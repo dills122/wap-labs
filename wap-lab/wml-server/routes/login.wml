@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
-  <card id="login-result" title="Login Result">
-    <p>Login submitted via local WAP stack.</p>
-    <p><a href="/">Back to home</a></p>
-    <do type="accept" label="Home">
-      <go href="/"/>
+  <card id="login-example" title="Login Example">
+    <p>This static page documents login fields:</p>
+    <p>- username</p>
+    <p>- pin (4 to 6 digits)</p>
+    <p><a href="/login">Use dynamic login</a></p>
+    <do type="accept" label="Login">
+      <go href="/login"/>
     </do>
   </card>
 </wml>

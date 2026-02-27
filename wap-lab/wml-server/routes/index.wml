@@ -1,24 +1,34 @@
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
-  <card id="home" title="WAP Lab Home">
-    <p>Welcome to the local WAP gateway lab.</p>
-    <p>
-      <a href="#form">Go to Login Form</a>
-    </p>
-    <do type="accept" label="Login">
-      <go href="#form"/>
+  <card id="welcome" title="Static Demo">
+    <p>This is a static WML sample deck.</p>
+    <p><a href="#nav">Open Navigation</a></p>
+    <do type="accept" label="Next">
+      <go href="#nav"/>
     </do>
   </card>
 
-  <card id="form" title="Login">
-    <p>User Name:</p>
+  <card id="nav" title="Navigation">
+    <p>Use anchor links and softkeys.</p>
+    <p><a href="#form">Open Form Card</a></p>
+    <do type="accept" label="Form">
+      <go href="#form"/>
+    </do>
+    <do type="prev" label="Back">
+      <prev/>
+    </do>
+  </card>
+
+  <card id="form" title="WML Form">
+    <p>Alias:</p>
     <p>
-      <input name="username" title="User" format="*M" emptyok="false"/>
+      <input name="alias" title="Alias" format="*M" emptyok="false"/>
     </p>
     <do type="accept" label="Submit">
       <go method="post" href="/login">
-        <postfield name="username" value="$(username)"/>
+        <postfield name="username" value="$(alias)"/>
+        <postfield name="pin" value="0000"/>
       </go>
     </do>
     <do type="prev" label="Back">

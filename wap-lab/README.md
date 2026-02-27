@@ -1,8 +1,19 @@
-# WAP Lab (Local Legacy WAP Stack)
+# WAP Lab v2: Local Legacy WAP Stack
 
-This project simulates a historical WAP 1.x flow locally:
+A modern local lab that emulates a classic carrier WAP path:
 
-Client (WAP browser/emulator) -> WSP -> Kannel WAP Gateway -> HTTP -> Node WML Server
+`WAP Client -> WSP/WTP -> Kannel Gateway -> HTTP -> WML Application Server`
+
+This version includes a stateful demo app (register/login/session/portal), smoke tests, and teaching-oriented documentation.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    A["WAP Browser / Emulator"] -->|"WSP/WTP"| B["Kannel bearerbox + wapbox"]
+    B -->|"HTTP"| C["Node Express WML Server"]
+    C --> D["WML Decks (cards/forms)"]
+```
 
 ## Project Layout
 
@@ -13,26 +24,44 @@ wap-lab/
 │       ├── Dockerfile
 │       ├── kannel.conf
 │       └── start.sh
+├── scripts/
+│   └── smoke.sh
 ├── wml-server/
 │   ├── package.json
 │   ├── server.js
 │   ├── viewer.html
 │   └── routes/
 │       ├── index.wml
-│       └── login.wml
+│       ├── login.wml
+│       └── register.wml
 ├── docker-compose.yml
+├── Makefile
 └── README.md
 ```
 
-## What It Provides
+## What Is Included
 
-- Kannel `bearerbox` + `wapbox` as a local carrier-style WAP gateway
-- Admin status endpoint on `http://localhost:13000/status`
-- WAP entry endpoint on `http://localhost:13002`
-- Node/Express WML app server on `http://localhost:3000`
-- WML responses served as `Content-Type: text/vnd.wap.wml`
+- Kannel gateway with both `bearerbox` and `wapbox`
+- Admin endpoint on port `13000`
+- WAP gateway endpoint on port `13002`
+- Node/Express WML server on port `3000`
+- Dynamic WML auth flow:
+  - `/register` (POST form)
+  - `/login` (POST form)
+  - `/portal?sid=...`
+  - `/profile?sid=...`
+  - `/messages?sid=...&page=...`
+  - `/logout?sid=...`
+- Static WML examples:
+  - `/examples/index.wml`
+  - `/examples/login.wml`
+  - `/examples/register.wml`
+- Basic observability:
+  - request logs with request ID
+  - `/metrics` plain text counters
+  - `/health` JSON health check
 
-## Key Gateway Settings
+## Gateway Configuration (Kannel)
 
 Configured in `docker/kannel/kannel.conf`:
 
@@ -40,65 +69,157 @@ Configured in `docker/kannel/kannel.conf`:
 - `wapbox-port = 13002`
 - `box-allow-ip = 127.0.0.1`
 - `wdp-interface-name = "*"`
-- WSP/WTP requests are translated by `wapbox` and routed using:
+- HTTP translation/routing in `group = wapbox`:
   - `device-home = "http://wml-server:3000/"`
   - `map-url-0 = "http://localhost:13002/* http://wml-server:3000/*"`
 
-## Run the Stack
+## Quickstart (3 Minutes)
 
-From the `wap-lab` directory:
+Run from the `wap-lab` directory:
 
 ```bash
+make up
+```
+
+Check container state:
+
+```bash
+make ps
+```
+
+Check gateway status:
+
+```bash
+make status
+```
+
+Run smoke test:
+
+```bash
+make smoke
+```
+
+Stop everything:
+
+```bash
+make down
+```
+
+## Direct Endpoints
+
+- Kannel admin status:
+  - `http://localhost:13000/status?password=changeme`
+- WAP gateway target (emulator/bridge):
+  - `http://localhost:13002`
+- WML server direct HTTP:
+  - `http://localhost:3000`
+- Browser WML card viewer:
+  - `http://localhost:3000/viewer`
+
+## End-to-End Request Trace
+
+1. WAP client requests `http://localhost:13002/login`
+2. `wapbox` maps URL to `http://wml-server:3000/login`
+3. Node app returns WML deck with `Content-Type: text/vnd.wap.wml`
+4. Gateway translates WSP/WTP <-> HTTP and returns response to client
+
+## Demo Flow
+
+1. Open `/register`, create user with 4-6 digit PIN
+2. Open `/login`, authenticate
+3. Follow portal link with generated `sid`
+4. Browse profile and paged messages
+5. Logout and confirm session is invalidated
+
+## WML Concepts Demonstrated
+
+- `<card>` deck design
+- `<input>` form fields
+- `<do>` softkey actions
+- `<go>` GET/POST transitions
+- `<postfield>` form submission
+- multi-card navigation and pagination style links
+
+## Observability
+
+Server logs include request metadata:
+
+- request ID
+- timestamp
+- method/path
+- client IP
+- user-agent and accept headers
+
+Metrics endpoint (`/metrics`) exposes:
+
+- `requests_total`
+- `users_total`
+- `sessions_total`
+- `register_success_total`
+- `login_success_total`
+- `login_failure_total`
+
+## Troubleshooting
+
+### `Group 'wapbox' may not contain field 'wapbox-port'`
+
+Cause: `wapbox-port` was placed in the wrong group.
+
+Fix: keep `wapbox-port` under `group = core`.
+
+### `Group 'wapbox-user' is no valid group identifier`
+
+Cause: this Kannel package does not support that group.
+
+Fix: route with `map-url-*` fields inside `group = wapbox`.
+
+### `curl: (7) Failed to connect to localhost port 13000`
+
+Cause: gateway container failed to start or crashed.
+
+Fix:
+
+```bash
+docker compose logs kannel
 docker compose up --build
 ```
 
-## Test Endpoints
+### Smoke test fails on gateway endpoint
 
-1. Gateway status:
+Cause: stack not up yet or mapping mismatch.
 
-```bash
-curl http://localhost:13000/status?password=changeme
-```
-
-2. WML app directly (HTTP):
+Fix:
 
 ```bash
-curl -i http://localhost:3000/
-curl -i http://localhost:3000/login
+make ps
+make status
+curl -i http://localhost:13002/
 ```
 
-3. WAP gateway endpoint for emulator/bridge target:
+Note: in some environments `http://localhost:13002/` may not return a plain HTTP body promptly because the gateway endpoint primarily serves WSP device traffic. In that case, use emulator verification and rely on `13000/status` plus app logs.
 
-```text
-http://localhost:13002
+## Lab Exercises
+
+1. Add a `settings` card to portal with user preference toggles.
+2. Add session timeout cleanup in `server.js`.
+3. Add another `map-url` rule that proxies `/legacy/*` to a separate service.
+4. Add request latency metric buckets to `/metrics`.
+5. Build a tiny WMLScript endpoint and call it from a card action.
+
+## Useful Commands
+
+```bash
+make up        # build and start
+make ps        # container status
+make logs      # follow logs
+make status    # kannel admin status
+make smoke     # smoke test against running stack
+make clean     # remove containers, networks, volumes
 ```
-
-Use this as the emulator target URL when testing WAP browsing through the local gateway.
-
-## Sample WML Features Included
-
-`routes/index.wml` includes:
-
-- Multiple `<card>` screens
-- Navigation between cards
-- `<input>` field
-- Submit via `<do>` + `<go method="post">`
-- `<postfield>` usage
-
-All WML files begin with WAP 1.1 DOCTYPE.
-
-## Optional Bonus: Browser WML Viewer
-
-Open in a normal browser:
-
-```text
-http://localhost:3000/viewer
-```
-
-This helper fetches `.wml` content and displays each `<card>` as a simple section for quick inspection.
 
 ## Notes
 
-- SMS configuration is intentionally omitted.
-- No TLS is configured (development only).
-- WBXML translation is handled by Kannel `wapbox`.
+- No SMS services configured (WAP-focused only).
+- No TLS (local dev only).
+- WML files use WAP 1.1 DOCTYPE.
+- WBXML translation is handled by Kannel/wapbox.
