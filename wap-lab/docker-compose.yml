@@ -1,0 +1,23 @@
+services:
+  wml-server:
+    image: node:20-slim
+    container_name: wml-server
+    working_dir: /app
+    volumes:
+      - ./wml-server:/app
+    command: sh -c "npm install && npm start"
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+
+  kannel:
+    build:
+      context: ./docker/kannel
+      dockerfile: Dockerfile
+    container_name: wap-gateway
+    depends_on:
+      - wml-server
+    ports:
+      - "13000:13000"
+      - "13002:13002"

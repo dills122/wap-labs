@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WML Viewer</title>
+  <style>
+    body { font-family: "Courier New", monospace; margin: 2rem; background: #f4f5f7; color: #1b1f23; }
+    .toolbar { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    input, button { padding: 0.45rem; border: 1px solid #555; }
+    .card { background: white; border: 1px solid #ccc; border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem; }
+    .title { font-weight: bold; margin-bottom: 0.3rem; }
+    pre { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Simple WML Viewer</h1>
+  <div class="toolbar">
+    <input id="url" size="45" value="/" />
+    <button id="load">Load WML</button>
+  </div>
+  <div id="cards"></div>
+
+  <script>
+    async function loadWml() {
+      const target = document.getElementById('url').value || '/';
+      const res = await fetch(target);
+      const text = await res.text();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(text, 'text/xml');
+      const cardEls = [...xml.getElementsByTagName('card')];
+      const cardsRoot = document.getElementById('cards');
+      cardsRoot.innerHTML = '';
+
+      if (!cardEls.length) {
+        cardsRoot.innerHTML = '<pre>No &lt;card&gt; elements found.</pre>';
+        return;
+      }
+
+      cardEls.forEach((card) => {
+        const section = document.createElement('section');
+        section.className = 'card';
+
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = card.getAttribute('title') || card.getAttribute('id') || 'Untitled';
+
+        const body = document.createElement('pre');
+        body.textContent = card.textContent.replace(/\s+/g, ' ').trim();
+
+        section.appendChild(title);
+        section.appendChild(body);
+        cardsRoot.appendChild(section);
+      });
+    }
+
+    document.getElementById('load').addEventListener('click', loadWml);
+    loadWml();
+  </script>
+</body>
+</html>

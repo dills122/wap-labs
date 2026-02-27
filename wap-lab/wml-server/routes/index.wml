@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+  <card id="home" title="WAP Lab Home">
+    <p>Welcome to the local WAP gateway lab.</p>
+    <p>
+      <a href="#form">Go to Login Form</a>
+    </p>
+    <do type="accept" label="Login">
+      <go href="#form"/>
+    </do>
+  </card>
+
+  <card id="form" title="Login">
+    <p>User Name:</p>
+    <p>
+      <input name="username" title="User" format="*M" emptyok="false"/>
+    </p>
+    <do type="accept" label="Submit">
+      <go method="post" href="/login">
+        <postfield name="username" value="$(username)"/>
+      </go>
+    </do>
+    <do type="prev" label="Back">
+      <prev/>
+    </do>
+  </card>
+</wml>
