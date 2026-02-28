@@ -5,6 +5,7 @@ node_modules/
 dist/
 out/
 release/
+src-tauri/target/
 
 # Runtime artifacts
 *.log

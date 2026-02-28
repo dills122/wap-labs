@@ -24,6 +24,7 @@ export interface FetchResponse {
       | 'UNSUPPORTED_CONTENT_TYPE'
       | 'WBXML_DECODE_FAILED'
       | 'PROTOCOL_ERROR'
+      | 'TRANSPORT_UNAVAILABLE'
       | 'INTERNAL_ERROR';
     message: string;
     details?: Record<string, unknown>;
@@ -33,4 +34,19 @@ export interface FetchResponse {
     udpRtt: number;
     decode: number;
   };
+}
+
+// Contract for the desktop host's transport boundary.
+export interface TransportClient {
+  fetchDeck(request: FetchRequest): Promise<FetchResponse>;
+}
+
+export interface HostSessionState {
+  requestedUrl: string;
+  finalUrl?: string;
+  contentType?: string;
+  activeCardId?: string;
+  focusedLinkIndex?: number;
+  externalNavigationIntent?: string;
+  lastError?: string;
 }

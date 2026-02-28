@@ -17,7 +17,7 @@ Breaking compatibility is acceptable at this stage when it helps move the MVP fo
 - `gateway-kannel/` + `docker/kannel/`: gateway behavior and environment wiring
 - `transport-python/`: Lowband transport appliance API and WSP/WBXML translation
 - `engine-wasm/`: WaveNav WML runtime, parser, layout, and WASM engine contracts
-- `electron-app/`: desktop host harness and adapter integration
+- `browser/`: Waves Tauri desktop host harness and adapter integration
 
 When a change spans multiple layers, preserve boundaries and update contracts first.
 
@@ -27,7 +27,7 @@ Treat these as interface contracts before implementation details:
 
 - `transport-python/api/openapi.yaml`
 - `engine-wasm/contracts/wml-engine.ts`
-- `electron-app/contracts/transport.ts`
+- `browser/contracts/transport.ts`
 
 If behavior changes, update the relevant contract and docs in the same change.
 
@@ -38,7 +38,7 @@ MUST:
 - keep WML deck/card semantics deterministic (navigation, focus, card transitions)
 - keep WBXML decode/encode in `transport-python/`
 - keep rendering and WML runtime logic in `engine-wasm/`
-- keep host window/input wiring in `electron-app/`
+- keep host window/input wiring in `browser/`
 
 MUST NOT:
 
