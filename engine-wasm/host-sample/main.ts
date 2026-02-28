@@ -1,46 +1,5 @@
 import { bootWmlEngine } from './renderer';
-
-const EXAMPLES: Record<string, string> = {
-  basic: `<wml>
-  <card id="home">
-    <p>WaveNav Host Harness</p>
-    <p>Use ArrowUp / ArrowDown / Enter.</p>
-    <a href="#next">Go to next card</a>
-    <br/>
-    <a href="http://example.com/other.wml">External link (MVP no-op)</a>
-  </card>
-  <card id="next">
-    <p>Second card loaded.</p>
-    <a href="#home">Return home</a>
-  </card>
-</wml>`,
-  missingFragment: `<wml>
-  <card id="home">
-    <p>Missing fragment test</p>
-    <a href="#missing">Broken target</a>
-  </card>
-</wml>`,
-  parserRobust: `<wml>
-  <cardinal id="noise">Ignore me</cardinal>
-  <card id="home">
-    <p>Hello <a href="#next">Next</a></p>
-  </card>
-  <card id="next">
-    <p>Still works.</p>
-    <a href="#home">Back</a>
-  </card>
-</wml>`,
-  wrapStress: `<wml>
-  <card id="home">
-    <p>supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis</p>
-    <a href="#next">Continue</a>
-  </card>
-  <card id="next">
-    <p>Wrap test complete.</p>
-    <a href="#home">Back</a>
-  </card>
-</wml>`
-};
+import { EXAMPLES } from './.generated/examples';
 
 const LIVE_RELOAD_DEBOUNCE_MS = 250;
 
@@ -80,9 +39,24 @@ async function main() {
     throw new Error('Host sample DOM not found');
   }
 
-  textarea.value = EXAMPLES.basic;
+  exampleSelect.replaceChildren();
+  for (const example of EXAMPLES) {
+    const option = document.createElement('option');
+    option.value = example.key;
+    option.textContent = example.label;
+    exampleSelect.appendChild(option);
+  }
+
+  if (EXAMPLES.length === 0) {
+    throw new Error('No examples available. Run: pnpm run examples:generate');
+  }
+
+  const exampleMap = new Map(EXAMPLES.map((item) => [item.key, item.wml]));
+  const defaultExample = EXAMPLES[0];
+  exampleSelect.value = defaultExample.key;
+  textarea.value = defaultExample.wml;
   const host = await bootWmlEngine(canvas, textarea.value);
-  status.textContent = 'Loaded example: basic';
+  status.textContent = `Loaded example: ${defaultExample.key}`;
 
   const updateRuntimeState = () => {
     const snapshot = host.snapshot();
@@ -134,7 +108,7 @@ async function main() {
 
   loadExampleButton.addEventListener('click', () => {
     const key = exampleSelect.value;
-    const example = EXAMPLES[key];
+    const example = exampleMap.get(key);
     if (!example) {
       return;
     }

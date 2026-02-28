@@ -1,0 +1,11 @@
+<!-- label: Long Token Wrap -->
+<wml>
+  <card id="home">
+    <p>supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis</p>
+    <a href="#next">Continue</a>
+  </card>
+  <card id="next">
+    <p>Wrap test complete.</p>
+    <a href="#home">Back</a>
+  </card>
+</wml>

@@ -1,0 +1,14 @@
+<!-- label: Basic Navigation -->
+<wml>
+  <card id="home">
+    <p>WaveNav Host Harness</p>
+    <p>Use ArrowUp / ArrowDown / Enter.</p>
+    <a href="#next">Go to next card</a>
+    <br/>
+    <a href="http://example.com/other.wml">External link (MVP no-op)</a>
+  </card>
+  <card id="next">
+    <p>Second card loaded.</p>
+    <a href="#home">Return home</a>
+  </card>
+</wml>

@@ -200,6 +200,8 @@ mod tests {
       </card>
     </wml>
     "##;
+    const FIELD_EXAMPLE_01: &str =
+        include_str!("../tests/fixtures/field/openwave-2011-example-01-navigation.wml");
 
     #[test]
     fn enter_navigates_to_fragment_card() {
@@ -305,5 +307,19 @@ mod tests {
         assert_eq!(engine.active_card_idx, 0);
         assert_eq!(engine.focused_link_idx, 0);
         assert!(engine.nav_stack.is_empty());
+    }
+
+    #[test]
+    fn field_example_01_loads_and_fragment_navigation_works() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIELD_EXAMPLE_01)
+            .expect("field fixture should load");
+        assert_eq!(engine.active_card_id().expect("active card"), "main");
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should move to #content");
+        assert_eq!(engine.active_card_id().expect("active card"), "content");
     }
 }

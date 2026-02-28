@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//OPENWAVE.COM//DTD WML 1.3//EN"
+"http://www.openwave.com/dtd/wml13.dtd">
+<wml>
+  <card id="main" title="Wireless Programming">
+    <p align="center" mode="wrap">
+      Welcome to our <em>Online Mobile Course</em><br/>
+      <big><strong>Wireless Programming</strong></big>
+    </p>
+    <p>To Continue Click <a href="#content">Here</a></p>
+  </card>
+  <card id="content" title="Services">
+    <p>
+      List of our services<br/>
+      <a href="dictionary.wml">WAP Dictionary</a><br/>
+      <a href="Lectures.wml">WAP Lectures</a><br/>
+      <a href="Quizes.wml">WAP Quizes</a><br/>
+      <a href="Assignments.wml">WAP Assignments</a><br/>
+      <a href="FAQ.wml">WAP FAQ</a><br/>
+    </p>
+  </card>
+</wml>

@@ -5,10 +5,15 @@ This sample is a quick local testing harness for the WaveNav WASM engine (no Ele
 It provides:
 
 1. A browser canvas renderer
-2. A selectable set of built-in example decks
+2. A selectable set of built-in example decks (including Openwave-era field sample)
 3. An in-memory WML editor with optional live reload (never auto-saves files)
 4. Keyboard + button key mapping (`ArrowUp`, `ArrowDown`, `Enter`)
 5. Runtime state panel (`activeCardId`, focus index, metadata)
+
+Example management:
+
+- Store examples as standalone files in `host-sample/examples/*.wml`
+- A build step generates `host-sample/.generated/examples.ts` for fast runtime loading
 
 Main files:
 
@@ -37,6 +42,13 @@ wasm-pack build --target web --out-dir ../pkg
 cd engine-wasm/host-sample
 npm install
 npm run dev
+```
+
+Regenerate example manifest manually (normally automatic via `predev`/`prebuild`):
+
+```bash
+cd engine-wasm/host-sample
+pnpm run examples:generate
 ```
 
 All-in-one from repo root (rebuild wasm, then start host dev server):

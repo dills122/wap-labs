@@ -1,0 +1,7 @@
+<!-- label: Missing Fragment Error -->
+<wml>
+  <card id="home">
+    <p>Missing fragment test</p>
+    <a href="#missing">Broken target</a>
+  </card>
+</wml>

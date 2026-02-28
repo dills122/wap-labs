@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//OPENWAVE.COM//DTD WML 1.3//EN"
+"http://www.openwave.com/dtd/wml13.dtd">
+<wml>
+  <template>
+    <do type="options" label="Help">
+      <go href="#help"/>
+    </do>
+    <do type="options" label="Go Back">
+      <prev/>
+    </do>
+    <do type="options" label="Home">
+      <go href="main.wml"/>
+    </do>
+  </template>
+
+  <card id="Assignments" title="Assignments">
+    <p>Choose the WAP Assignment from Menu options</p>
+    <do type="accept" label="Assign 1"><go href="#assign1"/></do>
+    <do type="accept" label="Assign 2"><go href="#assign2"/></do>
+  </card>
+
+  <card id="help" title="Help">
+    <p>This is the help file ....</p>
+  </card>
+
+  <card id="assign1" title="assign1">
+    <do type="options" label="Results"><go href="#results"/></do>
+    <p>This is the assign1 file ....</p>
+  </card>
+
+  <card id="assign2" title="assign2">
+    <do type="button" label="Assign 2.1"><go href="Assign2.wml"/></do>
+    <p>This is the assign2 file ....</p>
+  </card>
+
+  <card id="results" title="Results">
+    <p>This is the Results file ....</p>
+  </card>
+</wml>

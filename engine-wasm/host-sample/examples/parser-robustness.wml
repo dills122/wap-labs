@@ -1,0 +1,11 @@
+<!-- label: Parser Robustness -->
+<wml>
+  <cardinal id="noise">Ignore me</cardinal>
+  <card id="home">
+    <p>Hello <a href="#next">Next</a></p>
+  </card>
+  <card id="next">
+    <p>Still works.</p>
+    <a href="#home">Back</a>
+  </card>
+</wml>
