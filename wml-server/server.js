@@ -5,6 +5,9 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const gatewayBaseUrls = process.env.GATEWAY_BASE_URL
+  ? [process.env.GATEWAY_BASE_URL]
+  : ['http://kannel:13002', 'http://localhost:13002'];
 
 const users = new Map();
 const sessions = new Map();
@@ -397,7 +400,95 @@ app.get('/examples/:file', (req, res) => {
   sendStaticWml(res, fileName);
 });
 
+async function proxyGatewayRequest(req, res) {
+  try {
+    const suffix = req.params[0] ? `/${req.params[0]}` : '/';
+    const queryIndex = req.originalUrl.indexOf('?');
+    const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+    const accept = req.get('accept');
+    const contentType = req.get('content-type');
+
+    let requestBody;
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      if (contentType && contentType.includes('application/x-www-form-urlencoded')) {
+        requestBody = new URLSearchParams(req.body || {}).toString();
+      } else if (contentType && contentType.includes('application/json')) {
+        requestBody = JSON.stringify(req.body || {});
+      } else if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) {
+        requestBody = new URLSearchParams(req.body).toString();
+      } else if (typeof req.body === 'string') {
+        requestBody = req.body;
+      }
+    }
+
+    let upstream;
+    let lastError;
+    for (const baseUrl of gatewayBaseUrls) {
+      const targetUrl = new URL(`${suffix}${query}`, baseUrl);
+      try {
+        const headers = new Headers();
+        if (accept) {
+          headers.set('accept', accept);
+        }
+        headers.set('user-agent', 'WAP-Lab-Emulator/1.0');
+        if (contentType) {
+          headers.set('content-type', contentType);
+        } else if (requestBody) {
+          headers.set('content-type', 'application/x-www-form-urlencoded');
+        }
+
+        upstream = await fetch(targetUrl, {
+          method: req.method,
+          headers,
+          body: requestBody,
+          redirect: 'manual',
+          signal: AbortSignal.timeout(8000),
+        });
+        break;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    if (!upstream) {
+      throw lastError || new Error('Unable to connect to gateway');
+    }
+
+    res.status(upstream.status);
+    for (const [name, value] of upstream.headers.entries()) {
+      const lower = name.toLowerCase();
+      if (
+        lower === 'connection' ||
+        lower === 'keep-alive' ||
+        lower === 'proxy-authenticate' ||
+        lower === 'proxy-authorization' ||
+        lower === 'te' ||
+        lower === 'trailer' ||
+        lower === 'transfer-encoding' ||
+        lower === 'upgrade' ||
+        lower === 'content-length'
+      ) {
+        continue;
+      }
+      res.set(name, value);
+    }
+
+    const body = Buffer.from(await upstream.arrayBuffer());
+    res.send(body);
+  } catch (err) {
+    console.error(`[gateway-proxy-error] method=${req.method} path=${req.originalUrl} error=${err.message}`);
+    res.status(502).type('text/plain').send(`Gateway proxy failed: ${err.message}\n`);
+  }
+}
+
+app.all('/gateway', proxyGatewayRequest);
+app.all('/gateway/*', proxyGatewayRequest);
+
 app.get('/viewer', (req, res) => {
+  res.sendFile(path.join(__dirname, 'viewer.html'));
+});
+
+app.get('/emulator', (req, res) => {
   res.sendFile(path.join(__dirname, 'viewer.html'));
 });
 

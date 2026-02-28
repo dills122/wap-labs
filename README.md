@@ -18,7 +18,7 @@ flowchart TD
 ## Project Layout
 
 ```text
-wap-lab/
+wap-labs/
 ├── docker/
 │   └── kannel/
 │       ├── Dockerfile
@@ -69,13 +69,16 @@ Configured in `docker/kannel/kannel.conf`:
 - `wapbox-port = 13002`
 - `box-allow-ip = 127.0.0.1`
 - `wdp-interface-name = "*"`
-- HTTP translation/routing in `group = wapbox`:
+- `group = wapbox`:
   - `device-home = "http://wml-server:3000/"`
-  - `map-url-0 = "http://localhost:13002/* http://wml-server:3000/*"`
+- HTTP translation/routing in `group = wap-url-map`:
+  - `url = "http://localhost:13002/*"` -> `map-url = "http://wml-server:3000/*"`
+  - `url = "http://wap/*"` -> `map-url = "http://wml-server:3000/*"`
+  - `url = "http://10.0.2.2/*"` -> `map-url = "http://wml-server:3000/*"`
 
 ## Quickstart (3 Minutes)
 
-Run from the `wap-lab` directory:
+Run from the `wap-labs` directory:
 
 ```bash
 make up
@@ -92,6 +95,12 @@ Check gateway status:
 ```bash
 make status
 ```
+
+Verify host endpoints in Chrome:
+
+- Kannel admin: `http://localhost:13000/status?password=changeme`
+- WML app health: `http://localhost:3000/health`
+- WML app root deck over HTTP: `http://localhost:3000/`
 
 Run smoke test:
 
@@ -115,6 +124,254 @@ make down
   - `http://localhost:3000`
 - Browser WML card viewer:
   - `http://localhost:3000/viewer`
+  - `http://localhost:3000/emulator`
+
+## macOS ARM Emulator Options
+
+### Option A: Built-in Emulator (Fast HTTP/WML Flow)
+
+Use the built-in emulator UI on Apple Silicon (no x86 tooling required):
+
+1. Start stack: `make up`
+2. Open: `http://localhost:3000/emulator`
+3. Keep URL as `/login` (default) for the full register/login/portal/logout flow
+4. Use `Back` and softkey buttons to navigate cards and submit WML form actions
+
+Notes:
+
+- This emulator is HTTP/WML-focused and ideal for quick visual/flow testing.
+- Optional gateway bridge path is available at `/gateway/*` if your environment exposes a reachable HTTP gateway endpoint.
+
+### Option B: Real WAP 1.x Microbrowser (UTM + Windows XP + WinWAP/Openwave)
+
+This path runs a legacy microbrowser and sends real WSP traffic through Kannel.
+
+Flow:
+
+`WinWAP or Openwave Microbrowser -> WSP/UDP -> Kannel bearerbox (9200) -> wapbox -> HTTP translation -> Node WML server`
+
+#### Prerequisites
+
+Ensure these are running on your Mac:
+
+- Node WML server
+- Kannel bearerbox
+- Kannel wapbox
+
+Start and verify:
+
+```bash
+make up
+make status
+```
+
+Admin status URL:
+
+- `http://localhost:13000/status?password=changeme`
+
+#### 1. Install UTM
+
+Download and install UTM:
+
+- [UTM for macOS](https://mac.getutm.app)
+
+#### 2. Create Windows XP VM
+
+In UTM:
+
+1. `Create New` -> `Emulate` -> `Windows`
+2. Use Windows XP Professional SP3 (x86 ISO)
+
+Recommended VM settings:
+
+- Memory: `512 MB`
+- CPU: `1`
+- Storage: `10 GB`
+- Graphics: `Default VGA`
+- Networking: `Shared Network (NAT)`
+
+Important:
+
+- Do not enable Metal
+- Do not enable VirGL
+- Do not use Virtualize mode
+
+XP must run under Emulation.
+
+#### 3. Install Windows XP
+
+You can get the latest options to download:
+
+[UTM Windows XP Config](https://mac.getutm.app/gallery/windows-xp)
+
+[Windows XP Pro ISO](https://archive.org/details/WinXPProSP3x86)
+
+Boot the VM and complete normal XP installation:
+
+1. Boot from CD
+2. Format NTFS (Quick)
+3. Finish setup and reboot as requested
+
+#### 4. Install UTM Guest Tools (Required)
+
+Inside UTM VM window:
+
+1. CD icon -> `Install Windows Guest Tools`
+2. In XP, open `My Computer` -> CD drive
+3. Run `setup.exe`
+4. Restart VM
+
+#### 5. Verify VM -> Host Network Access
+
+Inside XP:
+
+```bat
+ipconfig
+```
+
+Find `Default Gateway` (typically `10.0.2.2` in UTM NAT mode). This should route to your Mac host.
+
+In XP Internet Explorer, test:
+
+- `http://10.0.2.2:13000/status?password=changeme`
+
+If it loads, VM can reach your local Kannel gateway.
+
+#### 6. Install Openwave SDK (Experimental)
+
+Openwave is legacy/discontinued software and is difficult to source. This community reference can help locate installers and plugin notes:
+
+- [Openwave SDK references](https://wapreview.com/3733/)
+
+Inside XP, install Openwave SDK 6.x and launch the Openwave Microbrowser.
+
+Current blocker: the required Openwave WAP browser plugin component is missing in our current setup. Until that plugin is found/installed, Openwave doesn't properly run in WAP Gateway mode so cant connect from my testing.
+
+During install, enable the browser/plugin components required by the SDK. If the microbrowser opens but cannot render local test pages, rerun installer in `Modify` mode and add the missing plugin component.
+
+If Openwave does not render pages after install in your XP image, use WinWAP as primary (known good in this lab) and treat Openwave as optional.
+
+#### 6b. Install WinWAP (Recommended)
+
+Inside XP, install WinWAP and use it as your primary WAP browser for this lab.
+
+Download WinWAP [HERE](https://www.winwap.com/downloads/downloads.php)
+
+Note: WinWAP/Openwave installers are not committed to this repository because of third-party licensing.
+
+#### 7. Configure WinWAP WAP Gateway (Recommended)
+
+Open WinWAP -> `Browser Options`:
+
+- `General` tab:
+  - Select `Gateway mode` (not HTTP mode)
+- `HTTP` tab:
+  - Disable `Use HTTP Proxy`
+  - Disable `Use HTTP Proxy Authentication`
+- `Gateway` tab:
+  - `Gateway IP/Host`: `10.0.2.2`
+  - `Connectionless` port: `9200`
+  - Home page: `http://wap/login` (or `http://10.0.2.2/login`)
+
+Save and restart WinWAP.
+
+WinWAP Setup Example:
+
+![Setup slide 1](./images/winwap-setup-slide-1.png)
+![Setup slide 1](./images/winwap-setup-slide-2.png)
+
+#### 8. Configure Openwave WAP Gateway (Optional)
+
+Openwave -> `Edit` -> `Preferences` -> `Network`
+
+Set:
+
+- Use WAP Gateway: Enabled
+- Gateway IP: `10.0.2.2`
+- Port: `9200`
+- Bearer: `UDP`
+
+Disable:
+
+- HTTP Proxy
+
+#### 9. Test WSP Routing
+
+Inside WinWAP/Openwave browse to:
+
+- `http://wap/login`
+- fallback: `http://10.0.2.2/login`
+
+Should see pages similar to tihs
+
+![WML Link Tree](./images/example-wap-link-tree-page-card.png)
+![Fake Session View](./images/example-wap-fake-session-portal.png)
+
+Watch logs on host:
+
+```bash
+docker compose logs -f kannel wml-server
+```
+
+You should see WSP activity (not plain browser HTTP GET from a desktop browser).
+
+#### 10. Host File Server for XP VM (Installers/Artifacts)
+
+Run a temporary file host on your Mac:
+
+```bash
+cd /Users/dsteele/repos/wap-labs/files
+python3 -m http.server 8080
+```
+
+From XP browser, open:
+
+- `http://10.0.2.2:8080/`
+
+Download what you need inside XP, for example:
+
+- `http://10.0.2.2:8080/winwap-win32.exe`
+- `http://10.0.2.2:8080/Openwave_SDK_622.exe`
+
+Stop file host with `Ctrl+C` when done.
+
+#### 11. Debugging
+
+Cannot reach gateway from XP:
+
+- Recheck XP URL: `http://10.0.2.2:13000/status?password=changeme`
+- Confirm VM network mode is Shared Network (NAT)
+- Confirm stack is running: `make ps`
+- Check host firewall rules for local ports
+
+Openwave loads nothing:
+
+- Confirm UDP ports `9200/9201` are published in `docker-compose.yml`
+- Confirm `wdp-interface-name = "*"` in `docker/kannel/kannel.conf`
+- Restart stack:
+
+```bash
+docker compose restart
+```
+
+HTTP desktop requests showing instead of WSP flow:
+
+- Recheck WinWAP/Openwave proxy/gateway settings and ensure HTTP proxy is disabled.
+
+WinWAP returns HTTP 503 for `http://wap/*`:
+
+- Check `docker compose logs kannel` for `map_url_max = -1`
+- If present, you are using deprecated mapping format; use `group = wap-url-map` entries in `docker/kannel/kannel.conf`
+- Restart gateway: `docker compose up -d --build kannel`
+
+#### Success Criteria
+
+You have real WAP 1.x microbrowser emulation when:
+
+- WinWAP or Openwave renders WML decks
+- `<card>` navigation works
+- `<input>` and `<go>` form flow works
+- Kannel logs show WSP-side activity through wapbox
 
 ## End-to-End Request Trace
 
@@ -171,7 +428,19 @@ Fix: keep `wapbox-port` under `group = core`.
 
 Cause: this Kannel package does not support that group.
 
-Fix: route with `map-url-*` fields inside `group = wapbox`.
+Fix: route with `group = wap-url-map` entries and `map-url` rules.
+
+### `map_url_max = -1` and `http://wap/*` fails with 503
+
+Cause: deprecated URL mapping format was used, so rewrite rules were not loaded.
+
+Fix: define explicit `group = wap-url-map` blocks for:
+
+- `http://localhost:13002/*`
+- `http://wap/*`
+- `http://10.0.2.2/*`
+
+and map each to `http://wml-server:3000/*`, then restart `kannel`.
 
 ### `curl: (7) Failed to connect to localhost port 13000`
 
