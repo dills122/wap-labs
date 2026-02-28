@@ -8,12 +8,40 @@ It provides:
 2. A selectable set of built-in example decks (including Openwave-era field sample)
 3. An in-memory WML editor with optional live reload (never auto-saves files)
 4. Keyboard + button key mapping (`ArrowUp`, `ArrowDown`, `Enter`)
-5. Runtime state panel (`activeCardId`, focus index, metadata)
+5. Runtime state panel (`activeCardId`, focus index, metadata, external navigation intent)
+6. Intent actions (`Clear Intent`, `Copy Intent URL`)
+7. Per-example event tracker timeline for flow/actions during testing
+8. Collapsible metadata/editor/event-log sections (state persists during page session)
+9. Export current example event log to a text file for debugging artifacts
 
 Example management:
 
 - Store examples as standalone files in `host-sample/examples/*.wml`
 - A build step generates `host-sample/.generated/examples.ts` for fast runtime loading
+- For every new demoable engine feature, add a new example or update an existing one that exercises that feature.
+- Each example must include a top metadata comment block with required keys:
+  - `label`
+  - `work-items` (comma-separated ids, optional if `spec-items` provided)
+  - `spec-items` (comma-separated ids, optional if `work-items` provided)
+  - `description`
+  - `goal`
+  - `testing-ac` (one or more checklist lines prefixed by `- `)
+
+Metadata template:
+
+```xml
+<!--
+label: Example Label
+work-items: A2-02
+spec-items: WML-R-007
+description: What this demonstrates.
+goal: What must be validated.
+testing-ac:
+- Step 1 to verify behavior.
+- Step 2 to verify behavior.
+-->
+<wml>...</wml>
+```
 
 Main files:
 

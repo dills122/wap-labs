@@ -45,4 +45,6 @@ export interface WmlEngineWasm {
   focusedLinkIndex(): number;
   baseUrl(): string;
   contentType(): string;
+  externalNavigationIntent(): string | undefined;
+  clearExternalNavigationIntent(): void;
 }

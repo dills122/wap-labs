@@ -124,6 +124,8 @@ Additional helpers:
 - `focusedLinkIndex()`
 - `baseUrl()`
 - `contentType()`
+- `externalNavigationIntent()`
+- `clearExternalNavigationIntent()`
 
 Type contract:
 

@@ -20,6 +20,20 @@ Target scope is Phase A (`P0`) only:
 
 No Phase B+ semantics should be added in this board unless explicitly promoted.
 
+## Demoability Requirement
+
+For any newly implemented, demoable feature:
+
+- add a new `engine-wasm/host-sample/examples/*.wml` fixture, or
+- update an existing host-sample example that directly exercises the new behavior.
+
+Every completed ticket with host-visible behavior should note which example covers it.
+Each example metadata block must include:
+
+- work item and/or spec IDs (`work-items`, `spec-items`)
+- brief `description` and `goal`
+- `testing-ac` checklist steps for deterministic manual verification
+
 ## Ticket Template
 
 Use this shape for any new ticket:
@@ -125,7 +139,7 @@ Use this shape for any new ticket:
 ### A2-02 External navigation intent emission
 
 1. `Requirement IDs`: `WML-R-007`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A2-01`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -140,6 +154,11 @@ Use this shape for any new ticket:
 7. `Accept`:
 - External href does not mutate active card.
 - Intent payload includes resolved URL string.
+8. `Notes`:
+- Added wasm API getters for `externalNavigationIntent` and `clearExternalNavigationIntent`.
+- `enter` on non-fragment links now emits a resolved external URL intent without changing active card.
+- Added Rust tests for external-intent emission, fragment branch non-emission, and intent clearing.
+- Added host-sample example `external-navigation-intent.wml` to demo external-intent vs fragment behavior.
 
 ### A2-03 History stack baseline
 

@@ -1,4 +1,15 @@
-<!-- label: Field Example (Openwave 2011) -->
+<!--
+label: Field Example (Openwave 2011)
+work-items: A1-03, A2-01
+spec-items: WML-R-002, WML-R-006
+description: Real-world style multi-card sample used to exercise parser ordering and fragment navigation.
+goal: Ensure source ordering, inline link parsing, and card transitions stay deterministic on legacy-like content.
+testing-ac:
+- Load the deck and verify activeCardId starts at main.
+- Press Enter on "Here" and confirm activeCardId transitions to content.
+- Use Down and Enter on one of the external service links and verify activeCardId remains content.
+- Confirm runtime-state externalNavigationIntent updates when entering an external service link.
+-->
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//OPENWAVE.COM//DTD WML 1.3//EN"
 "http://www.openwave.com/dtd/wml13.dtd">
