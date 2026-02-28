@@ -1,9 +1,16 @@
-import init, { WmlEngine } from '../pkg/wml_engine';
+import init, { WmlEngine } from '../pkg/wml_engine.js';
 import type { DrawCmd } from '../contracts/wml-engine';
 
 const lineHeight = 16;
+const charWidth = 8;
 
-export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string) {
+export interface EngineHost {
+  loadDeck(xml: string): void;
+  render(): void;
+  getEngine(): WmlEngine;
+}
+
+export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Promise<EngineHost> {
   await init();
 
   const engine = new WmlEngine();
@@ -17,22 +24,29 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string) {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '14px "IBM Plex Mono", monospace';
+    ctx.textBaseline = 'top';
+
     const renderList = engine.render() as { draw: DrawCmd[] };
 
     for (const cmd of renderList.draw) {
+      const x = cmd.x * charWidth;
+      const y = cmd.y * lineHeight;
+
       if (cmd.type === 'text') {
         ctx.fillStyle = '#111';
-        ctx.fillText(cmd.text, cmd.x, (cmd.y + 1) * lineHeight);
+        ctx.fillText(cmd.text, x, y);
         continue;
       }
 
       if (cmd.type === 'link') {
-        ctx.fillStyle = cmd.focused ? '#ffffff' : '#0b3d91';
         if (cmd.focused) {
-          ctx.fillRect(0, cmd.y * lineHeight + 2, canvas.width, lineHeight);
-          ctx.fillStyle = '#000000';
+          ctx.fillStyle = '#c8ddff';
+          ctx.fillRect(0, y - 1, canvas.width, lineHeight + 2);
         }
-        ctx.fillText(cmd.text, cmd.x, (cmd.y + 1) * lineHeight);
+
+        ctx.fillStyle = cmd.focused ? '#10274d' : '#0b3d91';
+        ctx.fillText(cmd.text, x, y);
       }
     }
   }
@@ -50,10 +64,21 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string) {
       return;
     }
 
+    event.preventDefault();
     engine.handleKey(key);
     paint();
   });
 
   paint();
-  return engine;
+
+  return {
+    loadDeck(nextXml: string) {
+      engine.loadDeck(nextXml);
+      paint();
+    },
+    render: paint,
+    getEngine() {
+      return engine;
+    }
+  };
 }

@@ -73,6 +73,16 @@ cargo test
 - Use API contract in `engine-wasm/contracts/wml-engine.ts`
 - See host loop sample in `engine-wasm/host-sample/renderer.ts`
 
+### 7) Quick local harness (no Electron)
+
+```bash
+cd engine-wasm/host-sample
+npm install
+npm run dev
+```
+
+Then open the printed local URL and use the in-browser tester.
+
 ## Rust module layout
 
 - `engine/src/lib.rs`

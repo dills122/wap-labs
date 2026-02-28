@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WML Engine Host Sample</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="controls">
+        <h1>WML Engine Quick Harness</h1>
+        <p>Keyboard: ArrowUp, ArrowDown, Enter</p>
+        <textarea id="deck-input" spellcheck="false"></textarea>
+        <div class="buttons">
+          <button id="reload-deck" type="button">Reload Deck</button>
+        </div>
+        <p id="status" class="status">Ready.</p>
+      </section>
+
+      <section class="screen-wrap">
+        <canvas id="wap-screen" width="240" height="320"></canvas>
+      </section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
