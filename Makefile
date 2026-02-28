@@ -87,6 +87,16 @@ test-node:
 	@if [ "$(ENABLE_NODE_CHECKS)" != "1" ]; then \
 		echo "skip: node tests/build checks disabled (set ENABLE_NODE_CHECKS=1 to enable)"; \
 	elif [ -f engine-wasm/host-sample/package.json ] && command -v pnpm >/dev/null 2>&1; then \
+		if [ ! -f engine-wasm/pkg/wavenav_engine.js ]; then \
+			if command -v wasm-pack >/dev/null 2>&1; then \
+				echo "==> build WaveNav wasm pkg (required by host-sample)"; \
+				cd engine-wasm/engine && wasm-pack build --target web --out-dir ../pkg; \
+				cd ../..; \
+			else \
+				echo "skip: missing engine-wasm/pkg/wavenav_engine.js and wasm-pack not installed"; \
+				exit 0; \
+			fi; \
+		fi; \
 		echo "==> host-sample build sanity"; \
 		cd engine-wasm/host-sample && pnpm run build; \
 	else \

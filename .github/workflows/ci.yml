@@ -60,6 +60,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install wasm-pack
+        run: cargo install wasm-pack --locked
+
+      - name: Build WaveNav WASM package
+        working-directory: engine-wasm/engine
+        run: wasm-pack build --target web --out-dir ../pkg
+
+      - name: Verify wasm package output
+        run: test -f engine-wasm/pkg/wavenav_engine.js
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
