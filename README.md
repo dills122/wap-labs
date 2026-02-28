@@ -41,6 +41,18 @@ npm install
 npm run dev
 ```
 
+Repo quality checks and hooks:
+
+```bash
+make ci-local
+make hooks-install
+ENABLE_NODE_CHECKS=1 make ci-local
+```
+
+Node version note:
+
+- Use Node `20.19+` or `22.12+` (`.nvmrc` pins a known-good version).
+
 ## Contributor Docs
 
 - Contributor guide: `CONTRIBUTING.md`

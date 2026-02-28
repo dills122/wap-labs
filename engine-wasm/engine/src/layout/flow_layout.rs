@@ -121,10 +121,9 @@ mod tests {
 
         let out = layout_card(&card, 10, 0);
         assert_eq!(out.links.len(), 1);
-        assert!(out
-            .render_list
-            .draw
-            .iter()
-            .any(|cmd| matches!(cmd, crate::render::render_list::DrawCmd::Link { focused: true, .. })));
+        assert!(out.render_list.draw.iter().any(|cmd| matches!(
+            cmd,
+            crate::render::render_list::DrawCmd::Link { focused: true, .. }
+        )));
     }
 }

@@ -1,0 +1,52 @@
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: rust-fmt-check
+        name: rust fmt check (engine-wasm)
+        language: system
+        pass_filenames: false
+        files: ^engine-wasm/engine/
+        entry: bash -lc 'cd engine-wasm/engine && cargo fmt --check'
+
+      # Keep tests on pre-push to avoid slowing every commit.
+      - id: rust-test
+        name: rust test (engine-wasm)
+        language: system
+        pass_filenames: false
+        files: ^engine-wasm/engine/
+        stages: [pre-push]
+        entry: bash -lc 'cd engine-wasm/engine && cargo test'
+
+      # Node host sample only has build/dev scripts today; lint/test are not configured yet.
+      # This gives a minimal sanity check without forcing broader JS tooling across the repo.
+      - id: host-sample-build
+        name: host-sample build sanity
+        language: system
+        pass_filenames: false
+        files: ^engine-wasm/host-sample/
+        stages: [pre-push]
+        entry: >-
+          bash -lc 'if [ "${WAP_ENABLE_NODE_HOOKS:-0}" != "1" ]; then
+          echo "skip: set WAP_ENABLE_NODE_HOOKS=1 to enable node hooks"; exit 0;
+          fi; if ! command -v node >/dev/null 2>&1; then echo "skip: node not
+          found"; exit 0; fi; node -e "const [M,m]=process.versions.node.split(\".\").map(Number);
+          if(M<20 || (M===20&&m<19)){process.exit(1)}" || { echo "skip: node
+          $(node -v) is <20.19; using CI for node checks"; exit 0; }; cd
+          engine-wasm/host-sample && pnpm run build'
+
+      # Future hooks (intentionally disabled until those layers are bootstrapped):
+      # - transport-python ruff/pytest
+      # - electron-app lint/typecheck/test

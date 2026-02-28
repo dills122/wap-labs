@@ -9,8 +9,10 @@ Before starting work, choose the documentation track:
 
 1. Clone repository and install required tools:
    - Docker + Docker Compose
-   - Node 20+
+   - Node 20.19+ (or 22.12+). Repo pin: `.nvmrc`
+   - pnpm 10+ (for Node workspace scripts)
    - Rust toolchain + wasm-pack (for `engine-wasm`)
+   - Python 3.11+ + `pre-commit` (for git hooks)
 2. Start legacy stack:
 
 ```bash
@@ -23,6 +25,13 @@ make status
 ```bash
 cd engine-wasm/engine
 wasm-pack build --target web --out-dir ../pkg
+```
+
+4. Install git hooks:
+
+```bash
+pipx install pre-commit
+make hooks-install
 ```
 
 ## Coding standards
@@ -45,6 +54,33 @@ make smoke
 cd engine-wasm/engine
 cargo test
 ```
+
+- Repo-wide CI-equivalent checks:
+
+```bash
+make ci-local
+```
+
+Node checks are disabled by default in `make` to avoid blocking environments without stable pnpm/corepack setup. Enable them explicitly when needed:
+
+```bash
+ENABLE_NODE_CHECKS=1 make ci-local
+```
+
+Pre-commit node hooks are also opt-in:
+
+```bash
+WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
+```
+
+## Git Hooks and CI
+
+- Local hooks are configured via `.pre-commit-config.yaml`.
+- CI runs in GitHub Actions: `.github/workflows/ci.yml`.
+- Some layer checks are intentionally disabled until those layers are bootstrapped:
+  - `transport-python` lint/test
+  - `electron-app` lint/test/build
+  - Node package lint/test scripts where not yet defined
 
 ## Pull request checklist
 

@@ -92,6 +92,8 @@ components:
           $ref: '#/components/schemas/ErrorInfo'
         timingMs:
           $ref: '#/components/schemas/TimingMs'
+        engineDeckInput:
+          $ref: '#/components/schemas/EngineDeckInput'
     RawPayload:
       type: object
       additionalProperties: false
@@ -143,3 +145,23 @@ components:
         details:
           type: object
           additionalProperties: true
+    EngineDeckInput:
+      type: object
+      additionalProperties: false
+      required:
+        - wmlXml
+        - baseUrl
+        - contentType
+      properties:
+        wmlXml:
+          type: string
+          description: Normalized WML XML text for WASM engine ingestion.
+        baseUrl:
+          type: string
+          description: Final URL after redirect resolution.
+        contentType:
+          type: string
+          description: Normalized media type from upstream response.
+        rawBytesBase64:
+          type: string
+          description: Optional raw payload bytes in base64 for debug/fidelity workflows.

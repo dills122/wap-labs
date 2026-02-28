@@ -1,0 +1,13 @@
+{
+  "name": "@wap-labs/root",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Root scripts for polyglot WAP labs repository",
+  "packageManager": "pnpm@10.23.0",
+  "scripts": {
+    "lint:node": "pnpm -r --if-present run lint",
+    "test:node": "pnpm -r --if-present run test",
+    "build:node": "pnpm -r --if-present run build",
+    "typecheck:node": "pnpm -r --if-present run typecheck"
+  }
+}

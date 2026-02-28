@@ -15,7 +15,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
 
   const engine = new WmlEngine();
   engine.setViewportCols(20);
-  engine.loadDeck(xml);
+  engine.loadDeckContext(xml, 'http://local.test/deck.wml', 'text/vnd.wap.wml');
 
   function paint() {
     const ctx = canvas.getContext('2d');
@@ -73,7 +73,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
 
   return {
     loadDeck(nextXml: string) {
-      engine.loadDeck(nextXml);
+      engine.loadDeckContext(nextXml, 'http://local.test/deck.wml', 'text/vnd.wap.wml');
       paint();
     },
     render: paint,

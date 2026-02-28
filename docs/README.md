@@ -18,6 +18,7 @@ Authoritative implementation set:
 - `wml-engine/requirements-matrix.md`: requirement to module/test traceability
 - `wml-engine/architecture.md`: maintainable internal module architecture
 - `wml-engine/ticket-plan.md`: active phased implementation backlog
+- `wml-engine/work-items.md`: PR-sized execution board for current implementation cycle
 - `wml-engine/test-strategy.md`: fixture and verification strategy
 
 Supporting context docs:

@@ -21,6 +21,9 @@ pub struct WmlEngine {
     nav_stack: Vec<usize>,
     focused_link_idx: usize,
     viewport_cols: usize,
+    base_url: String,
+    content_type: String,
+    raw_bytes_base64: Option<String>,
 }
 
 #[wasm_bindgen]
@@ -33,16 +36,33 @@ impl WmlEngine {
             nav_stack: Vec::new(),
             focused_link_idx: 0,
             viewport_cols: DEFAULT_VIEWPORT_COLS,
+            base_url: String::new(),
+            content_type: String::new(),
+            raw_bytes_base64: None,
         }
     }
 
     #[wasm_bindgen(js_name = loadDeck)]
     pub fn load_deck(&mut self, xml: &str) -> Result<(), JsValue> {
-        let deck = parse_wml(xml).map_err(as_js_err)?;
+        self.load_deck_context(xml, "", "text/vnd.wap.wml", None)
+    }
+
+    #[wasm_bindgen(js_name = loadDeckContext)]
+    pub fn load_deck_context(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+    ) -> Result<(), JsValue> {
+        let deck = parse_wml(wml_xml).map_err(as_js_err)?;
         self.deck = Some(deck);
         self.active_card_idx = 0;
         self.nav_stack.clear();
         self.focused_link_idx = 0;
+        self.base_url = base_url.to_string();
+        self.content_type = content_type.to_string();
+        self.raw_bytes_base64 = raw_bytes_base64;
         Ok(())
     }
 
@@ -84,12 +104,13 @@ impl WmlEngine {
 
     #[wasm_bindgen(js_name = navigateToCard)]
     pub fn navigate_to_card(&mut self, id: String) -> Result<(), JsValue> {
-        let deck = self.deck.as_ref().ok_or_else(|| JsValue::from_str("No deck loaded"))?;
+        let deck = self
+            .deck
+            .as_ref()
+            .ok_or_else(|| JsValue::from_str("No deck loaded"))?;
 
         let next_idx = deck
-            .cards
-            .iter()
-            .position(|card| card.id == id)
+            .card_index(&id)
             .ok_or_else(|| JsValue::from_str("Card id not found"))?;
 
         self.nav_stack.push(self.active_card_idx);
@@ -112,6 +133,16 @@ impl WmlEngine {
     #[wasm_bindgen(js_name = focusedLinkIndex)]
     pub fn focused_link_index(&self) -> usize {
         self.focused_link_idx
+    }
+
+    #[wasm_bindgen(js_name = baseUrl)]
+    pub fn base_url(&self) -> String {
+        self.base_url.clone()
+    }
+
+    #[wasm_bindgen(js_name = contentType)]
+    pub fn content_type(&self) -> String {
+        self.content_type.clone()
     }
 }
 
@@ -156,8 +187,47 @@ mod tests {
     fn enter_navigates_to_fragment_card() {
         let mut engine = WmlEngine::new();
         engine.load_deck(SAMPLE).expect("deck should load");
-        engine.handle_key("enter".to_string()).expect("enter should succeed");
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should succeed");
 
-        assert_eq!(engine.active_card_id().expect("active card should exist"), "next");
+        assert_eq!(
+            engine.active_card_id().expect("active card should exist"),
+            "next"
+        );
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    #[test]
+    fn load_deck_returns_structured_error_for_invalid_root() {
+        let mut engine = WmlEngine::new();
+        let err = engine
+            .load_deck("<card id=\"home\"><p>Hello</p></card>")
+            .expect_err("missing wml root must fail");
+
+        let msg = err
+            .as_string()
+            .expect("parser errors should cross wasm boundary as strings");
+        assert!(msg.contains("<wml>"), "unexpected error message: {msg}");
+    }
+
+    #[test]
+    fn load_deck_accepts_unknown_tags() {
+        let mut engine = WmlEngine::new();
+        let xml = r#"
+        <wml>
+          <experimental>
+            <ignored/>
+          </experimental>
+          <card id="home">
+            <p>Hello</p>
+          </card>
+        </wml>
+        "#;
+
+        engine
+            .load_deck(xml)
+            .expect("unknown tags should be ignored, not rejected");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
     }
 }

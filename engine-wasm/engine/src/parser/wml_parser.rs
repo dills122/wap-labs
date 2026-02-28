@@ -3,24 +3,26 @@ use crate::runtime::deck::Deck;
 use crate::runtime::node::{InlineNode, Node};
 
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
+    let wml_body = extract_wml_body(xml)?;
     let mut cards = Vec::new();
     let mut cursor = 0usize;
 
-    while let Some(start) = find_tag_from(xml, "card", cursor) {
-        let open_end = xml[start..]
+    while let Some(start) = find_tag_from(wml_body, "card", cursor) {
+        let open_end = wml_body[start..]
             .find('>')
             .map(|idx| start + idx)
             .ok_or_else(|| "Malformed <card> opening tag".to_string())?;
 
-        let open_tag = &xml[start..=open_end];
-        let id = extract_attr(open_tag, "id").unwrap_or_else(|| format!("card-{}", cards.len() + 1));
+        let open_tag = &wml_body[start..=open_end];
+        let id =
+            extract_attr(open_tag, "id").unwrap_or_else(|| format!("card-{}", cards.len() + 1));
 
-        let close_start = xml[open_end + 1..]
+        let close_start = wml_body[open_end + 1..]
             .find("</card>")
             .map(|idx| open_end + 1 + idx)
             .ok_or_else(|| format!("Missing closing </card> for card {id}"))?;
 
-        let card_body = &xml[open_end + 1..close_start];
+        let card_body = &wml_body[open_end + 1..close_start];
         let nodes = parse_card_nodes(card_body)?;
         cards.push(Card { id, nodes });
 
@@ -31,7 +33,24 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
         return Err("No <card> elements found".to_string());
     }
 
-    Ok(Deck { cards })
+    Ok(Deck::new(cards))
+}
+
+fn extract_wml_body(xml: &str) -> Result<&str, String> {
+    let open_start = find_tag_from(xml, "wml", 0)
+        .ok_or_else(|| "Missing required <wml> root element".to_string())?;
+
+    let open_end = xml[open_start..]
+        .find('>')
+        .map(|idx| open_start + idx)
+        .ok_or_else(|| "Malformed <wml> opening tag".to_string())?;
+
+    let close_start = xml[open_end + 1..]
+        .find("</wml>")
+        .map(|idx| open_end + 1 + idx)
+        .ok_or_else(|| "Missing closing </wml> root element".to_string())?;
+
+    Ok(&xml[open_end + 1..close_start])
 }
 
 fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
@@ -93,7 +112,11 @@ fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
                 let link_text_raw = &body[open_end + 1..close_start];
                 let link_text = normalize_text(link_text_raw);
                 if !href.is_empty() {
-                    let text = if link_text.is_empty() { href.clone() } else { link_text };
+                    let text = if link_text.is_empty() {
+                        href.clone()
+                    } else {
+                        link_text
+                    };
                     nodes.push(Node::Paragraph(vec![InlineNode::Link { text, href }]));
                 }
                 cursor = close_start + "</a>".len();
@@ -248,6 +271,86 @@ mod tests {
             Node::Paragraph(items) => {
                 assert!(matches!(&items[0], InlineNode::Text(t) if t == "Hello"));
                 assert!(matches!(&items[1], InlineNode::Link { href, .. } if href == "#next"));
+            }
+            _ => panic!("expected paragraph"),
+        }
+    }
+
+    #[test]
+    fn rejects_document_without_wml_root() {
+        let xml = r#"
+        <card id="home">
+          <p>Hello</p>
+        </card>
+        "#;
+
+        let err = parse_wml(xml).expect_err("document without <wml> root must fail");
+        assert!(
+            err.contains("<wml>"),
+            "expected error to reference wml root, got: {err}"
+        );
+    }
+
+    #[test]
+    fn ignores_unknown_tags_without_panicking() {
+        let xml = r#"
+        <wml>
+          <unknown>
+            <nested data-x="1">Ignored</nested>
+          </unknown>
+          <card id="home">
+            <p>Hello</p>
+            <unsupported attr="x">ignored wrapper</unsupported>
+            <p>World</p>
+          </card>
+        </wml>
+        "#;
+
+        let deck = parse_wml(xml).expect("unknown tags should not fail parse");
+        assert_eq!(deck.cards.len(), 1);
+        assert_eq!(deck.cards[0].id, "home");
+    }
+
+    #[test]
+    fn assigns_deterministic_ids_when_missing() {
+        let xml = r#"
+        <wml>
+          <card><p>A</p></card>
+          <card><p>B</p></card>
+        </wml>
+        "#;
+
+        let deck = parse_wml(xml).expect("deck should parse");
+        assert_eq!(deck.cards[0].id, "card-1");
+        assert_eq!(deck.cards[1].id, "card-2");
+        assert_eq!(deck.card_index("card-1"), Some(0));
+        assert_eq!(deck.card_index("card-2"), Some(1));
+    }
+
+    #[test]
+    fn preserves_inline_text_and_link_order_in_paragraph() {
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <p>one <a href="#a">A</a> two <a href="#b">B</a> three</p>
+          </card>
+        </wml>
+        "##;
+
+        let deck = parse_wml(xml).expect("deck should parse");
+        let first = &deck.cards[0].nodes[0];
+        match first {
+            Node::Paragraph(items) => {
+                assert_eq!(items.len(), 5);
+                assert!(matches!(&items[0], InlineNode::Text(t) if t == "one"));
+                assert!(
+                    matches!(&items[1], InlineNode::Link { text, href } if text == "A" && href == "#a")
+                );
+                assert!(matches!(&items[2], InlineNode::Text(t) if t == "two"));
+                assert!(
+                    matches!(&items[3], InlineNode::Link { text, href } if text == "B" && href == "#b")
+                );
+                assert!(matches!(&items[4], InlineNode::Text(t) if t == "three"));
             }
             _ => panic!("expected paragraph"),
         }
