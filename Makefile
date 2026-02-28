@@ -10,7 +10,8 @@ ENABLE_NODE_CHECKS ?= 0
 	test-rust test-node test-python \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
-	install-marketing-site dev-marketing-site build-marketing-site
+	install-marketing-site dev-marketing-site build-marketing-site \
+	preview-pages-local
 
 up:
 	$(COMPOSE) up -d --build
@@ -176,3 +177,6 @@ build-marketing-site:
 		echo "skip: pnpm or marketing-site package missing"; \
 		exit 1; \
 	fi
+
+preview-pages-local:
+	./scripts/preview-pages.sh

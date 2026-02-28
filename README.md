@@ -62,6 +62,13 @@ Make shortcuts:
 make install-marketing-site
 make dev-marketing-site
 make build-marketing-site
+make preview-pages-local
+```
+
+Local GitHub Pages-style preview (build + assemble only):
+
+```bash
+./scripts/preview-pages.sh --no-serve
 ```
 
 Repo quality checks and hooks:
