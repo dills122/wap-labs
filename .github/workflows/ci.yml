@@ -71,7 +71,7 @@ jobs:
           cache-dependency-path: engine-wasm/host-sample/pnpm-lock.yaml
 
       - name: Install host-sample deps
-        run: pnpm --dir engine-wasm/host-sample install --frozen-lockfile
+        run: pnpm --dir engine-wasm/host-sample install --frozen-lockfile --config.shared-workspace-lockfile=false
 
       - name: Build host-sample
         run: pnpm --dir engine-wasm/host-sample run build
