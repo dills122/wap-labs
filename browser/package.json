@@ -1,0 +1,11 @@
+{
+  "name": "@wavenav/desktop-host-tauri",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'TODO: wire Tauri frontend dev flow'",
+    "tauri:dev": "echo 'TODO: wire tauri dev command'",
+    "tauri:build": "echo 'TODO: wire tauri build command'"
+  }
+}

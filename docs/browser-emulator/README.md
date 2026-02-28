@@ -15,7 +15,7 @@ Build a faithful WAP-style browser stack that:
 - Transport/API boundary (Lowband): `transport-python/`
 - Runtime engine (WaveNav): `engine-wasm/`
 - Host harness (quick test): `engine-wasm/host-sample/`
-- Desktop host target: `electron-app/`
+- Desktop host target (Tauri shell): `browser/`
 
 Reference architecture doc:
 
@@ -47,12 +47,12 @@ cd engine-wasm/engine
 wasm-pack build --target web --out-dir ../pkg
 ```
 
-Run browser harness (no Electron):
+Run browser harness (no desktop shell):
 
 ```bash
 cd engine-wasm/host-sample
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ## What Is In Scope Right Now

@@ -17,8 +17,8 @@ WAP Labs contains two parallel tracks:
 - `wml-server/`: local WML demo server and emulator UI
 - `transport-python/`: Lowband transport API contract and implementation area
 - `engine-wasm/`: WaveNav Rust/WASM engine and host sample
+- `browser/`: Waves Tauri desktop host integration area
 - `marketing-site/`: Astro-based developer landing site (GitHub Pages root)
-- `electron-app/`: desktop host integration area
 - `docs/`: architecture, spec mapping, and implementation plans
 
 ## Quick Commands

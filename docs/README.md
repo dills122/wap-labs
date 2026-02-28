@@ -8,6 +8,8 @@
 ## Cross-Layer Architecture
 
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
+- `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + Python sidecar strategy)
+- `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
 
 ## Engineering Standards
 
