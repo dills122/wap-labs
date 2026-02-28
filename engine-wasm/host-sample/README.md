@@ -52,7 +52,7 @@ Main files:
 ## Host prerequisites
 
 - WASM package built to `engine-wasm/pkg` first
-- Node 20.19+ (or 22.12+) and npm
+- Node 20.19+ (or 22.12+) and pnpm
 - Vite config must allow parent directory access (already configured in `host-sample/vite.config.ts`)
 
 ## Quickstart
@@ -68,8 +68,8 @@ wasm-pack build --target web --out-dir ../pkg
 
 ```bash
 cd engine-wasm/host-sample
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Regenerate example manifest manually (normally automatic via `predev`/`prebuild`):
@@ -86,7 +86,7 @@ make dev-wavenav-host
 ```
 
 3. Open the URL printed by Vite (typically `http://localhost:5173`).
-4. Pick an example and click `Load Example`.
+4. Pick an example from the dropdown (selection auto-loads).
 5. Edit WML in textarea and click `Reload Deck`, or enable `Live reload`.
 6. Use keyboard keys or Up/Down/Enter buttons to test focus and `#cardId` navigation.
 
@@ -94,3 +94,4 @@ make dev-wavenav-host
 
 - This harness is intended for rapid engine regression testing.
 - External deck fetch/navigation should be handled by the future transport-host integration loop.
+- On GitHub Pages deploy, this app is published under `/simulator/`.

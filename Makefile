@@ -9,7 +9,9 @@ ENABLE_NODE_CHECKS ?= 0
 	lint-rust lint-node lint-python \
 	test-rust test-node test-python \
 	hooks-install hooks-update hooks-run \
-	dev-wavenav-host
+	dev-wavenav-host \
+	install-marketing-site dev-marketing-site build-marketing-site \
+	preview-pages-local
 
 up:
 	$(COMPOSE) up -d --build
@@ -100,6 +102,12 @@ test-node:
 		fi; \
 		echo "==> host-sample build sanity"; \
 		cd engine-wasm/host-sample && pnpm run build; \
+		if [ -f marketing-site/package.json ]; then \
+			echo "==> marketing-site build sanity"; \
+			pnpm --dir marketing-site --ignore-workspace run build; \
+		else \
+			echo "skip: marketing-site package missing (node test/build)"; \
+		fi; \
 	else \
 		echo "skip: pnpm or host-sample package missing (node test/build)"; \
 	fi
@@ -143,3 +151,32 @@ hooks-run:
 
 dev-wavenav-host:
 	./scripts/dev-wavenav-host.sh
+
+install-marketing-site:
+	@if [ -f marketing-site/package.json ] && command -v pnpm >/dev/null 2>&1; then \
+		echo "==> install marketing-site deps"; \
+		pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile; \
+	else \
+		echo "skip: pnpm or marketing-site package missing"; \
+	fi
+
+dev-marketing-site:
+	@if [ -f marketing-site/package.json ] && command -v pnpm >/dev/null 2>&1; then \
+		echo "==> start marketing-site dev server"; \
+		pnpm --dir marketing-site --ignore-workspace run dev; \
+	else \
+		echo "skip: pnpm or marketing-site package missing"; \
+		exit 1; \
+	fi
+
+build-marketing-site:
+	@if [ -f marketing-site/package.json ] && command -v pnpm >/dev/null 2>&1; then \
+		echo "==> build marketing-site"; \
+		pnpm --dir marketing-site --ignore-workspace run build; \
+	else \
+		echo "skip: pnpm or marketing-site package missing"; \
+		exit 1; \
+	fi
+
+preview-pages-local:
+	./scripts/preview-pages.sh
