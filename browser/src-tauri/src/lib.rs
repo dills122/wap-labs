@@ -34,7 +34,9 @@ fn fetch_deck(request: FetchDeckRequest) -> FetchDeckResponse {
         final_url: request.url,
         content_type: "text/plain".to_string(),
         wml: None,
-        error: Some("fetch_deck not implemented; integrate transport-python HTTP client".to_string()),
+        error: Some(
+            "fetch_deck not implemented; integrate transport-python HTTP client".to_string(),
+        ),
     }
 }
 

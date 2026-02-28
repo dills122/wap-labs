@@ -8,15 +8,38 @@ if ! command -v cargo >/dev/null 2>&1; then
   exit 0
 fi
 
-if ! git diff --cached --name-only | grep -qE '^engine-wasm/engine/.*\.rs$'; then
+STAGED_FILES="$(git diff --cached --name-only)"
+HAS_ENGINE_RUST="0"
+HAS_BROWSER_RUST="0"
+
+if echo "$STAGED_FILES" | grep -qE '^engine-wasm/engine/.*\.rs$'; then
+  HAS_ENGINE_RUST="1"
+fi
+
+if echo "$STAGED_FILES" | grep -qE '^browser/src-tauri/.*\.rs$'; then
+  HAS_BROWSER_RUST="1"
+fi
+
+if [[ "$HAS_ENGINE_RUST" == "0" && "$HAS_BROWSER_RUST" == "0" ]]; then
   exit 0
 fi
 
-echo "pre-commit: formatting Rust files (engine-wasm/engine)..."
-(
-  cd engine-wasm/engine
-  cargo fmt
-)
+if [[ "$HAS_ENGINE_RUST" == "1" ]]; then
+  echo "pre-commit: formatting Rust files (engine-wasm/engine)..."
+  (
+    cd engine-wasm/engine
+    cargo fmt
+  )
+  # Stage any formatter updates so commit proceeds in one pass.
+  git add engine-wasm/engine
+fi
 
-# Stage any formatter updates so commit proceeds in one pass.
-git add engine-wasm/engine
+if [[ "$HAS_BROWSER_RUST" == "1" ]]; then
+  echo "pre-commit: formatting Rust files (browser/src-tauri)..."
+  (
+    cd browser/src-tauri
+    cargo fmt
+  )
+  # Stage any formatter updates so commit proceeds in one pass.
+  git add browser/src-tauri
+fi

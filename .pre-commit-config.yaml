@@ -2,7 +2,7 @@ default_stages: [pre-commit]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
@@ -20,6 +20,14 @@ repos:
         stages: [pre-push]
         entry: bash -lc 'cd engine-wasm/engine && cargo fmt --check'
 
+      - id: rust-clippy-engine
+        name: rust clippy (engine-wasm)
+        language: system
+        pass_filenames: false
+        files: ^engine-wasm/engine/
+        stages: [pre-push]
+        entry: bash -lc 'cd engine-wasm/engine && cargo clippy --all-targets --all-features -- -D warnings'
+
       # Keep tests on pre-push to avoid slowing every commit.
       - id: rust-test
         name: rust test (engine-wasm)
@@ -28,6 +36,22 @@ repos:
         files: ^engine-wasm/engine/
         stages: [pre-push]
         entry: bash -lc 'cd engine-wasm/engine && cargo test'
+
+      - id: rust-fmt-check-browser
+        name: rust fmt check (browser tauri)
+        language: system
+        pass_filenames: false
+        files: ^browser/src-tauri/
+        stages: [pre-push]
+        entry: bash -lc 'cd browser/src-tauri && cargo fmt --check'
+
+      - id: rust-clippy-browser
+        name: rust clippy (browser tauri)
+        language: system
+        pass_filenames: false
+        files: ^browser/src-tauri/
+        stages: [pre-push]
+        entry: bash -lc 'cd browser/src-tauri && cargo clippy --all-targets --all-features -- -D warnings'
 
       # Node host sample only has build/dev scripts today; lint/test are not configured yet.
       # This gives a minimal sanity check without forcing broader JS tooling across the repo.
