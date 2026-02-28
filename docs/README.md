@@ -9,6 +9,11 @@
 
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 
+## Engineering Standards
+
+- `agents/AGENT_STANDARDS.md`: multi-language contributor/agent standards
+- `agents/RUST_STEERING.md`: Rust-specific steering for WaveNav engine development
+
 ## WaveNav Engine Documentation Set
 
 Authoritative implementation set:

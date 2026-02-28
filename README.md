@@ -41,6 +41,12 @@ npm install
 npm run dev
 ```
 
+All-in-one local host dev start (build wasm + run Vite):
+
+```bash
+make dev-wavenav-host
+```
+
 Repo quality checks and hooks:
 
 ```bash

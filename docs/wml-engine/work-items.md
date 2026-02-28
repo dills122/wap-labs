@@ -103,7 +103,7 @@ Use this shape for any new ticket:
 ### A2-01 Fragment navigation (`#cardId`) execution
 
 1. `Requirement IDs`: `WML-R-003`, `WML-R-006`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A1-02`, `A1-03`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -117,6 +117,10 @@ Use this shape for any new ticket:
 - Fixture for missing fragment id.
 7. `Accept`:
 - `activeCardId()` updates correctly on valid fragment nav.
+8. `Notes`:
+- Added integration tests for focused-link fragment navigation via key sequences.
+- Added failure-path test ensuring missing fragment returns stable error and preserves runtime state.
+- Introduced internal string-error navigation handlers to enable deterministic native testing without wasm error-path panics.
 
 ### A2-02 External navigation intent emission
 
