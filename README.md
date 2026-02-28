@@ -55,6 +55,11 @@ make hooks-install
 ENABLE_NODE_CHECKS=1 make ci-local
 ```
 
+Local hook behavior:
+
+- commit: auto-formats Rust (`engine-wasm/engine`) and stages fixes
+- push: runs strict pre-push checks
+
 Node version note:
 
 - Use Node `20.19+` or `22.12+` (`.nvmrc` pins a known-good version).

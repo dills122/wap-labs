@@ -34,6 +34,11 @@ pipx install pre-commit
 make hooks-install
 ```
 
+Hook behavior:
+
+- `pre-commit` hook auto-runs `cargo fmt` for staged Rust files in `engine-wasm/engine` and re-stages changes.
+- `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo test`, and configured non-mutating checks).
+
 ## Coding standards
 
 - Follow `.editorconfig`.
@@ -75,7 +80,7 @@ WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
 
 ## Git Hooks and CI
 
-- Local hooks are configured via `.pre-commit-config.yaml`.
+- Local hooks are wired from `.githooks/` (`git config core.hooksPath .githooks`) and use `.pre-commit-config.yaml` for pre-push checks.
 - CI runs in GitHub Actions: `.github/workflows/ci.yml`.
 - Some layer checks are intentionally disabled until those layers are bootstrapped:
   - `transport-python` lint/test

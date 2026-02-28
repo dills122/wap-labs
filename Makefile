@@ -116,9 +116,10 @@ test-python:
 
 hooks-install:
 	@if command -v pre-commit >/dev/null 2>&1; then \
-		pre-commit install; \
-		pre-commit install --hook-type pre-push; \
-		echo "installed git hooks: pre-commit, pre-push"; \
+		set -e; \
+		git config core.hooksPath .githooks; \
+		pre-commit install-hooks; \
+		echo "installed repo-managed hooks via .githooks (pre-commit + pre-push)"; \
 	else \
 		echo "pre-commit is not installed. Install with: pipx install pre-commit"; \
 		exit 1; \
