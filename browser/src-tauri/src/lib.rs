@@ -27,6 +27,7 @@ fn health() -> String {
 
 #[tauri::command]
 fn fetch_deck(request: FetchDeckRequest) -> FetchDeckResponse {
+    let _ = (&request.method, request.timeout_ms, request.retries);
     // Skeleton behavior only. Transport-python integration will be wired in the first vertical slice.
     FetchDeckResponse {
         ok: false,
