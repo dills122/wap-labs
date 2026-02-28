@@ -492,3 +492,30 @@ make clean     # remove containers, networks, volumes
 - No TLS (local dev only).
 - WML files use WAP 1.1 DOCTYPE.
 - WBXML translation is handled by Kannel/wapbox.
+
+## Next-Gen Browser Track
+
+This repo now includes a parallel implementation track for a modern WAP browser harness:
+
+- Architecture: `docs/modern-wap-browser-architecture.md`
+- Gateway track: `gateway-kannel/`
+- Python transport API: `transport-python/api/openapi.yaml`
+- Electron transport types: `electron-app/contracts/transport.ts`
+- WASM engine contract: `engine-wasm/contracts/wml-engine.ts`
+- WASM engine full setup guide: `engine-wasm/README.md`
+
+The boundary model is:
+
+1. `transport-python` owns UDP/WSP, retries, and WBXML decode.
+2. `engine-wasm` owns WML runtime semantics and render-list output.
+3. `electron-app` owns host UI, key mapping, and debug tooling.
+
+## Contributing
+
+- Contributor guide: `CONTRIBUTING.md`
+- Codex steering: `AGENTS.md`
+- Repository formatting conventions: `.editorconfig`
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE`.

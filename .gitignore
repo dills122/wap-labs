@@ -144,3 +144,8 @@ vite.config.ts.timestamp-*
 .vite/
 
 files
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/

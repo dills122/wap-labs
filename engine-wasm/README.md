@@ -1,0 +1,123 @@
+# engine-wasm
+
+Rust + WebAssembly WML runtime engine (MVP).
+
+## Objective
+
+Run a WML deck/card runtime in the Electron renderer and emit a host-consumable render list.
+
+## Full Environment Setup
+
+This section is the expected setup for a clean machine.
+
+### 1) System prerequisites
+
+- `git`
+- `node` 20+ and `npm`
+- Rust toolchain (`rustup`, `rustc`, `cargo`)
+- `wasm-pack`
+
+### 2) Install prerequisites
+
+macOS (Homebrew):
+
+```bash
+brew install node rustup-init wasm-pack
+rustup-init -y
+source "$HOME/.cargo/env"
+```
+
+Ubuntu/Debian:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y curl build-essential pkg-config libssl-dev nodejs npm
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source "$HOME/.cargo/env"
+cargo install wasm-pack
+```
+
+### 3) Verify toolchain
+
+```bash
+node --version
+npm --version
+rustc --version
+cargo --version
+wasm-pack --version
+```
+
+### 4) Build WASM package
+
+From repo root:
+
+```bash
+cd engine-wasm/engine
+wasm-pack build --target web --out-dir ../pkg
+```
+
+Expected output directory:
+
+- `engine-wasm/pkg/`
+
+### 5) Run Rust tests
+
+```bash
+cd engine-wasm/engine
+cargo test
+```
+
+### 6) Consume from host app
+
+- Import generated package from `engine-wasm/pkg`
+- Use API contract in `engine-wasm/contracts/wml-engine.ts`
+- See host loop sample in `engine-wasm/host-sample/renderer.ts`
+
+## Rust module layout
+
+- `engine/src/lib.rs`
+- `engine/src/parser/wml_parser.rs`
+- `engine/src/runtime/deck.rs`
+- `engine/src/runtime/card.rs`
+- `engine/src/runtime/node.rs`
+- `engine/src/layout/flow_layout.rs`
+- `engine/src/nav/focus.rs`
+- `engine/src/render/render_list.rs`
+
+## MVP support
+
+Supported elements:
+
+- `<wml>`
+- `<card id="...">`
+- `<p>`
+- `<br/>`
+- `<a href="...">`
+- `#cardId` navigation
+
+Ignored in MVP:
+
+- `<do>`, `<input>`, `<select>`, `<setvar>`, timers, events, WMLScript, images, tables
+
+## WASM API
+
+- `loadDeck(xml: string)`
+- `render(): RenderList`
+- `handleKey(key: 'up' | 'down' | 'enter')`
+- `navigateToCard(id: string)`
+
+Additional helpers:
+
+- `setViewportCols(cols: number)`
+- `activeCardId()`
+- `focusedLinkIndex()`
+
+Type contract:
+
+- `engine-wasm/contracts/wml-engine.ts`
+
+## Troubleshooting
+
+- Compile error around `href="#..."` in Rust tests: use raw string delimiters `r##"..."##` in fixtures that contain `"#`.
+- `wasm-pack: command not found`: install with `cargo install wasm-pack` and reopen shell.
+- `No such file or directory: ../pkg`: ensure command is run from `engine-wasm/engine`.
