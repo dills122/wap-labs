@@ -21,6 +21,13 @@ The existing local stack remains valid:
 3. WASM engine does not know about gateway internals.
 4. Transport service owns WSP transaction IDs, retries, and WBXML decode.
 
+Normalized handoff from transport to engine:
+
+- `wmlXml` (decoded XML text)
+- `baseUrl` (final URL post-redirect)
+- `contentType` (for fidelity/debug logging)
+- `rawBytesBase64` (optional, debug path)
+
 ## MVP Behavior
 
 - Connectionless WSP over UDP (`9201`), no WTLS.

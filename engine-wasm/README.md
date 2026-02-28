@@ -112,6 +112,7 @@ Ignored in MVP:
 ## WASM API
 
 - `loadDeck(xml: string)`
+- `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string)`
 - `render(): RenderList`
 - `handleKey(key: 'up' | 'down' | 'enter')`
 - `navigateToCard(id: string)`
@@ -121,10 +122,14 @@ Additional helpers:
 - `setViewportCols(cols: number)`
 - `activeCardId()`
 - `focusedLinkIndex()`
+- `baseUrl()`
+- `contentType()`
 
 Type contract:
 
 - `engine-wasm/contracts/wml-engine.ts`
+- `docs/wml-engine/requirements-matrix.md`
+- `docs/wml-engine/ticket-plan.md`
 
 ## Troubleshooting
 

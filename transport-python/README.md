@@ -16,6 +16,17 @@ Browser-side transport appliance for WAP networking.
 - Endpoint: `POST /fetch`
 - Response always includes timing metrics and content metadata
 
+## Engine handoff contract
+
+The service should normalize upstream WML/WMLC into a single payload model for the WASM engine:
+
+- `wmlXml` -> from `response.wml`
+- `baseUrl` -> from `response.finalUrl`
+- `contentType` -> from `response.contentType`
+- `rawBytesBase64` -> from `response.raw.bytesBase64` (optional)
+
+This keeps the renderer runtime independent of transport/WBXML details.
+
 ## Suggested implementation modules
 
 - `transport/wsp_codec.py`

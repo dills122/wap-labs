@@ -1,5 +1,10 @@
 # Contributing
 
+Before starting work, choose the documentation track:
+
+- Legacy stack setup/runbook: `docs/wap-test-environment/README.md`
+- Browser emulator build track: `docs/browser-emulator/README.md`
+
 ## Development setup
 
 1. Clone repository and install required tools:
