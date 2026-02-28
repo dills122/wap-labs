@@ -1,0 +1,23 @@
+# Node dependencies
+node_modules/
+
+# Build outputs
+dist/
+out/
+release/
+
+# Runtime artifacts
+*.log
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Tool caches
+.vite/
+.parcel-cache/
+
+# OS/editor noise
+.DS_Store
+.vscode/

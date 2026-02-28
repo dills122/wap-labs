@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  repo-hygiene:
+    name: Repo Hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit (non-language-specific hooks)
+        env:
+          SKIP: rust-fmt-check,rust-test,host-sample-build
+        run: pre-commit run --all-files
+
+  rust-engine:
+    name: Rust Engine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Rust fmt check
+        working-directory: engine-wasm/engine
+        run: cargo fmt --check
+
+      - name: Rust tests
+        working-directory: engine-wasm/engine
+        run: cargo test
+
+      # Enable when warning budget is defined.
+      - name: Rust clippy (disabled)
+        if: ${{ false }}
+        working-directory: engine-wasm/engine
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+  host-sample:
+    name: WaveNav Host Sample Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install wasm-pack
+        run: cargo install wasm-pack --locked
+
+      - name: Build WaveNav WASM package
+        working-directory: engine-wasm/engine
+        run: wasm-pack build --target web --out-dir ../pkg
+
+      - name: Verify wasm package output
+        run: test -f engine-wasm/pkg/wavenav_engine.js
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: engine-wasm/host-sample/pnpm-lock.yaml
+
+      - name: Install host-sample deps
+        run: pnpm --dir engine-wasm/host-sample install --frozen-lockfile --config.shared-workspace-lockfile=false
+
+      - name: Build host-sample
+        run: pnpm --dir engine-wasm/host-sample run build
+
+      # Enable when scripts are introduced.
+      - name: Host-sample lint (disabled)
+        if: ${{ false }}
+        run: pnpm --dir engine-wasm/host-sample run lint
+
+      - name: Host-sample tests (disabled)
+        if: ${{ false }}
+        run: pnpm --dir engine-wasm/host-sample run test
+
+  # Future jobs intentionally disabled until those layers are ready:
+  # - transport-python lint/test
+  # - electron-app build/lint/test

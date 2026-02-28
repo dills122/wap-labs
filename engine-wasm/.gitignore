@@ -1,0 +1,16 @@
+# wasm-pack generated output
+pkg/
+
+# Optional JS host dependencies/artifacts
+node_modules/
+dist/
+
+# Rust build outputs (for nested crate)
+engine/target/
+
+# Logs/temp
+*.log
+
+# OS/editor noise
+.DS_Store
+.vscode/
