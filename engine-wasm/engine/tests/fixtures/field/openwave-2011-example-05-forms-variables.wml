@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//OPENWAVE.COM//DTD WML 1.3//EN"
+"http://www.openwave.com/dtd/wml13.dtd">
+<wml>
+  <card id="Main" title="FAQ">
+    <p>
+      <fieldset title="User Info">
+        User Name:<br/>
+        <input name="UserName" value="AHMED" format="*A" type="text" emptyok="true" size="10"/><br/>
+        Password:<br/>
+        <input name="Password" format="NNNN\\-aaaa" type="password" emptyok="false" size="10" maxlength="8"/><br/>
+      </fieldset>
+      Country:<br/>
+      <select title="Country" name="Country">
+        <option value="Jordan">Jordan</option>
+        <option value="Syria">Syria</option>
+        <option value="France">France</option>
+        <option value="UK">UK</option>
+        <option value="Germany">Germany</option>
+      </select><br/>
+      <a href="#Result">Get Result</a>
+    </p>
+  </card>
+
+  <card id="Result" title="Result Card">
+    <p>
+      Your input is the following:<br/>
+      User Name = $(UserName)<br/>
+      Password = $(Password)<br/>
+      Country = $(Country)
+    </p>
+  </card>
+</wml>

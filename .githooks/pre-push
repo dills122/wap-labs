@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+if ! command -v pre-commit >/dev/null 2>&1; then
+  echo "pre-push: pre-commit not installed. Install with: pipx install pre-commit"
+  exit 1
+fi
+
+pre-commit run --hook-stage pre-push --all-files

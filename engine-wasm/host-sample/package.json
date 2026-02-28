@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "examples:generate": "node ./scripts/generate-example-manifest.mjs",
+    "predev": "pnpm run examples:generate",
     "dev": "vite",
+    "prebuild": "pnpm run examples:generate",
     "build": "vite build",
     "preview": "vite preview"
   },

@@ -78,3 +78,4 @@ Prefer work that improves:
 ## Additional Info & Standard
 
 please refer to `docs/agents/AGENT_STANDARDS.md` for a more in depth, language specific reference on standards
+and `docs/agents/RUST_STEERING.md` for Rust-specific implementation rules.

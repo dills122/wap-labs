@@ -41,6 +41,12 @@ npm install
 npm run dev
 ```
 
+All-in-one local host dev start (build wasm + run Vite):
+
+```bash
+make dev-wavenav-host
+```
+
 Repo quality checks and hooks:
 
 ```bash
@@ -48,6 +54,11 @@ make ci-local
 make hooks-install
 ENABLE_NODE_CHECKS=1 make ci-local
 ```
+
+Local hook behavior:
+
+- commit: auto-formats Rust (`engine-wasm/engine`) and stages fixes
+- push: runs strict pre-push checks
 
 Node version note:
 

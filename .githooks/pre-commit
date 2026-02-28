@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+if ! command -v cargo >/dev/null 2>&1; then
+  exit 0
+fi
+
+if ! git diff --cached --name-only | grep -qE '^engine-wasm/engine/.*\.rs$'; then
+  exit 0
+fi
+
+echo "pre-commit: formatting Rust files (engine-wasm/engine)..."
+(
+  cd engine-wasm/engine
+  cargo fmt
+)
+
+# Stage any formatter updates so commit proceeds in one pass.
+git add engine-wasm/engine

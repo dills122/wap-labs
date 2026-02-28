@@ -11,11 +11,26 @@
       <section class="controls">
         <h1>WaveNav Quick Harness</h1>
         <p>Keyboard: ArrowUp, ArrowDown, Enter</p>
+        <div class="row">
+          <label for="example-select">Example Deck</label>
+          <select id="example-select"></select>
+          <button id="load-example" type="button">Load Example</button>
+        </div>
+        <div class="row">
+          <label class="checkbox-row" for="live-reload">
+            <input id="live-reload" type="checkbox" />
+            Live reload on editor changes (memory only)
+          </label>
+        </div>
         <textarea id="deck-input" spellcheck="false"></textarea>
         <div class="buttons">
           <button id="reload-deck" type="button">Reload Deck</button>
+          <button id="press-up" type="button">Up</button>
+          <button id="press-down" type="button">Down</button>
+          <button id="press-enter" type="button">Enter</button>
         </div>
         <p id="status" class="status">Ready.</p>
+        <pre id="runtime-state" class="runtime-state">Waiting for engine...</pre>
       </section>
 
       <section class="screen-wrap">
