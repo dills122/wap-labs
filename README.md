@@ -17,6 +17,7 @@ WAP Labs contains two parallel tracks:
 - `wml-server/`: local WML demo server and emulator UI
 - `transport-python/`: Lowband transport API contract and implementation area
 - `engine-wasm/`: WaveNav Rust/WASM engine and host sample
+- `marketing-site/`: Astro-based developer landing site (GitHub Pages root)
 - `electron-app/`: desktop host integration area
 - `docs/`: architecture, spec mapping, and implementation plans
 
@@ -37,14 +38,30 @@ cd engine-wasm/engine
 wasm-pack build --target web --out-dir ../pkg
 
 cd ../host-sample
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 All-in-one local host dev start (build wasm + run Vite):
 
 ```bash
 make dev-wavenav-host
+```
+
+Marketing site local dev:
+
+```bash
+cd marketing-site
+pnpm install
+pnpm run dev
+```
+
+Make shortcuts:
+
+```bash
+make install-marketing-site
+make dev-marketing-site
+make build-marketing-site
 ```
 
 Repo quality checks and hooks:
@@ -63,6 +80,14 @@ Local hook behavior:
 Node version note:
 
 - Use Node `20.19+` or `22.12+` (`.nvmrc` pins a known-good version).
+
+## GitHub Pages
+
+- Deployment workflow: `.github/workflows/pages.yml`
+- Trigger: pushes to `main` that modify `marketing-site/**` or `engine-wasm/host-sample/**`
+- Published routes:
+  - `/` -> marketing site
+  - `/simulator/` -> host sample simulator
 
 ## Contributor Docs
 

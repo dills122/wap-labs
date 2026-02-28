@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <header class="hero">
+    <p class="kicker">WaveNav Labs</p>
+    <h1>WAP Emulator Stack For Deterministic Engine Work</h1>
+    <p class="lede">
+      A pre-alpha layered emulator stack focused on WML deck/card fidelity, strict layer boundaries,
+      and reproducible behavior across parser, runtime, and host integration.
+    </p>
+    <div class="hero-actions">
+      <a class="button" href="./simulator/">Open Simulator</a>
+    </div>
+  </header>
+
+  <main class="content">
+    <section class="panel">
+      <h2>Stack Layers</h2>
+      <ul>
+        <li><strong>Gateway:</strong> kannel environment + protocol behavior</li>
+        <li><strong>Transport:</strong> WBXML and constrained transport APIs</li>
+        <li><strong>Engine:</strong> Rust/WASM WML parser, runtime, layout, navigation</li>
+        <li><strong>Desktop Host:</strong> simulator harness and integration adapters</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Current Focus</h2>
+      <ul>
+        <li>Deterministic deck/card navigation semantics</li>
+        <li>Stable wasm contract for host integration</li>
+        <li>Repeatable fixture-driven engine behavior</li>
+        <li>Manual and scripted validation through simulator timelines</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Simulator</h2>
+      <p>
+        The simulator includes curated fixtures, metadata-driven acceptance checklists,
+        runtime state snapshots, and per-example event tracking with export.
+      </p>
+      <p><a class="inline-link" href="./simulator/">Launch /simulator</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>WaveNav Labs · Pre-alpha WAP/WML engine development</p>
+  </footer>
+</Layout>
