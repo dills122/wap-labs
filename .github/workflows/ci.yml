@@ -127,6 +127,70 @@ jobs:
         if: ${{ false }}
         run: pnpm --dir engine-wasm/host-sample run test
 
+  marketing-site:
+    name: Marketing Site Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: marketing-site/pnpm-lock.yaml
+
+      - name: Install marketing-site deps
+        run: pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile
+
+      - name: Build marketing-site
+        run: pnpm --dir marketing-site --ignore-workspace run build
+
+  browser-shell:
+    name: Browser Shell Skeleton Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Browser Rust fmt check
+        working-directory: browser/src-tauri
+        run: cargo fmt --check
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Browser script sanity
+        run: pnpm --dir browser run tauri:build
+
+  wml-server:
+    name: WML Server Sanity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: wml-server/package-lock.json
+
+      - name: Install wml-server deps
+        run: npm --prefix wml-server ci
+
+      - name: Node syntax check
+        run: node --check wml-server/server.js
+
   # Future jobs intentionally disabled until those layers are ready:
   # - transport-python lint/test
-  # - electron-app build/lint/test
