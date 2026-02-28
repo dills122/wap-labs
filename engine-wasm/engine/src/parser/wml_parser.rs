@@ -206,7 +206,18 @@ fn parse_inline_nodes(content: &str) -> Result<Vec<InlineNode>, String> {
 
 fn find_tag_from(xml: &str, tag_name: &str, from: usize) -> Option<usize> {
     let needle = format!("<{tag_name}");
-    xml[from..].find(&needle).map(|idx| from + idx)
+    let mut search = from;
+    while let Some(rel_idx) = xml[search..].find(&needle) {
+        let idx = search + rel_idx;
+        let next = xml[idx + needle.len()..].chars().next();
+        match next {
+            Some(ch) if ch.is_whitespace() || ch == '>' || ch == '/' => return Some(idx),
+            _ => {
+                search = idx + needle.len();
+            }
+        }
+    }
+    None
 }
 
 fn extract_attr(tag: &str, attr: &str) -> Option<String> {
@@ -354,5 +365,21 @@ mod tests {
             }
             _ => panic!("expected paragraph"),
         }
+    }
+
+    #[test]
+    fn ignores_card_like_unknown_tags_without_failing_parse() {
+        let xml = r#"
+        <wml>
+          <cardinal id="x">ignored wrapper</cardinal>
+          <card id="home">
+            <p>Hello</p>
+          </card>
+        </wml>
+        "#;
+
+        let deck = parse_wml(xml).expect("card-like unknown tags should be ignored");
+        assert_eq!(deck.cards.len(), 1);
+        assert_eq!(deck.cards[0].id, "home");
     }
 }

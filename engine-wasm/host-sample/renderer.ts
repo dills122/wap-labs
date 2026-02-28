@@ -3,9 +3,21 @@ import type { DrawCmd } from '../contracts/wml-engine';
 
 const lineHeight = 16;
 const charWidth = 8;
+const DEFAULT_BASE_URL = 'http://local.test/deck.wml';
+const DEFAULT_CONTENT_TYPE = 'text/vnd.wap.wml';
+type KeyName = 'up' | 'down' | 'enter';
+
+export interface EngineSnapshot {
+  activeCardId: string;
+  focusedLinkIndex: number;
+  baseUrl: string;
+  contentType: string;
+}
 
 export interface EngineHost {
   loadDeck(xml: string): void;
+  pressKey(key: KeyName): void;
+  snapshot(): EngineSnapshot;
   render(): void;
   getEngine(): WmlEngine;
 }
@@ -15,7 +27,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
 
   const engine = new WmlEngine();
   engine.setViewportCols(20);
-  engine.loadDeckContext(xml, 'http://local.test/deck.wml', 'text/vnd.wap.wml');
+  engine.loadDeckContext(xml, DEFAULT_BASE_URL, DEFAULT_CONTENT_TYPE);
 
   function paint() {
     const ctx = canvas.getContext('2d');
@@ -51,30 +63,24 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     }
   }
 
-  function mapKey(event: KeyboardEvent): 'up' | 'down' | 'enter' | null {
-    if (event.key === 'ArrowUp') return 'up';
-    if (event.key === 'ArrowDown') return 'down';
-    if (event.key === 'Enter') return 'enter';
-    return null;
-  }
-
-  window.addEventListener('keydown', (event) => {
-    const key = mapKey(event);
-    if (!key) {
-      return;
-    }
-
-    event.preventDefault();
-    engine.handleKey(key);
-    paint();
-  });
-
   paint();
 
   return {
     loadDeck(nextXml: string) {
-      engine.loadDeckContext(nextXml, 'http://local.test/deck.wml', 'text/vnd.wap.wml');
+      engine.loadDeckContext(nextXml, DEFAULT_BASE_URL, DEFAULT_CONTENT_TYPE);
       paint();
+    },
+    pressKey(key: KeyName) {
+      engine.handleKey(key);
+      paint();
+    },
+    snapshot() {
+      return {
+        activeCardId: engine.activeCardId(),
+        focusedLinkIndex: engine.focusedLinkIndex(),
+        baseUrl: engine.baseUrl(),
+        contentType: engine.contentType()
+      };
     },
     render: paint,
     getEngine() {

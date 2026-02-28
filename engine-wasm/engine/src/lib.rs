@@ -26,6 +26,12 @@ pub struct WmlEngine {
     raw_bytes_base64: Option<String>,
 }
 
+impl Default for WmlEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[wasm_bindgen]
 impl WmlEngine {
     #[wasm_bindgen(constructor)]
@@ -75,48 +81,12 @@ impl WmlEngine {
 
     #[wasm_bindgen(js_name = handleKey)]
     pub fn handle_key(&mut self, key: String) -> Result<(), JsValue> {
-        let card = self.active_card()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
-        let link_total = layout.links.len();
-
-        match key.as_str() {
-            "up" => {
-                self.focused_link_idx = move_focus_up(self.focused_link_idx, link_total);
-            }
-            "down" => {
-                self.focused_link_idx = move_focus_down(self.focused_link_idx, link_total);
-            }
-            "enter" => {
-                if link_total == 0 {
-                    return Ok(());
-                }
-                let idx = clamp_focus(self.focused_link_idx, link_total);
-                let href = &layout.links[idx];
-                if let Some(card_id) = href.strip_prefix('#') {
-                    self.navigate_to_card(card_id.to_string())?;
-                }
-            }
-            _ => {}
-        }
-
-        Ok(())
+        self.handle_key_internal(&key).map_err(as_js_err)
     }
 
     #[wasm_bindgen(js_name = navigateToCard)]
     pub fn navigate_to_card(&mut self, id: String) -> Result<(), JsValue> {
-        let deck = self
-            .deck
-            .as_ref()
-            .ok_or_else(|| JsValue::from_str("No deck loaded"))?;
-
-        let next_idx = deck
-            .card_index(&id)
-            .ok_or_else(|| JsValue::from_str("Card id not found"))?;
-
-        self.nav_stack.push(self.active_card_idx);
-        self.active_card_idx = next_idx;
-        self.focused_link_idx = 0;
-        Ok(())
+        self.navigate_to_card_internal(&id).map_err(as_js_err)
     }
 
     #[wasm_bindgen(js_name = setViewportCols)]
@@ -147,15 +117,63 @@ impl WmlEngine {
 }
 
 impl WmlEngine {
-    fn active_card(&self) -> Result<&runtime::card::Card, JsValue> {
+    fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
+        let card = self.active_card_internal()?;
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let link_total = layout.links.len();
+
+        match key {
+            "up" => {
+                self.focused_link_idx = move_focus_up(self.focused_link_idx, link_total);
+            }
+            "down" => {
+                self.focused_link_idx = move_focus_down(self.focused_link_idx, link_total);
+            }
+            "enter" => {
+                if link_total == 0 {
+                    return Ok(());
+                }
+                let idx = clamp_focus(self.focused_link_idx, link_total);
+                let href = &layout.links[idx];
+                if let Some(card_id) = href.strip_prefix('#') {
+                    self.navigate_to_card_internal(card_id)?;
+                }
+            }
+            _ => {}
+        }
+
+        Ok(())
+    }
+
+    fn navigate_to_card_internal(&mut self, id: &str) -> Result<(), String> {
         let deck = self
             .deck
             .as_ref()
-            .ok_or_else(|| JsValue::from_str("No deck loaded"))?;
+            .ok_or_else(|| "No deck loaded".to_string())?;
+
+        let next_idx = deck
+            .card_index(id)
+            .ok_or_else(|| "Card id not found".to_string())?;
+
+        self.nav_stack.push(self.active_card_idx);
+        self.active_card_idx = next_idx;
+        self.focused_link_idx = 0;
+        Ok(())
+    }
+
+    fn active_card_internal(&self) -> Result<&runtime::card::Card, String> {
+        let deck = self
+            .deck
+            .as_ref()
+            .ok_or_else(|| "No deck loaded".to_string())?;
 
         deck.cards
             .get(self.active_card_idx)
-            .ok_or_else(|| JsValue::from_str("Active card index out of range"))
+            .ok_or_else(|| "Active card index out of range".to_string())
+    }
+
+    fn active_card(&self) -> Result<&runtime::card::Card, JsValue> {
+        self.active_card_internal().map_err(as_js_err)
     }
 }
 
@@ -229,5 +247,63 @@ mod tests {
             .load_deck(xml)
             .expect("unknown tags should be ignored, not rejected");
         assert_eq!(engine.active_card_id().expect("active card"), "home");
+    }
+
+    #[test]
+    fn down_enter_fragment_navigation_resets_focus() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#next">Next</a>
+            <a href="#third">Third</a>
+          </card>
+          <card id="next">
+            <p>Second</p>
+          </card>
+          <card id="third">
+            <p>Third</p>
+          </card>
+        </wml>
+        "##;
+
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should succeed");
+        assert_eq!(engine.focused_link_index(), 1);
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should navigate");
+
+        assert_eq!(engine.active_card_id().expect("active card"), "third");
+        assert_eq!(engine.focused_link_index(), 0);
+    }
+
+    #[test]
+    fn missing_fragment_returns_error_and_preserves_state() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#missing">Broken</a>
+          </card>
+          <card id="next">
+            <p>Second</p>
+          </card>
+        </wml>
+        "##;
+
+        engine.load_deck(xml).expect("deck should load");
+        let err = engine
+            .handle_key_internal("enter")
+            .expect_err("missing fragment should return error");
+        assert!(
+            err.contains("Card id not found"),
+            "unexpected error message: {err}"
+        );
+        assert_eq!(engine.active_card_idx, 0);
+        assert_eq!(engine.focused_link_idx, 0);
+        assert!(engine.nav_stack.is_empty());
     }
 }

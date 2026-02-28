@@ -8,7 +8,8 @@ ENABLE_NODE_CHECKS ?= 0
 	fmt lint test test-fast ci-local \
 	lint-rust lint-node lint-python \
 	test-rust test-node test-python \
-	hooks-install hooks-update hooks-run
+	hooks-install hooks-update hooks-run \
+	dev-wavenav-host
 
 up:
 	$(COMPOSE) up -d --build
@@ -138,3 +139,6 @@ hooks-run:
 		echo "pre-commit is not installed. Install with: pipx install pre-commit"; \
 		exit 1; \
 	fi
+
+dev-wavenav-host:
+	./scripts/dev-wavenav-host.sh

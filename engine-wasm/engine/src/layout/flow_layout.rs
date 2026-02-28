@@ -69,7 +69,10 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
 
 fn wrap_text(text: &str, width: usize) -> Vec<String> {
     let width = width.max(1);
-    let words: Vec<&str> = text.split_whitespace().collect();
+    let words: Vec<String> = text
+        .split_whitespace()
+        .flat_map(|word| split_long_word(word, width))
+        .collect();
     if words.is_empty() {
         return Vec::new();
     }
@@ -77,7 +80,7 @@ fn wrap_text(text: &str, width: usize) -> Vec<String> {
     let mut lines = Vec::new();
     let mut current = String::new();
 
-    for word in words {
+    for word in &words {
         if current.is_empty() {
             current.push_str(word);
             continue;
@@ -98,6 +101,32 @@ fn wrap_text(text: &str, width: usize) -> Vec<String> {
     }
 
     lines
+}
+
+fn split_long_word(word: &str, width: usize) -> Vec<String> {
+    if word.chars().count() <= width {
+        return vec![word.to_string()];
+    }
+
+    let mut out = Vec::new();
+    let mut current = String::new();
+    let mut count = 0usize;
+
+    for ch in word.chars() {
+        current.push(ch);
+        count += 1;
+        if count == width {
+            out.push(current);
+            current = String::new();
+            count = 0;
+        }
+    }
+
+    if !current.is_empty() {
+        out.push(current);
+    }
+
+    out
 }
 
 #[cfg(test)]
@@ -125,5 +154,28 @@ mod tests {
             cmd,
             crate::render::render_list::DrawCmd::Link { focused: true, .. }
         )));
+    }
+
+    #[test]
+    fn hard_wraps_single_token_longer_than_width() {
+        let card = Card {
+            id: "home".to_string(),
+            nodes: vec![Node::Paragraph(vec![InlineNode::Text(
+                "supercalifragilistic".to_string(),
+            )])],
+        };
+
+        let out = layout_card(&card, 5, 0);
+        let lines: Vec<String> = out
+            .render_list
+            .draw
+            .iter()
+            .filter_map(|cmd| match cmd {
+                crate::render::render_list::DrawCmd::Text { text, .. } => Some(text.clone()),
+                _ => None,
+            })
+            .collect();
+
+        assert_eq!(lines, vec!["super", "calif", "ragil", "istic"]);
     }
 }
