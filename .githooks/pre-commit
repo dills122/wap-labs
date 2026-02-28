@@ -5,6 +5,7 @@ ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
 if ! command -v cargo >/dev/null 2>&1; then
+  echo "pre-commit: skip Rust formatting (cargo not found)"
   exit 0
 fi
 
@@ -21,6 +22,7 @@ if echo "$STAGED_FILES" | grep -qE '^browser/src-tauri/.*\.rs$'; then
 fi
 
 if [[ "$HAS_ENGINE_RUST" == "0" && "$HAS_BROWSER_RUST" == "0" ]]; then
+  echo "pre-commit: no staged Rust changes detected"
   exit 0
 fi
 
@@ -43,3 +45,5 @@ if [[ "$HAS_BROWSER_RUST" == "1" ]]; then
   # Stage any formatter updates so commit proceeds in one pass.
   git add browser/src-tauri
 fi
+
+echo "pre-commit: Rust formatting checks complete."

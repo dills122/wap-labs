@@ -9,4 +9,26 @@ if ! command -v pre-commit >/dev/null 2>&1; then
   exit 1
 fi
 
-pre-commit run --hook-stage pre-push --all-files
+echo "pre-push: running repository checks..."
+echo "pre-push: command => pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure"
+
+TMP_LOG="$(mktemp)"
+cleanup() {
+  rm -f "$TMP_LOG"
+}
+trap cleanup EXIT
+
+if ! pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure 2>&1 | tee "$TMP_LOG"; then
+  echo
+  echo "pre-push: checks failed. Failure summary:"
+  grep -E "^[[:alnum:] _()./-]+\\.\\.\\.+Failed$|^- hook id:" "$TMP_LOG" || true
+  echo
+  echo "pre-push: rerun full checks:"
+  echo "  pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure"
+  echo
+  echo "pre-push: rerun a single hook example:"
+  echo "  pre-commit run rust-clippy-browser --hook-stage pre-push -v --all-files"
+  exit 1
+fi
+
+echo "pre-push: all checks passed."
