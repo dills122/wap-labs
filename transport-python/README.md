@@ -1,6 +1,6 @@
-# transport-python
+# Lowband (transport-python)
 
-Browser-side transport appliance for WAP networking.
+Lowband is the browser-side transport appliance for WAP networking.
 
 ## Responsibilities
 

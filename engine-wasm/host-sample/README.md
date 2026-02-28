@@ -1,6 +1,6 @@
 # Host Sample (TypeScript)
 
-This sample is a quick local testing harness for the WASM engine (no Electron required).
+This sample is a quick local testing harness for the WaveNav WASM engine (no Electron required).
 
 It provides:
 
@@ -17,7 +17,7 @@ Main files:
 ## Host prerequisites
 
 - WASM package built to `engine-wasm/pkg` first
-- Node 20+ and npm
+- Node 20.19+ (or 22.12+) and npm
 - Vite config must allow parent directory access (already configured in `host-sample/vite.config.ts`)
 
 ## Quickstart

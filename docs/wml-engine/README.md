@@ -1,6 +1,6 @@
-# WML Engine Docs
+# WaveNav Engine Docs
 
-Purpose: implementation-ready documentation for a maintainable WASM WML engine based on WML 1.1 semantics.
+Purpose: implementation-ready documentation for a maintainable WaveNav WASM WML engine based on WML 1.1 semantics.
 
 ## Canonical Docs
 

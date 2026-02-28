@@ -9,7 +9,7 @@
 
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 
-## WML Engine Documentation Set
+## WaveNav Engine Documentation Set
 
 Authoritative implementation set:
 

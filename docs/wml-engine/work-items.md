@@ -1,4 +1,4 @@
-# WML Engine Work Items (Execution Board)
+# WaveNav Engine Work Items (Execution Board)
 
 Purpose: convert the phase plan into PR-sized implementation tickets for immediate execution.
 

@@ -158,7 +158,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "wml_engine"
+name = "wavenav_engine"
 version = "0.1.0"
 dependencies = [
  "serde",

@@ -33,7 +33,7 @@ repos:
       # Node host sample only has build/dev scripts today; lint/test are not configured yet.
       # This gives a minimal sanity check without forcing broader JS tooling across the repo.
       - id: host-sample-build
-        name: host-sample build sanity
+        name: WaveNav host-sample build sanity
         language: system
         pass_filenames: false
         files: ^engine-wasm/host-sample/

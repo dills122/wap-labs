@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: WAP Transport Service API
+  title: Lowband Transport Service API
   version: 0.1.0
   description: |
     Browser-side transport appliance for WSP/WBXML integration.

@@ -1,5 +1,5 @@
 {
-  "name": "@wap-labs/engine-wasm-host-sample",
+  "name": "@wavenav/host-sample",
   "version": "0.1.0",
   "private": true,
   "type": "module",

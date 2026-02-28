@@ -5,9 +5,9 @@ This document defines a parallel implementation track for a faithful WAP 1.x bro
 ## Target Components
 
 - `gateway-kannel/`: gateway runtime and config strategy (WSP/WDP to HTTP/HTTPS)
-- `transport-python/`: local WSP/WBXML appliance with a stable HTTP API
+- `transport-python/`: Lowband local WSP/WBXML appliance with a stable HTTP API
 - `electron-app/`: desktop harness and developer tooling UI
-- `engine-wasm/`: WML deck/card runtime, layout, and input semantics
+- `engine-wasm/`: WaveNav WML deck/card runtime, layout, and input semantics
 
 The existing local stack remains valid:
 
@@ -17,7 +17,7 @@ The existing local stack remains valid:
 ## Layer Contracts
 
 1. Electron talks only to transport HTTP API (no UDP in UI process).
-2. Electron talks to WASM engine through in-process function contracts.
+2. Electron talks to the WaveNav WASM engine through in-process function contracts.
 3. WASM engine does not know about gateway internals.
 4. Transport service owns WSP transaction IDs, retries, and WBXML decode.
 
@@ -41,8 +41,8 @@ Normalized handoff from transport to engine:
 
 ## Suggested Build Order
 
-1. Implement `transport-python` API and CLI probe (`wap-fetch`).
-2. Implement `engine-wasm` parser/runtime for MVP tags.
+1. Implement Lowband (`transport-python`) API and CLI probe (`wap-fetch`).
+2. Implement WaveNav engine (`engine-wasm`) parser/runtime for MVP tags.
 3. Build `electron-app` shell for URL entry, softkeys, and deck inspector.
 4. Wire end-to-end navigation loop.
 

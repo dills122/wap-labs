@@ -1,6 +1,6 @@
-# wml_engine (Rust crate)
+# wavenav_engine (Rust crate)
 
-Core Rust crate for the WASM engine.
+Core Rust crate for the WaveNav WASM engine.
 
 ## Prerequisites
 

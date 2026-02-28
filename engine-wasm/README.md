@@ -1,10 +1,10 @@
-# engine-wasm
+# WaveNav Engine (engine-wasm)
 
 Rust + WebAssembly WML runtime engine (MVP).
 
 ## Objective
 
-Run a WML deck/card runtime in the Electron renderer and emit a host-consumable render list.
+Run the WaveNav WML deck/card runtime in the Electron renderer and emit a host-consumable render list.
 
 ## Full Environment Setup
 
@@ -13,7 +13,7 @@ This section is the expected setup for a clean machine.
 ### 1) System prerequisites
 
 - `git`
-- `node` 20+ and `npm`
+- `node` 20.19+ (or 22.12+) and `npm`
 - Rust toolchain (`rustup`, `rustc`, `cargo`)
 - `wasm-pack`
 

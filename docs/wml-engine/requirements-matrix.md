@@ -1,4 +1,4 @@
-# WML Engine Requirements Matrix (From Local Source-Material Subset)
+# WaveNav Engine Requirements Matrix (From Local Source-Material Subset)
 
 This matrix maps normative behavior to engine modules and tests.
 

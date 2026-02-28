@@ -15,8 +15,8 @@ Breaking compatibility is acceptable at this stage when it helps move the MVP fo
 ## Canonical layer map
 
 - `gateway-kannel/` + `docker/kannel/`: gateway behavior and environment wiring
-- `transport-python/`: transport appliance API and WSP/WBXML translation
-- `engine-wasm/`: WML runtime, parser, layout, and WASM engine contracts
+- `transport-python/`: Lowband transport appliance API and WSP/WBXML translation
+- `engine-wasm/`: WaveNav WML runtime, parser, layout, and WASM engine contracts
 - `electron-app/`: desktop host harness and adapter integration
 
 When a change spans multiple layers, preserve boundaries and update contracts first.

@@ -3,7 +3,7 @@
 WAP Labs contains two parallel tracks:
 
 1. A legacy WAP 1.x test environment (Kannel + WML server + optional XP VM microbrowsers).
-2. A modern WAP browser emulator build (transport service + Rust/WASM WML engine + host harness).
+2. A modern WAP browser emulator build: WaveNav browser + Lowband transport + host harness.
 
 ## Start Here
 
@@ -15,8 +15,8 @@ WAP Labs contains two parallel tracks:
 
 - `docker/kannel/`: gateway image/config for local lab stack
 - `wml-server/`: local WML demo server and emulator UI
-- `transport-python/`: transport API contract and implementation area
-- `engine-wasm/`: Rust/WASM WML engine and host sample
+- `transport-python/`: Lowband transport API contract and implementation area
+- `engine-wasm/`: WaveNav Rust/WASM engine and host sample
 - `electron-app/`: desktop host integration area
 - `docs/`: architecture, spec mapping, and implementation plans
 
@@ -30,7 +30,7 @@ make status
 make smoke
 ```
 
-WASM engine + quick host harness:
+WaveNav engine + quick host harness:
 
 ```bash
 cd engine-wasm/engine

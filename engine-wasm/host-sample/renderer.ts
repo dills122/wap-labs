@@ -1,4 +1,4 @@
-import init, { WmlEngine } from '../pkg/wml_engine.js';
+import init, { WmlEngine } from '../pkg/wavenav_engine.js';
 import type { DrawCmd } from '../contracts/wml-engine';
 
 const lineHeight = 16;

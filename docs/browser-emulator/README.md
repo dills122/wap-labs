@@ -1,6 +1,6 @@
-# Browser Emulator Build (In Progress)
+# WaveNav Browser Build (In Progress)
 
-This track builds a modern WAP 1.x browser emulator with a real protocol boundary and a spec-driven runtime.
+This track builds WaveNav, a modern WAP 1.x browser emulator with a real protocol boundary and a spec-driven runtime.
 
 ## Goal
 
@@ -12,8 +12,8 @@ Build a faithful WAP-style browser stack that:
 
 ## Current Architecture
 
-- Transport/API boundary: `transport-python/`
-- Runtime engine: `engine-wasm/`
+- Transport/API boundary (Lowband): `transport-python/`
+- Runtime engine (WaveNav): `engine-wasm/`
 - Host harness (quick test): `engine-wasm/host-sample/`
 - Desktop host target: `electron-app/`
 
@@ -21,7 +21,7 @@ Reference architecture doc:
 
 - `docs/modern-wap-browser-architecture.md`
 
-## WML Engine Plan (Spec-driven)
+## WaveNav Engine Plan (Spec-driven)
 
 Primary engine docs:
 
