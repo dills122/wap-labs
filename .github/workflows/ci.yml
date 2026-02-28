@@ -39,6 +39,13 @@ jobs:
         with:
           components: rustfmt
 
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            engine-wasm/engine -> target
+
       - name: Rust fmt check
         working-directory: engine-wasm/engine
         run: cargo fmt --check
@@ -66,6 +73,7 @@ jobs:
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
+          shared-key: wavenav-rust
           workspaces: |
             engine-wasm/engine -> target
 
@@ -75,10 +83,17 @@ jobs:
         with:
           path: ~/.cargo/bin/wasm-pack
           key: ${{ runner.os }}-wasm-pack-0.13.1
+          restore-keys: |
+            ${{ runner.os }}-wasm-pack-
 
       - name: Install wasm-pack (if cache miss)
         if: steps.cache-wasm-pack.outputs.cache-hit != 'true'
         run: cargo install wasm-pack --version 0.13.1 --locked
+
+      - name: Cache diagnostics
+        run: |
+          echo "wasm-pack cache hit: ${{ steps.cache-wasm-pack.outputs.cache-hit }}"
+          echo "node: $(node --version || true)"
 
       - name: Build WaveNav WASM package
         working-directory: engine-wasm/engine
