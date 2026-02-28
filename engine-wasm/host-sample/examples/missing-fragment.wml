@@ -1,4 +1,15 @@
-<!-- label: Missing Fragment Error -->
+<!--
+label: Missing Fragment Error
+work-items: A2-01
+spec-items: WML-R-006
+description: Negative navigation case where a fragment target is absent.
+goal: Verify missing fragment transitions fail deterministically without mutating runtime state.
+testing-ac:
+- Load the deck and confirm activeCardId is home.
+- Press Enter on "Broken target".
+- Confirm status shows a key error and activeCardId remains home.
+- Confirm focusedLinkIndex remains stable after the failed navigation.
+-->
 <wml>
   <card id="home">
     <p>Missing fragment test</p>

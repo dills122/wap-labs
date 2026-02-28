@@ -1,11 +1,22 @@
-<!-- label: Basic Navigation -->
+<!--
+label: Basic Navigation
+work-items: A2-01, A2-02
+spec-items: WML-R-006, WML-R-007
+description: Baseline navigation deck with one fragment link and one external link.
+goal: Verify fragment transitions mutate active card while external links only emit host intent.
+testing-ac:
+- Load the example and press Enter on "Go to next card"; activeCardId should become next.
+- Press Enter on "Return home"; activeCardId should become home.
+- Move focus to "External link" and press Enter; activeCardId should remain home.
+- Confirm runtime-state shows externalNavigationIntent as http://example.com/other.wml.
+-->
 <wml>
   <card id="home">
     <p>WaveNav Host Harness</p>
     <p>Use ArrowUp / ArrowDown / Enter.</p>
     <a href="#next">Go to next card</a>
     <br/>
-    <a href="http://example.com/other.wml">External link (MVP no-op)</a>
+    <a href="http://example.com/other.wml">External link (emits host intent)</a>
   </card>
   <card id="next">
     <p>Second card loaded.</p>

@@ -1,0 +1,27 @@
+<!--
+label: External Navigation Intent
+work-items: A2-02
+spec-items: WML-R-007
+description: Focused demo of external intent emission for relative and absolute links.
+goal: Validate URL intent resolution and confirm fragment behavior remains separate.
+testing-ac:
+- Press Enter on "Relative external link" and confirm activeCardId stays home.
+- Confirm externalNavigationIntent resolves to the base directory plus next.wml?from=home.
+- Press Down then Enter on "Absolute external link" and confirm intent is exactly https://example.org/absolute.
+- Press Down then Enter on "Internal fragment link" and confirm activeCardId becomes details.
+-->
+<wml>
+  <card id="home">
+    <p>External intent demo</p>
+    <p>Enter on first link emits host intent only.</p>
+    <a href="next.wml?from=home">Relative external link</a>
+    <br/>
+    <a href="https://example.org/absolute">Absolute external link</a>
+    <br/>
+    <a href="#details">Internal fragment link</a>
+  </card>
+  <card id="details">
+    <p>Fragment navigation still changes active card.</p>
+    <a href="#home">Back home</a>
+  </card>
+</wml>

@@ -1,4 +1,15 @@
-<!-- label: Parser Robustness -->
+<!--
+label: Parser Robustness
+work-items: A1-01, A1-03
+spec-items: WML-R-001, WML-R-020
+description: Includes unsupported tags and valid card content to assert parser resilience.
+goal: Confirm unsupported tags are ignored while valid nodes remain functional and navigable.
+testing-ac:
+- Load the deck and verify it renders without load errors.
+- Confirm activeCardId starts at home despite the unsupported <cardinal> node.
+- Press Enter on "Next" and confirm transition to next works.
+- Press Enter on "Back" and confirm transition to home works.
+-->
 <wml>
   <cardinal id="noise">Ignore me</cardinal>
   <card id="home">

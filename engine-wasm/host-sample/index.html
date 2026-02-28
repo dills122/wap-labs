@@ -14,15 +14,50 @@
         <div class="row">
           <label for="example-select">Example Deck</label>
           <select id="example-select"></select>
-          <button id="load-example" type="button">Load Example</button>
         </div>
-        <div class="row">
-          <label class="checkbox-row" for="live-reload">
-            <input id="live-reload" type="checkbox" />
-            Live reload on editor changes (memory only)
-          </label>
-        </div>
-        <textarea id="deck-input" spellcheck="false"></textarea>
+        <section class="example-meta" aria-live="polite">
+          <div class="example-meta-header">
+            <h2 id="example-title">Example Metadata</h2>
+            <button
+              id="toggle-example-meta"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="example-meta-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="example-meta-body">
+            <p id="example-coverage" class="example-coverage"></p>
+            <p id="example-description"></p>
+            <p id="example-goal"></p>
+            <ul id="example-testing-ac"></ul>
+          </div>
+        </section>
+        <section class="editor-wrap">
+          <div class="section-header">
+            <h2>Deck Editor</h2>
+            <button
+              id="toggle-editor"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="editor-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="editor-body">
+            <div class="row">
+              <label class="checkbox-row" for="live-reload">
+                <input id="live-reload" type="checkbox" />
+                Live reload on editor changes (memory only)
+              </label>
+            </div>
+            <textarea id="deck-input" spellcheck="false"></textarea>
+          </div>
+        </section>
         <div class="buttons">
           <button id="reload-deck" type="button">Reload Deck</button>
           <button id="press-up" type="button">Up</button>
@@ -30,7 +65,37 @@
           <button id="press-enter" type="button">Enter</button>
         </div>
         <p id="status" class="status">Ready.</p>
+        <div class="runtime-actions">
+          <button id="clear-intent" type="button">Clear Intent</button>
+          <button id="copy-intent" type="button">Copy Intent URL</button>
+        </div>
         <pre id="runtime-state" class="runtime-state">Waiting for engine...</pre>
+        <section class="event-log-wrap">
+          <div class="section-header">
+            <h2>Event Tracker</h2>
+            <button
+              id="toggle-event-log"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="event-log-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="event-log-body">
+            <div class="event-log-actions">
+              <button id="clear-event-log" type="button">Clear Current Example Log</button>
+              <label class="event-export-label" for="event-log-export-format">Export as</label>
+              <select id="event-log-export-format">
+                <option value="txt">Text (.txt)</option>
+                <option value="json">JSON (.json)</option>
+              </select>
+              <button id="export-event-log" type="button">Export Current Example Log</button>
+            </div>
+            <pre id="event-log" class="event-log">No events yet.</pre>
+          </div>
+        </section>
       </section>
 
       <section class="screen-wrap">

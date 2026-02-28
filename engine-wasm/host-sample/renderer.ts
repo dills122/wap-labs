@@ -12,12 +12,14 @@ export interface EngineSnapshot {
   focusedLinkIndex: number;
   baseUrl: string;
   contentType: string;
+  externalNavigationIntent?: string;
 }
 
 export interface EngineHost {
   loadDeck(xml: string): void;
   pressKey(key: KeyName): void;
   snapshot(): EngineSnapshot;
+  clearExternalNavigationIntent(): void;
   render(): void;
   getEngine(): WmlEngine;
 }
@@ -79,8 +81,12 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         activeCardId: engine.activeCardId(),
         focusedLinkIndex: engine.focusedLinkIndex(),
         baseUrl: engine.baseUrl(),
-        contentType: engine.contentType()
+        contentType: engine.contentType(),
+        externalNavigationIntent: engine.externalNavigationIntent()
       };
+    },
+    clearExternalNavigationIntent() {
+      engine.clearExternalNavigationIntent();
     },
     render: paint,
     getEngine() {

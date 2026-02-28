@@ -20,6 +20,7 @@ pub struct WmlEngine {
     active_card_idx: usize,
     nav_stack: Vec<usize>,
     focused_link_idx: usize,
+    external_nav_intent: Option<String>,
     viewport_cols: usize,
     base_url: String,
     content_type: String,
@@ -41,6 +42,7 @@ impl WmlEngine {
             active_card_idx: 0,
             nav_stack: Vec::new(),
             focused_link_idx: 0,
+            external_nav_intent: None,
             viewport_cols: DEFAULT_VIEWPORT_COLS,
             base_url: String::new(),
             content_type: String::new(),
@@ -66,6 +68,7 @@ impl WmlEngine {
         self.active_card_idx = 0;
         self.nav_stack.clear();
         self.focused_link_idx = 0;
+        self.external_nav_intent = None;
         self.base_url = base_url.to_string();
         self.content_type = content_type.to_string();
         self.raw_bytes_base64 = raw_bytes_base64;
@@ -114,6 +117,16 @@ impl WmlEngine {
     pub fn content_type(&self) -> String {
         self.content_type.clone()
     }
+
+    #[wasm_bindgen(js_name = externalNavigationIntent)]
+    pub fn external_navigation_intent(&self) -> Option<String> {
+        self.external_nav_intent.clone()
+    }
+
+    #[wasm_bindgen(js_name = clearExternalNavigationIntent)]
+    pub fn clear_external_navigation_intent(&mut self) {
+        self.external_nav_intent = None;
+    }
 }
 
 impl WmlEngine {
@@ -137,6 +150,8 @@ impl WmlEngine {
                 let href = &layout.links[idx];
                 if let Some(card_id) = href.strip_prefix('#') {
                     self.navigate_to_card_internal(card_id)?;
+                } else {
+                    self.external_nav_intent = Some(self.resolve_external_href(href));
                 }
             }
             _ => {}
@@ -175,6 +190,62 @@ impl WmlEngine {
     fn active_card(&self) -> Result<&runtime::card::Card, JsValue> {
         self.active_card_internal().map_err(as_js_err)
     }
+
+    fn resolve_external_href(&self, href: &str) -> String {
+        if self.base_url.is_empty() || has_uri_scheme(href) || href.starts_with("//") {
+            return href.to_string();
+        }
+
+        if let Some(path_from_root) = href.strip_prefix('/') {
+            let Some(origin) = extract_origin(&self.base_url) else {
+                return href.to_string();
+            };
+            return format!("{origin}/{path_from_root}");
+        }
+
+        let Some(base_dir) = extract_base_dir(&self.base_url) else {
+            return href.to_string();
+        };
+
+        format!("{base_dir}{href}")
+    }
+}
+
+fn has_uri_scheme(value: &str) -> bool {
+    let Some((scheme, _)) = value.split_once(':') else {
+        return false;
+    };
+
+    !scheme.is_empty()
+        && scheme
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || ch == '+' || ch == '-' || ch == '.')
+}
+
+fn extract_origin(base_url: &str) -> Option<String> {
+    let (scheme, remainder) = base_url.split_once("://")?;
+    let authority = remainder.split('/').next().unwrap_or(remainder);
+    if authority.is_empty() {
+        return None;
+    }
+    Some(format!("{scheme}://{authority}"))
+}
+
+fn extract_base_dir(base_url: &str) -> Option<String> {
+    let no_query_or_fragment = base_url
+        .split('#')
+        .next()
+        .unwrap_or(base_url)
+        .split('?')
+        .next()
+        .unwrap_or(base_url);
+
+    if no_query_or_fragment.ends_with('/') {
+        return Some(no_query_or_fragment.to_string());
+    }
+
+    let (prefix, _) = no_query_or_fragment.rsplit_once('/')?;
+    Some(format!("{prefix}/"))
 }
 
 fn to_js_value(render_list: &RenderList) -> Result<JsValue, JsValue> {
@@ -321,5 +392,64 @@ mod tests {
             .handle_key("enter".to_string())
             .expect("enter should move to #content");
         assert_eq!(engine.active_card_id().expect("active card"), "content");
+        assert_eq!(engine.external_navigation_intent(), None);
+    }
+
+    #[test]
+    fn enter_on_external_link_sets_intent_without_mutating_card() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="next.wml?foo=1">Load</a>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+        </wml>
+        "##;
+
+        engine
+            .load_deck_context(
+                xml,
+                "http://local.test/dir/start.wml",
+                "text/vnd.wap.wml",
+                None,
+            )
+            .expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("external enter should succeed");
+
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(
+            engine.external_navigation_intent(),
+            Some("http://local.test/dir/next.wml?foo=1".to_string())
+        );
+        assert!(engine.nav_stack.is_empty());
+    }
+
+    #[test]
+    fn clear_external_navigation_intent_removes_intent() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="https://example.org/path">Load</a>
+          </card>
+        </wml>
+        "##;
+
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("external enter should succeed");
+        assert_eq!(
+            engine.external_navigation_intent(),
+            Some("https://example.org/path".to_string())
+        );
+
+        engine.clear_external_navigation_intent();
+        assert_eq!(engine.external_navigation_intent(), None);
     }
 }

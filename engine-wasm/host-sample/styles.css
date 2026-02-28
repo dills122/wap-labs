@@ -52,6 +52,81 @@ body {
   margin-bottom: 10px;
 }
 
+.example-meta {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.example-meta h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.example-meta p {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+
+.example-meta ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 0.82rem;
+}
+
+.example-meta li {
+  margin-bottom: 4px;
+}
+
+.example-coverage {
+  font-family: "IBM Plex Mono", Consolas, monospace;
+}
+
+.example-meta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.meta-toggle {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
+
+.example-meta.is-collapsed #example-meta-body {
+  display: none;
+}
+
+.editor-wrap {
+  margin: 0 0 12px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 12px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.editor-wrap.is-collapsed #editor-body {
+  display: none;
+}
+
 .row label {
   font-size: 0.85rem;
   min-width: 90px;
@@ -111,6 +186,17 @@ button:hover {
   font-size: 0.9rem;
 }
 
+.runtime-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.runtime-actions button {
+  font-size: 0.78rem;
+  padding: 7px 10px;
+}
+
 .runtime-state {
   margin: 10px 0 0;
   padding: 10px;
@@ -118,6 +204,57 @@ button:hover {
   border-radius: 8px;
   background: #fff;
   font-size: 0.8rem;
+  line-height: 1.45;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+}
+
+.event-log-wrap {
+  margin-top: 10px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
+}
+
+.event-log-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.event-log-actions button {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+}
+
+.event-export-label {
+  font-size: 0.78rem;
+  align-self: center;
+}
+
+#event-log-export-format {
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.78rem;
+  padding: 6px 8px;
+}
+
+.event-log-wrap.is-collapsed #event-log-body {
+  display: none;
+}
+
+.event-log {
+  margin: 0;
+  min-height: 130px;
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fcfcfc;
+  font-size: 0.77rem;
   line-height: 1.45;
   font-family: "IBM Plex Mono", Consolas, monospace;
 }
