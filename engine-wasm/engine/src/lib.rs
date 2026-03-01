@@ -114,6 +114,11 @@ impl WmlEngine {
         self.navigate_to_card_internal(&id).map_err(as_js_err)
     }
 
+    #[wasm_bindgen(js_name = navigateBack)]
+    pub fn navigate_back(&mut self) -> bool {
+        self.navigate_back_internal()
+    }
+
     #[wasm_bindgen(js_name = setViewportCols)]
     pub fn set_viewport_cols(&mut self, cols: usize) {
         self.viewport_cols = cols.max(1);
@@ -358,6 +363,18 @@ impl WmlEngine {
         self.focused_link_idx = 0;
         self.run_onenterforward_for_active_card()?;
         Ok(())
+    }
+
+    fn navigate_back_internal(&mut self) -> bool {
+        let Some(previous_idx) = self.nav_stack.pop() else {
+            self.push_trace("ACTION_BACK_EMPTY", String::new());
+            return false;
+        };
+
+        self.active_card_idx = previous_idx;
+        self.focused_link_idx = 0;
+        self.push_trace("ACTION_BACK", String::new());
+        true
     }
 
     fn run_onenterforward_for_active_card(&mut self) -> Result<(), String> {
@@ -650,6 +667,8 @@ mod tests {
         convert_script_call_args, parse_script_href, ParsedScriptRef, ScriptCallArgLiteral,
         ScriptValueLiteral, WmlEngine,
     };
+    use crate::layout::flow_layout::layout_card;
+    use crate::render::render_list::DrawCmd;
     use crate::wmlscript::value::ScriptValue;
 
     const SAMPLE: &str = r##"
@@ -665,6 +684,35 @@ mod tests {
     "##;
     const FIELD_EXAMPLE_01: &str =
         include_str!("../tests/fixtures/field/openwave-2011-example-01-navigation.wml");
+    const FIXTURE_BASIC_TWO_CARD: &str =
+        include_str!("../tests/fixtures/phase-a/basic-two-card.wml");
+    const FIXTURE_MIXED_INLINE_TEXT_LINKS: &str =
+        include_str!("../tests/fixtures/phase-a/mixed-inline-text-links.wml");
+    const FIXTURE_LINK_WRAP: &str = include_str!("../tests/fixtures/phase-a/link-wrap.wml");
+    const FIXTURE_MISSING_FRAGMENT: &str =
+        include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
+
+    fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
+        let card = engine
+            .active_card_internal()
+            .expect("active card must exist for snapshot");
+        let layout = layout_card(card, engine.viewport_cols, engine.focused_link_idx);
+        layout
+            .render_list
+            .draw
+            .iter()
+            .map(|cmd| match cmd {
+                DrawCmd::Text { x, y, text } => format!("text:{x}:{y}:{text}"),
+                DrawCmd::Link {
+                    x,
+                    y,
+                    text,
+                    focused,
+                    href,
+                } => format!("link:{x}:{y}:focused={focused}:href={href}:text={text}"),
+            })
+            .collect()
+    }
 
     #[test]
     fn enter_navigates_to_fragment_card() {
@@ -843,6 +891,69 @@ mod tests {
 
         engine.clear_external_navigation_intent();
         assert_eq!(engine.external_navigation_intent(), None);
+    }
+
+    #[test]
+    fn load_deck_sets_default_metadata_values() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(
+                r#"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#,
+            )
+            .expect("deck should load");
+
+        assert_eq!(engine.base_url(), "");
+        assert_eq!(engine.content_type(), "text/vnd.wap.wml");
+    }
+
+    #[test]
+    fn load_deck_context_overrides_metadata_values() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck_context(
+                r#"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#,
+                "http://local.test/path/start.wml",
+                "application/vnd.wap.wmlc",
+                Some("AQID".to_string()),
+            )
+            .expect("deck should load");
+
+        assert_eq!(engine.base_url(), "http://local.test/path/start.wml");
+        assert_eq!(engine.content_type(), "application/vnd.wap.wmlc");
+    }
+
+    #[test]
+    fn load_deck_compat_path_resets_metadata_to_defaults() {
+        let mut engine = WmlEngine::new();
+        let xml = r#"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#;
+        engine
+            .load_deck_context(
+                xml,
+                "http://local.test/path/start.wml",
+                "application/vnd.wap.wmlc",
+                Some("AQID".to_string()),
+            )
+            .expect("deck should load");
+        assert_eq!(engine.base_url(), "http://local.test/path/start.wml");
+        assert_eq!(engine.content_type(), "application/vnd.wap.wmlc");
+
+        engine
+            .load_deck(xml)
+            .expect("loadDeck should remain functional");
+        assert_eq!(engine.base_url(), "");
+        assert_eq!(engine.content_type(), "text/vnd.wap.wml");
     }
 
     #[test]
@@ -1149,6 +1260,49 @@ mod tests {
     }
 
     #[test]
+    fn navigate_back_restores_previous_card() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#next">Next</a>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should navigate");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+
+        let handled = engine.navigate_back();
+        assert!(handled, "back should pop existing history entry");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(engine.focused_link_index(), 0);
+    }
+
+    #[test]
+    fn navigate_back_returns_false_when_history_empty() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(
+                r#"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#,
+            )
+            .expect("deck should load");
+
+        let handled = engine.navigate_back();
+        assert!(!handled, "back should report false with empty history");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+    }
+
+    #[test]
     fn trace_entries_record_key_and_actions() {
         let mut engine = WmlEngine::new();
         let xml = r##"
@@ -1189,5 +1343,141 @@ mod tests {
         engine.clear_trace_entries();
         assert!(engine.trace_entries.is_empty());
         assert_eq!(engine.next_trace_seq, 1);
+    }
+
+    #[test]
+    fn phase_a_basic_two_card_fixture_snapshot_and_navigation() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_BASIC_TWO_CARD)
+            .expect("fixture should load");
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:Welcome".to_string(),
+                "link:0:1:focused=true:href=#next:text=Go next".to_string(),
+            ]
+        );
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should navigate to next");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:Second card".to_string(),
+                "link:0:1:focused=true:href=#home:text=Back home".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn phase_a_mixed_inline_text_links_fixture_preserves_source_order() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_MIXED_INLINE_TEXT_LINKS)
+            .expect("fixture should load");
+
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:Hello".to_string(),
+                "link:0:1:focused=true:href=#next:text=Next".to_string(),
+                "text:0:2:and".to_string(),
+                "link:0:3:focused=false:href=#final:text=Final".to_string(),
+            ]
+        );
+
+        engine
+            .handle_key("down".to_string())
+            .expect("down should move focus to second link");
+        assert_eq!(engine.focused_link_index(), 1);
+    }
+
+    #[test]
+    fn phase_a_link_wrap_fixture_snapshots_widths_and_focus_stability() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_LINK_WRAP)
+            .expect("fixture should load");
+
+        engine.set_viewport_cols(16);
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:abcdefghijklmnop".to_string(),
+                "text:0:1:qrstuvwx".to_string(),
+                "link:0:2:focused=true:href=#one:text=abcdefghijklmnop".to_string(),
+                "link:0:3:focused=true:href=#one:text=qrstuvwx".to_string(),
+                "link:0:4:focused=false:href=#two:text=short".to_string(),
+            ]
+        );
+
+        engine.set_viewport_cols(20);
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:abcdefghijklmnopqrst".to_string(),
+                "text:0:1:uvwx".to_string(),
+                "link:0:2:focused=true:href=#one:text=abcdefghijklmnopqrst".to_string(),
+                "link:0:3:focused=true:href=#one:text=uvwx".to_string(),
+                "link:0:4:focused=false:href=#two:text=short".to_string(),
+            ]
+        );
+
+        engine.set_viewport_cols(24);
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:abcdefghijklmnopqrstuvwx".to_string(),
+                "link:0:1:focused=true:href=#one:text=abcdefghijklmnopqrstuvwx".to_string(),
+                "link:0:2:focused=false:href=#two:text=short".to_string(),
+            ]
+        );
+
+        engine.set_viewport_cols(8);
+        engine
+            .handle_key("down".to_string())
+            .expect("down should move focus to second logical link");
+        assert_eq!(engine.focused_link_index(), 1);
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:abcdefgh".to_string(),
+                "text:0:1:ijklmnop".to_string(),
+                "text:0:2:qrstuvwx".to_string(),
+                "link:0:3:focused=false:href=#one:text=abcdefgh".to_string(),
+                "link:0:4:focused=false:href=#one:text=ijklmnop".to_string(),
+                "link:0:5:focused=false:href=#one:text=qrstuvwx".to_string(),
+                "link:0:6:focused=true:href=#two:text=short".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn phase_a_missing_fragment_fixture_keeps_runtime_state_stable() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_MISSING_FRAGMENT)
+            .expect("fixture should load");
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec![
+                "text:0:0:Missing fragment".to_string(),
+                "text:0:1:check".to_string(),
+                "link:0:2:focused=true:href=#missing:text=Broken".to_string(),
+            ]
+        );
+
+        let err = engine
+            .handle_key_internal("enter")
+            .expect_err("missing fragment must return error");
+        assert!(
+            err.contains("Card id not found"),
+            "unexpected missing fragment error: {err}"
+        );
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(engine.focused_link_index(), 0);
     }
 }

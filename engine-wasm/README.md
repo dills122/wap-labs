@@ -138,7 +138,7 @@ Type contract:
 
 ## Current checklist (planning/execution)
 
-- [ ] Complete Phase A todos in `docs/wml-engine/work-items.md` (`A2-03`, `A3-01`, `A3-02`, `A4-01`, `A4-02`)
+- [x] Complete Phase A todos in `docs/wml-engine/work-items.md` (`A2-03`, `A3-01`, `A3-02`, `A4-01`, `A4-02`)
 - [ ] Keep engine contract and transport/browser mapping synced
 - [ ] Expand fixture corpus to cover pending `RQ-RMK-*` and `RQ-WAE-*` groups
 

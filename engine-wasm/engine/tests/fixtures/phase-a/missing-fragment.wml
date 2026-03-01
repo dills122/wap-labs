@@ -1,0 +1,6 @@
+<wml>
+  <card id="home">
+    <p>Missing fragment check</p>
+    <a href="#missing">Broken</a>
+  </card>
+</wml>

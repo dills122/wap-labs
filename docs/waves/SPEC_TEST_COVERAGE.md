@@ -18,17 +18,18 @@ Legend:
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
 | `RQ-RMK-001` deck/card parse baseline | `covered` | Rust parser tests in `engine-wasm/engine/src/*` + host sample `basic.wml` |
-| `RQ-RMK-003` fragment/history nav basics | `partial` | host sample `basic.wml`, `missing-fragment.wml`; history-back API tests planned (`A2-03`) |
+| `RQ-RMK-003` fragment/history nav basics | `covered` | Rust engine tests cover fragment transitions + `navigateBack`; host sample examples `basic.wml`, `missing-fragment.wml`, `history-back-stack.wml` |
 | `RQ-RMK-006` anchor shorthand behavior | `partial` | host sample `external-navigation-intent.wml`; deeper parser fixture coverage planned |
 | `RQ-RMK-007` WBXML decode boundary ownership | `covered` | contract behavior via `loadDeckContext` metadata and docs; transport handoff checks planned in cross-project tests |
 | `RQ-RMK-009` compatibility/robustness behavior | `partial` | host sample `parser-robustness.wml`; expanded fixture corpus planned (`A4-02`) |
-| `RQ-WAE-016`, `RQ-WAE-017` history and back semantics | `planned` | `A2-03` + browser integration scenarios |
+| `RQ-WAE-016`, `RQ-WAE-017` history and back semantics | `partial` | engine `navigateBack` baseline + host sample `history-back-stack.wml`; browser integration scenarios remain planned |
 
 ## Host sample (`engine-wasm/host-sample`)
 
 | Coverage Focus | Status | Example / Verification |
 |---|---|---|
 | Basic card navigation | `covered` | `examples/basic.wml` |
+| History back-stack baseline | `covered` | `examples/history-back-stack.wml` + Back control in host harness |
 | Missing-fragment error path | `covered` | `examples/missing-fragment.wml` |
 | External navigation intent | `covered` | `examples/external-navigation-intent.wml` |
 | Field/openwave realism baseline | `partial` | `examples/field-openwave-2011-navigation.wml` |
