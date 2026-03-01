@@ -1350,7 +1350,7 @@ mod tests {
         assert!(outcome.ok);
         assert_eq!(outcome.result, ScriptValueLiteral::String("7".to_string()));
         assert_eq!(engine.get_var("score".to_string()).as_deref(), Some("7"));
-        assert_eq!(outcome.requires_refresh, true);
+        assert!(outcome.requires_refresh);
         assert_eq!(
             outcome.navigation_intent,
             ScriptNavigationIntentLiteral::None
