@@ -37,6 +37,23 @@ repos:
         stages: [pre-push]
         entry: bash -lc 'cd engine-wasm/engine && cargo test'
 
+      - id: rust-coverage-engine
+        name: rust coverage (engine-wasm, optional)
+        language: system
+        pass_filenames: false
+        files: ^engine-wasm/engine/
+        stages: [pre-push]
+        entry: >-
+          bash -lc 'if [ "${WAP_ENABLE_RUST_COVERAGE_HOOKS:-0}" != "1" ]; then
+          echo "skip: set WAP_ENABLE_RUST_COVERAGE_HOOKS=1 to enable rust coverage hook";
+          exit 0; fi; if ! command -v cargo >/dev/null 2>&1; then echo "skip:
+          cargo not found"; exit 0; fi; if ! (cd engine-wasm/engine && cargo
+          llvm-cov --version >/dev/null 2>&1); then echo "skip:
+          cargo-llvm-cov not installed"; exit 0; fi; cd engine-wasm/engine &&
+          cargo llvm-cov --all-features --summary-only --fail-under-lines
+          "${WAP_RUST_COVERAGE_MIN:-90}" --fail-under-functions
+          "${WAP_RUST_FUNCTION_COVERAGE_MIN:-85}"'
+
       - id: rust-fmt-check-browser
         name: rust fmt check (browser tauri)
         language: system
@@ -87,4 +104,4 @@ repos:
 
       # Future hooks (intentionally disabled until those layers are bootstrapped):
       # - transport-python ruff/pytest
-      # - electron-app lint/typecheck/test
+      # - browser frontend lint/typecheck/test

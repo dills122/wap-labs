@@ -342,7 +342,10 @@ fn decode_entities(input: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::parse_wml;
+    use super::{
+        extract_wml_body, parse_card_nodes, parse_do_accept_href, parse_go_href,
+        parse_inline_nodes, parse_onenterforward_href, parse_wml,
+    };
     use crate::runtime::node::{InlineNode, Node};
 
     #[test]
@@ -537,5 +540,116 @@ mod tests {
             Some("script:calc.wmlsc#main")
         );
         assert_eq!(deck.cards[0].onenterforward_href.as_deref(), Some("#next"));
+    }
+
+    #[test]
+    fn helper_extract_wml_body_reports_root_errors() {
+        let malformed = extract_wml_body("<wml ").expect_err("malformed wml open tag must fail");
+        assert!(malformed.contains("Malformed <wml> opening tag"));
+
+        let missing_close = extract_wml_body("<wml><card id=\"x\"></card>")
+            .expect_err("missing wml close must fail");
+        assert!(missing_close.contains("Missing closing </wml> root element"));
+    }
+
+    #[test]
+    fn helper_parse_go_href_handles_missing_or_empty_href() {
+        assert_eq!(parse_go_href("<go href=\"#ok\"/>"), Some("#ok".to_string()));
+        assert_eq!(parse_go_href("<go/>"), None);
+        assert_eq!(parse_go_href("<go href=\"\"/>"), None);
+        assert_eq!(parse_go_href("<noop/>"), None);
+        assert_eq!(parse_go_href("<go href=\"#broken\""), None);
+    }
+
+    #[test]
+    fn helper_parse_do_accept_href_exercises_direct_and_error_paths() {
+        assert_eq!(
+            parse_do_accept_href("<do type=\"accept\" href=\"#direct\"></do>")
+                .expect("direct href should parse"),
+            Some("#direct".to_string())
+        );
+
+        assert_eq!(
+            parse_do_accept_href("<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>")
+                .expect("fallback go href should parse"),
+            Some("#fallback".to_string())
+        );
+
+        let malformed = parse_do_accept_href("<do type=\"accept\"")
+            .expect_err("malformed do open tag must fail");
+        assert!(malformed.contains("Malformed <do> opening tag"));
+
+        let missing_close = parse_do_accept_href("<do type=\"accept\">")
+            .expect_err("missing do close tag must fail");
+        assert!(missing_close.contains("Missing closing </do> tag"));
+    }
+
+    #[test]
+    fn helper_parse_onenterforward_href_exercises_non_matching_and_error_paths() {
+        assert_eq!(
+            parse_onenterforward_href(
+                "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>"
+            )
+            .expect("non-matching onevent should parse"),
+            None
+        );
+
+        assert_eq!(
+            parse_onenterforward_href(
+                "<onevent type=\"onenterforward\"><go href=\"#next\"/></onevent>"
+            )
+            .expect("matching onevent should parse"),
+            Some("#next".to_string())
+        );
+
+        let malformed = parse_onenterforward_href("<onevent type=\"onenterforward\"")
+            .expect_err("malformed onevent open tag must fail");
+        assert!(malformed.contains("Malformed <onevent> opening tag"));
+
+        let missing_close = parse_onenterforward_href("<onevent type=\"onenterforward\">")
+            .expect_err("missing onevent close tag must fail");
+        assert!(missing_close.contains("Missing closing </onevent> tag"));
+    }
+
+    #[test]
+    fn helper_parse_card_nodes_reports_malformed_tags() {
+        let malformed_br = parse_card_nodes("<br").expect_err("malformed br should fail");
+        assert!(malformed_br.contains("Malformed <br> tag"));
+
+        let malformed_p = parse_card_nodes("<p").expect_err("malformed p open tag should fail");
+        assert!(malformed_p.contains("Malformed <p> opening tag"));
+
+        let missing_p_close = parse_card_nodes("<p>text").expect_err("unclosed p should fail");
+        assert!(missing_p_close.contains("Missing closing </p> tag"));
+
+        let malformed_a =
+            parse_card_nodes("<a href=\"#x\"").expect_err("malformed a open tag should fail");
+        assert!(malformed_a.contains("Malformed <a> opening tag"));
+
+        let missing_a_close =
+            parse_card_nodes("<a href=\"#x\">X").expect_err("unclosed a should fail");
+        assert!(missing_a_close.contains("Missing closing </a> tag"));
+
+        let malformed_tag =
+            parse_card_nodes("<foo").expect_err("malformed generic tag should fail");
+        assert!(malformed_tag.contains("Malformed tag"));
+    }
+
+    #[test]
+    fn helper_parse_inline_nodes_reports_malformed_tags() {
+        let malformed_a =
+            parse_inline_nodes("<a href=\"#x\"").expect_err("malformed inline a should fail");
+        assert!(malformed_a.contains("Malformed inline <a> opening tag"));
+
+        let missing_a_close =
+            parse_inline_nodes("<a href=\"#x\">X").expect_err("unclosed inline a should fail");
+        assert!(missing_a_close.contains("Missing closing inline </a> tag"));
+
+        let malformed_br = parse_inline_nodes("<br").expect_err("malformed inline br should fail");
+        assert!(malformed_br.contains("Malformed inline <br> tag"));
+
+        let malformed_tag =
+            parse_inline_nodes("<unknown").expect_err("malformed inline tag should fail");
+        assert!(malformed_tag.contains("Malformed inline tag"));
     }
 }

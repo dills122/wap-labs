@@ -1,3 +1,9 @@
+//! WaveNav/Wavescript engine crate.
+//!
+//! Public API is exported through [`WmlEngine`] with `wasm_bindgen` so host
+//! shells can load decks, drive input, invoke scripts, and read runtime state.
+//! Use `cargo doc --no-deps` from `engine-wasm/engine` to generate API docs.
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
@@ -52,6 +58,7 @@ impl Default for WmlEngine {
 
 #[wasm_bindgen]
 impl WmlEngine {
+    /// Construct a new engine instance with empty runtime state.
     #[wasm_bindgen(constructor)]
     pub fn new() -> WmlEngine {
         WmlEngine {
@@ -74,11 +81,13 @@ impl WmlEngine {
         }
     }
 
+    /// Load a WML deck using default metadata (`text/vnd.wap.wml`).
     #[wasm_bindgen(js_name = loadDeck)]
     pub fn load_deck(&mut self, xml: &str) -> Result<(), JsValue> {
         self.load_deck_context(xml, "", "text/vnd.wap.wml", None)
     }
 
+    /// Load a WML deck with explicit transport metadata for traceability.
     #[wasm_bindgen(js_name = loadDeckContext)]
     pub fn load_deck_context(
         &mut self,
@@ -106,11 +115,13 @@ impl WmlEngine {
         Ok(())
     }
 
+    /// Read a runtime variable.
     #[wasm_bindgen(js_name = getVar)]
     pub fn get_var(&self, name: String) -> Option<String> {
         self.vars.get(&name).cloned()
     }
 
+    /// Set a runtime variable if `name` passes deterministic validation.
     #[wasm_bindgen(js_name = setVar)]
     pub fn set_var(&mut self, name: String, value: String) -> bool {
         if !is_valid_var_name(&name) {
@@ -120,6 +131,7 @@ impl WmlEngine {
         true
     }
 
+    /// Render active card into draw commands for the current viewport width.
     #[wasm_bindgen]
     pub fn render(&self) -> Result<JsValue, JsValue> {
         let card = self.active_card()?;
@@ -127,73 +139,87 @@ impl WmlEngine {
         to_js_value(&layout.render_list)
     }
 
+    /// Handle one input key (`up`, `down`, `enter`).
     #[wasm_bindgen(js_name = handleKey)]
     pub fn handle_key(&mut self, key: String) -> Result<(), JsValue> {
         self.handle_key_internal(&key).map_err(as_js_err)
     }
 
+    /// Navigate directly to a card id and push history.
     #[wasm_bindgen(js_name = navigateToCard)]
     pub fn navigate_to_card(&mut self, id: String) -> Result<(), JsValue> {
         self.navigate_to_card_internal(&id).map_err(as_js_err)
     }
 
+    /// Navigate back in history. Returns `false` when history is empty.
     #[wasm_bindgen(js_name = navigateBack)]
     pub fn navigate_back(&mut self) -> bool {
         self.navigate_back_internal()
     }
 
+    /// Set viewport width in columns.
     #[wasm_bindgen(js_name = setViewportCols)]
     pub fn set_viewport_cols(&mut self, cols: usize) {
         self.viewport_cols = cols.max(1);
     }
 
+    /// Get active card id.
     #[wasm_bindgen(js_name = activeCardId)]
     pub fn active_card_id(&self) -> Result<String, JsValue> {
         let card = self.active_card()?;
         Ok(card.id.clone())
     }
 
+    /// Get focused link index for the active card layout.
     #[wasm_bindgen(js_name = focusedLinkIndex)]
     pub fn focused_link_index(&self) -> usize {
         self.focused_link_idx
     }
 
+    /// Get deck base URL metadata from last `loadDeckContext`.
     #[wasm_bindgen(js_name = baseUrl)]
     pub fn base_url(&self) -> String {
         self.base_url.clone()
     }
 
+    /// Get content type metadata from last `loadDeckContext`.
     #[wasm_bindgen(js_name = contentType)]
     pub fn content_type(&self) -> String {
         self.content_type.clone()
     }
 
+    /// Get host-resolved external navigation intent when one is pending.
     #[wasm_bindgen(js_name = externalNavigationIntent)]
     pub fn external_navigation_intent(&self) -> Option<String> {
         self.external_nav_intent.clone()
     }
 
+    /// Clear pending external navigation intent.
     #[wasm_bindgen(js_name = clearExternalNavigationIntent)]
     pub fn clear_external_navigation_intent(&mut self) {
         self.external_nav_intent = None;
     }
 
+    /// Execute a raw bytecode unit with no runtime host bindings.
     #[wasm_bindgen(js_name = executeScriptUnit)]
     pub fn execute_script_unit(&self, bytes: Vec<u8>) -> Result<JsValue, JsValue> {
         to_js_value(&self.execute_script_unit_internal(&bytes))
     }
 
+    /// Register a bytecode unit by source key.
     #[wasm_bindgen(js_name = registerScriptUnit)]
     pub fn register_script_unit(&mut self, src: String, bytes: Vec<u8>) {
         self.script_units.insert(src, bytes);
     }
 
+    /// Clear all registered units and function entry points.
     #[wasm_bindgen(js_name = clearScriptUnits)]
     pub fn clear_script_units(&mut self) {
         self.script_units.clear();
         self.script_entrypoints.clear();
     }
 
+    /// Register an entry point program counter for `src#function_name`.
     #[wasm_bindgen(js_name = registerScriptEntryPoint)]
     pub fn register_script_entry_point(
         &mut self,
@@ -207,11 +233,13 @@ impl WmlEngine {
             .insert(function_name, entry_pc);
     }
 
+    /// Clear all registered entry points.
     #[wasm_bindgen(js_name = clearScriptEntryPoints)]
     pub fn clear_script_entry_points(&mut self) {
         self.script_entrypoints.clear();
     }
 
+    /// Execute script reference without applying deferred runtime effects.
     #[wasm_bindgen(js_name = executeScriptRef)]
     pub fn execute_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
         let outcome = self.execute_script_ref_internal(&src, "main");
@@ -220,6 +248,7 @@ impl WmlEngine {
         to_js_value(&outcome)
     }
 
+    /// Execute script function without applying deferred runtime effects.
     #[wasm_bindgen(js_name = executeScriptRefFunction)]
     pub fn execute_script_ref_function(
         &mut self,
@@ -232,6 +261,7 @@ impl WmlEngine {
         to_js_value(&outcome)
     }
 
+    /// Execute script function call without applying deferred runtime effects.
     #[wasm_bindgen(js_name = executeScriptRefCall)]
     pub fn execute_script_ref_call(
         &mut self,
@@ -248,6 +278,7 @@ impl WmlEngine {
         to_js_value(&outcome)
     }
 
+    /// Invoke script reference and apply deferred runtime effects at boundary.
     #[wasm_bindgen(js_name = invokeScriptRef)]
     pub fn invoke_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
         let outcome = self
@@ -256,6 +287,7 @@ impl WmlEngine {
         to_js_value(&outcome)
     }
 
+    /// Invoke script function and apply deferred runtime effects at boundary.
     #[wasm_bindgen(js_name = invokeScriptRefFunction)]
     pub fn invoke_script_ref_function(
         &mut self,
@@ -268,6 +300,7 @@ impl WmlEngine {
         to_js_value(&outcome)
     }
 
+    /// Invoke script function call and apply deferred runtime effects.
     #[wasm_bindgen(js_name = invokeScriptRefCall)]
     pub fn invoke_script_ref_call(
         &mut self,
@@ -284,6 +317,7 @@ impl WmlEngine {
         to_js_value(&outcome)
     }
 
+    /// Read last script trap message, if any.
     #[wasm_bindgen(js_name = lastScriptExecutionTrap)]
     pub fn last_script_execution_trap(&self) -> Option<String> {
         self.last_script_outcome
@@ -291,11 +325,13 @@ impl WmlEngine {
             .and_then(|outcome| outcome.trap.clone())
     }
 
+    /// Read `ok` status from the last script execution.
     #[wasm_bindgen(js_name = lastScriptExecutionOk)]
     pub fn last_script_execution_ok(&self) -> Option<bool> {
         self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
     }
 
+    /// Read refresh requirement from the last script execution.
     #[wasm_bindgen(js_name = lastScriptRequiresRefresh)]
     pub fn last_script_requires_refresh(&self) -> Option<bool> {
         self.last_script_outcome
@@ -303,11 +339,13 @@ impl WmlEngine {
             .map(|outcome| outcome.requires_refresh)
     }
 
+    /// Get bounded trace buffer entries.
     #[wasm_bindgen(js_name = traceEntries)]
     pub fn trace_entries(&self) -> Result<JsValue, JsValue> {
         to_js_value(&self.trace_entries)
     }
 
+    /// Clear trace entries and reset trace sequence numbering.
     #[wasm_bindgen(js_name = clearTraceEntries)]
     pub fn clear_trace_entries(&mut self) {
         self.trace_entries.clear();
@@ -728,7 +766,7 @@ struct ScriptExecutionOutcome {
     requires_refresh: bool,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct ScriptInvocationOutcome {
     navigation_intent: ScriptNavigationIntentLiteral,
@@ -1493,6 +1531,32 @@ mod tests {
         );
         assert_eq!(engine.active_card_id().expect("active card"), "next");
         assert_eq!(engine.last_script_requires_refresh(), Some(true));
+    }
+
+    #[test]
+    fn invoke_script_ref_trap_does_not_apply_deferred_navigation() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #next
+        unit.push(0xff); // trap
+        engine.register_script_unit("trap-nav.wmlsc".to_string(), unit);
+
+        let err = engine
+            .invoke_script_ref_internal("trap-nav.wmlsc", "main", &[])
+            .expect_err("invoke should trap");
+        assert!(err.contains("unsupported opcode"));
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(engine.last_script_execution_ok(), Some(false));
     }
 
     #[test]

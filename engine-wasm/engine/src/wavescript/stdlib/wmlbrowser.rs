@@ -3,6 +3,10 @@ use crate::wavescript::value::ScriptValue;
 use crate::wavescript::vm::{VmHost, VmTrap};
 use std::collections::HashMap;
 
+const MAX_VAR_NAME_BYTES: usize = 64;
+const MAX_VAR_VALUE_BYTES: usize = 1024;
+const MAX_GO_HREF_BYTES: usize = 2048;
+
 pub const WMLBROWSER_GET_VAR: u8 = 0x01;
 pub const WMLBROWSER_SET_VAR: u8 = 0x02;
 pub const WMLBROWSER_GO: u8 = 0x03;
@@ -29,6 +33,10 @@ impl<'a> WmlBrowserHost<'a> {
             return ScriptValue::Invalid;
         };
 
+        if name.len() > MAX_VAR_NAME_BYTES {
+            return ScriptValue::Invalid;
+        }
+
         ScriptValue::String(self.vars.get(&name).cloned().unwrap_or_default())
     }
 
@@ -39,8 +47,14 @@ impl<'a> WmlBrowserHost<'a> {
         let Some(name) = normalize_var_name(&args[0]) else {
             return ScriptValue::Invalid;
         };
+        if name.len() > MAX_VAR_NAME_BYTES {
+            return ScriptValue::Invalid;
+        }
 
         let value = coerce_to_string(&args[1]);
+        if value.len() > MAX_VAR_VALUE_BYTES {
+            return ScriptValue::Invalid;
+        }
         self.vars.insert(name, value);
         self.effects.mark_refresh_required();
         ScriptValue::Bool(true)
@@ -50,8 +64,11 @@ impl<'a> WmlBrowserHost<'a> {
         let Some(href) = args.first() else {
             return ScriptValue::Invalid;
         };
-
-        self.effects.request_go(coerce_to_string(href));
+        let href = coerce_to_string(href);
+        if href.len() > MAX_GO_HREF_BYTES {
+            return ScriptValue::Invalid;
+        }
+        self.effects.request_go(href);
         ScriptValue::Bool(true)
     }
 
@@ -253,5 +270,34 @@ mod tests {
         assert_eq!(coerce_to_string(&ScriptValue::Int32(-3)), "-3");
         assert_eq!(coerce_to_string(&ScriptValue::Float64(1.5)), "1.5");
         assert_eq!(coerce_to_string(&ScriptValue::Invalid), "");
+    }
+
+    #[test]
+    fn oversized_setvar_value_is_rejected_without_mutation() {
+        let mut vars = HashMap::new();
+        let mut effects = ScriptRuntimeEffects::default();
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+        let oversized = "x".repeat(super::MAX_VAR_VALUE_BYTES + 1);
+
+        let result = host
+            .call(
+                WMLBROWSER_SET_VAR,
+                &[
+                    ScriptValue::String("safe".to_string()),
+                    ScriptValue::String(oversized),
+                ],
+            )
+            .expect("setVar should return invalid, not trap");
+
+        assert_eq!(result, ScriptValue::Invalid);
+        assert_eq!(
+            host.call(
+                WMLBROWSER_GET_VAR,
+                &[ScriptValue::String("safe".to_string())]
+            )
+            .expect("getVar should not trap"),
+            ScriptValue::String(String::new())
+        );
+        assert!(!effects.requires_refresh());
     }
 }

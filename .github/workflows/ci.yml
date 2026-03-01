@@ -76,6 +76,32 @@ jobs:
         working-directory: engine-wasm/engine
         run: cargo clippy --all-targets --all-features -- -D warnings
 
+  rust-engine-coverage:
+    name: Rust Engine Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            engine-wasm/engine -> target
+
+      - name: Rust coverage gate
+        working-directory: engine-wasm/engine
+        run: cargo llvm-cov --all-features --summary-only --fail-under-lines 90 --fail-under-functions 85
+
   host-sample:
     name: WaveNav Host Sample Build
     runs-on: ubuntu-latest

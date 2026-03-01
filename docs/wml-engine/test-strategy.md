@@ -22,6 +22,7 @@
 4. Contract tests (host <-> wasm)
 - `loadDeckContext` metadata propagation
 - render payload shape compatibility
+- raw execution vs invocation boundary behavior (`executeScriptRef*` vs `invokeScriptRef*`)
 
 ## 2. Golden Fixtures
 
@@ -57,7 +58,24 @@ Use `engine-wasm/host-sample` for manual/automated smoke:
 - API/doc updates if contract changed
 - No panic across wasm boundary
 
-## 5. Cross-Project Alignment
+## 5. Coverage and Safety Gates
+
+1. Rust baseline checks
+- `cargo fmt --check`
+- `cargo clippy --all-targets --all-features -- -D warnings`
+- `cargo test`
+
+2. Coverage checker (optional local + CI-ready)
+- `make coverage-rust` (uses `cargo-llvm-cov`)
+- install once: `cargo install cargo-llvm-cov`
+- default local thresholds: lines `90`, functions `85`
+
+3. Optional pre-push coverage hook
+- enable: `WAP_ENABLE_RUST_COVERAGE_HOOKS=1`
+- line threshold override: `WAP_RUST_COVERAGE_MIN=90`
+- function threshold override: `WAP_RUST_FUNCTION_COVERAGE_MIN=85`
+
+## 6. Cross-Project Alignment
 
 - Keep test IDs and fixture coverage in sync with:
   - `docs/waves/SPEC_TEST_COVERAGE.md`
