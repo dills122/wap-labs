@@ -1,0 +1,25 @@
+<!--
+label: WaveScript Navigation Order
+work-items: W0-04
+spec-items: RQ-WMLS-018
+description: Demonstrates last-call-wins behavior for go/prev ordering inside a single script invocation.
+goal: Confirm ordering rules stay deterministic as compatibility fixtures evolve.
+testing-ac:
+- Press Enter on "go then prev" and confirm activeCardId stays home.
+- Press Down then Enter on "prev then go" and confirm activeCardId becomes next.
+- On next card, press Enter on "Script external go" and confirm externalNavigationIntent is populated.
+-->
+<wml>
+  <card id="home">
+    <p>Navigation ordering matrix.</p>
+    <a href="script:wavescript-fixtures.wmlsc#goThenPrev">go then prev</a>
+    <br/>
+    <a href="script:wavescript-fixtures.wmlsc#prevThenGo">prev then go</a>
+  </card>
+  <card id="next">
+    <p>Reached via prev-then-go ordering.</p>
+    <a href="script:wavescript-fixtures.wmlsc#externalGo">Script external go</a>
+    <br/>
+    <a href="#home">Back home</a>
+  </card>
+</wml>

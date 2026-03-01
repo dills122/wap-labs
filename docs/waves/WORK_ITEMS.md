@@ -22,7 +22,7 @@ This board therefore prioritizes host/browser integration, UX shell behavior, an
 
 ## Architecture standards gate
 
-For WMLScript/runtime tickets, enforce these implementation standards (derived from Chromium/WebKit/WHATWG/Wasm architecture references documented in `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`):
+For WaveScript VM/runtime tickets, enforce these implementation standards (derived from Chromium/WebKit/WHATWG/Wasm architecture references documented in `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`):
 
 1. VM/interpreter semantics must remain in `engine-wasm`.
 2. Host code must only implement side-effect capabilities (dialogs, timer wake/tick, script fetch on miss).
@@ -330,7 +330,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 Reference architecture:
 
-- `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`
+- `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
 
 ### W0-01 WMLScript integration contract and action model
@@ -339,7 +339,7 @@ Reference architecture:
 2. `Depends On`: host-sample integration kickoff
 3. `Files`:
 - `engine-wasm/contracts/wml-engine.ts`
-- `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`
+- `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`
 4. `Build`:
 - Define call-site contract from deck actions/events to script invocation model.
 - Keep VM/interpreter ownership in `engine-wasm` and keep host behavior to side effects only (dialogs/timer wake/fetch-on-miss).
@@ -365,8 +365,8 @@ Reference architecture:
 1. `Status`: `in-progress`
 2. `Depends On`: `W0-01`
 3. `Files`:
-- `engine-wasm/engine/src/wmlscript/decoder.rs`
-- `engine-wasm/engine/src/wmlscript/mod.rs`
+- `engine-wasm/engine/src/wavescript/decoder.rs`
+- `engine-wasm/engine/src/wavescript/mod.rs`
 4. `Build`:
 - Introduce deterministic decoder entry point and resource bounds.
 - Provide stable skeleton error taxonomy for empty/oversized-unit failures.
@@ -391,8 +391,8 @@ Reference architecture:
 1. `Status`: `in-progress`
 2. `Depends On`: `W0-02`
 3. `Files`:
-- `engine-wasm/engine/src/wmlscript/vm.rs`
-- `engine-wasm/engine/src/wmlscript/value.rs`
+- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/value.rs`
 4. `Build`:
 - Implement bounded VM loop with traps and execution limits.
 5. `Tests`:
@@ -408,10 +408,10 @@ Reference architecture:
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `W0-03`
 3. `Files`:
-- `engine-wasm/engine/src/wmlscript/stdlib/wmlbrowser.rs`
+- `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
 - `engine-wasm/engine/src/runtime/events.rs`
 4. `Build`:
 - Add `getVar`, `setVar`, `go`, `prev`, and explicit refresh-behavior decision (`refresh` API or equivalent runtime invalidation signal).
@@ -422,16 +422,16 @@ Reference architecture:
 7. `Spec`:
 - `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
 8. `Architecture Compliance`:
-- [ ] `WMLBrowser` state mutation remains in engine runtime state.
-- [ ] Host is not responsible for navigation decision logic.
-- [ ] Deferred navigation/refresh application boundary is explicit and test-covered.
+- [x] `WMLBrowser` state mutation remains in engine runtime state.
+- [x] Host is not responsible for navigation decision logic.
+- [x] Deferred navigation/refresh application boundary is explicit and test-covered.
 
 ### W0-05 Timer/dialog integration baseline
 
 1. `Status`: `todo`
 2. `Depends On`: `W0-04`
 3. `Files`:
-- `engine-wasm/engine/src/wmlscript/stdlib/dialogs.rs`
+- `engine-wasm/engine/src/wavescript/stdlib/dialogs.rs`
 - `engine-wasm/engine/src/runtime/events.rs`
 - `browser/src-tauri/src/*`
 4. `Build`:

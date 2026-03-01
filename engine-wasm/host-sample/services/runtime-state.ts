@@ -6,8 +6,10 @@ export function renderRuntimeState(element: HTMLPreElement, snapshot: EngineSnap
     `focusedLinkIndex: ${snapshot.focusedLinkIndex}`,
     `baseUrl: ${snapshot.baseUrl}`,
     `contentType: ${snapshot.contentType}`,
+    `nextCardVar: ${snapshot.nextCardVar ?? '(none)'}`,
     `externalNavigationIntent: ${snapshot.externalNavigationIntent ?? '(none)'}`,
     `lastScriptExecutionOk: ${snapshot.lastScriptExecutionOk ?? '(none)'}`,
-    `lastScriptExecutionTrap: ${snapshot.lastScriptExecutionTrap ?? '(none)'}`
+    `lastScriptExecutionTrap: ${snapshot.lastScriptExecutionTrap ?? '(none)'}`,
+    `lastScriptRequiresRefresh: ${snapshot.lastScriptRequiresRefresh ?? '(none)'}`
   ].join('\n');
 }

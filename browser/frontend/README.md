@@ -1,6 +1,6 @@
 # Frontend Shell (Placeholder)
 
-Future Tauri webview UI shell for the WaveNav desktop host.
+Future Tauri webview UI shell for the Waves desktop host.
 
 Planned responsibilities:
 

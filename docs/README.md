@@ -10,7 +10,7 @@
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + Python sidecar strategy)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
-- `waves/WMLSCRIPT_VM_ARCHITECTURE.md`: WMLScript VM/runtime design and milestone plan
+- `waves/WAVESCRIPT_VM_ARCHITECTURE.md`: WaveScript VM/runtime design and milestone plan
 - `waves/WMLSCRIPT_SPEC_TRACEABILITY.md`: WMLScript spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`: WML/WBXML runtime-markup requirements and acceptance-criteria traceability matrix
 - `waves/WAE_SPEC_TRACEABILITY.md`: WAE/WAEMT spec-derived requirements and acceptance-criteria traceability matrix

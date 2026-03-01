@@ -1,4 +1,4 @@
-# Waves WMLScript Runtime + VM Architecture
+# Waves WaveScript VM Architecture
 
 Version: v0.1  
 Status: Planning (no implementation started)
@@ -9,7 +9,7 @@ Companion tracking matrix:
 
 ## Scope
 
-This document defines how WMLScript support should be integrated into Waves, aligned with:
+This document defines how WaveScript VM support should be integrated into Waves, aligned with:
 
 - runtime-first architecture
 - Tauri host model
@@ -41,7 +41,7 @@ Secondary implementation reference (tutorial material):
 
 ## Kickoff decisions
 
-- VM + interpreter execution live in `engine-wasm` (not in `browser/`).
+- VM/interpreter execution live in `engine-wasm` (not in `browser/`).
 - Host integrations are limited to side effects: dialogs, timer wake/tick, and optional script fetch for cache misses.
 - First runnable host path is `engine-wasm/host-sample`; Waves browser integration follows later.
 - `WMLBrowser.refresh()` baseline is deferred refresh semantics first; immediate refresh stays feature-gated.
@@ -61,7 +61,7 @@ These references are used as architecture guidance only (not behavior spec autho
 - Execution safety model reference:
   - https://webassembly.org/docs/security/
 
-Derived implementation standards for Waves WMLScript runtime:
+Derived implementation standards for Waves WaveScript VM runtime:
 
 1. Runtime semantics authority stays in engine:
 - Script decode/verify/execute semantics are resolved in `engine-wasm`, not in host UI layers.
@@ -86,7 +86,7 @@ Derived implementation standards for Waves WMLScript runtime:
 
 ### Components
 
-1. WMLScript loader  
+1. WaveScript loader  
 Resolves script URL/function references to loaded bytecode units and function IDs.
 
 2. Bytecode decoder  
@@ -282,10 +282,10 @@ Execution guardrails required from first runnable VM:
 
 ## Repository module targets (planned)
 
-- `engine-wasm/engine/src/wmlscript/decoder.rs`
-- `engine-wasm/engine/src/wmlscript/vm.rs`
-- `engine-wasm/engine/src/wmlscript/value.rs`
-- `engine-wasm/engine/src/wmlscript/stdlib/*`
+- `engine-wasm/engine/src/wavescript/decoder.rs`
+- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/value.rs`
+- `engine-wasm/engine/src/wavescript/stdlib/*`
 - `engine-wasm/engine/src/runtime/events.rs`
 - `engine-wasm/engine/src/runtime/softkeys.rs`
 

@@ -45,5 +45,5 @@ pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![health, fetch_deck])
         .run(tauri::generate_context!())
-        .expect("error while running WaveNav Tauri host");
+        .expect("error while running Waves Tauri host");
 }

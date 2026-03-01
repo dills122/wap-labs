@@ -12,16 +12,23 @@ fi
 echo "pre-push: running repository checks..."
 echo "pre-push: command => pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure"
 
-TMP_LOG="$(mktemp)"
-cleanup() {
-  rm -f "$TMP_LOG"
-}
-trap cleanup EXIT
+LOG_DIR="${TMPDIR:-/tmp}/wap-labs-hooks"
+mkdir -p "$LOG_DIR"
+RUN_TS="$(date +%Y%m%d-%H%M%S)"
+LOG_FILE="$LOG_DIR/pre-push-$RUN_TS.log"
+LAST_LOG_LINK="$LOG_DIR/pre-push-last.log"
 
-if ! pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure 2>&1 | tee "$TMP_LOG"; then
+# Route output to stderr so GUI clients surface hook failures more reliably.
+if ! pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure 2>&1 | tee "$LOG_FILE" >&2; then
+  ln -sfn "$(basename "$LOG_FILE")" "$LAST_LOG_LINK"
   echo
   echo "pre-push: checks failed. Failure summary:"
-  grep -E "^[[:alnum:] _()./-]+\\.\\.\\.+Failed$|^- hook id:" "$TMP_LOG" || true
+  grep -E "^[[:alnum:] _()./-]+\\.\\.\\.+Failed$|^- hook id:" "$LOG_FILE" || true
+  echo
+  echo "pre-push: full output saved to:"
+  echo "  $LOG_FILE"
+  echo "pre-push: latest log symlink:"
+  echo "  $LAST_LOG_LINK"
   echo
   echo "pre-push: rerun full checks:"
   echo "  pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-failure"
@@ -31,4 +38,5 @@ if ! pre-commit run --hook-stage pre-push --all-files --verbose --show-diff-on-f
   exit 1
 fi
 
+ln -sfn "$(basename "$LOG_FILE")" "$LAST_LOG_LINK"
 echo "pre-push: all checks passed."

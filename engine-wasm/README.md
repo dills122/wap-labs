@@ -107,7 +107,13 @@ Supported elements:
 
 Ignored in MVP:
 
-- `<do>`, `<input>`, `<select>`, `<setvar>`, timers, events, WMLScript, images, tables
+- `<input>`, `<select>`, timers, images, tables
+
+Partially supported (phase W0 baseline):
+
+- Script href execution for registered `.wmlsc` units
+- `WMLBrowser` subset: `getVar`, `setVar`, `go`, `prev`
+- Deferred post-invocation navigation application (`go`/`prev`)
 
 ## WASM API
 
@@ -126,6 +132,12 @@ Additional helpers:
 - `contentType()`
 - `externalNavigationIntent()`
 - `clearExternalNavigationIntent()`
+- `getVar(name: string)`
+- `setVar(name: string, value: string)`
+- `invokeScriptRef(src: string)` (runtime invocation + post-invocation effect application)
+- `invokeScriptRefFunction(src: string, functionName: string)`
+- `invokeScriptRefCall(src: string, functionName: string, args: ScriptValueLiteral[])`
+- `executeScriptRef(...)` / `executeScriptRefFunction(...)` / `executeScriptRefCall(...)` (raw execution outcome only)
 
 Type contract:
 

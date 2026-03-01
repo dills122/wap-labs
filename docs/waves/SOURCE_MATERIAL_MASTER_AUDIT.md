@@ -73,7 +73,7 @@ Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
 - WML subset extraction for engine: `docs/wml-engine/source-material-review.md`
 - corpus triage: `docs/wml-engine/source-material-triage.md`
 - WMLScript architecture and traceability:
-  - `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`
+  - `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`
   - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
 - Runtime-markup traceability:
   - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
