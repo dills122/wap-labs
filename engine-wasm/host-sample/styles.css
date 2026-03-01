@@ -271,6 +271,7 @@ button:hover {
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
 .trace-actions button {
@@ -293,6 +294,40 @@ button:hover {
 
 .trace-wrap.is-collapsed #trace-body {
   display: none;
+}
+
+.trace-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.trace-filters label {
+  font-size: 0.78rem;
+}
+
+.trace-presets-label {
+  font-size: 0.78rem;
+}
+
+.trace-filters button {
+  font-size: 0.72rem;
+  padding: 5px 8px;
+}
+
+.trace-filters input[type="text"] {
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.78rem;
+  padding: 6px 8px;
+  min-width: 120px;
+}
+
+.trace-traps-only {
+  min-width: 0;
 }
 
 .engine-trace {

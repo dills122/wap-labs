@@ -34,6 +34,13 @@ async function main() {
   const clearTraceButton = document.querySelector<HTMLButtonElement>('#clear-trace');
   const traceExportFormat = document.querySelector<HTMLSelectElement>('#trace-export-format');
   const exportTraceButton = document.querySelector<HTMLButtonElement>('#export-trace');
+  const tracePresetAll = document.querySelector<HTMLButtonElement>('#trace-preset-all');
+  const tracePresetScripts = document.querySelector<HTMLButtonElement>('#trace-preset-scripts');
+  const tracePresetNavigation = document.querySelector<HTMLButtonElement>('#trace-preset-navigation');
+  const tracePresetTraps = document.querySelector<HTMLButtonElement>('#trace-preset-traps');
+  const traceFilterKind = document.querySelector<HTMLInputElement>('#trace-filter-kind');
+  const traceFilterCard = document.querySelector<HTMLInputElement>('#trace-filter-card');
+  const traceFilterTraps = document.querySelector<HTMLInputElement>('#trace-filter-traps');
   const engineTrace = document.querySelector<HTMLPreElement>('#engine-trace');
   const status = document.querySelector<HTMLParagraphElement>('#status');
   const runtimeState = document.querySelector<HTMLPreElement>('#runtime-state');
@@ -69,6 +76,13 @@ async function main() {
     !clearTraceButton ||
     !traceExportFormat ||
     !exportTraceButton ||
+    !tracePresetAll ||
+    !tracePresetScripts ||
+    !tracePresetNavigation ||
+    !tracePresetTraps ||
+    !traceFilterKind ||
+    !traceFilterCard ||
+    !traceFilterTraps ||
     !engineTrace ||
     !status ||
     !runtimeState ||
@@ -136,6 +150,13 @@ async function main() {
     clearButton: clearTraceButton,
     exportButton: exportTraceButton,
     exportFormat: traceExportFormat,
+    presetAllButton: tracePresetAll,
+    presetScriptsButton: tracePresetScripts,
+    presetNavigationButton: tracePresetNavigation,
+    presetTrapsButton: tracePresetTraps,
+    kindFilter: traceFilterKind,
+    cardFilter: traceFilterCard,
+    trapsOnlyFilter: traceFilterTraps,
     getEntries: () => host.traceEntries(),
     onCleared: () => {
       host.clearTraceEntries();
@@ -150,6 +171,10 @@ async function main() {
       }
       status.textContent = `Exported ${count} engine trace entr${count === 1 ? 'y' : 'ies'} as ${format}.`;
       appendEvent(`TRACE_EXPORTED (${format})`);
+    },
+    onPresetApplied: (preset) => {
+      status.textContent = `Applied trace preset: ${preset}`;
+      appendEvent(`TRACE_PRESET (${preset})`);
     }
   });
 
