@@ -8,6 +8,7 @@ ENABLE_NODE_CHECKS ?= 0
 	fmt lint test test-fast ci-local \
 	lint-rust lint-node lint-python \
 	test-rust test-node test-python \
+	check-transport-contract \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
 	install-marketing-site dev-marketing-site build-marketing-site \
@@ -85,6 +86,9 @@ lint-node:
 	fi
 	@echo "skip: electron-app lint (no package/scripts configured yet)"
 	@echo "skip: wml-server lint (no lint script configured yet)"
+
+check-transport-contract:
+	@pnpm run check:transport-contract
 
 test-node:
 	@if [ "$(ENABLE_NODE_CHECKS)" != "1" ]; then \

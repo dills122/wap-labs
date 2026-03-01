@@ -261,15 +261,19 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### T0-01 OpenAPI and browser transport contract parity
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B0-02`, `S0-05`
 3. `Files`:
 - `transport-python/api/openapi.yaml`
 - `browser/contracts/transport.ts`
+- `browser/contracts/transport.openapi.generated.d.ts`
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+- `package.json`
+- `.github/workflows/ci.yml`
+- `Makefile`
 4. `Build`:
-- Align request/response/error code enums and optional fields across OpenAPI and browser TS contract.
-- Close known enum gap for `TRANSPORT_UNAVAILABLE` parity.
+- Generate browser transport types from OpenAPI and derive browser contract types from generated schema.
+- Enforce generated-file drift checks in CI and local quality commands.
 5. `Tests`:
 - Add schema/contract parity validation step in CI or script.
 6. `Accept`:

@@ -12,6 +12,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 - `engine-wasm/contracts/wml-engine.ts`
 - `transport-python/api/openapi.yaml`
 - `browser/contracts/transport.ts`
+- `browser/contracts/transport.openapi.generated.d.ts` (generated from OpenAPI)
 
 ## Engine contract mapping (`engine-wasm/contracts/wml-engine.ts`)
 
@@ -60,8 +61,13 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `HostSessionState` runtime fields | `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `HostSessionState.externalNavigationIntent` | `RQ-WAE-010`, `RQ-RMK-003` |
 
+Generation rule:
+
+- Source of truth is `transport-python/api/openapi.yaml`.
+- Generate with `pnpm run generate:transport-contract`.
+- CI drift check: `pnpm run check:transport-contract`.
+
 ## Known gaps to schedule
 
-1. Ensure `TRANSPORT_UNAVAILABLE` appears in `transport-python/api/openapi.yaml` `ErrorInfo.code` enum for parity with `browser/contracts/transport.ts`.
-2. Add explicit contract field for engine/runtime error taxonomy once finalized (planned quality ticket).
-3. Define WMLScript fetch/bytecode unit contract extension before WMLScript runtime execution work starts.
+1. Add explicit contract field for engine/runtime error taxonomy once finalized (planned quality ticket).
+2. Define WMLScript fetch/bytecode unit contract extension before WMLScript runtime execution work starts.

@@ -37,7 +37,23 @@ make hooks-install
 Hook behavior:
 
 - `pre-commit` hook auto-runs `cargo fmt` for staged Rust files in `engine-wasm/engine` and `browser/src-tauri`, then re-stages changes.
-- `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo clippy -D warnings`, `cargo test` where configured, and configured non-mutating checks).
+- `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo clippy -D warnings`, `cargo test` where configured, transport contract generation drift check, and configured non-mutating checks).
+
+Transport contract workflow:
+
+- Source of truth: `transport-python/api/openapi.yaml`
+- Generated browser types: `browser/contracts/transport.openapi.generated.d.ts`
+- Regenerate manually:
+
+```bash
+pnpm run generate:transport-contract
+```
+
+- Check for drift (also run in pre-push + CI):
+
+```bash
+pnpm run check:transport-contract
+```
 
 ## Coding standards
 

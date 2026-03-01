@@ -53,7 +53,7 @@ This keeps the renderer runtime independent of transport/WBXML details.
 
 ## Current checklist (planning)
 
-- [ ] OpenAPI parity with `browser/contracts/transport.ts`
+- [x] OpenAPI-generated browser contract guardrail added (`pnpm run check:transport-contract`, CI + Makefile)
 - [ ] Deterministic normalization to engine deck input payload
 - [ ] Error taxonomy alignment for timeout/retry/protocol/decode conditions
 - [ ] Integration tests for WML and WBXML decode paths

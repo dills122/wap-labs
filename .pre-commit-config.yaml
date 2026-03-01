@@ -55,6 +55,17 @@ repos:
 
       # Node host sample only has build/dev scripts today; lint/test are not configured yet.
       # This gives a minimal sanity check without forcing broader JS tooling across the repo.
+      - id: transport-contract-check
+        name: transport contract generated check
+        language: system
+        pass_filenames: false
+        files: ^(transport-python/api/openapi\.yaml|browser/contracts/transport\.ts|browser/contracts/transport\.openapi\.generated\.d\.ts|package\.json|pnpm-lock\.yaml)$
+        stages: [pre-push]
+        entry: >-
+          bash -lc 'if ! command -v pnpm >/dev/null 2>&1; then
+          echo "skip: pnpm not found (transport contract check)"; exit 0; fi;
+          pnpm run check:transport-contract'
+
       - id: host-sample-build
         name: WaveNav host-sample build sanity
         language: system

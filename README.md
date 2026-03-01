@@ -76,6 +76,7 @@ Repo quality checks and hooks:
 ```bash
 make ci-local
 make hooks-install
+pnpm run check:transport-contract
 ENABLE_NODE_CHECKS=1 make ci-local
 ```
 
