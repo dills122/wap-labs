@@ -12,9 +12,10 @@ Use these as the current source of truth:
 4. `ticket-plan.md`
 5. `test-strategy.md`
 6. `work-items.md`
-7. `../waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
-8. `../waves/CONTRACT_REQUIREMENTS_MAPPING.md`
-9. `../waves/SPEC_TEST_COVERAGE.md`
+7. `wavescript-security.md`
+8. `../waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+9. `../waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+10. `../waves/SPEC_TEST_COVERAGE.md`
 
 Non-authoritative historical docs are retained only for context:
 
@@ -30,8 +31,9 @@ Non-authoritative historical docs are retained only for context:
 5. `ticket-plan.md` (step-by-step spec-referenced backlog)
 6. `work-items.md` (execution-ready tickets for current build cycle)
 7. `test-strategy.md` (how to verify behavior)
-8. `source-material-triage.md` (full-corpus triage context)
-9. `implementation-tickets.md` (older backlog draft; superseded by `ticket-plan.md`)
+8. `wavescript-security.md` (sandbox and safety controls)
+9. `source-material-triage.md` (full-corpus triage context)
+10. `implementation-tickets.md` (older backlog draft; superseded by `ticket-plan.md`)
 
 ## Scope Philosophy
 

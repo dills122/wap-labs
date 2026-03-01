@@ -43,6 +43,7 @@ Authoritative implementation set:
 - `wml-engine/ticket-plan.md`: active phased implementation backlog
 - `wml-engine/work-items.md`: PR-sized execution board for current implementation cycle
 - `wml-engine/test-strategy.md`: fixture and verification strategy
+- `wml-engine/wavescript-security.md`: WaveScript VM sandbox and security guardrails
 
 Supporting context docs:
 

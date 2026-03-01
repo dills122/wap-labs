@@ -3,9 +3,12 @@ SHELL := /bin/bash
 COMPOSE := docker compose
 PROJECT_DIR := $(CURDIR)
 ENABLE_NODE_CHECKS ?= 0
+RUST_COVERAGE_MIN ?= 90
+RUST_FUNCTION_COVERAGE_MIN ?= 85
 
 .PHONY: up down restart logs ps status smoke smoke-up clean \
 	fmt lint test test-fast ci-local \
+	coverage-rust \
 	lint-rust lint-node lint-python \
 	test-rust test-node test-python \
 	check-transport-contract \
@@ -73,6 +76,21 @@ test-rust:
 		cd engine-wasm/engine && cargo test; \
 	else \
 		echo "skip: cargo not found (engine-wasm tests)"; \
+	fi
+
+coverage-rust:
+	@if command -v cargo >/dev/null 2>&1; then \
+		if (cd engine-wasm/engine && cargo llvm-cov --version >/dev/null 2>&1); then \
+			echo "==> cargo llvm-cov --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN)"; \
+			cd engine-wasm/engine && cargo llvm-cov --all-features --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN); \
+		else \
+			echo "skip: cargo-llvm-cov is not installed"; \
+			echo "install with: cargo install cargo-llvm-cov"; \
+			exit 1; \
+		fi; \
+	else \
+		echo "skip: cargo not found (engine-wasm coverage)"; \
+		exit 1; \
 	fi
 
 lint-node:
