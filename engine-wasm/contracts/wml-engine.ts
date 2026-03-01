@@ -39,8 +39,8 @@ export interface ScriptExecutionOutcome {
   ok: boolean;
   result: ScriptValueLiteral;
   trap?: string;
-  navigationIntent?: ScriptNavigationIntent;
-  requiresRefresh?: boolean;
+  navigationIntent: ScriptNavigationIntent;
+  requiresRefresh: boolean;
 }
 
 export interface EngineTraceEntry {
@@ -102,6 +102,13 @@ export interface WmlEngineWasm {
   clearScriptUnits(): void;
   registerScriptEntryPoint(src: string, functionName: string, entryPc: number): void;
   clearScriptEntryPoints(): void;
+  invokeScriptRef(src: string): ScriptInvocationOutcome;
+  invokeScriptRefFunction(src: string, functionName: string): ScriptInvocationOutcome;
+  invokeScriptRefCall(
+    src: string,
+    functionName: string,
+    args: ScriptValueLiteral[]
+  ): ScriptInvocationOutcome;
   executeScriptRef(src: string): ScriptExecutionOutcome;
   executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
   executeScriptRefCall(
@@ -111,6 +118,7 @@ export interface WmlEngineWasm {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
+  lastScriptRequiresRefresh(): boolean | undefined;
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
 }

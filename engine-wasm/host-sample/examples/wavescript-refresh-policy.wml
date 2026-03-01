@@ -1,0 +1,17 @@
+<!--
+label: WaveScript Refresh Policy
+work-items: W0-04
+spec-items: RQ-WMLS-017, RQ-WMLS-021
+description: Verifies setVar-driven refresh signaling without navigation side effects.
+goal: Confirm requiresRefresh policy is surfaced while active card remains stable.
+testing-ac:
+- On home card, press Enter on "Script setVar only".
+- Confirm activeCardId remains home and focusedLinkIndex remains stable.
+- Confirm runtime-state nextCardVar becomes updated and lastScriptRequiresRefresh becomes true.
+-->
+<wml>
+  <card id="home">
+    <p>Refresh policy demo (no navigation).</p>
+    <a href="script:wavescript-fixtures.wmlsc#refreshOnly">Script setVar only</a>
+  </card>
+</wml>

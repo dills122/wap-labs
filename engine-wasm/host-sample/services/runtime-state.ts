@@ -9,6 +9,7 @@ export function renderRuntimeState(element: HTMLPreElement, snapshot: EngineSnap
     `nextCardVar: ${snapshot.nextCardVar ?? '(none)'}`,
     `externalNavigationIntent: ${snapshot.externalNavigationIntent ?? '(none)'}`,
     `lastScriptExecutionOk: ${snapshot.lastScriptExecutionOk ?? '(none)'}`,
-    `lastScriptExecutionTrap: ${snapshot.lastScriptExecutionTrap ?? '(none)'}`
+    `lastScriptExecutionTrap: ${snapshot.lastScriptExecutionTrap ?? '(none)'}`,
+    `lastScriptRequiresRefresh: ${snapshot.lastScriptRequiresRefresh ?? '(none)'}`
   ].join('\n');
 }

@@ -408,7 +408,7 @@ Reference architecture:
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-03`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
@@ -422,9 +422,9 @@ Reference architecture:
 7. `Spec`:
 - `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
 8. `Architecture Compliance`:
-- [ ] `WMLBrowser` state mutation remains in engine runtime state.
-- [ ] Host is not responsible for navigation decision logic.
-- [ ] Deferred navigation/refresh application boundary is explicit and test-covered.
+- [x] `WMLBrowser` state mutation remains in engine runtime state.
+- [x] Host is not responsible for navigation decision logic.
+- [x] Deferred navigation/refresh application boundary is explicit and test-covered.
 
 ### W0-05 Timer/dialog integration baseline
 

@@ -216,11 +216,7 @@ impl WmlEngine {
     pub fn execute_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
         let outcome = self.execute_script_ref_internal(&src, "main");
         self.last_script_outcome = Some(outcome.clone());
-        if outcome.ok {
-            self.apply_pending_script_effects().map_err(as_js_err)?;
-        } else {
-            self.pending_script_effects = ScriptRuntimeEffects::default();
-        }
+        self.pending_script_effects = ScriptRuntimeEffects::default();
         to_js_value(&outcome)
     }
 
@@ -232,11 +228,7 @@ impl WmlEngine {
     ) -> Result<JsValue, JsValue> {
         let outcome = self.execute_script_ref_internal(&src, &function_name);
         self.last_script_outcome = Some(outcome.clone());
-        if outcome.ok {
-            self.apply_pending_script_effects().map_err(as_js_err)?;
-        } else {
-            self.pending_script_effects = ScriptRuntimeEffects::default();
-        }
+        self.pending_script_effects = ScriptRuntimeEffects::default();
         to_js_value(&outcome)
     }
 
@@ -252,11 +244,43 @@ impl WmlEngine {
         let vm_args = convert_script_call_args(&call_args);
         let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
         self.last_script_outcome = Some(outcome.clone());
-        if outcome.ok {
-            self.apply_pending_script_effects().map_err(as_js_err)?;
-        } else {
-            self.pending_script_effects = ScriptRuntimeEffects::default();
-        }
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = invokeScriptRef)]
+    pub fn invoke_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
+        let outcome = self
+            .invoke_script_ref_internal(&src, "main", &[])
+            .map_err(as_js_err)?;
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = invokeScriptRefFunction)]
+    pub fn invoke_script_ref_function(
+        &mut self,
+        src: String,
+        function_name: String,
+    ) -> Result<JsValue, JsValue> {
+        let outcome = self
+            .invoke_script_ref_internal(&src, &function_name, &[])
+            .map_err(as_js_err)?;
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = invokeScriptRefCall)]
+    pub fn invoke_script_ref_call(
+        &mut self,
+        src: String,
+        function_name: String,
+        args: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        let call_args: Vec<ScriptCallArgLiteral> = serde_wasm_bindgen::from_value(args)
+            .map_err(|err| JsValue::from_str(&err.to_string()))?;
+        let vm_args = convert_script_call_args(&call_args);
+        let outcome = self
+            .invoke_script_ref_internal(&src, &function_name, &vm_args)
+            .map_err(as_js_err)?;
         to_js_value(&outcome)
     }
 
@@ -270,6 +294,13 @@ impl WmlEngine {
     #[wasm_bindgen(js_name = lastScriptExecutionOk)]
     pub fn last_script_execution_ok(&self) -> Option<bool> {
         self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
+    }
+
+    #[wasm_bindgen(js_name = lastScriptRequiresRefresh)]
+    pub fn last_script_requires_refresh(&self) -> Option<bool> {
+        self.last_script_outcome
+            .as_ref()
+            .map(|outcome| outcome.requires_refresh)
     }
 
     #[wasm_bindgen(js_name = traceEntries)]
@@ -365,6 +396,26 @@ impl WmlEngine {
         }
     }
 
+    fn invoke_script_ref_internal(
+        &mut self,
+        src: &str,
+        function_name: &str,
+        args: &[ScriptValue],
+    ) -> Result<ScriptInvocationOutcome, String> {
+        let outcome = self.execute_script_ref_call_internal(src, function_name, args);
+        self.last_script_outcome = Some(outcome.clone());
+
+        if !outcome.ok {
+            self.pending_script_effects = ScriptRuntimeEffects::default();
+            return Err(outcome
+                .trap
+                .unwrap_or_else(|| "script invocation failed".to_string()));
+        }
+
+        self.apply_pending_script_effects()?;
+        Ok(ScriptInvocationOutcome::from_execution(&outcome))
+    }
+
     fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
         self.push_trace("KEY", format!("key={key}"));
         let (layout, accept_action_href) = {
@@ -445,14 +496,12 @@ impl WmlEngine {
                 "ACTION_SCRIPT",
                 format!("{}#{}", script_ref.src, function_name),
             );
-            let outcome = self.execute_script_ref_internal(script_ref.src, function_name);
-            self.last_script_outcome = Some(outcome.clone());
-            if let Some(message) = outcome.trap {
-                self.pending_script_effects = ScriptRuntimeEffects::default();
+            if let Err(message) =
+                self.invoke_script_ref_internal(script_ref.src, function_name, &[])
+            {
                 self.push_trace("SCRIPT_TRAP", message.clone());
                 return Err(message);
             }
-            self.apply_pending_script_effects()?;
             self.push_trace("SCRIPT_OK", String::new());
             return Ok(());
         }
@@ -670,12 +719,21 @@ fn script_value_to_literal(value: ScriptValue) -> ScriptValueLiteral {
 }
 
 #[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 struct ScriptExecutionOutcome {
     ok: bool,
     result: ScriptValueLiteral,
     trap: Option<String>,
     navigation_intent: ScriptNavigationIntentLiteral,
     requires_refresh: bool,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct ScriptInvocationOutcome {
+    navigation_intent: ScriptNavigationIntentLiteral,
+    requires_refresh: bool,
+    result: ScriptValueLiteral,
 }
 
 #[derive(Clone, Serialize)]
@@ -712,6 +770,16 @@ impl ScriptExecutionOutcome {
             trap: Some(message),
             navigation_intent: ScriptNavigationIntentLiteral::None,
             requires_refresh: false,
+        }
+    }
+}
+
+impl ScriptInvocationOutcome {
+    fn from_execution(outcome: &ScriptExecutionOutcome) -> Self {
+        Self {
+            navigation_intent: outcome.navigation_intent.clone(),
+            requires_refresh: outcome.requires_refresh,
+            result: outcome.result.clone(),
         }
     }
 }
@@ -1355,6 +1423,76 @@ mod tests {
             outcome.navigation_intent,
             ScriptNavigationIntentLiteral::None
         );
+    }
+
+    #[test]
+    fn execute_script_ref_is_raw_and_does_not_apply_navigation_effects() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01);
+        unit.push(0x00);
+        engine.register_script_unit("raw-nav.wmlsc".to_string(), unit);
+
+        let outcome = engine.execute_script_ref_internal("raw-nav.wmlsc", "main");
+        assert!(outcome.ok);
+        assert_eq!(
+            outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::Go {
+                href: "#next".to_string()
+            }
+        );
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+    }
+
+    #[test]
+    fn invoke_script_ref_applies_effects_and_returns_invocation_outcome() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        let mut unit = Vec::new();
+        push_string(&mut unit, "nextCard");
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x02);
+        unit.push(0x02); // setVar
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go
+        unit.push(0x00);
+        engine.register_script_unit("invoke-nav.wmlsc".to_string(), unit);
+
+        let outcome = engine
+            .invoke_script_ref_internal("invoke-nav.wmlsc", "main", &[])
+            .expect("invoke should succeed");
+        assert_eq!(
+            outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::Go {
+                href: "#next".to_string()
+            }
+        );
+        assert!(outcome.requires_refresh);
+        assert_eq!(
+            engine.get_var("nextCard".to_string()).as_deref(),
+            Some("#next")
+        );
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_eq!(engine.last_script_requires_refresh(), Some(true));
     }
 
     #[test]

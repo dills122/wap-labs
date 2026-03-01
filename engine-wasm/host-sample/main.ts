@@ -26,6 +26,8 @@ async function main() {
   const pressEnterButton = document.querySelector<HTMLButtonElement>('#press-enter');
   const clearIntentButton = document.querySelector<HTMLButtonElement>('#clear-intent');
   const copyIntentButton = document.querySelector<HTMLButtonElement>('#copy-intent');
+  const probeExecuteScriptButton = document.querySelector<HTMLButtonElement>('#probe-execute-script');
+  const probeInvokeScriptButton = document.querySelector<HTMLButtonElement>('#probe-invoke-script');
   const eventLogWrap = document.querySelector<HTMLElement>('.event-log-wrap');
   const toggleEventLog = document.querySelector<HTMLButtonElement>('#toggle-event-log');
   const clearEventLogButton = document.querySelector<HTMLButtonElement>('#clear-event-log');
@@ -59,6 +61,8 @@ async function main() {
     !pressEnterButton ||
     !clearIntentButton ||
     !copyIntentButton ||
+    !probeExecuteScriptButton ||
+    !probeInvokeScriptButton ||
     !eventLogWrap ||
     !toggleEventLog ||
     !clearEventLogButton ||
@@ -257,6 +261,30 @@ async function main() {
     } catch (error) {
       status.textContent = `Copy intent failed: ${String(error)}`;
       appendEvent(`INTENT_COPY_ERROR ${String(error)}`, snapshot);
+    }
+  });
+  probeExecuteScriptButton.addEventListener('click', () => {
+    try {
+      const outcome = host.executeScriptRefFunction('wavescript-fixtures.wmlsc', 'externalGo');
+      const snapshot = updateRuntimeState();
+      status.textContent = `executeScriptRefFunction externalGo => ok=${outcome.ok}; intent=${snapshot.externalNavigationIntent ?? '(none)'}`;
+      appendEvent('SCRIPT_PROBE_EXECUTE externalGo', snapshot);
+    } catch (error) {
+      const snapshot = updateRuntimeState();
+      status.textContent = `executeScriptRefFunction error: ${String(error)}`;
+      appendEvent(`SCRIPT_PROBE_EXECUTE_ERROR ${String(error)}`, snapshot);
+    }
+  });
+  probeInvokeScriptButton.addEventListener('click', () => {
+    try {
+      const outcome = host.invokeScriptRefFunction('wavescript-fixtures.wmlsc', 'externalGo');
+      const snapshot = updateRuntimeState();
+      status.textContent = `invokeScriptRefFunction externalGo => nav=${outcome.navigationIntent.type}; intent=${snapshot.externalNavigationIntent ?? '(none)'}`;
+      appendEvent('SCRIPT_PROBE_INVOKE externalGo', snapshot);
+    } catch (error) {
+      const snapshot = updateRuntimeState();
+      status.textContent = `invokeScriptRefFunction error: ${String(error)}`;
+      appendEvent(`SCRIPT_PROBE_INVOKE_ERROR ${String(error)}`, snapshot);
     }
   });
   clearEventLogButton.addEventListener('click', () => {

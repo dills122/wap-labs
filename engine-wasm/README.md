@@ -134,6 +134,10 @@ Additional helpers:
 - `clearExternalNavigationIntent()`
 - `getVar(name: string)`
 - `setVar(name: string, value: string)`
+- `invokeScriptRef(src: string)` (runtime invocation + post-invocation effect application)
+- `invokeScriptRefFunction(src: string, functionName: string)`
+- `invokeScriptRefCall(src: string, functionName: string, args: ScriptValueLiteral[])`
+- `executeScriptRef(...)` / `executeScriptRefFunction(...)` / `executeScriptRefCall(...)` (raw execution outcome only)
 
 Type contract:
 

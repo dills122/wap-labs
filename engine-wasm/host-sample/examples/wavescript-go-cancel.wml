@@ -1,0 +1,21 @@
+<!--
+label: WaveScript Go Cancel
+work-items: W0-04
+spec-items: RQ-WMLS-018
+description: Exercises go-cancel behavior where go("") clears pending navigation intent in the same invocation.
+goal: Verify deferred navigation cancellation semantics are deterministic.
+testing-ac:
+- On home card, press Enter on "Script go then cancel".
+- Confirm activeCardId remains home after invocation.
+- Confirm runtime-state externalNavigationIntent remains (none).
+-->
+<wml>
+  <card id="home">
+    <p>go("#next") then go("") in one script invocation.</p>
+    <a href="script:wavescript-fixtures.wmlsc#goCancel">Script go then cancel</a>
+  </card>
+  <card id="next">
+    <p>If you can read this from the script link, cancellation regressed.</p>
+    <a href="#home">Back</a>
+  </card>
+</wml>
