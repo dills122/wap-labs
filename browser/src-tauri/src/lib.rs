@@ -1,12 +1,10 @@
-mod transport;
-
+use lowband_transport_rust::{fetch_deck_in_process, FetchDeckRequest, FetchDeckResponse};
 use serde::{Deserialize, Serialize};
 use std::process::Command;
 use std::sync::Mutex;
 use tauri::path::BaseDirectory;
 use tauri::Manager;
 use tauri::State;
-use transport::{fetch_deck_in_process, FetchDeckRequest, FetchDeckResponse};
 use wavenav_engine::{RenderList, WmlEngine};
 
 struct AppState {

@@ -1,10 +1,8 @@
-# browser (Waves Tauri Host Skeleton)
+# browser (Waves Tauri Host)
 
 This directory is the desktop host app for Waves, implemented as a Tauri (Rust) app.
 
 ## Current status
-
-This is an architecture + skeleton scaffold only.
 
 Implemented now:
 
@@ -22,16 +20,17 @@ Implemented now:
   - `engine_set_viewport_cols`
   - `engine_snapshot`
   - `engine_clear_external_navigation_intent`
-- Transport sidecar boot management in `src-tauri/src/lib.rs`:
-  - auto-starts `transport-python/service.py` on app setup
-  - waits for `/health` before app run proceeds
-  - shuts down child process on app exit
+- In-process Rust transport library under `../transport-rust/`:
+  - `http://`/`https://` fetch
+  - `wap://`/`waps://` gateway bridge mapping
+  - retry/timeout and error taxonomy mapping
+  - WBXML decode using `wbxml2xml` utility
+  - startup preflight for decoder availability
 
 Not implemented yet:
 
 - Full browser chrome (address bar/history panes/history/devtools)
 - End-to-end UI fetch -> transport fetch -> engine load flow
-- Python transport service lifecycle management
 - Production packaging/signing
 
 ## Direction
@@ -39,28 +38,29 @@ Not implemented yet:
 The desktop host will be a WAP-only browser shell:
 
 1. UI triggers fetch/navigation intents.
-2. Tauri command layer calls `transport-python` HTTP API.
+2. Tauri command layer calls in-process Rust transport functions.
 3. Returned WML + metadata are passed to `engine-wasm` runtime.
 4. Runtime render output is drawn in host viewport.
-
-The Python transport layer remains mandatory for now (no WSP/WBXML rewrite in Rust at this stage).
 
 ## Contracts
 
 - Desktop/transport contract: `browser/contracts/transport.ts`
 - Engine contract: `engine-wasm/contracts/wml-engine.ts`
 
-## Transport sidecar runtime knobs
+## Transport runtime knobs
 
-- `TRANSPORT_API_BASE` (default `http://127.0.0.1:8765`)
-- `TRANSPORT_SIDECAR_AUTOSTART` (default `1`; set `0` to disable auto-start)
-- `TRANSPORT_SIDECAR_AUTO_PROVISION` (default `1`; set `0` to disable venv/pip bootstrap)
-- `TRANSPORT_SERVICE_PATH` (optional absolute path to `service.py`)
-- `PYTHON_BIN` (optional explicit runtime python; when unset Waves prefers `transport-python/.venv/bin/python`)
-- `PYTHON_BOOTSTRAP_BIN` (default `python3`; used to create `.venv` when missing)
+- `GATEWAY_HTTP_BASE` (default `http://127.0.0.1:13002`)
+- `WBXML2XML_BIN` (optional explicit path to `wbxml2xml`; startup preflight checks availability)
 
-On first boot, Waves will provision `transport-python/.venv` and install `requirements.txt`
-automatically if transport dependencies are not yet present.
+## Bundled WBXML decoder
+
+You can bundle `wbxml2xml` as a Tauri resource:
+
+- `src-tauri/resources/wbxml/macos/wbxml2xml`
+- `src-tauri/resources/wbxml/linux/wbxml2xml`
+- `src-tauri/resources/wbxml/windows/wbxml2xml.exe`
+
+When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 

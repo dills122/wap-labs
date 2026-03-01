@@ -6,7 +6,7 @@ use std::env;
 use std::fs;
 use std::process::Command;
 use std::time::{Duration, Instant};
-use tempfile::NamedTempFile;
+use tempfile::tempdir;
 use url::Url;
 
 #[derive(Debug, Deserialize)]
@@ -106,17 +106,16 @@ fn decode_wmlc_with_tool(payload: &[u8], tool: &str) -> Result<String, String> {
         return Err("WBXML decode failed: empty payload".to_string());
     }
 
-    let input =
-        NamedTempFile::new().map_err(|err| format!("WBXML decode failed: temp input: {err}"))?;
-    fs::write(input.path(), payload)
+    let tmp_dir = tempdir().map_err(|err| format!("WBXML decode failed: temp dir: {err}"))?;
+    let input_path = tmp_dir.path().join("input.wmlc");
+    let output_path = tmp_dir.path().join("output.xml");
+    fs::write(&input_path, payload)
         .map_err(|err| format!("WBXML decode failed: write input: {err}"))?;
-    let output =
-        NamedTempFile::new().map_err(|err| format!("WBXML decode failed: temp output: {err}"))?;
 
     let proc = Command::new(tool)
         .arg("-o")
-        .arg(output.path())
-        .arg(input.path())
+        .arg(&output_path)
+        .arg(&input_path)
         .output()
         .map_err(|_| {
             format!("WBXML decoder tool not available: {tool}. Install libwbxml/wbxml2xml.")
@@ -130,7 +129,7 @@ fn decode_wmlc_with_tool(payload: &[u8], tool: &str) -> Result<String, String> {
         return Err(format!("WBXML decode failed: {first}"));
     }
 
-    let xml = fs::read_to_string(output.path())
+    let xml = fs::read_to_string(&output_path)
         .map_err(|err| format!("WBXML decode failed: read output: {err}"))?;
     let trimmed = xml.trim().to_string();
     if trimmed.is_empty() {
@@ -500,6 +499,14 @@ mod tests {
             mapped_headers.get("X-Wap-Target-Url"),
             Some(&"wap://example.test/home.wml?x=1".to_string())
         );
+    }
+
+    #[test]
+    fn transport_build_gateway_request_handles_root_path() {
+        let headers = HashMap::new();
+        let (gateway_url, _) = build_gateway_request("wap://example.test", "GET", &headers)
+            .expect("gateway root mapping should succeed");
+        assert_eq!(gateway_url, "http://127.0.0.1:13002/");
     }
 
     #[test]

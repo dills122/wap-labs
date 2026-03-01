@@ -8,9 +8,9 @@ RUST_FUNCTION_COVERAGE_MIN ?= 85
 
 .PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport init-refresh \
 	fmt lint test test-fast ci-local \
-	coverage-rust \
-	lint-rust lint-node lint-python \
-	test-rust test-node test-python \
+	coverage-rust coverage-rust-engine coverage-rust-transport \
+	lint-rust lint-rust-engine lint-rust-transport lint-node lint-python \
+	test-rust test-rust-engine test-rust-transport test-node test-python \
 	check-transport-contract \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
@@ -69,25 +69,37 @@ test-fast: test-rust
 ci-local: lint test
 
 lint-rust:
+	@$(MAKE) lint-rust-engine
+	@$(MAKE) lint-rust-transport
+
+lint-rust-engine:
 	@if command -v cargo >/dev/null 2>&1; then \
-		echo "==> cargo fmt --check"; \
+		echo "==> cargo fmt --check (engine-wasm/engine)"; \
 		cd engine-wasm/engine && cargo fmt --check; \
 	else \
 		echo "skip: cargo not found (engine-wasm lint)"; \
 	fi
 
 test-rust:
+	@$(MAKE) test-rust-engine
+	@$(MAKE) test-rust-transport
+
+test-rust-engine:
 	@if command -v cargo >/dev/null 2>&1; then \
-		echo "==> cargo test"; \
+		echo "==> cargo test (engine-wasm/engine)"; \
 		cd engine-wasm/engine && cargo test; \
 	else \
 		echo "skip: cargo not found (engine-wasm tests)"; \
 	fi
 
 coverage-rust:
+	@$(MAKE) coverage-rust-engine
+	@$(MAKE) coverage-rust-transport
+
+coverage-rust-engine:
 	@if command -v cargo >/dev/null 2>&1; then \
 		if (cd engine-wasm/engine && cargo llvm-cov --version >/dev/null 2>&1); then \
-			echo "==> cargo llvm-cov --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN)"; \
+			echo "==> cargo llvm-cov --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN) (engine-wasm/engine)"; \
 			cd engine-wasm/engine && cargo llvm-cov --all-features --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN); \
 		else \
 			echo "skip: cargo-llvm-cov is not installed"; \
@@ -96,6 +108,37 @@ coverage-rust:
 		fi; \
 	else \
 		echo "skip: cargo not found (engine-wasm coverage)"; \
+		exit 1; \
+	fi
+
+lint-rust-transport:
+	@if command -v cargo >/dev/null 2>&1; then \
+		echo "==> cargo fmt --check (transport-rust)"; \
+		cd transport-rust && cargo fmt --check; \
+	else \
+		echo "skip: cargo not found (transport-rust lint)"; \
+	fi
+
+test-rust-transport:
+	@if command -v cargo >/dev/null 2>&1; then \
+		echo "==> cargo test (transport-rust)"; \
+		cd transport-rust && cargo test; \
+	else \
+		echo "skip: cargo not found (transport-rust tests)"; \
+	fi
+
+coverage-rust-transport:
+	@if command -v cargo >/dev/null 2>&1; then \
+		if (cd transport-rust && cargo llvm-cov --version >/dev/null 2>&1); then \
+			echo "==> cargo llvm-cov --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN) (transport-rust)"; \
+			cd transport-rust && cargo llvm-cov --all-features --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN); \
+		else \
+			echo "skip: cargo-llvm-cov is not installed"; \
+			echo "install with: cargo install cargo-llvm-cov"; \
+			exit 1; \
+		fi; \
+	else \
+		echo "skip: cargo not found (transport-rust coverage)"; \
 		exit 1; \
 	fi
 

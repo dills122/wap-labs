@@ -102,6 +102,59 @@ jobs:
         working-directory: engine-wasm/engine
         run: cargo llvm-cov --all-features --summary-only --fail-under-lines 90 --fail-under-functions 85
 
+  rust-transport:
+    name: Rust Transport
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            transport-rust -> target
+
+      - name: Rust fmt check
+        working-directory: transport-rust
+        run: cargo fmt --check
+
+      - name: Rust tests
+        working-directory: transport-rust
+        run: cargo test
+
+  rust-transport-coverage:
+    name: Rust Transport Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            transport-rust -> target
+
+      - name: Rust coverage gate
+        working-directory: transport-rust
+        run: cargo llvm-cov --all-features --summary-only --fail-under-lines 90 --fail-under-functions 85
+
   host-sample:
     name: WaveNav Host Sample Build
     runs-on: ubuntu-latest

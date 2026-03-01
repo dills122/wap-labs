@@ -16,7 +16,8 @@ WAP Labs contains two parallel tracks:
 
 - `docker/kannel/`: gateway image/config for local lab stack
 - `wml-server/`: local WML demo server and emulator UI
-- `transport-python/`: Lowband transport API contract and implementation area
+- `transport-python/`: Lowband transport API/service (legacy sidecar path)
+- `transport-rust/`: Lowband in-process transport library for browser host
 - `engine-wasm/`: WaveNav Rust/WASM engine and host sample
 - `browser/`: Waves Tauri desktop host integration area
 - `marketing-site/`: Astro-based developer landing site (GitHub Pages root)
@@ -76,6 +77,9 @@ Repo quality checks and hooks:
 
 ```bash
 make ci-local
+make lint-rust-transport
+make test-rust-transport
+make coverage-rust-transport
 make hooks-install
 pnpm run check:transport-contract
 ENABLE_NODE_CHECKS=1 make ci-local
