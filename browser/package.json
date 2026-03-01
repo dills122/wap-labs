@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo 'TODO: wire Tauri frontend dev flow'",
-    "tauri:dev": "echo 'TODO: wire tauri dev command'",
-    "tauri:build": "echo 'TODO: wire tauri build command'"
+    "dev": "pnpm --dir frontend dev",
+    "build": "pnpm --dir frontend build",
+    "tauri:dev": "cd src-tauri && cargo tauri dev",
+    "tauri:build": "cd src-tauri && cargo tauri build"
   }
 }

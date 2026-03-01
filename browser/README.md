@@ -10,12 +10,23 @@ Implemented now:
 
 - Tauri Rust shell scaffold under `src-tauri/`
 - Host-side transport contract in `contracts/transport.ts`
-- Frontend shell placeholder under `frontend/`
+- Host-side native engine contract in `contracts/engine.ts`
+- Frontend basic smoke harness under `frontend/` (load/render/key loop)
+- Native engine harness commands in `src-tauri/src/lib.rs`:
+  - `engine_load_deck`
+  - `engine_load_deck_context`
+  - `engine_render`
+  - `engine_handle_key`
+  - `engine_navigate_to_card`
+  - `engine_navigate_back`
+  - `engine_set_viewport_cols`
+  - `engine_snapshot`
+  - `engine_clear_external_navigation_intent`
 
 Not implemented yet:
 
-- Full browser chrome (address bar/history panes/devtools)
-- End-to-end deck fetch/render loop in Tauri commands
+- Full browser chrome (address bar/history panes/history/devtools)
+- End-to-end transport fetch -> engine load flow
 - Python transport service lifecycle management
 - Production packaging/signing
 
@@ -37,9 +48,9 @@ The Python transport layer remains mandatory for now (no WSP/WBXML rewrite in Ru
 
 ## Next implementation slice
 
-1. Wire a minimal Tauri command (`fetch_deck`) to the Python service.
-2. Add a basic frontend route that loads a URL and displays status/errors.
-3. Connect loaded WML into the existing engine host rendering loop.
+1. Wire `fetch_deck` command to the Python service.
+2. Expand frontend harness into browser chrome and URL navigation UX.
+3. Add fixture-driven integration checks for load/render/nav parity.
 
 ## Planning + Traceability
 

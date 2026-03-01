@@ -1,5 +1,4 @@
 packages:
   # Active Node package today
   - "engine-wasm/host-sample"
-  # Reserved for upcoming desktop harness package bootstrap
-  - "electron-app"
+  - "browser/frontend"
