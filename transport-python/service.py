@@ -224,7 +224,11 @@ def fetch(request: FetchRequest) -> FetchResponse:
             last_error = str(err.reason)
             if attempt == attempts:
                 elapsed_ms = (time.perf_counter() - start) * 1000.0
-                code = "GATEWAY_TIMEOUT" if "timed out" in last_error.lower() else "TRANSPORT_UNAVAILABLE"
+                code = (
+                    "GATEWAY_TIMEOUT"
+                    if "timed out" in last_error.lower()
+                    else "TRANSPORT_UNAVAILABLE"
+                )
                 return _error_response(
                     status=0,
                     final_url=request.url,

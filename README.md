@@ -9,6 +9,7 @@ WAP Labs contains two parallel tracks:
 
 - Legacy test environment guide: `docs/wap-test-environment/README.md`
 - Browser emulator build guide: `docs/browser-emulator/README.md`
+- Development prerequisites + bootstrap: `docs/development-prerequisites.md`
 - Documentation index: `docs/README.md`
 
 ## Repo Map
@@ -78,6 +79,12 @@ make ci-local
 make hooks-install
 pnpm run check:transport-contract
 ENABLE_NODE_CHECKS=1 make ci-local
+```
+
+Bootstrap/refresh local tool and dependency setup:
+
+```bash
+./scripts/init-refresh.sh
 ```
 
 Local hook behavior:

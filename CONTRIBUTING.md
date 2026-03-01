@@ -7,6 +7,16 @@ Before starting work, choose the documentation track:
 
 ## Development setup
 
+Quick bootstrap:
+
+```bash
+./scripts/init-refresh.sh
+```
+
+Canonical prerequisite reference:
+
+- `docs/development-prerequisites.md`
+
 1. Clone repository and install required tools:
    - Docker + Docker Compose
    - Node 20.19+ (or 22.12+). Repo pin: `.nvmrc`

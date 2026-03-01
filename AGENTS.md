@@ -79,6 +79,7 @@ Prefer work that improves:
 
 ## Useful commands
 
+- Bootstrap/refresh local deps: `./scripts/init-refresh.sh` (or `make init-refresh`)
 - Legacy stack: `make up`, `make down`, `make status`, `make smoke`
 - WASM engine build: `cd engine-wasm/engine && wasm-pack build --target web --out-dir ../pkg`
 - WASM engine tests: `cd engine-wasm/engine && cargo test`
