@@ -208,11 +208,13 @@ jobs:
         working-directory: browser/src-tauri
         run: cargo fmt --check
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Browser Rust compile check
+        working-directory: browser/src-tauri
+        run: cargo check
 
-      - name: Browser script sanity
-        run: pnpm --dir browser run tauri:build
+      - name: Browser smoke tests
+        working-directory: browser/src-tauri
+        run: cargo test
 
   wml-server:
     name: WML Server Sanity
