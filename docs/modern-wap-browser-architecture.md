@@ -46,6 +46,12 @@ Normalized handoff from transport to engine:
 3. Build `browser` (Tauri) shell for URL entry, softkeys, and deck inspector.
 4. Wire end-to-end navigation loop.
 
+## Transport Implementation Roadmap
+
+For the active Rust transport implementation phases, see:
+
+- `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md`
+
 ## Compatibility Notes
 
 - Prefer `application/vnd.wap.wmlc` and `text/vnd.wap.wml` handling first.

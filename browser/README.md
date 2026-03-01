@@ -50,7 +50,11 @@ The desktop host will be a WAP-only browser shell:
 ## Transport runtime knobs
 
 - `GATEWAY_HTTP_BASE` (default `http://127.0.0.1:13002`)
-- `WBXML2XML_BIN` (optional explicit path to `wbxml2xml`; startup preflight checks availability)
+- Decoder backend order:
+  - preferred: in-process `libwbxml` shared library
+  - fallback: `wbxml2xml` CLI
+- `WBXML2XML_BIN` (optional explicit path to `wbxml2xml` fallback binary)
+- `LOWBAND_DISABLE_LIBWBXML=1` (debug/testing: force CLI fallback path)
 
 ## Bundled WBXML decoder
 

@@ -1,6 +1,7 @@
-use lowband_transport_rust::{fetch_deck_in_process, FetchDeckRequest, FetchDeckResponse};
+use lowband_transport_rust::{
+    fetch_deck_in_process, preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse,
+};
 use serde::{Deserialize, Serialize};
-use std::process::Command;
 use std::sync::Mutex;
 use tauri::path::BaseDirectory;
 use tauri::Manager;
@@ -195,22 +196,8 @@ fn configure_bundled_wbxml_decoder(app: &tauri::AppHandle) -> Result<(), String>
 }
 
 fn preflight_wbxml_decoder_available() -> Result<(), String> {
-    let tool = std::env::var("WBXML2XML_BIN").unwrap_or_else(|_| "wbxml2xml".to_string());
-    let output = Command::new(&tool)
-        .arg("--version")
-        .output()
-        .map_err(|_| {
-            format!(
-                "WBXML decoder not available at `{tool}`. Install libwbxml or bundle wbxml2xml resource."
-            )
-        })?;
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let reason = stderr.lines().next().unwrap_or("non-zero exit");
-        return Err(format!(
-            "WBXML decoder failed preflight at `{tool}`: {reason}"
-        ));
-    }
+    let backend = preflight_wbxml_decoder()?;
+    println!("WBXML decoder backend: {backend}");
     Ok(())
 }
 

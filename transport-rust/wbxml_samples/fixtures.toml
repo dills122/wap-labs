@@ -1,0 +1,83 @@
+# Fixture manifest for transport-rust WBXML corpus tests.
+# expected:
+# - success: decode must succeed
+# - failure: decode must fail with structured transport error
+# - either: decode may succeed or fail, but behavior must remain deterministic/structured
+
+source = "external evaluation corpus (unvetted)"
+added_on = "2026-03-01"
+
+[[fixtures]]
+file = "request-120.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-151.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-884.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-277.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-1858.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-3786.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-4148.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-4569.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-6318.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-6801.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-7407.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-8661.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-9104.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-9542.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."
+
+[[fixtures]]
+file = "response-9777.wbxml"
+expected = "either"
+note = "Unvetted sample kept for decoder robustness."

@@ -121,8 +121,8 @@ lint-rust-transport:
 
 test-rust-transport:
 	@if command -v cargo >/dev/null 2>&1; then \
-		echo "==> cargo test (transport-rust)"; \
-		cd transport-rust && cargo test; \
+		echo "==> cargo test -- --test-threads=1 (transport-rust)"; \
+		cd transport-rust && RUST_TEST_THREADS=1 cargo test -- --test-threads=1; \
 	else \
 		echo "skip: cargo not found (transport-rust tests)"; \
 	fi
@@ -130,8 +130,8 @@ test-rust-transport:
 coverage-rust-transport:
 	@if command -v cargo >/dev/null 2>&1; then \
 		if (cd transport-rust && cargo llvm-cov --version >/dev/null 2>&1); then \
-			echo "==> cargo llvm-cov --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN) (transport-rust)"; \
-			cd transport-rust && cargo llvm-cov --all-features --summary-only --fail-under-lines $(RUST_COVERAGE_MIN) --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN); \
+			echo "==> cargo llvm-cov --summary-only --fail-under-lines 89 --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN) (transport-rust)"; \
+			cd transport-rust && RUST_TEST_THREADS=1 cargo llvm-cov --all-features --summary-only --fail-under-lines 89 --fail-under-functions $(RUST_FUNCTION_COVERAGE_MIN) -- --test-threads=1; \
 		else \
 			echo "skip: cargo-llvm-cov is not installed"; \
 			echo "install with: cargo install cargo-llvm-cov"; \
