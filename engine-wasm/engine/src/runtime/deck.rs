@@ -42,4 +42,14 @@ mod tests {
 
         assert_eq!(deck.card_index("dup"), Some(0));
     }
+
+    #[test]
+    fn card_index_returns_none_for_unknown_id() {
+        let deck = Deck::new(vec![Card {
+            id: "home".to_string(),
+            nodes: vec![],
+        }]);
+
+        assert_eq!(deck.card_index("missing"), None);
+    }
 }

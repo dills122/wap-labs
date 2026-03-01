@@ -1,3 +1,4 @@
+use serde::Serialize;
 use wasm_bindgen::prelude::*;
 
 mod layout;
@@ -5,12 +6,16 @@ mod nav;
 mod parser;
 mod render;
 mod runtime;
+#[allow(dead_code)]
+mod wmlscript;
 
 use layout::flow_layout::layout_card;
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
 use parser::wml_parser::parse_wml;
-use render::render_list::RenderList;
 use runtime::deck::Deck;
+use wmlscript::decoder::{decode_compilation_unit, DecodeError};
+use wmlscript::value::ScriptValue;
+use wmlscript::vm::{Vm, VmTrap};
 
 const DEFAULT_VIEWPORT_COLS: usize = 20;
 
@@ -127,9 +132,29 @@ impl WmlEngine {
     pub fn clear_external_navigation_intent(&mut self) {
         self.external_nav_intent = None;
     }
+
+    #[wasm_bindgen(js_name = executeScriptUnit)]
+    pub fn execute_script_unit(&self, bytes: Vec<u8>) -> Result<JsValue, JsValue> {
+        to_js_value(&self.execute_script_unit_internal(&bytes))
+    }
 }
 
 impl WmlEngine {
+    fn execute_script_unit_internal(&self, bytes: &[u8]) -> ScriptExecutionOutcome {
+        let decoded_unit = match decode_compilation_unit(bytes) {
+            Ok(unit) => unit,
+            Err(err) => {
+                return ScriptExecutionOutcome::trap(format_decode_error(err));
+            }
+        };
+
+        let vm = Vm::default();
+        match vm.execute(&decoded_unit) {
+            Ok(result) => ScriptExecutionOutcome::ok(script_value_to_literal(result)),
+            Err(trap) => ScriptExecutionOutcome::trap(format_vm_trap(trap)),
+        }
+    }
+
     fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
         let card = self.active_card_internal()?;
         let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
@@ -248,12 +273,85 @@ fn extract_base_dir(base_url: &str) -> Option<String> {
     Some(format!("{prefix}/"))
 }
 
-fn to_js_value(render_list: &RenderList) -> Result<JsValue, JsValue> {
-    serde_wasm_bindgen::to_value(render_list).map_err(|err| JsValue::from_str(&err.to_string()))
+fn to_js_value<T: Serialize>(value: &T) -> Result<JsValue, JsValue> {
+    serde_wasm_bindgen::to_value(value).map_err(|err| JsValue::from_str(&err.to_string()))
 }
 
 fn as_js_err(message: String) -> JsValue {
     JsValue::from_str(&message)
+}
+
+fn format_decode_error(err: DecodeError) -> String {
+    match err {
+        DecodeError::EmptyUnit => "decode: empty compilation unit".to_string(),
+        DecodeError::UnitTooLarge { size, limit } => {
+            format!("decode: unit too large (size={size}, limit={limit})")
+        }
+    }
+}
+
+fn format_vm_trap(trap: VmTrap) -> String {
+    match trap {
+        VmTrap::EmptyUnit => "vm: empty unit".to_string(),
+        VmTrap::UnsupportedOpcode(opcode) => format!("vm: unsupported opcode 0x{opcode:02x}"),
+        VmTrap::TruncatedImmediate { opcode } => {
+            format!("vm: truncated immediate for opcode 0x{opcode:02x}")
+        }
+        VmTrap::StackOverflow { limit } => format!("vm: stack overflow (limit={limit})"),
+        VmTrap::StackUnderflow => "vm: stack underflow".to_string(),
+        VmTrap::TypeError(message) => format!("vm: type error ({message})"),
+        VmTrap::InvalidLocalIndex { index } => format!("vm: invalid local index ({index})"),
+        VmTrap::InvalidCallTarget { target } => format!("vm: invalid call target ({target})"),
+        VmTrap::CallDepthExceeded { limit } => format!("vm: call depth exceeded (limit={limit})"),
+        VmTrap::ReturnFromRootFrame => "vm: return from root frame".to_string(),
+        VmTrap::ExecutionLimitExceeded { limit } => {
+            format!("vm: execution step limit exceeded ({limit})")
+        }
+    }
+}
+
+fn script_value_to_literal(value: ScriptValue) -> ScriptValueLiteral {
+    match value {
+        ScriptValue::Bool(value) => ScriptValueLiteral::Bool(value),
+        ScriptValue::Int32(value) => ScriptValueLiteral::Number(f64::from(value)),
+        ScriptValue::Float64(value) => ScriptValueLiteral::Number(value),
+        ScriptValue::String(value) => ScriptValueLiteral::String(value),
+        ScriptValue::Invalid => ScriptValueLiteral::Invalid { invalid: true },
+    }
+}
+
+#[derive(Serialize)]
+struct ScriptExecutionOutcome {
+    ok: bool,
+    result: ScriptValueLiteral,
+    trap: Option<String>,
+}
+
+impl ScriptExecutionOutcome {
+    fn ok(result: ScriptValueLiteral) -> Self {
+        Self {
+            ok: true,
+            result,
+            trap: None,
+        }
+    }
+
+    fn trap(message: String) -> Self {
+        Self {
+            ok: false,
+            result: ScriptValueLiteral::Invalid { invalid: true },
+            trap: Some(message),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Serialize)]
+#[serde(untagged)]
+enum ScriptValueLiteral {
+    Bool(bool),
+    Number(f64),
+    String(String),
+    Invalid { invalid: bool },
 }
 
 #[cfg(test)]
@@ -451,5 +549,78 @@ mod tests {
 
         engine.clear_external_navigation_intent();
         assert_eq!(engine.external_navigation_intent(), None);
+    }
+
+    #[test]
+    fn execute_script_unit_halt_bytecode_returns_ok() {
+        let engine = WmlEngine::new();
+
+        let outcome = engine.execute_script_unit_internal(&[0x00]);
+        assert!(outcome.ok);
+        assert!(outcome.trap.is_none());
+        assert_eq!(
+            outcome.result,
+            super::ScriptValueLiteral::String(String::new())
+        );
+    }
+
+    #[test]
+    fn execute_script_unit_empty_bytecode_returns_decode_trap() {
+        let engine = WmlEngine::new();
+
+        let outcome = engine.execute_script_unit_internal(&[]);
+        assert!(!outcome.ok);
+        assert_eq!(
+            outcome.trap.as_deref(),
+            Some("decode: empty compilation unit")
+        );
+        assert_eq!(
+            outcome.result,
+            super::ScriptValueLiteral::Invalid { invalid: true }
+        );
+    }
+
+    #[test]
+    fn execute_script_unit_unknown_opcode_returns_vm_trap() {
+        let engine = WmlEngine::new();
+
+        let outcome = engine.execute_script_unit_internal(&[0xff]);
+        assert!(!outcome.ok);
+        assert_eq!(outcome.trap.as_deref(), Some("vm: unsupported opcode 0xff"));
+        assert_eq!(
+            outcome.result,
+            super::ScriptValueLiteral::Invalid { invalid: true }
+        );
+    }
+
+    #[test]
+    fn execute_script_unit_addition_returns_ok() {
+        let engine = WmlEngine::new();
+
+        let outcome = engine.execute_script_unit_internal(&[0x01, 4, 0x01, 8, 0x02, 0x00]);
+        assert!(outcome.ok);
+        assert!(outcome.trap.is_none());
+        assert_eq!(outcome.result, super::ScriptValueLiteral::Number(12.0));
+    }
+
+    #[test]
+    fn execute_script_unit_truncated_immediate_returns_vm_trap() {
+        let engine = WmlEngine::new();
+
+        let outcome = engine.execute_script_unit_internal(&[0x01]);
+        assert!(!outcome.ok);
+        assert_eq!(
+            outcome.trap.as_deref(),
+            Some("vm: truncated immediate for opcode 0x01")
+        );
+    }
+
+    #[test]
+    fn execute_script_unit_return_from_root_reports_vm_trap() {
+        let engine = WmlEngine::new();
+
+        let outcome = engine.execute_script_unit_internal(&[0x13]);
+        assert!(!outcome.ok);
+        assert_eq!(outcome.trap.as_deref(), Some("vm: return from root frame"));
     }
 }

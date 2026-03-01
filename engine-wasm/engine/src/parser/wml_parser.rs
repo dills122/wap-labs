@@ -382,4 +382,51 @@ mod tests {
         assert_eq!(deck.cards.len(), 1);
         assert_eq!(deck.cards[0].id, "home");
     }
+
+    #[test]
+    fn decodes_entities_and_uses_href_as_fallback_link_text() {
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <p>&lt;safe&gt; &amp; ok</p>
+            <a href="#next"></a>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+
+        let deck = parse_wml(xml).expect("deck should parse");
+        match &deck.cards[0].nodes[0] {
+            Node::Paragraph(items) => {
+                assert!(matches!(&items[0], InlineNode::Text(t) if t == "<safe> & ok"));
+            }
+            _ => panic!("expected paragraph"),
+        }
+
+        match &deck.cards[0].nodes[1] {
+            Node::Paragraph(items) => {
+                assert!(matches!(
+                    &items[0],
+                    InlineNode::Link { text, href } if text == "#next" && href == "#next"
+                ));
+            }
+            _ => panic!("expected link paragraph"),
+        }
+    }
+
+    #[test]
+    fn rejects_missing_card_closing_tag() {
+        let xml = r#"
+        <wml>
+          <card id="home">
+            <p>Hello</p>
+        </wml>
+        "#;
+
+        let err = parse_wml(xml).expect_err("unclosed card must fail parse");
+        assert!(
+            err.contains("Missing closing </card>"),
+            "unexpected error: {err}"
+        );
+    }
 }

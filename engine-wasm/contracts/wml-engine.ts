@@ -7,6 +7,34 @@ export interface WmlDeckInput {
   rawBytesBase64?: string;
 }
 
+export type ScriptCallSite =
+  | 'softkey-do'
+  | 'intrinsic-onevent'
+  | 'ontimer'
+  | 'onenterforward'
+  | 'onenterbackward'
+  | 'onpick';
+
+export interface ScriptInvocationRef {
+  src: string;
+  functionName: string;
+  callSite: ScriptCallSite;
+  args: ScriptValueLiteral[];
+}
+
+export type ScriptValueLiteral = boolean | number | string | { invalid: true };
+
+export type ScriptNavigationIntent =
+  | { type: 'none' }
+  | { type: 'go'; href: string }
+  | { type: 'prev' };
+
+export interface ScriptInvocationOutcome {
+  navigationIntent: ScriptNavigationIntent;
+  requiresRefresh: boolean;
+  result: ScriptValueLiteral;
+}
+
 export interface RenderList {
   draw: DrawCmd[];
 }

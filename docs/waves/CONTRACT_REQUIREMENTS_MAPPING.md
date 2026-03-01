@@ -70,4 +70,4 @@ Generation rule:
 ## Known gaps to schedule
 
 1. Add explicit contract field for engine/runtime error taxonomy once finalized (planned quality ticket).
-2. Define WMLScript fetch/bytecode unit contract extension before WMLScript runtime execution work starts.
+2. Wire WMLScript invocation + hostcall contract fields into exported wasm APIs after W0-03 VM baseline lands.
