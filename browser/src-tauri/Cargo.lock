@@ -3969,6 +3969,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wavenav_engine"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "wavenav_host"
 version = "0.1.0"
 dependencies = [
@@ -3976,6 +3983,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "wavenav_engine",
 ]
 
 [[package]]

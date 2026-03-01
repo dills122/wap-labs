@@ -155,7 +155,7 @@ jobs:
           cache-dependency-path: engine-wasm/host-sample/pnpm-lock.yaml
 
       - name: Install host-sample deps
-        run: pnpm --dir engine-wasm/host-sample install --frozen-lockfile --config.shared-workspace-lockfile=false
+        run: pnpm --dir engine-wasm/host-sample --ignore-workspace install --frozen-lockfile
 
       - name: Build host-sample
         run: pnpm --dir engine-wasm/host-sample run build
@@ -199,20 +199,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Linux system deps for Tauri
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pkg-config \
+            libglib2.0-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+          sudo apt-get install -y libwebkit2gtk-4.1-dev || sudo apt-get install -y libwebkit2gtk-4.0-dev
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
 
+      - name: Cache Browser Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-browser-rust
+          workspaces: |
+            browser/src-tauri -> target
+
+      - name: Ensure Tauri frontendDist exists for compile-time config
+        run: |
+          mkdir -p browser/frontend/dist
+          test -f browser/frontend/dist/index.html || echo '<!doctype html><title>ci-placeholder</title>' > browser/frontend/dist/index.html
+
       - name: Browser Rust fmt check
         working-directory: browser/src-tauri
         run: cargo fmt --check
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Browser Rust compile check
+        working-directory: browser/src-tauri
+        run: cargo check
 
-      - name: Browser script sanity
-        run: pnpm --dir browser run tauri:build
+      - name: Browser smoke tests
+        working-directory: browser/src-tauri
+        run: cargo test
 
   wml-server:
     name: WML Server Sanity

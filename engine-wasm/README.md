@@ -1,6 +1,6 @@
 # WaveNav Engine (engine-wasm)
 
-Rust + WebAssembly WML runtime engine (MVP).
+Rust WML runtime engine with dual targets (native + WebAssembly) (MVP).
 
 ## Objective
 
@@ -47,7 +47,16 @@ cargo --version
 wasm-pack --version
 ```
 
-### 4) Build WASM package
+### 4) Build native Rust library
+
+From repo root:
+
+```bash
+cd engine-wasm/engine
+cargo build
+```
+
+### 5) Build WASM package
 
 From repo root:
 
@@ -60,20 +69,20 @@ Expected output directory:
 
 - `engine-wasm/pkg/`
 
-### 5) Run Rust tests
+### 6) Run Rust tests
 
 ```bash
 cd engine-wasm/engine
 cargo test
 ```
 
-### 6) Consume from host app
+### 7) Consume from host app
 
 - Import generated package from `engine-wasm/pkg`
 - Use API contract in `engine-wasm/contracts/wml-engine.ts`
 - See host loop sample in `engine-wasm/host-sample/renderer.ts`
 
-### 7) Quick local harness (no Electron)
+### 8) Quick local harness (no Electron)
 
 ```bash
 cd engine-wasm/host-sample
@@ -138,6 +147,17 @@ Additional helpers:
 - `invokeScriptRefFunction(src: string, functionName: string)`
 - `invokeScriptRefCall(src: string, functionName: string, args: ScriptValueLiteral[])`
 - `executeScriptRef(...)` / `executeScriptRefFunction(...)` / `executeScriptRefCall(...)` (raw execution outcome only)
+
+## Native API
+
+Native hosts (including future Tauri backend integration) call `WmlEngine` directly from Rust.
+Behavior must stay aligned with the WASM API for:
+
+- deck loading and metadata handling
+- navigation and focus transitions
+- render output (`RenderList`) ordering and shape
+- script execution/invocation outcomes
+- trace entry semantics
 
 Type contract:
 

@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.wavenav.host",
   "build": {
-    "beforeDevCommand": "",
-    "beforeBuildCommand": "",
+    "beforeDevCommand": "pnpm --dir frontend dev",
+    "beforeBuildCommand": "pnpm --dir frontend build",
     "frontendDist": "../frontend/dist",
     "devUrl": "http://localhost:1420"
   },

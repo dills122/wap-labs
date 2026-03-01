@@ -136,6 +136,13 @@ Agents must preserve support for:
   - Avoid HTTP
   - Avoid Gateway State
 
+### Rust Multi-Target Runtime Policy
+
+- Engine runtime code must remain target-agnostic and compile for both native Rust and WASM.
+- WASM-specific conversion (`wasm-bindgen`, `JsValue`, serialization adapters) belongs only at adapter boundaries.
+- Native host integrations (for Tauri/backend use) must call the same runtime semantics and produce equivalent outputs.
+- Any behavior change in runtime APIs must be reflected in shared contracts and parity tests for both targets.
+
 ---
 
 ### TypeScript Adapter Layer
