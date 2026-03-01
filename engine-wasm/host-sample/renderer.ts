@@ -1,5 +1,5 @@
 import init, { WmlEngine } from '../pkg/wavenav_engine.js';
-import type { DrawCmd } from '../contracts/wml-engine';
+import type { DrawCmd, EngineTraceEntry, ScriptExecutionOutcome } from '../contracts/wml-engine';
 
 const lineHeight = 16;
 const charWidth = 8;
@@ -13,6 +13,8 @@ export interface EngineSnapshot {
   baseUrl: string;
   contentType: string;
   externalNavigationIntent?: string;
+  lastScriptExecutionOk?: boolean;
+  lastScriptExecutionTrap?: string;
 }
 
 export interface EngineHost {
@@ -20,6 +22,22 @@ export interface EngineHost {
   pressKey(key: KeyName): void;
   snapshot(): EngineSnapshot;
   clearExternalNavigationIntent(): void;
+  executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
+  registerScriptUnit(src: string, bytes: Uint8Array): void;
+  clearScriptUnits(): void;
+  registerScriptEntryPoint(src: string, functionName: string, entryPc: number): void;
+  clearScriptEntryPoints(): void;
+  executeScriptRef(src: string): ScriptExecutionOutcome;
+  executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
+  executeScriptRefCall(
+    src: string,
+    functionName: string,
+    args: Array<boolean | number | string | { invalid: true }>
+  ): ScriptExecutionOutcome;
+  lastScriptExecutionTrap(): string | undefined;
+  lastScriptExecutionOk(): boolean | undefined;
+  traceEntries(): EngineTraceEntry[];
+  clearTraceEntries(): void;
   render(): void;
   getEngine(): WmlEngine;
 }
@@ -29,6 +47,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
 
   const engine = new WmlEngine();
   engine.setViewportCols(20);
+  registerBuiltInScriptUnits(engine);
   engine.loadDeckContext(xml, DEFAULT_BASE_URL, DEFAULT_CONTENT_TYPE);
 
   function paint() {
@@ -70,6 +89,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
   return {
     loadDeck(nextXml: string) {
       engine.loadDeckContext(nextXml, DEFAULT_BASE_URL, DEFAULT_CONTENT_TYPE);
+      registerBuiltInScriptUnits(engine);
       paint();
     },
     pressKey(key: KeyName) {
@@ -82,15 +102,60 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         focusedLinkIndex: engine.focusedLinkIndex(),
         baseUrl: engine.baseUrl(),
         contentType: engine.contentType(),
-        externalNavigationIntent: engine.externalNavigationIntent()
+        externalNavigationIntent: engine.externalNavigationIntent(),
+        lastScriptExecutionOk: engine.lastScriptExecutionOk(),
+        lastScriptExecutionTrap: engine.lastScriptExecutionTrap()
       };
     },
     clearExternalNavigationIntent() {
       engine.clearExternalNavigationIntent();
+    },
+    executeScriptUnit(bytes: Uint8Array) {
+      return engine.executeScriptUnit(bytes) as ScriptExecutionOutcome;
+    },
+    registerScriptUnit(src: string, bytes: Uint8Array) {
+      engine.registerScriptUnit(src, bytes);
+    },
+    clearScriptUnits() {
+      engine.clearScriptUnits();
+    },
+    registerScriptEntryPoint(src: string, functionName: string, entryPc: number) {
+      engine.registerScriptEntryPoint(src, functionName, entryPc);
+    },
+    clearScriptEntryPoints() {
+      engine.clearScriptEntryPoints();
+    },
+    executeScriptRef(src: string) {
+      return engine.executeScriptRef(src) as ScriptExecutionOutcome;
+    },
+    executeScriptRefFunction(src: string, functionName: string) {
+      return engine.executeScriptRefFunction(src, functionName) as ScriptExecutionOutcome;
+    },
+    executeScriptRefCall(src: string, functionName: string, args) {
+      return engine.executeScriptRefCall(src, functionName, args) as ScriptExecutionOutcome;
+    },
+    lastScriptExecutionTrap() {
+      return engine.lastScriptExecutionTrap();
+    },
+    lastScriptExecutionOk() {
+      return engine.lastScriptExecutionOk();
+    },
+    traceEntries() {
+      return engine.traceEntries() as EngineTraceEntry[];
+    },
+    clearTraceEntries() {
+      engine.clearTraceEntries();
     },
     render: paint,
     getEngine() {
       return engine;
     }
   };
+}
+
+function registerBuiltInScriptUnits(engine: WmlEngine): void {
+  engine.clearScriptUnits();
+  engine.clearScriptEntryPoints();
+  engine.registerScriptUnit('calc.wmlsc', new Uint8Array([0x01, 4, 0x01, 5, 0x02, 0x00]));
+  engine.registerScriptEntryPoint('calc.wmlsc', 'main', 0);
 }

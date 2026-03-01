@@ -146,6 +146,8 @@ mod tests {
                     href: "#next".to_string(),
                 },
             ])],
+            accept_action_href: None,
+            onenterforward_href: None,
         };
 
         let out = layout_card(&card, 10, 0);
@@ -163,6 +165,8 @@ mod tests {
             nodes: vec![Node::Paragraph(vec![InlineNode::Text(
                 "supercalifragilistic".to_string(),
             )])],
+            accept_action_href: None,
+            onenterforward_href: None,
         };
 
         let out = layout_card(&card, 5, 0);
@@ -177,5 +181,33 @@ mod tests {
             .collect();
 
         assert_eq!(lines, vec!["super", "calif", "ragil", "istic"]);
+    }
+
+    #[test]
+    fn wrapped_link_keeps_single_logical_focus_index() {
+        let card = Card {
+            id: "home".to_string(),
+            nodes: vec![Node::Paragraph(vec![InlineNode::Link {
+                text: "abcdefghijkl".to_string(),
+                href: "#next".to_string(),
+            }])],
+            accept_action_href: None,
+            onenterforward_href: None,
+        };
+
+        let out = layout_card(&card, 4, 0);
+        assert_eq!(out.links, vec!["#next".to_string()]);
+
+        let link_chunks: Vec<bool> = out
+            .render_list
+            .draw
+            .iter()
+            .filter_map(|cmd| match cmd {
+                crate::render::render_list::DrawCmd::Link { focused, .. } => Some(*focused),
+                _ => None,
+            })
+            .collect();
+
+        assert_eq!(link_chunks, vec![true, true, true]);
     }
 }

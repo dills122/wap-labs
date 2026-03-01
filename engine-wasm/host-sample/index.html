@@ -96,6 +96,23 @@
             <pre id="event-log" class="event-log">No events yet.</pre>
           </div>
         </section>
+        <section class="trace-wrap">
+          <div class="section-header">
+            <h2>Runtime Inspector</h2>
+            <button
+              id="toggle-trace"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="trace-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="trace-body">
+            <runtime-inspector-panel id="runtime-inspector"></runtime-inspector-panel>
+          </div>
+        </section>
       </section>
 
       <section class="screen-wrap">

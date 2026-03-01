@@ -1,0 +1,23 @@
+<!--
+label: Script Link Execution
+work-items: W0-01, W0-03
+spec-items: RQ-WMLS-001, RQ-WMLS-008
+description: Runs a registered script unit through a script href and exposes execution outcome in runtime state.
+goal: Validate runtime routes script href actions into engine VM execution path.
+testing-ac:
+- Load the example and press Enter on "Run calc script"; activeCardId should stay home.
+- Confirm runtime-state lastScriptExecutionOk becomes true.
+- Confirm runtime-state lastScriptExecutionTrap remains (none).
+-->
+<wml>
+  <card id="home">
+    <p>Script action execution demo.</p>
+    <a href="script:calc.wmlsc#main">Run calc script</a>
+    <br/>
+    <a href="#done">Continue</a>
+  </card>
+  <card id="done">
+    <p>Script executed in previous card.</p>
+    <a href="#home">Back</a>
+  </card>
+</wml>

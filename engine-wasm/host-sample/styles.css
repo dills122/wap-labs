@@ -259,6 +259,18 @@ button:hover {
   font-family: "IBM Plex Mono", Consolas, monospace;
 }
 
+.trace-wrap {
+  margin-top: 10px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
+}
+
+.trace-wrap.is-collapsed #trace-body {
+  display: none;
+}
+
 #wap-screen {
   width: 100%;
   height: auto;

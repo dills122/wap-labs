@@ -29,5 +29,7 @@ mod tests {
         assert_eq!(move_focus_down(2, 3), 0);
         assert_eq!(clamp_focus(9, 3), 2);
         assert_eq!(clamp_focus(2, 0), 0);
+        assert_eq!(move_focus_up(0, 0), 0);
+        assert_eq!(move_focus_down(0, 0), 0);
     }
 }

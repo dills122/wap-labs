@@ -20,6 +20,17 @@ These assumptions are active for this board and should not be re-litigated in ea
 
 This board therefore prioritizes host/browser integration, UX shell behavior, and runtime/transport orchestration over low-level parser/transport re-validation.
 
+## Architecture standards gate
+
+For WMLScript/runtime tickets, enforce these implementation standards (derived from Chromium/WebKit/WHATWG/Wasm architecture references documented in `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`):
+
+1. VM/interpreter semantics must remain in `engine-wasm`.
+2. Host code must only implement side-effect capabilities (dialogs, timer wake/tick, script fetch on miss).
+3. Bytecode verification gates must run before execution.
+4. Execution must be bounded (steps, stack, call depth, growth limits).
+5. Script/runtime failures must trap deterministically without host/runtime crashes.
+6. Navigation/refresh effects from script must apply at deterministic post-invocation boundaries.
+
 ## Scope
 
 Primary implementation target:
@@ -324,35 +335,60 @@ Reference architecture:
 
 ### W0-01 WMLScript integration contract and action model
 
-1. `Status`: `todo`
-2. `Depends On`: browser integration kickoff
+1. `Status`: `in-progress`
+2. `Depends On`: host-sample integration kickoff
 3. `Files`:
 - `engine-wasm/contracts/wml-engine.ts`
 - `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`
 4. `Build`:
 - Define call-site contract from deck actions/events to script invocation model.
+- Keep VM/interpreter ownership in `engine-wasm` and keep host behavior to side effects only (dialogs/timer wake/fetch-on-miss).
+- Set refresh baseline to deferred semantics first; immediate-refresh behavior remains optional/feature-gated.
 5. `Tests`:
 - Contract-level fixture definitions only.
+- Host-sample fixture list for softkey and event-driven invocation paths.
 6. `Accept`:
 - Script action model is explicit and implementation-ready.
+7. `Spec`:
+- `RQ-WMLS-001`, `RQ-WMLS-003`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022`, `RQ-WAE-003`
+8. `AC`:
+- Script call-site metadata is representable without host-specific assumptions.
+- Navigation intent shape supports last-call-wins defer behavior.
+- Refresh behavior policy is explicitly documented as deferred baseline.
+9. `Architecture Compliance`:
+- [ ] VM/interpreter logic remains in `engine-wasm` only.
+- [ ] Host-facing shape only defines side-effect capabilities (no host-defined script semantics).
+- [ ] Navigation/refresh outcomes are defined as post-invocation runtime effects.
 
 ### W0-02 Bytecode loader + decoder skeleton
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-01`
 3. `Files`:
 - `engine-wasm/engine/src/wmlscript/decoder.rs`
 - `engine-wasm/engine/src/wmlscript/mod.rs`
 4. `Build`:
-- Load and validate script unit structure with deterministic error taxonomy.
+- Introduce deterministic decoder entry point and resource bounds.
+- Provide stable skeleton error taxonomy for empty/oversized-unit failures.
 5. `Tests`:
 - Valid/invalid unit parse tests.
+- Decoder boundary tests for empty and max-size gates.
 6. `Accept`:
-- Decoder accepts known-good fixture units and rejects malformed inputs safely.
+- Decoder skeleton accepts bounded units and rejects malformed inputs safely.
+7. `Spec`:
+- `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+8. `AC`:
+- Empty units fail deterministically.
+- Oversized units fail before allocation/execute paths.
+- Valid bounded units are preserved for VM handoff.
+9. `Architecture Compliance`:
+- [ ] Decoder verification runs before VM execution entry.
+- [ ] Decoder enforces bounded resource constraints.
+- [ ] Decoder failures return deterministic trap/error variants.
 
 ### W0-03 VM core baseline (stack/call/return/limits)
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-02`
 3. `Files`:
 - `engine-wasm/engine/src/wmlscript/vm.rs`
@@ -363,6 +399,12 @@ Reference architecture:
 - Instruction step/call-depth/stack-bound tests.
 6. `Accept`:
 - VM executes minimal bytecode path deterministically with bounded resources.
+7. `Spec`:
+- `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-010`
+8. `Architecture Compliance`:
+- [ ] VM loop enforces instruction/call-depth/stack bounds.
+- [ ] VM traps are recoverable runtime errors (no panic/host crash).
+- [ ] Return path preserves deterministic result typing.
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
@@ -377,6 +419,12 @@ Reference architecture:
 - Softkey/event-driven script invocation integration fixtures, including `go/go`, `go/prev`, and `prev/prev` compatibility profiling.
 6. `Accept`:
 - Script can mutate vars, trigger deterministic navigation intent, and apply card refresh behavior consistently after variable updates.
+7. `Spec`:
+- `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
+8. `Architecture Compliance`:
+- [ ] `WMLBrowser` state mutation remains in engine runtime state.
+- [ ] Host is not responsible for navigation decision logic.
+- [ ] Deferred navigation/refresh application boundary is explicit and test-covered.
 
 ### W0-05 Timer/dialog integration baseline
 
@@ -392,6 +440,12 @@ Reference architecture:
 - `ontimer` and dialog invocation trace tests.
 6. `Accept`:
 - Timer-triggered script flow works with deterministic host/runtime behavior.
+7. `Spec`:
+- `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017`
+8. `Architecture Compliance`:
+- [ ] Dialog/timer features are host capability calls only.
+- [ ] Timer semantics remain runtime-owned and deterministic.
+- [ ] Host integration cannot bypass runtime error/trap handling model.
 
 ## Phase S: Source-Material Deep Audit (Prepared)
 

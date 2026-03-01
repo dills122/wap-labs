@@ -39,6 +39,43 @@ Secondary implementation reference (tutorial material):
   - runtime host bindings (navigation/vars/dialogs/timers)
 - Roll out incrementally with a usable MVP before completeness.
 
+## Kickoff decisions
+
+- VM + interpreter execution live in `engine-wasm` (not in `browser/`).
+- Host integrations are limited to side effects: dialogs, timer wake/tick, and optional script fetch for cache misses.
+- First runnable host path is `engine-wasm/host-sample`; Waves browser integration follows later.
+- `WMLBrowser.refresh()` baseline is deferred refresh semantics first; immediate refresh stays feature-gated.
+
+## External implementation references (modern browser architecture)
+
+These references are used as architecture guidance only (not behavior spec authority):
+
+- Chromium process model and site isolation:
+  - https://chromium.googlesource.com/chromium/src/+/main/docs/process_model_and_site_isolation.md
+  - https://www.chromium.org/developers/design-documents/site-isolation/
+- WebKit multi-process architecture:
+  - https://docs.webkit.org/Deep%20Dive/Architecture/WebKit2.html
+- Event loop and navigation processing model:
+  - https://html.spec.whatwg.org/multipage/webappapis.html#event-loops
+  - https://html.spec.whatwg.org/multipage/browsing-the-web.html
+- Execution safety model reference:
+  - https://webassembly.org/docs/security/
+
+Derived implementation standards for Waves WMLScript runtime:
+
+1. Runtime semantics authority stays in engine:
+- Script decode/verify/execute semantics are resolved in `engine-wasm`, not in host UI layers.
+2. Host interface is capability-minimal:
+- Host only performs side effects requested by engine (dialogs/timer wake/script fetch on miss).
+3. Verification before execution:
+- Bytecode unit structure and limits are validated before instruction execution.
+4. Bounded execution by default:
+- Step, stack, call-depth, and memory growth limits are required in MVP.
+5. Trap, do not crash:
+- Script failures surface as deterministic runtime errors and do not terminate host process.
+6. Deferred side-effect application:
+- Navigation intents raised in script are applied by runtime at deterministic boundaries (post invocation).
+
 ## Non-goals (initial)
 
 - Full WTAI/telephony/device-specific behavior parity.

@@ -33,13 +33,29 @@ mod tests {
             Card {
                 id: "dup".to_string(),
                 nodes: vec![],
+                accept_action_href: None,
+                onenterforward_href: None,
             },
             Card {
                 id: "dup".to_string(),
                 nodes: vec![],
+                accept_action_href: None,
+                onenterforward_href: None,
             },
         ]);
 
         assert_eq!(deck.card_index("dup"), Some(0));
+    }
+
+    #[test]
+    fn card_index_returns_none_for_unknown_id() {
+        let deck = Deck::new(vec![Card {
+            id: "home".to_string(),
+            nodes: vec![],
+            accept_action_href: None,
+            onenterforward_href: None,
+        }]);
+
+        assert_eq!(deck.card_index("missing"), None);
     }
 }

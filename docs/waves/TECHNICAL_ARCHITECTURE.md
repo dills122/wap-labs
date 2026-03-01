@@ -24,6 +24,27 @@ Execution correctness is independent from:
 - latency/retries
 - session negotiation
 
+## External Architecture Alignment
+
+Waves architecture is intentionally aligned with modern browser engine split patterns:
+
+- content/runtime semantics live in the engine runtime layer
+- host/browser shell brokers external capabilities and UI side effects
+- execution isolates failures via runtime error boundaries
+
+Guidance references:
+
+- Chromium process model and site isolation:
+  - https://chromium.googlesource.com/chromium/src/+/main/docs/process_model_and_site_isolation.md
+  - https://www.chromium.org/developers/design-documents/site-isolation/
+- WebKit2 architecture:
+  - https://docs.webkit.org/Deep%20Dive/Architecture/WebKit2.html
+- WHATWG event loop + navigation model:
+  - https://html.spec.whatwg.org/multipage/webappapis.html#event-loops
+  - https://html.spec.whatwg.org/multipage/browsing-the-web.html
+- WebAssembly security model:
+  - https://webassembly.org/docs/security/
+
 ## System Architecture
 
 ### 1) Runtime Core (Rust)
