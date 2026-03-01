@@ -288,7 +288,7 @@ Legend:
 
 These groups should be tracked explicitly in tickets and tests:
 
-1. WMLScript interpreter mandatory SCRs:
+1. WaveScript VM mandatory SCRs:
 - `WMLS-C-069..111` (all `M`)
 2. WMLScript optional SCRs to gate by feature flags:
 - `WMLS-C-071`, `WMLS-C-074`, `WMLS-C-112`

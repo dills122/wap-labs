@@ -333,8 +333,8 @@ fn pop_int32(stack: &mut Vec<ScriptValue>) -> Result<i32, VmTrap> {
 #[cfg(test)]
 mod tests {
     use super::{pop_int32, ExecutionLimits, Vm, VmHost, VmTrap};
-    use crate::wmlscript::decoder::decode_compilation_unit;
-    use crate::wmlscript::value::ScriptValue;
+    use crate::wavescript::decoder::decode_compilation_unit;
+    use crate::wavescript::value::ScriptValue;
 
     #[derive(Default)]
     struct EchoHost;

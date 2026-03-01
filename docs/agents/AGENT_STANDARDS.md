@@ -2,7 +2,7 @@
 
 **Project Codename:** Kennel\
 **Owner:** Dylan Steele\
-**Target Platform:** Unix / macOS Tooling + Electron/Tauri Host\
+**Target Platform:** Unix / macOS Tooling + Tauri Host\
 **Rendering Engine:** Rust → WebAssembly\
 **API / Transport Layer:** Python\
 **Adapters / Host UI:** TypeScript
@@ -18,7 +18,7 @@ emulator stack**:
 - 🦀 Rust (WML Rendering Engine → WASM)
 - 🐍 Python (API + Network Translation Layer)
 - 🟦 TypeScript (Browser Adapters / Harness / Samples)
-- ⚡ Electron OR Tauri (Real-world Emulator Host)
+- ⚡ Tauri (Real-world Emulator Host)
 - 🧰 Unix/macOS Tooling + Build Chain
 
 The emulator must remain:
@@ -48,7 +48,7 @@ Engine
 Browser Input + Mounting TypeScript Host Runtime
 Adapter
 
-Emulator Window + Device UI Electron / Tauri Desktop
+Emulator Window + Device UI Tauri Desktop
 Shell
 
 Toolchain Build + Test Bash / Make Unix/macOS
@@ -89,7 +89,7 @@ Interface Format Notes
 Python ⇄ Node Protobuf / JSON Gateway Messaging
 Python ⇄ Rust (via TS) Typed Array / IPC Deck Transfer
 WASM ⇄ TS Host Memory Buffer Render Output
-TS ⇄ Host Shell Native IPC Electron/Tauri
+TS ⇄ Host Shell Native IPC Tauri
 
 WASM must receive:
 
@@ -148,7 +148,7 @@ Agents must preserve support for:
 
 ---
 
-### Host Shell (Electron / Tauri)
+### Host Shell (Tauri)
 
 - Emulates:
   - Viewport
@@ -204,9 +204,7 @@ Agents MUST NOT:
     /gateway-node
     /transport-python
     /renderer-rust-wasm
-    /adapters-typescript
-    /host-electron
-    /host-tauri (optional)
+    /adapters-typescript    /browser
     /shared-proto
     /docs
 

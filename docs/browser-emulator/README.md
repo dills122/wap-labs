@@ -1,6 +1,6 @@
-# WaveNav Browser Build (In Progress)
+# Waves Browser Build (In Progress)
 
-This track builds WaveNav, a modern WAP 1.x browser emulator with a real protocol boundary and a spec-driven runtime.
+This track builds Waves, a modern WAP 1.x browser emulator with a real protocol boundary and a spec-driven runtime.
 
 ## Goal
 

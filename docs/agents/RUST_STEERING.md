@@ -15,7 +15,7 @@ Applies to:
 Does not apply to:
 
 - Python transport layer (`transport-python/`)
-- Electron/TypeScript host logic (except contract alignment concerns)
+- Tauri/TypeScript host logic (except contract alignment concerns)
 
 ## 2. Canonical External Standards
 

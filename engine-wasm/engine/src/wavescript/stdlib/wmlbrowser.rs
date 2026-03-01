@@ -1,6 +1,6 @@
 use crate::runtime::events::ScriptRuntimeEffects;
-use crate::wmlscript::value::ScriptValue;
-use crate::wmlscript::vm::{VmHost, VmTrap};
+use crate::wavescript::value::ScriptValue;
+use crate::wavescript::vm::{VmHost, VmTrap};
 use std::collections::HashMap;
 
 pub const WMLBROWSER_GET_VAR: u8 = 0x01;
@@ -140,8 +140,8 @@ mod tests {
         WMLBROWSER_SET_VAR,
     };
     use crate::runtime::events::{ScriptNavigationIntent, ScriptRuntimeEffects};
-    use crate::wmlscript::value::ScriptValue;
-    use crate::wmlscript::vm::VmHost;
+    use crate::wavescript::value::ScriptValue;
+    use crate::wavescript::vm::VmHost;
     use std::collections::HashMap;
 
     #[test]

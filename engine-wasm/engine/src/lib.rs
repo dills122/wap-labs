@@ -8,7 +8,7 @@ mod parser;
 mod render;
 mod runtime;
 #[allow(dead_code)]
-mod wmlscript;
+mod wavescript;
 
 use layout::flow_layout::layout_card;
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
@@ -16,10 +16,10 @@ use parser::wml_parser::parse_wml;
 use runtime::deck::Deck;
 use runtime::events::{ScriptNavigationIntent, ScriptRuntimeEffects};
 use std::mem;
-use wmlscript::decoder::{decode_compilation_unit, DecodeError};
-use wmlscript::stdlib::wmlbrowser::WmlBrowserHost;
-use wmlscript::value::ScriptValue;
-use wmlscript::vm::{Vm, VmTrap};
+use wavescript::decoder::{decode_compilation_unit, DecodeError};
+use wavescript::stdlib::wmlbrowser::WmlBrowserHost;
+use wavescript::value::ScriptValue;
+use wavescript::vm::{Vm, VmTrap};
 
 const DEFAULT_VIEWPORT_COLS: usize = 20;
 const MAX_TRACE_ENTRIES: usize = 256;
@@ -797,7 +797,7 @@ mod tests {
     };
     use crate::layout::flow_layout::layout_card;
     use crate::render::render_list::DrawCmd;
-    use crate::wmlscript::value::ScriptValue;
+    use crate::wavescript::value::ScriptValue;
 
     const SAMPLE: &str = r##"
     <wml>
