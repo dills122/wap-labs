@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
@@ -32,6 +32,7 @@ pub struct WmlEngine {
     content_type: String,
     raw_bytes_base64: Option<String>,
     script_units: HashMap<String, Vec<u8>>,
+    script_entrypoints: HashMap<String, HashMap<String, usize>>,
     last_script_outcome: Option<ScriptExecutionOutcome>,
 }
 
@@ -56,6 +57,7 @@ impl WmlEngine {
             content_type: String::new(),
             raw_bytes_base64: None,
             script_units: HashMap::new(),
+            script_entrypoints: HashMap::new(),
             last_script_outcome: None,
         }
     }
@@ -83,6 +85,7 @@ impl WmlEngine {
         self.content_type = content_type.to_string();
         self.raw_bytes_base64 = raw_bytes_base64;
         self.script_units.clear();
+        self.script_entrypoints.clear();
         self.last_script_outcome = None;
         Ok(())
     }
@@ -153,11 +156,56 @@ impl WmlEngine {
     #[wasm_bindgen(js_name = clearScriptUnits)]
     pub fn clear_script_units(&mut self) {
         self.script_units.clear();
+        self.script_entrypoints.clear();
+    }
+
+    #[wasm_bindgen(js_name = registerScriptEntryPoint)]
+    pub fn register_script_entry_point(
+        &mut self,
+        src: String,
+        function_name: String,
+        entry_pc: usize,
+    ) {
+        self.script_entrypoints
+            .entry(src)
+            .or_default()
+            .insert(function_name, entry_pc);
+    }
+
+    #[wasm_bindgen(js_name = clearScriptEntryPoints)]
+    pub fn clear_script_entry_points(&mut self) {
+        self.script_entrypoints.clear();
     }
 
     #[wasm_bindgen(js_name = executeScriptRef)]
     pub fn execute_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
-        let outcome = self.execute_script_ref_internal(&src);
+        let outcome = self.execute_script_ref_internal(&src, "main");
+        self.last_script_outcome = Some(outcome.clone());
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = executeScriptRefFunction)]
+    pub fn execute_script_ref_function(
+        &mut self,
+        src: String,
+        function_name: String,
+    ) -> Result<JsValue, JsValue> {
+        let outcome = self.execute_script_ref_internal(&src, &function_name);
+        self.last_script_outcome = Some(outcome.clone());
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = executeScriptRefCall)]
+    pub fn execute_script_ref_call(
+        &mut self,
+        src: String,
+        function_name: String,
+        args: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        let call_args: Vec<ScriptCallArgLiteral> = serde_wasm_bindgen::from_value(args)
+            .map_err(|err| JsValue::from_str(&err.to_string()))?;
+        let vm_args = convert_script_call_args(&call_args);
+        let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
         self.last_script_outcome = Some(outcome.clone());
         to_js_value(&outcome)
     }
@@ -191,13 +239,54 @@ impl WmlEngine {
         }
     }
 
-    fn execute_script_ref_internal(&self, src: &str) -> ScriptExecutionOutcome {
+    fn execute_script_ref_internal(
+        &self,
+        src: &str,
+        function_name: &str,
+    ) -> ScriptExecutionOutcome {
+        self.execute_script_ref_call_internal(src, function_name, &[])
+    }
+
+    fn execute_script_ref_call_internal(
+        &self,
+        src: &str,
+        function_name: &str,
+        args: &[ScriptValue],
+    ) -> ScriptExecutionOutcome {
         let Some(bytes) = self.script_units.get(src) else {
             return ScriptExecutionOutcome::trap(format!(
                 "loader: script unit not registered ({src})"
             ));
         };
-        self.execute_script_unit_internal(bytes)
+
+        let decoded_unit = match decode_compilation_unit(bytes) {
+            Ok(unit) => unit,
+            Err(err) => {
+                return ScriptExecutionOutcome::trap(format_decode_error(err));
+            }
+        };
+
+        let entry_pc = if function_name == "main" {
+            0
+        } else {
+            let Some(entrypoints) = self.script_entrypoints.get(src) else {
+                return ScriptExecutionOutcome::trap(format!(
+                    "loader: function entry point not registered ({src}#{function_name})"
+                ));
+            };
+            let Some(entry_pc) = entrypoints.get(function_name) else {
+                return ScriptExecutionOutcome::trap(format!(
+                    "loader: function entry point not registered ({src}#{function_name})"
+                ));
+            };
+            *entry_pc
+        };
+
+        let vm = Vm::default();
+        match vm.execute_from_pc_with_locals(&decoded_unit, entry_pc, args.to_vec()) {
+            Ok(result) => ScriptExecutionOutcome::ok(script_value_to_literal(result)),
+            Err(trap) => ScriptExecutionOutcome::trap(format_vm_trap(trap)),
+        }
     }
 
     fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
@@ -260,8 +349,9 @@ impl WmlEngine {
     }
 
     fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
-        if let Some(script_src) = parse_script_href(href) {
-            let outcome = self.execute_script_ref_internal(script_src);
+        if let Some(script_ref) = parse_script_href(href) {
+            let function_name = script_ref.function_name.unwrap_or("main");
+            let outcome = self.execute_script_ref_internal(script_ref.src, function_name);
             self.last_script_outcome = Some(outcome.clone());
             if let Some(message) = outcome.trap {
                 return Err(message);
@@ -350,13 +440,29 @@ fn extract_base_dir(base_url: &str) -> Option<String> {
     Some(format!("{prefix}/"))
 }
 
-fn parse_script_href(href: &str) -> Option<&str> {
+#[derive(Debug, PartialEq, Eq)]
+struct ParsedScriptRef<'a> {
+    src: &'a str,
+    function_name: Option<&'a str>,
+}
+
+fn parse_script_href(href: &str) -> Option<ParsedScriptRef<'_>> {
     let body = href.strip_prefix("script:")?;
-    let src = body.split('#').next().unwrap_or(body);
+    let (src, function_name) = match body.split_once('#') {
+        Some((src, fn_name)) => {
+            let fn_name = if fn_name.is_empty() {
+                None
+            } else {
+                Some(fn_name)
+            };
+            (src, fn_name)
+        }
+        None => (body, None),
+    };
     if src.is_empty() {
         return None;
     }
-    Some(src)
+    Some(ParsedScriptRef { src, function_name })
 }
 
 fn to_js_value<T: Serialize>(value: &T) -> Result<JsValue, JsValue> {
@@ -379,6 +485,9 @@ fn format_decode_error(err: DecodeError) -> String {
 fn format_vm_trap(trap: VmTrap) -> String {
     match trap {
         VmTrap::EmptyUnit => "vm: empty unit".to_string(),
+        VmTrap::InvalidEntryPoint { entry_pc } => {
+            format!("vm: invalid entry point ({entry_pc})")
+        }
         VmTrap::UnsupportedOpcode(opcode) => format!("vm: unsupported opcode 0x{opcode:02x}"),
         VmTrap::TruncatedImmediate { opcode } => {
             format!("vm: truncated immediate for opcode 0x{opcode:02x}")
@@ -440,9 +549,45 @@ enum ScriptValueLiteral {
     Invalid { invalid: bool },
 }
 
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum ScriptCallArgLiteral {
+    Bool(bool),
+    Number(f64),
+    String(String),
+    Invalid { invalid: bool },
+}
+
+fn convert_script_call_args(args: &[ScriptCallArgLiteral]) -> Vec<ScriptValue> {
+    args.iter()
+        .map(|arg| match arg {
+            ScriptCallArgLiteral::Bool(value) => ScriptValue::Bool(*value),
+            ScriptCallArgLiteral::Number(value) => {
+                if value.fract() == 0.0 && *value >= i32::MIN as f64 && *value <= i32::MAX as f64 {
+                    ScriptValue::Int32(*value as i32)
+                } else {
+                    ScriptValue::Float64(*value)
+                }
+            }
+            ScriptCallArgLiteral::String(value) => ScriptValue::String(value.clone()),
+            ScriptCallArgLiteral::Invalid { invalid } => {
+                if *invalid {
+                    ScriptValue::Invalid
+                } else {
+                    ScriptValue::String(String::new())
+                }
+            }
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{parse_script_href, WmlEngine};
+    use super::{
+        convert_script_call_args, parse_script_href, ParsedScriptRef, ScriptCallArgLiteral,
+        ScriptValueLiteral, WmlEngine,
+    };
+    use crate::wmlscript::value::ScriptValue;
 
     const SAMPLE: &str = r##"
     <wml>
@@ -713,7 +858,7 @@ mod tests {
     #[test]
     fn execute_script_ref_reports_missing_unit() {
         let mut engine = WmlEngine::new();
-        let outcome = engine.execute_script_ref_internal("missing.wmlsc");
+        let outcome = engine.execute_script_ref_internal("missing.wmlsc", "main");
         engine.last_script_outcome = Some(outcome);
         assert_eq!(engine.last_script_execution_ok(), Some(false));
         assert_eq!(
@@ -773,7 +918,7 @@ mod tests {
         engine.clear_script_units();
 
         let outcome = engine
-            .execute_script_ref_internal("unit.wmlsc")
+            .execute_script_ref_internal("unit.wmlsc", "main")
             .trap
             .expect("missing unit should trap");
         assert_eq!(outcome, "loader: script unit not registered (unit.wmlsc)");
@@ -781,13 +926,112 @@ mod tests {
 
     #[test]
     fn parse_script_href_extracts_source_before_fragment() {
-        assert_eq!(
+        assert!(matches!(
             parse_script_href("script:calc.wmlsc#main"),
-            Some("calc.wmlsc")
-        );
-        assert_eq!(parse_script_href("script:calc.wmlsc"), Some("calc.wmlsc"));
+            Some(ParsedScriptRef {
+                src: "calc.wmlsc",
+                function_name: Some("main")
+            })
+        ));
+        assert!(matches!(
+            parse_script_href("script:calc.wmlsc"),
+            Some(ParsedScriptRef {
+                src: "calc.wmlsc",
+                function_name: None
+            })
+        ));
         assert_eq!(parse_script_href("script:#main"), None);
         assert_eq!(parse_script_href("#next"), None);
+    }
+
+    #[test]
+    fn execute_script_ref_function_uses_registered_entry_point() {
+        let mut engine = WmlEngine::new();
+        engine.register_script_unit(
+            "multi.wmlsc".to_string(),
+            vec![0x01, 1, 0x00, 0x01, 9, 0x00],
+        );
+        engine.register_script_entry_point("multi.wmlsc".to_string(), "alt".to_string(), 3);
+
+        let outcome = engine.execute_script_ref_internal("multi.wmlsc", "alt");
+        assert!(outcome.ok);
+        assert_eq!(outcome.result, super::ScriptValueLiteral::Number(9.0));
+        assert_eq!(outcome.trap, None);
+    }
+
+    #[test]
+    fn execute_script_ref_function_missing_entry_point_traps() {
+        let mut engine = WmlEngine::new();
+        engine.register_script_unit("multi.wmlsc".to_string(), vec![0x01, 1, 0x00]);
+
+        let outcome = engine.execute_script_ref_internal("multi.wmlsc", "missing");
+        assert!(!outcome.ok);
+        assert_eq!(
+            outcome.trap.as_deref(),
+            Some("loader: function entry point not registered (multi.wmlsc#missing)")
+        );
+    }
+
+    #[test]
+    fn script_link_function_dispatch_uses_registered_entry_point() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="script:multi.wmlsc#alt">Run alt</a>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit(
+            "multi.wmlsc".to_string(),
+            vec![0x01, 1, 0x00, 0x01, 9, 0x00],
+        );
+        engine.register_script_entry_point("multi.wmlsc".to_string(), "alt".to_string(), 3);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("script alt entrypoint should execute");
+        assert_eq!(engine.last_script_execution_ok(), Some(true));
+        assert_eq!(engine.last_script_execution_trap(), None);
+    }
+
+    #[test]
+    fn execute_script_ref_call_passes_args_into_function_locals() {
+        let mut engine = WmlEngine::new();
+        engine.register_script_unit("sum.wmlsc".to_string(), vec![0x11, 0, 0x11, 1, 0x02, 0x00]);
+        engine.register_script_entry_point("sum.wmlsc".to_string(), "sum".to_string(), 0);
+
+        let outcome = engine.execute_script_ref_call_internal(
+            "sum.wmlsc",
+            "sum",
+            &[ScriptValue::Int32(10), ScriptValue::Int32(32)],
+        );
+        assert!(outcome.ok);
+        assert_eq!(outcome.result, ScriptValueLiteral::Number(42.0));
+        assert_eq!(outcome.trap, None);
+    }
+
+    #[test]
+    fn convert_script_call_args_maps_number_to_int_when_whole() {
+        let args = vec![
+            ScriptCallArgLiteral::Number(7.0),
+            ScriptCallArgLiteral::Number(7.5),
+            ScriptCallArgLiteral::Bool(true),
+            ScriptCallArgLiteral::String("x".to_string()),
+            ScriptCallArgLiteral::Invalid { invalid: true },
+        ];
+        let converted = convert_script_call_args(&args);
+        assert_eq!(
+            converted,
+            vec![
+                ScriptValue::Int32(7),
+                ScriptValue::Float64(7.5),
+                ScriptValue::Bool(true),
+                ScriptValue::String("x".to_string()),
+                ScriptValue::Invalid
+            ]
+        );
     }
 
     #[test]

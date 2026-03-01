@@ -84,7 +84,15 @@ export interface WmlEngineWasm {
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;
   clearScriptUnits(): void;
+  registerScriptEntryPoint(src: string, functionName: string, entryPc: number): void;
+  clearScriptEntryPoints(): void;
   executeScriptRef(src: string): ScriptExecutionOutcome;
+  executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
+  executeScriptRefCall(
+    src: string,
+    functionName: string,
+    args: ScriptValueLiteral[]
+  ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
 }

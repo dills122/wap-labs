@@ -29,6 +29,7 @@ impl Default for ExecutionLimits {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum VmTrap {
     EmptyUnit,
+    InvalidEntryPoint { entry_pc: usize },
     UnsupportedOpcode(u8),
     TruncatedImmediate { opcode: u8 },
     StackOverflow { limit: usize },
@@ -64,16 +65,36 @@ impl Vm {
     }
 
     pub fn execute(&self, unit: &DecodedUnit) -> Result<ScriptValue, VmTrap> {
+        self.execute_from_pc(unit, 0)
+    }
+
+    pub fn execute_from_pc(
+        &self,
+        unit: &DecodedUnit,
+        entry_pc: usize,
+    ) -> Result<ScriptValue, VmTrap> {
+        self.execute_from_pc_with_locals(unit, entry_pc, Vec::new())
+    }
+
+    pub fn execute_from_pc_with_locals(
+        &self,
+        unit: &DecodedUnit,
+        entry_pc: usize,
+        initial_locals: Vec<ScriptValue>,
+    ) -> Result<ScriptValue, VmTrap> {
         if unit.bytes().is_empty() {
             return Err(VmTrap::EmptyUnit);
         }
+        if entry_pc >= unit.bytes().len() {
+            return Err(VmTrap::InvalidEntryPoint { entry_pc });
+        }
 
-        let mut pc = 0usize;
+        let mut pc = entry_pc;
         let mut steps = 0usize;
         let mut stack: Vec<ScriptValue> = Vec::new();
         let mut frames = vec![CallFrame {
             return_pc: None,
-            locals: Vec::new(),
+            locals: initial_locals,
         }];
 
         while pc < unit.bytes().len() {
@@ -246,6 +267,43 @@ mod tests {
             .execute(&unit)
             .expect_err("unknown opcode should trap deterministically");
         assert_eq!(err, VmTrap::UnsupportedOpcode(0xff));
+    }
+
+    #[test]
+    fn execute_from_pc_uses_entry_point() {
+        let vm = Vm::default();
+        let unit = decode_compilation_unit(&[0x01, 1, 0x00, 0x01, 9, 0x00]).expect("unit decode");
+
+        let value = vm
+            .execute_from_pc(&unit, 3)
+            .expect("entry pc should execute second sequence");
+        assert_eq!(value, ScriptValue::Int32(9));
+    }
+
+    #[test]
+    fn execute_from_pc_rejects_invalid_entry_point() {
+        let vm = Vm::default();
+        let unit = decode_compilation_unit(&[0x00]).expect("unit decode");
+
+        let err = vm
+            .execute_from_pc(&unit, 4)
+            .expect_err("invalid entry should trap");
+        assert_eq!(err, VmTrap::InvalidEntryPoint { entry_pc: 4 });
+    }
+
+    #[test]
+    fn execute_from_pc_with_locals_uses_arguments() {
+        let vm = Vm::default();
+        let unit = decode_compilation_unit(&[0x11, 0, 0x11, 1, 0x02, 0x00]).expect("unit decode");
+
+        let value = vm
+            .execute_from_pc_with_locals(
+                &unit,
+                0,
+                vec![ScriptValue::Int32(3), ScriptValue::Int32(4)],
+            )
+            .expect("locals should be visible");
+        assert_eq!(value, ScriptValue::Int32(7));
     }
 
     #[test]

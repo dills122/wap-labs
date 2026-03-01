@@ -25,7 +25,15 @@ export interface EngineHost {
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;
   clearScriptUnits(): void;
+  registerScriptEntryPoint(src: string, functionName: string, entryPc: number): void;
+  clearScriptEntryPoints(): void;
   executeScriptRef(src: string): ScriptExecutionOutcome;
+  executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
+  executeScriptRefCall(
+    src: string,
+    functionName: string,
+    args: Array<boolean | number | string | { invalid: true }>
+  ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
   render(): void;
@@ -109,8 +117,20 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     clearScriptUnits() {
       engine.clearScriptUnits();
     },
+    registerScriptEntryPoint(src: string, functionName: string, entryPc: number) {
+      engine.registerScriptEntryPoint(src, functionName, entryPc);
+    },
+    clearScriptEntryPoints() {
+      engine.clearScriptEntryPoints();
+    },
     executeScriptRef(src: string) {
       return engine.executeScriptRef(src) as ScriptExecutionOutcome;
+    },
+    executeScriptRefFunction(src: string, functionName: string) {
+      return engine.executeScriptRefFunction(src, functionName) as ScriptExecutionOutcome;
+    },
+    executeScriptRefCall(src: string, functionName: string, args) {
+      return engine.executeScriptRefCall(src, functionName, args) as ScriptExecutionOutcome;
     },
     lastScriptExecutionTrap() {
       return engine.lastScriptExecutionTrap();
@@ -127,5 +147,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
 
 function registerBuiltInScriptUnits(engine: WmlEngine): void {
   engine.clearScriptUnits();
+  engine.clearScriptEntryPoints();
   engine.registerScriptUnit('calc.wmlsc', new Uint8Array([0x01, 4, 0x01, 5, 0x02, 0x00]));
+  engine.registerScriptEntryPoint('calc.wmlsc', 'main', 0);
 }
