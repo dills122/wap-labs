@@ -173,7 +173,7 @@ Use this shape for any new ticket:
 ### A2-03 History stack baseline
 
 1. `Requirement IDs`: `WML-R-008`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A2-01`
 4. `Files`:
 - `engine-wasm/engine/src/runtime/deck.rs`
@@ -186,11 +186,15 @@ Use this shape for any new ticket:
 - Empty history behavior tests.
 7. `Accept`:
 - Back call restores prior card deterministically.
+8. `Notes`:
+- Added `navigateBack()` wasm API in engine contract/runtime for explicit host-triggered back navigation.
+- Fragment transitions now have tested push/pop history behavior (`home -> next -> back`) and empty-history no-op behavior.
+- Added host-sample fixture `history-back-stack.wml` and Back control wiring for deterministic manual verification.
 
 ### A3-01 Deterministic wrapping at viewport width
 
 1. `Requirement IDs`: `WML-R-004`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A1-03`
 4. `Files`:
 - `engine-wasm/engine/src/layout/flow_layout.rs`
@@ -203,11 +207,14 @@ Use this shape for any new ticket:
 - Fixture: `link-wrap.wml`.
 7. `Accept`:
 - Draw command sequence stable across repeated runs.
+8. `Notes`:
+- Added phase-A golden fixture snapshots at viewport widths `16`, `20`, and `24` using `link-wrap.wml`.
+- Snapshot assertions now lock expected draw command sequences for deterministic wrapping behavior.
 
 ### A3-02 Focus index stability for wrapped links
 
 1. `Requirement IDs`: `WML-R-005`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A3-01`
 4. `Files`:
 - `engine-wasm/engine/src/nav/focus.rs`
@@ -219,11 +226,14 @@ Use this shape for any new ticket:
 - Focus traversal snapshots with wrapped/unwrapped links.
 7. `Accept`:
 - `focusedLinkIndex()` is deterministic for identical key sequences.
+8. `Notes`:
+- Added wrapped-link focus stability snapshots confirming one logical focus index per link across wrapped segments.
+- Added key-sequence assertions for focus traversal from wrapped to unwrapped links.
 
 ### A4-01 Metadata boundary contract hardening
 
 1. `Requirement IDs`: `WML-R-009`, `WBXML-R-001`, `WBXML-R-002`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: none
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -238,11 +248,14 @@ Use this shape for any new ticket:
 - wasm contract tests for metadata propagation and defaults.
 7. `Accept`:
 - Host sample works using both APIs.
+8. `Notes`:
+- Added metadata regression tests for `loadDeck` defaults and `loadDeckContext` overrides.
+- Added compatibility-path test ensuring `loadDeck` remains functional and resets to default metadata semantics.
 
 ### A4-02 Golden fixture harness in Rust tests
 
 1. `Requirement IDs`: supports all Phase A requirements
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A1-01`
 4. `Files`:
 - `engine-wasm/engine/tests/fixtures/*`
@@ -258,6 +271,9 @@ Use this shape for any new ticket:
 - `missing-fragment.wml`
 7. `Accept`:
 - Regression tests fail on unintended behavior changes.
+8. `Notes`:
+- Added fixture corpus under `engine-wasm/engine/tests/fixtures/phase-a/`.
+- Added fixture-driven snapshot/state regression tests in `engine-wasm/engine/src/lib.rs` test module.
 
 ## Suggested First Sprint (7 tickets)
 

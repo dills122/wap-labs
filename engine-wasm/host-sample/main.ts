@@ -20,6 +20,7 @@ async function main() {
   const editorWrap = document.querySelector<HTMLElement>('.editor-wrap');
   const toggleEditor = document.querySelector<HTMLButtonElement>('#toggle-editor');
   const liveCheckbox = document.querySelector<HTMLInputElement>('#live-reload');
+  const pressBackButton = document.querySelector<HTMLButtonElement>('#press-back');
   const pressUpButton = document.querySelector<HTMLButtonElement>('#press-up');
   const pressDownButton = document.querySelector<HTMLButtonElement>('#press-down');
   const pressEnterButton = document.querySelector<HTMLButtonElement>('#press-enter');
@@ -52,6 +53,7 @@ async function main() {
     !editorWrap ||
     !toggleEditor ||
     !liveCheckbox ||
+    !pressBackButton ||
     !pressUpButton ||
     !pressDownButton ||
     !pressEnterButton ||
@@ -226,6 +228,14 @@ async function main() {
   pressUpButton.addEventListener('click', () => pressKey('up'));
   pressDownButton.addEventListener('click', () => pressKey('down'));
   pressEnterButton.addEventListener('click', () => pressKey('enter'));
+  pressBackButton.addEventListener('click', () => {
+    const handled = host.navigateBack();
+    const snapshot = updateRuntimeState();
+    status.textContent = handled
+      ? `Back applied. Active card: ${snapshot.activeCardId}`
+      : 'Back ignored (history empty).';
+    appendEvent(handled ? 'BACK' : 'BACK_EMPTY', snapshot);
+  });
   clearIntentButton.addEventListener('click', () => {
     host.clearExternalNavigationIntent();
     const snapshot = updateRuntimeState();

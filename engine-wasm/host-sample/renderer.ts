@@ -20,6 +20,7 @@ export interface EngineSnapshot {
 export interface EngineHost {
   loadDeck(xml: string): void;
   pressKey(key: KeyName): void;
+  navigateBack(): boolean;
   snapshot(): EngineSnapshot;
   clearExternalNavigationIntent(): void;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
@@ -95,6 +96,11 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     pressKey(key: KeyName) {
       engine.handleKey(key);
       paint();
+    },
+    navigateBack() {
+      const handled = engine.navigateBack();
+      paint();
+      return handled;
     },
     snapshot() {
       return {

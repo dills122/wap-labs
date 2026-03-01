@@ -85,6 +85,7 @@ export interface WmlEngineWasm {
   render(): RenderList;
   handleKey(key: EngineKey): void;
   navigateToCard(id: string): void;
+  navigateBack(): boolean;
   setViewportCols(cols: number): void;
   activeCardId(): string;
   focusedLinkIndex(): number;

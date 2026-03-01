@@ -1,0 +1,21 @@
+<!--
+label: History Back Stack
+description: Exercises fragment navigation history and host-triggered back navigation.
+goal: Verify runtime pushes history on fragment transitions and pops deterministically through navigateBack.
+work-items: A2-03
+spec-items: WML-R-008
+testing-ac:
+- Load the deck and press Enter on "Go to next"; activeCardId should become next.
+- Press Back; activeCardId should return to home.
+- Press Back again and confirm status reports history empty with activeCardId still home.
+-->
+<wml>
+  <card id="home">
+    <p>History baseline demo.</p>
+    <a href="#next">Go to next</a>
+  </card>
+  <card id="next">
+    <p>Second card reached by fragment navigation.</p>
+    <a href="#home">Return home via link</a>
+  </card>
+</wml>

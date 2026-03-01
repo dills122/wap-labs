@@ -1,0 +1,10 @@
+<wml>
+  <card id="home">
+    <p>Welcome</p>
+    <a href="#next">Go next</a>
+  </card>
+  <card id="next">
+    <p>Second card</p>
+    <a href="#home">Back home</a>
+  </card>
+</wml>
