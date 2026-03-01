@@ -87,6 +87,69 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
     }
 }
 
+fn apply_load_deck(
+    engine: &mut WmlEngine,
+    request: LoadDeckRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.load_deck(&request.wml_xml)?;
+    Ok(snapshot(engine))
+}
+
+fn apply_load_deck_context(
+    engine: &mut WmlEngine,
+    request: LoadDeckContextRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.load_deck_context(
+        &request.wml_xml,
+        &request.base_url,
+        &request.content_type,
+        request.raw_bytes_base64,
+    )?;
+    Ok(snapshot(engine))
+}
+
+fn apply_render(engine: &WmlEngine) -> Result<RenderList, String> {
+    engine.render()
+}
+
+fn apply_handle_key(
+    engine: &mut WmlEngine,
+    request: HandleKeyRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.handle_key(request.key)?;
+    Ok(snapshot(engine))
+}
+
+fn apply_navigate_to_card(
+    engine: &mut WmlEngine,
+    request: NavigateToCardRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.navigate_to_card(request.card_id)?;
+    Ok(snapshot(engine))
+}
+
+fn apply_navigate_back(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
+    engine.navigate_back();
+    snapshot(engine)
+}
+
+fn apply_set_viewport_cols(
+    engine: &mut WmlEngine,
+    request: SetViewportColsRequest,
+) -> EngineRuntimeSnapshot {
+    engine.set_viewport_cols(request.cols);
+    snapshot(engine)
+}
+
+fn apply_engine_snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
+    snapshot(engine)
+}
+
+fn apply_clear_external_navigation_intent(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
+    engine.clear_external_navigation_intent();
+    snapshot(engine)
+}
+
 fn lock_engine<'a>(
     state: &'a State<AppState>,
 ) -> Result<std::sync::MutexGuard<'a, WmlEngine>, String> {
@@ -123,8 +186,7 @@ fn engine_load_deck(
     request: LoadDeckRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.load_deck(&request.wml_xml)?;
-    Ok(snapshot(&engine))
+    apply_load_deck(&mut engine, request)
 }
 
 #[tauri::command]
@@ -133,19 +195,13 @@ fn engine_load_deck_context(
     request: LoadDeckContextRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.load_deck_context(
-        &request.wml_xml,
-        &request.base_url,
-        &request.content_type,
-        request.raw_bytes_base64,
-    )?;
-    Ok(snapshot(&engine))
+    apply_load_deck_context(&mut engine, request)
 }
 
 #[tauri::command]
 fn engine_render(state: State<AppState>) -> Result<RenderList, String> {
     let engine = lock_engine(&state)?;
-    engine.render()
+    apply_render(&engine)
 }
 
 #[tauri::command]
@@ -154,8 +210,7 @@ fn engine_handle_key(
     request: HandleKeyRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.handle_key(request.key)?;
-    Ok(snapshot(&engine))
+    apply_handle_key(&mut engine, request)
 }
 
 #[tauri::command]
@@ -164,15 +219,13 @@ fn engine_navigate_to_card(
     request: NavigateToCardRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.navigate_to_card(request.card_id)?;
-    Ok(snapshot(&engine))
+    apply_navigate_to_card(&mut engine, request)
 }
 
 #[tauri::command]
 fn engine_navigate_back(state: State<AppState>) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.navigate_back();
-    Ok(snapshot(&engine))
+    Ok(apply_navigate_back(&mut engine))
 }
 
 #[tauri::command]
@@ -181,14 +234,13 @@ fn engine_set_viewport_cols(
     request: SetViewportColsRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.set_viewport_cols(request.cols);
-    Ok(snapshot(&engine))
+    Ok(apply_set_viewport_cols(&mut engine, request))
 }
 
 #[tauri::command]
 fn engine_snapshot(state: State<AppState>) -> Result<EngineRuntimeSnapshot, String> {
     let engine = lock_engine(&state)?;
-    Ok(snapshot(&engine))
+    Ok(apply_engine_snapshot(&engine))
 }
 
 #[tauri::command]
@@ -196,8 +248,7 @@ fn engine_clear_external_navigation_intent(
     state: State<AppState>,
 ) -> Result<EngineRuntimeSnapshot, String> {
     let mut engine = lock_engine(&state)?;
-    engine.clear_external_navigation_intent();
-    Ok(snapshot(&engine))
+    Ok(apply_clear_external_navigation_intent(&mut engine))
 }
 
 pub fn run() {
@@ -218,4 +269,121 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running Waves Tauri host");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        apply_clear_external_navigation_intent, apply_engine_snapshot, apply_handle_key,
+        apply_load_deck_context, apply_navigate_back, apply_render, apply_set_viewport_cols,
+        HandleKeyRequest, LoadDeckContextRequest,
+    };
+    use wavenav_engine::{DrawCmd, WmlEngine};
+
+    const BASIC_NAV_WML: &str = r##"
+    <wml>
+      <card id="home">
+        <p>Hello from Waves</p>
+        <a href="#next">Next</a>
+      </card>
+      <card id="next">
+        <p>Second card</p>
+      </card>
+    </wml>
+    "##;
+
+    const EXTERNAL_LINK_WML: &str = r##"
+    <wml>
+      <card id="home">
+        <a href="next.wml?foo=1">Load External</a>
+      </card>
+    </wml>
+    "##;
+
+    #[test]
+    fn smoke_load_render_and_snapshot() {
+        let mut engine = WmlEngine::new();
+        let snapshot = apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: BASIC_NAV_WML.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+        assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
+
+        let render = apply_render(&engine).expect("render should succeed");
+        let contains_greeting = render.draw.iter().any(|cmd| match cmd {
+            DrawCmd::Text { text, .. } => text.contains("Hello from Waves"),
+            _ => false,
+        });
+        assert!(
+            contains_greeting,
+            "render output should include greeting text"
+        );
+
+        let post = apply_engine_snapshot(&engine);
+        assert_eq!(post.focused_link_index, 0);
+    }
+
+    #[test]
+    fn smoke_key_navigation_and_back_stack() {
+        let mut engine = WmlEngine::new();
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: BASIC_NAV_WML.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+
+        let after_enter = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter should navigate");
+        assert_eq!(after_enter.active_card_id.as_deref(), Some("next"));
+
+        let after_back = apply_navigate_back(&mut engine);
+        assert_eq!(after_back.active_card_id.as_deref(), Some("home"));
+    }
+
+    #[test]
+    fn smoke_external_intent_set_and_clear() {
+        let mut engine = WmlEngine::new();
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: EXTERNAL_LINK_WML.to_string(),
+                base_url: "http://local.test/dir/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+
+        apply_set_viewport_cols(&mut engine, super::SetViewportColsRequest { cols: 20 });
+        let after_enter = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter should set external intent");
+        assert_eq!(
+            after_enter.external_navigation_intent.as_deref(),
+            Some("http://local.test/dir/next.wml?foo=1")
+        );
+
+        let after_clear = apply_clear_external_navigation_intent(&mut engine);
+        assert_eq!(after_clear.external_navigation_intent, None);
+    }
 }
