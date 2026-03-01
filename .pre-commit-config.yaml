@@ -102,6 +102,27 @@ repos:
           wasm-pack not installed"; exit 0; fi; fi; cd engine-wasm/host-sample
           && pnpm run build'
 
+      - id: python-ruff-transport
+        name: python ruff (transport-python)
+        language: system
+        pass_filenames: false
+        files: ^transport-python/
+        stages: [pre-push]
+        entry: >-
+          bash -lc 'if [ -x transport-python/.venv/bin/ruff ]; then
+          transport-python/.venv/bin/ruff check transport-python; elif command -v ruff >/dev/null 2>&1; then
+          ruff check transport-python; else echo "skip: ruff not found (transport-python)"; exit 1; fi'
+
+      - id: python-pytest-transport
+        name: python pytest (transport-python)
+        language: system
+        pass_filenames: false
+        files: ^transport-python/
+        stages: [pre-push]
+        entry: >-
+          bash -lc 'if [ -x transport-python/.venv/bin/pytest ]; then
+          transport-python/.venv/bin/pytest transport-python/tests; elif command -v pytest >/dev/null 2>&1; then
+          pytest transport-python/tests; else echo "skip: pytest not found (transport-python)"; exit 1; fi'
+
       # Future hooks (intentionally disabled until those layers are bootstrapped):
-      # - transport-python ruff/pytest
       # - browser frontend lint/typecheck/test

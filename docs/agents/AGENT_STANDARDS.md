@@ -122,6 +122,7 @@ Agents must preserve support for:
   - Session Translation
   - MTU Enforcement
 - No DOM / Layout Logic
+- Detailed Python transport standards: `docs/agents/PYTHON_STEERING.md`
 
 ---
 
