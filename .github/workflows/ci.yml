@@ -215,6 +215,11 @@ jobs:
         with:
           components: rustfmt
 
+      - name: Ensure Tauri frontendDist exists for compile-time config
+        run: |
+          mkdir -p browser/frontend/dist
+          test -f browser/frontend/dist/index.html || echo '<!doctype html><title>ci-placeholder</title>' > browser/frontend/dist/index.html
+
       - name: Browser Rust fmt check
         working-directory: browser/src-tauri
         run: cargo fmt --check
