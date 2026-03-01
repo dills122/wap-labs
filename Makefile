@@ -6,7 +6,7 @@ ENABLE_NODE_CHECKS ?= 0
 RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
-.PHONY: up down restart logs ps status smoke smoke-up clean \
+.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport \
 	fmt lint test test-fast ci-local \
 	coverage-rust \
 	lint-rust lint-node lint-python \
@@ -40,6 +40,9 @@ smoke:
 smoke-up:
 	$(COMPOSE) up -d --build
 	./scripts/smoke.sh
+
+smoke-transport:
+	./scripts/transport-http-smoke.sh
 
 clean:
 	$(COMPOSE) down -v --remove-orphans

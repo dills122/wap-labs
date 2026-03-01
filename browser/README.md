@@ -22,11 +22,15 @@ Implemented now:
   - `engine_set_viewport_cols`
   - `engine_snapshot`
   - `engine_clear_external_navigation_intent`
+- Transport sidecar boot management in `src-tauri/src/lib.rs`:
+  - auto-starts `transport-python/service.py` on app setup
+  - waits for `/health` before app run proceeds
+  - shuts down child process on app exit
 
 Not implemented yet:
 
 - Full browser chrome (address bar/history panes/history/devtools)
-- End-to-end transport fetch -> engine load flow
+- End-to-end UI fetch -> transport fetch -> engine load flow
 - Python transport service lifecycle management
 - Production packaging/signing
 
@@ -46,9 +50,21 @@ The Python transport layer remains mandatory for now (no WSP/WBXML rewrite in Ru
 - Desktop/transport contract: `browser/contracts/transport.ts`
 - Engine contract: `engine-wasm/contracts/wml-engine.ts`
 
+## Transport sidecar runtime knobs
+
+- `TRANSPORT_API_BASE` (default `http://127.0.0.1:8765`)
+- `TRANSPORT_SIDECAR_AUTOSTART` (default `1`; set `0` to disable auto-start)
+- `TRANSPORT_SIDECAR_AUTO_PROVISION` (default `1`; set `0` to disable venv/pip bootstrap)
+- `TRANSPORT_SERVICE_PATH` (optional absolute path to `service.py`)
+- `PYTHON_BIN` (optional explicit runtime python; when unset Waves prefers `transport-python/.venv/bin/python`)
+- `PYTHON_BOOTSTRAP_BIN` (default `python3`; used to create `.venv` when missing)
+
+On first boot, Waves will provision `transport-python/.venv` and install `requirements.txt`
+automatically if transport dependencies are not yet present.
+
 ## Next implementation slice
 
-1. Wire `fetch_deck` command to the Python service.
+1. Connect frontend URL flow to `fetch_deck` + `engine_load_deck_context`.
 2. Expand frontend harness into browser chrome and URL navigation UX.
 3. Add fixture-driven integration checks for load/render/nav parity.
 

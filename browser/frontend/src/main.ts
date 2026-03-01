@@ -36,6 +36,36 @@ interface EngineRuntimeSnapshot {
   lastScriptRequiresRefresh?: boolean;
 }
 
+interface FetchErrorInfo {
+  code: string;
+  message: string;
+  details?: Record<string, unknown>;
+}
+
+interface FetchTiming {
+  encode: number;
+  udpRtt: number;
+  decode: number;
+}
+
+interface EngineDeckInput {
+  wmlXml: string;
+  baseUrl: string;
+  contentType: string;
+  rawBytesBase64?: string;
+}
+
+interface FetchDeckResponse {
+  ok: boolean;
+  status: number;
+  finalUrl: string;
+  contentType: string;
+  wml?: string;
+  error?: FetchErrorInfo;
+  timingMs: FetchTiming;
+  engineDeckInput?: EngineDeckInput;
+}
+
 const SAMPLE_WML = `<wml>
   <card id="home">
     <p>WaveNav native engine harness</p>
@@ -71,6 +101,7 @@ app.innerHTML = `
       </div>
       <div class="actions">
         <button id="btn-health">Health</button>
+        <button id="btn-fetch-url">Fetch URL</button>
         <button id="btn-load-context">Load Deck Context</button>
         <button id="btn-render">Render</button>
         <button id="btn-up">Key Up</button>
@@ -85,6 +116,10 @@ app.innerHTML = `
     <section class="panel">
       <h2>Viewport</h2>
       <div id="viewport" class="viewport"></div>
+      <h2 style="margin-top: 14px;">Transport URL</h2>
+      <input id="fetch-url" type="text" value="http://127.0.0.1:3000/" />
+      <h2 style="margin-top: 14px;">Transport Response</h2>
+      <pre id="transport-response"></pre>
       <h2 style="margin-top: 14px;">Runtime Snapshot</h2>
       <pre id="snapshot"></pre>
     </section>
@@ -97,8 +132,19 @@ const viewportColsInput = document.querySelector<HTMLInputElement>('#viewport-co
 const viewportEl = document.querySelector<HTMLDivElement>('#viewport');
 const snapshotEl = document.querySelector<HTMLPreElement>('#snapshot');
 const statusEl = document.querySelector<HTMLDivElement>('#status');
+const fetchUrlInput = document.querySelector<HTMLInputElement>('#fetch-url');
+const transportResponseEl = document.querySelector<HTMLPreElement>('#transport-response');
 
-if (!wmlInput || !baseUrlInput || !viewportColsInput || !viewportEl || !snapshotEl || !statusEl) {
+if (
+  !wmlInput ||
+  !baseUrlInput ||
+  !viewportColsInput ||
+  !viewportEl ||
+  !snapshotEl ||
+  !statusEl ||
+  !fetchUrlInput ||
+  !transportResponseEl
+) {
   throw new Error('missing expected UI element');
 }
 
@@ -110,6 +156,10 @@ const setStatus = (message: string): void => {
 
 const setSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
   snapshotEl.textContent = JSON.stringify(snapshot, null, 2);
+};
+
+const setTransportResponse = (response: FetchDeckResponse | null): void => {
+  transportResponseEl.textContent = response ? JSON.stringify(response, null, 2) : '';
 };
 
 const drawRenderList = (renderList: RenderList): void => {
@@ -189,6 +239,52 @@ document.querySelector<HTMLButtonElement>('#btn-load-context')?.addEventListener
     const renderList = await invoke<RenderList>('engine_render');
     drawRenderList(renderList);
     setStatus('Deck loaded and rendered.');
+  })
+);
+
+document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.addEventListener(
+  'click',
+  withAction(async () => {
+    await setViewportCols();
+    const transport = await invoke<FetchDeckResponse>('fetch_deck', {
+      request: {
+        url: fetchUrlInput.value,
+        method: 'GET',
+        timeoutMs: 5000,
+        retries: 1
+      }
+    });
+    setTransportResponse(transport);
+
+    if (!transport.ok) {
+      const errorMessage = transport.error?.message ?? 'unknown transport failure';
+      setStatus(`Fetch failed: ${errorMessage}`);
+      return;
+    }
+
+    const deckInput = transport.engineDeckInput ?? {
+      wmlXml: transport.wml ?? '',
+      baseUrl: transport.finalUrl,
+      contentType: transport.contentType,
+      rawBytesBase64: undefined
+    };
+    if (!deckInput.wmlXml) {
+      setStatus('Fetch succeeded but returned no WML payload.');
+      return;
+    }
+
+    const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
+      request: {
+        wmlXml: deckInput.wmlXml,
+        baseUrl: deckInput.baseUrl,
+        contentType: deckInput.contentType,
+        rawBytesBase64: deckInput.rawBytesBase64 ?? null
+      }
+    });
+    setSnapshot(snapshot);
+    const renderList = await invoke<RenderList>('engine_render');
+    drawRenderList(renderList);
+    setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
   })
 );
 
