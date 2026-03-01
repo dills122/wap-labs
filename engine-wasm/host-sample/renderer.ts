@@ -1,5 +1,5 @@
 import init, { WmlEngine } from '../pkg/wavenav_engine.js';
-import type { DrawCmd, ScriptExecutionOutcome } from '../contracts/wml-engine';
+import type { DrawCmd, EngineTraceEntry, ScriptExecutionOutcome } from '../contracts/wml-engine';
 
 const lineHeight = 16;
 const charWidth = 8;
@@ -36,6 +36,8 @@ export interface EngineHost {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
+  traceEntries(): EngineTraceEntry[];
+  clearTraceEntries(): void;
   render(): void;
   getEngine(): WmlEngine;
 }
@@ -137,6 +139,12 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     },
     lastScriptExecutionOk() {
       return engine.lastScriptExecutionOk();
+    },
+    traceEntries() {
+      return engine.traceEntries() as EngineTraceEntry[];
+    },
+    clearTraceEntries() {
+      engine.clearTraceEntries();
     },
     render: paint,
     getEngine() {

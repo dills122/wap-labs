@@ -7,6 +7,7 @@ import { renderRuntimeState } from './services/runtime-state';
 import { ExampleEventLog } from './services/event-log';
 import { renderExampleMetadata } from './ui/example-metadata';
 import { downloadFile } from './services/download';
+import { createRuntimeInspector } from './ui/runtime-inspector';
 
 const LIVE_RELOAD_DEBOUNCE_MS = 250;
 
@@ -28,6 +29,12 @@ async function main() {
   const clearEventLogButton = document.querySelector<HTMLButtonElement>('#clear-event-log');
   const eventLogExportFormat = document.querySelector<HTMLSelectElement>('#event-log-export-format');
   const exportEventLogButton = document.querySelector<HTMLButtonElement>('#export-event-log');
+  const traceWrap = document.querySelector<HTMLElement>('.trace-wrap');
+  const toggleTrace = document.querySelector<HTMLButtonElement>('#toggle-trace');
+  const clearTraceButton = document.querySelector<HTMLButtonElement>('#clear-trace');
+  const traceExportFormat = document.querySelector<HTMLSelectElement>('#trace-export-format');
+  const exportTraceButton = document.querySelector<HTMLButtonElement>('#export-trace');
+  const engineTrace = document.querySelector<HTMLPreElement>('#engine-trace');
   const status = document.querySelector<HTMLParagraphElement>('#status');
   const runtimeState = document.querySelector<HTMLPreElement>('#runtime-state');
   const eventLog = document.querySelector<HTMLPreElement>('#event-log');
@@ -57,6 +64,12 @@ async function main() {
     !clearEventLogButton ||
     !eventLogExportFormat ||
     !exportEventLogButton ||
+    !traceWrap ||
+    !toggleTrace ||
+    !clearTraceButton ||
+    !traceExportFormat ||
+    !exportTraceButton ||
+    !engineTrace ||
     !status ||
     !runtimeState ||
     !eventLog ||
@@ -112,11 +125,38 @@ async function main() {
     toggleButton: toggleEventLog,
     collapsedClass: 'is-collapsed'
   });
+  const traceSection = createCollapsible({
+    container: traceWrap,
+    toggleButton: toggleTrace,
+    collapsedClass: 'is-collapsed'
+  });
   const eventLogService = new ExampleEventLog(eventLog, defaultExample.key);
+  const runtimeInspector = createRuntimeInspector({
+    output: engineTrace,
+    clearButton: clearTraceButton,
+    exportButton: exportTraceButton,
+    exportFormat: traceExportFormat,
+    getEntries: () => host.traceEntries(),
+    onCleared: () => {
+      host.clearTraceEntries();
+      status.textContent = 'Cleared engine trace.';
+      appendEvent('TRACE_CLEARED');
+    },
+    onExported: (outcome, format, count) => {
+      if (outcome === 'empty') {
+        status.textContent = 'No engine trace entries to export.';
+        appendEvent('TRACE_EXPORT_SKIPPED (empty)');
+        return;
+      }
+      status.textContent = `Exported ${count} engine trace entr${count === 1 ? 'y' : 'ies'} as ${format}.`;
+      appendEvent(`TRACE_EXPORTED (${format})`);
+    }
+  });
 
   const updateRuntimeState = () => {
     const snapshot = host.snapshot();
     renderRuntimeState(runtimeState, snapshot);
+    runtimeInspector.render();
     return snapshot;
   };
 
@@ -180,6 +220,7 @@ async function main() {
   toggleExampleMeta.addEventListener('click', () => exampleMetaSection.toggle());
   toggleEditor.addEventListener('click', () => editorSection.toggle());
   toggleEventLog.addEventListener('click', () => eventLogSection.toggle());
+  toggleTrace.addEventListener('click', () => traceSection.toggle());
 
   reloadButton.addEventListener('click', () => {
     reloadFromEditor('Deck reloaded.', 'manual-reload');
@@ -247,6 +288,7 @@ async function main() {
   exampleMetaSection.apply();
   editorSection.apply();
   eventLogSection.apply();
+  traceSection.apply();
   const initialSnapshot = updateRuntimeState();
   appendEvent('BOOT');
   appendEvent('INITIAL_LOAD', initialSnapshot);

@@ -41,6 +41,17 @@ export interface ScriptExecutionOutcome {
   trap?: string;
 }
 
+export interface EngineTraceEntry {
+  seq: number;
+  kind: string;
+  detail: string;
+  active_card_id?: string;
+  focused_link_index: number;
+  external_navigation_intent?: string;
+  script_ok?: boolean;
+  script_trap?: string;
+}
+
 export interface RenderList {
   draw: DrawCmd[];
 }
@@ -95,4 +106,6 @@ export interface WmlEngineWasm {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
+  traceEntries(): EngineTraceEntry[];
+  clearTraceEntries(): void;
 }

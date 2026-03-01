@@ -19,6 +19,7 @@ use wmlscript::value::ScriptValue;
 use wmlscript::vm::{Vm, VmTrap};
 
 const DEFAULT_VIEWPORT_COLS: usize = 20;
+const MAX_TRACE_ENTRIES: usize = 256;
 
 #[wasm_bindgen]
 pub struct WmlEngine {
@@ -34,6 +35,8 @@ pub struct WmlEngine {
     script_units: HashMap<String, Vec<u8>>,
     script_entrypoints: HashMap<String, HashMap<String, usize>>,
     last_script_outcome: Option<ScriptExecutionOutcome>,
+    trace_entries: Vec<EngineTraceEntry>,
+    next_trace_seq: u64,
 }
 
 impl Default for WmlEngine {
@@ -59,6 +62,8 @@ impl WmlEngine {
             script_units: HashMap::new(),
             script_entrypoints: HashMap::new(),
             last_script_outcome: None,
+            trace_entries: Vec::new(),
+            next_trace_seq: 1,
         }
     }
 
@@ -87,6 +92,8 @@ impl WmlEngine {
         self.script_units.clear();
         self.script_entrypoints.clear();
         self.last_script_outcome = None;
+        self.clear_trace_entries();
+        self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
         Ok(())
     }
 
@@ -221,6 +228,17 @@ impl WmlEngine {
     pub fn last_script_execution_ok(&self) -> Option<bool> {
         self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
     }
+
+    #[wasm_bindgen(js_name = traceEntries)]
+    pub fn trace_entries(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.trace_entries)
+    }
+
+    #[wasm_bindgen(js_name = clearTraceEntries)]
+    pub fn clear_trace_entries(&mut self) {
+        self.trace_entries.clear();
+        self.next_trace_seq = 1;
+    }
 }
 
 impl WmlEngine {
@@ -290,6 +308,7 @@ impl WmlEngine {
     }
 
     fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
+        self.push_trace("KEY", format!("key={key}"));
         let (layout, accept_action_href) = {
             let card = self.active_card_internal()?;
             (
@@ -309,6 +328,7 @@ impl WmlEngine {
             "enter" => {
                 if link_total == 0 {
                     if let Some(href) = accept_action_href {
+                        self.push_trace("ACTION_ACCEPT", href.clone());
                         self.execute_action_href(&href)?;
                     }
                     return Ok(());
@@ -351,21 +371,52 @@ impl WmlEngine {
     fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
         if let Some(script_ref) = parse_script_href(href) {
             let function_name = script_ref.function_name.unwrap_or("main");
+            self.push_trace(
+                "ACTION_SCRIPT",
+                format!("{}#{}", script_ref.src, function_name),
+            );
             let outcome = self.execute_script_ref_internal(script_ref.src, function_name);
             self.last_script_outcome = Some(outcome.clone());
             if let Some(message) = outcome.trap {
+                self.push_trace("SCRIPT_TRAP", message.clone());
                 return Err(message);
             }
+            self.push_trace("SCRIPT_OK", String::new());
             return Ok(());
         }
 
         if let Some(card_id) = href.strip_prefix('#') {
+            self.push_trace("ACTION_FRAGMENT", card_id.to_string());
             self.navigate_to_card_internal(card_id)?;
             return Ok(());
         }
 
+        self.push_trace("ACTION_EXTERNAL", href.to_string());
         self.external_nav_intent = Some(self.resolve_external_href(href));
         Ok(())
+    }
+
+    fn push_trace(&mut self, kind: &str, detail: String) {
+        if self.trace_entries.len() >= MAX_TRACE_ENTRIES {
+            self.trace_entries.remove(0);
+        }
+
+        let active_card_id = self.active_card_internal().ok().map(|card| card.id.clone());
+        let entry = EngineTraceEntry {
+            seq: self.next_trace_seq,
+            kind: kind.to_string(),
+            detail,
+            active_card_id,
+            focused_link_index: self.focused_link_idx,
+            external_navigation_intent: self.external_nav_intent.clone(),
+            script_ok: self.last_script_outcome.as_ref().map(|outcome| outcome.ok),
+            script_trap: self
+                .last_script_outcome
+                .as_ref()
+                .and_then(|outcome| outcome.trap.clone()),
+        };
+        self.next_trace_seq += 1;
+        self.trace_entries.push(entry);
     }
 
     fn active_card_internal(&self) -> Result<&runtime::card::Card, String> {
@@ -520,6 +571,18 @@ struct ScriptExecutionOutcome {
     ok: bool,
     result: ScriptValueLiteral,
     trap: Option<String>,
+}
+
+#[derive(Clone, Serialize)]
+struct EngineTraceEntry {
+    seq: u64,
+    kind: String,
+    detail: String,
+    active_card_id: Option<String>,
+    focused_link_index: usize,
+    external_navigation_intent: Option<String>,
+    script_ok: Option<bool>,
+    script_trap: Option<String>,
 }
 
 impl ScriptExecutionOutcome {
@@ -1083,5 +1146,48 @@ mod tests {
             .handle_key("enter".to_string())
             .expect("enter should navigate and run onenterforward");
         assert_eq!(engine.active_card_id().expect("active card"), "next");
+    }
+
+    #[test]
+    fn trace_entries_record_key_and_actions() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#next">Next</a>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should navigate");
+
+        assert!(!engine.trace_entries.is_empty());
+        assert!(
+            engine.trace_entries.iter().any(|entry| entry.kind == "KEY"),
+            "expected KEY trace entry"
+        );
+        assert!(
+            engine
+                .trace_entries
+                .iter()
+                .any(|entry| entry.kind == "ACTION_FRAGMENT"),
+            "expected ACTION_FRAGMENT trace entry"
+        );
+    }
+
+    #[test]
+    fn clear_trace_entries_resets_trace_state() {
+        let mut engine = WmlEngine::new();
+        engine.push_trace("TEST", "x".to_string());
+        assert!(!engine.trace_entries.is_empty());
+
+        engine.clear_trace_entries();
+        assert!(engine.trace_entries.is_empty());
+        assert_eq!(engine.next_trace_seq, 1);
     }
 }

@@ -96,6 +96,32 @@
             <pre id="event-log" class="event-log">No events yet.</pre>
           </div>
         </section>
+        <section class="trace-wrap">
+          <div class="section-header">
+            <h2>Runtime Inspector</h2>
+            <button
+              id="toggle-trace"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="trace-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="trace-body">
+            <div class="trace-actions">
+              <button id="clear-trace" type="button">Clear Engine Trace</button>
+              <label class="trace-export-label" for="trace-export-format">Export as</label>
+              <select id="trace-export-format">
+                <option value="txt">Text (.txt)</option>
+                <option value="json">JSON (.json)</option>
+              </select>
+              <button id="export-trace" type="button">Export Engine Trace</button>
+            </div>
+            <pre id="engine-trace" class="engine-trace">No engine trace entries yet.</pre>
+          </div>
+        </section>
       </section>
 
       <section class="screen-wrap">
