@@ -1,0 +1,21 @@
+<!--
+label: WMLBrowser Var + Nav
+work-items: W0-04
+spec-items: RQ-WMLS-017, RQ-WMLS-018
+description: Exercises script-host bindings for setVar/getVar and deferred go/prev navigation effects.
+goal: Validate WMLBrowser subset semantics at the engine-owned post-invocation boundary.
+testing-ac:
+- On home card, press Enter on "Script setVar + go"; activeCardId should become next.
+- Confirm runtime-state nextCardVar becomes #next after the script runs.
+- On next card, press Enter on "Script prev"; activeCardId should return to home.
+-->
+<wml>
+  <card id="home">
+    <p>WMLBrowser var/nav subset demo.</p>
+    <a href="script:wmlbrowser-demo.wmlsc#main">Script setVar + go</a>
+  </card>
+  <card id="next">
+    <p>Navigation came from script go().</p>
+    <a href="script:wmlbrowser-demo.wmlsc#back">Script prev</a>
+  </card>
+</wml>

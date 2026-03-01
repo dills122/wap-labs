@@ -39,6 +39,8 @@ export interface ScriptExecutionOutcome {
   ok: boolean;
   result: ScriptValueLiteral;
   trap?: string;
+  navigationIntent?: ScriptNavigationIntent;
+  requiresRefresh?: boolean;
 }
 
 export interface EngineTraceEntry {
@@ -91,6 +93,8 @@ export interface WmlEngineWasm {
   focusedLinkIndex(): number;
   baseUrl(): string;
   contentType(): string;
+  getVar(name: string): string | undefined;
+  setVar(name: string, value: string): boolean;
   externalNavigationIntent(): string | undefined;
   clearExternalNavigationIntent(): void;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;

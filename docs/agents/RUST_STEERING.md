@@ -34,38 +34,46 @@ Project rule: if an internal convention conflicts with these references, prefer 
 ## 3. Language and Toolchain Policy
 
 1. Edition:
+
 - Keep crate edition explicit in `Cargo.toml`.
 - Do not bump edition in incidental PRs.
 
 2. Toolchain:
+
 - CI uses stable Rust.
 - Prefer `cargo` subcommands over ad-hoc scripts.
 
 3. Formatting:
+
 - Use `cargo fmt`.
 - CI gate is `cargo fmt --check`.
 - Avoid custom rustfmt style overrides unless there is a concrete readability or diff-stability reason.
 
 4. Linting:
+
 - Use `cargo clippy` for advisories, but avoid enabling broad deny-all lint policies without team agreement.
 - If a lint is intentionally not followed, use narrow `#[allow(...)]` at the smallest scope with a short rationale comment.
 
 ## 4. Architecture Rules for This Repo
 
 1. Rust engine owns:
+
 - WML parse/runtime/layout/focus/navigation semantics.
 
 2. Rust engine does not own:
+
 - Network access
 - WSP/WBXML decode
 - Transport retries/session protocols
 
 3. WASM boundary:
+
 - Export only stable, host-oriented methods via `#[wasm_bindgen]`.
 - Keep rich internal logic in non-exported helpers returning Rust-native types (`Result<T, String>` or typed errors).
 - Convert to `JsValue` at boundary edges only.
 
 4. Public contract alignment:
+
 - Any boundary behavior change must update:
 - `engine-wasm/contracts/wml-engine.ts`
 - related docs under `docs/wml-engine/`
@@ -75,39 +83,48 @@ Project rule: if an internal convention conflicts with these references, prefer 
 Follow Rust API Guidelines directly for naming, traits, docs, predictability:
 
 1. Naming:
+
 - Types/traits: `UpperCamelCase`
 - functions/methods/modules: `snake_case`
 - constants/statics: `SCREAMING_SNAKE_CASE`
 
 2. Method naming:
+
 - Use idiomatic names (`new`, `from_*`, `as_*`, `to_*`, `into_*`) consistently.
 - Do not invent one-off naming patterns for conversions.
 
 3. Predictability:
+
 - Prefer methods when there is a clear receiver.
 - Keep word order consistent across related methods/types.
 
 4. Trait derivations:
+
 - Derive common traits where semantically correct (`Debug`, `Clone`, `PartialEq`, `Eq`, etc.).
 - Avoid deriving traits that can mislead semantics (example: `Copy` for large or stateful types).
 
 5. Type exposure:
+
 - Prefer private fields + constructor/helper methods over broad public mutable structs, unless the struct is intentionally a plain data model.
 
 ## 6. Error Handling Policy
 
 1. Default:
+
 - Return `Result` for recoverable failures.
 
 2. Panic usage:
+
 - `panic!` is acceptable for impossible internal invariants and test scaffolding.
 - Avoid panic paths in normal runtime/host input flows.
 
 3. WASM edge:
+
 - Internal functions should return Rust errors.
 - Map to `JsValue` only in exported API methods.
 
 4. Error messages:
+
 - Keep messages stable and concise for integration tests.
 - Prefer deterministic text to aid snapshot/contract checks.
 
@@ -116,11 +133,13 @@ Follow Rust API Guidelines directly for naming, traits, docs, predictability:
 1. Keep runtime state transitions explicit.
 
 2. For nav/focus/history:
+
 - Update one concern at a time.
 - Preserve deterministic ordering.
 - Write tests for state before and after each transition.
 
 3. Avoid hidden side effects:
+
 - Do not mutate unrelated state in parse/layout functions.
 
 ## 8. WASM-Specific Guidance
@@ -132,27 +151,33 @@ Follow Rust API Guidelines directly for naming, traits, docs, predictability:
 3. Avoid passing complex internal structs directly to JS when a stable view model is sufficient.
 
 4. Keep host compatibility:
+
 - Do not break existing exported method names/signatures in incidental refactors.
 - If breaking, do it intentionally with contract and docs updates in the same change.
 
 ## 9. Testing and TDD Rules
 
 1. Mandatory workflow:
+
 - Red (failing test) -> Green (minimal fix) -> Refactor.
 
 2. Minimum tests for behavior changes:
+
 - Unit tests for parser/runtime helper logic.
 - Integration-style tests for key-sequence and state transitions.
 
 3. Required validation commands for Rust-only PRs:
+
 - `cargo fmt --check`
 - `cargo test`
 
 4. Preferred test qualities:
+
 - Deterministic assertions on state (`active_card_idx`, focus index, nav stack behavior).
 - Avoid brittle assertions on incidental formatting unless snapshot intent is explicit.
 
 5. Documentation tests:
+
 - Add doctests for public APIs where useful.
 - Keep examples runnable when possible.
 
@@ -163,6 +188,7 @@ Follow Rust API Guidelines directly for naming, traits, docs, predictability:
 2. Do not introduce complex caching until there is measured need.
 
 3. When optimizing:
+
 - Benchmark or at least compare before/after behavior and complexity.
 - Keep readability unless perf gain is meaningful.
 
@@ -171,6 +197,7 @@ Follow Rust API Guidelines directly for naming, traits, docs, predictability:
 1. `unsafe` is disallowed by default in this crate.
 
 2. If `unsafe` becomes necessary:
+
 - Isolate to minimal module/function.
 - Document invariants and why safe alternatives are insufficient.
 - Add targeted tests for boundary assumptions.

@@ -408,7 +408,7 @@ Reference architecture:
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-03`
 3. `Files`:
 - `engine-wasm/engine/src/wmlscript/stdlib/wmlbrowser.rs`

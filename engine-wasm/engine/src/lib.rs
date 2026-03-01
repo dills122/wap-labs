@@ -14,7 +14,10 @@ use layout::flow_layout::layout_card;
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
 use parser::wml_parser::parse_wml;
 use runtime::deck::Deck;
+use runtime::events::{ScriptNavigationIntent, ScriptRuntimeEffects};
+use std::mem;
 use wmlscript::decoder::{decode_compilation_unit, DecodeError};
+use wmlscript::stdlib::wmlbrowser::WmlBrowserHost;
 use wmlscript::value::ScriptValue;
 use wmlscript::vm::{Vm, VmTrap};
 
@@ -32,8 +35,10 @@ pub struct WmlEngine {
     base_url: String,
     content_type: String,
     raw_bytes_base64: Option<String>,
+    vars: HashMap<String, String>,
     script_units: HashMap<String, Vec<u8>>,
     script_entrypoints: HashMap<String, HashMap<String, usize>>,
+    pending_script_effects: ScriptRuntimeEffects,
     last_script_outcome: Option<ScriptExecutionOutcome>,
     trace_entries: Vec<EngineTraceEntry>,
     next_trace_seq: u64,
@@ -59,8 +64,10 @@ impl WmlEngine {
             base_url: String::new(),
             content_type: String::new(),
             raw_bytes_base64: None,
+            vars: HashMap::new(),
             script_units: HashMap::new(),
             script_entrypoints: HashMap::new(),
+            pending_script_effects: ScriptRuntimeEffects::default(),
             last_script_outcome: None,
             trace_entries: Vec::new(),
             next_trace_seq: 1,
@@ -89,12 +96,28 @@ impl WmlEngine {
         self.base_url = base_url.to_string();
         self.content_type = content_type.to_string();
         self.raw_bytes_base64 = raw_bytes_base64;
+        self.vars.clear();
         self.script_units.clear();
         self.script_entrypoints.clear();
+        self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_outcome = None;
         self.clear_trace_entries();
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
         Ok(())
+    }
+
+    #[wasm_bindgen(js_name = getVar)]
+    pub fn get_var(&self, name: String) -> Option<String> {
+        self.vars.get(&name).cloned()
+    }
+
+    #[wasm_bindgen(js_name = setVar)]
+    pub fn set_var(&mut self, name: String, value: String) -> bool {
+        if !is_valid_var_name(&name) {
+            return false;
+        }
+        self.vars.insert(name, value);
+        true
     }
 
     #[wasm_bindgen]
@@ -193,6 +216,11 @@ impl WmlEngine {
     pub fn execute_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
         let outcome = self.execute_script_ref_internal(&src, "main");
         self.last_script_outcome = Some(outcome.clone());
+        if outcome.ok {
+            self.apply_pending_script_effects().map_err(as_js_err)?;
+        } else {
+            self.pending_script_effects = ScriptRuntimeEffects::default();
+        }
         to_js_value(&outcome)
     }
 
@@ -204,6 +232,11 @@ impl WmlEngine {
     ) -> Result<JsValue, JsValue> {
         let outcome = self.execute_script_ref_internal(&src, &function_name);
         self.last_script_outcome = Some(outcome.clone());
+        if outcome.ok {
+            self.apply_pending_script_effects().map_err(as_js_err)?;
+        } else {
+            self.pending_script_effects = ScriptRuntimeEffects::default();
+        }
         to_js_value(&outcome)
     }
 
@@ -219,6 +252,11 @@ impl WmlEngine {
         let vm_args = convert_script_call_args(&call_args);
         let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
         self.last_script_outcome = Some(outcome.clone());
+        if outcome.ok {
+            self.apply_pending_script_effects().map_err(as_js_err)?;
+        } else {
+            self.pending_script_effects = ScriptRuntimeEffects::default();
+        }
         to_js_value(&outcome)
     }
 
@@ -257,13 +295,17 @@ impl WmlEngine {
 
         let vm = Vm::default();
         match vm.execute(&decoded_unit) {
-            Ok(result) => ScriptExecutionOutcome::ok(script_value_to_literal(result)),
+            Ok(result) => ScriptExecutionOutcome::ok(
+                script_value_to_literal(result),
+                ScriptNavigationIntentLiteral::None,
+                false,
+            ),
             Err(trap) => ScriptExecutionOutcome::trap(format_vm_trap(trap)),
         }
     }
 
     fn execute_script_ref_internal(
-        &self,
+        &mut self,
         src: &str,
         function_name: &str,
     ) -> ScriptExecutionOutcome {
@@ -271,7 +313,7 @@ impl WmlEngine {
     }
 
     fn execute_script_ref_call_internal(
-        &self,
+        &mut self,
         src: &str,
         function_name: &str,
         args: &[ScriptValue],
@@ -305,9 +347,20 @@ impl WmlEngine {
             *entry_pc
         };
 
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        let mut host = WmlBrowserHost::new(&mut self.vars, &mut self.pending_script_effects);
         let vm = Vm::default();
-        match vm.execute_from_pc_with_locals(&decoded_unit, entry_pc, args.to_vec()) {
-            Ok(result) => ScriptExecutionOutcome::ok(script_value_to_literal(result)),
+        match vm.execute_from_pc_with_locals_and_host(
+            &decoded_unit,
+            entry_pc,
+            args.to_vec(),
+            &mut host,
+        ) {
+            Ok(result) => ScriptExecutionOutcome::ok(
+                script_value_to_literal(result),
+                script_nav_intent_to_literal(self.pending_script_effects.navigation_intent()),
+                self.pending_script_effects.requires_refresh(),
+            ),
             Err(trap) => ScriptExecutionOutcome::trap(format_vm_trap(trap)),
         }
     }
@@ -395,9 +448,11 @@ impl WmlEngine {
             let outcome = self.execute_script_ref_internal(script_ref.src, function_name);
             self.last_script_outcome = Some(outcome.clone());
             if let Some(message) = outcome.trap {
+                self.pending_script_effects = ScriptRuntimeEffects::default();
                 self.push_trace("SCRIPT_TRAP", message.clone());
                 return Err(message);
             }
+            self.apply_pending_script_effects()?;
             self.push_trace("SCRIPT_OK", String::new());
             return Ok(());
         }
@@ -410,6 +465,27 @@ impl WmlEngine {
 
         self.push_trace("ACTION_EXTERNAL", href.to_string());
         self.external_nav_intent = Some(self.resolve_external_href(href));
+        Ok(())
+    }
+
+    fn apply_pending_script_effects(&mut self) -> Result<(), String> {
+        let effects = mem::take(&mut self.pending_script_effects);
+        let nav_intent = effects.navigation_intent().clone();
+
+        match nav_intent {
+            ScriptNavigationIntent::None => {}
+            ScriptNavigationIntent::Prev => {
+                self.navigate_back_internal();
+            }
+            ScriptNavigationIntent::Go(href) => {
+                if let Some(card_id) = href.strip_prefix('#') {
+                    self.navigate_to_card_internal(card_id)?;
+                } else if !href.is_empty() {
+                    self.external_nav_intent = Some(self.resolve_external_href(&href));
+                }
+            }
+        }
+
         Ok(())
     }
 
@@ -570,6 +646,16 @@ fn format_vm_trap(trap: VmTrap) -> String {
         VmTrap::ExecutionLimitExceeded { limit } => {
             format!("vm: execution step limit exceeded ({limit})")
         }
+        VmTrap::Utf8ImmediateDecode => "vm: invalid utf-8 string immediate".to_string(),
+        VmTrap::HostCallUnavailable { function_id } => {
+            format!("vm: host call unavailable (function={function_id})")
+        }
+        VmTrap::HostCallError {
+            function_id,
+            message,
+        } => {
+            format!("vm: host call error (function={function_id}, message={message})")
+        }
     }
 }
 
@@ -588,6 +674,8 @@ struct ScriptExecutionOutcome {
     ok: bool,
     result: ScriptValueLiteral,
     trap: Option<String>,
+    navigation_intent: ScriptNavigationIntentLiteral,
+    requires_refresh: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -603,11 +691,17 @@ struct EngineTraceEntry {
 }
 
 impl ScriptExecutionOutcome {
-    fn ok(result: ScriptValueLiteral) -> Self {
+    fn ok(
+        result: ScriptValueLiteral,
+        navigation_intent: ScriptNavigationIntentLiteral,
+        requires_refresh: bool,
+    ) -> Self {
         Self {
             ok: true,
             result,
             trap: None,
+            navigation_intent,
+            requires_refresh,
         }
     }
 
@@ -616,8 +710,18 @@ impl ScriptExecutionOutcome {
             ok: false,
             result: ScriptValueLiteral::Invalid { invalid: true },
             trap: Some(message),
+            navigation_intent: ScriptNavigationIntentLiteral::None,
+            requires_refresh: false,
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+enum ScriptNavigationIntentLiteral {
+    None,
+    Go { href: String },
+    Prev,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -661,11 +765,35 @@ fn convert_script_call_args(args: &[ScriptCallArgLiteral]) -> Vec<ScriptValue> {
         .collect()
 }
 
+fn is_valid_var_name(name: &str) -> bool {
+    if name.is_empty() {
+        return false;
+    }
+    let mut chars = name.chars();
+    let Some(first) = chars.next() else {
+        return false;
+    };
+    if !(first.is_ascii_alphabetic() || first == '_') {
+        return false;
+    }
+    chars.all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '.' || ch == '-')
+}
+
+fn script_nav_intent_to_literal(intent: &ScriptNavigationIntent) -> ScriptNavigationIntentLiteral {
+    match intent {
+        ScriptNavigationIntent::None => ScriptNavigationIntentLiteral::None,
+        ScriptNavigationIntent::Go(href) => {
+            ScriptNavigationIntentLiteral::Go { href: href.clone() }
+        }
+        ScriptNavigationIntent::Prev => ScriptNavigationIntentLiteral::Prev,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{
         convert_script_call_args, parse_script_href, ParsedScriptRef, ScriptCallArgLiteral,
-        ScriptValueLiteral, WmlEngine,
+        ScriptNavigationIntentLiteral, ScriptValueLiteral, WmlEngine,
     };
     use crate::layout::flow_layout::layout_card;
     use crate::render::render_list::DrawCmd;
@@ -712,6 +840,17 @@ mod tests {
                 } => format!("link:{x}:{y}:focused={focused}:href={href}:text={text}"),
             })
             .collect()
+    }
+
+    fn push_string(bytes: &mut Vec<u8>, value: &str) {
+        let raw = value.as_bytes();
+        assert!(
+            u8::try_from(raw.len()).is_ok(),
+            "test string too long for PUSH_STRING8"
+        );
+        bytes.push(0x03);
+        bytes.push(raw.len() as u8);
+        bytes.extend_from_slice(raw);
     }
 
     #[test]
@@ -1184,6 +1323,158 @@ mod tests {
         assert!(outcome.ok);
         assert_eq!(outcome.result, ScriptValueLiteral::Number(42.0));
         assert_eq!(outcome.trap, None);
+    }
+
+    #[test]
+    fn wmlbrowser_setvar_getvar_lifecycle_and_coercion() {
+        let mut engine = WmlEngine::new();
+        assert!(engine.set_var("alpha".to_string(), "1".to_string()));
+        assert_eq!(engine.get_var("alpha".to_string()).as_deref(), Some("1"));
+        assert!(!engine.set_var("9bad".to_string(), "x".to_string()));
+
+        let mut unit = Vec::new();
+        push_string(&mut unit, "score");
+        unit.push(0x01);
+        unit.push(7);
+        unit.push(0x20);
+        unit.push(0x02);
+        unit.push(0x02);
+        push_string(&mut unit, "score");
+        unit.push(0x20);
+        unit.push(0x01);
+        unit.push(0x01);
+        unit.push(0x00);
+        engine.register_script_unit("vars.wmlsc".to_string(), unit);
+
+        let outcome = engine.execute_script_ref_internal("vars.wmlsc", "main");
+        assert!(outcome.ok);
+        assert_eq!(outcome.result, ScriptValueLiteral::String("7".to_string()));
+        assert_eq!(engine.get_var("score".to_string()).as_deref(), Some("7"));
+        assert_eq!(outcome.requires_refresh, true);
+        assert_eq!(
+            outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::None
+        );
+    }
+
+    #[test]
+    fn wmlbrowser_script_go_fragment_applies_at_post_invocation_boundary() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="script:nav.wmlsc#main">Script go</a>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01);
+        unit.push(0x00);
+        engine.register_script_unit("nav.wmlsc".to_string(), unit);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("script go should apply post invocation");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+    }
+
+    #[test]
+    fn wmlbrowser_script_prev_applies_post_invocation() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#next">Go next</a>
+          </card>
+          <card id="next">
+            <a href="script:nav.wmlsc#back">Back via script</a>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("fragment nav should work");
+        assert_eq!(engine.active_card_id().expect("active"), "next");
+
+        engine.register_script_unit("nav.wmlsc".to_string(), vec![0x20, 0x04, 0x00, 0x00]);
+        engine.register_script_entry_point("nav.wmlsc".to_string(), "back".to_string(), 0);
+        engine
+            .handle_key("enter".to_string())
+            .expect("script prev should apply");
+        assert_eq!(engine.active_card_id().expect("active"), "home");
+    }
+
+    #[test]
+    fn wmlbrowser_navigation_last_call_wins_matrix() {
+        let mut engine = WmlEngine::new();
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #next
+        unit.push(0x20);
+        unit.push(0x04);
+        unit.push(0x00); // prev
+        unit.push(0x00);
+        let go_prev = unit.clone();
+
+        let mut unit = Vec::new();
+        unit.push(0x20);
+        unit.push(0x04);
+        unit.push(0x00); // prev
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #next
+        unit.push(0x00);
+        let prev_go = unit.clone();
+
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #next
+        push_string(&mut unit, "");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go ""
+        unit.push(0x00);
+        let go_cancel = unit.clone();
+
+        engine.register_script_unit("go_prev.wmlsc".to_string(), go_prev);
+        engine.register_script_unit("prev_go.wmlsc".to_string(), prev_go);
+        engine.register_script_unit("go_cancel.wmlsc".to_string(), go_cancel);
+
+        let go_prev_outcome = engine.execute_script_ref_internal("go_prev.wmlsc", "main");
+        assert!(go_prev_outcome.ok);
+        assert_eq!(
+            go_prev_outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::Prev
+        );
+
+        let prev_go_outcome = engine.execute_script_ref_internal("prev_go.wmlsc", "main");
+        assert!(prev_go_outcome.ok);
+        assert_eq!(
+            prev_go_outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::Go {
+                href: "#next".to_string()
+            }
+        );
+
+        let go_cancel_outcome = engine.execute_script_ref_internal("go_cancel.wmlsc", "main");
+        assert!(go_cancel_outcome.ok);
+        assert_eq!(
+            go_cancel_outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::None
+        );
     }
 
     #[test]

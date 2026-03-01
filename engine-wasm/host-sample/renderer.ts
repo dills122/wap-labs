@@ -12,6 +12,7 @@ export interface EngineSnapshot {
   focusedLinkIndex: number;
   baseUrl: string;
   contentType: string;
+  nextCardVar?: string;
   externalNavigationIntent?: string;
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
@@ -23,6 +24,8 @@ export interface EngineHost {
   navigateBack(): boolean;
   snapshot(): EngineSnapshot;
   clearExternalNavigationIntent(): void;
+  getVar(name: string): string | undefined;
+  setVar(name: string, value: string): boolean;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;
   clearScriptUnits(): void;
@@ -108,6 +111,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         focusedLinkIndex: engine.focusedLinkIndex(),
         baseUrl: engine.baseUrl(),
         contentType: engine.contentType(),
+        nextCardVar: engine.getVar('nextCard'),
         externalNavigationIntent: engine.externalNavigationIntent(),
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap()
@@ -115,6 +119,12 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     },
     clearExternalNavigationIntent() {
       engine.clearExternalNavigationIntent();
+    },
+    getVar(name: string) {
+      return engine.getVar(name);
+    },
+    setVar(name: string, value: string) {
+      return engine.setVar(name, value);
     },
     executeScriptUnit(bytes: Uint8Array) {
       return engine.executeScriptUnit(bytes) as ScriptExecutionOutcome;
@@ -164,4 +174,61 @@ function registerBuiltInScriptUnits(engine: WmlEngine): void {
   engine.clearScriptEntryPoints();
   engine.registerScriptUnit('calc.wmlsc', new Uint8Array([0x01, 4, 0x01, 5, 0x02, 0x00]));
   engine.registerScriptEntryPoint('calc.wmlsc', 'main', 0);
+  engine.registerScriptUnit(
+    'wmlbrowser-demo.wmlsc',
+    new Uint8Array([
+      0x03,
+      0x08,
+      0x6e,
+      0x65,
+      0x78,
+      0x74,
+      0x43,
+      0x61,
+      0x72,
+      0x64, // "nextCard"
+      0x03,
+      0x05,
+      0x23,
+      0x6e,
+      0x65,
+      0x78,
+      0x74, // "#next"
+      0x20,
+      0x02,
+      0x02, // setVar(name, value)
+      0x03,
+      0x05,
+      0x23,
+      0x6e,
+      0x65,
+      0x78,
+      0x74, // "#next"
+      0x20,
+      0x03,
+      0x01, // go(href)
+      0x00, // halt
+      0x20,
+      0x04,
+      0x00, // prev()
+      0x00, // halt
+      0x03,
+      0x08,
+      0x6e,
+      0x65,
+      0x78,
+      0x74,
+      0x43,
+      0x61,
+      0x72,
+      0x64, // "nextCard"
+      0x20,
+      0x01,
+      0x01, // getVar(name)
+      0x00 // halt
+    ])
+  );
+  engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'main', 0);
+  engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'back', 31);
+  engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'readNext', 35);
 }

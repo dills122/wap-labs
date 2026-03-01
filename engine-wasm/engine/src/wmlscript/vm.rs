@@ -4,10 +4,12 @@ use super::value::ScriptValue;
 const HALT_OPCODE: u8 = 0x00;
 const PUSH_INT8_OPCODE: u8 = 0x01;
 const ADD_I32_OPCODE: u8 = 0x02;
+const PUSH_STRING8_OPCODE: u8 = 0x03;
 const STORE_LOCAL_OPCODE: u8 = 0x10;
 const LOAD_LOCAL_OPCODE: u8 = 0x11;
 const CALL_OPCODE: u8 = 0x12;
 const RET_OPCODE: u8 = 0x13;
+const CALL_HOST_OPCODE: u8 = 0x20;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ExecutionLimits {
@@ -40,6 +42,9 @@ pub enum VmTrap {
     CallDepthExceeded { limit: usize },
     ReturnFromRootFrame,
     ExecutionLimitExceeded { limit: usize },
+    Utf8ImmediateDecode,
+    HostCallUnavailable { function_id: u8 },
+    HostCallError { function_id: u8, message: String },
 }
 
 #[derive(Debug, Clone)]
@@ -51,6 +56,19 @@ pub struct Vm {
 struct CallFrame {
     return_pc: Option<usize>,
     locals: Vec<ScriptValue>,
+}
+
+pub trait VmHost {
+    fn call(&mut self, function_id: u8, args: &[ScriptValue]) -> Result<ScriptValue, VmTrap>;
+}
+
+#[derive(Default)]
+struct NoopHost;
+
+impl VmHost for NoopHost {
+    fn call(&mut self, function_id: u8, _args: &[ScriptValue]) -> Result<ScriptValue, VmTrap> {
+        Err(VmTrap::HostCallUnavailable { function_id })
+    }
 }
 
 impl Default for Vm {
@@ -65,7 +83,16 @@ impl Vm {
     }
 
     pub fn execute(&self, unit: &DecodedUnit) -> Result<ScriptValue, VmTrap> {
-        self.execute_from_pc(unit, 0)
+        let mut host = NoopHost;
+        self.execute_from_pc_with_host(unit, 0, &mut host)
+    }
+
+    pub fn execute_with_host<H: VmHost>(
+        &self,
+        unit: &DecodedUnit,
+        host: &mut H,
+    ) -> Result<ScriptValue, VmTrap> {
+        self.execute_from_pc_with_host(unit, 0, host)
     }
 
     pub fn execute_from_pc(
@@ -73,7 +100,17 @@ impl Vm {
         unit: &DecodedUnit,
         entry_pc: usize,
     ) -> Result<ScriptValue, VmTrap> {
-        self.execute_from_pc_with_locals(unit, entry_pc, Vec::new())
+        let mut host = NoopHost;
+        self.execute_from_pc_with_locals_and_host(unit, entry_pc, Vec::new(), &mut host)
+    }
+
+    pub fn execute_from_pc_with_host<H: VmHost>(
+        &self,
+        unit: &DecodedUnit,
+        entry_pc: usize,
+        host: &mut H,
+    ) -> Result<ScriptValue, VmTrap> {
+        self.execute_from_pc_with_locals_and_host(unit, entry_pc, Vec::new(), host)
     }
 
     pub fn execute_from_pc_with_locals(
@@ -81,6 +118,17 @@ impl Vm {
         unit: &DecodedUnit,
         entry_pc: usize,
         initial_locals: Vec<ScriptValue>,
+    ) -> Result<ScriptValue, VmTrap> {
+        let mut host = NoopHost;
+        self.execute_from_pc_with_locals_and_host(unit, entry_pc, initial_locals, &mut host)
+    }
+
+    pub fn execute_from_pc_with_locals_and_host<H: VmHost>(
+        &self,
+        unit: &DecodedUnit,
+        entry_pc: usize,
+        initial_locals: Vec<ScriptValue>,
+        host: &mut H,
     ) -> Result<ScriptValue, VmTrap> {
         if unit.bytes().is_empty() {
             return Err(VmTrap::EmptyUnit);
@@ -127,6 +175,17 @@ impl Vm {
                     push_stack(
                         &mut stack,
                         ScriptValue::Int32(lhs.saturating_add(rhs)),
+                        self.limits.max_stack_size,
+                    )?;
+                }
+                PUSH_STRING8_OPCODE => {
+                    let len = usize::from(read_u8(unit.bytes(), &mut pc, opcode)?);
+                    let bytes = read_bytes(unit.bytes(), &mut pc, len, opcode)?;
+                    let value = String::from_utf8(bytes.to_vec())
+                        .map_err(|_| VmTrap::Utf8ImmediateDecode)?;
+                    push_stack(
+                        &mut stack,
+                        ScriptValue::String(value),
                         self.limits.max_stack_size,
                     )?;
                 }
@@ -188,6 +247,20 @@ impl Vm {
                     pc = frame.return_pc.ok_or(VmTrap::ReturnFromRootFrame)?;
                     push_stack(&mut stack, return_value, self.limits.max_stack_size)?;
                 }
+                CALL_HOST_OPCODE => {
+                    let function_id = read_u8(unit.bytes(), &mut pc, opcode)?;
+                    let arg_count = usize::from(read_u8(unit.bytes(), &mut pc, opcode)?);
+
+                    let mut args = Vec::with_capacity(arg_count);
+                    for _ in 0..arg_count {
+                        let value = stack.pop().ok_or(VmTrap::StackUnderflow)?;
+                        args.push(value);
+                    }
+                    args.reverse();
+
+                    let result = host.call(function_id, &args)?;
+                    push_stack(&mut stack, result, self.limits.max_stack_size)?;
+                }
                 _ => {
                     return Err(VmTrap::UnsupportedOpcode(opcode));
                 }
@@ -204,6 +277,20 @@ fn read_u8(bytes: &[u8], pc: &mut usize, opcode: u8) -> Result<u8, VmTrap> {
     };
     *pc += 1;
     Ok(*value)
+}
+
+fn read_bytes<'a>(
+    bytes: &'a [u8],
+    pc: &mut usize,
+    len: usize,
+    opcode: u8,
+) -> Result<&'a [u8], VmTrap> {
+    if bytes.len().saturating_sub(*pc) < len {
+        return Err(VmTrap::TruncatedImmediate { opcode });
+    }
+    let start = *pc;
+    *pc += len;
+    Ok(&bytes[start..start + len])
 }
 
 fn current_frame(frames: &[CallFrame]) -> &CallFrame {
@@ -245,9 +332,27 @@ fn pop_int32(stack: &mut Vec<ScriptValue>) -> Result<i32, VmTrap> {
 
 #[cfg(test)]
 mod tests {
-    use super::{pop_int32, ExecutionLimits, Vm, VmTrap};
+    use super::{pop_int32, ExecutionLimits, Vm, VmHost, VmTrap};
     use crate::wmlscript::decoder::decode_compilation_unit;
     use crate::wmlscript::value::ScriptValue;
+
+    #[derive(Default)]
+    struct EchoHost;
+
+    impl VmHost for EchoHost {
+        fn call(&mut self, function_id: u8, args: &[ScriptValue]) -> Result<ScriptValue, VmTrap> {
+            match function_id {
+                1 => Ok(args
+                    .first()
+                    .cloned()
+                    .unwrap_or_else(ScriptValue::empty_string)),
+                _ => Err(VmTrap::HostCallError {
+                    function_id,
+                    message: "unknown".to_string(),
+                }),
+            }
+        }
+    }
 
     #[test]
     fn execute_returns_empty_string_on_halt_opcode() {
@@ -429,5 +534,43 @@ mod tests {
 
         let err = vm.execute(&unit).expect_err("return from root must trap");
         assert_eq!(err, VmTrap::ReturnFromRootFrame);
+    }
+
+    #[test]
+    fn execute_push_string_and_halt_returns_string() {
+        let vm = Vm::default();
+        let unit = decode_compilation_unit(&[0x03, 5, b'h', b'e', b'l', b'l', b'o', 0x00])
+            .expect("unit decode");
+
+        let value = vm.execute(&unit).expect("string push should execute");
+        assert_eq!(value, ScriptValue::String("hello".to_string()));
+    }
+
+    #[test]
+    fn execute_host_call_without_host_traps() {
+        let vm = Vm::default();
+        let unit = decode_compilation_unit(&[0x20, 1, 0, 0x00]).expect("unit decode");
+
+        let err = vm
+            .execute(&unit)
+            .expect_err("hostcall must trap without host");
+        assert_eq!(err, VmTrap::HostCallUnavailable { function_id: 1 });
+    }
+
+    #[test]
+    fn execute_host_call_with_host_returns_value() {
+        let vm = Vm::default();
+        let mut host = EchoHost;
+        let unit = decode_compilation_unit(&[
+            0x03, 2, b'o', b'k', // arg0
+            0x20, 1, 1, // host fn 1 with 1 arg
+            0x00,
+        ])
+        .expect("unit decode");
+
+        let value = vm
+            .execute_with_host(&unit, &mut host)
+            .expect("hostcall should execute");
+        assert_eq!(value, ScriptValue::String("ok".to_string()));
     }
 }
