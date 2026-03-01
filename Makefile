@@ -6,7 +6,7 @@ ENABLE_NODE_CHECKS ?= 0
 RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
-.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport init-refresh \
+.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport smoke-transport-wap init-refresh \
 	fmt lint test test-fast ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
 	lint-rust lint-rust-engine lint-rust-transport lint-node lint-python \
@@ -43,6 +43,9 @@ smoke-up:
 
 smoke-transport:
 	./scripts/transport-http-smoke.sh
+
+smoke-transport-wap:
+	./scripts/transport-wap-smoke.sh
 
 init-refresh:
 	./scripts/init-refresh.sh

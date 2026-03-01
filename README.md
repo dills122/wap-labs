@@ -31,7 +31,12 @@ Legacy stack:
 make up
 make status
 make smoke
+make smoke-transport-wap
+# optional direct gateway override:
+# GATEWAY_HTTP_BASE=http://localhost:13002 make smoke-transport-wap
 ```
+
+`make smoke-transport-wap` defaults to `GATEWAY_HTTP_BASE=http://localhost:3000/gateway` so host-side smoke remains stable while still exercising Kannel through the existing proxy path.
 
 WaveNav engine + quick host harness:
 

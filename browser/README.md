@@ -49,7 +49,7 @@ The desktop host will be a WAP-only browser shell:
 
 ## Transport runtime knobs
 
-- `GATEWAY_HTTP_BASE` (default `http://127.0.0.1:13002`)
+- `GATEWAY_HTTP_BASE` (default `http://localhost:13002`)
 - Decoder backend order:
   - preferred: in-process `libwbxml` shared library
   - fallback: `wbxml2xml` CLI

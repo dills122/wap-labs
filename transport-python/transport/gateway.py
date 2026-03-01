@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from transport.wsp_codec import build_wsp_envelope
 
-DEFAULT_GATEWAY_HTTP_BASE = "http://127.0.0.1:13002"
+DEFAULT_GATEWAY_HTTP_BASE = "http://localhost:13002"
 
 
 @dataclass(frozen=True)

@@ -403,7 +403,7 @@ pub fn preflight_wbxml_decoder() -> Result<String, String> {
 }
 
 fn gateway_http_base() -> String {
-    env::var("GATEWAY_HTTP_BASE").unwrap_or_else(|_| "http://127.0.0.1:13002".to_string())
+    env::var("GATEWAY_HTTP_BASE").unwrap_or_else(|_| "http://localhost:13002".to_string())
 }
 
 fn build_gateway_request(
@@ -435,16 +435,9 @@ fn build_gateway_request(
     request_url.set_query(parsed.query());
 
     let mut merged_headers = headers.clone();
-    if let Some(host) = parsed.host_str() {
-        let host_value = if let Some(port) = parsed.port() {
-            format!("{host}:{port}")
-        } else {
-            host.to_string()
-        };
-        merged_headers
-            .entry("Host".to_string())
-            .or_insert(host_value);
-    }
+    // Do not override Host by default for the gateway bridge.
+    // Kannel map-url matching is keyed on the gateway authority/path, and
+    // forcing Host to the original WAP target can break route resolution.
     merged_headers
         .entry("X-Wap-Target-Url".to_string())
         .or_insert_with(|| original_url.to_string());
@@ -876,10 +869,10 @@ mod tests {
         let result = build_gateway_request("wap://example.test/home.wml?x=1", "GET", &headers)
             .expect("gateway mapping should succeed");
         let (gateway_url, mapped_headers) = result;
-        assert_eq!(gateway_url, "http://127.0.0.1:13002/home.wml?x=1");
-        assert_eq!(
-            mapped_headers.get("Host"),
-            Some(&"example.test".to_string())
+        assert_eq!(gateway_url, "http://localhost:13002/home.wml?x=1");
+        assert!(
+            !mapped_headers.contains_key("Host"),
+            "transport should not inject Host header for gateway mapping"
         );
         assert_eq!(
             mapped_headers.get("X-Wap-Target-Url"),
@@ -892,7 +885,7 @@ mod tests {
         let headers = HashMap::new();
         let (gateway_url, _) = build_gateway_request("wap://example.test", "GET", &headers)
             .expect("gateway root mapping should succeed");
-        assert_eq!(gateway_url, "http://127.0.0.1:13002/");
+        assert_eq!(gateway_url, "http://localhost:13002/");
     }
 
     #[test]
@@ -912,14 +905,16 @@ mod tests {
     }
 
     #[test]
-    fn transport_build_gateway_request_includes_target_port_in_host_header() {
+    fn transport_build_gateway_request_keeps_target_in_x_wap_target_url_when_port_present() {
         let headers = HashMap::new();
         let (_, mapped_headers) =
             build_gateway_request("wap://example.test:9200/home.wml", "GET", &headers)
                 .expect("gateway mapping with explicit target port should succeed");
         assert_eq!(
-            mapped_headers.get("Host").map(String::as_str),
-            Some("example.test:9200")
+            mapped_headers
+                .get("X-Wap-Target-Url")
+                .map(String::as_str),
+            Some("wap://example.test:9200/home.wml")
         );
     }
 

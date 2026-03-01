@@ -352,6 +352,45 @@ jobs:
       - name: Run transport HTTP smoke check
         run: bash scripts/transport-http-smoke.sh
 
+  transport-wap-smoke:
+    name: Transport WAP Smoke (Kannel)
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start Kannel + WML stack
+        run: docker compose up -d --build kannel wml-server
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            transport-rust -> target
+
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
+
+      - name: Run WAP smoke
+        run: make smoke-transport-wap
+
+      - name: Dump service logs on failure
+        if: failure()
+        run: |
+          docker compose logs --tail=200 kannel wml-server || true
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down
+
   transport-python:
     name: Transport Python Lint + Test
     runs-on: ubuntu-latest

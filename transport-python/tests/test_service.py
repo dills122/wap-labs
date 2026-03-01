@@ -155,7 +155,7 @@ def test_fetch_wap_routes_through_gateway_bridge() -> None:
     fake = FakeResponse(
         body=b"<wml><card id='home'><p>Hi</p></card></wml>",
         status=200,
-        url="http://127.0.0.1:13002/home.wml",
+        url="http://localhost:13002/home.wml",
         headers={"Content-Type": "text/vnd.wap.wml"},
     )
     captured: dict[str, Any] = {}
@@ -167,7 +167,7 @@ def test_fetch_wap_routes_through_gateway_bridge() -> None:
         return fake
 
     with patch.dict(
-        os.environ, {"GATEWAY_HTTP_BASE": "http://127.0.0.1:13002"}, clear=False
+        os.environ, {"GATEWAY_HTTP_BASE": "http://localhost:13002"}, clear=False
     ), patch("service.urllib.request.urlopen", side_effect=fake_urlopen):
         response = client.post(
             "/fetch",
@@ -177,7 +177,7 @@ def test_fetch_wap_routes_through_gateway_bridge() -> None:
     body = response.json()
     assert response.status_code == 200
     assert body["ok"] is True
-    assert captured["url"] == "http://127.0.0.1:13002/home.wml?x=1"
+    assert captured["url"] == "http://localhost:13002/home.wml?x=1"
     assert captured["headers"]["host"] == "example.test"
     assert captured["headers"]["x-wap-target-url"] == "wap://example.test/home.wml?x=1"
     assert body["finalUrl"] == "wap://example.test/home.wml?x=1"
