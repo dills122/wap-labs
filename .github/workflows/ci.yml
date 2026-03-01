@@ -109,6 +109,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -135,6 +141,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
