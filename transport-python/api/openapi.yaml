@@ -139,6 +139,7 @@ components:
             - UNSUPPORTED_CONTENT_TYPE
             - WBXML_DECODE_FAILED
             - PROTOCOL_ERROR
+            - TRANSPORT_UNAVAILABLE
             - INTERNAL_ERROR
         message:
           type: string

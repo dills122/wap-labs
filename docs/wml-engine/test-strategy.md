@@ -54,3 +54,10 @@ Use `engine-wasm/host-sample` for manual/automated smoke:
 - Updated fixture/snapshot if behavior changed
 - API/doc updates if contract changed
 - No panic across wasm boundary
+
+## 5. Cross-Project Alignment
+
+- Keep test IDs and fixture coverage in sync with:
+  - `docs/waves/SPEC_TEST_COVERAGE.md`
+  - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+- When a requirement group moves from `planned` to `covered`, update both docs in the same change.

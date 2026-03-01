@@ -132,6 +132,15 @@ Type contract:
 - `engine-wasm/contracts/wml-engine.ts`
 - `docs/wml-engine/requirements-matrix.md`
 - `docs/wml-engine/ticket-plan.md`
+- `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+
+## Current checklist (planning/execution)
+
+- [ ] Complete Phase A todos in `docs/wml-engine/work-items.md` (`A2-03`, `A3-01`, `A3-02`, `A4-01`, `A4-02`)
+- [ ] Keep engine contract and transport/browser mapping synced
+- [ ] Expand fixture corpus to cover pending `RQ-RMK-*` and `RQ-WAE-*` groups
 
 ## Troubleshooting
 

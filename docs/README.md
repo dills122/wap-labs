@@ -10,6 +10,22 @@
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + Python sidecar strategy)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
+- `waves/WMLSCRIPT_VM_ARCHITECTURE.md`: WMLScript VM/runtime design and milestone plan
+- `waves/WMLSCRIPT_SPEC_TRACEABILITY.md`: WMLScript spec-derived requirements and acceptance-criteria traceability matrix
+- `waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`: WML/WBXML runtime-markup requirements and acceptance-criteria traceability matrix
+- `waves/WAE_SPEC_TRACEABILITY.md`: WAE/WAEMT spec-derived requirements and acceptance-criteria traceability matrix
+- `waves/TRANSPORT_SPEC_TRACEABILITY.md`: WSP/WTP/WDP transport spec-derived requirements and acceptance-criteria traceability matrix
+- `waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`: HTTP/TCP/HTTPSM/WCMP transport-adjacent requirements and interoperability-boundary traceability
+- `waves/SECURITY_BOUNDARY_TRACEABILITY.md`: WTLS/TLS/end-to-end security traceability and Waves boundary policy mapping
+- `waves/SECURITY_PKI_SPEC_TRACEABILITY.md`: WAPCert/WPKI/WIM trust and PKI-profile boundary traceability
+- `waves/ARCHITECTURE_CONTEXT_SPEC_REVIEW.md`: architecture-context constraints and non-runtime conformance guardrails
+- `waves/DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md`: reviewed deferred capabilities (WMLScript crypto, UAProf) and explicit defer decisions
+- `waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`: reviewed out-of-scope spec families with explicit defer posture and future activation AC
+- `waves/CONTRACT_REQUIREMENTS_MAPPING.md`: contract-field to requirement-ID mapping across engine, transport, and browser interfaces
+- `waves/SPEC_TEST_COVERAGE.md`: requirement-group test coverage matrix across engine/host/transport/browser
+- `waves/SPEC_COVERAGE_DASHBOARD.md`: current cross-domain spec coverage and remaining gap register
+- `waves/SOURCE_MATERIAL_MASTER_AUDIT.md`: full source-material audit scope, precedence, and gap-tracking plan
+- `waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`: per-file review ledger for all canonical source PDFs
 
 ## Engineering Standards
 

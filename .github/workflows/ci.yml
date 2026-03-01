@@ -19,6 +19,19 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install root Node deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
       - name: Install pre-commit
         run: pip install pre-commit
 
@@ -26,6 +39,9 @@ jobs:
         env:
           SKIP: rust-fmt-check,rust-test,host-sample-build
         run: pre-commit run --all-files
+
+      - name: Check generated transport contract
+        run: pnpm run check:transport-contract
 
   rust-engine:
     name: Rust Engine

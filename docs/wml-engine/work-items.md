@@ -47,6 +47,16 @@ Use this shape for any new ticket:
 7. `Tests`
 8. `Accept`
 
+## Traceability Rule
+
+- Every ticket must map its `Requirement IDs` to Waves requirement IDs using:
+  - `docs/wml-engine/requirements-matrix.md` ("Waves Traceability Mapping")
+  - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+  - `docs/waves/WAE_SPEC_TRACEABILITY.md` (where applicable)
+- Any contract-impacting ticket must also update:
+  - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+  - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 ## Phase A Implementation Queue
 
 ### A1-01 Enforce deck root/card invariant

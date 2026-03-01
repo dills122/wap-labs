@@ -32,6 +32,27 @@ This matrix maps normative behavior to engine modules and tests.
 | WBXML-R-001 | Keep WBXML decode outside engine MVP; accept textual WML | P0 | `WAP-192*` + architecture decision | api | contract |
 | WBXML-R-002 | Preserve optional raw bytes metadata for debug fidelity | P1 | `WAP-192*` token/binary handling context | api | contract |
 
+## Waves Traceability Mapping
+
+This maps engine-local requirement IDs to Waves global traceability IDs.
+
+| Engine Req ID(s) | Waves Requirement IDs |
+|---|---|
+| `WML-R-001`, `WML-R-002` | `RQ-RMK-001` |
+| `WML-R-003`, `WML-R-006`, `WML-R-008` | `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017` |
+| `WML-R-004` | `RQ-RMK-001`, `RQ-RMK-009` |
+| `WML-R-005` | `RQ-RMK-006` |
+| `WML-R-007` | `RQ-RMK-003`, `RQ-WAE-010` |
+| `WML-R-009` | `RQ-RMK-007`, `RQ-WAE-001` |
+| `WML-R-010` | `RQ-RMK-003` |
+| `WML-R-011`, `WML-R-012` | `RQ-RMK-002` |
+| `WML-R-013`, `WML-R-014` | `RQ-RMK-004` |
+| `WML-R-015`, `WML-R-016`, `WML-R-017` | `RQ-RMK-005` |
+| `WML-R-018` | `RQ-RMK-001`, `RQ-RMK-009` |
+| `WML-R-019` | `RQ-RMK-008` |
+| `WML-R-020` | `RQ-RMK-009` |
+| `WBXML-R-001`, `WBXML-R-002` | `RQ-RMK-007`, `RQ-WAE-005` |
+
 ## Explicit Non-goals (Current Phase)
 
 - In-engine WBXML decoding
