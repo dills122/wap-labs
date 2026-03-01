@@ -25,6 +25,9 @@
   "bundle": {
     "active": false,
     "targets": "all",
+    "resources": [
+      "resources/wbxml/**/*"
+    ],
     "icon": []
   }
 }
