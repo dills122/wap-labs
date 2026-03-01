@@ -215,6 +215,13 @@ jobs:
         with:
           components: rustfmt
 
+      - name: Cache Browser Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-browser-rust
+          workspaces: |
+            browser/src-tauri -> target
+
       - name: Ensure Tauri frontendDist exists for compile-time config
         run: |
           mkdir -p browser/frontend/dist
