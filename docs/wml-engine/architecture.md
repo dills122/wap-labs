@@ -24,8 +24,10 @@
 5. `render/`
 - Defines serializable output model consumed by host canvas renderer.
 
-6. `api (lib.rs wasm-bindgen)`
-- Stable methods (`loadDeck`, `loadDeckContext`, `render`, `handleKey`, `navigateToCard`, metadata getters).
+6. `api (lib.rs core + adapters)`
+- Stable runtime methods in native Rust (`load_deck`, `load_deck_context`, `render`, `handle_key`, `navigate_to_card`, metadata getters).
+- WASM adapter exports JS-compatible names (`loadDeck`, `loadDeckContext`, `render`, `handleKey`, `navigateToCard`, metadata getters).
+- Target-specific serialization/binding logic must remain adapter-only.
 
 ## 3. Data Model (Incremental)
 

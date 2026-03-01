@@ -6,6 +6,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 use wasm_bindgen::prelude::*;
 
 mod layout;
@@ -27,10 +28,12 @@ use wavescript::stdlib::wmlbrowser::WmlBrowserHost;
 use wavescript::value::ScriptValue;
 use wavescript::vm::{Vm, VmTrap};
 
+pub use render::render_list::{DrawCmd, RenderList};
+
 const DEFAULT_VIEWPORT_COLS: usize = 20;
 const MAX_TRACE_ENTRIES: usize = 256;
 
-#[wasm_bindgen]
+#[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
     deck: Option<Deck>,
     active_card_idx: usize,
@@ -56,10 +59,8 @@ impl Default for WmlEngine {
     }
 }
 
-#[wasm_bindgen]
 impl WmlEngine {
     /// Construct a new engine instance with empty runtime state.
-    #[wasm_bindgen(constructor)]
     pub fn new() -> WmlEngine {
         WmlEngine {
             deck: None,
@@ -82,21 +83,19 @@ impl WmlEngine {
     }
 
     /// Load a WML deck using default metadata (`text/vnd.wap.wml`).
-    #[wasm_bindgen(js_name = loadDeck)]
-    pub fn load_deck(&mut self, xml: &str) -> Result<(), JsValue> {
+    pub fn load_deck(&mut self, xml: &str) -> Result<(), String> {
         self.load_deck_context(xml, "", "text/vnd.wap.wml", None)
     }
 
     /// Load a WML deck with explicit transport metadata for traceability.
-    #[wasm_bindgen(js_name = loadDeckContext)]
     pub fn load_deck_context(
         &mut self,
         wml_xml: &str,
         base_url: &str,
         content_type: &str,
         raw_bytes_base64: Option<String>,
-    ) -> Result<(), JsValue> {
-        let deck = parse_wml(wml_xml).map_err(as_js_err)?;
+    ) -> Result<(), String> {
+        let deck = parse_wml(wml_xml)?;
         self.deck = Some(deck);
         self.active_card_idx = 0;
         self.nav_stack.clear();
@@ -116,13 +115,11 @@ impl WmlEngine {
     }
 
     /// Read a runtime variable.
-    #[wasm_bindgen(js_name = getVar)]
     pub fn get_var(&self, name: String) -> Option<String> {
         self.vars.get(&name).cloned()
     }
 
     /// Set a runtime variable if `name` passes deterministic validation.
-    #[wasm_bindgen(js_name = setVar)]
     pub fn set_var(&mut self, name: String, value: String) -> bool {
         if !is_valid_var_name(&name) {
             return false;
@@ -132,95 +129,80 @@ impl WmlEngine {
     }
 
     /// Render active card into draw commands for the current viewport width.
-    #[wasm_bindgen]
-    pub fn render(&self) -> Result<JsValue, JsValue> {
-        let card = self.active_card()?;
+    pub fn render(&self) -> Result<RenderList, String> {
+        let card = self.active_card_internal()?;
         let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
-        to_js_value(&layout.render_list)
+        Ok(layout.render_list)
     }
 
     /// Handle one input key (`up`, `down`, `enter`).
-    #[wasm_bindgen(js_name = handleKey)]
-    pub fn handle_key(&mut self, key: String) -> Result<(), JsValue> {
-        self.handle_key_internal(&key).map_err(as_js_err)
+    pub fn handle_key(&mut self, key: String) -> Result<(), String> {
+        self.handle_key_internal(&key)
     }
 
     /// Navigate directly to a card id and push history.
-    #[wasm_bindgen(js_name = navigateToCard)]
-    pub fn navigate_to_card(&mut self, id: String) -> Result<(), JsValue> {
-        self.navigate_to_card_internal(&id).map_err(as_js_err)
+    pub fn navigate_to_card(&mut self, id: String) -> Result<(), String> {
+        self.navigate_to_card_internal(&id)
     }
 
     /// Navigate back in history. Returns `false` when history is empty.
-    #[wasm_bindgen(js_name = navigateBack)]
     pub fn navigate_back(&mut self) -> bool {
         self.navigate_back_internal()
     }
 
     /// Set viewport width in columns.
-    #[wasm_bindgen(js_name = setViewportCols)]
     pub fn set_viewport_cols(&mut self, cols: usize) {
         self.viewport_cols = cols.max(1);
     }
 
     /// Get active card id.
-    #[wasm_bindgen(js_name = activeCardId)]
-    pub fn active_card_id(&self) -> Result<String, JsValue> {
-        let card = self.active_card()?;
+    pub fn active_card_id(&self) -> Result<String, String> {
+        let card = self.active_card_internal()?;
         Ok(card.id.clone())
     }
 
     /// Get focused link index for the active card layout.
-    #[wasm_bindgen(js_name = focusedLinkIndex)]
     pub fn focused_link_index(&self) -> usize {
         self.focused_link_idx
     }
 
     /// Get deck base URL metadata from last `loadDeckContext`.
-    #[wasm_bindgen(js_name = baseUrl)]
     pub fn base_url(&self) -> String {
         self.base_url.clone()
     }
 
     /// Get content type metadata from last `loadDeckContext`.
-    #[wasm_bindgen(js_name = contentType)]
     pub fn content_type(&self) -> String {
         self.content_type.clone()
     }
 
     /// Get host-resolved external navigation intent when one is pending.
-    #[wasm_bindgen(js_name = externalNavigationIntent)]
     pub fn external_navigation_intent(&self) -> Option<String> {
         self.external_nav_intent.clone()
     }
 
     /// Clear pending external navigation intent.
-    #[wasm_bindgen(js_name = clearExternalNavigationIntent)]
     pub fn clear_external_navigation_intent(&mut self) {
         self.external_nav_intent = None;
     }
 
     /// Execute a raw bytecode unit with no runtime host bindings.
-    #[wasm_bindgen(js_name = executeScriptUnit)]
-    pub fn execute_script_unit(&self, bytes: Vec<u8>) -> Result<JsValue, JsValue> {
-        to_js_value(&self.execute_script_unit_internal(&bytes))
+    pub fn execute_script_unit(&self, bytes: Vec<u8>) -> ScriptExecutionOutcome {
+        self.execute_script_unit_internal(&bytes)
     }
 
     /// Register a bytecode unit by source key.
-    #[wasm_bindgen(js_name = registerScriptUnit)]
     pub fn register_script_unit(&mut self, src: String, bytes: Vec<u8>) {
         self.script_units.insert(src, bytes);
     }
 
     /// Clear all registered units and function entry points.
-    #[wasm_bindgen(js_name = clearScriptUnits)]
     pub fn clear_script_units(&mut self) {
         self.script_units.clear();
         self.script_entrypoints.clear();
     }
 
     /// Register an entry point program counter for `src#function_name`.
-    #[wasm_bindgen(js_name = registerScriptEntryPoint)]
     pub fn register_script_entry_point(
         &mut self,
         src: String,
@@ -234,91 +216,70 @@ impl WmlEngine {
     }
 
     /// Clear all registered entry points.
-    #[wasm_bindgen(js_name = clearScriptEntryPoints)]
     pub fn clear_script_entry_points(&mut self) {
         self.script_entrypoints.clear();
     }
 
     /// Execute script reference without applying deferred runtime effects.
-    #[wasm_bindgen(js_name = executeScriptRef)]
-    pub fn execute_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
+    pub fn execute_script_ref(&mut self, src: String) -> ScriptExecutionOutcome {
         let outcome = self.execute_script_ref_internal(&src, "main");
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
-        to_js_value(&outcome)
+        outcome
     }
 
     /// Execute script function without applying deferred runtime effects.
-    #[wasm_bindgen(js_name = executeScriptRefFunction)]
     pub fn execute_script_ref_function(
         &mut self,
         src: String,
         function_name: String,
-    ) -> Result<JsValue, JsValue> {
+    ) -> ScriptExecutionOutcome {
         let outcome = self.execute_script_ref_internal(&src, &function_name);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
-        to_js_value(&outcome)
+        outcome
     }
 
     /// Execute script function call without applying deferred runtime effects.
-    #[wasm_bindgen(js_name = executeScriptRefCall)]
     pub fn execute_script_ref_call(
         &mut self,
         src: String,
         function_name: String,
-        args: JsValue,
-    ) -> Result<JsValue, JsValue> {
-        let call_args: Vec<ScriptCallArgLiteral> = serde_wasm_bindgen::from_value(args)
-            .map_err(|err| JsValue::from_str(&err.to_string()))?;
-        let vm_args = convert_script_call_args(&call_args);
+        args: Vec<ScriptCallArgLiteral>,
+    ) -> ScriptExecutionOutcome {
+        let vm_args = convert_script_call_args(&args);
         let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
-        to_js_value(&outcome)
+        outcome
     }
 
     /// Invoke script reference and apply deferred runtime effects at boundary.
-    #[wasm_bindgen(js_name = invokeScriptRef)]
-    pub fn invoke_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
-        let outcome = self
-            .invoke_script_ref_internal(&src, "main", &[])
-            .map_err(as_js_err)?;
-        to_js_value(&outcome)
+    pub fn invoke_script_ref(&mut self, src: String) -> Result<ScriptInvocationOutcome, String> {
+        self.invoke_script_ref_internal(&src, "main", &[])
     }
 
     /// Invoke script function and apply deferred runtime effects at boundary.
-    #[wasm_bindgen(js_name = invokeScriptRefFunction)]
     pub fn invoke_script_ref_function(
         &mut self,
         src: String,
         function_name: String,
-    ) -> Result<JsValue, JsValue> {
-        let outcome = self
-            .invoke_script_ref_internal(&src, &function_name, &[])
-            .map_err(as_js_err)?;
-        to_js_value(&outcome)
+    ) -> Result<ScriptInvocationOutcome, String> {
+        self.invoke_script_ref_internal(&src, &function_name, &[])
     }
 
     /// Invoke script function call and apply deferred runtime effects.
-    #[wasm_bindgen(js_name = invokeScriptRefCall)]
     pub fn invoke_script_ref_call(
         &mut self,
         src: String,
         function_name: String,
-        args: JsValue,
-    ) -> Result<JsValue, JsValue> {
-        let call_args: Vec<ScriptCallArgLiteral> = serde_wasm_bindgen::from_value(args)
-            .map_err(|err| JsValue::from_str(&err.to_string()))?;
-        let vm_args = convert_script_call_args(&call_args);
-        let outcome = self
-            .invoke_script_ref_internal(&src, &function_name, &vm_args)
-            .map_err(as_js_err)?;
-        to_js_value(&outcome)
+        args: Vec<ScriptCallArgLiteral>,
+    ) -> Result<ScriptInvocationOutcome, String> {
+        let vm_args = convert_script_call_args(&args);
+        self.invoke_script_ref_internal(&src, &function_name, &vm_args)
     }
 
     /// Read last script trap message, if any.
-    #[wasm_bindgen(js_name = lastScriptExecutionTrap)]
     pub fn last_script_execution_trap(&self) -> Option<String> {
         self.last_script_outcome
             .as_ref()
@@ -326,13 +287,11 @@ impl WmlEngine {
     }
 
     /// Read `ok` status from the last script execution.
-    #[wasm_bindgen(js_name = lastScriptExecutionOk)]
     pub fn last_script_execution_ok(&self) -> Option<bool> {
         self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
     }
 
     /// Read refresh requirement from the last script execution.
-    #[wasm_bindgen(js_name = lastScriptRequiresRefresh)]
     pub fn last_script_requires_refresh(&self) -> Option<bool> {
         self.last_script_outcome
             .as_ref()
@@ -340,16 +299,219 @@ impl WmlEngine {
     }
 
     /// Get bounded trace buffer entries.
-    #[wasm_bindgen(js_name = traceEntries)]
-    pub fn trace_entries(&self) -> Result<JsValue, JsValue> {
-        to_js_value(&self.trace_entries)
+    pub fn trace_entries(&self) -> Vec<EngineTraceEntry> {
+        self.trace_entries.clone()
     }
 
     /// Clear trace entries and reset trace sequence numbering.
-    #[wasm_bindgen(js_name = clearTraceEntries)]
     pub fn clear_trace_entries(&mut self) {
         self.trace_entries.clear();
         self.next_trace_seq = 1;
+    }
+}
+
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+#[wasm_bindgen]
+impl WmlEngine {
+    #[wasm_bindgen(constructor)]
+    pub fn wasm_new() -> WmlEngine {
+        Self::new()
+    }
+
+    #[wasm_bindgen(js_name = loadDeck)]
+    pub fn load_deck_wasm(&mut self, xml: &str) -> Result<(), JsValue> {
+        self.load_deck(xml).map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = loadDeckContext)]
+    pub fn load_deck_context_wasm(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+    ) -> Result<(), JsValue> {
+        self.load_deck_context(wml_xml, base_url, content_type, raw_bytes_base64)
+            .map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = getVar)]
+    pub fn get_var_wasm(&self, name: String) -> Option<String> {
+        self.get_var(name)
+    }
+
+    #[wasm_bindgen(js_name = setVar)]
+    pub fn set_var_wasm(&mut self, name: String, value: String) -> bool {
+        self.set_var(name, value)
+    }
+
+    #[wasm_bindgen(js_name = render)]
+    pub fn render_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.render().map_err(as_js_err)?)
+    }
+
+    #[wasm_bindgen(js_name = handleKey)]
+    pub fn handle_key_wasm(&mut self, key: String) -> Result<(), JsValue> {
+        self.handle_key(key).map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = navigateToCard)]
+    pub fn navigate_to_card_wasm(&mut self, id: String) -> Result<(), JsValue> {
+        self.navigate_to_card(id).map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = navigateBack)]
+    pub fn navigate_back_wasm(&mut self) -> bool {
+        self.navigate_back()
+    }
+
+    #[wasm_bindgen(js_name = setViewportCols)]
+    pub fn set_viewport_cols_wasm(&mut self, cols: usize) {
+        self.set_viewport_cols(cols);
+    }
+
+    #[wasm_bindgen(js_name = activeCardId)]
+    pub fn active_card_id_wasm(&self) -> Result<String, JsValue> {
+        self.active_card_id().map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = focusedLinkIndex)]
+    pub fn focused_link_index_wasm(&self) -> usize {
+        self.focused_link_index()
+    }
+
+    #[wasm_bindgen(js_name = baseUrl)]
+    pub fn base_url_wasm(&self) -> String {
+        self.base_url()
+    }
+
+    #[wasm_bindgen(js_name = contentType)]
+    pub fn content_type_wasm(&self) -> String {
+        self.content_type()
+    }
+
+    #[wasm_bindgen(js_name = externalNavigationIntent)]
+    pub fn external_navigation_intent_wasm(&self) -> Option<String> {
+        self.external_navigation_intent()
+    }
+
+    #[wasm_bindgen(js_name = clearExternalNavigationIntent)]
+    pub fn clear_external_navigation_intent_wasm(&mut self) {
+        self.clear_external_navigation_intent();
+    }
+
+    #[wasm_bindgen(js_name = executeScriptUnit)]
+    pub fn execute_script_unit_wasm(&self, bytes: Vec<u8>) -> Result<JsValue, JsValue> {
+        to_js_value(&self.execute_script_unit(bytes))
+    }
+
+    #[wasm_bindgen(js_name = registerScriptUnit)]
+    pub fn register_script_unit_wasm(&mut self, src: String, bytes: Vec<u8>) {
+        self.register_script_unit(src, bytes);
+    }
+
+    #[wasm_bindgen(js_name = clearScriptUnits)]
+    pub fn clear_script_units_wasm(&mut self) {
+        self.clear_script_units();
+    }
+
+    #[wasm_bindgen(js_name = registerScriptEntryPoint)]
+    pub fn register_script_entry_point_wasm(
+        &mut self,
+        src: String,
+        function_name: String,
+        entry_pc: usize,
+    ) {
+        self.register_script_entry_point(src, function_name, entry_pc);
+    }
+
+    #[wasm_bindgen(js_name = clearScriptEntryPoints)]
+    pub fn clear_script_entry_points_wasm(&mut self) {
+        self.clear_script_entry_points();
+    }
+
+    #[wasm_bindgen(js_name = executeScriptRef)]
+    pub fn execute_script_ref_wasm(&mut self, src: String) -> Result<JsValue, JsValue> {
+        to_js_value(&self.execute_script_ref(src))
+    }
+
+    #[wasm_bindgen(js_name = executeScriptRefFunction)]
+    pub fn execute_script_ref_function_wasm(
+        &mut self,
+        src: String,
+        function_name: String,
+    ) -> Result<JsValue, JsValue> {
+        to_js_value(&self.execute_script_ref_function(src, function_name))
+    }
+
+    #[wasm_bindgen(js_name = executeScriptRefCall)]
+    pub fn execute_script_ref_call_wasm(
+        &mut self,
+        src: String,
+        function_name: String,
+        args: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        let call_args: Vec<ScriptCallArgLiteral> = serde_wasm_bindgen::from_value(args)
+            .map_err(|err| JsValue::from_str(&err.to_string()))?;
+        to_js_value(&self.execute_script_ref_call(src, function_name, call_args))
+    }
+
+    #[wasm_bindgen(js_name = invokeScriptRef)]
+    pub fn invoke_script_ref_wasm(&mut self, src: String) -> Result<JsValue, JsValue> {
+        let outcome = self.invoke_script_ref(src).map_err(as_js_err)?;
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = invokeScriptRefFunction)]
+    pub fn invoke_script_ref_function_wasm(
+        &mut self,
+        src: String,
+        function_name: String,
+    ) -> Result<JsValue, JsValue> {
+        let outcome = self
+            .invoke_script_ref_function(src, function_name)
+            .map_err(as_js_err)?;
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = invokeScriptRefCall)]
+    pub fn invoke_script_ref_call_wasm(
+        &mut self,
+        src: String,
+        function_name: String,
+        args: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        let call_args: Vec<ScriptCallArgLiteral> = serde_wasm_bindgen::from_value(args)
+            .map_err(|err| JsValue::from_str(&err.to_string()))?;
+        let outcome = self
+            .invoke_script_ref_call(src, function_name, call_args)
+            .map_err(as_js_err)?;
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = lastScriptExecutionTrap)]
+    pub fn last_script_execution_trap_wasm(&self) -> Option<String> {
+        self.last_script_execution_trap()
+    }
+
+    #[wasm_bindgen(js_name = lastScriptExecutionOk)]
+    pub fn last_script_execution_ok_wasm(&self) -> Option<bool> {
+        self.last_script_execution_ok()
+    }
+
+    #[wasm_bindgen(js_name = lastScriptRequiresRefresh)]
+    pub fn last_script_requires_refresh_wasm(&self) -> Option<bool> {
+        self.last_script_requires_refresh()
+    }
+
+    #[wasm_bindgen(js_name = traceEntries)]
+    pub fn trace_entries_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.trace_entries())
+    }
+
+    #[wasm_bindgen(js_name = clearTraceEntries)]
+    pub fn clear_trace_entries_wasm(&mut self) {
+        self.clear_trace_entries();
     }
 }
 
@@ -610,10 +772,6 @@ impl WmlEngine {
             .ok_or_else(|| "Active card index out of range".to_string())
     }
 
-    fn active_card(&self) -> Result<&runtime::card::Card, JsValue> {
-        self.active_card_internal().map_err(as_js_err)
-    }
-
     fn resolve_external_href(&self, href: &str) -> String {
         if self.base_url.is_empty() || has_uri_scheme(href) || href.starts_with("//") {
             return href.to_string();
@@ -696,10 +854,12 @@ fn parse_script_href(href: &str) -> Option<ParsedScriptRef<'_>> {
     Some(ParsedScriptRef { src, function_name })
 }
 
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 fn to_js_value<T: Serialize>(value: &T) -> Result<JsValue, JsValue> {
     serde_wasm_bindgen::to_value(value).map_err(|err| JsValue::from_str(&err.to_string()))
 }
 
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 fn as_js_err(message: String) -> JsValue {
     JsValue::from_str(&message)
 }
@@ -756,34 +916,34 @@ fn script_value_to_literal(value: ScriptValue) -> ScriptValueLiteral {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct ScriptExecutionOutcome {
-    ok: bool,
-    result: ScriptValueLiteral,
-    trap: Option<String>,
-    navigation_intent: ScriptNavigationIntentLiteral,
-    requires_refresh: bool,
+pub struct ScriptExecutionOutcome {
+    pub ok: bool,
+    pub result: ScriptValueLiteral,
+    pub trap: Option<String>,
+    pub navigation_intent: ScriptNavigationIntentLiteral,
+    pub requires_refresh: bool,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct ScriptInvocationOutcome {
-    navigation_intent: ScriptNavigationIntentLiteral,
-    requires_refresh: bool,
-    result: ScriptValueLiteral,
+pub struct ScriptInvocationOutcome {
+    pub navigation_intent: ScriptNavigationIntentLiteral,
+    pub requires_refresh: bool,
+    pub result: ScriptValueLiteral,
 }
 
-#[derive(Clone, Serialize)]
-struct EngineTraceEntry {
-    seq: u64,
-    kind: String,
-    detail: String,
-    active_card_id: Option<String>,
-    focused_link_index: usize,
-    external_navigation_intent: Option<String>,
-    script_ok: Option<bool>,
-    script_trap: Option<String>,
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct EngineTraceEntry {
+    pub seq: u64,
+    pub kind: String,
+    pub detail: String,
+    pub active_card_id: Option<String>,
+    pub focused_link_index: usize,
+    pub external_navigation_intent: Option<String>,
+    pub script_ok: Option<bool>,
+    pub script_trap: Option<String>,
 }
 
 impl ScriptExecutionOutcome {
@@ -822,26 +982,26 @@ impl ScriptInvocationOutcome {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
-enum ScriptNavigationIntentLiteral {
+pub enum ScriptNavigationIntentLiteral {
     None,
     Go { href: String },
     Prev,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
-enum ScriptValueLiteral {
+pub enum ScriptValueLiteral {
     Bool(bool),
     Number(f64),
     String(String),
     Invalid { invalid: bool },
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(untagged)]
-enum ScriptCallArgLiteral {
+pub enum ScriptCallArgLiteral {
     Bool(bool),
     Number(f64),
     String(String),
@@ -973,17 +1133,12 @@ mod tests {
         );
     }
 
-    #[cfg(target_arch = "wasm32")]
     #[test]
     fn load_deck_returns_structured_error_for_invalid_root() {
         let mut engine = WmlEngine::new();
-        let err = engine
+        let msg = engine
             .load_deck("<card id=\"home\"><p>Hello</p></card>")
             .expect_err("missing wml root must fail");
-
-        let msg = err
-            .as_string()
-            .expect("parser errors should cross wasm boundary as strings");
         assert!(msg.contains("<wml>"), "unexpected error message: {msg}");
     }
 

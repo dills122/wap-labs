@@ -1,6 +1,6 @@
 # wavenav_engine (Rust crate)
 
-Core Rust crate for the WaveNav WASM engine.
+Core Rust crate for the WaveNav runtime with native and WASM targets.
 
 ## Prerequisites
 
@@ -16,6 +16,13 @@ Build wasm package:
 
 ```bash
 wasm-pack build --target web --out-dir ../pkg
+```
+
+Check native + wasm targets:
+
+```bash
+cargo check
+cargo check --target wasm32-unknown-unknown
 ```
 
 Run tests:

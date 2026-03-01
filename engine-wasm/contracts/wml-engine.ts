@@ -122,3 +122,52 @@ export interface WmlEngineWasm {
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
 }
+
+export interface WmlEngineNative {
+  loadDeck(xml: string): void;
+  loadDeckContext(input: WmlDeckInput): void;
+  render(): RenderList;
+  handleKey(key: EngineKey): void;
+  navigateToCard(id: string): void;
+  navigateBack(): boolean;
+  setViewportCols(cols: number): void;
+  activeCardId(): string;
+  focusedLinkIndex(): number;
+  baseUrl(): string;
+  contentType(): string;
+  getVar(name: string): string | undefined;
+  setVar(name: string, value: string): boolean;
+  externalNavigationIntent(): string | undefined;
+  clearExternalNavigationIntent(): void;
+  executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
+  registerScriptUnit(src: string, bytes: Uint8Array): void;
+  clearScriptUnits(): void;
+  registerScriptEntryPoint(src: string, functionName: string, entryPc: number): void;
+  clearScriptEntryPoints(): void;
+  invokeScriptRef(src: string): ScriptInvocationOutcome;
+  invokeScriptRefFunction(src: string, functionName: string): ScriptInvocationOutcome;
+  invokeScriptRefCall(
+    src: string,
+    functionName: string,
+    args: ScriptValueLiteral[]
+  ): ScriptInvocationOutcome;
+  executeScriptRef(src: string): ScriptExecutionOutcome;
+  executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
+  executeScriptRefCall(
+    src: string,
+    functionName: string,
+    args: ScriptValueLiteral[]
+  ): ScriptExecutionOutcome;
+  lastScriptExecutionTrap(): string | undefined;
+  lastScriptExecutionOk(): boolean | undefined;
+  lastScriptRequiresRefresh(): boolean | undefined;
+  traceEntries(): EngineTraceEntry[];
+  clearTraceEntries(): void;
+}
+
+export interface WmlEngineCompatibilityRules {
+  behaviorParityRequired: true;
+  renderOutputParityRequired: true;
+  navigationParityRequired: true;
+  scriptInvocationParityRequired: true;
+}

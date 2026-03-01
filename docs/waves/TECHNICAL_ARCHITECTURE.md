@@ -68,15 +68,15 @@ fn navigate(handle: DeckHandle, action: NavAction);
 fn render(handle: DeckHandle) -> RenderTree;
 ```
 
-### 2) WASM Runtime/Renderer
+### 2) Runtime Targets
 
-Built with `wasm-bindgen` / `wasm-pack`.
+Built as a shared Rust runtime with target-specific adapters.
 
-Runs in:
+Targets:
 
-- Tauri webview host
+- native Rust embedding (preferred for Tauri backend integration)
+- WASM (`wasm-bindgen` / `wasm-pack`) for browser/webview hosts
 - local browser harness (`engine-wasm/host-sample`)
-- future embedded/web hosts
 
 Responsibilities:
 
@@ -94,6 +94,7 @@ Responsibilities:
 - host process lifecycle
 - transport sidecar process management
 - IPC bridge from UI to transport/runtime boundaries
+- native runtime embedding path (when host chooses direct Rust integration)
 
 ## Transport Strategy
 
@@ -200,7 +201,7 @@ Minimum gate:
 
 Execution targets for gate:
 
-- Tauri host (WASM runtime)
+- Tauri host (native runtime or WASM adapter)
 - browser harness (`engine-wasm/host-sample`)
 
 ## WTLS Strategy

@@ -31,6 +31,14 @@ Treat these as interface contracts before implementation details:
 
 If behavior changes, update the relevant contract and docs in the same change.
 
+## Multi-target compatibility policy
+
+- Treat `engine-wasm/engine` as a dual-target runtime: native Rust and WASM adapters.
+- Keep runtime behavior identical across targets for deck load, navigation, focus, script invocation, and render output.
+- Put target-specific glue at the boundary only (serialization/IPC/wasm bindings), not in parser/runtime/layout logic.
+- When engine APIs change, update `engine-wasm/contracts/wml-engine.ts` and document parity expectations in the same change.
+- Add or update tests that exercise parity-critical behavior (`loadDeckContext`, `handleKey`, `render`, script invocation, trace entries).
+
 ## Architecture guardrails
 
 MUST:
