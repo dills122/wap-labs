@@ -42,6 +42,44 @@ This keeps the renderer runtime independent of transport/WBXML details.
 - `TRANSPORT_BIND` (default `127.0.0.1`)
 - `TRANSPORT_PORT` (default `8765`)
 
+## Local run (first vertical slice)
+
+From `transport-python/`:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python service.py
+```
+
+Service endpoints:
+
+- `GET /health`
+- `POST /fetch`
+
+Smoke check (repo root):
+
+```bash
+make smoke-transport
+```
+
+Smoke script notes:
+
+- Self-provisions `transport-python/.venv` if missing.
+- Installs `requirements.txt` in that venv before running the check.
+
+## Lint + tests
+
+From repo root:
+
+```bash
+python3 -m venv transport-python/.venv
+transport-python/.venv/bin/python -m pip install -r transport-python/requirements.txt -r transport-python/requirements-dev.txt
+transport-python/.venv/bin/ruff check transport-python
+transport-python/.venv/bin/pytest transport-python/tests
+```
+
 ## Planning + Traceability
 
 - Cross-project board: `docs/waves/WORK_ITEMS.md` (Phase `T`)

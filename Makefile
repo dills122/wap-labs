@@ -6,7 +6,7 @@ ENABLE_NODE_CHECKS ?= 0
 RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
-.PHONY: up down restart logs ps status smoke smoke-up clean \
+.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport init-refresh \
 	fmt lint test test-fast ci-local \
 	coverage-rust \
 	lint-rust lint-node lint-python \
@@ -40,6 +40,12 @@ smoke:
 smoke-up:
 	$(COMPOSE) up -d --build
 	./scripts/smoke.sh
+
+smoke-transport:
+	./scripts/transport-http-smoke.sh
+
+init-refresh:
+	./scripts/init-refresh.sh
 
 clean:
 	$(COMPOSE) down -v --remove-orphans
@@ -137,10 +143,30 @@ test-node:
 	@echo "skip: wml-server tests (no test script configured yet)"
 
 lint-python:
-	@echo "skip: transport-python lint (implementation not bootstrapped yet)"
+	@if [ -x transport-python/.venv/bin/ruff ]; then \
+		echo "==> ruff check transport-python"; \
+		transport-python/.venv/bin/ruff check transport-python; \
+	elif command -v ruff >/dev/null 2>&1; then \
+		echo "==> ruff check transport-python"; \
+		ruff check transport-python; \
+	else \
+		echo "skip: ruff not found (python lint)"; \
+		echo "install with: python3 -m venv transport-python/.venv && transport-python/.venv/bin/python -m pip install -r transport-python/requirements.txt -r transport-python/requirements-dev.txt"; \
+		exit 1; \
+	fi
 
 test-python:
-	@echo "skip: transport-python tests (implementation not bootstrapped yet)"
+	@if [ -x transport-python/.venv/bin/pytest ]; then \
+		echo "==> pytest transport-python/tests"; \
+		transport-python/.venv/bin/pytest transport-python/tests; \
+	elif command -v pytest >/dev/null 2>&1; then \
+		echo "==> pytest transport-python/tests"; \
+		pytest transport-python/tests; \
+	else \
+		echo "skip: pytest not found (python tests)"; \
+		echo "install with: python3 -m venv transport-python/.venv && transport-python/.venv/bin/python -m pip install -r transport-python/requirements.txt -r transport-python/requirements-dev.txt"; \
+		exit 1; \
+	fi
 
 # --- Git hooks (pre-commit) ---
 

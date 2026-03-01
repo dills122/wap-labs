@@ -4,6 +4,7 @@
 
 - `wap-test-environment/README.md`: legacy stack setup and real-world validation runbook
 - `browser-emulator/README.md`: browser emulator build track (transport + WASM engine + host harness)
+- `development-prerequisites.md`: canonical prerequisite matrix + local bootstrap workflow
 
 ## Cross-Layer Architecture
 
@@ -31,6 +32,7 @@
 
 - `agents/AGENT_STANDARDS.md`: multi-language contributor/agent standards
 - `agents/RUST_STEERING.md`: Rust-specific steering for WaveNav engine development
+- `agents/PYTHON_STEERING.md`: Python transport implementation steering and quality rules
 
 ## WaveNav Engine Documentation Set
 

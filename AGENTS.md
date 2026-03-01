@@ -79,6 +79,7 @@ Prefer work that improves:
 
 ## Useful commands
 
+- Bootstrap/refresh local deps: `./scripts/init-refresh.sh` (or `make init-refresh`)
 - Legacy stack: `make up`, `make down`, `make status`, `make smoke`
 - WASM engine build: `cd engine-wasm/engine && wasm-pack build --target web --out-dir ../pkg`
 - WASM engine tests: `cd engine-wasm/engine && cargo test`
@@ -87,3 +88,4 @@ Prefer work that improves:
 
 please refer to `docs/agents/AGENT_STANDARDS.md` for a more in depth, language specific reference on standards
 and `docs/agents/RUST_STEERING.md` for Rust-specific implementation rules.
+and `docs/agents/PYTHON_STEERING.md` for Python transport implementation rules.
