@@ -15,7 +15,8 @@ Breaking compatibility is acceptable at this stage when it helps move the MVP fo
 ## Canonical layer map
 
 - `gateway-kannel/` + `docker/kannel/`: gateway behavior and environment wiring
-- `transport-python/`: Lowband transport appliance API and WSP/WBXML translation
+- `transport-rust/`: Lowband in-process transport library and WSP/WBXML translation
+- `transport-python/`: Lowband transport appliance API (legacy sidecar path)
 - `engine-wasm/`: WaveNav WML runtime, parser, layout, and WASM engine contracts
 - `browser/`: Waves Tauri desktop host harness and adapter integration
 
@@ -44,7 +45,7 @@ If behavior changes, update the relevant contract and docs in the same change.
 MUST:
 
 - keep WML deck/card semantics deterministic (navigation, focus, card transitions)
-- keep WBXML decode/encode in `transport-python/`
+- keep WBXML decode/encode in the transport layer (`transport-rust/` or `transport-python/`)
 - keep rendering and WML runtime logic in `engine-wasm/`
 - keep host window/input wiring in `browser/`
 
@@ -83,6 +84,7 @@ Prefer work that improves:
 - Legacy stack: `make up`, `make down`, `make status`, `make smoke`
 - WASM engine build: `cd engine-wasm/engine && wasm-pack build --target web --out-dir ../pkg`
 - WASM engine tests: `cd engine-wasm/engine && cargo test`
+- Rust transport checks: `make lint-rust-transport` and `make test-rust-transport`
 
 ## Additional Info & Standard
 

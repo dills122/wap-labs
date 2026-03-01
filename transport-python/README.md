@@ -39,8 +39,20 @@ This keeps the renderer runtime independent of transport/WBXML details.
 
 - `GATEWAY_HOST` (default `127.0.0.1`)
 - `GATEWAY_PORT` (default `9201`)
+- `GATEWAY_HTTP_BASE` (default `http://localhost:13002`, used for `wap://`/`waps://` bridge requests)
+- `WBXML2XML_BIN` (default `wbxml2xml`, decoder tool from `libwbxml`)
 - `TRANSPORT_BIND` (default `127.0.0.1`)
 - `TRANSPORT_PORT` (default `8765`)
+
+## WBXML decoder dependency
+
+`application/vnd.wap.wmlc` decode uses `wbxml2xml` from `libwbxml`.
+
+Install on macOS:
+
+```bash
+brew install libwbxml
+```
 
 ## Local run (first vertical slice)
 

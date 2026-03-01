@@ -6,10 +6,13 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+from transport.gateway import build_gateway_request
+from transport.wbxml_decoder import WbxmlDecodeError, decode_wmlc
 
 DEFAULT_TIMEOUT_MS = 5000
 DEFAULT_RETRIES = 1
@@ -27,11 +30,17 @@ class FetchRequest(BaseModel):
     url: str = Field(description="Absolute URL to fetch through the gateway.")
     method: str = Field(default="GET")
     headers: dict[str, str] | None = None
-    timeout_ms: int = Field(default=DEFAULT_TIMEOUT_MS, alias="timeoutMs", ge=100, le=30000)
-    retries: int = Field(default=DEFAULT_RETRIES, ge=0, le=2)
-
-    class Config:
-        populate_by_name = True
+    timeout_ms: Annotated[
+        int,
+        Field(
+            ge=100,
+            le=30000,
+            validation_alias="timeoutMs",
+            serialization_alias="timeoutMs",
+        ),
+    ] = DEFAULT_TIMEOUT_MS
+    retries: Annotated[int, Field(ge=0, le=2)] = DEFAULT_RETRIES
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class ErrorInfo(BaseModel):
@@ -42,44 +51,36 @@ class ErrorInfo(BaseModel):
 
 class TimingMs(BaseModel):
     encode: float
-    udp_rtt: float = Field(alias="udpRtt")
+    udp_rtt: Annotated[float, Field(alias="udpRtt")]
     decode: float
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class RawPayload(BaseModel):
-    bytes_base64: str = Field(alias="bytesBase64")
-    content_type: str = Field(alias="contentType")
-
-    class Config:
-        populate_by_name = True
+    bytes_base64: Annotated[str, Field(alias="bytesBase64")]
+    content_type: Annotated[str, Field(alias="contentType")]
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class EngineDeckInput(BaseModel):
-    wml_xml: str = Field(alias="wmlXml")
-    base_url: str = Field(alias="baseUrl")
-    content_type: str = Field(alias="contentType")
-    raw_bytes_base64: str | None = Field(default=None, alias="rawBytesBase64")
-
-    class Config:
-        populate_by_name = True
+    wml_xml: Annotated[str, Field(alias="wmlXml")]
+    base_url: Annotated[str, Field(alias="baseUrl")]
+    content_type: Annotated[str, Field(alias="contentType")]
+    raw_bytes_base64: Annotated[str | None, Field(alias="rawBytesBase64")] = None
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class FetchResponse(BaseModel):
     ok: bool
     status: int
-    final_url: str = Field(alias="finalUrl")
-    content_type: str = Field(alias="contentType")
+    final_url: Annotated[str, Field(alias="finalUrl")]
+    content_type: Annotated[str, Field(alias="contentType")]
     wml: str | None = None
     raw: RawPayload | None = None
     error: ErrorInfo | None = None
-    timing_ms: TimingMs = Field(alias="timingMs")
-    engine_deck_input: EngineDeckInput | None = Field(default=None, alias="engineDeckInput")
-
-    class Config:
-        populate_by_name = True
+    timing_ms: Annotated[TimingMs, Field(alias="timingMs")]
+    engine_deck_input: Annotated[EngineDeckInput | None, Field(alias="engineDeckInput")] = None
+    model_config = ConfigDict(populate_by_name=True)
 
 
 app = FastAPI(title="Lowband Transport Service API", version="0.1.0")
@@ -147,42 +148,68 @@ def fetch(request: FetchRequest) -> FetchResponse:
             message="URL must include a scheme",
         )
 
-    if parsed.scheme in {"wap", "waps"}:
-        return _error_response(
-            status=0,
-            final_url=request.url,
-            content_type="text/plain",
-            code="TRANSPORT_UNAVAILABLE",
-            message="WAP transport path not yet wired; start with http/https fetch flow",
-        )
-
+    is_wap_scheme = parsed.scheme in {"wap", "waps"}
     headers = request.headers or {}
     timeout_seconds = max(request.timeout_ms / 1000.0, 0.1)
     retries = max(request.retries, 0)
     attempts = retries + 1
     last_error: str | None = None
+    upstream_url = request.url
+
+    if is_wap_scheme:
+        try:
+            gateway_request = build_gateway_request(
+                original_url=request.url,
+                method=method,
+                headers=headers,
+            )
+        except ValueError as err:
+            return _error_response(
+                status=0,
+                final_url=request.url,
+                content_type="text/plain",
+                code="TRANSPORT_UNAVAILABLE",
+                message=str(err),
+            )
+        headers = gateway_request.headers
+        upstream_url = gateway_request.request_url
 
     for attempt in range(1, attempts + 1):
         start = time.perf_counter()
         try:
-            req = urllib.request.Request(url=request.url, method=method, headers=headers)
+            req = urllib.request.Request(url=upstream_url, method=method, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
                 body = resp.read()
                 elapsed_ms = (time.perf_counter() - start) * 1000.0
                 status = getattr(resp, "status", 200)
-                final_url = resp.geturl()
+                final_url = request.url if is_wap_scheme else resp.geturl()
                 content_type = _normalize_content_type(resp.headers.get("Content-Type"))
                 raw_b64 = base64.b64encode(body).decode("ascii")
 
                 if content_type == "application/vnd.wap.wmlc":
-                    return _error_response(
+                    decode_start = time.perf_counter()
+                    try:
+                        wml = decode_wmlc(body)
+                    except WbxmlDecodeError as err:
+                        return _error_response(
+                            status=status,
+                            final_url=final_url,
+                            content_type=content_type,
+                            code="WBXML_DECODE_FAILED",
+                            message=str(err),
+                            details={"attempt": attempt},
+                            udp_rtt_ms=elapsed_ms,
+                        )
+                    decode_ms = (time.perf_counter() - decode_start) * 1000.0
+                    return FetchResponse(
+                        ok=True,
                         status=status,
-                        final_url=final_url,
-                        content_type=content_type,
-                        code="WBXML_DECODE_FAILED",
-                        message="WBXML decode path not implemented yet",
-                        details={"attempt": attempt},
-                        udp_rtt_ms=elapsed_ms,
+                        finalUrl=final_url,
+                        contentType=content_type,
+                        wml=wml,
+                        raw=RawPayload(bytesBase64=raw_b64, contentType=content_type),
+                        timingMs=TimingMs(encode=0.0, udpRtt=elapsed_ms, decode=decode_ms),
+                        engineDeckInput=_build_engine_input(wml, final_url, content_type, raw_b64),
                     )
 
                 if content_type not in SUPPORTED_WML_TYPES:
@@ -213,7 +240,7 @@ def fetch(request: FetchRequest) -> FetchResponse:
             body_text = payload.decode("utf-8", errors="replace") if payload else ""
             return _error_response(
                 status=err.code,
-                final_url=request.url,
+                final_url=request.url if is_wap_scheme else upstream_url,
                 content_type="text/plain",
                 code="PROTOCOL_ERROR",
                 message=f"Upstream HTTP error: {err.code}",
@@ -235,7 +262,7 @@ def fetch(request: FetchRequest) -> FetchResponse:
                     content_type="text/plain",
                     code=code,
                     message=last_error,
-                    details={"attempts": attempts},
+                    details={"attempts": attempts, "lastAttempt": attempt},
                     udp_rtt_ms=elapsed_ms,
                 )
         except Exception as err:  # noqa: BLE001

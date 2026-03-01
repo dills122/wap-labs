@@ -53,7 +53,7 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt
+          components: rustfmt, clippy
 
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
@@ -101,6 +101,75 @@ jobs:
       - name: Rust coverage gate
         working-directory: engine-wasm/engine
         run: cargo llvm-cov --all-features --summary-only --fail-under-lines 90 --fail-under-functions 85
+
+  rust-transport:
+    name: Rust Transport
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            transport-rust -> target
+
+      - name: Rust fmt check
+        working-directory: transport-rust
+        run: cargo fmt --check
+
+      - name: Rust clippy
+        working-directory: transport-rust
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Rust tests
+        working-directory: transport-rust
+        run: RUST_TEST_THREADS=1 cargo test -- --test-threads=1
+
+  rust-transport-coverage:
+    name: Rust Transport Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            transport-rust -> target
+
+      - name: Rust coverage gate
+        working-directory: transport-rust
+        run: RUST_TEST_THREADS=1 cargo llvm-cov --all-features --summary-only --fail-under-lines 88 --fail-under-functions 85 -- --test-threads=1
 
   host-sample:
     name: WaveNav Host Sample Build
@@ -286,6 +355,45 @@ jobs:
 
       - name: Run transport HTTP smoke check
         run: bash scripts/transport-http-smoke.sh
+
+  transport-wap-smoke:
+    name: Transport WAP Smoke (Kannel)
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start Kannel + WML stack
+        run: docker compose up -d --build kannel wml-server
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            transport-rust -> target
+
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
+
+      - name: Run WAP smoke
+        run: make smoke-transport-wap
+
+      - name: Dump service logs on failure
+        if: failure()
+        run: |
+          docker compose logs --tail=200 kannel wml-server || true
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down
 
   transport-python:
     name: Transport Python Lint + Test

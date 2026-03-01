@@ -16,6 +16,7 @@
 - `waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`: WML/WBXML runtime-markup requirements and acceptance-criteria traceability matrix
 - `waves/WAE_SPEC_TRACEABILITY.md`: WAE/WAEMT spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/TRANSPORT_SPEC_TRACEABILITY.md`: WSP/WTP/WDP transport spec-derived requirements and acceptance-criteria traceability matrix
+- `waves/TRANSPORT_RUST_PHASE_PLAN.md`: active phased implementation plan for `transport-rust` (FFI decode, streaming, protocol, and WTLS stages)
 - `waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`: HTTP/TCP/HTTPSM/WCMP transport-adjacent requirements and interoperability-boundary traceability
 - `waves/SECURITY_BOUNDARY_TRACEABILITY.md`: WTLS/TLS/end-to-end security traceability and Waves boundary policy mapping
 - `waves/SECURITY_PKI_SPEC_TRACEABILITY.md`: WAPCert/WPKI/WIM trust and PKI-profile boundary traceability
