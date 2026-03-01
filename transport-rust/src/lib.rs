@@ -445,6 +445,7 @@ fn build_gateway_request(
     Ok((request_url.to_string(), merged_headers))
 }
 
+#[allow(clippy::too_many_arguments)]
 fn map_success_payload_response(
     status: u16,
     is_wap_scheme: bool,
@@ -911,9 +912,7 @@ mod tests {
             build_gateway_request("wap://example.test:9200/home.wml", "GET", &headers)
                 .expect("gateway mapping with explicit target port should succeed");
         assert_eq!(
-            mapped_headers
-                .get("X-Wap-Target-Url")
-                .map(String::as_str),
+            mapped_headers.get("X-Wap-Target-Url").map(String::as_str),
             Some("wap://example.test:9200/home.wml")
         );
     }
@@ -982,7 +981,7 @@ mod tests {
         assert!(disabled);
 
         let not_disabled =
-            with_env_removed_locked("LOWBAND_DISABLE_LIBWBXML", || libwbxml_disabled_by_env());
+            with_env_removed_locked("LOWBAND_DISABLE_LIBWBXML", libwbxml_disabled_by_env);
         assert!(!not_disabled);
     }
 
@@ -1389,14 +1388,11 @@ mod tests {
         );
         assert!(response.ok);
         assert_eq!(response.status, 200);
-        assert_eq!(
-            response
-                .engine_deck_input
-                .as_ref()
-                .and_then(|deck| deck.raw_bytes_base64.as_ref())
-                .is_some(),
-            true
-        );
+        assert!(response
+            .engine_deck_input
+            .as_ref()
+            .and_then(|deck| deck.raw_bytes_base64.as_ref())
+            .is_some());
     }
 
     #[test]

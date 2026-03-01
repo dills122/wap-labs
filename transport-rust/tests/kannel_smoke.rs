@@ -37,9 +37,7 @@ fn kannel_wap_login_smoke_normalizes_engine_input() {
     assert!(
         response.ok,
         "expected ok=true for target={target}, got error={:?} status={} contentType={}",
-        response.error,
-        response.status,
-        response.content_type
+        response.error, response.status, response.content_type
     );
     assert!(
         response.status >= 200 && response.status < 400,

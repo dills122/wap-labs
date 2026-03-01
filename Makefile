@@ -117,7 +117,9 @@ coverage-rust-engine:
 lint-rust-transport:
 	@if command -v cargo >/dev/null 2>&1; then \
 		echo "==> cargo fmt --check (transport-rust)"; \
-		cd transport-rust && cargo fmt --check; \
+		(cd transport-rust && cargo fmt --check); \
+		echo "==> cargo clippy --all-targets --all-features -- -D warnings (transport-rust)"; \
+		(cd transport-rust && cargo clippy --all-targets --all-features -- -D warnings); \
 	else \
 		echo "skip: cargo not found (transport-rust lint)"; \
 	fi
