@@ -371,9 +371,10 @@ fn ensure_transport_python_env(service_path: &Path) -> Result<String, String> {
     if has_fastapi(&fallback)? {
         return Ok(fallback);
     }
-    Err(format!(
+    Err(
         "unable to provision transport python env automatically. Try setting PYTHON_BIN to a python with fastapi available"
-    ))
+            .to_string(),
+    )
 }
 
 fn find_transport_service_path() -> Result<PathBuf, String> {
