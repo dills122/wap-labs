@@ -23,8 +23,14 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             .ok_or_else(|| format!("Missing closing </card> for card {id}"))?;
 
         let card_body = &wml_body[open_end + 1..close_start];
+        let (accept_action_href, onenterforward_href) = parse_card_actions(card_body)?;
         let nodes = parse_card_nodes(card_body)?;
-        cards.push(Card { id, nodes });
+        cards.push(Card {
+            id,
+            nodes,
+            accept_action_href,
+            onenterforward_href,
+        });
 
         cursor = close_start + "</card>".len();
     }
@@ -34,6 +40,84 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     }
 
     Ok(Deck::new(cards))
+}
+
+fn parse_card_actions(body: &str) -> Result<(Option<String>, Option<String>), String> {
+    let accept_action_href = parse_do_accept_href(body)?;
+    let onenterforward_href = parse_onenterforward_href(body)?;
+    Ok((accept_action_href, onenterforward_href))
+}
+
+fn parse_do_accept_href(body: &str) -> Result<Option<String>, String> {
+    let mut cursor = 0usize;
+    while let Some(start) = find_tag_from(body, "do", cursor) {
+        let open_end = body[start..]
+            .find('>')
+            .map(|idx| start + idx)
+            .ok_or_else(|| "Malformed <do> opening tag".to_string())?;
+        let open_tag = &body[start..=open_end];
+        let close_start = body[open_end + 1..]
+            .find("</do>")
+            .map(|idx| open_end + 1 + idx)
+            .ok_or_else(|| "Missing closing </do> tag".to_string())?;
+        let do_body = &body[open_end + 1..close_start];
+
+        let do_type = extract_attr(open_tag, "type")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        if do_type == "accept" {
+            if let Some(href) = extract_attr(open_tag, "href") {
+                if !href.is_empty() {
+                    return Ok(Some(href));
+                }
+            }
+            if let Some(href) = parse_go_href(do_body) {
+                return Ok(Some(href));
+            }
+        }
+
+        cursor = close_start + "</do>".len();
+    }
+
+    Ok(None)
+}
+
+fn parse_onenterforward_href(body: &str) -> Result<Option<String>, String> {
+    let mut cursor = 0usize;
+    while let Some(start) = find_tag_from(body, "onevent", cursor) {
+        let open_end = body[start..]
+            .find('>')
+            .map(|idx| start + idx)
+            .ok_or_else(|| "Malformed <onevent> opening tag".to_string())?;
+        let open_tag = &body[start..=open_end];
+        let close_start = body[open_end + 1..]
+            .find("</onevent>")
+            .map(|idx| open_end + 1 + idx)
+            .ok_or_else(|| "Missing closing </onevent> tag".to_string())?;
+        let onevent_body = &body[open_end + 1..close_start];
+
+        let event_type = extract_attr(open_tag, "type")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        if event_type == "onenterforward" {
+            return Ok(parse_go_href(onevent_body));
+        }
+
+        cursor = close_start + "</onevent>".len();
+    }
+
+    Ok(None)
+}
+
+fn parse_go_href(body: &str) -> Option<String> {
+    let start = find_tag_from(body, "go", 0)?;
+    let open_end = body[start..].find('>').map(|idx| start + idx)?;
+    let open_tag = &body[start..=open_end];
+    let href = extract_attr(open_tag, "href")?;
+    if href.is_empty() {
+        return None;
+    }
+    Some(href)
 }
 
 fn extract_wml_body(xml: &str) -> Result<&str, String> {
@@ -428,5 +512,30 @@ mod tests {
             err.contains("Missing closing </card>"),
             "unexpected error: {err}"
         );
+    }
+
+    #[test]
+    fn parses_accept_do_and_onenterforward_go_actions() {
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <do type="accept">
+              <go href="script:calc.wmlsc#main"/>
+            </do>
+            <onevent type="onenterforward">
+              <go href="#next"/>
+            </onevent>
+            <p>Home</p>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+
+        let deck = parse_wml(xml).expect("deck should parse");
+        assert_eq!(
+            deck.cards[0].accept_action_href.as_deref(),
+            Some("script:calc.wmlsc#main")
+        );
+        assert_eq!(deck.cards[0].onenterforward_href.as_deref(), Some("#next"));
     }
 }

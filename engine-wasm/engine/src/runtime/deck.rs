@@ -33,10 +33,14 @@ mod tests {
             Card {
                 id: "dup".to_string(),
                 nodes: vec![],
+                accept_action_href: None,
+                onenterforward_href: None,
             },
             Card {
                 id: "dup".to_string(),
                 nodes: vec![],
+                accept_action_href: None,
+                onenterforward_href: None,
             },
         ]);
 
@@ -48,6 +52,8 @@ mod tests {
         let deck = Deck::new(vec![Card {
             id: "home".to_string(),
             nodes: vec![],
+            accept_action_href: None,
+            onenterforward_href: None,
         }]);
 
         assert_eq!(deck.card_index("missing"), None);

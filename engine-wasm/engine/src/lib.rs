@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
 mod layout;
@@ -30,6 +31,8 @@ pub struct WmlEngine {
     base_url: String,
     content_type: String,
     raw_bytes_base64: Option<String>,
+    script_units: HashMap<String, Vec<u8>>,
+    last_script_outcome: Option<ScriptExecutionOutcome>,
 }
 
 impl Default for WmlEngine {
@@ -52,6 +55,8 @@ impl WmlEngine {
             base_url: String::new(),
             content_type: String::new(),
             raw_bytes_base64: None,
+            script_units: HashMap::new(),
+            last_script_outcome: None,
         }
     }
 
@@ -77,6 +82,8 @@ impl WmlEngine {
         self.base_url = base_url.to_string();
         self.content_type = content_type.to_string();
         self.raw_bytes_base64 = raw_bytes_base64;
+        self.script_units.clear();
+        self.last_script_outcome = None;
         Ok(())
     }
 
@@ -137,6 +144,35 @@ impl WmlEngine {
     pub fn execute_script_unit(&self, bytes: Vec<u8>) -> Result<JsValue, JsValue> {
         to_js_value(&self.execute_script_unit_internal(&bytes))
     }
+
+    #[wasm_bindgen(js_name = registerScriptUnit)]
+    pub fn register_script_unit(&mut self, src: String, bytes: Vec<u8>) {
+        self.script_units.insert(src, bytes);
+    }
+
+    #[wasm_bindgen(js_name = clearScriptUnits)]
+    pub fn clear_script_units(&mut self) {
+        self.script_units.clear();
+    }
+
+    #[wasm_bindgen(js_name = executeScriptRef)]
+    pub fn execute_script_ref(&mut self, src: String) -> Result<JsValue, JsValue> {
+        let outcome = self.execute_script_ref_internal(&src);
+        self.last_script_outcome = Some(outcome.clone());
+        to_js_value(&outcome)
+    }
+
+    #[wasm_bindgen(js_name = lastScriptExecutionTrap)]
+    pub fn last_script_execution_trap(&self) -> Option<String> {
+        self.last_script_outcome
+            .as_ref()
+            .and_then(|outcome| outcome.trap.clone())
+    }
+
+    #[wasm_bindgen(js_name = lastScriptExecutionOk)]
+    pub fn last_script_execution_ok(&self) -> Option<bool> {
+        self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
+    }
 }
 
 impl WmlEngine {
@@ -155,9 +191,23 @@ impl WmlEngine {
         }
     }
 
+    fn execute_script_ref_internal(&self, src: &str) -> ScriptExecutionOutcome {
+        let Some(bytes) = self.script_units.get(src) else {
+            return ScriptExecutionOutcome::trap(format!(
+                "loader: script unit not registered ({src})"
+            ));
+        };
+        self.execute_script_unit_internal(bytes)
+    }
+
     fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
-        let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let (layout, accept_action_href) = {
+            let card = self.active_card_internal()?;
+            (
+                layout_card(card, self.viewport_cols, self.focused_link_idx),
+                card.accept_action_href.clone(),
+            )
+        };
         let link_total = layout.links.len();
 
         match key {
@@ -169,15 +219,14 @@ impl WmlEngine {
             }
             "enter" => {
                 if link_total == 0 {
+                    if let Some(href) = accept_action_href {
+                        self.execute_action_href(&href)?;
+                    }
                     return Ok(());
                 }
                 let idx = clamp_focus(self.focused_link_idx, link_total);
                 let href = &layout.links[idx];
-                if let Some(card_id) = href.strip_prefix('#') {
-                    self.navigate_to_card_internal(card_id)?;
-                } else {
-                    self.external_nav_intent = Some(self.resolve_external_href(href));
-                }
+                self.execute_action_href(href)?;
             }
             _ => {}
         }
@@ -198,6 +247,34 @@ impl WmlEngine {
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
+        self.run_onenterforward_for_active_card()?;
+        Ok(())
+    }
+
+    fn run_onenterforward_for_active_card(&mut self) -> Result<(), String> {
+        let href = self.active_card_internal()?.onenterforward_href.clone();
+        if let Some(href) = href {
+            self.execute_action_href(&href)?;
+        }
+        Ok(())
+    }
+
+    fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
+        if let Some(script_src) = parse_script_href(href) {
+            let outcome = self.execute_script_ref_internal(script_src);
+            self.last_script_outcome = Some(outcome.clone());
+            if let Some(message) = outcome.trap {
+                return Err(message);
+            }
+            return Ok(());
+        }
+
+        if let Some(card_id) = href.strip_prefix('#') {
+            self.navigate_to_card_internal(card_id)?;
+            return Ok(());
+        }
+
+        self.external_nav_intent = Some(self.resolve_external_href(href));
         Ok(())
     }
 
@@ -273,6 +350,15 @@ fn extract_base_dir(base_url: &str) -> Option<String> {
     Some(format!("{prefix}/"))
 }
 
+fn parse_script_href(href: &str) -> Option<&str> {
+    let body = href.strip_prefix("script:")?;
+    let src = body.split('#').next().unwrap_or(body);
+    if src.is_empty() {
+        return None;
+    }
+    Some(src)
+}
+
 fn to_js_value<T: Serialize>(value: &T) -> Result<JsValue, JsValue> {
     serde_wasm_bindgen::to_value(value).map_err(|err| JsValue::from_str(&err.to_string()))
 }
@@ -320,7 +406,7 @@ fn script_value_to_literal(value: ScriptValue) -> ScriptValueLiteral {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 struct ScriptExecutionOutcome {
     ok: bool,
     result: ScriptValueLiteral,
@@ -345,7 +431,7 @@ impl ScriptExecutionOutcome {
     }
 }
 
-#[derive(Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(untagged)]
 enum ScriptValueLiteral {
     Bool(bool),
@@ -356,7 +442,7 @@ enum ScriptValueLiteral {
 
 #[cfg(test)]
 mod tests {
-    use super::WmlEngine;
+    use super::{parse_script_href, WmlEngine};
 
     const SAMPLE: &str = r##"
     <wml>
@@ -622,5 +708,136 @@ mod tests {
         let outcome = engine.execute_script_unit_internal(&[0x13]);
         assert!(!outcome.ok);
         assert_eq!(outcome.trap.as_deref(), Some("vm: return from root frame"));
+    }
+
+    #[test]
+    fn execute_script_ref_reports_missing_unit() {
+        let mut engine = WmlEngine::new();
+        let outcome = engine.execute_script_ref_internal("missing.wmlsc");
+        engine.last_script_outcome = Some(outcome);
+        assert_eq!(engine.last_script_execution_ok(), Some(false));
+        assert_eq!(
+            engine.last_script_execution_trap().as_deref(),
+            Some("loader: script unit not registered (missing.wmlsc)")
+        );
+    }
+
+    #[test]
+    fn script_link_executes_registered_unit_without_external_navigation() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="script:calc.wmlsc#main">Run</a>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit("calc.wmlsc".to_string(), vec![0x01, 4, 0x01, 5, 0x02, 0x00]);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("script execution should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(engine.external_navigation_intent(), None);
+        assert_eq!(engine.last_script_execution_ok(), Some(true));
+        assert_eq!(engine.last_script_execution_trap(), None);
+    }
+
+    #[test]
+    fn script_link_returns_error_when_unit_is_missing() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="script:missing.wmlsc#main">Run</a>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let err = engine
+            .handle_key_internal("enter")
+            .expect_err("missing script unit should fail");
+        assert_eq!(err, "loader: script unit not registered (missing.wmlsc)");
+        assert_eq!(
+            engine.last_script_execution_trap().as_deref(),
+            Some("loader: script unit not registered (missing.wmlsc)")
+        );
+    }
+
+    #[test]
+    fn clear_script_units_removes_registered_units() {
+        let mut engine = WmlEngine::new();
+        engine.register_script_unit("unit.wmlsc".to_string(), vec![0x00]);
+        engine.clear_script_units();
+
+        let outcome = engine
+            .execute_script_ref_internal("unit.wmlsc")
+            .trap
+            .expect("missing unit should trap");
+        assert_eq!(outcome, "loader: script unit not registered (unit.wmlsc)");
+    }
+
+    #[test]
+    fn parse_script_href_extracts_source_before_fragment() {
+        assert_eq!(
+            parse_script_href("script:calc.wmlsc#main"),
+            Some("calc.wmlsc")
+        );
+        assert_eq!(parse_script_href("script:calc.wmlsc"), Some("calc.wmlsc"));
+        assert_eq!(parse_script_href("script:#main"), None);
+        assert_eq!(parse_script_href("#next"), None);
+    }
+
+    #[test]
+    fn enter_triggers_accept_do_action_when_no_links_exist() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <do type="accept">
+              <go href="script:calc.wmlsc#main"/>
+            </do>
+            <p>No focusable links on this card.</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit("calc.wmlsc".to_string(), vec![0x01, 2, 0x01, 3, 0x02, 0x00]);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should execute accept action script");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(engine.last_script_execution_ok(), Some(true));
+        assert_eq!(engine.last_script_execution_trap(), None);
+    }
+
+    #[test]
+    fn navigate_runs_onenterforward_action() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterforward">
+              <go href="#next"/>
+            </onevent>
+            <p>Middle</p>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should navigate and run onenterforward");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
     }
 }

@@ -6,6 +6,8 @@ export function renderRuntimeState(element: HTMLPreElement, snapshot: EngineSnap
     `focusedLinkIndex: ${snapshot.focusedLinkIndex}`,
     `baseUrl: ${snapshot.baseUrl}`,
     `contentType: ${snapshot.contentType}`,
-    `externalNavigationIntent: ${snapshot.externalNavigationIntent ?? '(none)'}`
+    `externalNavigationIntent: ${snapshot.externalNavigationIntent ?? '(none)'}`,
+    `lastScriptExecutionOk: ${snapshot.lastScriptExecutionOk ?? '(none)'}`,
+    `lastScriptExecutionTrap: ${snapshot.lastScriptExecutionTrap ?? '(none)'}`
   ].join('\n');
 }

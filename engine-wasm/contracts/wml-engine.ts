@@ -35,6 +35,12 @@ export interface ScriptInvocationOutcome {
   result: ScriptValueLiteral;
 }
 
+export interface ScriptExecutionOutcome {
+  ok: boolean;
+  result: ScriptValueLiteral;
+  trap?: string;
+}
+
 export interface RenderList {
   draw: DrawCmd[];
 }
@@ -75,4 +81,10 @@ export interface WmlEngineWasm {
   contentType(): string;
   externalNavigationIntent(): string | undefined;
   clearExternalNavigationIntent(): void;
+  executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
+  registerScriptUnit(src: string, bytes: Uint8Array): void;
+  clearScriptUnits(): void;
+  executeScriptRef(src: string): ScriptExecutionOutcome;
+  lastScriptExecutionTrap(): string | undefined;
+  lastScriptExecutionOk(): boolean | undefined;
 }

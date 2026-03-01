@@ -1,0 +1,29 @@
+<!--
+label: Do + Onevent Actions
+work-items: W0-01
+spec-items: RQ-WMLS-018
+description: Demonstrates accept softkey action and onenterforward event chaining through runtime action handling.
+goal: Verify runtime executes card-level action/event href intents without host-side semantics.
+testing-ac:
+- Load the example and press Enter on the first card; activeCardId should move from home to trigger.
+- Confirm onenterforward on trigger executes immediately and activeCardId becomes final.
+- Confirm externalNavigationIntent remains (none) through the flow.
+-->
+<wml>
+  <card id="home">
+    <do type="accept">
+      <go href="#trigger"/>
+    </do>
+    <p>Press Enter to run the accept action.</p>
+  </card>
+  <card id="trigger">
+    <onevent type="onenterforward">
+      <go href="#final"/>
+    </onevent>
+    <p>This card should auto-forward to final.</p>
+  </card>
+  <card id="final">
+    <p>Final card reached via onenterforward.</p>
+    <a href="#home">Back home</a>
+  </card>
+</wml>

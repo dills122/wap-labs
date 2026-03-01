@@ -355,6 +355,10 @@ Reference architecture:
 - Script call-site metadata is representable without host-specific assumptions.
 - Navigation intent shape supports last-call-wins defer behavior.
 - Refresh behavior policy is explicitly documented as deferred baseline.
+9. `Architecture Compliance`:
+- [ ] VM/interpreter logic remains in `engine-wasm` only.
+- [ ] Host-facing shape only defines side-effect capabilities (no host-defined script semantics).
+- [ ] Navigation/refresh outcomes are defined as post-invocation runtime effects.
 
 ### W0-02 Bytecode loader + decoder skeleton
 
@@ -377,10 +381,14 @@ Reference architecture:
 - Empty units fail deterministically.
 - Oversized units fail before allocation/execute paths.
 - Valid bounded units are preserved for VM handoff.
+9. `Architecture Compliance`:
+- [ ] Decoder verification runs before VM execution entry.
+- [ ] Decoder enforces bounded resource constraints.
+- [ ] Decoder failures return deterministic trap/error variants.
 
 ### W0-03 VM core baseline (stack/call/return/limits)
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-02`
 3. `Files`:
 - `engine-wasm/engine/src/wmlscript/vm.rs`
@@ -393,6 +401,10 @@ Reference architecture:
 - VM executes minimal bytecode path deterministically with bounded resources.
 7. `Spec`:
 - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-010`
+8. `Architecture Compliance`:
+- [ ] VM loop enforces instruction/call-depth/stack bounds.
+- [ ] VM traps are recoverable runtime errors (no panic/host crash).
+- [ ] Return path preserves deterministic result typing.
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
@@ -409,6 +421,10 @@ Reference architecture:
 - Script can mutate vars, trigger deterministic navigation intent, and apply card refresh behavior consistently after variable updates.
 7. `Spec`:
 - `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
+8. `Architecture Compliance`:
+- [ ] `WMLBrowser` state mutation remains in engine runtime state.
+- [ ] Host is not responsible for navigation decision logic.
+- [ ] Deferred navigation/refresh application boundary is explicit and test-covered.
 
 ### W0-05 Timer/dialog integration baseline
 
@@ -426,6 +442,10 @@ Reference architecture:
 - Timer-triggered script flow works with deterministic host/runtime behavior.
 7. `Spec`:
 - `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017`
+8. `Architecture Compliance`:
+- [ ] Dialog/timer features are host capability calls only.
+- [ ] Timer semantics remain runtime-owned and deterministic.
+- [ ] Host integration cannot bypass runtime error/trap handling model.
 
 ## Phase S: Source-Material Deep Audit (Prepared)
 
