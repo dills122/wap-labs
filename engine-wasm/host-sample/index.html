@@ -110,31 +110,7 @@
             </button>
           </div>
           <div id="trace-body">
-            <div class="trace-actions">
-              <button id="clear-trace" type="button">Clear Engine Trace</button>
-              <label class="trace-export-label" for="trace-export-format">Export as</label>
-              <select id="trace-export-format">
-                <option value="txt">Text (.txt)</option>
-                <option value="json">JSON (.json)</option>
-              </select>
-              <button id="export-trace" type="button">Export Engine Trace</button>
-            </div>
-            <div class="trace-filters">
-              <span class="trace-presets-label">Presets</span>
-              <button id="trace-preset-all" type="button">All</button>
-              <button id="trace-preset-scripts" type="button">Scripts</button>
-              <button id="trace-preset-navigation" type="button">Navigation</button>
-              <button id="trace-preset-traps" type="button">Traps</button>
-              <label for="trace-filter-kind">Kind</label>
-              <input id="trace-filter-kind" type="text" placeholder="e.g. ACTION_SCRIPT" />
-              <label for="trace-filter-card">Card</label>
-              <input id="trace-filter-card" type="text" placeholder="e.g. home" />
-              <label class="checkbox-row trace-traps-only" for="trace-filter-traps">
-                <input id="trace-filter-traps" type="checkbox" />
-                Traps only
-              </label>
-            </div>
-            <pre id="engine-trace" class="engine-trace">No engine trace entries yet.</pre>
+            <runtime-inspector-panel id="runtime-inspector"></runtime-inspector-panel>
           </div>
         </section>
       </section>

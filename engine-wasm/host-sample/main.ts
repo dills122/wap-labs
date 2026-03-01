@@ -7,7 +7,8 @@ import { renderRuntimeState } from './services/runtime-state';
 import { ExampleEventLog } from './services/event-log';
 import { renderExampleMetadata } from './ui/example-metadata';
 import { downloadFile } from './services/download';
-import { createRuntimeInspector } from './ui/runtime-inspector';
+import './ui/runtime-inspector-panel';
+import type { RuntimeInspectorPanel } from './ui/runtime-inspector-panel';
 
 const LIVE_RELOAD_DEBOUNCE_MS = 250;
 
@@ -31,17 +32,7 @@ async function main() {
   const exportEventLogButton = document.querySelector<HTMLButtonElement>('#export-event-log');
   const traceWrap = document.querySelector<HTMLElement>('.trace-wrap');
   const toggleTrace = document.querySelector<HTMLButtonElement>('#toggle-trace');
-  const clearTraceButton = document.querySelector<HTMLButtonElement>('#clear-trace');
-  const traceExportFormat = document.querySelector<HTMLSelectElement>('#trace-export-format');
-  const exportTraceButton = document.querySelector<HTMLButtonElement>('#export-trace');
-  const tracePresetAll = document.querySelector<HTMLButtonElement>('#trace-preset-all');
-  const tracePresetScripts = document.querySelector<HTMLButtonElement>('#trace-preset-scripts');
-  const tracePresetNavigation = document.querySelector<HTMLButtonElement>('#trace-preset-navigation');
-  const tracePresetTraps = document.querySelector<HTMLButtonElement>('#trace-preset-traps');
-  const traceFilterKind = document.querySelector<HTMLInputElement>('#trace-filter-kind');
-  const traceFilterCard = document.querySelector<HTMLInputElement>('#trace-filter-card');
-  const traceFilterTraps = document.querySelector<HTMLInputElement>('#trace-filter-traps');
-  const engineTrace = document.querySelector<HTMLPreElement>('#engine-trace');
+  const runtimeInspector = document.querySelector<RuntimeInspectorPanel>('#runtime-inspector');
   const status = document.querySelector<HTMLParagraphElement>('#status');
   const runtimeState = document.querySelector<HTMLPreElement>('#runtime-state');
   const eventLog = document.querySelector<HTMLPreElement>('#event-log');
@@ -73,17 +64,7 @@ async function main() {
     !exportEventLogButton ||
     !traceWrap ||
     !toggleTrace ||
-    !clearTraceButton ||
-    !traceExportFormat ||
-    !exportTraceButton ||
-    !tracePresetAll ||
-    !tracePresetScripts ||
-    !tracePresetNavigation ||
-    !tracePresetTraps ||
-    !traceFilterKind ||
-    !traceFilterCard ||
-    !traceFilterTraps ||
-    !engineTrace ||
+    !runtimeInspector ||
     !status ||
     !runtimeState ||
     !eventLog ||
@@ -145,43 +126,32 @@ async function main() {
     collapsedClass: 'is-collapsed'
   });
   const eventLogService = new ExampleEventLog(eventLog, defaultExample.key);
-  const runtimeInspector = createRuntimeInspector({
-    output: engineTrace,
-    clearButton: clearTraceButton,
-    exportButton: exportTraceButton,
-    exportFormat: traceExportFormat,
-    presetAllButton: tracePresetAll,
-    presetScriptsButton: tracePresetScripts,
-    presetNavigationButton: tracePresetNavigation,
-    presetTrapsButton: tracePresetTraps,
-    kindFilter: traceFilterKind,
-    cardFilter: traceFilterCard,
-    trapsOnlyFilter: traceFilterTraps,
-    getEntries: () => host.traceEntries(),
-    onCleared: () => {
-      host.clearTraceEntries();
-      status.textContent = 'Cleared engine trace.';
-      appendEvent('TRACE_CLEARED');
-    },
-    onExported: (outcome, format, count) => {
-      if (outcome === 'empty') {
-        status.textContent = 'No engine trace entries to export.';
-        appendEvent('TRACE_EXPORT_SKIPPED (empty)');
-        return;
-      }
-      status.textContent = `Exported ${count} engine trace entr${count === 1 ? 'y' : 'ies'} as ${format}.`;
-      appendEvent(`TRACE_EXPORTED (${format})`);
-    },
-    onPresetApplied: (preset) => {
-      status.textContent = `Applied trace preset: ${preset}`;
-      appendEvent(`TRACE_PRESET (${preset})`);
+  runtimeInspector.addEventListener('trace-clear-requested', () => {
+    host.clearTraceEntries();
+    runtimeInspector.entries = host.traceEntries();
+    status.textContent = 'Cleared engine trace.';
+    appendEvent('TRACE_CLEARED');
+  });
+  runtimeInspector.addEventListener('trace-exported', (event) => {
+    const detail = (event as CustomEvent<{ outcome: 'exported' | 'empty'; format: 'txt' | 'json'; count: number }>).detail;
+    if (detail.outcome === 'empty') {
+      status.textContent = 'No engine trace entries to export.';
+      appendEvent('TRACE_EXPORT_SKIPPED (empty)');
+      return;
     }
+    status.textContent = `Exported ${detail.count} engine trace entr${detail.count === 1 ? 'y' : 'ies'} as ${detail.format}.`;
+    appendEvent(`TRACE_EXPORTED (${detail.format})`);
+  });
+  runtimeInspector.addEventListener('trace-preset-applied', (event) => {
+    const detail = (event as CustomEvent<{ preset: 'all' | 'scripts' | 'navigation' | 'traps' }>).detail;
+    status.textContent = `Applied trace preset: ${detail.preset}`;
+    appendEvent(`TRACE_PRESET (${detail.preset})`);
   });
 
   const updateRuntimeState = () => {
     const snapshot = host.snapshot();
     renderRuntimeState(runtimeState, snapshot);
-    runtimeInspector.render();
+    runtimeInspector.entries = host.traceEntries();
     return snapshot;
   };
 
