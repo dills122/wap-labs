@@ -41,3 +41,19 @@ This keeps the renderer runtime independent of transport/WBXML details.
 - `GATEWAY_PORT` (default `9201`)
 - `TRANSPORT_BIND` (default `127.0.0.1`)
 - `TRANSPORT_PORT` (default `8765`)
+
+## Planning + Traceability
+
+- Cross-project board: `docs/waves/WORK_ITEMS.md` (Phase `T`)
+- Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+- Test coverage matrix: `docs/waves/SPEC_TEST_COVERAGE.md`
+- Transport requirements:
+  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+  - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
+
+## Current checklist (planning)
+
+- [ ] OpenAPI parity with `browser/contracts/transport.ts`
+- [ ] Deterministic normalization to engine deck input payload
+- [ ] Error taxonomy alignment for timeout/retry/protocol/decode conditions
+- [ ] Integration tests for WML and WBXML decode paths

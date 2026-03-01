@@ -31,6 +31,13 @@ Integrated dependencies:
 - `engine-wasm/` (runtime + wasm contract)
 - `transport-python/` (sidecar/API transport boundary)
 
+Project planning links:
+
+- Engine execution board: `docs/wml-engine/work-items.md`
+- Engine phased backlog: `docs/wml-engine/ticket-plan.md`
+- Transport planning/checklist: `transport-python/README.md`
+- Browser planning/checklist: `browser/README.md`
+
 ## Pre-Kickoff Guardrail
 
 Do not begin implementation work on this board until the project is explicitly kicked off.
@@ -46,6 +53,7 @@ All items below are intentionally prepared as `todo` only.
 5. `Build`
 6. `Tests`
 7. `Accept`
+8. `Spec`: requirement IDs + section refs/SCR IDs from relevant `docs/waves/*TRACEABILITY*.md` docs
 
 ## Initial Backlog (Prepared, Not Started)
 
@@ -248,3 +256,443 @@ These are the first tickets to pull once Waves browser implementation officially
 - Validate export payload contains action/state chronology.
 6. `Accept`:
 - Debug artifacts can be attached for integration bug triage.
+
+## Phase T: Transport-Python Alignment (Prepared)
+
+### T0-01 OpenAPI and browser transport contract parity
+
+1. `Status`: `todo`
+2. `Depends On`: `B0-02`, `S0-05`
+3. `Files`:
+- `transport-python/api/openapi.yaml`
+- `browser/contracts/transport.ts`
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+4. `Build`:
+- Align request/response/error code enums and optional fields across OpenAPI and browser TS contract.
+- Close known enum gap for `TRANSPORT_UNAVAILABLE` parity.
+5. `Tests`:
+- Add schema/contract parity validation step in CI or script.
+6. `Accept`:
+- No drift between OpenAPI and browser transport contract for shared fields.
+7. `Spec`:
+- `RQ-TRN-001..015`, `RQ-TRX-001..010`, `RQ-WAE-001`, `RQ-WAE-010`
+
+### T0-02 Transport normalization guarantees for engine handoff
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-01`
+3. `Files`:
+- `transport-python/api/openapi.yaml`
+- `engine-wasm/contracts/wml-engine.ts`
+- `transport-python/README.md`
+4. `Build`:
+- Freeze normalization guarantees (`wmlXml`, `baseUrl`, `contentType`, optional raw bytes) and failure semantics.
+5. `Tests`:
+- Integration tests for WML, WBXML->WML decode path, and unsupported-content failures.
+6. `Accept`:
+- Engine handoff payload is deterministic and contract-documented.
+7. `Spec`:
+- `RQ-RMK-007`, `RQ-WAE-001`, `RQ-WAE-005`, `RQ-TRN-004`
+
+### T0-03 Protocol error taxonomy alignment
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-01`
+3. `Files`:
+- `transport-python/api/openapi.yaml`
+- `browser/contracts/transport.ts`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Align error classification and mapping for timeout/retry/protocol/decode paths.
+5. `Tests`:
+- Table-driven transport error mapping tests.
+6. `Accept`:
+- Each error code has deterministic trigger conditions and host-facing semantics.
+7. `Spec`:
+- `RQ-TRN-007`, `RQ-TRN-011`, `RQ-TRN-012`, `RQ-TRX-006`, `RQ-TRX-007`
+
+## Phase W: WMLScript Runtime and VM (Prepared)
+
+Reference architecture:
+
+- `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`
+- `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+
+### W0-01 WMLScript integration contract and action model
+
+1. `Status`: `todo`
+2. `Depends On`: browser integration kickoff
+3. `Files`:
+- `engine-wasm/contracts/wml-engine.ts`
+- `docs/waves/WMLSCRIPT_VM_ARCHITECTURE.md`
+4. `Build`:
+- Define call-site contract from deck actions/events to script invocation model.
+5. `Tests`:
+- Contract-level fixture definitions only.
+6. `Accept`:
+- Script action model is explicit and implementation-ready.
+
+### W0-02 Bytecode loader + decoder skeleton
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-01`
+3. `Files`:
+- `engine-wasm/engine/src/wmlscript/decoder.rs`
+- `engine-wasm/engine/src/wmlscript/mod.rs`
+4. `Build`:
+- Load and validate script unit structure with deterministic error taxonomy.
+5. `Tests`:
+- Valid/invalid unit parse tests.
+6. `Accept`:
+- Decoder accepts known-good fixture units and rejects malformed inputs safely.
+
+### W0-03 VM core baseline (stack/call/return/limits)
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-02`
+3. `Files`:
+- `engine-wasm/engine/src/wmlscript/vm.rs`
+- `engine-wasm/engine/src/wmlscript/value.rs`
+4. `Build`:
+- Implement bounded VM loop with traps and execution limits.
+5. `Tests`:
+- Instruction step/call-depth/stack-bound tests.
+6. `Accept`:
+- VM executes minimal bytecode path deterministically with bounded resources.
+
+### W0-04 `WMLBrowser` var + navigation subset
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-03`
+3. `Files`:
+- `engine-wasm/engine/src/wmlscript/stdlib/wmlbrowser.rs`
+- `engine-wasm/engine/src/runtime/events.rs`
+4. `Build`:
+- Add `getVar`, `setVar`, `go`, `prev`, and explicit refresh-behavior decision (`refresh` API or equivalent runtime invalidation signal).
+5. `Tests`:
+- Softkey/event-driven script invocation integration fixtures, including `go/go`, `go/prev`, and `prev/prev` compatibility profiling.
+6. `Accept`:
+- Script can mutate vars, trigger deterministic navigation intent, and apply card refresh behavior consistently after variable updates.
+
+### W0-05 Timer/dialog integration baseline
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-04`
+3. `Files`:
+- `engine-wasm/engine/src/wmlscript/stdlib/dialogs.rs`
+- `engine-wasm/engine/src/runtime/events.rs`
+- `browser/src-tauri/src/*`
+4. `Build`:
+- Add timer/event plumbing and dialog hostcall path.
+5. `Tests`:
+- `ontimer` and dialog invocation trace tests.
+6. `Accept`:
+- Timer-triggered script flow works with deterministic host/runtime behavior.
+
+## Phase S: Source-Material Deep Audit (Prepared)
+
+Reference:
+
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+
+### S0-01 WAE semantic extraction and traceability
+
+1. `Status`: `done`
+2. `Depends On`: none
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-236-WAESpec-20020207-a.pdf`
+- `docs/source-material/WAP-237-WAEMT-20010515-a.pdf`
+4. `Build`:
+- Extract normative runtime/browser semantic requirements used by Waves engine and host integration.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- WAE requirement matrix exists with section-linked AC.
+7. `Spec`:
+- `WAP-236`, `WAP-237`
+
+### S0-02 Transport protocol traceability for rewrite phases
+
+1. `Status`: `done`
+2. `Depends On`: `S0-01`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-230-WSP-20010705-a.pdf`
+- `docs/source-material/WAP-224-WTP-20010710-a.pdf`
+- `docs/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
+- `docs/source-material/WAP-259-WDP-20010614-a.pdf`
+4. `Build`:
+- Build requirement matrix for protocol behavior needed in Rust migration phases 2-5.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Transport traceability doc exists with mandatory/optional split and phase mapping.
+7. `Spec`:
+- `WAP-230`, `WAP-224`, `OMA-WAP-224_002`, `WAP-259`
+
+### S0-03 Coverage dashboard and gap register
+
+1. `Status`: `done`
+2. `Depends On`: `S0-02`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/README.md`
+- `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
+4. `Build`:
+- Add a single dashboard page linking all traceability docs and listing uncovered requirements.
+5. `Tests`:
+- Documentation consistency check.
+6. `Accept`:
+- Team can identify coverage and gaps in one place.
+7. `Spec`:
+- Aggregated references from all in-scope Waves traceability docs.
+
+### S0-04 Security boundary traceability (WTLS/TLS/E2E)
+
+1. `Status`: `done`
+2. `Depends On`: `S0-03`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-261-WTLS-20010406-a.pdf`
+- `docs/source-material/WAP-261_100-WTLS-20010926-a.pdf`
+- `docs/source-material/WAP-261_101-WTLS-20011027-a.pdf`
+- `docs/source-material/WAP-261_102-WTLS-20011027-a.pdf`
+- `docs/source-material/WAP-219-TLS-20010411-a.pdf`
+- `docs/source-material/WAP-219_100-TLS-20011029-a.pdf`
+- `docs/source-material/WAP-187-TransportE2ESec-20010628-a.pdf`
+- `docs/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf`
+4. `Build`:
+- Build requirements + AC matrix for security semantics and map to Waves simulation policy.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Security boundary requirements are explicit and mapped to current/future implementation stance.
+7. `Spec`:
+- `WAP-261*`, `WAP-219*`, `WAP-187*`
+
+### S0-05 Contract mapping from spec requirements
+
+1. `Status`: `done`
+2. `Depends On`: `S0-04`
+3. `Files`:
+- `engine-wasm/contracts/wml-engine.ts`
+- `transport-python/api/openapi.yaml`
+- `browser/contracts/transport.ts`
+- `docs/waves/*TRACEABILITY*.md`
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+4. `Build`:
+- Map every implemented and planned contract field/behavior to spec requirement IDs.
+5. `Tests`:
+- Documentation consistency check.
+6. `Accept`:
+- Contract surfaces are traceable to spec IDs and uncovered contract gaps are listed.
+7. `Spec`:
+- Aggregated IDs from transport/WAE/WMLScript/security traceability docs.
+
+### S0-06 Transport-adjacent spec extraction (HTTP/TCP/HTTPSM/WCMP)
+
+1. `Status`: `done`
+2. `Depends On`: `S0-03`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-229-HTTP-20010329-a.pdf`
+- `docs/source-material/WAP-229_001-HTTP-20011031-a.pdf`
+- `docs/source-material/WAP-223-HTTPSM-20001213-a.pdf`
+- `docs/source-material/WAP-223_101-HTTPSM-20010928-a.pdf`
+- `docs/source-material/WAP-225-TCP-20010331-a.pdf`
+- `docs/source-material/WAP-202-WCMP-20010624-a.pdf`
+- `docs/source-material/WAP-159-WDPWCMPAdapt-20010713-a.pdf`
+4. `Build`:
+- Build requirements + AC matrix for transport-adjacent interoperability and gateway adaptation boundaries.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Transport-adjacent requirements are explicitly captured with section-linked references and SIN precedence.
+7. `Spec`:
+- `WAP-229*`, `WAP-223*`, `WAP-225`, `WAP-202`, `WAP-159`
+
+### S0-07 Runtime-markup extraction (WML/WBXML lineage)
+
+1. `Status`: `done`
+2. `Depends On`: `S0-03`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-191-WML-20000219-a.pdf`
+- `docs/source-material/WAP-191_102-WML-20001213-a.pdf`
+- `docs/source-material/WAP-191_104-WML-20010718-a.pdf`
+- `docs/source-material/WAP-191_105-WML-20020212-a.pdf`
+- `docs/source-material/WAP-192-WBXML-20010725-a.pdf`
+- `docs/source-material/WAP-192_105-WBXML-20011015-a.pdf`
+4. `Build`:
+- Build requirements + AC matrix for deterministic WML deck/card semantics and WBXML boundary ownership.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Runtime-markup requirements are captured with explicit precedence notes and section-linked references.
+7. `Spec`:
+- `WAP-191*`, `WAP-192*`
+
+### S0-08 Security PKI/WIM extraction
+
+1. `Status`: `done`
+2. `Depends On`: `S0-04`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-211-WAPCert-20010522-a.pdf`
+- `docs/source-material/WAP-211_104-WAPCert-20010928-a.pdf`
+- `docs/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf`
+- `docs/source-material/WAP-217-WPKI-20010424-a.pdf`
+- `docs/source-material/WAP-217_103-WPKI-20011102-a.pdf`
+- `docs/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf`
+- `docs/source-material/WAP-260-WIM-20010712-a.pdf`
+- `docs/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf`
+- `docs/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf`
+4. `Build`:
+- Build requirements + AC matrix for WAP certificate, trust-distribution, and WIM profile boundaries.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- PKI/WIM requirements and defer/enable boundaries are explicit and section-linked.
+7. `Spec`:
+- `WAP-211*`, `WAP-217*`, `WAP-260*`, `OMA-WAP-211_105`, `OMA-WAP-217_105`, `OMA-WAP-260_100`, `OMA-WAP-260_101`
+
+### S0-09 Architecture-context extraction
+
+1. `Status`: `done`
+2. `Depends On`: `S0-03`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-210-WAPArch-20010712-a.pdf`
+- `docs/source-material/WAP-196-ClientID-20010409-a.pdf`
+- `docs/source-material/WAP-188-WAPGenFormats-20010710-a.pdf`
+4. `Build`:
+- Capture architecture-context constraints that influence conformance framing and contract semantics.
+5. `Tests`:
+- Documentation consistency check.
+6. `Accept`:
+- Architecture-context constraints are documented and scoped as context vs direct runtime requirements.
+7. `Spec`:
+- `WAP-210`, `WAP-196`, `WAP-188`
+
+### S0-10 Deferred capability extraction (WMLScript Crypto + UAProf)
+
+1. `Status`: `done`
+2. `Depends On`: `S0-03`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf`
+- `docs/source-material/WAP-161_101-WMLScriptCrypto-20010730-a.pdf`
+- `docs/source-material/WAP-248-UAProf-20011020-a.pdf`
+4. `Build`:
+- Extract requirements and convert them into explicit defer decisions with future AC triggers.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Deferred capabilities are tracked as reviewed, with concrete future implementation gates.
+7. `Spec`:
+- `WAP-161*`, `WAP-248`
+
+### S0-11 Runtime-markup lineage consolidation tail
+
+1. `Status`: `done`
+2. `Depends On`: `S0-07`
+3. `Files`:
+- `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+- `docs/source-material/WAP-238-WML-20010911-a.pdf`
+- `docs/source-material/spec-wml-19990616.pdf`
+4. `Build`:
+- Consolidate remaining WML lineage documents into runtime-markup precedence and compatibility notes.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Runtime-markup family no longer has unresolved in-scope catalog-only files.
+7. `Spec`:
+- `WAP-238`, `spec-wml-19990616`
+
+### S0-12 Out-of-scope domain extraction sweep
+
+1. `Status`: `done`
+2. `Depends On`: `S0-03`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
+- `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
+- `docs/source-material/WAP-120-WAPCachingMod-20010413-a.pdf`
+- `docs/source-material/WAP-167*.pdf`
+- `docs/source-material/WAP-168*.pdf`
+- `docs/source-material/WAP-175*.pdf`
+- `docs/source-material/WAP-182*.pdf`
+- `docs/source-material/WAP-183*.pdf`
+- `docs/source-material/WAP-184*.pdf`
+- `docs/source-material/WAP-185*.pdf`
+- `docs/source-material/WAP-186*.pdf`
+- `docs/source-material/WAP-204*.pdf`
+- `docs/source-material/WAP-205*.pdf`
+- `docs/source-material/WAP-206*.pdf`
+- `docs/source-material/WAP-209*.pdf`
+- `docs/source-material/WAP-213*.pdf`
+- `docs/source-material/WAP-227*.pdf`
+- `docs/source-material/WAP-228*.pdf`
+- `docs/source-material/WAP-231*.pdf`
+- `docs/source-material/WAP-234*.pdf`
+- `docs/source-material/WAP-235*.pdf`
+- `docs/source-material/WAP-239*.pdf`
+- `docs/source-material/WAP-244*.pdf`
+- `docs/source-material/WAP-247*.pdf`
+- `docs/source-material/WAP-249*.pdf`
+- `docs/source-material/WAP-250*.pdf`
+- `docs/source-material/WAP-251*.pdf`
+- `docs/source-material/WAP-255*.pdf`
+- `docs/source-material/WAP-266*.pdf`
+- `docs/source-material/WAP-268*.pdf`
+- `docs/source-material/WAP-269*.pdf`
+- `docs/source-material/WAP-270*.pdf`
+- `docs/source-material/WAP-277*.pdf`
+4. `Build`:
+- Extract normative obligations for remaining out-of-scope families and convert to explicit defer posture + future activation AC.
+5. `Tests`:
+- AC checklist only (planning stage).
+6. `Accept`:
+- Canonical source-material ledger has no `catalog-reviewed` entries remaining.
+7. `Spec`:
+- Aggregated out-of-scope families listed above.
+
+### S0-13 AC-to-test coverage matrix
+
+1. `Status`: `done`
+2. `Depends On`: `S0-05`
+3. `Files`:
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `docs/wml-engine/test-strategy.md`
+- `docs/waves/WORK_ITEMS.md`
+4. `Build`:
+- Map requirement groups to current and planned test assets across engine, host sample, transport, and browser.
+5. `Tests`:
+- Documentation consistency check.
+6. `Accept`:
+- Coverage matrix exists with explicit `covered`/`partial`/`planned` status and immediate cross-project checklist.
+7. `Spec`:
+- Aggregated requirement groups from `docs/waves/*TRACEABILITY*.md`.
+
+### S0-14 Project plan synchronization sweep
+
+1. `Status`: `done`
+2. `Depends On`: `S0-05`, `S0-13`
+3. `Files`:
+- `docs/wml-engine/work-items.md`
+- `docs/wml-engine/ticket-plan.md`
+- `docs/wml-engine/requirements-matrix.md`
+- `docs/wml-engine/test-strategy.md`
+- `engine-wasm/README.md`
+- `transport-python/README.md`
+- `browser/README.md`
+- `docs/browser-emulator/README.md`
+4. `Build`:
+- Integrate traceability + checklist direction directly into existing project/library planning docs.
+5. `Tests`:
+- Documentation consistency check.
+6. `Accept`:
+- Engine/browser/transport plans all reference current Waves traceability, contract mapping, and test coverage artifacts.
+7. `Spec`:
+- Aggregated requirement groups from `docs/waves/*TRACEABILITY*.md`.

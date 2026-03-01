@@ -2,6 +2,13 @@
 
 This is the actionable backlog for implementation without overengineering.
 
+Traceability linkage:
+
+- Engine requirements map to Waves IDs in `docs/wml-engine/requirements-matrix.md`.
+- Cross-project contract/test alignment is tracked in:
+  - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+  - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 ## Phase A: Lock MVP Runtime (P0)
 
 ### A1. Parser baseline hardening

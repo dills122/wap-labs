@@ -40,3 +40,17 @@ The Python transport layer remains mandatory for now (no WSP/WBXML rewrite in Ru
 1. Wire a minimal Tauri command (`fetch_deck`) to the Python service.
 2. Add a basic frontend route that loads a URL and displays status/errors.
 3. Connect loaded WML into the existing engine host rendering loop.
+
+## Planning + Traceability
+
+- Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
+- Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+- Test coverage matrix: `docs/waves/SPEC_TEST_COVERAGE.md`
+- Browser architecture baseline: `docs/waves/TECHNICAL_ARCHITECTURE.md`
+
+## Current checklist (planning)
+
+- [ ] Freeze Tauri command and TypeScript contract parity
+- [ ] Add deterministic URL load and runtime status model
+- [ ] Implement transport fetch -> engine loadDeckContext handoff
+- [ ] Add integration fixtures for load/nav/external-intent loops

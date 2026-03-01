@@ -12,6 +12,9 @@ Use these as the current source of truth:
 4. `ticket-plan.md`
 5. `test-strategy.md`
 6. `work-items.md`
+7. `../waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+8. `../waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+9. `../waves/SPEC_TEST_COVERAGE.md`
 
 Non-authoritative historical docs are retained only for context:
 
