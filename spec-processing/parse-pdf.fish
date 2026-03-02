@@ -22,7 +22,7 @@ set DOCFLAGS $DOCLING_PROFILE_FLAGS
 # Core analysis set (WML + WMLScript + transport core)
 set CORE_FILES \
 $ROOT/spec-processing/source-material/WAP-191-WML-20000219-a.pdf \
-$ROOT/spec-processing/source-material/WMLScript/WAP-193_101-WMLScript-20010928-a.pdf \
+$ROOT/spec-processing/source-material/WAP-193_101-WMLScript-20010928-a.pdf \
 $ROOT/spec-processing/source-material/WAP-259-WDP-20010614-a.pdf \
 $ROOT/spec-processing/source-material/WAP-224-WTP-20010710-a.pdf \
 $ROOT/spec-processing/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF \

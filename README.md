@@ -11,6 +11,7 @@ WAP Labs contains two parallel tracks:
 - Browser emulator build guide: `docs/browser-emulator/README.md`
 - Development prerequisites + bootstrap: `docs/development-prerequisites.md`
 - Documentation index: `docs/README.md`
+- Spec-processing subproject: `spec-processing/README.md`
 
 ## Repo Map
 
@@ -21,6 +22,7 @@ WAP Labs contains two parallel tracks:
 - `browser/`: Waves Tauri desktop host integration area
 - `marketing-site/`: Astro-based developer landing site (GitHub Pages root)
 - `docs/`: architecture, spec mapping, and implementation plans
+- `spec-processing/`: source-spec corpus, parsing/cleanup workflow, and provenance tooling
 
 ## Quick Commands
 
