@@ -106,12 +106,23 @@ Status: Active
   - content-type routing for WMLScript payloads
   - core function/local/conversion/error semantics
 
-2. Contract-level requirement mapping
+2. Transport bedrock conformance closure (`WAP-259`, `WAP-224`, `WAP-230`)
+- Status: in progress (cleaned-source table-grounded closure lane added)
+- Deliverables:
+  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` (`RQ-TRN-016`..`RQ-TRN-019`)
+  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`)
+- Priority closure focus:
+  - WTP TID/MPL replay-window behavior
+  - WSP connectionless primitive-profile gating
+  - WSP assigned-number registry fidelity (PDU/abort/header/parameter maps)
+  - WSP capability negotiation and bounds enforcement
+
+3. Contract-level requirement mapping
 - Status: complete
 - Deliverable:
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 
-3. AC-to-test inventory
+4. AC-to-test inventory
 - Status: complete (initial matrix)
 - Deliverable:
   - `docs/waves/SPEC_TEST_COVERAGE.md`

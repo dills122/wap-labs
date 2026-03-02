@@ -49,8 +49,12 @@ Legend:
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
 | `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `partial` | transport-rust unit tests + fixture harness scenarios under `transport-rust/tests/fixtures/transport/` |
-| `RQ-TRN-005..009` WTP semantics and SIN overlays | `planned` | protocol-level tests/fuzz fixtures (planned) |
+| `RQ-TRN-005..009` WTP semantics and SIN overlays | `planned` | protocol-level retransmission/abort/SAR fixtures; follow-ups tracked in `T0-08` and existing WTP lanes |
 | `RQ-TRN-010..015` WSP/session/method/capability behavior | `partial` | transport-rust request validation/gateway mapping tests + fixture harness |
+| `RQ-TRN-016` WTP TID window/MPL discipline | `planned` | deterministic replay-window and TID-rate fixtures tracked in `T0-08` |
+| `RQ-TRN-017` WSP connectionless primitive profile | `planned` | primitive occurrence matrix fixtures tracked in `T0-09` |
+| `RQ-TRN-018` WSP assigned-number registry fidelity | `planned` | table-driven token map fixtures tracked in `T0-10` |
+| `RQ-TRN-019` WSP capability-bounds enforcement | `planned` | capability negotiation and bound-exceed fixtures tracked in `T0-11` |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
 | WAP-191 request-policy + post metadata plumbing (`go/postfield/cache-control`) | `planned` | `T0-04`, `R0-06` |
 | WAP-191 encoder/validation fixture lane (`14.x`, `15.2-15.4`) | `planned` | `T0-07`, `R0-08` |

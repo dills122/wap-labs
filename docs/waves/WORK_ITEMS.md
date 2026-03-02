@@ -417,6 +417,79 @@ These were the first tickets prepared before Waves browser implementation starte
 7. `Spec`:
 - `RQ-RMK-007`, `RQ-WAE-005`
 
+### T0-08 WTP TID/MPL replay-window conformance follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-03`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Add explicit responder-side TID decision policy and fixtures for cache/no-cache and duplicate-guarantee modes.
+- Enforce initiator-side TID progression/rate guardrails relative to MPL assumptions for replay-window safety.
+5. `Tests`:
+- Fixture matrix for Table-6/7/8-like TID decisions and out-of-order invoke handling.
+- Deterministic TID wrap/restart-window tests with trace assertions.
+6. `Accept`:
+- TID replay-window behavior is deterministic and explicitly profile-gated.
+7. `Spec`:
+- `RQ-TRN-007`, `RQ-TRN-016`
+
+### T0-09 WSP connectionless primitive-profile conformance
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-01`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Make WSP mode selection explicit (`connection-oriented`, `connectionless`, or both) with deterministic primitive-usage gating.
+- Implement/validate connectionless primitive occurrence matrix behavior and deterministic invalid-primitive handling.
+5. `Tests`:
+- Primitive occurrence fixtures for `S-Unit-MethodInvoke`, `S-Unit-MethodResult`, `S-Unit-Push`.
+6. `Accept`:
+- Connectionless mode policy is explicit and test-backed; invalid primitive paths are deterministic.
+7. `Spec`:
+- `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-017`
+
+### T0-10 WSP assigned-number registry conformance fixtures
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-05`, `T0-07`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Add table-driven token-map fixtures for WSP PDU types, abort-reason codes, well-known parameters, and header-field names.
+- Define deterministic handling policy for unassigned/unknown registry values.
+5. `Tests`:
+- Decode/encode round-trip fixtures anchored to assigned-number tables.
+6. `Accept`:
+- Assigned-number behavior is deterministic, profile-documented, and regression-guarded.
+7. `Spec`:
+- `RQ-TRN-014`, `RQ-TRN-018`
+
+### T0-11 WSP capability-bound and negotiation-limit enforcement
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-09`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Enforce min/intersection semantics for negotiated capabilities.
+- Enforce negotiated SDU/message-size and outstanding-request bounds with deterministic abort/error surfacing.
+5. `Tests`:
+- Capability negotiation fixtures across client/server proposal mismatches and boundary exceed cases.
+6. `Accept`:
+- Capability negotiation and bounds behavior is deterministic and spec-linked.
+7. `Spec`:
+- `RQ-TRN-013`, `RQ-TRN-019`
+
 ## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:

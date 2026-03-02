@@ -1,7 +1,7 @@
 # Waves Transport Spec Traceability
 
 Version: v0.1  
-Status: S0-02 complete (initial extraction)
+Status: S0-02 complete (initial extraction + cleaned-source validation pass)
 
 ## Purpose
 
@@ -201,11 +201,56 @@ Legend:
   - [ ] Push paths are explicitly enabled/disabled by profile.
   - [ ] Confirmed push round-trip behavior is test-covered when enabled.
 
+### RQ-TRN-016 WTP TID window and MPL discipline
+
+- Requirement:
+  - WTP responder-side TID acceptance/replay behavior must follow window-based validation and duplicate-handling rules.
+  - WTP initiator TID allocation rate must respect MPL-derived constraints.
+- Spec:
+  - `WAP-224` 7.8.2, 7.8.3.1
+  - tables: `Table 6`, `Table 7`, `Table 8`
+- AC:
+  - [ ] Responder behavior is explicit for: no-cache, TID cache present, and transport duplicate-guarantee assumptions.
+  - [ ] Initiator TID increment policy includes the `2**14 steps in 2*MPL` bound and deterministic behavior on restart/wrap windows.
+
+### RQ-TRN-017 WSP connectionless primitive profile conformance
+
+- Requirement:
+  - If connectionless mode is enabled, allowed client/server primitive occurrences must follow the WSP connectionless primitive matrix.
+- Spec:
+  - `WAP-230` 6.4.3
+  - table: `Table 9` (connectionless service primitives)
+- AC:
+  - [ ] Primitive occurrence matrix (`req`/`ind` only; no `res`/`cnf`) is encoded in transport profile tests.
+  - [ ] Invalid primitive usage paths fail deterministically and do not desynchronize session/transaction state.
+
+### RQ-TRN-018 WSP assigned-number registry fidelity
+
+- Requirement:
+  - WSP parsing/encoding must use spec-defined assigned-number registries for PDU types, abort reasons, well-known parameters, and header field names.
+- Spec:
+  - `WAP-230` section 8.4
+  - tables: `Table 34`, `Table 35`, `Table 38`, `Table 39`
+- AC:
+  - [ ] Registry token maps are fixture-backed for decode and encode paths.
+  - [ ] Unknown/unassigned values map to deterministic error or ignore behavior per profile policy.
+
+### RQ-TRN-019 WSP capability-bounds enforcement
+
+- Requirement:
+  - Negotiated capability values must follow capability semantics and enforce session limits for SDU/message size and outstanding-request counts.
+- Spec:
+  - `WAP-230` 6.3.2, 8.3
+  - tables: `Table 17`, `Table 18`, `Table 19`, `Table 20`, `Table 21`, `Table 22`, `Table 23`, `Table 24`, `Table 37`
+- AC:
+  - [ ] Final negotiated values use deterministic min/intersection behavior for numeric/set capabilities.
+  - [ ] Exceeded capability limits are handled with deterministic abort/error behavior and trace output.
+
 ## Migration phase mapping
 
-- Phase 2 (WSP parsing in Rust): `RQ-TRN-010`..`RQ-TRN-015`
+- Phase 2 (WSP parsing in Rust): `RQ-TRN-010`..`RQ-TRN-015`, `RQ-TRN-017`, `RQ-TRN-018`, `RQ-TRN-019`
 - Phase 3 (WSP session in Rust): `RQ-TRN-011`, `RQ-TRN-013`
-- Phase 4 (WTP retransmission in Rust): `RQ-TRN-005`..`RQ-TRN-009`
+- Phase 4 (WTP retransmission in Rust): `RQ-TRN-005`..`RQ-TRN-009`, `RQ-TRN-016`
 - Phase 5 (UDP/WDP in Rust): `RQ-TRN-001`..`RQ-TRN-004`
 
 ## Notes
