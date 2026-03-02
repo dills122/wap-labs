@@ -74,9 +74,10 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 
-1. Complete `T0-02`: freeze transport normalization guarantees (`wmlXml`, `baseUrl`, `contentType`, raw-bytes metadata) across host contracts/docs.
-2. Complete `T0-03`: align transport/browser error taxonomy with deterministic host-facing semantics.
-3. Add automated browser-side regression checks for keyboard + hybrid back behavior.
+1. Execute `M1-01`: contract-source unification in browser host/frontend (remove local type duplication and import shared contracts).
+2. Execute `M1-05`: add automated browser navigation state-machine checks (load transitions, external intent loop, hybrid back).
+3. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
+4. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
 
 ## Planning + Traceability
 
@@ -95,3 +96,6 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [x] Ship browser-style shell with hidden developer drawer
 - [x] Add global keyboard navigation when not in text-entry fields
 - [x] Add hybrid back behavior (engine card-history + host URL fallback)
+- [ ] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
+- [ ] Add browser-side automated regression checks for navigation state machine (`M1-05`)
+- [ ] Decompose browser high-churn files into boundary modules (`M1-08`)

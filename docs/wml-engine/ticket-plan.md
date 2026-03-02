@@ -9,6 +9,17 @@ Traceability linkage:
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
   - `docs/waves/SPEC_TEST_COVERAGE.md`
 
+Immediate cross-project next-in-line maintenance alignment (before Phase B promotion):
+
+- `M1-02` native/wasm parity-critical regression coverage.
+- `M1-07` parser robustness hardening without feature-scope expansion, using an existing XML parser backend with a WaveNav WML semantic mapper layer.
+- `M1-08` boundary-oriented decomposition of high-churn files.
+- `M1-03` engine API generator design/bootstrap as a non-priority track.
+
+Source board:
+
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+
 ## Phase A: Lock MVP Runtime (P0)
 
 ### A1. Parser baseline hardening
@@ -133,3 +144,7 @@ These remain intentionally deferred to avoid overengineering early phases.
 
 ### Q3. Conformance fixtures
 - Build fixture deck corpus from subset specs and maintain expected outputs under version control.
+
+### Q4. Engine API generation pipeline (non-priority)
+- Generate TypeScript API/types/facade scaffolding from engine-owned API metadata.
+- Use generated outputs to reduce manual contract-sync churn across browser and host tooling.

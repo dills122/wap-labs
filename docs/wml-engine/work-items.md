@@ -20,6 +20,19 @@ Target scope is Phase A (`P0`) only:
 
 No Phase B+ semantics should be added in this board unless explicitly promoted.
 
+## Next In Line (Cross-Project Maintenance Alignment)
+
+Before additional Phase B+ feature promotion, execute aligned maintenance tickets:
+
+1. `M1-02` parity-critical native/wasm regression suite.
+2. `M1-07` parser robustness hardening (no scope expansion) using an existing XML parser backend plus a WML semantic mapper layer.
+3. `M1-08` high-churn file decomposition into boundary modules.
+4. `M1-03` engine API generator design/bootstrap (non-priority track).
+
+Source of truth for these items:
+
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+
 ## Demoability Requirement
 
 For any newly implemented, demoable feature:
