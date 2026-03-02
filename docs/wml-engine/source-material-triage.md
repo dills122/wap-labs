@@ -2,7 +2,7 @@
 
 This triage reviews all `93` files in `spec-processing/source-material` and scopes only what matters for the WASM WML rendering/runtime engine.
 
-Note: this is a full-corpus triage document. For the currently reviewed subset and extracted conclusions, use `source-material-review.md`.
+Note: this is a full-corpus triage document. For the currently reviewed canonical extraction conclusions, use `source-material-review.md`.
 
 ## Decision Rule
 

@@ -1,4 +1,4 @@
-# WaveNav Engine Requirements Matrix (From Local Source-Material Subset)
+# WaveNav Engine Requirements Matrix (From Canonical Local Source Material)
 
 This matrix maps normative behavior to engine modules and tests.
 

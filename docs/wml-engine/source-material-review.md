@@ -1,4 +1,4 @@
-# Source Material Review (Local Subset PDFs)
+# Source Material Review (Canonical Local PDFs)
 
 Reviewed directly from canonical local files under `spec-processing/source-material/`.
 
@@ -93,7 +93,7 @@ Engine implication for current architecture:
 
 - Keep WBXML decode outside WASM runtime for now (transport layer), then feed textual WML into engine.
 
-## 8) SIN impact observed in subset
+## 8) SIN impact observed in reviewed corpus
 
 - `WAP-191_105` clarifies `go` post + `enctype` + charset behavior, including multipart guidance.
 - `WAP-192_105` primarily corrects/consolidates WBXML conformance references.

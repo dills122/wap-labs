@@ -40,7 +40,7 @@
 Authoritative implementation set:
 
 - `wml-engine/README.md`: engine docs entrypoint and read order
-- `wml-engine/source-material-review.md`: extracted normative notes from reviewed local subset PDFs
+- `wml-engine/source-material-review.md`: extracted normative notes from reviewed canonical local PDFs
 - `wml-engine/requirements-matrix.md`: requirement to module/test traceability
 - `wml-engine/architecture.md`: maintainable internal module architecture
 - `wml-engine/ticket-plan.md`: active phased implementation backlog

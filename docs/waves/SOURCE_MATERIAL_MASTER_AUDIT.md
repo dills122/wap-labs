@@ -11,31 +11,19 @@ Run a repeatable, deep audit over all local source specs and ensure Waves requir
 
 Current repository corpus under `spec-processing/source-material`:
 
-- `105` PDF files total
-- `11` duplicated filenames across convenience folders (`sub-set/`, `WMLScript/`) and root
+- `94` PDF files total (canonical root-level corpus)
+- `0` duplicate mirror folders in active use (`sub-set/`, `WMLScript/` removed from canonical tree)
 
 Canonical per-file ledger:
 
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 
-Duplicate filename set:
-
-- `WAP-191-WML-20000219-a.pdf`
-- `WAP-191_102-WML-20001213-a.pdf`
-- `WAP-191_104-WML-20010718-a.pdf`
-- `WAP-191_105-WML-20020212-a.pdf`
-- `WAP-192-WBXML-20010725-a.pdf`
-- `WAP-192_105-WBXML-20011015-a.pdf`
-- `WAP-193-WMLScript-20001025-a.pdf`
-- `WAP-193_101-WMLScript-20010928-a.pdf`
-- `WAP-194-WMLScriptLibraries-20000925-a.pdf`
-- `WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
-- `WAP-196-ClientID-20010409-a.pdf`
+Historical duplicate mirrors were removed during repository cleanup; canonical root-level PDFs are now the only supported source paths.
 
 ## Canonical-source rule
 
 For audit and traceability, use root-level files in `spec-processing/source-material/` as canonical.  
-Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
+Do not reintroduce foldered mirror duplicates (`sub-set/`, `WMLScript/`) unless explicitly required and documented.
 
 ## Waves-focused domain map
 
@@ -70,7 +58,7 @@ Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
 
 ### Already captured well
 
-- WML subset extraction for engine: `docs/wml-engine/source-material-review.md`
+- WML extraction for engine from canonical corpus: `docs/wml-engine/source-material-review.md`
 - corpus triage: `docs/wml-engine/source-material-triage.md`
 - WMLScript architecture and traceability:
   - `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`

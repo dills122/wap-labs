@@ -143,7 +143,7 @@ These remain intentionally deferred to avoid overengineering early phases.
 - For each implemented requirement id from `requirements-matrix.md`, add test id mapping.
 
 ### Q3. Conformance fixtures
-- Build fixture deck corpus from subset specs and maintain expected outputs under version control.
+- Build fixture deck corpus from canonical reviewed specs and maintain expected outputs under version control.
 
 ### Q4. Engine API generation pipeline (non-priority)
 - Generate TypeScript API/types/facade scaffolding from engine-owned API metadata.
