@@ -363,6 +363,46 @@ const withAction =
     }
   };
 
+const isTextEntryTarget = (target: EventTarget | null): boolean => {
+  if (!(target instanceof Element)) {
+    return false;
+  }
+  if (target instanceof HTMLInputElement) {
+    const type = target.type.toLowerCase();
+    return type === 'text' || type === 'search' || type === 'url' || type === 'number';
+  }
+  if (target instanceof HTMLTextAreaElement) {
+    return true;
+  }
+  if (target instanceof HTMLSelectElement) {
+    return true;
+  }
+  return target.getAttribute('contenteditable') === 'true';
+};
+
+const applyEngineKey = async (key: EngineKey): Promise<void> => {
+  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_handle_key', {
+    request: { key }
+  });
+  setSnapshot(snapshot);
+  const renderList = await invoke<RenderList>('engine_render');
+  drawRenderList(renderList);
+  syncSessionFromSnapshot(snapshot);
+
+  if (snapshot.externalNavigationIntent) {
+    fetchUrlInput.value = snapshot.externalNavigationIntent;
+    await loadTransportUrl(snapshot.externalNavigationIntent, 'external-intent', true);
+  }
+};
+
+const applyNavigateBack = async (): Promise<void> => {
+  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_navigate_back');
+  setSnapshot(snapshot);
+  const renderList = await invoke<RenderList>('engine_render');
+  drawRenderList(renderList);
+  syncSessionFromSnapshot(snapshot);
+};
+
 const loadTransportUrl = async (
   url: string,
   source: 'user' | 'external-intent',
@@ -543,14 +583,6 @@ fetchUrlInput.addEventListener(
   })
 );
 
-window.addEventListener('keydown', (event) => {
-  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'd') {
-    event.preventDefault();
-    devDrawerEl.open = !devDrawerEl.open;
-    setStatus(devDrawerEl.open ? 'Developer tools opened.' : 'Developer tools hidden.');
-  }
-});
-
 document.querySelector<HTMLButtonElement>('#btn-render')?.addEventListener(
   'click',
   withAction('render', async () => {
@@ -563,13 +595,7 @@ const bindKeyButton = (id: string, key: EngineKey): void => {
   document.querySelector<HTMLButtonElement>(id)?.addEventListener(
     'click',
     withAction(`handle-key-${key}`, async () => {
-      const snapshot = await invoke<EngineRuntimeSnapshot>('engine_handle_key', {
-        request: { key }
-      });
-      setSnapshot(snapshot);
-      const renderList = await invoke<RenderList>('engine_render');
-      drawRenderList(renderList);
-      syncSessionFromSnapshot(snapshot);
+      await applyEngineKey(key);
       setStatus(`Handled key: ${key}`);
     })
   );
@@ -582,11 +608,7 @@ bindKeyButton('#btn-enter', 'enter');
 document.querySelector<HTMLButtonElement>('#btn-back')?.addEventListener(
   'click',
   withAction('navigate-back', async () => {
-    const snapshot = await invoke<EngineRuntimeSnapshot>('engine_navigate_back');
-    setSnapshot(snapshot);
-    const renderList = await invoke<RenderList>('engine_render');
-    drawRenderList(renderList);
-    syncSessionFromSnapshot(snapshot);
+    await applyNavigateBack();
     setStatus('navigateBack invoked.');
   })
 );
@@ -627,3 +649,51 @@ document.querySelector<HTMLButtonElement>('#btn-clear-timeline')?.addEventListen
     setStatus('Cleared event timeline.');
   })
 );
+
+window.addEventListener('keydown', (event) => {
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'd') {
+    event.preventDefault();
+    devDrawerEl.open = !devDrawerEl.open;
+    setStatus(devDrawerEl.open ? 'Developer tools opened.' : 'Developer tools hidden.');
+    return;
+  }
+
+  if (isTextEntryTarget(event.target)) {
+    return;
+  }
+
+  if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    void withAction('keyboard-up', async () => {
+      await applyEngineKey('up');
+      setStatus('Keyboard: up');
+    })();
+    return;
+  }
+
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    void withAction('keyboard-down', async () => {
+      await applyEngineKey('down');
+      setStatus('Keyboard: down');
+    })();
+    return;
+  }
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    void withAction('keyboard-enter', async () => {
+      await applyEngineKey('enter');
+      setStatus('Keyboard: enter');
+    })();
+    return;
+  }
+
+  if (event.key === 'Backspace') {
+    event.preventDefault();
+    void withAction('keyboard-backspace', async () => {
+      await applyNavigateBack();
+      setStatus('Keyboard: back');
+    })();
+  }
+});
