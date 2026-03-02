@@ -158,21 +158,21 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     },
     invokeScriptRef(src: string) {
       const outcome = engine.invokeScriptRef(src) as ScriptInvocationOutcome;
-      if (outcome.requiresRefresh || outcome.navigationIntent.type !== 'none') {
+      if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
         paint();
       }
       return outcome;
     },
     invokeScriptRefFunction(src: string, functionName: string) {
       const outcome = engine.invokeScriptRefFunction(src, functionName) as ScriptInvocationOutcome;
-      if (outcome.requiresRefresh || outcome.navigationIntent.type !== 'none') {
+      if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
         paint();
       }
       return outcome;
     },
     invokeScriptRefCall(src: string, functionName: string, args) {
       const outcome = engine.invokeScriptRefCall(src, functionName, args) as ScriptInvocationOutcome;
-      if (outcome.requiresRefresh || outcome.navigationIntent.type !== 'none') {
+      if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
         paint();
       }
       return outcome;

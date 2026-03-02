@@ -1,7 +1,7 @@
 # Waves WaveScript VM Architecture
 
 Version: v0.1  
-Status: Planning (no implementation started)
+Status: Active (Phase W execution in progress)
 
 Companion tracking matrix:
 
@@ -45,6 +45,25 @@ Secondary implementation reference (tutorial material):
 - Host integrations are limited to side effects: dialogs, timer wake/tick, and optional script fetch for cache misses.
 - First runnable host path is `engine-wasm/host-sample`; Waves browser integration follows later.
 - `WMLBrowser.refresh()` baseline is deferred refresh semantics first; immediate refresh stays feature-gated.
+
+## W0-01 Contract Baseline (Implemented)
+
+`engine-wasm/contracts/wml-engine.ts` now defines the script invocation model used by Phase W work:
+
+- `ScriptInvocationContext`: runtime-owned call-site metadata (`callSite`, `cardId`, optional `sourceHref`).
+- `ScriptInvocationRef`: script reference plus invocation context and args.
+- `ScriptPostInvocationEffects`: deterministic post-invocation runtime effects (`navigationIntent`, `requiresRefresh`).
+- `ScriptInvocationOutcome` and `ScriptExecutionOutcome`: unified outcome shape with `effects` envelope.
+- `ScriptHostCapabilities`: host side-effect adapters only (`dialogs`, `timers`, optional `scriptFetch`).
+
+This contract keeps VM/interpreter semantics in `engine-wasm` while limiting host responsibilities to side effects.
+
+Contract-level fixture coverage for W0-01 is tracked with host-sample decks:
+
+- `engine-wasm/host-sample/examples/wmlbrowser-var-nav.wml`
+- `engine-wasm/host-sample/examples/wavescript-nav-order.wml`
+- `engine-wasm/host-sample/examples/wavescript-go-cancel.wml`
+- `engine-wasm/host-sample/examples/wavescript-refresh-policy.wml`
 
 ## External implementation references (modern browser architecture)
 

@@ -30,6 +30,13 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `focusedLinkIndex()` | `RQ-RMK-006` |
 | `externalNavigationIntent()` | `RQ-RMK-003`, `RQ-WAE-010` |
 | `clearExternalNavigationIntent()` | `RQ-RMK-003` |
+| `ScriptInvocationContext` (`callSite`, `cardId`, `sourceHref`) | `RQ-WMLS-001`, `RQ-WMLS-003`, `RQ-WAE-003` |
+| `ScriptInvocationRef.context` | `RQ-WMLS-001`, `RQ-WMLS-003` |
+| `ScriptPostInvocationEffects.navigationIntent` | `RQ-WMLS-017`, `RQ-WMLS-021` |
+| `ScriptPostInvocationEffects.requiresRefresh` | `RQ-WMLS-018`, `RQ-WMLS-022` |
+| `ScriptInvocationOutcome.effects` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
+| `ScriptExecutionOutcome.effects` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
+| `ScriptHostCapabilities` side-effect-only host adapters | `RQ-WMLS-003`, `RQ-WAE-003` |
 
 ## Transport mapping (`transport-rust/src/lib.rs`)
 
@@ -59,6 +66,18 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `TransportClient.fetchDeck` behavior | `RQ-TRN-001..015`, `RQ-TRX-001..010` (profile-dependent) |
 | `HostSessionState` runtime fields (including `navigationStatus`) | `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `HostSessionState.externalNavigationIntent` | `RQ-WAE-010`, `RQ-RMK-003` |
+| `HostSessionState.navigationSource` | `RQ-WAE-010`, `RQ-TRN-012` |
+| `HostSessionState.history` / `historyIndex` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
+| `HostHistoryEntry.url` / `activeCardId` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
+
+Deterministic transport error trigger mapping:
+
+- `INVALID_REQUEST`: request rejected before transport send (`method`, URL validation)
+- `PROTOCOL_ERROR`: upstream HTTP status `>= 400`
+- `UNSUPPORTED_CONTENT_TYPE`: upstream success but unsupported normalized content type
+- `WBXML_DECODE_FAILED`: WBXML payload decode failure
+- `GATEWAY_TIMEOUT`: terminal timeout-classified send/read failure
+- `TRANSPORT_UNAVAILABLE`: terminal non-timeout send/read/client/gateway failure
 
 Sync rule:
 
@@ -68,4 +87,4 @@ Sync rule:
 ## Known gaps to schedule
 
 1. Add explicit contract field for engine/runtime error taxonomy once finalized (planned quality ticket).
-2. Wire WMLScript invocation + hostcall contract fields into exported wasm APIs after W0-03 VM baseline lands.
+2. Expand script host capability coverage into concrete host wiring after W0-03 VM baseline lands.

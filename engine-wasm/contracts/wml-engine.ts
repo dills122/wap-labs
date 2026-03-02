@@ -1,9 +1,13 @@
 export type EngineKey = 'up' | 'down' | 'enter';
 
 export interface WmlDeckInput {
+  // Normalized textual WML payload passed into engine runtime.
   wmlXml: string;
+  // Resolved document URL used for fragment and relative navigation resolution.
   baseUrl: string;
+  // Normalized source media-type metadata from transport handoff.
   contentType: string;
+  // Optional raw source payload bytes (base64) for diagnostics and parity checks.
   rawBytesBase64?: string;
 }
 
@@ -15,10 +19,18 @@ export type ScriptCallSite =
   | 'onenterbackward'
   | 'onpick';
 
+// Script invocation metadata passed from runtime-owned action/event plumbing.
+// This shape is runtime-centric and does not encode host-specific policy semantics.
+export interface ScriptInvocationContext {
+  callSite: ScriptCallSite;
+  cardId: string;
+  sourceHref?: string;
+}
+
 export interface ScriptInvocationRef {
   src: string;
   functionName: string;
-  callSite: ScriptCallSite;
+  context: ScriptInvocationContext;
   args: ScriptValueLiteral[];
 }
 
@@ -29,9 +41,14 @@ export type ScriptNavigationIntent =
   | { type: 'go'; href: string }
   | { type: 'prev' };
 
-export interface ScriptInvocationOutcome {
+// Runtime applies script side effects at deterministic post-invocation boundaries.
+export interface ScriptPostInvocationEffects {
   navigationIntent: ScriptNavigationIntent;
   requiresRefresh: boolean;
+}
+
+export interface ScriptInvocationOutcome {
+  effects: ScriptPostInvocationEffects;
   result: ScriptValueLiteral;
 }
 
@@ -39,8 +56,23 @@ export interface ScriptExecutionOutcome {
   ok: boolean;
   result: ScriptValueLiteral;
   trap?: string;
-  navigationIntent: ScriptNavigationIntent;
-  requiresRefresh: boolean;
+  effects: ScriptPostInvocationEffects;
+}
+
+// Host capabilities are side-effect adapters only; they do not define script semantics.
+export interface ScriptHostCapabilities {
+  dialogs?: {
+    alert(message: string): void;
+    confirm(message: string): boolean;
+    prompt(message: string, defaultValue?: string): string | undefined;
+  };
+  timers?: {
+    schedule(delayMs: number, token?: string): void;
+    cancel(token: string): void;
+  };
+  scriptFetch?: {
+    fetchUnit(src: string): Promise<Uint8Array>;
+  };
 }
 
 export interface EngineTraceEntry {

@@ -279,7 +279,7 @@ async function main() {
     try {
       const outcome = host.invokeScriptRefFunction('wavescript-fixtures.wmlsc', 'externalGo');
       const snapshot = updateRuntimeState();
-      status.textContent = `invokeScriptRefFunction externalGo => nav=${outcome.navigationIntent.type}; intent=${snapshot.externalNavigationIntent ?? '(none)'}`;
+      status.textContent = `invokeScriptRefFunction externalGo => nav=${outcome.effects.navigationIntent.type}; intent=${snapshot.externalNavigationIntent ?? '(none)'}`;
       appendEvent('SCRIPT_PROBE_INVOKE externalGo', snapshot);
     } catch (error) {
       const snapshot = updateRuntimeState();

@@ -289,7 +289,7 @@ These were the first tickets prepared before Waves browser implementation starte
 
 ### T0-02 Transport normalization guarantees for engine handoff
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -308,7 +308,7 @@ These were the first tickets prepared before Waves browser implementation starte
 
 ### T0-03 Protocol error taxonomy alignment
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -332,7 +332,7 @@ Reference architecture:
 
 ### W0-01 WMLScript integration contract and action model
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: host-sample integration kickoff
 3. `Files`:
 - `engine-wasm/contracts/wml-engine.ts`
@@ -353,9 +353,9 @@ Reference architecture:
 - Navigation intent shape supports last-call-wins defer behavior.
 - Refresh behavior policy is explicitly documented as deferred baseline.
 9. `Architecture Compliance`:
-- [ ] VM/interpreter logic remains in `engine-wasm` only.
-- [ ] Host-facing shape only defines side-effect capabilities (no host-defined script semantics).
-- [ ] Navigation/refresh outcomes are defined as post-invocation runtime effects.
+- [x] VM/interpreter logic remains in `engine-wasm` only.
+- [x] Host-facing shape only defines side-effect capabilities (no host-defined script semantics).
+- [x] Navigation/refresh outcomes are defined as post-invocation runtime effects.
 
 ### W0-02 Bytecode loader + decoder skeleton
 
