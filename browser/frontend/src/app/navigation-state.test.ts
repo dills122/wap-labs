@@ -7,9 +7,7 @@ const renderStub: RenderList = {
   draw: [{ type: 'text', x: 0, y: 0, text: 'ok' }]
 };
 
-const snapshot = (
-  overrides: Partial<EngineRuntimeSnapshot> = {}
-): EngineRuntimeSnapshot => ({
+const snapshot = (overrides: Partial<EngineRuntimeSnapshot> = {}): EngineRuntimeSnapshot => ({
   focusedLinkIndex: 0,
   baseUrl: 'http://example.test/start.wml',
   contentType: 'text/vnd.wap.wml',

@@ -26,12 +26,15 @@ async function main() {
   const pressEnterButton = document.querySelector<HTMLButtonElement>('#press-enter');
   const clearIntentButton = document.querySelector<HTMLButtonElement>('#clear-intent');
   const copyIntentButton = document.querySelector<HTMLButtonElement>('#copy-intent');
-  const probeExecuteScriptButton = document.querySelector<HTMLButtonElement>('#probe-execute-script');
+  const probeExecuteScriptButton =
+    document.querySelector<HTMLButtonElement>('#probe-execute-script');
   const probeInvokeScriptButton = document.querySelector<HTMLButtonElement>('#probe-invoke-script');
   const eventLogWrap = document.querySelector<HTMLElement>('.event-log-wrap');
   const toggleEventLog = document.querySelector<HTMLButtonElement>('#toggle-event-log');
   const clearEventLogButton = document.querySelector<HTMLButtonElement>('#clear-event-log');
-  const eventLogExportFormat = document.querySelector<HTMLSelectElement>('#event-log-export-format');
+  const eventLogExportFormat = document.querySelector<HTMLSelectElement>(
+    '#event-log-export-format'
+  );
   const exportEventLogButton = document.querySelector<HTMLButtonElement>('#export-event-log');
   const traceWrap = document.querySelector<HTMLElement>('.trace-wrap');
   const toggleTrace = document.querySelector<HTMLButtonElement>('#toggle-trace');
@@ -139,7 +142,9 @@ async function main() {
     appendEvent('TRACE_CLEARED');
   });
   runtimeInspector.addEventListener('trace-exported', (event) => {
-    const detail = (event as CustomEvent<{ outcome: 'exported' | 'empty'; format: 'txt' | 'json'; count: number }>).detail;
+    const detail = (
+      event as CustomEvent<{ outcome: 'exported' | 'empty'; format: 'txt' | 'json'; count: number }>
+    ).detail;
     if (detail.outcome === 'empty') {
       status.textContent = 'No engine trace entries to export.';
       appendEvent('TRACE_EXPORT_SKIPPED (empty)');
@@ -149,7 +154,8 @@ async function main() {
     appendEvent(`TRACE_EXPORTED (${detail.format})`);
   });
   runtimeInspector.addEventListener('trace-preset-applied', (event) => {
-    const detail = (event as CustomEvent<{ preset: 'all' | 'scripts' | 'navigation' | 'traps' }>).detail;
+    const detail = (event as CustomEvent<{ preset: 'all' | 'scripts' | 'navigation' | 'traps' }>)
+      .detail;
     status.textContent = `Applied trace preset: ${detail.preset}`;
     appendEvent(`TRACE_PRESET (${detail.preset})`);
   });

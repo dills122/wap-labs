@@ -13,7 +13,7 @@
 
 body {
   margin: 0;
-  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   color: var(--ink);
   background: radial-gradient(circle at top left, #efe8d2, var(--bg));
 }
@@ -82,7 +82,7 @@ body {
 }
 
 .example-coverage {
-  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-family: 'IBM Plex Mono', Consolas, monospace;
 }
 
 .example-meta-header {
@@ -156,7 +156,7 @@ textarea {
   border: 1px solid var(--edge);
   border-radius: 8px;
   padding: 12px;
-  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-family: 'IBM Plex Mono', Consolas, monospace;
   font-size: 0.85rem;
   line-height: 1.4;
 }
@@ -205,7 +205,7 @@ button:hover {
   background: #fff;
   font-size: 0.8rem;
   line-height: 1.45;
-  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-family: 'IBM Plex Mono', Consolas, monospace;
 }
 
 .event-log-wrap {
@@ -256,7 +256,7 @@ button:hover {
   background: #fcfcfc;
   font-size: 0.77rem;
   line-height: 1.45;
-  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-family: 'IBM Plex Mono', Consolas, monospace;
 }
 
 .trace-wrap {

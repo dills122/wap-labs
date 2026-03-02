@@ -229,9 +229,7 @@ export const createNavigationStateMachine = (
     return snapshot;
   };
 
-  const applyEngineKey = async (
-    key: HandleKeyRequest['key']
-  ): Promise<EngineRuntimeSnapshot> => {
+  const applyEngineKey = async (key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot> => {
     const snapshot = await hostClient.engineHandleKey({ key });
     await renderSnapshot(snapshot);
     return snapshot;

@@ -11,6 +11,13 @@ const charWidth = 8;
 const DEFAULT_BASE_URL = 'http://local.test/deck.wml';
 const DEFAULT_CONTENT_TYPE = 'text/vnd.wap.wml';
 type KeyName = 'up' | 'down' | 'enter';
+type ScriptErrorClass = 'none' | 'non-fatal' | 'fatal';
+type ScriptErrorCategory = 'none' | 'computational' | 'integrity' | 'resource' | 'host-binding';
+
+interface EngineWithOptionalScriptErrorDiagnostics {
+  lastScriptExecutionErrorClass?: () => ScriptErrorClass | undefined;
+  lastScriptExecutionErrorCategory?: () => ScriptErrorCategory | undefined;
+}
 
 export interface EngineSnapshot {
   activeCardId: string;
@@ -21,13 +28,8 @@ export interface EngineSnapshot {
   externalNavigationIntent?: string;
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
-  lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
-  lastScriptExecutionErrorCategory?:
-    | 'none'
-    | 'computational'
-    | 'integrity'
-    | 'resource'
-    | 'host-binding';
+  lastScriptExecutionErrorClass?: ScriptErrorClass;
+  lastScriptExecutionErrorCategory?: ScriptErrorCategory;
   lastScriptRequiresRefresh?: boolean;
 }
 
@@ -60,14 +62,8 @@ export interface EngineHost {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
-  lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
-  lastScriptExecutionErrorCategory():
-    | 'none'
-    | 'computational'
-    | 'integrity'
-    | 'resource'
-    | 'host-binding'
-    | undefined;
+  lastScriptExecutionErrorClass(): ScriptErrorClass | undefined;
+  lastScriptExecutionErrorCategory(): ScriptErrorCategory | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
@@ -135,6 +131,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       return handled;
     },
     snapshot() {
+      const diagnostics = engine as unknown as EngineWithOptionalScriptErrorDiagnostics;
       return {
         activeCardId: engine.activeCardId(),
         focusedLinkIndex: engine.focusedLinkIndex(),
@@ -144,15 +141,9 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         externalNavigationIntent: engine.externalNavigationIntent(),
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),
-        lastScriptExecutionErrorClass: engine.lastScriptExecutionErrorClass() ?? undefined,
+        lastScriptExecutionErrorClass: diagnostics.lastScriptExecutionErrorClass?.() ?? undefined,
         lastScriptExecutionErrorCategory:
-          (engine.lastScriptExecutionErrorCategory() as
-            | 'none'
-            | 'computational'
-            | 'integrity'
-            | 'resource'
-            | 'host-binding'
-            | undefined) ?? undefined,
+          diagnostics.lastScriptExecutionErrorCategory?.() ?? undefined,
         lastScriptRequiresRefresh: engine.lastScriptRequiresRefresh()
       };
     },
@@ -195,7 +186,11 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       return outcome;
     },
     invokeScriptRefCall(src: string, functionName: string, args) {
-      const outcome = engine.invokeScriptRefCall(src, functionName, args) as ScriptInvocationOutcome;
+      const outcome = engine.invokeScriptRefCall(
+        src,
+        functionName,
+        args
+      ) as ScriptInvocationOutcome;
       if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
         paint();
       }
@@ -217,16 +212,12 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       return engine.lastScriptExecutionOk();
     },
     lastScriptExecutionErrorClass() {
-      return engine.lastScriptExecutionErrorClass() as 'none' | 'non-fatal' | 'fatal' | undefined;
+      const diagnostics = engine as unknown as EngineWithOptionalScriptErrorDiagnostics;
+      return diagnostics.lastScriptExecutionErrorClass?.();
     },
     lastScriptExecutionErrorCategory() {
-      return engine.lastScriptExecutionErrorCategory() as
-        | 'none'
-        | 'computational'
-        | 'integrity'
-        | 'resource'
-        | 'host-binding'
-        | undefined;
+      const diagnostics = engine as unknown as EngineWithOptionalScriptErrorDiagnostics;
+      return diagnostics.lastScriptExecutionErrorCategory?.();
     },
     lastScriptRequiresRefresh() {
       return engine.lastScriptRequiresRefresh();

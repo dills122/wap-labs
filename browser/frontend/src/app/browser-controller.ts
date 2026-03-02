@@ -38,7 +38,10 @@ export class BrowserController {
         onRender: (render) => this.presenter.drawRenderList(render),
         onTransportResponse: (response) => this.presenter.setTransportResponse(response),
         onNetworkUnavailable: () => {
-          this.presenter.showToast('No network available currently. WAP server/gateway is unreachable.', 'error');
+          this.presenter.showToast(
+            'No network available currently. WAP server/gateway is unreachable.',
+            'error'
+          );
         },
         onStateEvent: (action, details) => {
           this.presenter.recordTimeline(action, 'state', details);

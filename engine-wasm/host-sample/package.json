@@ -14,21 +14,22 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",
-    "format": "prettier --write \"**/*.{ts,css,html}\"",
-    "format:check": "prettier --check \"**/*.{ts,css,html}\""
+    "format": "prettier --ignore-path ../../.prettierignore --write \"**/*.{ts,css,html}\"",
+    "format:check": "prettier --ignore-path ../../.prettierignore --check \"**/*.{ts,css,html}\""
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.56.1",
-    "@typescript-eslint/parser": "^8.56.1",
-    "eslint": "^10.0.2",
-    "eslint-config-prettier": "^10.1.8",
-    "globals": "^17.4.0",
-    "prettier": "^3.8.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "@types/node": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   },
   "dependencies": {
-    "lit": "^3.3.2"
+    "lit": "catalog:"
   },
   "repository": {
     "type": "git",

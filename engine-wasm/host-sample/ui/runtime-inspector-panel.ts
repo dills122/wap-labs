@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import type { EngineTraceEntry } from '../contracts/wml-engine';
+import type { EngineTraceEntry } from '../../contracts/wml-engine';
 import { downloadFile } from '../services/download';
 
 type TraceExportFormat = 'txt' | 'json';

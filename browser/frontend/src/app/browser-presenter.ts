@@ -53,7 +53,11 @@ export class BrowserPresenter {
     this.refs.timelineEl.textContent = JSON.stringify(this.timelineState.entries, null, 2);
   }
 
-  recordTimeline(action: string, phase: TimelineEntry['phase'], details?: Record<string, unknown>): void {
+  recordTimeline(
+    action: string,
+    phase: TimelineEntry['phase'],
+    details?: Record<string, unknown>
+  ): void {
     this.timelineState = appendTimelineEntry(
       this.timelineState,
       this.maxTimelineEvents,
