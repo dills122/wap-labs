@@ -9,7 +9,7 @@ Status keys:
 - `blocked`
 - `done`
 
-Current mode: planning only. No ticket execution has started.
+Current mode: active execution. Completed and in-progress tickets are tracked below.
 
 ## Baseline Assumptions
 
@@ -49,11 +49,9 @@ Project planning links:
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
 
-## Pre-Kickoff Guardrail
+## Kickoff Guardrail (Historical)
 
-Do not begin implementation work on this board until the project is explicitly kicked off.
-
-All items below are intentionally prepared as `todo` only.
+This board was prepared before implementation kickoff. Keep ticket statuses current as execution continues.
 
 ## Ticket Template
 
@@ -66,9 +64,9 @@ All items below are intentionally prepared as `todo` only.
 7. `Accept`
 8. `Spec`: requirement IDs + section refs/SCR IDs from relevant `docs/waves/*TRACEABILITY*.md` docs
 
-## Initial Backlog (Prepared, Not Started)
+## Initial Backlog (Prepared)
 
-These are the first tickets to pull once Waves browser implementation officially starts.
+These were the first tickets prepared before Waves browser implementation started.
 
 ### P0-01 Repo bootstrap alignment for `browser/`
 
@@ -243,7 +241,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B3-01 Browser-side integration fixtures
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B2-02`
 3. `Files`:
 - `browser/frontend/src/*`
@@ -257,7 +255,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B3-02 Event timeline/debug export parity
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B3-01`
 3. `Files`:
 - `browser/frontend/src/*`

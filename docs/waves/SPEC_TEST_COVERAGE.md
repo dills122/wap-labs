@@ -21,7 +21,7 @@ Legend:
 | `RQ-RMK-003` fragment/history nav basics | `covered` | Rust engine tests cover fragment transitions + `navigateBack`; host sample examples `basic.wml`, `missing-fragment.wml`, `history-back-stack.wml` |
 | `RQ-RMK-006` anchor shorthand behavior | `partial` | host sample `external-navigation-intent.wml`; deeper parser fixture coverage planned |
 | `RQ-RMK-007` WBXML decode boundary ownership | `covered` | contract behavior via `loadDeckContext` metadata and docs; transport handoff checks planned in cross-project tests |
-| `RQ-RMK-009` compatibility/robustness behavior | `partial` | host sample `parser-robustness.wml`; expanded fixture corpus planned (`A4-02`) |
+| `RQ-RMK-009` compatibility/robustness behavior | `partial` | host sample `parser-robustness.wml`; fixture harness baseline implemented in `A4-02`, broader corpus expansion remains planned |
 | `RQ-WAE-016`, `RQ-WAE-017` history and back semantics | `partial` | engine `navigateBack` baseline + host sample `history-back-stack.wml`; browser integration scenarios remain planned |
 
 ## Host sample (`engine-wasm/host-sample`)
@@ -51,15 +51,15 @@ Legend:
 |---|---|---|
 | Transport contract integration (`fetchDeck`) | `partial` | browser host Rust tests in `browser/src-tauri/src/lib.rs` + transport-rust unit/integration tests |
 | URL load state transitions | `partial` | browser frontend transport-first URL flow + session-state transitions in `browser/frontend/src/main.ts` |
-| Engine render handoff | `partial` | browser host integration-style test `browser_e2e_fetch_load_render_sequence_renders_expected_content` |
+| Engine render handoff | `partial` | browser host integration-style tests `browser_e2e_fetch_load_render_sequence_renders_expected_content` and `browser_fixture_load_navigate_and_external_intent_flow_is_deterministic` |
 | Input model determinism | `partial` | host key-sequence checks in `browser/src-tauri/src/lib.rs` (`smoke_key_navigation_and_back_stack`) |
-| External intent handoff loop | `partial` | runtime intent emission/clear tests in host Rust + frontend follow-loop implementation in `browser/frontend/src/main.ts` |
-| Event timeline/export artifacts | `planned` | `B3-02` debug export checks |
+| External intent handoff loop | `partial` | runtime intent emission/clear tests in host Rust + fixture flow `browser_fixture_load_navigate_and_external_intent_flow_is_deterministic` + frontend follow-loop implementation in `browser/frontend/src/main.ts` |
+| Event timeline/export artifacts | `partial` | frontend timeline/export implementation + export-time chronology validation in `browser/frontend/src/main.ts`; automated regression checks still pending |
 
-## Cross-project checklist (immediate)
+## Cross-project checklist (current)
 
-1. Create a minimal contract parity check between:
+1. [x] Create a minimal contract parity check between:
    - `transport-rust` request/response model tests
    - `browser/contracts/transport.ts`
-2. Add a CI check that verifies example metadata (`work-items`, `spec-items`, `testing-ac`) for each host-sample fixture.
-3. Add engine fixture test harness expansion (`A4-02`) and map fixture IDs back to `RQ-RMK-*` groups.
+2. [ ] Add a CI check that verifies example metadata (`work-items`, `spec-items`, `testing-ac`) for each host-sample fixture.
+3. [x] Add engine fixture test harness expansion (`A4-02`) and map fixture IDs back to `RQ-RMK-*` groups.

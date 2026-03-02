@@ -409,6 +409,9 @@ mod tests {
     </wml>
     "##;
 
+    const FIXTURE_LOAD_NAV_EXTERNAL_WML: &str =
+        include_str!("../tests/fixtures/integration/load-nav-external.wml");
+
     fn mock_fetch_ok(url: &str, content_type: &str, wml: &str) -> FetchDeckResponse {
         FetchDeckResponse {
             ok: true,
@@ -608,6 +611,69 @@ mod tests {
             .expect("loadDeckContext should succeed");
         assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
         assert_render_contains(&engine, "pipeline");
+    }
+
+    #[test]
+    fn browser_fixture_load_navigate_and_external_intent_flow_is_deterministic() {
+        let transport = mock_fetch_ok(
+            "http://example.test/fixtures/load-nav-external.wml",
+            "text/vnd.wap.wml",
+            FIXTURE_LOAD_NAV_EXTERNAL_WML,
+        );
+        let mut engine = WmlEngine::new();
+        let loaded = load_transport_response_into_engine(&mut engine, transport)
+            .expect("fixture loadDeckContext should succeed");
+        assert_eq!(loaded.active_card_id.as_deref(), Some("home"));
+        assert_eq!(loaded.focused_link_index, 0);
+        assert_render_contains(&engine, "Fixture Home");
+
+        let after_fragment = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter on first link should navigate to fragment card");
+        assert_eq!(after_fragment.active_card_id.as_deref(), Some("menu"));
+        assert_eq!(after_fragment.external_navigation_intent, None);
+        assert_render_contains(&engine, "Fixture Menu");
+
+        let after_back = apply_navigate_back(&mut engine);
+        assert_eq!(after_back.active_card_id.as_deref(), Some("home"));
+        assert_eq!(after_back.focused_link_index, 0);
+
+        let after_down = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "down".to_string(),
+            },
+        )
+        .expect("down should advance focus to external link");
+        assert_eq!(after_down.active_card_id.as_deref(), Some("home"));
+        assert_eq!(after_down.focused_link_index, 1);
+        assert_eq!(after_down.external_navigation_intent, None);
+
+        let after_external = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter on second link should emit external intent");
+        assert_eq!(after_external.active_card_id.as_deref(), Some("home"));
+        assert_eq!(after_external.focused_link_index, 1);
+        assert_eq!(
+            after_external.external_navigation_intent.as_deref(),
+            Some("http://example.test/fixtures/news.wml?src=fixture")
+        );
+
+        let after_clear = apply_clear_external_navigation_intent(&mut engine);
+        assert_eq!(after_clear.external_navigation_intent, None);
+
+        let repeat_snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(repeat_snapshot.active_card_id.as_deref(), Some("home"));
+        assert_eq!(repeat_snapshot.focused_link_index, 1);
+        assert_eq!(repeat_snapshot.external_navigation_intent, None);
     }
 
     #[test]
