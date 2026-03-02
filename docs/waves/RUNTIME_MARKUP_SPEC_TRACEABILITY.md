@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.1  
-Status: S0-07 complete (initial extraction)
+Status: S0-07 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 

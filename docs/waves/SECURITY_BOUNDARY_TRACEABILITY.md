@@ -1,7 +1,7 @@
 # Waves Security Boundary Traceability
 
 Version: v0.1  
-Status: S0-04 complete (initial extraction)
+Status: S0-04 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 

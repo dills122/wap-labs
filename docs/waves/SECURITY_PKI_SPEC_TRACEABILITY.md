@@ -1,7 +1,7 @@
 # Waves Security PKI/WIM Spec Traceability
 
 Version: v0.1  
-Status: S0-08 complete (initial extraction)
+Status: S0-08 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 

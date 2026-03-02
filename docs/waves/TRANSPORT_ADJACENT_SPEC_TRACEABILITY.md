@@ -1,7 +1,7 @@
 # Waves Transport-Adjacent Spec Traceability
 
 Version: v0.1  
-Status: S0-06 complete (initial extraction)
+Status: S0-06 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 

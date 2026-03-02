@@ -1,7 +1,7 @@
 # Waves Source Material Master Audit
 
 Version: v0.1  
-Status: Source audit extraction complete; initial contract/test mapping complete
+Status: Source audit extraction complete; initial contract/test mapping complete; docling rerun validation pass complete for in-scope high-value domains
 
 ## Goal
 

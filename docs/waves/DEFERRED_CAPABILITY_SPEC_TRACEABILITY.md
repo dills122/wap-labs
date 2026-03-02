@@ -1,7 +1,7 @@
 # Waves Deferred Capability Spec Traceability
 
 Version: v0.1  
-Status: S0-10 complete (initial extraction)
+Status: S0-10 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 

@@ -154,3 +154,36 @@ Scope: `docs/source-material/`, `docs/source-material/sub-set/`, `docs/source-ma
 - **High confidence**: WML navigation/history core obligations, WAE BACK/history obligations, WMLScript deferred-nav semantics (`go/prev`), and decoder/VM status mismatch findings.
 - **Medium confidence**: Transport-adjacent capability header and caching assertions (traceability exists, implementation evidence is partial and distributed).
 - **Residual risk**: Some normative obligations are represented through conformance tables/SCR references rather than complete algorithm text in current backlog; additional fixture-level verification is still required for full conformance evidence.
+
+## Current Status Snapshot (2026-03-02)
+
+### Overall project posture
+
+- Platform is in a strong pre-alpha foundation state: deterministic deck loading/navigation loop exists, WBXML decode boundary ownership is explicit, and WaveScript runtime lane is active.
+- Compliance work is now concentrated in defined closure lanes instead of broad unknowns:
+  - WML full-stack closure (`R0-*`)
+  - WMLScript bedrock closure (`W0-06..08`, `W1-01..05`)
+  - Transport bedrock closure (`T0-08..11`)
+
+### Near-sprint feasibility (few working days)
+
+- Achievable in one focused sprint:
+  - move WMLScript and transport lanes from broad `partial/planned` to materially improved conformance posture by landing early bedrock tickets and fixture packs.
+- Not achievable in one sprint:
+  - full protocol-complete WAP transport replacement with broad bearer/profile parity.
+
+### Remaining architecture-level unresolved item
+
+- The primary unresolved cross-cutting decision is networking target profile and migration gates:
+  - current behavior: gateway-bridged HTTP path with WAP URL translation and WBXML normalization
+  - target behavior: deeper in-process WDP/WTP/WSP protocol semantics
+- This is now explicitly tracked as `T0-14` in `docs/waves/WORK_ITEMS.md` and linked in coverage/test planning docs.
+
+### Rerun delta check (remaining 35-file wave)
+
+- Net-new high-impact compliance misses discovered: none beyond currently tracked closure lanes.
+- Outcome of this pass is confidence uplift and source-validation tightening across:
+  - runtime-markup lineage (`WAP-191*`, `WAP-192*`, `WAP-238`, `spec-wml-19990616`)
+  - WMLScript lineage (`WAP-193`, `WAP-194`, `WAP-194_103`)
+  - WAE lineage (`WAP-236`, `WAP-237`)
+  - security/security-PKI/architecture/deferred families

@@ -1,7 +1,7 @@
 # Waves Architecture Context Spec Review
 
 Version: v0.1  
-Status: S0-09 complete (initial extraction)
+Status: S0-09 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 

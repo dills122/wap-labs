@@ -10,6 +10,7 @@ Status: Active
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 - Scope: all canonical root-level source PDFs under `docs/source-material` (94 files)
 - Status: all 94 canonical PDFs are `deep-extracted`
+- Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves)
 
 ### Completed traceability domains
 
@@ -110,24 +111,45 @@ Status: Active
 - Status: in progress (cleaned-source table-grounded closure lane added)
 - Deliverables:
   - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` (`RQ-TRN-016`..`RQ-TRN-019`)
-  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`)
+  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`, `T0-14`)
 - Priority closure focus:
   - WTP TID/MPL replay-window behavior
   - WSP connectionless primitive-profile gating
   - WSP assigned-number registry fidelity (PDU/abort/header/parameter maps)
   - WSP capability negotiation and bounds enforcement
 
-3. Contract-level requirement mapping
+3. Networking target-profile decision and migration gates (`gateway bridge` -> `in-process WAP transport`)
+- Status: in progress (decision ticket added; implementation unchanged)
+- Deliverables:
+  - `docs/waves/TECHNICAL_ARCHITECTURE.md` profile decision update
+  - `docs/waves/WORK_ITEMS.md` ticket `T0-14`
+- Priority closure focus:
+  - explicit near-term vs target-state profile declaration
+  - contract stability rules across profile transitions
+  - promotion gates tied to protocol fixture coverage
+
+4. Contract-level requirement mapping
 - Status: complete
 - Deliverable:
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 
-4. AC-to-test inventory
+5. AC-to-test inventory
 - Status: complete (initial matrix)
 - Deliverable:
   - `docs/waves/SPEC_TEST_COVERAGE.md`
 - Remaining work:
   - promote `planned` rows into implemented tests per project backlog
+
+6. Spec-processing quality governance
+- Status: in progress (low-priority lane added)
+- Deliverables:
+  - Phase S1 tickets in `docs/waves/WORK_ITEMS.md` (`S1-01`..`S1-06`)
+  - `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
+  - `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+- Focus:
+  - table-fidelity ambiguity resolution
+  - cleaned-markdown stability and provenance tracking
+  - extraction-noise regression visibility
 
 
 ## Quality gate summary

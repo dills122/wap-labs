@@ -1,7 +1,7 @@
 # Waves WMLScript Spec Traceability
 
 Version: v0.1  
-Status: Active implementation baseline (incremental conformance closure)
+Status: Active implementation baseline (incremental conformance closure + docling rerun validation pass)
 
 ## Purpose
 

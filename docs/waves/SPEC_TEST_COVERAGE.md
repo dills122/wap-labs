@@ -56,6 +56,9 @@ Legend:
 | `RQ-TRN-018` WSP assigned-number registry fidelity | `planned` | table-driven token map fixtures tracked in `T0-10` |
 | `RQ-TRN-019` WSP capability-bounds enforcement | `planned` | capability negotiation and bound-exceed fixtures tracked in `T0-11` |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
+| `RQ-TRX-009` Wireless Profiled TCP optimization baseline | `planned` | profile declaration + compatibility fixture lane tracked in `T0-12` |
+| `RQ-TRX-010` WDP/WCMP over SMPP adaptation profile | `planned` | explicit scope decision + adapter fixture lane tracked in `T0-13` |
+| WAP networking profile decision and migration gates | `planned` | architecture decision + profile-gate fixture lane tracked in `T0-14` |
 | WAP-191 request-policy + post metadata plumbing (`go/postfield/cache-control`) | `planned` | `T0-04`, `R0-06` |
 | WAP-191 encoder/validation fixture lane (`14.x`, `15.2-15.4`) | `planned` | `T0-07`, `R0-08` |
 

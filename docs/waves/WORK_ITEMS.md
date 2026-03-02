@@ -490,6 +490,67 @@ These were the first tickets prepared before Waves browser implementation starte
 7. `Spec`:
 - `RQ-TRN-013`, `RQ-TRN-019`
 
+### T0-12 Wireless Profiled TCP compatibility profile declaration
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-01`
+3. `Files`:
+- `transport-rust/README.md`
+- `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Declare explicit Waves TCP compatibility posture for profiled requirements (SACK/split/end-to-end/window-scale threshold behavior).
+- Mark each requirement as implemented, delegated, or deferred for MVP with rationale.
+5. `Tests`:
+- Add compatibility-policy fixtures/checks that prevent silent drift in declared TCP posture.
+6. `Accept`:
+- TCP optimization baseline posture is explicit and traceable.
+7. `Spec`:
+- `RQ-TRX-009`
+
+### T0-13 SMPP adaptation scope gate and fixture baseline
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-01`
+3. `Files`:
+- `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
+- `transport-rust/README.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Make a hard scope decision for `WAP-159` path (`in scope now` vs `deferred`).
+- If in scope, define `data_sm` mapping fixtures and WCMP payload type handling checks.
+- If deferred, document non-blocking rationale and explicit exclusion guardrails.
+5. `Tests`:
+- Add either adapter fixtures (in-scope) or explicit policy assertions (deferred).
+6. `Accept`:
+- SMPP adaptation status is unambiguous and regression-guarded.
+7. `Spec`:
+- `RQ-TRX-010`
+
+### T0-14 WAP networking profile decision record and migration gates
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-09`, `T0-11`, `T0-12`, `T0-13`
+3. `Files`:
+- `docs/waves/TECHNICAL_ARCHITECTURE.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
+- `transport-rust/README.md`
+4. `Build`:
+- Publish an explicit profile decision for near-term and target-state transport:
+  - current profile: gateway-bridged HTTP/WBXML normalization path
+  - target profile: in-process WDP/WTP/WSP behavior lane and activation criteria
+- Define non-negotiable boundary rules so engine/browser contracts stay stable across both profiles.
+- Define migration gates that block profile promotion until required protocol fixtures pass.
+5. `Tests`:
+- Add profile-gate checks that assert declared mode/profile against fixture coverage state.
+- Add one end-to-end fixture lane per declared profile to prevent drift in behavior expectations.
+6. `Accept`:
+- Networking architecture direction is explicit, versioned, and test-gated.
+- Team can state exactly what is spec-compliant now versus planned for protocol-complete mode.
+7. `Spec`:
+- `RQ-TRN-001..019`, `RQ-TRX-001..010`
+
 ## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:
@@ -1238,3 +1299,120 @@ Reference:
 - Engine/browser/transport plans all reference current Waves traceability, contract mapping, and test coverage artifacts.
 7. `Spec`:
 - Aggregated requirement groups from `docs/waves/*TRACEABILITY*.md`.
+
+## Phase S1: Spec-Processing Quality and Trace Governance (Low Priority)
+
+### S1-01 Table-fidelity manual spot-check lane for ambiguous captions
+
+1. `Status`: `todo`
+2. `Depends On`: `S0-14`
+3. `Files`:
+- `tmp/docling-rerun-remaining/cleanup-report.txt`
+- `tmp/docling-rerun-remaining/core/WAP-191_104-WML-20010718-a.md`
+- `tmp/docling-rerun-remaining/core/WAP-191_104-WML-20010718-a.cleaned.md`
+- `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+4. `Build`:
+- Perform manual PDF-grounded review for captions flagged as non-normalized by automated cleanup detection.
+- Confirm whether each flagged caption is true table loss vs mixed prose region and document final disposition.
+5. `Tests`:
+- Spot-check checklist against source PDF and cleaned markdown output.
+6. `Accept`:
+- Every flagged ambiguous table caption has explicit final status (`normalized`, `intentionally prose`, `needs follow-up extraction`).
+7. `Spec`:
+- `WAP-191_104` (`Table 1` spot-check from rerun cleanup report).
+
+### S1-02 Markdown cleaner hardening for heavy TOC/legal-noise specs
+
+1. `Status`: `todo`
+2. `Depends On`: `S1-01`
+3. `Files`:
+- `parse-pdf-remaining.fish`
+- `tmp/docling-rerun-remaining/*/*.md`
+- `tmp/docling-rerun-remaining/*/*.cleaned.md`
+- `tmp/docling-rerun-remaining/cleanup-report.txt`
+4. `Build`:
+- Reduce residual noise in cleaned outputs for long legal/TOC-heavy documents while preserving technical meaning.
+- Freeze deterministic cleaner rules so repeated runs produce stable output deltas.
+5. `Tests`:
+- Re-run cleanup against a fixed sample set and compare line-delta stability across two consecutive runs.
+6. `Accept`:
+- Cleaner output is stable and significantly reduces non-technical boilerplate drift in flagged-heavy docs.
+7. `Spec`:
+- Cross-cutting documentation fidelity lane (applies to all in-scope spec families).
+
+### S1-03 Extraction quality gate for parser-noise regressions
+
+1. `Status`: `todo`
+2. `Depends On`: `S1-02`
+3. `Files`:
+- `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `tmp/docling-rerun-remaining/cleanup-report.txt`
+- `.github/workflows/*`
+4. `Build`:
+- Add lightweight quality gate checks for cleaned-spec artifacts (e.g., extreme TOC noise density, unresolved table-caption ambiguity count, malformed markdown table ratios).
+- Keep thresholds advisory-first, then promote to failure gates once baseline noise profile is stable.
+5. `Tests`:
+- CI dry-run with one intentionally degraded cleaned artifact sample.
+6. `Accept`:
+- Extraction quality regressions are visible and cannot silently accumulate.
+7. `Spec`:
+- Traceability-quality governance for all spec-derived requirement artifacts.
+
+### S1-04 Source-to-clean provenance manifest and reproducibility trail
+
+1. `Status`: `todo`
+2. `Depends On`: `S1-02`
+3. `Files`:
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
+- `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+- `tmp/docling-rerun-remaining/cleanup-report.txt`
+4. `Build`:
+- Record source-to-clean provenance metadata (source path, cleaned path, line deltas, table-caption outcomes, run date/profile).
+- Keep manifest append-only so audit history remains visible across reruns.
+5. `Tests`:
+- Manifest consistency check against current cleaned-file inventory.
+6. `Accept`:
+- Team can reconstruct when and how any cleaned spec artifact was produced and validated.
+7. `Spec`:
+- Documentation governance lane for reproducible spec extraction and auditability.
+
+### S1-05 Promote validated cleaned rerun artifacts into canonical parsed corpus
+
+1. `Status`: `todo`
+2. `Depends On`: `S1-01`, `S1-02`
+3. `Files`:
+- `tmp/docling-rerun/core/*.cleaned.md`
+- `tmp/docling-rerun/ext/*.cleaned.md`
+- `tmp/docling-rerun-remaining/core/*.cleaned.md`
+- `tmp/docling-rerun-remaining/ext/*.cleaned.md`
+- `docs/source-material/parsed-markdown/`
+- `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
+- `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+4. `Build`:
+- Promote validated cleaned outputs from both temporary rerun waves into canonical parsed-markdown storage used by long-term analysis workflows.
+- Preserve source-file naming lineage to avoid ambiguity across multiple extraction passes.
+5. `Tests`:
+- Inventory check that every promoted canonical file has exactly one source markdown parent and one cleanup report entry.
+6. `Accept`:
+- Cleaned artifacts used by planning/compliance analysis are durable and no longer depend on temporary directories.
+7. `Spec`:
+- Cross-cutting source-fidelity governance for all in-scope spec families.
+
+### S1-06 Canonical source-reference path normalization across traceability docs
+
+1. `Status`: `todo`
+2. `Depends On`: `S1-04`
+3. `Files`:
+- `docs/waves/*TRACEABILITY*.md`
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
+4. `Build`:
+- Normalize source references to canonical root-level `docs/source-material/*.pdf` paths (except when a mirror path is explicitly intentional and labeled).
+- Remove inconsistent mirror-folder references that can cause provenance drift in audits.
+5. `Tests`:
+- Lint/check script that flags non-canonical source-material paths in traceability docs unless explicitly allowlisted.
+6. `Accept`:
+- Traceability docs consistently resolve to canonical source files, reducing audit ambiguity.
+7. `Spec`:
+- Source-material governance rule from `SOURCE_MATERIAL_MASTER_AUDIT` canonical-source policy.

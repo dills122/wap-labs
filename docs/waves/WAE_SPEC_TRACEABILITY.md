@@ -1,7 +1,7 @@
 # Waves WAE Spec Traceability
 
 Version: v0.1  
-Status: S0-01 complete (initial extraction)
+Status: S0-01 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
