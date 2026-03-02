@@ -24,3 +24,4 @@ Configure branch protection to require these job names from `.github/workflows/c
 
 - If job names are changed in workflow YAML, update branch-protection required check names immediately.
 - Re-check required checks after CI refactors to avoid stale required statuses blocking merges.
+- `Browser Shell Skeleton Checks` includes Rust->TS contract codegen drift validation for `browser/contracts/generated/engine-host.ts` and `browser/contracts/generated/transport-host.ts`.

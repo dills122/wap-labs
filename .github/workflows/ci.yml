@@ -311,6 +311,11 @@ jobs:
         working-directory: browser/src-tauri
         run: cargo fmt --check
 
+      - name: Browser contract codegen drift check
+        run: |
+          cargo run --manifest-path browser/src-tauri/Cargo.toml --bin generate_contracts
+          git diff --exit-code -- browser/contracts/generated/engine-host.ts browser/contracts/generated/transport-host.ts
+
       - name: Browser Rust coverage gate
         working-directory: browser/src-tauri
         run: cargo llvm-cov --all-features --summary-only --fail-under-lines ${{ env.BROWSER_COV_LINES }} --fail-under-functions ${{ env.BROWSER_COV_FUNCS }}
