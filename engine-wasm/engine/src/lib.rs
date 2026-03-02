@@ -23,6 +23,7 @@ use parser::wml_parser::parse_wml;
 use runtime::deck::Deck;
 use runtime::events::{ScriptNavigationIntent, ScriptRuntimeEffects};
 use std::mem;
+use url::Url;
 use wavescript::decoder::{decode_compilation_unit, DecodeError};
 use wavescript::stdlib::wmlbrowser::WmlBrowserHost;
 use wavescript::value::ScriptValue;
@@ -773,60 +774,19 @@ impl WmlEngine {
     }
 
     fn resolve_external_href(&self, href: &str) -> String {
-        if self.base_url.is_empty() || has_uri_scheme(href) || href.starts_with("//") {
+        if self.base_url.is_empty() {
             return href.to_string();
         }
 
-        if let Some(path_from_root) = href.strip_prefix('/') {
-            let Some(origin) = extract_origin(&self.base_url) else {
-                return href.to_string();
-            };
-            return format!("{origin}/{path_from_root}");
-        }
-
-        let Some(base_dir) = extract_base_dir(&self.base_url) else {
+        let Ok(base) = Url::parse(&self.base_url) else {
             return href.to_string();
         };
 
-        format!("{base_dir}{href}")
+        match base.join(href) {
+            Ok(resolved) => resolved.to_string(),
+            Err(_) => href.to_string(),
+        }
     }
-}
-
-fn has_uri_scheme(value: &str) -> bool {
-    let Some((scheme, _)) = value.split_once(':') else {
-        return false;
-    };
-
-    !scheme.is_empty()
-        && scheme
-            .chars()
-            .all(|ch| ch.is_ascii_alphanumeric() || ch == '+' || ch == '-' || ch == '.')
-}
-
-fn extract_origin(base_url: &str) -> Option<String> {
-    let (scheme, remainder) = base_url.split_once("://")?;
-    let authority = remainder.split('/').next().unwrap_or(remainder);
-    if authority.is_empty() {
-        return None;
-    }
-    Some(format!("{scheme}://{authority}"))
-}
-
-fn extract_base_dir(base_url: &str) -> Option<String> {
-    let no_query_or_fragment = base_url
-        .split('#')
-        .next()
-        .unwrap_or(base_url)
-        .split('?')
-        .next()
-        .unwrap_or(base_url);
-
-    if no_query_or_fragment.ends_with('/') {
-        return Some(no_query_or_fragment.to_string());
-    }
-
-    let (prefix, _) = no_query_or_fragment.rsplit_once('/')?;
-    Some(format!("{prefix}/"))
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -1291,6 +1251,93 @@ mod tests {
 
         engine.clear_external_navigation_intent();
         assert_eq!(engine.external_navigation_intent(), None);
+    }
+
+    #[test]
+    fn external_navigation_query_only_uses_base_document() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="?q=1">Query</a>
+          </card>
+        </wml>
+        "##;
+
+        engine
+            .load_deck_context(
+                xml,
+                "http://local.test/dir/start.wml",
+                "text/vnd.wap.wml",
+                None,
+            )
+            .expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("external enter should succeed");
+
+        assert_eq!(
+            engine.external_navigation_intent(),
+            Some("http://local.test/dir/start.wml?q=1".to_string())
+        );
+    }
+
+    #[test]
+    fn external_navigation_parent_segment_resolves() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="../next.wml">Parent</a>
+          </card>
+        </wml>
+        "##;
+
+        engine
+            .load_deck_context(
+                xml,
+                "http://local.test/dir/start.wml",
+                "text/vnd.wap.wml",
+                None,
+            )
+            .expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("external enter should succeed");
+
+        assert_eq!(
+            engine.external_navigation_intent(),
+            Some("http://local.test/next.wml".to_string())
+        );
+    }
+
+    #[test]
+    fn external_navigation_scheme_relative_inherits_base_scheme() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="//cdn.example.org/deck.wml">CDN</a>
+          </card>
+        </wml>
+        "##;
+
+        engine
+            .load_deck_context(
+                xml,
+                "http://local.test/dir/start.wml",
+                "text/vnd.wap.wml",
+                None,
+            )
+            .expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("external enter should succeed");
+
+        assert_eq!(
+            engine.external_navigation_intent(),
+            Some("http://cdn.example.org/deck.wml".to_string())
+        );
     }
 
     #[test]

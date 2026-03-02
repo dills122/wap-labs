@@ -204,7 +204,7 @@ fn preflight_wbxml_decoder_available() -> Result<(), String> {
 
 #[tauri::command]
 fn fetch_deck(_state: State<AppState>, mut request: FetchDeckRequest) -> FetchDeckResponse {
-    request.request_id = Some(next_request_id());
+    ensure_request_id(&mut request);
     fetch_deck_in_process(request)
 }
 
@@ -212,6 +212,17 @@ fn next_request_id() -> String {
     static REQUEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
     let seq = REQUEST_SEQUENCE.fetch_add(1, Ordering::Relaxed);
     format!("waves-fetch-{seq}")
+}
+
+fn ensure_request_id(request: &mut FetchDeckRequest) {
+    let keep_existing = request
+        .request_id
+        .as_ref()
+        .map(|value| !value.trim().is_empty())
+        .unwrap_or(false);
+    if !keep_existing {
+        request.request_id = Some(next_request_id());
+    }
 }
 
 #[tauri::command]
@@ -315,9 +326,11 @@ mod tests {
     use super::{
         apply_clear_external_navigation_intent, apply_engine_snapshot, apply_handle_key,
         apply_load_deck_context, apply_navigate_back, apply_render, apply_set_viewport_cols,
-        HandleKeyRequest, LoadDeckContextRequest,
+        ensure_request_id, HandleKeyRequest, LoadDeckContextRequest,
     };
-    use lowband_transport_rust::{EngineDeckInputPayload, FetchDeckResponse, FetchTiming};
+    use lowband_transport_rust::{
+        EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchTiming,
+    };
     use wavenav_engine::{DrawCmd, WmlEngine};
 
     const BASIC_NAV_WML: &str = r##"
@@ -529,5 +542,52 @@ mod tests {
             .expect("loadDeckContext should succeed");
         assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
         assert_render_contains(&engine, "pipeline");
+    }
+
+    #[test]
+    fn fetch_deck_assigns_request_id_when_missing_or_blank() {
+        let mut missing = FetchDeckRequest {
+            url: "http://example.test".to_string(),
+            method: None,
+            headers: None,
+            timeout_ms: None,
+            retries: None,
+            request_id: None,
+        };
+        ensure_request_id(&mut missing);
+        let generated = missing.request_id.clone().unwrap_or_default();
+        assert!(
+            generated.starts_with("waves-fetch-"),
+            "expected generated request id to use waves-fetch-* prefix"
+        );
+
+        let mut blank = FetchDeckRequest {
+            url: "http://example.test".to_string(),
+            method: None,
+            headers: None,
+            timeout_ms: None,
+            retries: None,
+            request_id: Some("   ".to_string()),
+        };
+        ensure_request_id(&mut blank);
+        let generated_blank = blank.request_id.unwrap_or_default();
+        assert!(
+            generated_blank.starts_with("waves-fetch-"),
+            "blank request id should be replaced with generated id"
+        );
+    }
+
+    #[test]
+    fn fetch_deck_preserves_non_blank_request_id() {
+        let mut request = FetchDeckRequest {
+            url: "http://example.test".to_string(),
+            method: None,
+            headers: None,
+            timeout_ms: None,
+            retries: None,
+            request_id: Some("req-123".to_string()),
+        };
+        ensure_request_id(&mut request);
+        assert_eq!(request.request_id.as_deref(), Some("req-123"));
     }
 }

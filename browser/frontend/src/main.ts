@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
+import type { FetchResponse as FetchDeckResponse, HostSessionState } from '../../contracts/transport';
 import './styles.css';
 
 type EngineKey = 'up' | 'down' | 'enter';
-type HostNavigationStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
 interface DrawText {
   type: 'text';
@@ -35,47 +35,6 @@ interface EngineRuntimeSnapshot {
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptRequiresRefresh?: boolean;
-}
-
-interface FetchErrorInfo {
-  code: string;
-  message: string;
-  details?: Record<string, unknown>;
-}
-
-interface FetchTiming {
-  encode: number;
-  udpRtt: number;
-  decode: number;
-}
-
-interface EngineDeckInput {
-  wmlXml: string;
-  baseUrl: string;
-  contentType: string;
-  rawBytesBase64?: string;
-}
-
-interface FetchDeckResponse {
-  ok: boolean;
-  status: number;
-  finalUrl: string;
-  contentType: string;
-  wml?: string;
-  error?: FetchErrorInfo;
-  timingMs: FetchTiming;
-  engineDeckInput?: EngineDeckInput;
-}
-
-interface HostSessionState {
-  navigationStatus: HostNavigationStatus;
-  requestedUrl: string;
-  finalUrl?: string;
-  contentType?: string;
-  activeCardId?: string;
-  focusedLinkIndex?: number;
-  externalNavigationIntent?: string;
-  lastError?: string;
 }
 
 const SAMPLE_WML = `<wml>
