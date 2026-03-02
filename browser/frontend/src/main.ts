@@ -5,6 +5,7 @@ import type {
 } from '../../contracts/transport';
 import './styles.css';
 import { resolveKeyboardIntent } from './app/keyboard';
+import { isNetworkUnavailableErrorCode, isProbeReachable } from './app/network';
 import {
   appendTimelineEntry,
   buildTimelineExport as buildTimelineExportPayload,
@@ -92,6 +93,9 @@ const SAMPLE_WML = `<wml>
 
 const MAX_EXTERNAL_INTENT_HOPS = 3;
 const MAX_TIMELINE_EVENTS = 200;
+const NETWORK_PROBE_MAX_ATTEMPTS = 3;
+const NETWORK_PROBE_DELAY_MS = 1200;
+const NETWORK_PROBE_TIMEOUT_MS = 1800;
 
 registerBrowserComponents();
 
@@ -137,6 +141,7 @@ app.innerHTML = `
         <wv-surface-panel heading="Status">
           <wv-status-panel id="status"></wv-status-panel>
         </wv-surface-panel>
+        <div id="toast" class="toast toast-hidden" role="alert" aria-live="polite"></div>
 
         <details id="dev-drawer" class="dev-drawer">
           <summary>Developer Tools</summary>
@@ -189,6 +194,7 @@ const sessionStateEl = document.querySelector<HTMLPreElement>('#session-state');
 const timelineEl = document.querySelector<HTMLPreElement>('#timeline');
 const activeUrlLabelEl = document.querySelector<HTMLSpanElement>('#active-url-label');
 const devDrawerEl = document.querySelector<HTMLDetailsElement>('#dev-drawer');
+const toastEl = document.querySelector<HTMLDivElement>('#toast');
 
 if (
   !wmlInput ||
@@ -202,7 +208,8 @@ if (
   !sessionStateEl ||
   !timelineEl ||
   !activeUrlLabelEl ||
-  !devDrawerEl
+  !devDrawerEl ||
+  !toastEl
 ) {
   throw new Error('missing expected UI element');
 }
@@ -215,6 +222,7 @@ let hostSessionState: HostSessionState = {
 };
 const hostHistory = createHostHistoryState();
 let timelineState = createTimelineState();
+let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
 const cloneSessionState = (): HostSessionState => ({ ...hostSessionState });
 
@@ -251,6 +259,25 @@ const setStatus = (message: string): void => {
   }
   uiEvents.emit('status', { message, tone });
 };
+
+const showToast = (message: string, tone: 'error' | 'ok' = 'error', ttlMs = 6000): void => {
+  if (!toastEl) {
+    return;
+  }
+  if (toastTimer) {
+    clearTimeout(toastTimer);
+  }
+  toastEl.textContent = message;
+  toastEl.className = `toast toast-${tone}`;
+  toastTimer = setTimeout(() => {
+    toastEl.className = 'toast toast-hidden';
+  }, ttlMs);
+};
+
+const wait = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 
 const setSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
   snapshotEl.textContent = JSON.stringify(snapshot, null, 2);
@@ -519,6 +546,12 @@ const loadTransportUrl = async (
       lastError: errorMessage
     });
     setStatus(`Fetch failed: ${errorMessage}`);
+    if (isNetworkUnavailableErrorCode(transport.error?.code)) {
+      showToast(
+        'No network available currently. WAP server/gateway is unreachable.',
+        'error'
+      );
+    }
     return null;
   }
 
@@ -594,6 +627,47 @@ const loadTransportUrl = async (
   }
 
   return snapshot;
+};
+
+const runStartupNetworkProbe = async (): Promise<void> => {
+  const targetUrl = fetchUrlInput.value.trim();
+  if (!targetUrl) {
+    return;
+  }
+
+  for (let attempt = 1; attempt <= NETWORK_PROBE_MAX_ATTEMPTS; attempt += 1) {
+    recordTimeline('startup-network-probe', 'state', {
+      attempt,
+      targetUrl
+    });
+    try {
+      const probe = await invoke<FetchDeckResponse>('fetch_deck', {
+        request: {
+          url: targetUrl,
+          method: 'GET',
+          timeoutMs: NETWORK_PROBE_TIMEOUT_MS,
+          retries: 0
+        }
+      });
+      if (isProbeReachable(probe)) {
+        setStatus('Ready. Network available.');
+        return;
+      }
+    } catch {
+      // Keep retrying on invocation errors.
+    }
+    if (attempt < NETWORK_PROBE_MAX_ATTEMPTS) {
+      await wait(NETWORK_PROBE_DELAY_MS);
+    }
+  }
+
+  const message = 'No network available currently. Could not reach WAP server/gateway.';
+  mergeSessionState({
+    navigationStatus: 'error',
+    lastError: message
+  });
+  setStatus(message);
+  showToast(message, 'error');
 };
 
 document.querySelector<HTMLButtonElement>('#btn-health')?.addEventListener(
@@ -773,3 +847,5 @@ window.addEventListener('keydown', (event) => {
     })();
   }
 });
+
+void runStartupNetworkProbe();

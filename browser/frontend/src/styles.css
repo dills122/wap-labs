@@ -212,6 +212,37 @@ button:hover {
   color: #b91c1c;
 }
 
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  max-width: 360px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  background: #7f1d1d;
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+  z-index: 1200;
+}
+
+.toast-error {
+  border-color: #fecaca;
+  background: #7f1d1d;
+  color: #fff;
+}
+
+.toast-ok {
+  border-color: #86efac;
+  background: #14532d;
+  color: #fff;
+}
+
+.toast-hidden {
+  display: none;
+}
+
 .viewport {
   border: 1px solid var(--line);
   border-radius: 8px;
