@@ -168,11 +168,21 @@ Type contract:
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 
+## Next implementation slice
+
+1. Execute `M1-02`: add parity-critical native/wasm regression coverage for `loadDeckContext`, `handleKey`, `navigateBack`, `render`, and script invocation outcomes.
+2. Execute `M1-07`: parser robustness hardening for malformed/edge markup by adopting an existing XML parser backend and keeping WML semantics in an engine-owned mapper layer.
+3. Execute `M1-08`: split high-churn engine surfaces into clearer boundary modules while keeping runtime behavior stable.
+4. Track `M1-03` engine API generator as non-priority design/bootstrap work to reduce manual TypeScript API sync.
+
 ## Current checklist (planning/execution)
 
 - [x] Complete Phase A todos in `docs/wml-engine/work-items.md` (`A2-03`, `A3-01`, `A3-02`, `A4-01`, `A4-02`)
 - [ ] Keep engine contract and transport/browser mapping synced
 - [ ] Expand fixture corpus to cover pending `RQ-RMK-*` and `RQ-WAE-*` groups
+- [ ] Add parity-critical native/wasm regression coverage (`M1-02`)
+- [ ] Harden parser robustness for malformed/edge markup fixtures (`M1-07`)
+- [ ] Decompose high-churn engine file boundaries without behavior changes (`M1-08`)
 
 ## Troubleshooting
 

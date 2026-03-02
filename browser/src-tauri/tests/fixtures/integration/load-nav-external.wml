@@ -1,0 +1,10 @@
+<wml>
+  <card id="home">
+    <p>Fixture Home</p>
+    <a href="#menu">Go Menu</a>
+    <a href="news.wml?src=fixture">Load News</a>
+  </card>
+  <card id="menu">
+    <p>Fixture Menu</p>
+  </card>
+</wml>

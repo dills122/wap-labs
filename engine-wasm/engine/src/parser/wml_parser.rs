@@ -152,7 +152,7 @@ fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
                 }
             }
 
-            if body[tag_start..].starts_with("<br") {
+            if starts_with_tag_at(body, tag_start, "br") {
                 let end = body[tag_start..]
                     .find('>')
                     .map(|idx| tag_start + idx)
@@ -162,7 +162,7 @@ fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
                 continue;
             }
 
-            if body[tag_start..].starts_with("<p") {
+            if starts_with_tag_at(body, tag_start, "p") {
                 let open_end = body[tag_start..]
                     .find('>')
                     .map(|idx| tag_start + idx)
@@ -181,7 +181,7 @@ fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
                 continue;
             }
 
-            if body[tag_start..].starts_with("<a") {
+            if starts_with_tag_at(body, tag_start, "a") {
                 let open_end = body[tag_start..]
                     .find('>')
                     .map(|idx| tag_start + idx)
@@ -238,7 +238,7 @@ fn parse_inline_nodes(content: &str) -> Result<Vec<InlineNode>, String> {
                 }
             }
 
-            if content[tag_start..].starts_with("<a") {
+            if starts_with_tag_at(content, tag_start, "a") {
                 let open_end = content[tag_start..]
                     .find('>')
                     .map(|idx| tag_start + idx)
@@ -261,7 +261,7 @@ fn parse_inline_nodes(content: &str) -> Result<Vec<InlineNode>, String> {
                 continue;
             }
 
-            if content[tag_start..].starts_with("<br") {
+            if starts_with_tag_at(content, tag_start, "br") {
                 let end = content[tag_start..]
                     .find('>')
                     .map(|idx| tag_start + idx)
@@ -302,6 +302,21 @@ fn find_tag_from(xml: &str, tag_name: &str, from: usize) -> Option<usize> {
         }
     }
     None
+}
+
+fn starts_with_tag_at(xml: &str, from: usize, tag_name: &str) -> bool {
+    if from >= xml.len() {
+        return false;
+    }
+    let tail = &xml[from..];
+    let needle = format!("<{tag_name}");
+    let Some(rest) = tail.strip_prefix(&needle) else {
+        return false;
+    };
+    match rest.chars().next() {
+        Some(ch) => ch.is_whitespace() || ch == '>' || ch == '/',
+        None => true,
+    }
 }
 
 fn extract_attr(tag: &str, attr: &str) -> Option<String> {
@@ -540,6 +555,29 @@ mod tests {
             Some("script:calc.wmlsc#main")
         );
         assert_eq!(deck.cards[0].onenterforward_href.as_deref(), Some("#next"));
+    }
+
+    #[test]
+    fn does_not_treat_prev_tag_as_paragraph_opening_tag() {
+        let xml = r##"
+        <wml>
+          <card id="menu">
+            <p>Menu</p>
+            <do type="prev" label="Back"><prev/></do>
+          </card>
+        </wml>
+        "##;
+
+        let deck = parse_wml(xml).expect("deck with <prev/> in <do> should parse");
+        assert_eq!(deck.cards.len(), 1);
+        assert_eq!(deck.cards[0].id, "menu");
+        assert!(
+            deck.cards[0]
+                .nodes
+                .iter()
+                .any(|node| matches!(node, Node::Paragraph(_))),
+            "paragraph content should still be parsed"
+        );
     }
 
     #[test]

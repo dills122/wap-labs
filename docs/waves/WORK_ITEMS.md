@@ -9,7 +9,7 @@ Status keys:
 - `blocked`
 - `done`
 
-Current mode: planning only. No ticket execution has started.
+Current mode: active execution. Completed and in-progress tickets are tracked below.
 
 ## Baseline Assumptions
 
@@ -46,14 +46,28 @@ Project planning links:
 
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
+- Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
 
-## Pre-Kickoff Guardrail
+## Next In Line (Architecture Maintenance Sprint)
 
-Do not begin implementation work on this board until the project is explicitly kicked off.
+Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
-All items below are intentionally prepared as `todo` only.
+1. `M1-01` Contract-source unification in browser host/frontend.
+2. `M1-02` Engine native/wasm parity regression suite for critical flows.
+3. `M1-04` Transport module decomposition and mapping isolation.
+4. `M1-05` Browser frontend navigation state-machine test automation.
+5. `M1-06` CI guardrails for contract drift and worklist drift.
+6. `M1-07` Parser robustness hardening without feature-scope expansion.
+7. `M1-08` Split high-churn files into boundary modules.
+8. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
+
+Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
+
+## Kickoff Guardrail (Historical)
+
+This board was prepared before implementation kickoff. Keep ticket statuses current as execution continues.
 
 ## Ticket Template
 
@@ -66,9 +80,9 @@ All items below are intentionally prepared as `todo` only.
 7. `Accept`
 8. `Spec`: requirement IDs + section refs/SCR IDs from relevant `docs/waves/*TRACEABILITY*.md` docs
 
-## Initial Backlog (Prepared, Not Started)
+## Initial Backlog (Prepared)
 
-These are the first tickets to pull once Waves browser implementation officially starts.
+These were the first tickets prepared before Waves browser implementation started.
 
 ### P0-01 Repo bootstrap alignment for `browser/`
 
@@ -243,7 +257,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B3-01 Browser-side integration fixtures
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B2-02`
 3. `Files`:
 - `browser/frontend/src/*`
@@ -257,7 +271,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B3-02 Event timeline/debug export parity
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B3-01`
 3. `Files`:
 - `browser/frontend/src/*`
@@ -290,11 +304,13 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### T0-02 Transport normalization guarantees for engine handoff
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`
 - `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/frontend/src/session-history.ts`
 - `transport-rust/README.md`
 4. `Build`:
 - Freeze normalization guarantees (`wmlXml`, `baseUrl`, `contentType`, optional raw bytes) and failure semantics.
@@ -307,7 +323,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### T0-03 Protocol error taxonomy alignment
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -331,7 +347,7 @@ Reference architecture:
 
 ### W0-01 WMLScript integration contract and action model
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: host-sample integration kickoff
 3. `Files`:
 - `engine-wasm/contracts/wml-engine.ts`
@@ -352,13 +368,13 @@ Reference architecture:
 - Navigation intent shape supports last-call-wins defer behavior.
 - Refresh behavior policy is explicitly documented as deferred baseline.
 9. `Architecture Compliance`:
-- [ ] VM/interpreter logic remains in `engine-wasm` only.
-- [ ] Host-facing shape only defines side-effect capabilities (no host-defined script semantics).
-- [ ] Navigation/refresh outcomes are defined as post-invocation runtime effects.
+- [x] VM/interpreter logic remains in `engine-wasm` only.
+- [x] Host-facing shape only defines side-effect capabilities (no host-defined script semantics).
+- [x] Navigation/refresh outcomes are defined as post-invocation runtime effects.
 
 ### W0-02 Bytecode loader + decoder skeleton
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-01`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/decoder.rs`
@@ -378,13 +394,13 @@ Reference architecture:
 - Oversized units fail before allocation/execute paths.
 - Valid bounded units are preserved for VM handoff.
 9. `Architecture Compliance`:
-- [ ] Decoder verification runs before VM execution entry.
-- [ ] Decoder enforces bounded resource constraints.
-- [ ] Decoder failures return deterministic trap/error variants.
+- [x] Decoder verification runs before VM execution entry.
+- [x] Decoder enforces bounded resource constraints.
+- [x] Decoder failures return deterministic trap/error variants.
 
 ### W0-03 VM core baseline (stack/call/return/limits)
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-02`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/vm.rs`
@@ -398,9 +414,9 @@ Reference architecture:
 7. `Spec`:
 - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-010`
 8. `Architecture Compliance`:
-- [ ] VM loop enforces instruction/call-depth/stack bounds.
-- [ ] VM traps are recoverable runtime errors (no panic/host crash).
-- [ ] Return path preserves deterministic result typing.
+- [x] VM loop enforces instruction/call-depth/stack bounds.
+- [x] VM traps are recoverable runtime errors (no panic/host crash).
+- [x] Return path preserves deterministic result typing.
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
@@ -424,11 +440,15 @@ Reference architecture:
 
 ### W0-05 Timer/dialog integration baseline
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-04`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/stdlib/dialogs.rs`
+- `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
 - `engine-wasm/engine/src/runtime/events.rs`
+- `engine-wasm/engine/src/lib.rs`
+- `browser/contracts/engine.ts`
+- `browser/frontend/src/main.ts`
 - `browser/src-tauri/src/*`
 4. `Build`:
 - Add timer/event plumbing and dialog hostcall path.

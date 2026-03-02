@@ -55,6 +55,35 @@ struct SetViewportColsRequest {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+enum ScriptDialogRequestSnapshot {
+    Alert {
+        message: String,
+    },
+    Confirm {
+        message: String,
+    },
+    Prompt {
+        message: String,
+        #[serde(rename = "defaultValue")]
+        default_value: Option<String>,
+    },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+enum ScriptTimerRequestSnapshot {
+    Schedule {
+        #[serde(rename = "delayMs")]
+        delay_ms: u32,
+        token: Option<String>,
+    },
+    Cancel {
+        token: String,
+    },
+}
+
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct EngineRuntimeSnapshot {
     active_card_id: Option<String>,
@@ -65,6 +94,8 @@ struct EngineRuntimeSnapshot {
     last_script_execution_ok: Option<bool>,
     last_script_execution_trap: Option<String>,
     last_script_requires_refresh: Option<bool>,
+    last_script_dialog_requests: Vec<ScriptDialogRequestSnapshot>,
+    last_script_timer_requests: Vec<ScriptTimerRequestSnapshot>,
 }
 
 fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
@@ -77,6 +108,37 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         last_script_execution_ok: engine.last_script_execution_ok(),
         last_script_execution_trap: engine.last_script_execution_trap(),
         last_script_requires_refresh: engine.last_script_requires_refresh(),
+        last_script_dialog_requests: engine
+            .last_script_dialog_requests()
+            .into_iter()
+            .map(|request| match request {
+                wavenav_engine::ScriptDialogRequestLiteral::Alert { message } => {
+                    ScriptDialogRequestSnapshot::Alert { message }
+                }
+                wavenav_engine::ScriptDialogRequestLiteral::Confirm { message } => {
+                    ScriptDialogRequestSnapshot::Confirm { message }
+                }
+                wavenav_engine::ScriptDialogRequestLiteral::Prompt {
+                    message,
+                    default_value,
+                } => ScriptDialogRequestSnapshot::Prompt {
+                    message,
+                    default_value,
+                },
+            })
+            .collect(),
+        last_script_timer_requests: engine
+            .last_script_timer_requests()
+            .into_iter()
+            .map(|request| match request {
+                wavenav_engine::ScriptTimerRequestLiteral::Schedule { delay_ms, token } => {
+                    ScriptTimerRequestSnapshot::Schedule { delay_ms, token }
+                }
+                wavenav_engine::ScriptTimerRequestLiteral::Cancel { token } => {
+                    ScriptTimerRequestSnapshot::Cancel { token }
+                }
+            })
+            .collect(),
     }
 }
 
@@ -382,7 +444,8 @@ mod tests {
         command_engine_load_deck, command_engine_load_deck_context, command_engine_navigate_back,
         command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
         command_engine_snapshot, ensure_request_id, fetch_deck, health, AppState, HandleKeyRequest,
-        LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest, SetViewportColsRequest,
+        LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest,
+        ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetViewportColsRequest,
     };
     use lowband_transport_rust::{
         EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchTiming,
@@ -408,6 +471,9 @@ mod tests {
       </card>
     </wml>
     "##;
+
+    const FIXTURE_LOAD_NAV_EXTERNAL_WML: &str =
+        include_str!("../tests/fixtures/integration/load-nav-external.wml");
 
     fn mock_fetch_ok(url: &str, content_type: &str, wml: &str) -> FetchDeckResponse {
         FetchDeckResponse {
@@ -562,6 +628,66 @@ mod tests {
     }
 
     #[test]
+    fn snapshot_exposes_script_dialog_and_timer_requests() {
+        let mut engine = WmlEngine::new();
+        let script_deck = r##"
+        <wml>
+          <card id="home">
+            <a href="script:effects.wmlsc#main">Run</a>
+          </card>
+        </wml>
+        "##;
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: script_deck.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+
+        let mut unit = Vec::new();
+        unit.push(0x03);
+        unit.push(5);
+        unit.extend_from_slice(b"hello");
+        unit.push(0x20);
+        unit.push(0x05);
+        unit.push(0x01); // alert(message)
+        unit.push(0x01);
+        unit.push(25);
+        unit.push(0x03);
+        unit.push(3);
+        unit.extend_from_slice(b"otp");
+        unit.push(0x20);
+        unit.push(0x08);
+        unit.push(0x02); // setTimer(delay, token)
+        unit.push(0x00);
+        engine.register_script_unit("effects.wmlsc".to_string(), unit);
+
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter should invoke script");
+
+        let snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(snapshot.last_script_dialog_requests.len(), 1);
+        assert_eq!(snapshot.last_script_timer_requests.len(), 1);
+        assert!(matches!(
+            snapshot.last_script_dialog_requests[0],
+            ScriptDialogRequestSnapshot::Alert { .. }
+        ));
+        assert!(matches!(
+            snapshot.last_script_timer_requests[0],
+            ScriptTimerRequestSnapshot::Schedule { .. }
+        ));
+    }
+
+    #[test]
     fn browser_flow_http_fetch_then_engine_load_succeeds() {
         let wml = r#"<wml><card id="home"><p>HTTP Fetch Deck</p></card></wml>"#;
         let response = mock_fetch_ok("http://example.test/index.wml", "text/vnd.wap.wml", wml);
@@ -608,6 +734,69 @@ mod tests {
             .expect("loadDeckContext should succeed");
         assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
         assert_render_contains(&engine, "pipeline");
+    }
+
+    #[test]
+    fn browser_fixture_load_navigate_and_external_intent_flow_is_deterministic() {
+        let transport = mock_fetch_ok(
+            "http://example.test/fixtures/load-nav-external.wml",
+            "text/vnd.wap.wml",
+            FIXTURE_LOAD_NAV_EXTERNAL_WML,
+        );
+        let mut engine = WmlEngine::new();
+        let loaded = load_transport_response_into_engine(&mut engine, transport)
+            .expect("fixture loadDeckContext should succeed");
+        assert_eq!(loaded.active_card_id.as_deref(), Some("home"));
+        assert_eq!(loaded.focused_link_index, 0);
+        assert_render_contains(&engine, "Fixture Home");
+
+        let after_fragment = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter on first link should navigate to fragment card");
+        assert_eq!(after_fragment.active_card_id.as_deref(), Some("menu"));
+        assert_eq!(after_fragment.external_navigation_intent, None);
+        assert_render_contains(&engine, "Fixture Menu");
+
+        let after_back = apply_navigate_back(&mut engine);
+        assert_eq!(after_back.active_card_id.as_deref(), Some("home"));
+        assert_eq!(after_back.focused_link_index, 0);
+
+        let after_down = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "down".to_string(),
+            },
+        )
+        .expect("down should advance focus to external link");
+        assert_eq!(after_down.active_card_id.as_deref(), Some("home"));
+        assert_eq!(after_down.focused_link_index, 1);
+        assert_eq!(after_down.external_navigation_intent, None);
+
+        let after_external = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter on second link should emit external intent");
+        assert_eq!(after_external.active_card_id.as_deref(), Some("home"));
+        assert_eq!(after_external.focused_link_index, 1);
+        assert_eq!(
+            after_external.external_navigation_intent.as_deref(),
+            Some("http://example.test/fixtures/news.wml?src=fixture")
+        );
+
+        let after_clear = apply_clear_external_navigation_intent(&mut engine);
+        assert_eq!(after_clear.external_navigation_intent, None);
+
+        let repeat_snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(repeat_snapshot.active_card_id.as_deref(), Some("home"));
+        assert_eq!(repeat_snapshot.focused_link_index, 1);
+        assert_eq!(repeat_snapshot.external_navigation_intent, None);
     }
 
     #[test]

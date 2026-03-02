@@ -1,5 +1,18 @@
 pub const MAX_COMPILATION_UNIT_BYTES: usize = 64 * 1024;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DecodeLimits {
+    pub max_unit_bytes: usize,
+}
+
+impl Default for DecodeLimits {
+    fn default() -> Self {
+        Self {
+            max_unit_bytes: MAX_COMPILATION_UNIT_BYTES,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DecodeError {
     EmptyUnit,
@@ -18,14 +31,21 @@ impl DecodedUnit {
 }
 
 pub fn decode_compilation_unit(bytes: &[u8]) -> Result<DecodedUnit, DecodeError> {
+    decode_compilation_unit_with_limits(bytes, DecodeLimits::default())
+}
+
+pub fn decode_compilation_unit_with_limits(
+    bytes: &[u8],
+    limits: DecodeLimits,
+) -> Result<DecodedUnit, DecodeError> {
     if bytes.is_empty() {
         return Err(DecodeError::EmptyUnit);
     }
 
-    if bytes.len() > MAX_COMPILATION_UNIT_BYTES {
+    if bytes.len() > limits.max_unit_bytes {
         return Err(DecodeError::UnitTooLarge {
             size: bytes.len(),
-            limit: MAX_COMPILATION_UNIT_BYTES,
+            limit: limits.max_unit_bytes,
         });
     }
 
@@ -36,7 +56,10 @@ pub fn decode_compilation_unit(bytes: &[u8]) -> Result<DecodedUnit, DecodeError>
 
 #[cfg(test)]
 mod tests {
-    use super::{decode_compilation_unit, DecodeError, DecodedUnit, MAX_COMPILATION_UNIT_BYTES};
+    use super::{
+        decode_compilation_unit, decode_compilation_unit_with_limits, DecodeError, DecodeLimits,
+        DecodedUnit, MAX_COMPILATION_UNIT_BYTES,
+    };
 
     #[test]
     fn decode_rejects_empty_input() {
@@ -75,5 +98,18 @@ mod tests {
         let bytes = vec![0xaa; MAX_COMPILATION_UNIT_BYTES];
         let decoded = decode_compilation_unit(&bytes).expect("max-sized unit should decode");
         assert_eq!(decoded.bytes().len(), MAX_COMPILATION_UNIT_BYTES);
+    }
+
+    #[test]
+    fn decode_respects_custom_bounds() {
+        let limits = DecodeLimits { max_unit_bytes: 3 };
+
+        let ok = decode_compilation_unit_with_limits(&[0x00, 0x00, 0x00], limits)
+            .expect("unit at custom limit should decode");
+        assert_eq!(ok.bytes(), &[0x00, 0x00, 0x00]);
+
+        let err = decode_compilation_unit_with_limits(&[0x00, 0x00, 0x00, 0x00], limits)
+            .expect_err("unit above custom limit should fail");
+        assert_eq!(err, DecodeError::UnitTooLarge { size: 4, limit: 3 });
     }
 }
