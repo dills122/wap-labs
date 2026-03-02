@@ -14,3 +14,4 @@ wasm-bindings = ["dep:serde-wasm-bindgen", "dep:wasm-bindgen"]
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = { version = "0.6", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
+url = "2"

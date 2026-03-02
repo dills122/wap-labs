@@ -23,12 +23,10 @@ export interface TransportErrorInfo {
   code:
     | 'INVALID_REQUEST'
     | 'GATEWAY_TIMEOUT'
-    | 'RETRIES_EXHAUSTED'
     | 'UNSUPPORTED_CONTENT_TYPE'
     | 'WBXML_DECODE_FAILED'
     | 'PROTOCOL_ERROR'
-    | 'TRANSPORT_UNAVAILABLE'
-    | 'INTERNAL_ERROR';
+    | 'TRANSPORT_UNAVAILABLE';
   message: string;
   details?: Record<string, unknown>;
 }
