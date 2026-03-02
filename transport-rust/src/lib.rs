@@ -1684,6 +1684,7 @@ mod tests {
             input.body.as_bytes(),
             input.attempt,
             input.elapsed_ms,
+            None,
         );
         assert_eq!(response.ok, expected.ok);
         assert_eq!(response.status, expected.status);
@@ -1789,6 +1790,7 @@ mod tests {
             input.body.as_bytes(),
             input.attempt,
             input.elapsed_ms,
+            None,
         );
         assert_eq!(response.ok, expected.ok);
         assert_eq!(response.status, expected.status);
