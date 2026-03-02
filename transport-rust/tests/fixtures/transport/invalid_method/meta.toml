@@ -1,0 +1,8 @@
+name = "Invalid method request"
+description = "Reject non-GET method requests before any transport attempt."
+work_items = ["T0-03"]
+spec_items = ["RQ-TRN-010", "RQ-TRX-001"]
+testing_ac = [
+  "Given method=POST, fetch_deck_in_process returns ok=false with INVALID_REQUEST.",
+  "Response status is 0 and content type is text/plain.",
+]

@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 502,
+  "finalUrl": "http://upstream.example/index.wml",
+  "contentType": "text/plain",
+  "errorCode": "PROTOCOL_ERROR"
+}

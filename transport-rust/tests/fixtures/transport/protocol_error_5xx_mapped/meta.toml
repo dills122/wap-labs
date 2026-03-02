@@ -1,0 +1,9 @@
+name = "Protocol error 5xx mapping"
+description = "Maps upstream HTTP 5xx into PROTOCOL_ERROR with deterministic shape."
+mode = "mapped"
+work_items = ["T0-03"]
+spec_items = ["RQ-TRN-012", "RQ-TRN-007"]
+testing_ac = [
+  "Given upstream status 502, mapping returns PROTOCOL_ERROR.",
+  "Result preserves status and reports text/plain content type.",
+]

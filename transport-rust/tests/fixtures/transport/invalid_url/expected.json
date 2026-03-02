@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 0,
+  "finalUrl": "example.test/no-scheme.wml",
+  "contentType": "text/plain",
+  "errorCode": "INVALID_REQUEST"
+}

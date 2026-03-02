@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 0,
+  "finalUrl": "wap://example.test/start.wml",
+  "contentType": "text/plain",
+  "errorCode": "TRANSPORT_UNAVAILABLE"
+}

@@ -1,0 +1,9 @@
+name = "Unsupported content type mapping"
+description = "Maps non-WML media to UNSUPPORTED_CONTENT_TYPE deterministically."
+mode = "mapped"
+work_items = ["T0-02", "T0-03"]
+spec_items = ["RQ-WAE-001", "RQ-TRN-012"]
+testing_ac = [
+  "Given 200 response with application/json, mapping returns UNSUPPORTED_CONTENT_TYPE.",
+  "Result is ok=false and status preserves upstream status.",
+]

@@ -1,0 +1,8 @@
+name = "Invalid URL without scheme"
+description = "Reject URL values that do not include a scheme."
+work_items = ["T0-03"]
+spec_items = ["RQ-TRN-010"]
+testing_ac = [
+  "Given a URL with no scheme, fetch_deck_in_process returns ok=false with INVALID_REQUEST.",
+  "Final URL echoes the input string for deterministic host diagnostics.",
+]
