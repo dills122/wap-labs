@@ -90,7 +90,9 @@ WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
 ## Git Hooks and CI
 
 - Local hooks are wired from `.githooks/` (`git config core.hooksPath .githooks`) and use `.pre-commit-config.yaml` for pre-push checks.
-- CI runs in GitHub Actions: `.github/workflows/ci.yml`.
+- CI runs in GitHub Actions:
+  - `.github/workflows/ci.yml` (required PR/push checks)
+  - `.github/workflows/transport-wap-smoke.yml` (manual WAP smoke against Kannel stack)
 - Some layer checks are intentionally disabled until those layers are bootstrapped:
   - `electron-app` lint/test/build
   - Node package lint/test scripts where not yet defined

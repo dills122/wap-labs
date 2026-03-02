@@ -1,0 +1,46 @@
+name: Transport WAP Smoke
+
+on:
+  workflow_dispatch:
+
+env:
+  RUST_SHARED_KEY: wavenav-rust
+
+jobs:
+  transport-wap-smoke:
+    name: Transport WAP Smoke (Kannel)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start Kannel + WML stack
+        run: docker compose up -d --build kannel wml-server
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ env.RUST_SHARED_KEY }}
+          workspaces: |
+            transport-rust -> target
+
+      - name: Install libwbxml runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
+          sudo apt-get install -y libwbxml2-utils || true
+
+      - name: Run WAP smoke
+        run: make smoke-transport-wap
+
+      - name: Dump service logs on failure
+        if: failure()
+        run: |
+          docker compose logs --tail=200 kannel wml-server || true
+
+      - name: Stop stack
+        if: always()
+        run: docker compose down

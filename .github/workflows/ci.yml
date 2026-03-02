@@ -6,6 +6,17 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  NODE_VERSION: "22"
+  RUST_SHARED_KEY: wavenav-rust
+  RUST_BROWSER_KEY: wavenav-browser-rust
+  ENGINE_COV_LINES: "90"
+  ENGINE_COV_FUNCS: "85"
+  TRANSPORT_COV_LINES: "88"
+  TRANSPORT_COV_FUNCS: "85"
+  BROWSER_COV_LINES: "80"
+  BROWSER_COV_FUNCS: "65"
+
 jobs:
   repo-hygiene:
     name: Repo Hygiene
@@ -20,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
           cache-dependency-path: pnpm-lock.yaml
 
@@ -29,6 +40,9 @@ jobs:
 
       - name: Git whitespace check
         run: git diff --check
+
+      - name: Browser frontend typecheck (contract drift guard)
+        run: pnpm --dir browser/frontend exec tsc --noEmit
 
   rust-engine:
     name: Rust Engine
@@ -40,40 +54,7 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt, clippy
-
-      - name: Cache Rust build artifacts
-        uses: Swatinem/rust-cache@v2
-        with:
-          shared-key: wavenav-rust
-          workspaces: |
-            engine-wasm/engine -> target
-
-      - name: Rust fmt check
-        working-directory: engine-wasm/engine
-        run: cargo fmt --check
-
-      - name: Rust tests
-        working-directory: engine-wasm/engine
-        run: cargo test
-
-      # Enable when warning budget is defined.
-      - name: Rust clippy (disabled)
-        if: ${{ false }}
-        working-directory: engine-wasm/engine
-        run: cargo clippy --all-targets --all-features -- -D warnings
-
-  rust-engine-coverage:
-    name: Rust Engine Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: llvm-tools-preview
+          components: rustfmt, clippy, llvm-tools-preview
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
@@ -81,13 +62,23 @@ jobs:
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
-          shared-key: wavenav-rust
+          shared-key: ${{ env.RUST_SHARED_KEY }}
           workspaces: |
             engine-wasm/engine -> target
 
+      - name: Rust fmt check
+        working-directory: engine-wasm/engine
+        run: cargo fmt --check
+
       - name: Rust coverage gate
         working-directory: engine-wasm/engine
-        run: cargo llvm-cov --all-features --summary-only --fail-under-lines 90 --fail-under-functions 85
+        run: cargo llvm-cov --all-features --summary-only --fail-under-lines ${{ env.ENGINE_COV_LINES }} --fail-under-functions ${{ env.ENGINE_COV_FUNCS }}
+
+      # Enable when warning budget is defined.
+      - name: Rust clippy (disabled)
+        if: ${{ false }}
+        working-directory: engine-wasm/engine
+        run: cargo clippy --all-targets --all-features -- -D warnings
 
   rust-transport:
     name: Rust Transport
@@ -105,12 +96,15 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt
+          components: rustfmt, llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
-          shared-key: wavenav-rust
+          shared-key: ${{ env.RUST_SHARED_KEY }}
           workspaces: |
             transport-rust -> target
 
@@ -122,41 +116,9 @@ jobs:
         working-directory: transport-rust
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-      - name: Rust tests
-        working-directory: transport-rust
-        run: RUST_TEST_THREADS=1 cargo test -- --test-threads=1
-
-  rust-transport-coverage:
-    name: Rust Transport Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install libwbxml runtime
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
-          sudo apt-get install -y libwbxml2-utils || true
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: llvm-tools-preview
-
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
-
-      - name: Cache Rust build artifacts
-        uses: Swatinem/rust-cache@v2
-        with:
-          shared-key: wavenav-rust
-          workspaces: |
-            transport-rust -> target
-
       - name: Rust coverage gate
         working-directory: transport-rust
-        run: RUST_TEST_THREADS=1 cargo llvm-cov --all-features --summary-only --fail-under-lines 88 --fail-under-functions 85 -- --test-threads=1
+        run: RUST_TEST_THREADS=1 cargo llvm-cov --all-features --summary-only --fail-under-lines ${{ env.TRANSPORT_COV_LINES }} --fail-under-functions ${{ env.TRANSPORT_COV_FUNCS }} -- --test-threads=1
 
   host-sample:
     name: WaveNav Host Sample Build
@@ -171,7 +133,7 @@ jobs:
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
-          shared-key: wavenav-rust
+          shared-key: ${{ env.RUST_SHARED_KEY }}
           workspaces: |
             engine-wasm/engine -> target
 
@@ -206,7 +168,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
           cache-dependency-path: engine-wasm/host-sample/pnpm-lock.yaml
 
@@ -238,7 +200,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
           cache-dependency-path: marketing-site/pnpm-lock.yaml
 
@@ -269,12 +231,15 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt
+          components: rustfmt, llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Cache Browser Rust build artifacts
         uses: Swatinem/rust-cache@v2
         with:
-          shared-key: wavenav-browser-rust
+          shared-key: ${{ env.RUST_BROWSER_KEY }}
           workspaces: |
             browser/src-tauri -> target
 
@@ -287,13 +252,9 @@ jobs:
         working-directory: browser/src-tauri
         run: cargo fmt --check
 
-      - name: Browser Rust compile check
+      - name: Browser Rust coverage gate
         working-directory: browser/src-tauri
-        run: cargo check
-
-      - name: Browser smoke tests
-        working-directory: browser/src-tauri
-        run: cargo test
+        run: cargo llvm-cov --all-features --summary-only --fail-under-lines ${{ env.BROWSER_COV_LINES }} --fail-under-functions ${{ env.BROWSER_COV_FUNCS }}
 
   wml-server:
     name: WML Server Sanity
@@ -305,7 +266,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
           cache-dependency-path: wml-server/package-lock.json
 
@@ -314,45 +275,6 @@ jobs:
 
       - name: Node syntax check
         run: node --check wml-server/server.js
-
-  transport-wap-smoke:
-    name: Transport WAP Smoke (Kannel)
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Start Kannel + WML stack
-        run: docker compose up -d --build kannel wml-server
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust build artifacts
-        uses: Swatinem/rust-cache@v2
-        with:
-          shared-key: wavenav-rust
-          workspaces: |
-            transport-rust -> target
-
-      - name: Install libwbxml runtime
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
-          sudo apt-get install -y libwbxml2-utils || true
-
-      - name: Run WAP smoke
-        run: make smoke-transport-wap
-
-      - name: Dump service logs on failure
-        if: failure()
-        run: |
-          docker compose logs --tail=200 kannel wml-server || true
-
-      - name: Stop stack
-        if: always()
-        run: docker compose down
 
   # Future jobs intentionally disabled until those layers are ready:
   # - browser frontend lint/test
