@@ -8,7 +8,7 @@ Status: Active
 ### Corpus ledger
 
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
-- Scope: all canonical root-level source PDFs under `docs/source-material` (94 files)
+- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (94 files)
 - Status: all 94 canonical PDFs are `deep-extracted`
 - Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves)
 
@@ -141,17 +141,21 @@ Status: Active
   - promote `planned` rows into implemented tests per project backlog
 
 6. Spec-processing quality governance
-- Status: in progress (low-priority lane added)
+- Status: complete (manual governance lane implemented; no CI coupling)
 - Deliverables:
   - Phase S1 tickets in `docs/waves/WORK_ITEMS.md` (`S1-01`..`S1-06`)
   - `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
   - `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+  - `spec-processing/README.md`
+  - `docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md`
+  - `docs/waves/provenance/docling-provenance-2026-03-02.csv`
+  - `docs/waves/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
 - Focus:
   - table-fidelity ambiguity resolution
   - cleaned-markdown stability and provenance tracking
   - extraction-noise regression visibility
 - Current checkpoint:
-  - `S1-01` and `S1-06` completed; remaining governance work stays in `S1-02`..`S1-05`
+  - All `S1` items (`S1-01`..`S1-06`) are closed.
 
 
 ## Quality gate summary

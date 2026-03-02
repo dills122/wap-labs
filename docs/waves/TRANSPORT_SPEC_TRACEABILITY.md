@@ -9,10 +9,10 @@ Capture normative transport-layer requirements for the Waves protocol rewrite tr
 
 ## Source set reviewed (S0-02)
 
-- `docs/source-material/WAP-230-WSP-20010705-a.pdf`
-- `docs/source-material/WAP-224-WTP-20010710-a.pdf`
-- `docs/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
-- `docs/source-material/WAP-259-WDP-20010614-a.pdf`
+- `spec-processing/source-material/WAP-230-WSP-20010705-a.pdf`
+- `spec-processing/source-material/WAP-224-WTP-20010710-a.pdf`
+- `spec-processing/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
+- `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
 
 ## Normative precedence
 

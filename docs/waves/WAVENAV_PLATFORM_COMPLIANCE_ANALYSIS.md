@@ -1,7 +1,7 @@
 # WaveNav Platform Compliance Analysis (WAP UA Runtime)
 
 Date: 2026-03-02  
-Scope: canonical root-level `docs/source-material/` corpus plus in-repo backlog/work tracking.
+Scope: canonical root-level `spec-processing/source-material/` corpus plus in-repo backlog/work tracking.
 
 ## Implementation Requirements Matrix
 

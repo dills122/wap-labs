@@ -9,7 +9,7 @@ Run a repeatable, deep audit over all local source specs and ensure Waves requir
 
 ## Corpus snapshot
 
-Current repository corpus under `docs/source-material`:
+Current repository corpus under `spec-processing/source-material`:
 
 - `105` PDF files total
 - `11` duplicated filenames across convenience folders (`sub-set/`, `WMLScript/`) and root
@@ -34,7 +34,7 @@ Duplicate filename set:
 
 ## Canonical-source rule
 
-For audit and traceability, use root-level files in `docs/source-material/` as canonical.  
+For audit and traceability, use root-level files in `spec-processing/source-material/` as canonical.  
 Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
 
 ## Waves-focused domain map
@@ -152,7 +152,7 @@ Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
 
 1. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synced with contract changes.
 2. Promote `planned` entries in `docs/waves/SPEC_TEST_COVERAGE.md` into implemented tests in each project backlog.
-3. Execute Phase `S1` spec-processing governance tickets in `docs/waves/WORK_ITEMS.md` to finalize provenance, canonical-path normalization, and extraction-quality gates.
+3. Maintain completed Phase `S1` governance artifacts (`docs/waves/WORK_ITEMS.md`) and append new provenance snapshots for future reruns.
 
 ## Quality gates
 

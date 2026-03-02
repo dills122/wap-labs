@@ -9,9 +9,9 @@ Capture architectural-context specs that constrain naming, identity, and layerin
 
 ## Source set reviewed (S0-09)
 
-- `docs/source-material/WAP-210-WAPArch-20010712-a.pdf`
-- `docs/source-material/WAP-196-ClientID-20010409-a.pdf`
-- `docs/source-material/WAP-188-WAPGenFormats-20010710-a.pdf`
+- `spec-processing/source-material/WAP-210-WAPArch-20010712-a.pdf`
+- `spec-processing/source-material/WAP-196-ClientID-20010409-a.pdf`
+- `spec-processing/source-material/WAP-188-WAPGenFormats-20010710-a.pdf`
 
 ## Findings
 

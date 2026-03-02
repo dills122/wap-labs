@@ -1,6 +1,6 @@
 # Source Material Review (Local Subset PDFs)
 
-Reviewed directly from local files under `docs/source-material/sub-set`.
+Reviewed directly from local files under `spec-processing/source-material/sub-set`.
 
 ## Files Reviewed for WASM Engine
 

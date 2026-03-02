@@ -76,4 +76,4 @@ Rerun-validation status has been recorded in:
 
 ## Follow-up tracking
 
-- Remaining extraction-governance actions from this rerun wave are tracked in `docs/waves/WORK_ITEMS.md` Phase `S1` (`S1-02`..`S1-05`).
+- Extraction-governance actions from this rerun wave are complete in `docs/waves/WORK_ITEMS.md` Phase `S1` (`S1-01`..`S1-06` closed).

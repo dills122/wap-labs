@@ -9,10 +9,10 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 
 ## Source set reviewed (full pass)
 
-- `docs/source-material/WAP-193-WMLScript-20001025-a.pdf`
-- `docs/source-material/WAP-193_101-WMLScript-20010928-a.pdf`
-- `docs/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf`
-- `docs/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
+- `spec-processing/source-material/WAP-193-WMLScript-20001025-a.pdf`
+- `spec-processing/source-material/WAP-193_101-WMLScript-20010928-a.pdf`
+- `spec-processing/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf`
+- `spec-processing/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
 
 ## Normative precedence for Waves
 

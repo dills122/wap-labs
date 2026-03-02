@@ -2,7 +2,7 @@
 
 Version: v0.1  
 Date: 2026-03-02  
-Primary source: `docs/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
+Primary source: `spec-processing/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
 
 ## Purpose
 

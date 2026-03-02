@@ -47,4 +47,4 @@ This pass materially improved source-cleaning confidence for the core transport 
 - This base rerun report complements:
   - `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
 - Together, the two rerun waves cover all currently in-scope high-value source families.
-- Follow-up governance and promotion work is tracked in `docs/waves/WORK_ITEMS.md` Phase `S1` (active remaining items: `S1-02`..`S1-05`).
+- Governance and promotion follow-ups from this wave are complete in `docs/waves/WORK_ITEMS.md` Phase `S1` (`S1-01`..`S1-06` closed).

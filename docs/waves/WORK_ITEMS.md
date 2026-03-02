@@ -896,7 +896,7 @@ Compliance target for this lane:
 Reference:
 
 - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
-- `docs/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
+- `spec-processing/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
 
 ### R0-01 WML-191 conformance matrix and CI gate
 
@@ -1081,8 +1081,8 @@ Reference:
 2. `Depends On`: none
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-236-WAESpec-20020207-a.pdf`
-- `docs/source-material/WAP-237-WAEMT-20010515-a.pdf`
+- `spec-processing/source-material/WAP-236-WAESpec-20020207-a.pdf`
+- `spec-processing/source-material/WAP-237-WAEMT-20010515-a.pdf`
 4. `Build`:
 - Extract normative runtime/browser semantic requirements used by Waves engine and host integration.
 5. `Tests`:
@@ -1098,10 +1098,10 @@ Reference:
 2. `Depends On`: `S0-01`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-230-WSP-20010705-a.pdf`
-- `docs/source-material/WAP-224-WTP-20010710-a.pdf`
-- `docs/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
-- `docs/source-material/WAP-259-WDP-20010614-a.pdf`
+- `spec-processing/source-material/WAP-230-WSP-20010705-a.pdf`
+- `spec-processing/source-material/WAP-224-WTP-20010710-a.pdf`
+- `spec-processing/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
+- `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
 4. `Build`:
 - Build requirement matrix for protocol behavior needed in Rust migration phases 2-5.
 5. `Tests`:
@@ -1134,14 +1134,14 @@ Reference:
 2. `Depends On`: `S0-03`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-261-WTLS-20010406-a.pdf`
-- `docs/source-material/WAP-261_100-WTLS-20010926-a.pdf`
-- `docs/source-material/WAP-261_101-WTLS-20011027-a.pdf`
-- `docs/source-material/WAP-261_102-WTLS-20011027-a.pdf`
-- `docs/source-material/WAP-219-TLS-20010411-a.pdf`
-- `docs/source-material/WAP-219_100-TLS-20011029-a.pdf`
-- `docs/source-material/WAP-187-TransportE2ESec-20010628-a.pdf`
-- `docs/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf`
+- `spec-processing/source-material/WAP-261-WTLS-20010406-a.pdf`
+- `spec-processing/source-material/WAP-261_100-WTLS-20010926-a.pdf`
+- `spec-processing/source-material/WAP-261_101-WTLS-20011027-a.pdf`
+- `spec-processing/source-material/WAP-261_102-WTLS-20011027-a.pdf`
+- `spec-processing/source-material/WAP-219-TLS-20010411-a.pdf`
+- `spec-processing/source-material/WAP-219_100-TLS-20011029-a.pdf`
+- `spec-processing/source-material/WAP-187-TransportE2ESec-20010628-a.pdf`
+- `spec-processing/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf`
 4. `Build`:
 - Build requirements + AC matrix for security semantics and map to Waves simulation policy.
 5. `Tests`:
@@ -1176,13 +1176,13 @@ Reference:
 2. `Depends On`: `S0-03`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-229-HTTP-20010329-a.pdf`
-- `docs/source-material/WAP-229_001-HTTP-20011031-a.pdf`
-- `docs/source-material/WAP-223-HTTPSM-20001213-a.pdf`
-- `docs/source-material/WAP-223_101-HTTPSM-20010928-a.pdf`
-- `docs/source-material/WAP-225-TCP-20010331-a.pdf`
-- `docs/source-material/WAP-202-WCMP-20010624-a.pdf`
-- `docs/source-material/WAP-159-WDPWCMPAdapt-20010713-a.pdf`
+- `spec-processing/source-material/WAP-229-HTTP-20010329-a.pdf`
+- `spec-processing/source-material/WAP-229_001-HTTP-20011031-a.pdf`
+- `spec-processing/source-material/WAP-223-HTTPSM-20001213-a.pdf`
+- `spec-processing/source-material/WAP-223_101-HTTPSM-20010928-a.pdf`
+- `spec-processing/source-material/WAP-225-TCP-20010331-a.pdf`
+- `spec-processing/source-material/WAP-202-WCMP-20010624-a.pdf`
+- `spec-processing/source-material/WAP-159-WDPWCMPAdapt-20010713-a.pdf`
 4. `Build`:
 - Build requirements + AC matrix for transport-adjacent interoperability and gateway adaptation boundaries.
 5. `Tests`:
@@ -1198,12 +1198,12 @@ Reference:
 2. `Depends On`: `S0-03`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-191-WML-20000219-a.pdf`
-- `docs/source-material/WAP-191_102-WML-20001213-a.pdf`
-- `docs/source-material/WAP-191_104-WML-20010718-a.pdf`
-- `docs/source-material/WAP-191_105-WML-20020212-a.pdf`
-- `docs/source-material/WAP-192-WBXML-20010725-a.pdf`
-- `docs/source-material/WAP-192_105-WBXML-20011015-a.pdf`
+- `spec-processing/source-material/WAP-191-WML-20000219-a.pdf`
+- `spec-processing/source-material/WAP-191_102-WML-20001213-a.pdf`
+- `spec-processing/source-material/WAP-191_104-WML-20010718-a.pdf`
+- `spec-processing/source-material/WAP-191_105-WML-20020212-a.pdf`
+- `spec-processing/source-material/WAP-192-WBXML-20010725-a.pdf`
+- `spec-processing/source-material/WAP-192_105-WBXML-20011015-a.pdf`
 4. `Build`:
 - Build requirements + AC matrix for deterministic WML deck/card semantics and WBXML boundary ownership.
 5. `Tests`:
@@ -1219,15 +1219,15 @@ Reference:
 2. `Depends On`: `S0-04`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-211-WAPCert-20010522-a.pdf`
-- `docs/source-material/WAP-211_104-WAPCert-20010928-a.pdf`
-- `docs/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf`
-- `docs/source-material/WAP-217-WPKI-20010424-a.pdf`
-- `docs/source-material/WAP-217_103-WPKI-20011102-a.pdf`
-- `docs/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf`
-- `docs/source-material/WAP-260-WIM-20010712-a.pdf`
-- `docs/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf`
-- `docs/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf`
+- `spec-processing/source-material/WAP-211-WAPCert-20010522-a.pdf`
+- `spec-processing/source-material/WAP-211_104-WAPCert-20010928-a.pdf`
+- `spec-processing/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf`
+- `spec-processing/source-material/WAP-217-WPKI-20010424-a.pdf`
+- `spec-processing/source-material/WAP-217_103-WPKI-20011102-a.pdf`
+- `spec-processing/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf`
+- `spec-processing/source-material/WAP-260-WIM-20010712-a.pdf`
+- `spec-processing/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf`
+- `spec-processing/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf`
 4. `Build`:
 - Build requirements + AC matrix for WAP certificate, trust-distribution, and WIM profile boundaries.
 5. `Tests`:
@@ -1243,9 +1243,9 @@ Reference:
 2. `Depends On`: `S0-03`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-210-WAPArch-20010712-a.pdf`
-- `docs/source-material/WAP-196-ClientID-20010409-a.pdf`
-- `docs/source-material/WAP-188-WAPGenFormats-20010710-a.pdf`
+- `spec-processing/source-material/WAP-210-WAPArch-20010712-a.pdf`
+- `spec-processing/source-material/WAP-196-ClientID-20010409-a.pdf`
+- `spec-processing/source-material/WAP-188-WAPGenFormats-20010710-a.pdf`
 4. `Build`:
 - Capture architecture-context constraints that influence conformance framing and contract semantics.
 5. `Tests`:
@@ -1261,9 +1261,9 @@ Reference:
 2. `Depends On`: `S0-03`
 3. `Files`:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-- `docs/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf`
-- `docs/source-material/WAP-161_101-WMLScriptCrypto-20010730-a.pdf`
-- `docs/source-material/WAP-248-UAProf-20011020-a.pdf`
+- `spec-processing/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf`
+- `spec-processing/source-material/WAP-161_101-WMLScriptCrypto-20010730-a.pdf`
+- `spec-processing/source-material/WAP-248-UAProf-20011020-a.pdf`
 4. `Build`:
 - Extract requirements and convert them into explicit defer decisions with future AC triggers.
 5. `Tests`:
@@ -1279,8 +1279,8 @@ Reference:
 2. `Depends On`: `S0-07`
 3. `Files`:
 - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
-- `docs/source-material/WAP-238-WML-20010911-a.pdf`
-- `docs/source-material/spec-wml-19990616.pdf`
+- `spec-processing/source-material/WAP-238-WML-20010911-a.pdf`
+- `spec-processing/source-material/spec-wml-19990616.pdf`
 4. `Build`:
 - Consolidate remaining WML lineage documents into runtime-markup precedence and compatibility notes.
 5. `Tests`:
@@ -1298,37 +1298,37 @@ Reference:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
-- `docs/source-material/WAP-120-WAPCachingMod-20010413-a.pdf`
-- `docs/source-material/WAP-167*.pdf`
-- `docs/source-material/WAP-168*.pdf`
-- `docs/source-material/WAP-175*.pdf`
-- `docs/source-material/WAP-182*.pdf`
-- `docs/source-material/WAP-183*.pdf`
-- `docs/source-material/WAP-184*.pdf`
-- `docs/source-material/WAP-185*.pdf`
-- `docs/source-material/WAP-186*.pdf`
-- `docs/source-material/WAP-204*.pdf`
-- `docs/source-material/WAP-205*.pdf`
-- `docs/source-material/WAP-206*.pdf`
-- `docs/source-material/WAP-209*.pdf`
-- `docs/source-material/WAP-213*.pdf`
-- `docs/source-material/WAP-227*.pdf`
-- `docs/source-material/WAP-228*.pdf`
-- `docs/source-material/WAP-231*.pdf`
-- `docs/source-material/WAP-234*.pdf`
-- `docs/source-material/WAP-235*.pdf`
-- `docs/source-material/WAP-239*.pdf`
-- `docs/source-material/WAP-244*.pdf`
-- `docs/source-material/WAP-247*.pdf`
-- `docs/source-material/WAP-249*.pdf`
-- `docs/source-material/WAP-250*.pdf`
-- `docs/source-material/WAP-251*.pdf`
-- `docs/source-material/WAP-255*.pdf`
-- `docs/source-material/WAP-266*.pdf`
-- `docs/source-material/WAP-268*.pdf`
-- `docs/source-material/WAP-269*.pdf`
-- `docs/source-material/WAP-270*.pdf`
-- `docs/source-material/WAP-277*.pdf`
+- `spec-processing/source-material/WAP-120-WAPCachingMod-20010413-a.pdf`
+- `spec-processing/source-material/WAP-167*.pdf`
+- `spec-processing/source-material/WAP-168*.pdf`
+- `spec-processing/source-material/WAP-175*.pdf`
+- `spec-processing/source-material/WAP-182*.pdf`
+- `spec-processing/source-material/WAP-183*.pdf`
+- `spec-processing/source-material/WAP-184*.pdf`
+- `spec-processing/source-material/WAP-185*.pdf`
+- `spec-processing/source-material/WAP-186*.pdf`
+- `spec-processing/source-material/WAP-204*.pdf`
+- `spec-processing/source-material/WAP-205*.pdf`
+- `spec-processing/source-material/WAP-206*.pdf`
+- `spec-processing/source-material/WAP-209*.pdf`
+- `spec-processing/source-material/WAP-213*.pdf`
+- `spec-processing/source-material/WAP-227*.pdf`
+- `spec-processing/source-material/WAP-228*.pdf`
+- `spec-processing/source-material/WAP-231*.pdf`
+- `spec-processing/source-material/WAP-234*.pdf`
+- `spec-processing/source-material/WAP-235*.pdf`
+- `spec-processing/source-material/WAP-239*.pdf`
+- `spec-processing/source-material/WAP-244*.pdf`
+- `spec-processing/source-material/WAP-247*.pdf`
+- `spec-processing/source-material/WAP-249*.pdf`
+- `spec-processing/source-material/WAP-250*.pdf`
+- `spec-processing/source-material/WAP-251*.pdf`
+- `spec-processing/source-material/WAP-255*.pdf`
+- `spec-processing/source-material/WAP-266*.pdf`
+- `spec-processing/source-material/WAP-268*.pdf`
+- `spec-processing/source-material/WAP-269*.pdf`
+- `spec-processing/source-material/WAP-270*.pdf`
+- `spec-processing/source-material/WAP-277*.pdf`
 4. `Build`:
 - Extract normative obligations for remaining out-of-scope families and convert to explicit defer posture + future activation AC.
 5. `Tests`:
@@ -1402,50 +1402,55 @@ Reference:
 
 ### S1-02 Markdown cleaner hardening for heavy TOC/legal-noise specs
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `S1-01`
 3. `Files`:
-- `parse-pdf-remaining.fish`
-- `tmp/docling-rerun-remaining/*/*.md`
-- `tmp/docling-rerun-remaining/*/*.cleaned.md`
-- `tmp/docling-rerun-remaining/cleanup-report.txt`
+- `spec-processing/parse-pdf-remaining.fish`
+- `spec-processing/parse-pdf.fish`
+- `spec-processing/scripts/docling-profile.fish`
+- `spec-processing/scripts/promote-docling-cleaned.fish`
+- `spec-processing/README.md`
 4. `Build`:
 - Reduce residual noise in cleaned outputs for long legal/TOC-heavy documents while preserving technical meaning.
 - Freeze deterministic cleaner rules so repeated runs produce stable output deltas.
 5. `Tests`:
-- Re-run cleanup against a fixed sample set and compare line-delta stability across two consecutive runs.
+- Manual rerun using shared Docling profile and compare stable output inventory.
 6. `Accept`:
 - Cleaner output is stable and significantly reduces non-technical boilerplate drift in flagged-heavy docs.
 7. `Spec`:
 - Cross-cutting documentation fidelity lane (applies to all in-scope spec families).
+8. `Notes`:
+- Shared deterministic Docling profile was centralized and parse scripts now use that single profile source.
 
 ### S1-03 Extraction quality gate for parser-noise regressions
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `S1-02`
 3. `Files`:
 - `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
-- `docs/waves/SPEC_TEST_COVERAGE.md`
-- `tmp/docling-rerun-remaining/cleanup-report.txt`
-- `.github/workflows/*`
+- `spec-processing/scripts/check-docling-cleaned-quality.sh`
+- `docs/waves/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
 4. `Build`:
 - Add lightweight quality gate checks for cleaned-spec artifacts (e.g., extreme TOC noise density, unresolved table-caption ambiguity count, malformed markdown table ratios).
-- Keep thresholds advisory-first, then promote to failure gates once baseline noise profile is stable.
+- Keep thresholds advisory-first as a manual script lane (no CI integration).
 5. `Tests`:
-- CI dry-run with one intentionally degraded cleaned artifact sample.
+- Manual dry-run via quality script in advisory mode and strict mode.
 6. `Accept`:
 - Extraction quality regressions are visible and cannot silently accumulate.
 7. `Spec`:
 - Traceability-quality governance for all spec-derived requirement artifacts.
+8. `Notes`:
+- Explicitly kept out of CI per project preference; checks run manually.
 
 ### S1-04 Source-to-clean provenance manifest and reproducibility trail
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `S1-02`
 3. `Files`:
-- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
-- `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
-- `tmp/docling-rerun-remaining/cleanup-report.txt`
+- `spec-processing/scripts/generate-docling-provenance.sh`
+- `docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md`
+- `docs/waves/provenance/docling-provenance-2026-03-02.csv`
+- `spec-processing/README.md`
 4. `Build`:
 - Record source-to-clean provenance metadata (source path, cleaned path, line deltas, table-caption outcomes, run date/profile).
 - Keep manifest append-only so audit history remains visible across reruns.
@@ -1455,17 +1460,20 @@ Reference:
 - Team can reconstruct when and how any cleaned spec artifact was produced and validated.
 7. `Spec`:
 - Documentation governance lane for reproducible spec extraction and auditability.
+8. `Notes`:
+- Provenance snapshot generated for `2026-03-02` with per-file CSV and aggregate manifest totals.
 
 ### S1-05 Promote validated cleaned rerun artifacts into canonical parsed corpus
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `S1-01`, `S1-02`
 3. `Files`:
 - `tmp/docling-rerun/core/*.cleaned.md`
 - `tmp/docling-rerun/ext/*.cleaned.md`
 - `tmp/docling-rerun-remaining/core/*.cleaned.md`
 - `tmp/docling-rerun-remaining/ext/*.cleaned.md`
-- `docs/source-material/parsed-markdown/`
+- `spec-processing/source-material/parsed-markdown/docling-cleaned/`
+- `spec-processing/scripts/promote-docling-cleaned.fish`
 - `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
 - `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
 4. `Build`:
@@ -1477,6 +1485,8 @@ Reference:
 - Cleaned artifacts used by planning/compliance analysis are durable and no longer depend on temporary directories.
 7. `Spec`:
 - Cross-cutting source-fidelity governance for all in-scope spec families.
+8. `Notes`:
+- Canonical cleaned corpus currently contains `48` finalized `.cleaned.md` artifacts.
 
 ### S1-06 Canonical source-reference path normalization across traceability docs
 
@@ -1489,7 +1499,7 @@ Reference:
 - `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`
 - `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md`
 4. `Build`:
-- Normalize source references to canonical root-level `docs/source-material/*.pdf` paths (except when a mirror path is explicitly intentional and labeled).
+- Normalize source references to canonical root-level `spec-processing/source-material/*.pdf` paths (except when a mirror path is explicitly intentional and labeled).
 - Remove inconsistent mirror-folder references that can cause provenance drift in audits.
 5. `Tests`:
 - Lint/check script that flags non-canonical source-material paths in traceability docs unless explicitly allowlisted.
