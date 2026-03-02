@@ -900,10 +900,11 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
 mod tests {
     use super::{
         build_gateway_request, decode_wmlc, decode_wmlc_with_libwbxml, decode_wmlc_with_tool,
-        fetch_deck_in_process, invalid_request_response, is_supported_wml_content_type,
-        libwbxml_available, libwbxml_disabled_by_env, map_success_payload_response,
-        map_terminal_send_error, normalize_content_type, preflight_wbxml_decoder, wbxml2xml_bin,
-        FetchDeckRequest, LibwbxmlDecodeError,
+        details_with_request_id, fetch_deck_in_process, invalid_request_response,
+        is_supported_wml_content_type, libwbxml_available, libwbxml_disabled_by_env,
+        libwbxml_error_text, log_transport_event, map_success_payload_response,
+        map_terminal_send_error, normalize_content_type, normalized_request_id,
+        preflight_wbxml_decoder, wbxml2xml_bin, FetchDeckRequest, LibwbxmlDecodeError,
     };
     use std::collections::HashMap;
     use std::fs;
@@ -1061,6 +1062,54 @@ mod tests {
     }
 
     #[test]
+    fn transport_normalized_request_id_trims_and_rejects_blank() {
+        assert_eq!(normalized_request_id(Some(" req-1 ")), Some("req-1"));
+        assert_eq!(normalized_request_id(Some("   ")), None);
+        assert_eq!(normalized_request_id(None), None);
+    }
+
+    #[test]
+    fn transport_details_with_request_id_merges_object_details() {
+        let merged =
+            details_with_request_id(Some("req-merge"), Some(serde_json::json!({ "attempt": 2 })))
+                .expect("details should exist");
+        assert_eq!(
+            merged.get("requestId").and_then(|value| value.as_str()),
+            Some("req-merge")
+        );
+        assert_eq!(
+            merged.get("attempt").and_then(|value| value.as_u64()),
+            Some(2)
+        );
+    }
+
+    #[test]
+    fn transport_details_with_request_id_keeps_non_object_details_and_handles_blank() {
+        let passthrough = details_with_request_id(Some("req-raw"), Some(serde_json::json!("raw")))
+            .expect("details should exist");
+        assert_eq!(passthrough.as_str(), Some("raw"));
+
+        let blank_id = details_with_request_id(Some("   "), Some(serde_json::json!({ "a": 1 })));
+        assert!(blank_id.is_none());
+    }
+
+    #[test]
+    fn transport_log_event_accepts_blank_or_missing_request_id() {
+        log_transport_event(
+            "transport.test",
+            None,
+            "http://example.test",
+            serde_json::json!({ "ok": true }),
+        );
+        log_transport_event(
+            "transport.test",
+            Some("   "),
+            "http://example.test",
+            serde_json::json!({ "ok": true }),
+        );
+    }
+
+    #[test]
     fn transport_build_gateway_request_maps_wap_url_and_headers() {
         let headers = HashMap::new();
         let result = build_gateway_request("wap://example.test/home.wml?x=1", "GET", &headers)
@@ -1176,9 +1225,23 @@ mod tests {
         });
         assert!(disabled);
 
+        let disabled_yes = with_env_var_locked("LOWBAND_DISABLE_LIBWBXML", "yes", || {
+            libwbxml_disabled_by_env()
+        });
+        assert!(disabled_yes);
+
         let not_disabled =
             with_env_removed_locked("LOWBAND_DISABLE_LIBWBXML", libwbxml_disabled_by_env);
         assert!(!not_disabled);
+    }
+
+    #[test]
+    fn transport_libwbxml_error_text_handles_null_pointer_message() {
+        unsafe extern "C" fn null_msg(_: i32) -> *const u8 {
+            std::ptr::null()
+        }
+        let text = libwbxml_error_text(null_msg, -9);
+        assert_eq!(text, "libwbxml error code -9");
     }
 
     #[test]
