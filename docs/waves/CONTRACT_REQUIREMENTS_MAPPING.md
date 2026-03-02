@@ -37,6 +37,8 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `ScriptInvocationOutcome.effects` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
 | `ScriptExecutionOutcome.effects` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
 | `ScriptHostCapabilities` side-effect-only host adapters | `RQ-WMLS-003`, `RQ-WAE-003` |
+| `lastScriptDialogRequests()` (`alert`/`confirm`/`prompt`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
+| `lastScriptTimerRequests()` (`schedule`/`cancel`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
 
 ## Transport mapping (`transport-rust/src/lib.rs`)
 

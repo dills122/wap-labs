@@ -43,6 +43,15 @@ interface EngineRuntimeSnapshot {
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptRequiresRefresh?: boolean;
+  lastScriptDialogRequests?: Array<
+    | { type: 'alert'; message: string }
+    | { type: 'confirm'; message: string }
+    | { type: 'prompt'; message: string; defaultValue?: string }
+  >;
+  lastScriptTimerRequests?: Array<
+    | { type: 'schedule'; delayMs: number; token?: string }
+    | { type: 'cancel'; token: string }
+  >;
 }
 
 interface TimelineEntry {

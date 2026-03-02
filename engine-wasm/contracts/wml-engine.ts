@@ -47,6 +47,15 @@ export interface ScriptPostInvocationEffects {
   requiresRefresh: boolean;
 }
 
+export type ScriptDialogRequest =
+  | { type: 'alert'; message: string }
+  | { type: 'confirm'; message: string }
+  | { type: 'prompt'; message: string; defaultValue?: string };
+
+export type ScriptTimerRequest =
+  | { type: 'schedule'; delayMs: number; token?: string }
+  | { type: 'cancel'; token: string };
+
 export interface ScriptInvocationOutcome {
   effects: ScriptPostInvocationEffects;
   result: ScriptValueLiteral;
@@ -151,6 +160,8 @@ export interface WmlEngineWasm {
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
+  lastScriptDialogRequests(): ScriptDialogRequest[];
+  lastScriptTimerRequests(): ScriptTimerRequest[];
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
 }
@@ -193,6 +204,8 @@ export interface WmlEngineNative {
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
+  lastScriptDialogRequests(): ScriptDialogRequest[];
+  lastScriptTimerRequests(): ScriptTimerRequest[];
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
 }

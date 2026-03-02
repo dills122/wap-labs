@@ -55,6 +55,35 @@ struct SetViewportColsRequest {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+enum ScriptDialogRequestSnapshot {
+    Alert {
+        message: String,
+    },
+    Confirm {
+        message: String,
+    },
+    Prompt {
+        message: String,
+        #[serde(rename = "defaultValue")]
+        default_value: Option<String>,
+    },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+enum ScriptTimerRequestSnapshot {
+    Schedule {
+        #[serde(rename = "delayMs")]
+        delay_ms: u32,
+        token: Option<String>,
+    },
+    Cancel {
+        token: String,
+    },
+}
+
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct EngineRuntimeSnapshot {
     active_card_id: Option<String>,
@@ -65,6 +94,8 @@ struct EngineRuntimeSnapshot {
     last_script_execution_ok: Option<bool>,
     last_script_execution_trap: Option<String>,
     last_script_requires_refresh: Option<bool>,
+    last_script_dialog_requests: Vec<ScriptDialogRequestSnapshot>,
+    last_script_timer_requests: Vec<ScriptTimerRequestSnapshot>,
 }
 
 fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
@@ -77,6 +108,37 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         last_script_execution_ok: engine.last_script_execution_ok(),
         last_script_execution_trap: engine.last_script_execution_trap(),
         last_script_requires_refresh: engine.last_script_requires_refresh(),
+        last_script_dialog_requests: engine
+            .last_script_dialog_requests()
+            .into_iter()
+            .map(|request| match request {
+                wavenav_engine::ScriptDialogRequestLiteral::Alert { message } => {
+                    ScriptDialogRequestSnapshot::Alert { message }
+                }
+                wavenav_engine::ScriptDialogRequestLiteral::Confirm { message } => {
+                    ScriptDialogRequestSnapshot::Confirm { message }
+                }
+                wavenav_engine::ScriptDialogRequestLiteral::Prompt {
+                    message,
+                    default_value,
+                } => ScriptDialogRequestSnapshot::Prompt {
+                    message,
+                    default_value,
+                },
+            })
+            .collect(),
+        last_script_timer_requests: engine
+            .last_script_timer_requests()
+            .into_iter()
+            .map(|request| match request {
+                wavenav_engine::ScriptTimerRequestLiteral::Schedule { delay_ms, token } => {
+                    ScriptTimerRequestSnapshot::Schedule { delay_ms, token }
+                }
+                wavenav_engine::ScriptTimerRequestLiteral::Cancel { token } => {
+                    ScriptTimerRequestSnapshot::Cancel { token }
+                }
+            })
+            .collect(),
     }
 }
 
@@ -382,7 +444,8 @@ mod tests {
         command_engine_load_deck, command_engine_load_deck_context, command_engine_navigate_back,
         command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
         command_engine_snapshot, ensure_request_id, fetch_deck, health, AppState, HandleKeyRequest,
-        LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest, SetViewportColsRequest,
+        LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest,
+        ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetViewportColsRequest,
     };
     use lowband_transport_rust::{
         EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchTiming,
@@ -562,6 +625,66 @@ mod tests {
 
         let after_clear = apply_clear_external_navigation_intent(&mut engine);
         assert_eq!(after_clear.external_navigation_intent, None);
+    }
+
+    #[test]
+    fn snapshot_exposes_script_dialog_and_timer_requests() {
+        let mut engine = WmlEngine::new();
+        let script_deck = r##"
+        <wml>
+          <card id="home">
+            <a href="script:effects.wmlsc#main">Run</a>
+          </card>
+        </wml>
+        "##;
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: script_deck.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+
+        let mut unit = Vec::new();
+        unit.push(0x03);
+        unit.push(5);
+        unit.extend_from_slice(b"hello");
+        unit.push(0x20);
+        unit.push(0x05);
+        unit.push(0x01); // alert(message)
+        unit.push(0x01);
+        unit.push(25);
+        unit.push(0x03);
+        unit.push(3);
+        unit.extend_from_slice(b"otp");
+        unit.push(0x20);
+        unit.push(0x08);
+        unit.push(0x02); // setTimer(delay, token)
+        unit.push(0x00);
+        engine.register_script_unit("effects.wmlsc".to_string(), unit);
+
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("enter should invoke script");
+
+        let snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(snapshot.last_script_dialog_requests.len(), 1);
+        assert_eq!(snapshot.last_script_timer_requests.len(), 1);
+        assert!(matches!(
+            snapshot.last_script_dialog_requests[0],
+            ScriptDialogRequestSnapshot::Alert { .. }
+        ));
+        assert!(matches!(
+            snapshot.last_script_timer_requests[0],
+            ScriptTimerRequestSnapshot::Schedule { .. }
+        ));
     }
 
     #[test]

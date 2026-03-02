@@ -1,6 +1,8 @@
 import type {
   EngineKey,
   RenderList,
+  ScriptDialogRequest,
+  ScriptTimerRequest,
   WmlDeckInput
 } from '../../engine-wasm/contracts/wml-engine';
 
@@ -13,6 +15,8 @@ export interface EngineRuntimeSnapshot {
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptRequiresRefresh?: boolean;
+  lastScriptDialogRequests?: ScriptDialogRequest[];
+  lastScriptTimerRequests?: ScriptTimerRequest[];
 }
 
 export interface EngineHostClient {

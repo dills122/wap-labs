@@ -432,6 +432,8 @@ Reference architecture:
 - `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
 - `engine-wasm/engine/src/runtime/events.rs`
 - `engine-wasm/engine/src/lib.rs`
+- `browser/contracts/engine.ts`
+- `browser/frontend/src/main.ts`
 - `browser/src-tauri/src/*`
 4. `Build`:
 - Add timer/event plumbing and dialog hostcall path.
