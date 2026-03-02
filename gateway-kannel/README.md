@@ -12,6 +12,10 @@ Runtime/config files already exist in:
 
 Use this folder for future gateway-specific docs, profiles, and integration tests focused on WSP/WDP behavior.
 
+## Parity planning
+
+- `PARITY_PLAN.md`: prioritized Kannel-vs-embedded parity matrix and fixture format for migration readiness.
+
 ## MVP requirements
 
 - UDP WSP endpoint reachable on `9201`
