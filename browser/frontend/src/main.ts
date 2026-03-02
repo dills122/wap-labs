@@ -45,6 +45,13 @@ interface TimelineEntry {
   details?: Record<string, unknown>;
 }
 
+type NavSource = 'user' | 'external-intent' | 'history-back';
+
+interface HostHistoryEntry {
+  url: string;
+  activeCardId?: string;
+}
+
 const SAMPLE_WML = `<wml>
   <card id="home">
     <p>WaveNav native engine harness</p>
@@ -176,8 +183,28 @@ let hostSessionState: HostSessionState = {
   navigationStatus: 'idle',
   requestedUrl: fetchUrlInput.value
 };
+const hostHistory: HostHistoryEntry[] = [];
+let hostHistoryIndex = -1;
 let timelineSeq = 0;
 const timelineEntries: TimelineEntry[] = [];
+
+const pushHostHistory = (url: string, activeCardId?: string): void => {
+  const normalized = url.trim();
+  if (!normalized) {
+    return;
+  }
+  if (hostHistoryIndex >= 0 && hostHistory[hostHistoryIndex]?.url === normalized) {
+    if (activeCardId) {
+      hostHistory[hostHistoryIndex].activeCardId = activeCardId;
+    }
+    return;
+  }
+  if (hostHistoryIndex < hostHistory.length - 1) {
+    hostHistory.splice(hostHistoryIndex + 1);
+  }
+  hostHistory.push({ url: normalized, activeCardId });
+  hostHistoryIndex = hostHistory.length - 1;
+};
 
 const cloneSessionState = (): HostSessionState => ({ ...hostSessionState });
 
@@ -240,6 +267,9 @@ const syncSessionFromSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
     focusedLinkIndex: snapshot.focusedLinkIndex,
     externalNavigationIntent: snapshot.externalNavigationIntent
   });
+  if (hostHistoryIndex >= 0 && snapshot.activeCardId) {
+    hostHistory[hostHistoryIndex].activeCardId = snapshot.activeCardId;
+  }
 };
 
 setSessionState(hostSessionState);
@@ -391,22 +421,63 @@ const applyEngineKey = async (key: EngineKey): Promise<void> => {
 
   if (snapshot.externalNavigationIntent) {
     fetchUrlInput.value = snapshot.externalNavigationIntent;
-    await loadTransportUrl(snapshot.externalNavigationIntent, 'external-intent', true);
+    await loadTransportUrl(snapshot.externalNavigationIntent, 'external-intent', true, true);
   }
 };
 
-const applyNavigateBack = async (): Promise<void> => {
+const applyNavigateBack = async (): Promise<EngineRuntimeSnapshot> => {
   const snapshot = await invoke<EngineRuntimeSnapshot>('engine_navigate_back');
   setSnapshot(snapshot);
   const renderList = await invoke<RenderList>('engine_render');
   drawRenderList(renderList);
   syncSessionFromSnapshot(snapshot);
+  return snapshot;
+};
+
+const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> => {
+  const before = await invoke<EngineRuntimeSnapshot>('engine_snapshot');
+  const after = await applyNavigateBack();
+  const engineHandled =
+    before.activeCardId !== after.activeCardId || before.focusedLinkIndex !== after.focusedLinkIndex;
+  if (engineHandled) {
+    return 'engine';
+  }
+
+  if (hostHistoryIndex > 0) {
+    const targetIndex = hostHistoryIndex - 1;
+    const previous = hostHistory[targetIndex];
+    if (previous?.url) {
+      const prevSnapshot = await loadTransportUrl(previous.url, 'history-back', true, false);
+      if (prevSnapshot) {
+        if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
+          const restored = await invoke<EngineRuntimeSnapshot>('engine_navigate_to_card', {
+            request: { cardId: previous.activeCardId }
+          });
+          setSnapshot(restored);
+          const renderList = await invoke<RenderList>('engine_render');
+          drawRenderList(renderList);
+          syncSessionFromSnapshot(restored);
+        }
+        hostHistoryIndex = targetIndex;
+        fetchUrlInput.value = previous.url;
+        recordTimeline('host-history-back', 'state', {
+          historyIndex: hostHistoryIndex,
+          url: previous.url,
+          restoredCardId: previous.activeCardId
+        });
+        return 'host';
+      }
+    }
+  }
+
+  return 'none';
 };
 
 const loadTransportUrl = async (
   url: string,
-  source: 'user' | 'external-intent',
-  followExternalIntent: boolean
+  source: NavSource,
+  followExternalIntent: boolean,
+  pushHistory = true
 ): Promise<EngineRuntimeSnapshot | null> => {
   const requestedUrl = url.trim();
   if (!requestedUrl) {
@@ -415,7 +486,8 @@ const loadTransportUrl = async (
   recordTimeline('load-transport-url', 'state', {
     source,
     requestedUrl,
-    followExternalIntent
+    followExternalIntent,
+    pushHistory
   });
 
   await setViewportCols();
@@ -424,7 +496,13 @@ const loadTransportUrl = async (
     requestedUrl,
     lastError: undefined
   });
-  setStatus(source === 'user' ? `Loading ${requestedUrl}...` : `Following external intent: ${requestedUrl}`);
+  if (source === 'user') {
+    setStatus(`Loading ${requestedUrl}...`);
+  } else if (source === 'external-intent') {
+    setStatus(`Following external intent: ${requestedUrl}`);
+  } else {
+    setStatus(`Loading previous page: ${requestedUrl}`);
+  }
 
   const transport = await invoke<FetchDeckResponse>('fetch_deck', {
     request: {
@@ -497,6 +575,9 @@ const loadTransportUrl = async (
     externalNavigationIntent: snapshot.externalNavigationIntent,
     lastError: undefined
   });
+  if (pushHistory) {
+    pushHostHistory(transport.finalUrl, snapshot.activeCardId);
+  }
   setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
 
   if (followExternalIntent && snapshot.externalNavigationIntent) {
@@ -504,7 +585,7 @@ const loadTransportUrl = async (
     for (let hop = 1; hop <= MAX_EXTERNAL_INTENT_HOPS; hop += 1) {
       await invoke<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent');
       fetchUrlInput.value = nextUrl;
-      const nextSnapshot = await loadTransportUrl(nextUrl, 'external-intent', false);
+      const nextSnapshot = await loadTransportUrl(nextUrl, 'external-intent', false, true);
       if (!nextSnapshot || !nextSnapshot.externalNavigationIntent) {
         break;
       }
@@ -560,7 +641,7 @@ document.querySelector<HTMLButtonElement>('#btn-load-context')?.addEventListener
 document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.addEventListener(
   'click',
   withAction('fetch-url', async () => {
-    await loadTransportUrl(fetchUrlInput.value, 'user', true);
+    await loadTransportUrl(fetchUrlInput.value, 'user', true, true);
   })
 );
 
@@ -569,7 +650,7 @@ document.querySelector<HTMLButtonElement>('#btn-reload')?.addEventListener(
   withAction('reload', async () => {
     const reloadUrl = hostSessionState.finalUrl ?? hostSessionState.requestedUrl ?? fetchUrlInput.value;
     fetchUrlInput.value = reloadUrl;
-    await loadTransportUrl(reloadUrl, 'user', true);
+    await loadTransportUrl(reloadUrl, 'user', true, false);
   })
 );
 
@@ -578,7 +659,7 @@ fetchUrlInput.addEventListener(
   withAction('fetch-url-enter', async (event?: Event) => {
     if (event instanceof KeyboardEvent && event.key === 'Enter') {
       event.preventDefault();
-      await loadTransportUrl(fetchUrlInput.value, 'user', true);
+      await loadTransportUrl(fetchUrlInput.value, 'user', true, true);
     }
   })
 );
@@ -608,8 +689,14 @@ bindKeyButton('#btn-enter', 'enter');
 document.querySelector<HTMLButtonElement>('#btn-back')?.addEventListener(
   'click',
   withAction('navigate-back', async () => {
-    await applyNavigateBack();
-    setStatus('navigateBack invoked.');
+    const mode = await navigateBackWithFallback();
+    if (mode === 'engine') {
+      setStatus('navigateBack invoked (engine history).');
+    } else if (mode === 'host') {
+      setStatus('navigateBack invoked (browser history).');
+    } else {
+      setStatus('No back history available.');
+    }
   })
 );
 
@@ -692,8 +779,14 @@ window.addEventListener('keydown', (event) => {
   if (event.key === 'Backspace') {
     event.preventDefault();
     void withAction('keyboard-backspace', async () => {
-      await applyNavigateBack();
-      setStatus('Keyboard: back');
+      const mode = await navigateBackWithFallback();
+      if (mode === 'engine') {
+        setStatus('Keyboard: back (engine history)');
+      } else if (mode === 'host') {
+        setStatus('Keyboard: back (browser history)');
+      } else {
+        setStatus('Keyboard: no back history');
+      }
     })();
   }
 });

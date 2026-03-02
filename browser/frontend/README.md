@@ -28,6 +28,7 @@ This frontend now includes a browser-style shell with a hidden developer harness
 - browser chrome with address bar (`Back`, `Reload`, `Go`)
 - viewport-first deck rendering and softkey controls (`Up`, `Select`, `Down`)
 - global keyboard navigation when not in text-entry fields (`ArrowUp`, `ArrowDown`, `Enter`, `Backspace`)
+- hybrid back behavior: engine card-history first, then browser URL history fallback across fetched decks
 - deterministic host session-state panel (`idle/loading/loaded/error` + URL/card/focus/error)
 - automatic external intent follow loop (`externalNavigationIntent` fetch/load cycle)
 - debug-only raw WML textarea path (`Load Raw WML (Debug)`)
