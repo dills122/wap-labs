@@ -42,6 +42,10 @@ jobs:
               - ".github/workflows/**"
               - "package.json"
               - "pnpm-lock.yaml"
+              - "tsconfig.base.json"
+              - "eslint.shared.mjs"
+              - ".prettierrc.json"
+              - ".prettierignore"
               - "scripts/check-transport-contract-parity.mjs"
             rust_engine:
               - "engine-wasm/engine/**"
@@ -89,6 +93,15 @@ jobs:
 
       - name: Browser frontend typecheck (contract drift guard)
         run: pnpm --dir browser/frontend exec tsc --noEmit
+
+      - name: Workspace typecheck
+        run: pnpm typecheck:node
+
+      - name: Workspace lint
+        run: pnpm lint:node
+
+      - name: Workspace format check
+        run: pnpm format:check:node
 
       - name: Transport contract parity check
         run: node scripts/check-transport-contract-parity.mjs
@@ -225,22 +238,22 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
-          cache-dependency-path: engine-wasm/host-sample/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install host-sample deps
-        run: pnpm --dir engine-wasm/host-sample --ignore-workspace install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build host-sample
         run: pnpm --dir engine-wasm/host-sample run build
 
-      # Enable when scripts are introduced.
-      - name: Host-sample lint (disabled)
-        if: ${{ false }}
+      - name: Host-sample typecheck
+        run: pnpm --dir engine-wasm/host-sample run typecheck
+
+      - name: Host-sample lint
         run: pnpm --dir engine-wasm/host-sample run lint
 
-      - name: Host-sample tests (disabled)
-        if: ${{ false }}
-        run: pnpm --dir engine-wasm/host-sample run test
+      - name: Host-sample format check
+        run: pnpm --dir engine-wasm/host-sample run format:check
 
   marketing-site:
     name: Marketing Site Build
