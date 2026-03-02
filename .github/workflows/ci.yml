@@ -88,6 +88,36 @@ jobs:
       - name: Install root Node deps
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ env.RUST_SHARED_KEY }}
+          workspaces: |
+            engine-wasm/engine -> target
+
+      - name: Cache wasm-pack binary
+        id: cache-wasm-pack-repo-hygiene
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/wasm-pack
+          key: ${{ runner.os }}-wasm-pack-0.13.1
+          restore-keys: |
+            ${{ runner.os }}-wasm-pack-
+
+      - name: Install wasm-pack (if cache miss)
+        if: steps.cache-wasm-pack-repo-hygiene.outputs.cache-hit != 'true'
+        run: cargo install wasm-pack --version 0.13.1 --locked
+
+      - name: Build WaveNav WASM package
+        working-directory: engine-wasm/engine
+        run: wasm-pack build --target web --out-dir ../pkg
+
+      - name: Generate host-sample example manifest
+        run: pnpm --dir engine-wasm/host-sample run examples:generate
+
       - name: Git whitespace check
         run: git diff --check
 
@@ -331,7 +361,7 @@ jobs:
 
       - name: Browser Rust coverage gate
         working-directory: browser/src-tauri
-        run: cargo llvm-cov --all-features --summary-only --fail-under-lines ${{ env.BROWSER_COV_LINES }} --fail-under-functions ${{ env.BROWSER_COV_FUNCS }}
+        run: cargo llvm-cov --all-features --lib --summary-only --fail-under-lines ${{ env.BROWSER_COV_LINES }} --fail-under-functions ${{ env.BROWSER_COV_FUNCS }}
 
   wml-server:
     name: WML Server Sanity
