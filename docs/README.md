@@ -9,7 +9,7 @@
 ## Cross-Layer Architecture
 
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
-- `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + Python sidecar strategy)
+- `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + in-process Rust transport)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
 - `waves/WAVESCRIPT_VM_ARCHITECTURE.md`: WaveScript VM/runtime design and milestone plan
 - `waves/WMLSCRIPT_SPEC_TRACEABILITY.md`: WMLScript spec-derived requirements and acceptance-criteria traceability matrix
@@ -33,7 +33,6 @@
 
 - `agents/AGENT_STANDARDS.md`: multi-language contributor/agent standards
 - `agents/RUST_STEERING.md`: Rust-specific steering for WaveNav engine development
-- `agents/PYTHON_STEERING.md`: Python transport implementation steering and quality rules
 
 ## WaveNav Engine Documentation Set
 

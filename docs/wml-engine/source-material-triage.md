@@ -37,7 +37,7 @@ Why:
 
 Why:
 
-- `WAP-192*` informs tokenized document handling assumptions (even if decode is currently Python-side).
+- `WAP-192*` informs tokenized document handling assumptions (even if decode is currently transport-side).
 - `WAP-237` covers MIME/media typing and content handling implications.
 - `WAP-210` provides architecture context for boundary decisions and conformance reasoning.
 

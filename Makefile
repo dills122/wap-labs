@@ -6,12 +6,11 @@ ENABLE_NODE_CHECKS ?= 0
 RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
-.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport smoke-transport-wap init-refresh \
+.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap init-refresh \
 	fmt lint test test-fast ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
-	lint-rust lint-rust-engine lint-rust-transport lint-node lint-python \
-	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node test-python \
-	check-transport-contract \
+	lint-rust lint-rust-engine lint-rust-transport lint-node \
+	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
 	install-marketing-site dev-marketing-site build-marketing-site \
@@ -41,9 +40,6 @@ smoke-up:
 	$(COMPOSE) up -d --build
 	./scripts/smoke.sh
 
-smoke-transport:
-	./scripts/transport-http-smoke.sh
-
 smoke-transport-wap:
 	./scripts/transport-wap-smoke.sh
 
@@ -63,9 +59,9 @@ fmt:
 		echo "skip: cargo not found (engine-wasm fmt)"; \
 	fi
 
-lint: lint-rust lint-node lint-python
+lint: lint-rust lint-node
 
-test: test-rust test-node test-python
+test: test-rust test-node
 
 test-fast: test-rust
 
@@ -169,9 +165,6 @@ lint-node:
 	@echo "skip: electron-app lint (no package/scripts configured yet)"
 	@echo "skip: wml-server lint (no lint script configured yet)"
 
-check-transport-contract:
-	@pnpm run check:transport-contract
-
 test-node:
 	@if [ "$(ENABLE_NODE_CHECKS)" != "1" ]; then \
 		echo "skip: node tests/build checks disabled (set ENABLE_NODE_CHECKS=1 to enable)"; \
@@ -200,32 +193,6 @@ test-node:
 	@echo "skip: electron-app tests (no package/tests configured yet)"
 	@echo "skip: wml-server tests (no test script configured yet)"
 
-lint-python:
-	@if [ -x transport-python/.venv/bin/ruff ]; then \
-		echo "==> ruff check transport-python"; \
-		transport-python/.venv/bin/ruff check transport-python; \
-	elif command -v ruff >/dev/null 2>&1; then \
-		echo "==> ruff check transport-python"; \
-		ruff check transport-python; \
-	else \
-		echo "skip: ruff not found (python lint)"; \
-		echo "install with: python3 -m venv transport-python/.venv && transport-python/.venv/bin/python -m pip install -r transport-python/requirements.txt -r transport-python/requirements-dev.txt"; \
-		exit 1; \
-	fi
-
-test-python:
-	@if [ -x transport-python/.venv/bin/pytest ]; then \
-		echo "==> pytest transport-python/tests"; \
-		transport-python/.venv/bin/pytest transport-python/tests; \
-	elif command -v pytest >/dev/null 2>&1; then \
-		echo "==> pytest transport-python/tests"; \
-		pytest transport-python/tests; \
-	else \
-		echo "skip: pytest not found (python tests)"; \
-		echo "install with: python3 -m venv transport-python/.venv && transport-python/.venv/bin/python -m pip install -r transport-python/requirements.txt -r transport-python/requirements-dev.txt"; \
-		exit 1; \
-	fi
-
 # --- Git hooks (pre-commit) ---
 
 hooks-install:
@@ -235,7 +202,7 @@ hooks-install:
 		pre-commit install-hooks; \
 		echo "installed repo-managed hooks via .githooks (pre-commit + pre-push)"; \
 	else \
-		echo "pre-commit is not installed. Install with: pipx install pre-commit"; \
+		echo "pre-commit is not installed. Install it with your package manager, then retry."; \
 		exit 1; \
 	fi
 
@@ -243,7 +210,7 @@ hooks-update:
 	@if command -v pre-commit >/dev/null 2>&1; then \
 		pre-commit autoupdate; \
 	else \
-		echo "pre-commit is not installed. Install with: pipx install pre-commit"; \
+		echo "pre-commit is not installed. Install it with your package manager, then retry."; \
 		exit 1; \
 	fi
 
@@ -251,7 +218,7 @@ hooks-run:
 	@if command -v pre-commit >/dev/null 2>&1; then \
 		pre-commit run --all-files; \
 	else \
-		echo "pre-commit is not installed. Install with: pipx install pre-commit"; \
+		echo "pre-commit is not installed. Install it with your package manager, then retry."; \
 		exit 1; \
 	fi
 

@@ -15,7 +15,7 @@ Current mode: planning only. No ticket execution has started.
 
 These assumptions are active for this board and should not be re-litigated in each ticket:
 
-1. `transport-python/` networking behavior is already functionally validated via CLI probes.
+1. `transport-rust/` networking behavior is already functionally validated via CLI probes.
 2. `engine-wasm/` runtime/rendering has reached a substantial milestone and is ready for full browser integration.
 
 This board therefore prioritizes host/browser integration, UX shell behavior, and runtime/transport orchestration over low-level parser/transport re-validation.
@@ -40,13 +40,13 @@ Primary implementation target:
 Integrated dependencies:
 
 - `engine-wasm/` (runtime + wasm contract)
-- `transport-python/` (sidecar/API transport boundary)
+- `transport-rust/` (in-process transport boundary)
 
 Project planning links:
 
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
-- Transport planning/checklist: `transport-python/README.md`
+- Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
 
 ## Pre-Kickoff Guardrail
@@ -102,7 +102,7 @@ These are the first tickets to pull once Waves browser implementation officially
 6. `Accept`:
 - Host command boundary is stable enough for integration work.
 
-### P0-03 Sidecar process lifecycle spec
+### P0-03 Transport module lifecycle spec
 
 1. `Status`: `todo`
 2. `Depends On`: `P0-02`
@@ -110,12 +110,12 @@ These are the first tickets to pull once Waves browser implementation officially
 - `browser/src-tauri/src/*`
 - `docs/waves/TECHNICAL_ARCHITECTURE.md`
 4. `Build`:
-- Define sidecar start/stop/restart policy and failure handling states.
-- Document expected sidecar health and timeout policy.
+- Define transport initialization/retry/reset policy and failure handling states.
+- Document expected transport health and timeout policy.
 5. `Tests`:
-- Simulated sidecar unavailable scenario runbook.
+- Simulated transport unavailable scenario runbook.
 6. `Accept`:
-- Sidecar lifecycle behavior is documented and implementable without ambiguity.
+- Transport lifecycle behavior is documented and implementable without ambiguity.
 
 ### P0-04 First end-to-end integration fixture definition
 
@@ -166,7 +166,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ## Phase B1: Transport + Engine Vertical Slice
 
-### B1-01 Tauri command: fetch deck from Python sidecar
+### B1-01 Tauri command: fetch deck via Rust transport
 
 1. `Status`: `done`
 2. `Depends On`: `B0-01`, `B0-02`
@@ -177,7 +177,7 @@ These are the first tickets to pull once Waves browser implementation officially
 - Implement `fetch_deck` command calling in-process `transport-rust`.
 - Return normalized payload (`wml`, `finalUrl`, `contentType`, error mapping).
 5. `Tests`:
-- Integration test against mocked or local sidecar endpoint.
+- Integration test against mocked or local transport endpoint/fixture.
 6. `Accept`:
 - Valid URL fetch yields deterministic payload without host crash.
 
@@ -268,27 +268,23 @@ These are the first tickets to pull once Waves browser implementation officially
 6. `Accept`:
 - Debug artifacts can be attached for integration bug triage.
 
-## Phase T: Transport-Python Alignment (Prepared)
+## Phase T: Transport Contract Alignment (Prepared)
 
-### T0-01 OpenAPI and browser transport contract parity
+### T0-01 Transport model and browser contract parity
 
 1. `Status`: `done`
 2. `Depends On`: `B0-02`, `S0-05`
 3. `Files`:
-- `transport-python/api/openapi.yaml`
+- `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
-- `browser/contracts/transport.openapi.generated.d.ts`
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
-- `package.json`
-- `.github/workflows/ci.yml`
-- `Makefile`
 4. `Build`:
-- Generate browser transport types from OpenAPI and derive browser contract types from generated schema.
-- Enforce generated-file drift checks in CI and local quality commands.
+- Align browser transport types with transport-rust request/response/error models.
+- Enforce contract drift checks through unit/integration tests and docs parity.
 5. `Tests`:
 - Add schema/contract parity validation step in CI or script.
 6. `Accept`:
-- No drift between OpenAPI and browser transport contract for shared fields.
+- No drift between transport-rust model semantics and browser transport contract for shared fields.
 7. `Spec`:
 - `RQ-TRN-001..015`, `RQ-TRX-001..010`, `RQ-WAE-001`, `RQ-WAE-010`
 
@@ -297,9 +293,9 @@ These are the first tickets to pull once Waves browser implementation officially
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
 3. `Files`:
-- `transport-python/api/openapi.yaml`
+- `transport-rust/src/lib.rs`
 - `engine-wasm/contracts/wml-engine.ts`
-- `transport-python/README.md`
+- `transport-rust/README.md`
 4. `Build`:
 - Freeze normalization guarantees (`wmlXml`, `baseUrl`, `contentType`, optional raw bytes) and failure semantics.
 5. `Tests`:
@@ -314,7 +310,7 @@ These are the first tickets to pull once Waves browser implementation officially
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
 3. `Files`:
-- `transport-python/api/openapi.yaml`
+- `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 4. `Build`:
@@ -535,7 +531,7 @@ Reference:
 2. `Depends On`: `S0-04`
 3. `Files`:
 - `engine-wasm/contracts/wml-engine.ts`
-- `transport-python/api/openapi.yaml`
+- `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `docs/waves/*TRACEABILITY*.md`
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
@@ -743,7 +739,7 @@ Reference:
 - `docs/wml-engine/requirements-matrix.md`
 - `docs/wml-engine/test-strategy.md`
 - `engine-wasm/README.md`
-- `transport-python/README.md`
+- `transport-rust/README.md`
 - `browser/README.md`
 - `docs/browser-emulator/README.md`
 4. `Build`:

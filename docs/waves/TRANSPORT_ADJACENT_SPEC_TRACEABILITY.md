@@ -152,6 +152,6 @@ Legend:
 
 ## Boundary notes for Waves
 
-- These requirements primarily impact `transport-python/` gateway compatibility and policy decisions, not the core deterministic WML runtime loop.
+- These requirements primarily impact `transport-rust/` gateway compatibility and policy decisions, not the core deterministic WML runtime loop.
 - `WAP-223` cookie-proxy behavior is relevant when HTTP-state delegation to network proxies is supported; otherwise mark as explicit non-goal.
 - `WAP-159` is gateway adaptation-specific (SMPP tunnel path) and may remain deferred unless this transport path is adopted.

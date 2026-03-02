@@ -140,7 +140,7 @@ Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
 
 - Map extracted requirements to contracts:
   - `engine-wasm/contracts/wml-engine.ts`
-  - `transport-python/api/openapi.yaml`
+  - `transport-rust` public request/response/error models
   - `browser/contracts/transport.ts`
 
 ### Stage D: AC + tests

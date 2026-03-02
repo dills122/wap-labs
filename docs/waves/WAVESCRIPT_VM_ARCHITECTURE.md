@@ -13,7 +13,7 @@ This document defines how WaveScript VM support should be integrated into Waves,
 
 - runtime-first architecture
 - Tauri host model
-- Python sidecar transport (temporary)
+- Rust in-process transport
 - deterministic behavior gates before protocol rewrite
 
 Primary source references:

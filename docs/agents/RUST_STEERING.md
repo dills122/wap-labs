@@ -14,7 +14,6 @@ Applies to:
 
 Does not apply to:
 
-- Python transport layer (`transport-python/`)
 - Tauri/TypeScript host logic (except contract alignment concerns)
 
 ## 2. Canonical External Standards

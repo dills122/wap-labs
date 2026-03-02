@@ -36,7 +36,7 @@ Legend:
 | Wrap/layout stress | `covered` | `examples/wrap-stress.wml` |
 | Parser robustness | `covered` | `examples/parser-robustness.wml` |
 
-## Transport (`transport-python`)
+## Transport (`transport-rust`)
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
@@ -59,7 +59,7 @@ Legend:
 ## Cross-project checklist (immediate)
 
 1. Create a minimal contract parity check between:
-   - `transport-python/api/openapi.yaml`
+   - `transport-rust` request/response model tests
    - `browser/contracts/transport.ts`
 2. Add a CI check that verifies example metadata (`work-items`, `spec-items`, `testing-ac`) for each host-sample fixture.
 3. Add engine fixture test harness expansion (`A4-02`) and map fixture IDs back to `RQ-RMK-*` groups.

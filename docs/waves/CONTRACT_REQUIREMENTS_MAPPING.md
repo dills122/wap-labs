@@ -10,9 +10,8 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 ## Contract files
 
 - `engine-wasm/contracts/wml-engine.ts`
-- `transport-python/api/openapi.yaml`
 - `browser/contracts/transport.ts`
-- `browser/contracts/transport.openapi.generated.d.ts` (generated from OpenAPI)
+- `transport-rust/src/lib.rs` (public transport request/response/error models)
 
 ## Engine contract mapping (`engine-wasm/contracts/wml-engine.ts`)
 
@@ -32,18 +31,18 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `externalNavigationIntent()` | `RQ-RMK-003`, `RQ-WAE-010` |
 | `clearExternalNavigationIntent()` | `RQ-RMK-003` |
 
-## Transport API mapping (`transport-python/api/openapi.yaml`)
+## Transport mapping (`transport-rust/src/lib.rs`)
 
 | Contract Surface | Requirement IDs |
 |---|---|
-| `POST /fetch` request/response boundary | `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003` |
+| `fetch_deck` request/response boundary | `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003` |
 | `FetchRequest.url` absolute URI | `RQ-WAE-010`, `RQ-ARC-002` (if client-id headers added later) |
 | `FetchRequest.method=GET` | `RQ-TRX-001` |
 | `FetchRequest.timeoutMs`, `retries` | `RQ-TRN-007`, `RQ-TRN-011`, `RQ-TRN-012` |
 | `FetchResponse.finalUrl` | `RQ-WAE-010`, `RQ-TRN-012` |
 | `FetchResponse.contentType` | `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WMLS-011` |
 | `FetchResponse.wml` normalized output | `RQ-RMK-007`, `RQ-WAE-005` |
-| `FetchResponse.raw.bytesBase64` | `RQ-RMK-007`, `RQ-TRX-010` (gateway adaptation debug) |
+| `FetchResponse.raw.bytesBase64` | `RQ-RMK-007`, `RQ-TRX-010` (gateway adaptation diagnostics) |
 | `FetchResponse.error.code` taxonomy | `RQ-TRN-004`, `RQ-TRN-007`, `RQ-TRX-006`, `RQ-TRX-007` |
 | `FetchResponse.timingMs` | `RQ-TRN-007`, `RQ-TRN-011` |
 | `FetchResponse.engineDeckInput` | `RQ-RMK-007`, `RQ-WAE-001` |
@@ -61,11 +60,10 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `HostSessionState` runtime fields (including `navigationStatus`) | `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `HostSessionState.externalNavigationIntent` | `RQ-WAE-010`, `RQ-RMK-003` |
 
-Generation rule:
+Sync rule:
 
-- Source of truth is `transport-python/api/openapi.yaml`.
-- Generate with `pnpm run generate:transport-contract`.
-- CI drift check: `pnpm run check:transport-contract`.
+- Source of truth is the Rust transport model + Tauri command payloads.
+- `browser/contracts/transport.ts` must remain aligned with `transport-rust` response semantics and command wiring in `browser/src-tauri`.
 
 ## Known gaps to schedule
 

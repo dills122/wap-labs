@@ -13,7 +13,6 @@ Build a faithful WAP-style browser stack that:
 ## Current Architecture
 
 - Transport/API boundary (Lowband, in-process library): `transport-rust/`
-- Legacy transport sidecar/API service: `transport-python/`
 - Runtime engine (WaveNav): `engine-wasm/`
 - Host harness (quick test): `engine-wasm/host-sample/`
 - Desktop host target (Tauri shell): `browser/`

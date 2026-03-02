@@ -16,7 +16,6 @@ Breaking compatibility is acceptable at this stage when it helps move the MVP fo
 
 - `gateway-kannel/` + `docker/kannel/`: gateway behavior and environment wiring
 - `transport-rust/`: Lowband in-process transport library and WSP/WBXML translation
-- `transport-python/`: Lowband transport appliance API (legacy sidecar path)
 - `engine-wasm/`: WaveNav WML runtime, parser, layout, and WASM engine contracts
 - `browser/`: Waves Tauri desktop host harness and adapter integration
 
@@ -26,9 +25,8 @@ When a change spans multiple layers, preserve boundaries and update contracts fi
 
 Treat these as interface contracts before implementation details:
 
-- `transport-python/api/openapi.yaml`
-- `engine-wasm/contracts/wml-engine.ts`
 - `browser/contracts/transport.ts`
+- `engine-wasm/contracts/wml-engine.ts`
 
 If behavior changes, update the relevant contract and docs in the same change.
 
@@ -45,13 +43,13 @@ If behavior changes, update the relevant contract and docs in the same change.
 MUST:
 
 - keep WML deck/card semantics deterministic (navigation, focus, card transitions)
-- keep WBXML decode/encode in the transport layer (`transport-rust/` or `transport-python/`)
+- keep WBXML decode/encode in the transport layer (`transport-rust/`)
 - keep rendering and WML runtime logic in `engine-wasm/`
 - keep host window/input wiring in `browser/`
 
 MUST NOT:
 
-- move rendering logic into Python transport services
+- move rendering logic into transport services
 - add network-fetch behavior to the WASM runtime
 - parse WBXML in TypeScript/Electron adapter code
 - introduce broad cross-layer refactors unless explicitly requested
@@ -90,4 +88,3 @@ Prefer work that improves:
 
 please refer to `docs/agents/AGENT_STANDARDS.md` for a more in depth, language specific reference on standards
 and `docs/agents/RUST_STEERING.md` for Rust-specific implementation rules.
-and `docs/agents/PYTHON_STEERING.md` for Python transport implementation rules.

@@ -1,229 +1,93 @@
-# WAP/WML Browser Emulator --- Multi-Language Agent Standards & Guidelines (v2)
+# WAP/WML Browser Emulator Agent Standards (v3)
 
-**Project Codename:** Kennel\
-**Owner:** Dylan Steele\
-**Target Platform:** Unix / macOS Tooling + Tauri Host\
-**Rendering Engine:** Rust → WebAssembly\
-**API / Transport Layer:** Python\
-**Adapters / Host UI:** TypeScript
+**Project Codename:** Waves  
+**Owner:** Dylan Steele  
+**Target Platform:** Unix / macOS tooling + Tauri host  
+**Rendering Engine:** Rust (native + WebAssembly targets)  
+**Transport Layer:** Rust (`transport-rust/`)  
+**Adapters / Host UI:** TypeScript (`browser/frontend`)
 
----
+## Purpose
 
-## 🎯 Purpose
+This document defines operational standards and architectural contracts for contributors and agents working across the Waves WAP emulator stack.
 
-This document defines operational standards and architectural contracts
-for AI agents and contributors working across a **polyglot WAP 1.x
-emulator stack**:
+Primary stack layers:
 
-- 🦀 Rust (WML Rendering Engine → WASM)
-- 🐍 Python (API + Network Translation Layer)
-- 🟦 TypeScript (Browser Adapters / Harness / Samples)
-- ⚡ Tauri (Real-world Emulator Host)
-- 🧰 Unix/macOS Tooling + Build Chain
+- Rust runtime engine (`engine-wasm/engine`)
+- Rust transport library (`transport-rust`)
+- TypeScript/Tauri host adapters (`browser`)
 
-The emulator must remain:
+## Canonical Layer Responsibilities
 
-- Historically accurate to WAP 1.x networking behavior
-- Layer-isolated
-- Renderer-authentic to WML Deck/Card semantics
+- `transport-rust/`
+  - network/protocol concerns (HTTP/WAP paths, gateway adaptation)
+  - WSP/WBXML handling and payload normalization
+  - deterministic transport error taxonomy and request correlation metadata
+- `engine-wasm/`
+  - WML parsing/runtime semantics
+  - navigation/history/focus behavior
+  - render list generation
+- `browser/`
+  - host UI, input wiring, and Tauri command boundaries
+  - transport-first fetch flow and handoff to engine contracts
 
----
+## Hard Isolation Rules
 
-## 🧱 Architectural Overview
+`transport-rust` MUST NOT:
 
----
+- implement rendering/runtime semantics
+- own browser UI/session state
 
-Layer Responsibility Language Runtime
+`engine-wasm` MUST NOT:
 
----
+- perform network requests
+- parse WBXML in TS/UI boundaries
 
-WSP Gateway Session + Protocol Handling Node.js Server
+`browser` MUST NOT:
 
-Network WBXML Decode / Encode Python Service
-Translation
+- implement WML parser/runtime logic
+- bypass transport contract semantics
 
-Rendering WML Parsing + Layout Rust → WASM Browser Engine
-Engine
+## Contract-First Files
 
-Browser Input + Mounting TypeScript Host Runtime
-Adapter
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/transport.ts`
 
-Emulator Window + Device UI Tauri Desktop
-Shell
+Behavior changes that cross boundaries must update contracts and docs in the same change.
 
-Toolchain Build + Test Bash / Make Unix/macOS
+## Runtime Parity Policy
 
----
+Engine runtime behavior must stay equivalent across native Rust and WASM targets for:
 
----
+- deck load and metadata handling
+- navigation/focus behavior
+- render output
+- script invocation side effects
 
-## 🧭 Guiding Principles
+Target-specific glue is allowed only at serialization/binding boundaries.
 
-### 1. Protocol Fidelity \> Developer Convenience
+## Testing Expectations
 
-- MUST mimic WAP MTU constraints
-- MUST support Deck/Card navigation
-- MUST simulate session resume behavior
+- Add/adjust unit tests in the layer where behavior changed.
+- Add integration/E2E coverage for cross-layer flows (`fetch_deck` -> `loadDeckContext` -> render).
+- Preserve deterministic outputs for fixtures and error paths.
 
-### 2. Strict Layer Isolation
+## Security and Robustness Notes
 
-Layer MUST NOT
+- Treat host/runtime boundaries as strict IPC contracts.
+- Transport errors must remain structured and deterministic.
+- Runtime/script failures must trap without crashing host process.
 
----
-
-Python Perform rendering
-Rust/WASM Perform network requests
-TypeScript Decode WBXML
-Host Shell Parse WML
-
----
-
-## 🔌 Inter-Service Contracts
-
-All language boundaries are treated as **formal message contracts**:
-
-Interface Format Notes
-
----
-
-Python ⇄ Node Protobuf / JSON Gateway Messaging
-Python ⇄ Rust (via TS) Typed Array / IPC Deck Transfer
-WASM ⇄ TS Host Memory Buffer Render Output
-TS ⇄ Host Shell Native IPC Tauri
-
-WASM must receive:
-
-    Decoded WML Deck/Card Only
-
-Never WBXML.
-
----
-
-## 🧪 Emulator Authenticity Requirements
-
-Agents must preserve support for:
-
-- WSP (Connection-Oriented Mode)
-- WBXML → WML Decoding (Python Layer)
-- Deck/Card Navigation
-- Softkey Input Model
-- 1400 byte MTU Simulation
-- Gateway-Terminated WTLS
-
----
-
-## 🛠️ Development Guidelines
-
-### Python Layer
-
-- Async Only (aiohttp / asyncio)
-- Handles:
-  - WBXML Decode
-  - Session Translation
-  - MTU Enforcement
-- No DOM / Layout Logic
-- Detailed Python transport standards: `docs/agents/PYTHON_STEERING.md`
-
----
-
-### Rust → WASM Renderer
-
-- Stateless Rendering Engine
-- Accepts:
-  - Parsed WML Deck/Card
-- Produces:
-  - Virtual DOM Representation
-- MUST:
-  - Avoid HTTP
-  - Avoid Gateway State
-
-### Rust Multi-Target Runtime Policy
-
-- Engine runtime code must remain target-agnostic and compile for both native Rust and WASM.
-- WASM-specific conversion (`wasm-bindgen`, `JsValue`, serialization adapters) belongs only at adapter boundaries.
-- Native host integrations (for Tauri/backend use) must call the same runtime semantics and produce equivalent outputs.
-- Any behavior change in runtime APIs must be reflected in shared contracts and parity tests for both targets.
-
----
-
-### TypeScript Adapter Layer
-
-- Mounts Renderer Output
-- Handles:
-  - Navigation
-  - Input Simulation
-  - Device UI
-
----
-
-### Host Shell (Tauri)
-
-- Emulates:
-  - Viewport
-  - Softkeys
-  - Device Capabilities
-- Responsible for:
-  - Windowing
-  - Runtime IPC
-
----
-
-## 🔐 Security Notes
-
-- WTLS terminated at Gateway
-- Renderer sandboxed (WASM)
-- Python Layer validates upstream Deck responses
-
----
-
-## 📦 Versioning Strategy
-
-Layer Versioning
-
----
-
-Python Transport Date-based
-Gateway SemVer
-Renderer WASM Hash
-Adapter Layer npm SemVer
-Emulator Host Tagged Release
-
----
-
-## 🤖 Agent Behavioral Rules
+## Agent Behavioral Rules
 
 Agents MUST:
 
-- Respect language boundaries
-- Avoid HTML semantics in WML renderer
-- Validate Deck schema before render
-- Use schema-first IPC
+- preserve layer boundaries
+- prefer localized, contract-first changes
+- keep behavior deterministic and test-backed
 
 Agents MUST NOT:
 
-- Call network from WASM
-- Parse WBXML in TypeScript
-- Introduce modern DOM assumptions
-
----
-
-## 📁 Suggested Repository Structure
-
-    /gateway-node
-    /transport-python
-    /renderer-rust-wasm
-    /adapters-typescript    /browser
-    /shared-proto
-    /docs
-
----
-
-## 📜 Compliance
-
-All agents must adhere to:
-
-- Layer isolation
-- Typed IPC contracts
-- Protocol authenticity
-
-Architectural changes must be documented via ADR.
+- move network behavior into `engine-wasm`
+- move WBXML parsing into TypeScript/Tauri frontend code
+- introduce broad cross-layer refactors without explicit request
