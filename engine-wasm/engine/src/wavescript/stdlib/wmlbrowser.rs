@@ -86,10 +86,7 @@ impl<'a> WmlBrowserHost<'a> {
     }
 
     fn alert(&mut self, args: &[ScriptValue]) -> ScriptValue {
-        let message = args
-            .first()
-            .map(coerce_to_string)
-            .unwrap_or_else(String::new);
+        let message = args.first().map(coerce_to_string).unwrap_or_default();
         if message.len() > MAX_DIALOG_TEXT_BYTES {
             return ScriptValue::Invalid;
         }
@@ -99,10 +96,7 @@ impl<'a> WmlBrowserHost<'a> {
     }
 
     fn confirm(&mut self, args: &[ScriptValue]) -> ScriptValue {
-        let message = args
-            .first()
-            .map(coerce_to_string)
-            .unwrap_or_else(String::new);
+        let message = args.first().map(coerce_to_string).unwrap_or_default();
         if message.len() > MAX_DIALOG_TEXT_BYTES {
             return ScriptValue::Invalid;
         }
@@ -112,10 +106,7 @@ impl<'a> WmlBrowserHost<'a> {
     }
 
     fn prompt(&mut self, args: &[ScriptValue]) -> ScriptValue {
-        let message = args
-            .first()
-            .map(coerce_to_string)
-            .unwrap_or_else(String::new);
+        let message = args.first().map(coerce_to_string).unwrap_or_default();
         if message.len() > MAX_DIALOG_TEXT_BYTES {
             return ScriptValue::Invalid;
         }
