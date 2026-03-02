@@ -17,12 +17,11 @@
 
 body {
   margin: 0;
-  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
   color: var(--ink);
   background:
     radial-gradient(circle at 8% 12%, #dbeafe 0%, transparent 32%),
-    radial-gradient(circle at 92% 88%, #d1fae5 0%, transparent 26%),
-    var(--bg);
+    radial-gradient(circle at 92% 88%, #d1fae5 0%, transparent 26%), var(--bg);
   min-height: 100vh;
 }
 
@@ -153,8 +152,8 @@ textarea {
   background: #fff;
 }
 
-input[type="text"],
-input[type="number"] {
+input[type='text'],
+input[type='number'] {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -219,7 +218,7 @@ button:hover {
   min-height: 520px;
   padding: 14px;
   background: var(--screen);
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .line {
@@ -293,7 +292,7 @@ pre {
     grid-template-columns: 1fr 1fr;
   }
 
-  .nav-row input[type="text"] {
+  .nav-row input[type='text'] {
     grid-column: 1 / -1;
   }
 

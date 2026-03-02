@@ -1,6 +1,19 @@
 import { invoke } from '@tauri-apps/api/core';
-import type { FetchResponse as FetchDeckResponse, HostSessionState } from '../../contracts/transport';
+import type {
+  FetchResponse as FetchDeckResponse,
+  HostSessionState
+} from '../../contracts/transport';
 import './styles.css';
+import { resolveKeyboardIntent } from './app/keyboard';
+import {
+  appendTimelineEntry,
+  buildTimelineExport as buildTimelineExportPayload,
+  clearTimelineState,
+  createTimelineState,
+  type TimelineExportPayload,
+  type TimelineEntry,
+  validateTimelineExport
+} from './app/timeline';
 import { registerBrowserComponents } from './components';
 import {
   canHistoryBack,
@@ -59,17 +72,8 @@ interface EngineRuntimeSnapshot {
     | { type: 'prompt'; message: string; defaultValue?: string }
   >;
   lastScriptTimerRequests?: Array<
-    | { type: 'schedule'; delayMs: number; token?: string }
-    | { type: 'cancel'; token: string }
+    { type: 'schedule'; delayMs: number; token?: string } | { type: 'cancel'; token: string }
   >;
-}
-
-interface TimelineEntry {
-  seq: number;
-  action: string;
-  phase: 'start' | 'ok' | 'error' | 'state';
-  session: HostSessionState;
-  details?: Record<string, unknown>;
 }
 
 type NavSource = 'user' | 'external-intent' | 'history-back';
@@ -130,7 +134,9 @@ app.innerHTML = `
           Viewport Cols
           <input id="viewport-cols" type="number" value="20" min="1" />
         </label>
-        <wv-status-panel id="status"></wv-status-panel>
+        <wv-surface-panel heading="Status">
+          <wv-status-panel id="status"></wv-status-panel>
+        </wv-surface-panel>
 
         <details id="dev-drawer" class="dev-drawer">
           <summary>Developer Tools</summary>
@@ -208,13 +214,12 @@ let hostSessionState: HostSessionState = {
   requestedUrl: fetchUrlInput.value
 };
 const hostHistory = createHostHistoryState();
-let timelineSeq = 0;
-const timelineEntries: TimelineEntry[] = [];
+let timelineState = createTimelineState();
 
 const cloneSessionState = (): HostSessionState => ({ ...hostSessionState });
 
 const renderTimeline = (): void => {
-  timelineEl.textContent = JSON.stringify(timelineEntries, null, 2);
+  timelineEl.textContent = JSON.stringify(timelineState.entries, null, 2);
 };
 
 const recordTimeline = (
@@ -222,24 +227,20 @@ const recordTimeline = (
   phase: TimelineEntry['phase'],
   details?: Record<string, unknown>
 ): void => {
-  timelineSeq += 1;
-  timelineEntries.push({
-    seq: timelineSeq,
+  timelineState = appendTimelineEntry(
+    timelineState,
+    MAX_TIMELINE_EVENTS,
     action,
     phase,
-    session: cloneSessionState(),
-    ...(details ? { details } : {})
-  });
-  if (timelineEntries.length > MAX_TIMELINE_EVENTS) {
-    timelineEntries.splice(0, timelineEntries.length - MAX_TIMELINE_EVENTS);
-  }
+    cloneSessionState(),
+    details
+  );
   uiEvents.emit('timeline', { action, phase });
   renderTimeline();
 };
 
 const clearTimeline = (): void => {
-  timelineEntries.length = 0;
-  timelineSeq = 0;
+  timelineState = clearTimelineState();
   renderTimeline();
 };
 
@@ -308,7 +309,9 @@ const drawRenderList = (renderList: RenderList): void => {
     .sort((a, b) => a[0] - b[0])
     .map(([, chunks]) => chunks.join(' '));
 
-  viewportEl.innerHTML = lines.map((line) => `<div class="line">${escapeHtml(line)}</div>`).join('');
+  viewportEl.innerHTML = lines
+    .map((line) => `<div class="line">${escapeHtml(line)}</div>`)
+    .join('');
 };
 
 const escapeHtml = (input: string): string =>
@@ -319,42 +322,8 @@ const escapeHtml = (input: string): string =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const buildTimelineExport = (): Record<string, unknown> => ({
-  schemaVersion: 1,
-  timelineLength: timelineEntries.length,
-  latestSessionState: cloneSessionState(),
-  timeline: timelineEntries.map((entry) => ({
-    seq: entry.seq,
-    action: entry.action,
-    phase: entry.phase,
-    session: entry.session,
-    ...(entry.details ? { details: entry.details } : {})
-  }))
-});
-
-const validateTimelineExport = (payload: Record<string, unknown>): void => {
-  const timeline = payload.timeline;
-  if (!Array.isArray(timeline) || timeline.length === 0) {
-    throw new Error('Timeline export requires at least one event.');
-  }
-  const hasState = timeline.some(
-    (entry) =>
-      typeof entry === 'object' &&
-      entry !== null &&
-      'phase' in entry &&
-      (entry as { phase: string }).phase === 'state'
-  );
-  const hasAction = timeline.some(
-    (entry) =>
-      typeof entry === 'object' &&
-      entry !== null &&
-      'phase' in entry &&
-      (entry as { phase: string }).phase !== 'state'
-  );
-  if (!hasState || !hasAction) {
-    throw new Error('Timeline export must contain both action and state chronology.');
-  }
-};
+const buildTimelineExport = (): TimelineExportPayload =>
+  buildTimelineExportPayload(timelineState.entries, cloneSessionState());
 
 const exportTimeline = (): void => {
   const payload = buildTimelineExport();
@@ -451,7 +420,8 @@ const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> =
   const before = await invoke<EngineRuntimeSnapshot>('engine_snapshot');
   const after = await applyNavigateBack();
   const engineHandled =
-    before.activeCardId !== after.activeCardId || before.focusedLinkIndex !== after.focusedLinkIndex;
+    before.activeCardId !== after.activeCardId ||
+    before.focusedLinkIndex !== after.focusedLinkIndex;
   if (engineHandled) {
     return 'engine';
   }
@@ -673,7 +643,8 @@ document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.addEventListener(
 document.querySelector<HTMLButtonElement>('#btn-reload')?.addEventListener(
   'click',
   withAction('reload', async () => {
-    const reloadUrl = hostSessionState.finalUrl ?? hostSessionState.requestedUrl ?? fetchUrlInput.value;
+    const reloadUrl =
+      hostSessionState.finalUrl ?? hostSessionState.requestedUrl ?? fetchUrlInput.value;
     fetchUrlInput.value = reloadUrl;
     await loadTransportUrl(reloadUrl, 'user', true, false);
   })
@@ -746,7 +717,7 @@ document.querySelector<HTMLButtonElement>('#btn-clear-intent')?.addEventListener
 document.querySelector<HTMLButtonElement>('#btn-export-timeline')?.addEventListener(
   'click',
   withAction('export-timeline', async () => {
-    if (timelineEntries.length === 0) {
+    if (timelineState.entries.length === 0) {
       throw new Error('No timeline events to export yet.');
     }
     exportTimeline();
@@ -763,46 +734,33 @@ document.querySelector<HTMLButtonElement>('#btn-clear-timeline')?.addEventListen
 );
 
 window.addEventListener('keydown', (event) => {
-  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'd') {
-    event.preventDefault();
+  const intent = resolveKeyboardIntent(
+    event.key,
+    event.ctrlKey,
+    event.shiftKey,
+    isTextEntryTarget(event.target)
+  );
+
+  if (intent.type === 'none') {
+    return;
+  }
+  event.preventDefault();
+
+  if (intent.type === 'toggle-dev-tools') {
     devDrawerEl.open = !devDrawerEl.open;
     setStatus(devDrawerEl.open ? 'Developer tools opened.' : 'Developer tools hidden.');
     return;
   }
 
-  if (isTextEntryTarget(event.target)) {
-    return;
-  }
-
-  if (event.key === 'ArrowUp') {
-    event.preventDefault();
-    void withAction('keyboard-up', async () => {
-      await applyEngineKey('up');
-      setStatus('Keyboard: up');
+  if (intent.type === 'engine-key') {
+    void withAction(`keyboard-${intent.key}`, async () => {
+      await applyEngineKey(intent.key);
+      setStatus(`Keyboard: ${intent.key}`);
     })();
     return;
   }
 
-  if (event.key === 'ArrowDown') {
-    event.preventDefault();
-    void withAction('keyboard-down', async () => {
-      await applyEngineKey('down');
-      setStatus('Keyboard: down');
-    })();
-    return;
-  }
-
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    void withAction('keyboard-enter', async () => {
-      await applyEngineKey('enter');
-      setStatus('Keyboard: enter');
-    })();
-    return;
-  }
-
-  if (event.key === 'Backspace') {
-    event.preventDefault();
+  if (intent.type === 'navigate-back') {
     void withAction('keyboard-backspace', async () => {
       const mode = await navigateBackWithFallback();
       if (mode === 'engine') {

@@ -33,5 +33,4 @@ export const inferStatusTone = (message: string): StatusTone => {
   return 'idle';
 };
 
-export const statusClassName = (tone: StatusTone): string =>
-  clsx('status', `status-${tone}`);
+export const statusClassName = (tone: StatusTone): string => clsx('status', `status-${tone}`);

@@ -43,8 +43,14 @@ export class WvStatusPanel extends LitElement {
     }
   `;
 
-  accessor message = '';
-  accessor tone: StatusTone = 'idle';
+  declare message: string;
+  declare tone: StatusTone;
+
+  constructor() {
+    super();
+    this.message = '';
+    this.tone = 'idle';
+  }
 
   setStatus(message: string, tone: StatusTone): void {
     this.message = message;
