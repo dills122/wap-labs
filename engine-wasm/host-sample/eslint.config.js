@@ -1,6 +1,7 @@
 import { createTsLintConfig } from '../../eslint.shared.mjs';
 
 export default createTsLintConfig({
-  files: ['src/**/*.ts'],
-  env: 'browser'
+  files: ['**/*.ts'],
+  ignores: ['dist/**', 'node_modules/**', '.generated/**'],
+  env: 'mixed'
 });

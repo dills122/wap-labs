@@ -13,8 +13,21 @@
   "packageManager": "pnpm@10.23.0",
   "scripts": {
     "lint:node": "pnpm -r --if-present run lint",
+    "format:node": "pnpm -r --if-present run format",
+    "format:check:node": "pnpm -r --if-present run format:check",
     "test:node": "pnpm -r --if-present run test",
     "build:node": "pnpm -r --if-present run build",
     "typecheck:node": "pnpm -r --if-present run typecheck"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "^5.9.3",
+      "vite": "^7.3.1",
+      "eslint": "^10.0.2",
+      "@typescript-eslint/eslint-plugin": "^8.56.1",
+      "@typescript-eslint/parser": "^8.56.1",
+      "prettier": "^3.8.1",
+      "globals": "^17.4.0"
+    }
   }
 }
