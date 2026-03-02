@@ -1,0 +1,11 @@
+name = "WAP gateway base misconfiguration"
+description = "Map invalid gateway base configuration to deterministic transport unavailable response."
+work_items = ["T0-03", "T0-02"]
+spec_items = ["RQ-TRN-012", "RQ-TRN-007"]
+testing_ac = [
+  "Given wap:// URL and invalid GATEWAY_HTTP_BASE, fetch_deck_in_process returns TRANSPORT_UNAVAILABLE.",
+  "Response keeps status=0 and text/plain content type for host error handling.",
+]
+
+[env]
+GATEWAY_HTTP_BASE = "not-a-url"

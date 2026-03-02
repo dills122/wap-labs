@@ -40,9 +40,9 @@ Legend:
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
-| `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `planned` | transport unit/integration test suite (to be added in transport-python implementation phase) |
+| `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `partial` | transport-rust unit tests + fixture harness scenarios under `transport-rust/tests/fixtures/transport/` |
 | `RQ-TRN-005..009` WTP semantics and SIN overlays | `planned` | protocol-level tests/fuzz fixtures (planned) |
-| `RQ-TRN-010..015` WSP/session/method/capability behavior | `planned` | parser/session integration tests (planned) |
+| `RQ-TRN-010..015` WSP/session/method/capability behavior | `partial` | transport-rust request validation/gateway mapping tests + fixture harness |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
 
 ## Browser host (`browser`)

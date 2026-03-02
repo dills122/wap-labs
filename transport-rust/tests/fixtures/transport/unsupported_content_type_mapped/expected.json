@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 200,
+  "finalUrl": "http://request.example/index.wml",
+  "contentType": "application/json",
+  "errorCode": "UNSUPPORTED_CONTENT_TYPE"
+}

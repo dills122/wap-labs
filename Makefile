@@ -10,7 +10,7 @@ RUST_FUNCTION_COVERAGE_MIN ?= 85
 	fmt lint test test-fast ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
 	lint-rust lint-rust-engine lint-rust-transport lint-node lint-python \
-	test-rust test-rust-engine test-rust-transport test-node test-python \
+	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node test-python \
 	check-transport-contract \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
@@ -130,6 +130,16 @@ test-rust-transport:
 		cd transport-rust && RUST_TEST_THREADS=1 cargo test -- --test-threads=1; \
 	else \
 		echo "skip: cargo not found (transport-rust tests)"; \
+	fi
+
+test-transport-fixtures:
+	@if command -v cargo >/dev/null 2>&1; then \
+		echo "==> cargo test --test fixture_harness (transport-rust)"; \
+		(cd transport-rust && cargo test --test fixture_harness -- --test-threads=1); \
+		echo "==> cargo test transport_fixture_mapped_ (transport-rust)"; \
+		(cd transport-rust && cargo test transport_fixture_mapped_ -- --test-threads=1); \
+	else \
+		echo "skip: cargo not found (transport fixture tests)"; \
 	fi
 
 coverage-rust-transport:

@@ -1,0 +1,6 @@
+{
+  "url": "http://example.test/home.wml",
+  "method": "POST",
+  "timeoutMs": 500,
+  "retries": 0
+}

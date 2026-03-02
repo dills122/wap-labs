@@ -1,0 +1,11 @@
+{
+  "status": 502,
+  "isWapScheme": false,
+  "requestUrl": "http://request.example/index.wml",
+  "upstreamUrl": "http://upstream.example/index.wml",
+  "finalUrl": "http://request.example/index.wml",
+  "contentType": "text/plain",
+  "body": "upstream fail",
+  "attempt": 2,
+  "elapsedMs": 9.1
+}
