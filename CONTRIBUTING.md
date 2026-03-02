@@ -93,6 +93,7 @@ WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
 - CI runs in GitHub Actions:
   - `.github/workflows/ci.yml` (required PR/push checks)
   - `.github/workflows/transport-wap-smoke.yml` (manual WAP smoke against Kannel stack)
+- Branch protection required-check policy: `docs/ci/REQUIRED_CHECKS.md`
 - Some layer checks are intentionally disabled until those layers are bootstrapped:
   - `electron-app` lint/test/build
   - Node package lint/test scripts where not yet defined
