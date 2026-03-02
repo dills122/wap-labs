@@ -89,12 +89,29 @@ Status: Active
 
 ## Open coverage gaps
 
-1. Contract-level requirement mapping
+0. WAP-191 full-stack conformance closure (`WML-01..75`)
+- Status: in progress (planned execution lane created)
+- Deliverables:
+  - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
+  - Phase R tickets in `docs/waves/WORK_ITEMS.md` (`R0-01`..`R0-08`)
+
+1. WMLScript bedrock conformance closure (`WAP-193_101` + `WAP-194/194_103`)
+- Status: in progress (active implementation, bedrock-first closure lane added)
+- Deliverables:
+  - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md` (active baseline + bedrock priority groups)
+  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-05`)
+- Priority closure focus:
+  - bytecode structural verification gates
+  - external-call/pragma/access-control conformance
+  - content-type routing for WMLScript payloads
+  - core function/local/conversion/error semantics
+
+2. Contract-level requirement mapping
 - Status: complete
 - Deliverable:
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 
-2. AC-to-test inventory
+3. AC-to-test inventory
 - Status: complete (initial matrix)
 - Deliverable:
   - `docs/waves/SPEC_TEST_COVERAGE.md`

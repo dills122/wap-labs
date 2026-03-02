@@ -138,3 +138,6 @@ Legend:
 ## Notes
 
 - This traceability pass is derived from direct local-spec review plus existing deep extraction notes in `docs/wml-engine/source-material-review.md`.
+- Full WAP-191 implementation-gap and execution planning follow-up is tracked in:
+  - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
+  - Phase R tickets in `docs/waves/WORK_ITEMS.md`

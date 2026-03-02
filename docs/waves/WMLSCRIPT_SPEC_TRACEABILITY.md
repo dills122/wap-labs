@@ -1,7 +1,7 @@
 # Waves WMLScript Spec Traceability
 
 Version: v0.1  
-Status: Planning baseline (implementation not started)
+Status: Active implementation baseline (incremental conformance closure)
 
 ## Purpose
 
@@ -19,6 +19,25 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 1. Use `WAP-193_101` as the primary WMLScript core baseline (same core content, updated SCR formatting and split encoder/interpreter IDs).
 2. Use `WAP-194` as the standard library baseline.
 3. Apply `WAP-194_103` on top of `WAP-194` for immediate-refresh conformance clarification (section 11.7 / SCR addition).
+
+## Compliance target and prioritization
+
+- Target: achieve and maintain approximately `90-95%` practical WMLScript/WMLSL conformance for in-scope Waves runtime behavior.
+- Strategy: close bedrock compliance gaps first, then broaden library/function coverage.
+- Bedrock-first requirement groups:
+  - `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003` (external callable model, pragmas, URL/script invocation ownership)
+  - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006` (function semantics, locals/initialization, conversion/type behavior)
+  - `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010` (bytecode structure verification and trap model)
+  - `RQ-WMLS-011` (WMLScript content-type routing/handoff)
+- Full closure of optional/profile-gated items (`O`) remains explicitly staged behind mandatory (`M`) bedrock behavior.
+
+## Current implementation posture
+
+- Waves has active WaveScript/WMLScript runtime implementation in `engine-wasm/engine/src/wavescript/*`.
+- Existing implementation is a conformance progression baseline, not yet full section `9/10/11` binary-format parity.
+- Work-plan source of truth for closure sequencing:
+  - `docs/waves/WORK_ITEMS.md` (`Phase W`, `Phase W1`)
+  - `docs/waves/SPEC_TEST_COVERAGE.md`
 
 ## Requirement matrix
 

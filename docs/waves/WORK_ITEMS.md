@@ -80,6 +80,12 @@ This board was prepared before implementation kickoff. Keep ticket statuses curr
 7. `Accept`
 8. `Spec`: requirement IDs + section refs/SCR IDs from relevant `docs/waves/*TRACEABILITY*.md` docs
 
+## Ticket Lifecycle Guardrail
+
+- Completed (`done`) tickets remain immutable historical records.
+- If a later compliance audit finds a gap in a completed area, add a new follow-up ticket that references the completed ticket in `Depends On` and notes.
+- Do not rewrite ticket history by changing completed items back to active statuses.
+
 ## Initial Backlog (Prepared)
 
 These were the first tickets prepared before Waves browser implementation started.
@@ -338,12 +344,94 @@ These were the first tickets prepared before Waves browser implementation starte
 7. `Spec`:
 - `RQ-TRN-007`, `RQ-TRN-011`, `RQ-TRN-012`, `RQ-TRX-006`, `RQ-TRX-007`
 
-## Phase W: WMLScript Runtime and VM (Prepared)
+### T0-04 Cache/reload and `go` request-policy conformance follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-02`, `A5-02`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `browser/contracts/transport.ts`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/src-tauri/src/lib.rs`
+4. `Build`:
+- Add request-policy plumbing for WML task metadata (`cache-control`, method/post context, referer policy).
+- Ensure `cache-control=no-cache` reload intent reaches transport deterministically.
+5. `Tests`:
+- Fixture tests for no-cache reload, same-deck suppression behavior, and deterministic request metadata mapping.
+6. `Accept`:
+- Transport behavior reflects runtime task metadata without host-side semantic drift.
+7. `Spec`:
+- `RQ-RMK-008`, `RQ-WAE-008`, `RQ-WAE-016`
+8. `Notes`:
+- Additive follow-up linked to completed normalization baseline (`T0-02`).
+
+### T0-05 UA capability header conformance follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-01`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `browser/src-tauri/src/lib.rs`
+- `browser/contracts/transport.ts`
+4. `Build`:
+- Add profile-gated emission path for `Accept`, `Accept-Charset`, `Accept-Encoding`, and `Accept-Language`.
+- Keep defaults deterministic and explicit when capability advertising is disabled.
+5. `Tests`:
+- Integration tests asserting emitted headers and deterministic fallback behavior.
+6. `Accept`:
+- Capability advertisement behavior is explicit, test-backed, and contract-documented.
+7. `Spec`:
+- `RQ-WAE-013`, `RQ-WAE-001`
+
+### T0-06 URI length and charset boundary conformance follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-02`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Add deterministic handling/tests for 1024-octet URI boundaries and UTF-8/UTF-16 encoding paths.
+5. `Tests`:
+- Boundary fixtures for URI length, UTF-16 decode success, and deterministic encoding failure mapping.
+6. `Accept`:
+- URI/encoding behavior meets WAE baseline and remains regression-protected.
+7. `Spec`:
+- `RQ-WAE-010`, `RQ-WAE-012`
+
+### T0-07 WBXML token/literal compatibility conformance follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-02`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Add compatibility checks covering WBXML literal-vs-token decoding paths and section-6.1 tokenisation expectations at boundary level.
+5. `Tests`:
+- Fixture matrix for literal token values, binary token values, and deterministic decode failure classification.
+6. `Accept`:
+- WBXML boundary behavior is conformance-backed beyond decode happy-path checks.
+7. `Spec`:
+- `RQ-RMK-007`, `RQ-WAE-005`
+
+## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:
 
 - `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+
+Compliance target for this lane:
+
+- Drive Waves toward `~90-95%` practical WMLScript/WMLSL conformance for in-scope runtime behavior.
+- Prioritize bedrock compliance closure before breadth-library expansion:
+  - external-call/pragma/url invocation correctness
+  - bytecode structure verification gates
+  - deterministic function/local/conversion/error semantics
+  - script content-type routing/handoff correctness
 
 ### W0-01 WMLScript integration contract and action model
 
@@ -432,7 +520,7 @@ Reference architecture:
 6. `Accept`:
 - Script can mutate vars, trigger deterministic navigation intent, and apply card refresh behavior consistently after variable updates.
 7. `Spec`:
-- `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
+- `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`
 8. `Architecture Compliance`:
 - [x] `WMLBrowser` state mutation remains in engine runtime state.
 - [x] Host is not responsible for navigation decision logic.
@@ -462,6 +550,313 @@ Reference architecture:
 - [ ] Dialog/timer features are host capability calls only.
 - [ ] Timer semantics remain runtime-owned and deterministic.
 - [ ] Host integration cannot bypass runtime error/trap handling model.
+
+### W0-06 Bytecode verification gates follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-02`
+3. `Files`:
+- `engine-wasm/engine/src/wavescript/decoder.rs`
+- `engine-wasm/engine/src/wavescript/vm.rs`
+- `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Implement structural verification gates (header/pools/index/jump-target validity) before VM execution.
+5. `Tests`:
+- Verification-failure fixtures for malformed pools, invalid branch targets, and out-of-range references.
+6. `Accept`:
+- Decoder rejects structurally invalid units before interpreter execution begins.
+7. `Spec`:
+- `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+8. `Notes`:
+- Additive compliance follow-up to completed decoder skeleton (`W0-02`).
+
+### W0-07 `newContext` + `getCurrentCard` semantics follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-04`
+3. `Files`:
+- `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/contracts/wml-engine.ts`
+4. `Build`:
+- Implement `WMLBrowser.newContext` and `WMLBrowser.getCurrentCard` behavior per spec.
+- Ensure interaction with pending `go`/`prev` requests is deterministic and spec-aligned.
+5. `Tests`:
+- Invocation fixtures for context reset semantics and current-card URL formatting (relative vs absolute).
+6. `Accept`:
+- Missing context APIs are present and behaviorally aligned with WMLScript library semantics.
+7. `Spec`:
+- `RQ-WMLS-019`, `RQ-WMLS-020`
+8. `Notes`:
+- Additive compliance follow-up to completed var/nav subset (`W0-04`).
+
+### W0-08 External function access-control conformance follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-01`, `W0-04`
+3. `Files`:
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/engine/src/wavescript/*`
+- `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Enforce external-call constraints (`extern` visibility, access pragma checks, deterministic call failure categories).
+5. `Tests`:
+- Resolver fixtures for allowed/denied domain/path calls and non-extern function rejection.
+6. `Accept`:
+- External script invocation semantics include conformance access checks before execution.
+7. `Spec`:
+- `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`
+
+## Phase W1: Bedrock Compliance Closure (Priority Lane)
+
+### W1-01 Script content-type routing and ownership boundaries
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-01`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `browser/contracts/transport.ts`
+- `browser/src-tauri/src/lib.rs`
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+4. `Build`:
+- Add explicit transport/host handling policy for:
+  - `text/vnd.wap.wmlscript`
+  - `application/vnd.wap.wmlscriptc`
+- Keep boundary ownership explicit: transport classification + runtime execution handoff; no host-side script semantic execution.
+5. `Tests`:
+- Fixture matrix for both content types and deterministic unsupported/error mappings.
+6. `Accept`:
+- Script media types are routed deterministically and reflected in contract/docs.
+7. `Spec`:
+- `RQ-WMLS-011`
+
+### W1-02 Bytecode structural verification (header/pools/indexes/jumps)
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-06`
+3. `Files`:
+- `engine-wasm/engine/src/wavescript/decoder.rs`
+- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/lib.rs`
+4. `Build`:
+- Implement pre-execution verification gates for bytecode structure and references.
+- Keep trap taxonomy deterministic and host-safe.
+5. `Tests`:
+- Malformed fixture set covering invalid section sizes, pool references, function boundaries, and jump targets.
+6. `Accept`:
+- Invalid bytecode fails before execution, with deterministic trap class.
+7. `Spec`:
+- `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+
+### W1-03 Extern/pragma/access-control conformance
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-08`
+3. `Files`:
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/engine/src/wavescript/*`
+- `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Enforce `extern` visibility and pragma-based external access control (`use url`, `use access`, `use meta`) for external invocation paths.
+5. `Tests`:
+- Allowed/denied call fixtures and non-extern rejection fixtures with deterministic outcomes.
+6. `Accept`:
+- External invocation behavior is policy-complete and spec-linked.
+7. `Spec`:
+- `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`
+
+### W1-04 Function/local/return and conversion semantics parity closure
+
+1. `Status`: `todo`
+2. `Depends On`: `W0-03`
+3. `Files`:
+- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/value.rs`
+- `engine-wasm/engine/src/wavescript/stdlib/*`
+4. `Build`:
+- Close gaps against spec semantics for arity, pass-by-value, implicit return value, local initialization, and conversion behavior.
+5. `Tests`:
+- Deterministic conformance fixtures mapped to requirement IDs in `docs/waves/SPEC_TEST_COVERAGE.md`.
+6. `Accept`:
+- Function/call/conversion semantics are deterministic and spec-aligned for mandatory coverage scope.
+7. `Spec`:
+- `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`
+
+### W1-05 SCR conformance matrix and CI guardrail for WMLScript lane
+
+1. `Status`: `todo`
+2. `Depends On`: `W1-02`, `W1-03`, `W1-04`
+3. `Files`:
+- `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `.github/workflows/*`
+4. `Build`:
+- Add machine-checkable mapping for mandatory SCRs (`WMLS-C-*`, `WMLSSL-*`) to implemented tests/status.
+- Fail CI when mandatory SCRs are unmapped or regress to untracked.
+5. `Tests`:
+- CI dry-run with one intentionally unmapped mandatory SCR.
+6. `Accept`:
+- Bedrock WMLScript compliance cannot silently drift.
+7. `Spec`:
+- `RQ-WMLS-001..022` (mandatory subsets first)
+
+## Phase R: WAP-191 Full-Stack Conformance Completion
+
+Reference:
+
+- `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
+- `docs/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
+
+### R0-01 WML-191 conformance matrix and CI gate
+
+1. `Status`: `todo`
+2. `Depends On`: `S0-14`
+3. `Files`:
+- `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+- `.github/workflows/*`
+4. `Build`:
+- Create a machine-checkable WML-191 conformance matrix (`WML-01..WML-75`) with status + test mapping.
+- Add CI guardrail that fails when mandatory items are unmapped.
+5. `Tests`:
+- CI dry-run with one intentionally unmapped mandatory ID.
+6. `Accept`:
+- Mandatory WML IDs cannot silently regress to unmapped/untracked state.
+7. `Spec`:
+- `WAP-191` section `15.1` through `15.4`
+
+### R0-02 Inter-card navigation process-order conformance
+
+1. `Status`: `todo`
+2. `Depends On`: `A5-02`, `T0-04`
+3. `Files`:
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/engine/src/runtime/*`
+- `transport-rust/src/lib.rs`
+- `browser/frontend/src/session-history.ts`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Implement and verify section `12.5` step-order behavior for `go`, `prev`, `noop`, `refresh`, including deterministic task-failure handling.
+- Ensure request metadata handoff (method/postfield/headers) stays aligned between runtime and transport.
+5. `Tests`:
+- Cross-layer fixtures for forward/back/refresh/error paths with trace assertions.
+6. `Accept`:
+- Runtime and host behavior match documented WML process ordering for covered flows.
+7. `Spec`:
+- `WML-18`, section `9.5`, section `12.5`
+
+### R0-03 History/context fidelity completion
+
+1. `Status`: `todo`
+2. `Depends On`: `A5-01`, `B2-02`
+3. `Files`:
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/frontend/src/session-history.ts`
+4. `Build`:
+- Expand history entries to include request identity fields needed by WML history semantics.
+- Complete `newcontext` and context-reset behavior across runtime and browser history integration.
+5. `Tests`:
+- Deterministic back-stack fixtures with repeated URLs, mixed transitions, and context resets.
+6. `Accept`:
+- History and context behavior is deterministic and conforms to section `9.2` + `10.2`.
+7. `Spec`:
+- `WML-07`, `WML-10`, `WML-11`, `WML-13`
+
+### R0-04 Parser semantic completeness for structure/task/form elements
+
+1. `Status`: `todo`
+2. `Depends On`: `M1-07`
+3. `Files`:
+- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/tests/fixtures/*`
+- `docs/wml-engine/work-items.md`
+4. `Build`:
+- Complete parser/runtime coverage for `head/template/access/meta`, `do/onevent`, `select/option/optgroup/input/fieldset`, `timer`, and associated validity constraints.
+- Keep deterministic failure behavior for invalid bindings/conflicts.
+5. `Tests`:
+- Fixture matrix for element parse/validation and runtime effects.
+6. `Accept`:
+- Core WML element families in section `11` are represented or explicitly profile-gated.
+7. `Spec`:
+- `WML-21`, `WML-25`, `WML-26`, `WML-33`, `WML-34`, `WML-39`, `WML-40`, `WML-41`, `WML-43`, `WML-47`, `WML-48`, `WML-52`, `WML-53`, `WML-66`, `WML-67`, `WML-69`
+
+### R0-05 Renderer semantics completion (`11.8`/`11.9`)
+
+1. `Status`: `todo`
+2. `Depends On`: `B5-02`, `B5-03`, `C5-01`, `C5-02`
+3. `Files`:
+- `engine-wasm/engine/src/layout/*`
+- `engine-wasm/engine/src/render/*`
+- `engine-wasm/engine/tests/fixtures/*`
+4. `Build`:
+- Close remaining text/paragraph/table/pre/image semantic gaps and maintain deterministic render output.
+- Preserve logical focus semantics under wrap and inline break behavior.
+5. `Tests`:
+- Snapshot and semantic fixtures across viewport widths and mixed markup.
+6. `Accept`:
+- Renderer behavior aligns with section `11.8` and `11.9` requirements for implemented profiles.
+7. `Spec`:
+- `WML-24`, `WML-32`, `WML-36`, `WML-46`, `WML-49`, `WML-50`, `WML-54..59`, `WML-68`, `WML-73`, `WML-75`
+
+### R0-06 Transport/request-policy and postfield plumbing
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-04`, `R0-02`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `browser/contracts/transport.ts`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/src-tauri/src/lib.rs`
+4. `Build`:
+- Add runtime-to-transport request-policy channel for task metadata (`cache-control`, referer policy, postfield payload context).
+- Preserve boundary ownership: transport executes requests, runtime defines semantic intent.
+5. `Tests`:
+- End-to-end request-shape fixtures for form submit and refresh/no-cache scenarios.
+6. `Accept`:
+- Request metadata semantics are deterministic and traceable to runtime task state.
+7. `Spec`:
+- `WML-29`, `WML-37`, `WML-52`, section `9.5.1`, section `12.5`
+
+### R0-07 Browser policy path: access control, low-memory, unknown-DTD behavior
+
+1. `Status`: `todo`
+2. `Depends On`: `R0-04`
+3. `Files`:
+- `browser/frontend/src/*`
+- `browser/src-tauri/src/*`
+- `engine-wasm/contracts/wml-engine.ts`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Implement policy-consistent handling for deck access-control metadata, low-memory behavior toggles, and unknown-DTD handling strategy.
+- Keep enforcement at host boundary where required by architecture constraints.
+5. `Tests`:
+- Policy fixtures and integration tests for allow/deny paths and deterministic error/reporting behavior.
+6. `Accept`:
+- Browser host has explicit, test-backed policy behavior for sections `12.1`-`12.4`.
+7. `Spec`:
+- `WML-14`, `WML-15`, `WML-16`, `WML-17`
+
+### R0-08 WML encoder/validation tooling and WBXML conformance fixtures
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-07`
+3. `Files`:
+- `transport-rust/tests/fixtures/transport/*`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Add tooling/fixtures that validate WML token table expectations, XML well-formed/validation gates, and server/client conformance constraints.
+- Keep ownership explicit where behavior is authoring/tooling vs runtime-execution.
+5. `Tests`:
+- Fixture matrix for valid/invalid tokenization and decode compatibility classes.
+6. `Accept`:
+- Section `14` and `15.2/15.3/15.4` obligations are concretely represented in testable artifacts.
+7. `Spec`:
+- `WML-60`, `WML-61`, `WML-62`, `WML-63`, `WML-64`, `WML-65`, `WML-70`
 
 ## Phase S: Source-Material Deep Audit (Prepared)
 

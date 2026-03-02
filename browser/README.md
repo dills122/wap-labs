@@ -76,8 +76,9 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 1. Execute `M1-01`: contract-source unification in browser host/frontend (remove local type duplication and import shared contracts).
 2. Execute `M1-05`: add automated browser navigation state-machine checks (load transitions, external intent loop, hybrid back).
-3. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
-4. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
+3. Execute cross-layer compliance follow-up integration tickets from `docs/waves/WORK_ITEMS.md`: `T0-04` and `T0-05` (request-policy + UA capability header flow wiring).
+4. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
+5. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
 
 ## Planning + Traceability
 
@@ -99,3 +100,5 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [ ] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
 - [ ] Add browser-side automated regression checks for navigation state machine (`M1-05`)
 - [ ] Decompose browser high-churn files into boundary modules (`M1-08`)
+- [ ] Wire cache/reload and request-policy metadata from runtime to transport flow (`T0-04`)
+- [ ] Wire profile-gated UA capability header controls in host flow (`T0-05`)
