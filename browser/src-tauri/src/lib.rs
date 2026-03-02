@@ -2,6 +2,7 @@ use lowband_transport_rust::{
     fetch_deck_in_process, preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse,
 };
 use serde::{Deserialize, Serialize};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
 use tauri::path::BaseDirectory;
 use tauri::Manager;
@@ -202,8 +203,15 @@ fn preflight_wbxml_decoder_available() -> Result<(), String> {
 }
 
 #[tauri::command]
-fn fetch_deck(_state: State<AppState>, request: FetchDeckRequest) -> FetchDeckResponse {
+fn fetch_deck(_state: State<AppState>, mut request: FetchDeckRequest) -> FetchDeckResponse {
+    request.request_id = Some(next_request_id());
     fetch_deck_in_process(request)
+}
+
+fn next_request_id() -> String {
+    static REQUEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
+    let seq = REQUEST_SEQUENCE.fetch_add(1, Ordering::Relaxed);
+    format!("waves-fetch-{seq}")
 }
 
 #[tauri::command]
@@ -309,6 +317,7 @@ mod tests {
         apply_load_deck_context, apply_navigate_back, apply_render, apply_set_viewport_cols,
         HandleKeyRequest, LoadDeckContextRequest,
     };
+    use lowband_transport_rust::{EngineDeckInputPayload, FetchDeckResponse, FetchTiming};
     use wavenav_engine::{DrawCmd, WmlEngine};
 
     const BASIC_NAV_WML: &str = r##"
@@ -330,6 +339,61 @@ mod tests {
       </card>
     </wml>
     "##;
+
+    fn mock_fetch_ok(url: &str, content_type: &str, wml: &str) -> FetchDeckResponse {
+        FetchDeckResponse {
+            ok: true,
+            status: 200,
+            final_url: url.to_string(),
+            content_type: content_type.to_string(),
+            wml: Some(wml.to_string()),
+            error: None,
+            timing_ms: FetchTiming {
+                encode: 0.0,
+                udp_rtt: 1.0,
+                decode: 0.0,
+            },
+            engine_deck_input: Some(EngineDeckInputPayload {
+                wml_xml: wml.to_string(),
+                base_url: url.to_string(),
+                content_type: content_type.to_string(),
+                raw_bytes_base64: None,
+            }),
+        }
+    }
+
+    fn load_transport_response_into_engine(
+        engine: &mut WmlEngine,
+        transport: FetchDeckResponse,
+    ) -> Result<super::EngineRuntimeSnapshot, String> {
+        if !transport.ok {
+            return Err("transport response is not ok".to_string());
+        }
+        let deck = transport
+            .engine_deck_input
+            .ok_or_else(|| "missing engineDeckInput".to_string())?;
+        apply_load_deck_context(
+            engine,
+            LoadDeckContextRequest {
+                wml_xml: deck.wml_xml,
+                base_url: deck.base_url,
+                content_type: deck.content_type,
+                raw_bytes_base64: deck.raw_bytes_base64,
+            },
+        )
+    }
+
+    fn assert_render_contains(engine: &WmlEngine, expected_text: &str) {
+        let render = apply_render(engine).expect("render should succeed");
+        let contains = render.draw.iter().any(|cmd| match cmd {
+            DrawCmd::Text { text, .. } => text.contains(expected_text),
+            DrawCmd::Link { text, .. } => text.contains(expected_text),
+        });
+        assert!(
+            contains,
+            "render output should contain expected text: {expected_text}"
+        );
+    }
 
     #[test]
     fn smoke_load_render_and_snapshot() {
@@ -416,5 +480,54 @@ mod tests {
 
         let after_clear = apply_clear_external_navigation_intent(&mut engine);
         assert_eq!(after_clear.external_navigation_intent, None);
+    }
+
+    #[test]
+    fn browser_flow_http_fetch_then_engine_load_succeeds() {
+        let wml = r#"<wml><card id="home"><p>HTTP Fetch Deck</p></card></wml>"#;
+        let response = mock_fetch_ok("http://example.test/index.wml", "text/vnd.wap.wml", wml);
+
+        let mut engine = WmlEngine::new();
+        let snapshot = load_transport_response_into_engine(&mut engine, response)
+            .expect("engine loadDeckContext should succeed");
+        assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
+        assert_render_contains(&engine, "HTTP Fetch Deck");
+    }
+
+    #[test]
+    fn browser_flow_wap_fetch_then_engine_load_succeeds() {
+        let wml = r#"<wml><card id="wap"><p>WAP Fetch Deck</p></card></wml>"#;
+        let response = mock_fetch_ok(
+            "wap://example.test/start.wml?src=wap",
+            "text/vnd.wap.wml",
+            wml,
+        );
+        assert_eq!(response.final_url, "wap://example.test/start.wml?src=wap");
+
+        let mut engine = WmlEngine::new();
+        load_transport_response_into_engine(&mut engine, response)
+            .expect("engine loadDeckContext should succeed");
+        assert_render_contains(&engine, "WAP Fetch Deck");
+    }
+
+    #[test]
+    fn browser_e2e_fetch_load_render_sequence_renders_expected_content() {
+        let wml = r##"
+        <wml>
+          <card id="home">
+            <p>Transport-to-engine pipeline</p>
+            <a href="#next">Next</a>
+          </card>
+          <card id="next"><p>Second</p></card>
+        </wml>
+        "##;
+        let transport = mock_fetch_ok("http://example.test/deck.wml", "text/vnd.wap.wml", wml);
+        assert!(transport.ok, "transport fetch should succeed");
+
+        let mut engine = WmlEngine::new();
+        let snapshot = load_transport_response_into_engine(&mut engine, transport)
+            .expect("loadDeckContext should succeed");
+        assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
+        assert_render_contains(&engine, "pipeline");
     }
 }

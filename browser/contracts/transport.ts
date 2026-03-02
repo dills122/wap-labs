@@ -3,7 +3,10 @@ import type { components } from './transport.openapi.generated';
 type OpenApiFetchRequest = components['schemas']['FetchRequest'];
 
 export type FetchRequest = Pick<OpenApiFetchRequest, 'url'> &
-  Partial<Pick<OpenApiFetchRequest, 'method' | 'headers' | 'timeoutMs' | 'retries'>>;
+  Partial<Pick<OpenApiFetchRequest, 'method' | 'headers' | 'timeoutMs' | 'retries'>> & {
+    // Desktop host transport extension used for correlation plumbing.
+    requestId?: string;
+  };
 
 export type FetchResponse = components['schemas']['FetchResponse'];
 
