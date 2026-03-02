@@ -87,13 +87,12 @@ app.innerHTML = `
   <h1>Waves Native Engine Harness</h1>
   <div class="layout">
     <section class="panel">
-      <h2>Deck Input</h2>
-      <textarea id="wml-input"></textarea>
+      <h2>Navigation</h2>
+      <label>
+        Transport URL
+        <input id="fetch-url" type="text" value="http://127.0.0.1:3000/" />
+      </label>
       <div class="row">
-        <label>
-          Base URL
-          <input id="base-url" type="text" value="http://local.test/start.wml" />
-        </label>
         <label>
           Viewport Cols
           <input id="viewport-cols" type="number" value="20" min="1" />
@@ -101,8 +100,7 @@ app.innerHTML = `
       </div>
       <div class="actions">
         <button id="btn-health">Health</button>
-        <button id="btn-fetch-url">Fetch URL</button>
-        <button id="btn-load-context">Load Deck Context</button>
+        <button id="btn-fetch-url">Go</button>
         <button id="btn-render">Render</button>
         <button id="btn-up">Key Up</button>
         <button id="btn-down">Key Down</button>
@@ -111,13 +109,24 @@ app.innerHTML = `
         <button id="btn-snapshot">Snapshot</button>
         <button id="btn-clear-intent">Clear External Intent</button>
       </div>
+      <details id="debug-raw-mode" style="margin-top: 12px;">
+        <summary>Debug: Raw WML paste mode</summary>
+        <div style="margin-top: 8px;">
+          <label>
+            Base URL
+            <input id="base-url" type="text" value="http://local.test/start.wml" />
+          </label>
+          <textarea id="wml-input"></textarea>
+          <div class="actions">
+            <button id="btn-load-context">Load Raw WML (Debug)</button>
+          </div>
+        </div>
+      </details>
       <div id="status" class="status"></div>
     </section>
     <section class="panel">
       <h2>Viewport</h2>
       <div id="viewport" class="viewport"></div>
-      <h2 style="margin-top: 14px;">Transport URL</h2>
-      <input id="fetch-url" type="text" value="http://127.0.0.1:3000/" />
       <h2 style="margin-top: 14px;">Transport Response</h2>
       <pre id="transport-response"></pre>
       <h2 style="margin-top: 14px;">Runtime Snapshot</h2>
@@ -206,9 +215,11 @@ const setViewportCols = async (): Promise<void> => {
   });
 };
 
-const withAction = (action: () => Promise<void>) => async (): Promise<void> => {
+const withAction =
+  (action: (event?: Event) => Promise<void>) =>
+  async (event?: Event): Promise<void> => {
   try {
-    await action();
+    await action(event);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     setStatus(`Error: ${message}`);
@@ -244,49 +255,61 @@ document.querySelector<HTMLButtonElement>('#btn-load-context')?.addEventListener
 
 document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.addEventListener(
   'click',
-  withAction(async () => {
-    await setViewportCols();
-    const transport = await invoke<FetchDeckResponse>('fetch_deck', {
-      request: {
-        url: fetchUrlInput.value,
-        method: 'GET',
-        timeoutMs: 5000,
-        retries: 1
-      }
-    });
-    setTransportResponse(transport);
+  withAction(async () => navigateFromTransportUrl())
+);
 
-    if (!transport.ok) {
-      const errorMessage = transport.error?.message ?? 'unknown transport failure';
-      setStatus(`Fetch failed: ${errorMessage}`);
-      return;
+fetchUrlInput.addEventListener(
+  'keydown',
+  withAction(async (event?: Event) => {
+    if (event instanceof KeyboardEvent && event.key === 'Enter') {
+      event.preventDefault();
+      await navigateFromTransportUrl();
     }
-
-    const deckInput = transport.engineDeckInput ?? {
-      wmlXml: transport.wml ?? '',
-      baseUrl: transport.finalUrl,
-      contentType: transport.contentType,
-      rawBytesBase64: undefined
-    };
-    if (!deckInput.wmlXml) {
-      setStatus('Fetch succeeded but returned no WML payload.');
-      return;
-    }
-
-    const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
-      request: {
-        wmlXml: deckInput.wmlXml,
-        baseUrl: deckInput.baseUrl,
-        contentType: deckInput.contentType,
-        rawBytesBase64: deckInput.rawBytesBase64 ?? null
-      }
-    });
-    setSnapshot(snapshot);
-    const renderList = await invoke<RenderList>('engine_render');
-    drawRenderList(renderList);
-    setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
   })
 );
+
+const navigateFromTransportUrl = async (): Promise<void> => {
+  await setViewportCols();
+  const transport = await invoke<FetchDeckResponse>('fetch_deck', {
+    request: {
+      url: fetchUrlInput.value,
+      method: 'GET',
+      timeoutMs: 5000,
+      retries: 1
+    }
+  });
+  setTransportResponse(transport);
+
+  if (!transport.ok) {
+    const errorMessage = transport.error?.message ?? 'unknown transport failure';
+    setStatus(`Fetch failed: ${errorMessage}`);
+    return;
+  }
+
+  const deckInput = transport.engineDeckInput ?? {
+    wmlXml: transport.wml ?? '',
+    baseUrl: transport.finalUrl,
+    contentType: transport.contentType,
+    rawBytesBase64: undefined
+  };
+  if (!deckInput.wmlXml) {
+    setStatus('Fetch succeeded but returned no WML payload.');
+    return;
+  }
+
+  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
+    request: {
+      wmlXml: deckInput.wmlXml,
+      baseUrl: deckInput.baseUrl,
+      contentType: deckInput.contentType,
+      rawBytesBase64: deckInput.rawBytesBase64 ?? null
+    }
+  });
+  setSnapshot(snapshot);
+  const renderList = await invoke<RenderList>('engine_render');
+  drawRenderList(renderList);
+  setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
+};
 
 document.querySelector<HTMLButtonElement>('#btn-render')?.addEventListener(
   'click',

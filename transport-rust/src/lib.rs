@@ -19,6 +19,7 @@ pub struct FetchDeckRequest {
     pub headers: Option<HashMap<String, String>>,
     pub timeout_ms: Option<u64>,
     pub retries: Option<u8>,
+    pub request_id: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -59,7 +60,65 @@ pub struct FetchDeckResponse {
     pub engine_deck_input: Option<EngineDeckInputPayload>,
 }
 
-fn transport_unavailable_response(url: String, message: String) -> FetchDeckResponse {
+fn normalized_request_id(value: Option<&str>) -> Option<&str> {
+    value.and_then(|raw| {
+        let trimmed = raw.trim();
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed)
+        }
+    })
+}
+
+fn details_with_request_id(
+    request_id: Option<&str>,
+    details: Option<serde_json::Value>,
+) -> Option<serde_json::Value> {
+    let request_id = normalized_request_id(request_id)?;
+    match details {
+        Some(serde_json::Value::Object(mut map)) => {
+            map.insert(
+                "requestId".to_string(),
+                serde_json::Value::String(request_id.to_string()),
+            );
+            Some(serde_json::Value::Object(map))
+        }
+        Some(other) => Some(other),
+        None => Some(serde_json::json!({ "requestId": request_id })),
+    }
+}
+
+fn log_transport_event(
+    event: &str,
+    request_id: Option<&str>,
+    request_url: &str,
+    payload: serde_json::Value,
+) {
+    let mut entry = serde_json::Map::new();
+    entry.insert(
+        "event".to_string(),
+        serde_json::Value::String(event.to_string()),
+    );
+    entry.insert(
+        "requestUrl".to_string(),
+        serde_json::Value::String(request_url.to_string()),
+    );
+    if let Some(id) = normalized_request_id(request_id) {
+        entry.insert(
+            "requestId".to_string(),
+            serde_json::Value::String(id.to_string()),
+        );
+    }
+    entry.insert("payload".to_string(), payload);
+    println!("{}", serde_json::Value::Object(entry));
+}
+
+fn transport_unavailable_response(
+    url: String,
+    message: String,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
     FetchDeckResponse {
         ok: false,
         status: 0,
@@ -69,7 +128,7 @@ fn transport_unavailable_response(url: String, message: String) -> FetchDeckResp
         error: Some(FetchErrorInfo {
             code: "TRANSPORT_UNAVAILABLE".to_string(),
             message,
-            details: None,
+            details: details_with_request_id(request_id, None),
         }),
         timing_ms: FetchTiming {
             encode: 0.0,
@@ -80,7 +139,11 @@ fn transport_unavailable_response(url: String, message: String) -> FetchDeckResp
     }
 }
 
-fn invalid_request_response(url: String, message: String) -> FetchDeckResponse {
+fn invalid_request_response(
+    url: String,
+    message: String,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
     FetchDeckResponse {
         ok: false,
         status: 0,
@@ -90,7 +153,7 @@ fn invalid_request_response(url: String, message: String) -> FetchDeckResponse {
         error: Some(FetchErrorInfo {
             code: "INVALID_REQUEST".to_string(),
             message,
-            details: None,
+            details: details_with_request_id(request_id, None),
         }),
         timing_ms: FetchTiming {
             encode: 0.0,
@@ -456,6 +519,7 @@ fn map_success_payload_response(
     body: &[u8],
     attempt: u8,
     elapsed_ms: f64,
+    request_id: Option<&str>,
 ) -> FetchDeckResponse {
     if status >= 400 {
         return FetchDeckResponse {
@@ -471,10 +535,13 @@ fn map_success_payload_response(
             error: Some(FetchErrorInfo {
                 code: "PROTOCOL_ERROR".to_string(),
                 message: format!("Upstream HTTP error: {status}"),
-                details: Some(serde_json::json!({
-                    "body": String::from_utf8_lossy(body).chars().take(300).collect::<String>(),
-                    "attempt": attempt
-                })),
+                details: details_with_request_id(
+                    request_id,
+                    Some(serde_json::json!({
+                        "body": String::from_utf8_lossy(body).chars().take(300).collect::<String>(),
+                        "attempt": attempt
+                    })),
+                ),
             }),
             timing_ms: FetchTiming {
                 encode: 0.0,
@@ -517,7 +584,10 @@ fn map_success_payload_response(
                 error: Some(FetchErrorInfo {
                     code: "WBXML_DECODE_FAILED".to_string(),
                     message: err,
-                    details: Some(serde_json::json!({ "attempt": attempt })),
+                    details: details_with_request_id(
+                        request_id,
+                        Some(serde_json::json!({ "attempt": attempt })),
+                    ),
                 }),
                 timing_ms: FetchTiming {
                     encode: 0.0,
@@ -539,7 +609,10 @@ fn map_success_payload_response(
             error: Some(FetchErrorInfo {
                 code: "UNSUPPORTED_CONTENT_TYPE".to_string(),
                 message: format!("Unsupported content type: {content_type}"),
-                details: Some(serde_json::json!({ "attempt": attempt })),
+                details: details_with_request_id(
+                    request_id,
+                    Some(serde_json::json!({ "attempt": attempt })),
+                ),
             }),
             timing_ms: FetchTiming {
                 encode: 0.0,
@@ -579,6 +652,7 @@ fn map_terminal_send_error(
     attempt: u8,
     is_timeout: bool,
     elapsed_ms: f64,
+    request_id: Option<&str>,
 ) -> FetchDeckResponse {
     FetchDeckResponse {
         ok: false,
@@ -593,10 +667,13 @@ fn map_terminal_send_error(
                 "TRANSPORT_UNAVAILABLE".to_string()
             },
             message: last_error,
-            details: Some(serde_json::json!({
-                "attempts": attempts,
-                "lastAttempt": attempt
-            })),
+            details: details_with_request_id(
+                request_id,
+                Some(serde_json::json!({
+                    "attempts": attempts,
+                    "lastAttempt": attempt
+                })),
+            ),
         }),
         timing_ms: FetchTiming {
             encode: 0.0,
@@ -608,44 +685,96 @@ fn map_terminal_send_error(
 }
 
 pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
-    let method = request
-        .method
+    let FetchDeckRequest {
+        url,
+        method,
+        headers,
+        timeout_ms,
+        retries,
+        request_id,
+    } = request;
+    let request_id = normalized_request_id(request_id.as_deref()).map(str::to_string);
+
+    let method = method
         .unwrap_or_else(|| "GET".to_string())
         .to_ascii_uppercase();
     if method != "GET" {
-        return invalid_request_response(request.url, format!("Unsupported method: {method}"));
+        return invalid_request_response(
+            url,
+            format!("Unsupported method: {method}"),
+            request_id.as_deref(),
+        );
     }
 
-    let parsed = match Url::parse(&request.url) {
+    let parsed = match Url::parse(&url) {
         Ok(parsed) => parsed,
         Err(_) => {
-            return invalid_request_response(request.url, "URL must include a scheme".to_string());
+            return invalid_request_response(
+                url,
+                "URL must include a scheme".to_string(),
+                request_id.as_deref(),
+            );
         }
     };
 
+    log_transport_event(
+        "transport.fetch.start",
+        request_id.as_deref(),
+        &url,
+        serde_json::json!({ "method": method }),
+    );
+
     let is_wap_scheme = matches!(parsed.scheme(), "wap" | "waps");
-    let mut upstream_url = request.url.clone();
-    let mut outbound_headers = request.headers.unwrap_or_default();
+    let mut upstream_url = url.clone();
+    let mut outbound_headers = headers.unwrap_or_default();
+    if let Some(id) = request_id.as_deref() {
+        outbound_headers
+            .entry("X-Request-Id".to_string())
+            .or_insert_with(|| id.to_string());
+    }
 
     if is_wap_scheme {
-        match build_gateway_request(&request.url, &method, &outbound_headers) {
+        match build_gateway_request(&url, &method, &outbound_headers) {
             Ok((gateway_url, headers)) => {
                 upstream_url = gateway_url;
                 outbound_headers = headers;
             }
-            Err(err) => return transport_unavailable_response(request.url, err),
+            Err(err) => {
+                log_transport_event(
+                    "transport.fetch.failure",
+                    request_id.as_deref(),
+                    &url,
+                    serde_json::json!({ "error": err, "phase": "gateway-request-build" }),
+                );
+                return transport_unavailable_response(url, err, request_id.as_deref());
+            }
         }
     }
 
-    let timeout_ms = request.timeout_ms.unwrap_or(5000).clamp(100, 30000);
-    let request_url = request.url.clone();
-    let attempts = request.retries.unwrap_or(1).clamp(0, 2) + 1;
+    let timeout_ms = timeout_ms.unwrap_or(5000).clamp(100, 30000);
+    let request_url = url.clone();
+    let attempts = retries.unwrap_or(1).clamp(0, 2) + 1;
     let client = match Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
         .build()
     {
         Ok(client) => client,
-        Err(err) => return transport_unavailable_response(request_url, err.to_string()),
+        Err(err) => {
+            log_transport_event(
+                "transport.fetch.failure",
+                request_id.as_deref(),
+                &url,
+                serde_json::json!({
+                    "error": err.to_string(),
+                    "phase": "client-build"
+                }),
+            );
+            return transport_unavailable_response(
+                request_url,
+                err.to_string(),
+                request_id.as_deref(),
+            );
+        }
     };
     let mut last_error = "Retries exhausted".to_string();
     let mut last_elapsed_ms = 0.0_f64;
@@ -663,7 +792,7 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
                 let elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
                 let status = resp.status().as_u16();
                 let final_url = if is_wap_scheme {
-                    request.url.clone()
+                    url.clone()
                 } else {
                     resp.url().to_string()
                 };
@@ -675,39 +804,95 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
                 let body = match resp.bytes() {
                     Ok(body) => body,
                     Err(err) => {
+                        let message = format!("transport read failed: {err}");
+                        log_transport_event(
+                            "transport.fetch.failure",
+                            request_id.as_deref(),
+                            &url,
+                            serde_json::json!({
+                                "attempt": attempt,
+                                "attempts": attempts,
+                                "phase": "response-read",
+                                "error": message
+                            }),
+                        );
                         return transport_unavailable_response(
                             request_url.clone(),
-                            format!("transport read failed: {err}"),
+                            message,
+                            request_id.as_deref(),
                         );
                     }
                 };
+                log_transport_event(
+                    "transport.fetch.success",
+                    request_id.as_deref(),
+                    &url,
+                    serde_json::json!({
+                        "attempt": attempt,
+                        "attempts": attempts,
+                        "status": status,
+                        "upstreamUrl": upstream_url.as_str(),
+                        "finalUrl": final_url.clone(),
+                        "elapsedMs": elapsed_ms
+                    }),
+                );
                 return map_success_payload_response(
                     status,
                     is_wap_scheme,
-                    &request.url,
+                    &url,
                     &upstream_url,
                     final_url,
                     content_type,
                     body.as_ref(),
                     attempt,
                     elapsed_ms,
+                    request_id.as_deref(),
                 );
             }
             Err(err) => {
                 last_error = err.to_string();
                 last_is_timeout = err.is_timeout();
                 last_elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
+                if attempt < attempts {
+                    log_transport_event(
+                        "transport.fetch.retry",
+                        request_id.as_deref(),
+                        &url,
+                        serde_json::json!({
+                            "attempt": attempt,
+                            "nextAttempt": attempt + 1,
+                            "attempts": attempts,
+                            "isTimeout": last_is_timeout,
+                            "error": last_error,
+                            "elapsedMs": last_elapsed_ms
+                        }),
+                    );
+                } else {
+                    log_transport_event(
+                        "transport.fetch.failure",
+                        request_id.as_deref(),
+                        &url,
+                        serde_json::json!({
+                            "attempt": attempt,
+                            "attempts": attempts,
+                            "isTimeout": last_is_timeout,
+                            "error": last_error,
+                            "elapsedMs": last_elapsed_ms
+                        }),
+                    );
+                }
             }
         }
     }
 
     map_terminal_send_error(
-        request.url,
+        url,
         last_error,
         attempts,
         attempts,
         last_is_timeout,
         last_elapsed_ms,
+        request_id.as_deref(),
     )
 }
 
@@ -715,10 +900,11 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
 mod tests {
     use super::{
         build_gateway_request, decode_wmlc, decode_wmlc_with_libwbxml, decode_wmlc_with_tool,
-        fetch_deck_in_process, invalid_request_response, is_supported_wml_content_type,
-        libwbxml_available, libwbxml_disabled_by_env, map_success_payload_response,
-        map_terminal_send_error, normalize_content_type, preflight_wbxml_decoder, wbxml2xml_bin,
-        FetchDeckRequest, LibwbxmlDecodeError,
+        details_with_request_id, fetch_deck_in_process, invalid_request_response,
+        is_supported_wml_content_type, libwbxml_available, libwbxml_disabled_by_env,
+        libwbxml_error_text, log_transport_event, map_success_payload_response,
+        map_terminal_send_error, normalize_content_type, normalized_request_id,
+        preflight_wbxml_decoder, wbxml2xml_bin, FetchDeckRequest, LibwbxmlDecodeError,
     };
     use std::collections::HashMap;
     use std::fs;
@@ -738,7 +924,18 @@ mod tests {
             headers: None,
             timeout_ms: Some(500),
             retries: Some(0),
+            request_id: None,
         }
+    }
+
+    fn detail_string(response: &super::FetchDeckResponse, key: &str) -> Option<String> {
+        response
+            .error
+            .as_ref()
+            .and_then(|error| error.details.as_ref())
+            .and_then(|details| details.get(key))
+            .and_then(|value| value.as_str())
+            .map(str::to_string)
     }
 
     fn with_env_var_locked<T>(name: &str, value: &str, f: impl FnOnce() -> T) -> T {
@@ -865,6 +1062,54 @@ mod tests {
     }
 
     #[test]
+    fn transport_normalized_request_id_trims_and_rejects_blank() {
+        assert_eq!(normalized_request_id(Some(" req-1 ")), Some("req-1"));
+        assert_eq!(normalized_request_id(Some("   ")), None);
+        assert_eq!(normalized_request_id(None), None);
+    }
+
+    #[test]
+    fn transport_details_with_request_id_merges_object_details() {
+        let merged =
+            details_with_request_id(Some("req-merge"), Some(serde_json::json!({ "attempt": 2 })))
+                .expect("details should exist");
+        assert_eq!(
+            merged.get("requestId").and_then(|value| value.as_str()),
+            Some("req-merge")
+        );
+        assert_eq!(
+            merged.get("attempt").and_then(|value| value.as_u64()),
+            Some(2)
+        );
+    }
+
+    #[test]
+    fn transport_details_with_request_id_keeps_non_object_details_and_handles_blank() {
+        let passthrough = details_with_request_id(Some("req-raw"), Some(serde_json::json!("raw")))
+            .expect("details should exist");
+        assert_eq!(passthrough.as_str(), Some("raw"));
+
+        let blank_id = details_with_request_id(Some("   "), Some(serde_json::json!({ "a": 1 })));
+        assert!(blank_id.is_none());
+    }
+
+    #[test]
+    fn transport_log_event_accepts_blank_or_missing_request_id() {
+        log_transport_event(
+            "transport.test",
+            None,
+            "http://example.test",
+            serde_json::json!({ "ok": true }),
+        );
+        log_transport_event(
+            "transport.test",
+            Some("   "),
+            "http://example.test",
+            serde_json::json!({ "ok": true }),
+        );
+    }
+
+    #[test]
     fn transport_build_gateway_request_maps_wap_url_and_headers() {
         let headers = HashMap::new();
         let result = build_gateway_request("wap://example.test/home.wml?x=1", "GET", &headers)
@@ -980,9 +1225,23 @@ mod tests {
         });
         assert!(disabled);
 
+        let disabled_yes = with_env_var_locked("LOWBAND_DISABLE_LIBWBXML", "yes", || {
+            libwbxml_disabled_by_env()
+        });
+        assert!(disabled_yes);
+
         let not_disabled =
             with_env_removed_locked("LOWBAND_DISABLE_LIBWBXML", libwbxml_disabled_by_env);
         assert!(!not_disabled);
+    }
+
+    #[test]
+    fn transport_libwbxml_error_text_handles_null_pointer_message() {
+        unsafe extern "C" fn null_msg(_: i32) -> *const u8 {
+            std::ptr::null()
+        }
+        let text = libwbxml_error_text(null_msg, -9);
+        assert_eq!(text, "libwbxml error code -9");
     }
 
     #[test]
@@ -1001,7 +1260,11 @@ mod tests {
 
     #[test]
     fn transport_decode_wmlc_with_libwbxml_empty_payload_returns_failed() {
-        let result = decode_wmlc_with_libwbxml(&[]);
+        let result =
+            with_env_removed_locked(
+                "LOWBAND_DISABLE_LIBWBXML",
+                || decode_wmlc_with_libwbxml(&[]),
+            );
         assert!(matches!(result, Err(LibwbxmlDecodeError::Failed(_))));
     }
 
@@ -1249,6 +1512,7 @@ mod tests {
     fn transport_fetch_invalid_method_maps_invalid_request() {
         let response = fetch_deck_in_process(FetchDeckRequest {
             method: Some("POST".to_string()),
+            request_id: Some("req-invalid-method".to_string()),
             ..basic_request("http://example.test".to_string())
         });
         assert!(!response.ok);
@@ -1257,11 +1521,18 @@ mod tests {
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("INVALID_REQUEST")
         );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-invalid-method")
+        );
     }
 
     #[test]
     fn transport_fetch_invalid_url_maps_invalid_request() {
-        let response = fetch_deck_in_process(basic_request("example.test/no-scheme".to_string()));
+        let response = fetch_deck_in_process(FetchDeckRequest {
+            request_id: Some("req-invalid-url".to_string()),
+            ..basic_request("example.test/no-scheme".to_string())
+        });
         assert!(!response.ok);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
@@ -1270,6 +1541,10 @@ mod tests {
         assert_eq!(
             response.error.as_ref().map(|err| err.message.as_str()),
             Some("URL must include a scheme")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-invalid-url")
         );
     }
 
@@ -1286,6 +1561,7 @@ mod tests {
             b"<wml><card id=\"home\"><p>ok</p></card></wml>",
             1,
             3.5,
+            None,
         );
         assert!(response.ok);
         assert_eq!(response.status, 200);
@@ -1312,12 +1588,17 @@ mod tests {
             b"upstream fail",
             2,
             9.1,
+            Some("req-protocol"),
         );
         assert!(!response.ok);
         assert_eq!(response.status, 502);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("PROTOCOL_ERROR")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-protocol")
         );
     }
 
@@ -1333,11 +1614,16 @@ mod tests {
             br#"{"ok":true}"#,
             1,
             2.0,
+            Some("req-content"),
         );
         assert!(!response.ok);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("UNSUPPORTED_CONTENT_TYPE")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-content")
         );
     }
 
@@ -1354,12 +1640,17 @@ mod tests {
                 b"\x03\x01\x6a\x00",
                 1,
                 2.0,
+                Some("req-wbxml"),
             )
         });
         assert!(!response.ok);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("WBXML_DECODE_FAILED")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-wbxml")
         );
     }
 
@@ -1383,6 +1674,7 @@ mod tests {
                     b"\x03\x01\x6a\x00",
                     1,
                     2.0,
+                    None,
                 )
             },
         );
@@ -1407,6 +1699,7 @@ mod tests {
             b"bad gateway",
             1,
             4.0,
+            None,
         );
         assert!(!response.ok);
         assert_eq!(response.final_url, "wap://example.test/start.wml");
@@ -1421,12 +1714,17 @@ mod tests {
             3,
             true,
             123.0,
+            Some("req-timeout"),
         );
         assert!(!response.ok);
         assert_eq!(response.status, 0);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("GATEWAY_TIMEOUT")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-timeout")
         );
     }
 
@@ -1439,11 +1737,16 @@ mod tests {
             2,
             false,
             10.0,
+            Some("req-unavailable"),
         );
         assert!(!response.ok);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("TRANSPORT_UNAVAILABLE")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-unavailable")
         );
     }
 
@@ -1464,6 +1767,7 @@ mod tests {
         let response = fetch_deck_in_process(FetchDeckRequest {
             retries: Some(2),
             timeout_ms: Some(100),
+            request_id: Some("req-retry-http".to_string()),
             ..basic_request("http://127.0.0.1:9/unreachable.wml".to_string())
         });
         assert!(!response.ok);
@@ -1478,6 +1782,10 @@ mod tests {
             .and_then(|details| details.get("attempts"))
             .and_then(|value| value.as_u64());
         assert_eq!(attempts, Some(3));
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-retry-http")
+        );
     }
 
     #[test]
@@ -1486,6 +1794,7 @@ mod tests {
             fetch_deck_in_process(FetchDeckRequest {
                 retries: Some(0),
                 timeout_ms: Some(100),
+                request_id: Some("req-retry-wap".to_string()),
                 ..basic_request("wap://example.test/path.wml?x=1".to_string())
             })
         });
@@ -1495,16 +1804,27 @@ mod tests {
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("TRANSPORT_UNAVAILABLE")
         );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-retry-wap")
+        );
     }
 
     #[test]
     fn transport_invalid_request_response_helper() {
-        let response =
-            invalid_request_response("http://example.test".to_string(), "bad input".to_string());
+        let response = invalid_request_response(
+            "http://example.test".to_string(),
+            "bad input".to_string(),
+            Some("req-helper"),
+        );
         assert!(!response.ok);
         assert_eq!(
             response.error.as_ref().map(|err| err.code.as_str()),
             Some("INVALID_REQUEST")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-helper")
         );
     }
 }

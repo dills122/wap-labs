@@ -25,6 +25,7 @@ fn request(url: &str) -> FetchDeckRequest {
         headers: None,
         timeout_ms: Some(smoke_timeout_ms()),
         retries: Some(smoke_retries()),
+        request_id: None,
     }
 }
 
