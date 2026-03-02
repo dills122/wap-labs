@@ -5,6 +5,7 @@ import type {
   HostSessionState
 } from '../../contracts/transport';
 import type { EngineKey, EngineRuntimeSnapshot, RenderList } from '../../contracts/engine';
+import { createTauriHostClient } from '../../contracts/generated/tauri-host-client';
 import './styles.css';
 import { resolveKeyboardIntent } from './app/keyboard';
 import { isNetworkUnavailableErrorCode, isProbeReachable } from './app/network';
@@ -28,6 +29,8 @@ import {
 } from './session-history';
 import { inferStatusTone, uiEvents } from './ui-helpers';
 import type { WvStatusPanel } from './components/status-panel';
+
+const hostClient = createTauriHostClient(invoke);
 
 const SAMPLE_WML = `<wml>
   <card id="home">
@@ -319,8 +322,8 @@ const exportTimeline = (): void => {
 };
 
 const renderAndSnapshot = async (): Promise<EngineRuntimeSnapshot> => {
-  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_snapshot');
-  const renderList = await invoke<RenderList>('engine_render');
+  const snapshot = await hostClient.engineSnapshot();
+  const renderList = await hostClient.engineRender();
   setSnapshot(snapshot);
   drawRenderList(renderList);
   syncSessionFromSnapshot(snapshot);
@@ -332,9 +335,7 @@ const setViewportCols = async (): Promise<void> => {
   if (!Number.isFinite(cols) || cols < 1) {
     throw new Error('viewport cols must be a positive number');
   }
-  await invoke<EngineRuntimeSnapshot>('engine_set_viewport_cols', {
-    request: { cols }
-  });
+  await hostClient.engineSetViewportCols({ cols });
 };
 
 const withAction =
@@ -370,11 +371,9 @@ const isTextEntryTarget = (target: EventTarget | null): boolean => {
 };
 
 const applyEngineKey = async (key: EngineKey): Promise<void> => {
-  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_handle_key', {
-    request: { key }
-  });
+  const snapshot = await hostClient.engineHandleKey({ key });
   setSnapshot(snapshot);
-  const renderList = await invoke<RenderList>('engine_render');
+  const renderList = await hostClient.engineRender();
   drawRenderList(renderList);
   syncSessionFromSnapshot(snapshot);
 
@@ -385,16 +384,16 @@ const applyEngineKey = async (key: EngineKey): Promise<void> => {
 };
 
 const applyNavigateBack = async (): Promise<EngineRuntimeSnapshot> => {
-  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_navigate_back');
+  const snapshot = await hostClient.engineNavigateBack();
   setSnapshot(snapshot);
-  const renderList = await invoke<RenderList>('engine_render');
+  const renderList = await hostClient.engineRender();
   drawRenderList(renderList);
   syncSessionFromSnapshot(snapshot);
   return snapshot;
 };
 
 const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> => {
-  const before = await invoke<EngineRuntimeSnapshot>('engine_snapshot');
+  const before = await hostClient.engineSnapshot();
   const after = await applyNavigateBack();
   const engineHandled =
     before.activeCardId !== after.activeCardId ||
@@ -409,11 +408,9 @@ const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> =
       const prevSnapshot = await loadTransportUrl(previous.url, 'history-back', true, false);
       if (prevSnapshot) {
         if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
-          const restored = await invoke<EngineRuntimeSnapshot>('engine_navigate_to_card', {
-            request: { cardId: previous.activeCardId }
-          });
+          const restored = await hostClient.engineNavigateToCard({ cardId: previous.activeCardId });
           setSnapshot(restored);
-          const renderList = await invoke<RenderList>('engine_render');
+          const renderList = await hostClient.engineRender();
           drawRenderList(renderList);
           syncSessionFromSnapshot(restored);
         }
@@ -471,14 +468,7 @@ const loadTransportUrl = async (
     setStatus(`Loading previous page: ${requestedUrl}`);
   }
 
-  const transport = await invoke<FetchDeckResponse>('fetch_deck', {
-    request: {
-      url: requestedUrl,
-      method: 'GET',
-      timeoutMs: 5000,
-      retries: 1
-    }
-  });
+  const transport = await hostClient.fetchDeck({ url: requestedUrl, method: 'GET', timeoutMs: 5000, retries: 1 });
   setTransportResponse(transport);
   recordTimeline('fetch-deck-response', 'state', {
     ok: transport.ok,
@@ -522,21 +512,14 @@ const loadTransportUrl = async (
     return null;
   }
 
-  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
-    request: {
-      wmlXml: deckInput.wmlXml,
-      baseUrl: deckInput.baseUrl,
-      contentType: deckInput.contentType,
-      rawBytesBase64: deckInput.rawBytesBase64 ?? null
-    }
-  });
+  const snapshot = await hostClient.engineLoadDeckContext({ wmlXml: deckInput.wmlXml, baseUrl: deckInput.baseUrl, contentType: deckInput.contentType, rawBytesBase64: deckInput.rawBytesBase64 });
   setSnapshot(snapshot);
   recordTimeline('engine-load-deck-context', 'state', {
     activeCardId: snapshot.activeCardId,
     focusedLinkIndex: snapshot.focusedLinkIndex,
     externalNavigationIntent: snapshot.externalNavigationIntent
   });
-  const renderList = await invoke<RenderList>('engine_render');
+  const renderList = await hostClient.engineRender();
   drawRenderList(renderList);
 
   mergeSessionState({
@@ -561,7 +544,7 @@ const loadTransportUrl = async (
   if (followExternalIntent && snapshot.externalNavigationIntent) {
     let nextUrl = snapshot.externalNavigationIntent;
     for (let hop = 1; hop <= MAX_EXTERNAL_INTENT_HOPS; hop += 1) {
-      await invoke<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent');
+      await hostClient.engineClearExternalNavigationIntent();
       fetchUrlInput.value = nextUrl;
       const nextSnapshot = await loadTransportUrl(nextUrl, 'external-intent', false, true);
       if (!nextSnapshot || !nextSnapshot.externalNavigationIntent) {
@@ -591,14 +574,7 @@ const runStartupNetworkProbe = async (): Promise<void> => {
       targetUrl
     });
     try {
-      const probe = await invoke<FetchDeckResponse>('fetch_deck', {
-        request: {
-          url: targetUrl,
-          method: 'GET',
-          timeoutMs: NETWORK_PROBE_TIMEOUT_MS,
-          retries: 0
-        }
-      });
+      const probe = await hostClient.fetchDeck({ url: targetUrl, method: 'GET', timeoutMs: NETWORK_PROBE_TIMEOUT_MS, retries: 0 });
       if (isProbeReachable(probe)) {
         setStatus('Ready. Network available.');
         return;
@@ -623,7 +599,7 @@ const runStartupNetworkProbe = async (): Promise<void> => {
 document.querySelector<HTMLButtonElement>('#btn-health')?.addEventListener(
   'click',
   withAction('health', async () => {
-    const message = await invoke<string>('health');
+    const message = await hostClient.health();
     setStatus(`Health: ${message}`);
   })
 );
@@ -632,16 +608,9 @@ document.querySelector<HTMLButtonElement>('#btn-load-context')?.addEventListener
   'click',
   withAction('load-raw-wml', async () => {
     await setViewportCols();
-    const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
-      request: {
-        wmlXml: wmlInput.value,
-        baseUrl: baseUrlInput.value,
-        contentType: 'text/vnd.wap.wml',
-        rawBytesBase64: null
-      }
-    });
+    const snapshot = await hostClient.engineLoadDeckContext({ wmlXml: wmlInput.value, baseUrl: baseUrlInput.value, contentType: 'text/vnd.wap.wml' });
     setSnapshot(snapshot);
-    const renderList = await invoke<RenderList>('engine_render');
+    const renderList = await hostClient.engineRender();
     drawRenderList(renderList);
     mergeSessionState({
       navigationStatus: 'loaded',
@@ -731,7 +700,7 @@ document.querySelector<HTMLButtonElement>('#btn-snapshot')?.addEventListener(
 document.querySelector<HTMLButtonElement>('#btn-clear-intent')?.addEventListener(
   'click',
   withAction('clear-external-intent', async () => {
-    const snapshot = await invoke<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent');
+    const snapshot = await hostClient.engineClearExternalNavigationIntent();
     setSnapshot(snapshot);
     syncSessionFromSnapshot(snapshot);
     setStatus('Cleared external navigation intent.');

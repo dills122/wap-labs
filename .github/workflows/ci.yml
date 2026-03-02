@@ -314,7 +314,7 @@ jobs:
       - name: Browser contract codegen drift check
         run: |
           cargo run --manifest-path browser/src-tauri/Cargo.toml --bin generate_contracts
-          git diff --exit-code -- browser/contracts/generated/engine-host.ts browser/contracts/generated/transport-host.ts
+          git diff --exit-code -- browser/contracts/generated/engine-host.ts browser/contracts/generated/transport-host.ts browser/contracts/generated/tauri-host-client.ts
 
       - name: Browser Rust coverage gate
         working-directory: browser/src-tauri
