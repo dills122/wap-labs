@@ -7,7 +7,6 @@ Canonical prerequisite + setup reference for local development across all reposi
 - `git`
 - `node` 20.19+ (or 22.12+) and `npm`
 - `pnpm` 10+
-- `python3` 3.11+
 - Rust toolchain (`rustup`, `cargo`, `rustc`)
 - `pre-commit` (recommended for local hook parity)
 
@@ -29,9 +28,6 @@ The script is idempotent and will:
 
 - install/update workspace Node dependencies
 - install `wml-server` dependencies
-- create/refresh `transport-python/.venv`
-- install transport runtime + dev dependencies
-- refresh generated browser transport contract types
 - optionally install hooks (if `pre-commit` is available)
 - optionally install Rust CLI tools (`wasm-pack`, `cargo-tauri`) when enabled
 
@@ -41,17 +37,14 @@ Environment variables supported by `scripts/init-refresh.sh`:
 
 - `AUTO_INSTALL_RUST_TOOLS=1` to auto-install missing `wasm-pack` and `cargo-tauri`
 - `SKIP_NODE_INSTALLS=1` to skip Node dependency setup
-- `SKIP_PYTHON_SETUP=1` to skip transport Python venv/deps setup
 - `SKIP_HOOKS=1` to skip hook installation
 
 ## Layer-Specific Notes
 
-### `transport-python/`
+### `transport-rust/`
 
-- Runtime deps: `requirements.txt`
-- Dev/test deps: `requirements-dev.txt`
-- Lint: `ruff check transport-python`
-- Tests: `pytest transport-python/tests`
+- Lint: `cargo fmt --check` and `cargo clippy --all-targets --all-features -- -D warnings`
+- Tests: `cargo test`
 
 ### `engine-wasm/engine`
 
@@ -75,5 +68,5 @@ From repo root:
 ```bash
 make lint
 make test
-make smoke-transport
+make smoke-transport-wap
 ```

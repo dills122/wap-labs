@@ -1,14 +1,56 @@
-import type { components } from './transport.openapi.generated';
+export interface FetchRequest {
+  url: string;
+  method?: 'GET';
+  headers?: Record<string, string>;
+  timeoutMs?: number;
+  retries?: number;
+  // Desktop host transport extension used for correlation plumbing.
+  requestId?: string;
+}
 
-type OpenApiFetchRequest = components['schemas']['FetchRequest'];
+export interface RawPayload {
+  bytesBase64: string;
+  contentType: string;
+}
 
-export type FetchRequest = Pick<OpenApiFetchRequest, 'url'> &
-  Partial<Pick<OpenApiFetchRequest, 'method' | 'headers' | 'timeoutMs' | 'retries'>> & {
-    // Desktop host transport extension used for correlation plumbing.
-    requestId?: string;
-  };
+export interface TimingMs {
+  encode: number;
+  udpRtt: number;
+  decode: number;
+}
 
-export type FetchResponse = components['schemas']['FetchResponse'];
+export interface TransportErrorInfo {
+  code:
+    | 'INVALID_REQUEST'
+    | 'GATEWAY_TIMEOUT'
+    | 'RETRIES_EXHAUSTED'
+    | 'UNSUPPORTED_CONTENT_TYPE'
+    | 'WBXML_DECODE_FAILED'
+    | 'PROTOCOL_ERROR'
+    | 'TRANSPORT_UNAVAILABLE'
+    | 'INTERNAL_ERROR';
+  message: string;
+  details?: Record<string, unknown>;
+}
+
+export interface EngineDeckInput {
+  wmlXml: string;
+  baseUrl: string;
+  contentType: string;
+  rawBytesBase64?: string;
+}
+
+export interface FetchResponse {
+  ok: boolean;
+  status: number;
+  finalUrl: string;
+  contentType: string;
+  wml?: string;
+  raw?: RawPayload;
+  error?: TransportErrorInfo;
+  timingMs: TimingMs;
+  engineDeckInput?: EngineDeckInput;
+}
 
 // Contract for the desktop host's transport boundary.
 export interface TransportClient {

@@ -68,7 +68,7 @@ Legend:
   - `WAP-236` 6.4.2
   - SCRs: `WAESpec-WMLS-S-001 (M)`, `WAESpec-WMLS-S-002 (O)`
 - AC:
-  - [ ] Transport sidecar exposes compile path or equivalent behavior contract.
+  - [ ] Transport layer exposes compile path or equivalent behavior contract.
   - [ ] Compile errors map to deterministic error response (502 where HTTP semantics apply).
 
 ### RQ-WAE-005 WBXML role and boundary
@@ -101,7 +101,7 @@ Legend:
   - `WAP-236` 7.1.1.2
   - SCRs: `WAESpec-HTS-C-001 (M)`, `WAESpec-HTS-S-001 (M)`, `WAESpec-HTS-C-002 (O)`, `WAESpec-HTS-C-003 (O)`, `WAESpec-HTS-S-002 (O)`, `WAESpec-HTS-S-003 (O)`
 - AC:
-  - [ ] Waves transport profile declares active stack(s) (currently sidecar-backed).
+  - [ ] Waves transport profile declares active stack(s) (currently Rust transport-backed).
   - [ ] Unsupported stack path returns explicit capability error.
 
 ### RQ-WAE-008 Cache model support
@@ -240,7 +240,7 @@ Legend:
 
 - `engine-wasm/`:
   - `RQ-WAE-001`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`
-- `transport-python/` (current proxy/transport role):
+- `transport-rust/` (current proxy/transport role):
   - `RQ-WAE-004`, `RQ-WAE-007`..`RQ-WAE-015`, `RQ-WAE-018` (as needed for image transformations/media handling)
 - `browser/` host:
   - UI-level behavior for `BACK` access and error surfacing (`RQ-WAE-011`, `RQ-WAE-017`)

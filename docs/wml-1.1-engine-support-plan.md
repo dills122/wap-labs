@@ -6,7 +6,7 @@ Status: earlier draft. Superseded by `docs/wml-engine/source-material-review.md`
 
 Implement a WML 1.1 runtime that parses decks/cards and renders constrained viewport output with deck/card navigation semantics.
 
-## Python -> WASM normalized handoff
+## Transport -> WASM normalized handoff
 
 The transport layer must normalize either WML media type:
 

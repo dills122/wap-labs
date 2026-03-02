@@ -5,7 +5,7 @@ This document defines a parallel implementation track for a faithful WAP 1.x bro
 ## Target Components
 
 - `gateway-kannel/`: gateway runtime and config strategy (WSP/WDP to HTTP/HTTPS)
-- `transport-python/`: Lowband local WSP/WBXML appliance with a stable HTTP API
+- `transport-rust/`: Lowband local WSP/WBXML appliance with a stable HTTP API
 - `browser/`: Tauri desktop harness and developer tooling UI
 - `engine-wasm/`: WaveNav WML deck/card runtime, layout, and input semantics
 
@@ -41,7 +41,7 @@ Normalized handoff from transport to engine:
 
 ## Suggested Build Order
 
-1. Implement Lowband (`transport-python`) API and CLI probe (`wap-fetch`).
+1. Implement Lowband (`transport-rust`) API and CLI probe (`wap-fetch`).
 2. Implement WaveNav engine (`engine-wasm`) parser/runtime for MVP tags.
 3. Build `browser` (Tauri) shell for URL entry, softkeys, and deck inspector.
 4. Wire end-to-end navigation loop.

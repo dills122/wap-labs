@@ -4,7 +4,6 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 AUTO_INSTALL_RUST_TOOLS="${AUTO_INSTALL_RUST_TOOLS:-0}"
 SKIP_NODE_INSTALLS="${SKIP_NODE_INSTALLS:-0}"
-SKIP_PYTHON_SETUP="${SKIP_PYTHON_SETUP:-0}"
 SKIP_HOOKS="${SKIP_HOOKS:-0}"
 
 log() {
@@ -40,7 +39,6 @@ ensure_rust_tool() {
 
 log "repo root: ${ROOT_DIR}"
 
-need_cmd python3 || true
 need_cmd node || true
 need_cmd pnpm || true
 need_cmd cargo || true
@@ -68,8 +66,6 @@ if [[ "${SKIP_NODE_INSTALLS}" != "1" ]]; then
       (cd "${ROOT_DIR}" && pnpm --dir marketing-site --ignore-workspace install)
     fi
 
-    log "refresh generated transport contract"
-    (cd "${ROOT_DIR}" && pnpm run generate:transport-contract)
   else
     warn "pnpm not found; skipping node installs"
   fi
@@ -84,30 +80,13 @@ else
   log "skipping node installs (SKIP_NODE_INSTALLS=1)"
 fi
 
-if [[ "${SKIP_PYTHON_SETUP}" != "1" ]]; then
-  if command -v python3 >/dev/null 2>&1; then
-    log "setup transport-python virtualenv"
-    (cd "${ROOT_DIR}/transport-python" && python3 -m venv .venv)
-    log "install transport-python runtime + dev dependencies"
-    (
-      cd "${ROOT_DIR}/transport-python" && \
-      .venv/bin/python -m pip install --upgrade pip && \
-      .venv/bin/python -m pip install -r requirements.txt -r requirements-dev.txt
-    )
-  else
-    warn "python3 not found; skipping transport-python setup"
-  fi
-else
-  log "skipping python setup (SKIP_PYTHON_SETUP=1)"
-fi
-
 if [[ "${SKIP_HOOKS}" != "1" ]]; then
   if command -v pre-commit >/dev/null 2>&1; then
     log "installing repo hooks"
     (cd "${ROOT_DIR}" && make hooks-install)
   else
     warn "pre-commit not found; skipping hook install"
-    warn "install with: pipx install pre-commit"
+    warn "install pre-commit with your package manager to enable hooks"
   fi
 else
   log "skipping hook setup (SKIP_HOOKS=1)"

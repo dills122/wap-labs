@@ -22,7 +22,7 @@ Canonical prerequisite reference:
    - Node 20.19+ (or 22.12+). Repo pin: `.nvmrc`
    - pnpm 10+ (for Node workspace scripts)
    - Rust toolchain + wasm-pack (for `engine-wasm`)
-   - Python 3.11+ + `pre-commit` (for git hooks)
+   - `pre-commit` (for git hooks)
 2. Start legacy stack:
 
 ```bash
@@ -40,30 +40,13 @@ wasm-pack build --target web --out-dir ../pkg
 4. Install git hooks:
 
 ```bash
-pipx install pre-commit
 make hooks-install
 ```
 
 Hook behavior:
 
 - `pre-commit` hook auto-runs `cargo fmt` for staged Rust files in `engine-wasm/engine` and `browser/src-tauri`, then re-stages changes.
-- `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo clippy -D warnings`, `cargo test` where configured, transport contract generation drift check, and configured non-mutating checks).
-
-Transport contract workflow:
-
-- Source of truth: `transport-python/api/openapi.yaml`
-- Generated browser types: `browser/contracts/transport.openapi.generated.d.ts`
-- Regenerate manually:
-
-```bash
-pnpm run generate:transport-contract
-```
-
-- Check for drift (also run in pre-push + CI):
-
-```bash
-pnpm run check:transport-contract
-```
+- `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo clippy -D warnings`, `cargo test` where configured, and configured non-mutating checks).
 
 ## Coding standards
 
@@ -109,7 +92,6 @@ WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
 - Local hooks are wired from `.githooks/` (`git config core.hooksPath .githooks`) and use `.pre-commit-config.yaml` for pre-push checks.
 - CI runs in GitHub Actions: `.github/workflows/ci.yml`.
 - Some layer checks are intentionally disabled until those layers are bootstrapped:
-  - `transport-python` lint/test
   - `electron-app` lint/test/build
   - Node package lint/test scripts where not yet defined
 

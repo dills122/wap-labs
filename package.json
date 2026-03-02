@@ -8,11 +8,6 @@
     "lint:node": "pnpm -r --if-present run lint",
     "test:node": "pnpm -r --if-present run test",
     "build:node": "pnpm -r --if-present run build",
-    "typecheck:node": "pnpm -r --if-present run typecheck",
-    "generate:transport-contract": "openapi-typescript transport-python/api/openapi.yaml -o browser/contracts/transport.openapi.generated.d.ts",
-    "check:transport-contract": "pnpm run generate:transport-contract && git diff --exit-code -- browser/contracts/transport.openapi.generated.d.ts"
-  },
-  "devDependencies": {
-    "openapi-typescript": "^7.13.0"
+    "typecheck:node": "pnpm -r --if-present run typecheck"
   }
 }

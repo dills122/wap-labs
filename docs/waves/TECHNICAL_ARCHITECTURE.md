@@ -11,7 +11,7 @@ Core goals:
 
 - deterministic WML runtime behavior
 - host/runtime separation
-- phased transport rewrite from Python to Rust
+- protocol fidelity through an in-process Rust transport stack
 - fidelity with historical WAP browser behavior
 
 ## Design Philosophy
@@ -92,7 +92,7 @@ Responsibilities:
 
 - windowing and input
 - host process lifecycle
-- transport sidecar process management
+- transport request lifecycle management
 - IPC bridge from UI to transport/runtime boundaries
 - native runtime embedding path (when host chooses direct Rust integration)
 
@@ -100,24 +100,15 @@ Responsibilities:
 
 ### Current state
 
-Transport is handled by Python (`transport-python/`) as a sidecar layer.
+Transport is handled by Rust (`transport-rust/`) as an in-process library invoked by Tauri commands.
 
-Current Python responsibilities:
+Current transport responsibilities:
 
-- UDP/WDP transport
-- WTP transaction behavior
-- WSP session framing
-- WBXML decoding
-- gateway integration
-
-Reasoning:
-
-- isolate runtime correctness from network nondeterminism
-- de-risk early runtime work
-
-### Sidecar integration model
-
-Tauri host manages the Python process and exchanges JSON messages.
+- HTTP and WAP fetch orchestration
+- WSP/session framing
+- WBXML decode/normalization
+- gateway adaptation and error taxonomy mapping
+- deterministic request correlation/logging metadata
 
 Request example:
 
@@ -138,57 +129,15 @@ Response example:
 }
 ```
 
-## Incremental Protocol Rewrite Plan
+## Protocol Evolution Plan
 
-### Phase 1
+- Keep transport-rust as the single transport implementation.
+- Expand protocol coverage incrementally behind tests and fixture-based checks.
+- Preserve strict boundary ownership: transport handles network/protocol/decode, engine handles runtime/rendering.
 
-Move to Rust:
+## Renderer Correctness Gate
 
-- WBXML decode
-
-Python remains:
-
-- UDP
-- WTP
-- WSP session
-
-### Phase 2
-
-Move to Rust:
-
-- WSP header parsing
-
-Python remains:
-
-- UDP
-- WTP retransmission
-
-### Phase 3
-
-Move to Rust:
-
-- WSP session management
-
-### Phase 4
-
-Move to Rust:
-
-- WTP retransmission logic
-
-### Phase 5
-
-Move to Rust:
-
-- UDP/WDP transport
-
-Final state:
-
-- Rust owns UDP + WTP + WSP + WBXML + WML runtime
-- Python transport is removed
-
-## Renderer Correctness Gate (Before Transport Rewrite)
-
-Do not start transport rewrite phases until deterministic runtime execution is proven with fixtures.
+Do not expand protocol complexity until deterministic runtime execution is proven with fixtures.
 
 Minimum gate:
 
@@ -229,7 +178,6 @@ Because runtime is Rust-native, future host targets may include:
 - Tauri bootstrap: ~1 day
 - WASM runtime MVP: ~2–3 weeks
 - fixture suite expansion: ~3–5 days
-- Python sidecar IPC wiring: ~3–5 days
 - Rust WBXML decode: ~1 week
 - Rust WSP parse: ~1–2 weeks
 
@@ -237,7 +185,7 @@ Because runtime is Rust-native, future host targets may include:
 
 - Runtime/WASM: `engine-wasm/`
 - Host shell (Tauri): `browser/`
-- Transport sidecar: `transport-python/`
+- Transport library: `transport-rust/`
 - Architecture docs: `docs/`
 
 ## Summary
@@ -246,4 +194,4 @@ Waves is runtime-first.
 
 - deterministic WML execution comes before protocol rewrite
 - host shell remains replaceable
-- transport migration proceeds in bounded phases
+- transport capability expansion proceeds in bounded phases
