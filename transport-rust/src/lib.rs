@@ -898,8 +898,6 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
 
 #[cfg(test)]
 mod tests {
-    use base64::Engine as _;
-    use crate::BASE64;
     use super::{
         build_gateway_request, decode_wmlc, decode_wmlc_with_libwbxml, decode_wmlc_with_tool,
         details_with_request_id, fetch_deck_in_process, invalid_request_response,
@@ -908,6 +906,8 @@ mod tests {
         map_terminal_send_error, normalize_content_type, normalized_request_id,
         preflight_wbxml_decoder, wbxml2xml_bin, FetchDeckRequest, LibwbxmlDecodeError,
     };
+    use crate::BASE64;
+    use base64::Engine as _;
     use serde::Deserialize;
     use std::collections::HashMap;
     use std::fs;

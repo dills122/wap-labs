@@ -359,7 +359,7 @@ Reference architecture:
 
 ### W0-02 Bytecode loader + decoder skeleton
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-01`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/decoder.rs`
@@ -379,9 +379,9 @@ Reference architecture:
 - Oversized units fail before allocation/execute paths.
 - Valid bounded units are preserved for VM handoff.
 9. `Architecture Compliance`:
-- [ ] Decoder verification runs before VM execution entry.
-- [ ] Decoder enforces bounded resource constraints.
-- [ ] Decoder failures return deterministic trap/error variants.
+- [x] Decoder verification runs before VM execution entry.
+- [x] Decoder enforces bounded resource constraints.
+- [x] Decoder failures return deterministic trap/error variants.
 
 ### W0-03 VM core baseline (stack/call/return/limits)
 
