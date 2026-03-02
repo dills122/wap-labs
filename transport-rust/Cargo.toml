@@ -2,6 +2,9 @@
 name = "lowband_transport_rust"
 version = "0.1.0"
 edition = "2021"
+description = "Lowband in-process transport library for the WaveNav stack"
+license = "MIT"
+authors = ["Dylan Steele <dylansteele57@gmail.com>"]
 
 [lib]
 name = "lowband_transport_rust"

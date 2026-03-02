@@ -2,6 +2,13 @@
   "name": "@wavenav/desktop-host-tauri",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Dylan Steele <dylansteele57@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dills122/wap-labs.git"
+  },
+  "homepage": "https://dills122.github.io/wap-labs/",
   "type": "module",
   "scripts": {
     "dev": "pnpm --dir frontend dev",

@@ -2,6 +2,9 @@
 name = "wavenav_engine"
 version = "0.1.0"
 edition = "2021"
+description = "WaveNav WML runtime, parser, and rendering engine (native + WASM)"
+license = "MIT"
+authors = ["Dylan Steele <dylansteele57@gmail.com>"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]

@@ -118,6 +118,8 @@ Node version note:
 - Contributor guide: `CONTRIBUTING.md`
 - Codex steering: `AGENTS.md`
 - Formatting conventions: `.editorconfig`
+- Attribution: `AUTHORS.md`
+- Notices: `NOTICE.md`
 
 ## License
 

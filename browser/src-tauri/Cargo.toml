@@ -2,6 +2,9 @@
 name = "wavenav_host"
 version = "0.1.0"
 edition = "2021"
+description = "Tauri host shell for the WaveNav desktop browser integration"
+license = "MIT"
+authors = ["Dylan Steele <dylansteele57@gmail.com>"]
 
 [lib]
 name = "wavenav_host_lib"

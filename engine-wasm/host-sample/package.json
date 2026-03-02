@@ -2,6 +2,8 @@
   "name": "@wavenav/host-sample",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Dylan Steele <dylansteele57@gmail.com>",
   "type": "module",
   "scripts": {
     "examples:generate": "node ./scripts/generate-example-manifest.mjs",
@@ -17,5 +19,10 @@
   },
   "dependencies": {
     "lit": "^3.3.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dills122/wap-labs.git"
+  },
+  "homepage": "https://dills122.github.io/wap-labs/"
 }
