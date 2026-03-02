@@ -9,6 +9,7 @@ import {
   pushHostHistoryEntry,
   updateCurrentHistoryCard
 } from './session-history';
+import { inferStatusTone, statusClassName, uiEvents } from './ui-helpers';
 
 type EngineKey = 'up' | 'down' | 'enter';
 
@@ -228,6 +229,7 @@ const recordTimeline = (
   if (timelineEntries.length > MAX_TIMELINE_EVENTS) {
     timelineEntries.splice(0, timelineEntries.length - MAX_TIMELINE_EVENTS);
   }
+  uiEvents.emit('timeline', { action, phase });
   renderTimeline();
 };
 
@@ -239,6 +241,9 @@ const clearTimeline = (): void => {
 
 const setStatus = (message: string): void => {
   statusEl.textContent = message;
+  const tone = inferStatusTone(message);
+  statusEl.className = statusClassName(tone);
+  uiEvents.emit('status', { message, tone });
 };
 
 const setSnapshot = (snapshot: EngineRuntimeSnapshot): void => {

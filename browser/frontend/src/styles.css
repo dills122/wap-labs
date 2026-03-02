@@ -193,6 +193,26 @@ button:hover {
   min-height: 44px;
 }
 
+.status-idle {
+  background: #f7fbff;
+  color: var(--muted);
+}
+
+.status-loading {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.status-ok {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
 .viewport {
   border: 1px solid var(--line);
   border-radius: 8px;
