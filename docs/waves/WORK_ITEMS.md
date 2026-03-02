@@ -308,7 +308,7 @@ These were the first tickets prepared before Waves browser implementation starte
 
 ### T0-03 Protocol error taxonomy alignment
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`

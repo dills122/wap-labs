@@ -898,6 +898,8 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
 
 #[cfg(test)]
 mod tests {
+    use base64::Engine as _;
+    use crate::BASE64;
     use super::{
         build_gateway_request, decode_wmlc, decode_wmlc_with_libwbxml, decode_wmlc_with_tool,
         details_with_request_id, fetch_deck_in_process, invalid_request_response,
@@ -1592,6 +1594,7 @@ mod tests {
     #[test]
     fn transport_map_success_payload_http_success_builds_engine_deck_input() {
         let base = "http://example.test/index.wml".to_string();
+        let body = b"<wml><card id=\"home\"><p>ok</p></card></wml>";
         let response = map_success_payload_response(
             200,
             false,
@@ -1599,7 +1602,7 @@ mod tests {
             &base,
             base.clone(),
             "text/vnd.wap.wml".to_string(),
-            b"<wml><card id=\"home\"><p>ok</p></card></wml>",
+            body,
             1,
             3.5,
             None,
@@ -1608,12 +1611,21 @@ mod tests {
         assert_eq!(response.status, 200);
         assert_eq!(response.content_type, "text/vnd.wap.wml");
         assert!(response.engine_deck_input.is_some());
+        let deck = response
+            .engine_deck_input
+            .as_ref()
+            .expect("engine deck input should be present");
+        assert_eq!(deck.base_url, "http://example.test/index.wml");
+        assert_eq!(deck.content_type, response.content_type);
         assert_eq!(
-            response
-                .engine_deck_input
-                .as_ref()
-                .map(|deck| deck.base_url.as_str()),
-            Some("http://example.test/index.wml")
+            response.wml.as_deref(),
+            Some(deck.wml_xml.as_str()),
+            "wml and engineDeckInput.wmlXml should be identical"
+        );
+        assert_eq!(
+            deck.raw_bytes_base64.as_deref(),
+            Some(BASE64.encode(body).as_str()),
+            "raw bytes should preserve original payload bytes as base64"
         );
     }
 
@@ -1727,6 +1739,7 @@ mod tests {
     #[cfg(unix)]
     fn transport_map_success_payload_wmlc_decode_success_maps_ok() {
         let script = write_fake_decoder_script("<wml><card id=\"d\"/></wml>");
+        let body = b"\x03\x01\x6a\x00";
         let response = with_two_env_vars_locked(
             "LOWBAND_DISABLE_LIBWBXML",
             "1",
@@ -1740,7 +1753,7 @@ mod tests {
                     "http://upstream.example",
                     "http://request.example".to_string(),
                     "application/vnd.wap.wmlc".to_string(),
-                    b"\x03\x01\x6a\x00",
+                    body,
                     1,
                     2.0,
                     None,
@@ -1749,11 +1762,22 @@ mod tests {
         );
         assert!(response.ok);
         assert_eq!(response.status, 200);
-        assert!(response
+        let deck = response
             .engine_deck_input
             .as_ref()
-            .and_then(|deck| deck.raw_bytes_base64.as_ref())
-            .is_some());
+            .expect("engine deck input should be present");
+        assert_eq!(deck.base_url, "http://request.example");
+        assert_eq!(deck.content_type, "application/vnd.wap.wmlc");
+        assert_eq!(
+            response.wml.as_deref(),
+            Some(deck.wml_xml.as_str()),
+            "decoded wml should be mirrored into engineDeckInput.wmlXml"
+        );
+        assert_eq!(
+            deck.raw_bytes_base64.as_deref(),
+            Some(BASE64.encode(body).as_str()),
+            "decoded success should preserve original wbxml bytes"
+        );
     }
 
     #[test]
@@ -1923,5 +1947,94 @@ mod tests {
             detail_string(&response, "requestId").as_deref(),
             Some("req-helper")
         );
+    }
+
+    #[test]
+    fn transport_error_code_trigger_matrix_is_deterministic() {
+        struct Case {
+            name: &'static str,
+            response: super::FetchDeckResponse,
+            expected_code: &'static str,
+        }
+
+        let cases = vec![
+            Case {
+                name: "invalid-request-method",
+                response: invalid_request_response(
+                    "http://example.test".to_string(),
+                    "Unsupported method: POST".to_string(),
+                    None,
+                ),
+                expected_code: "INVALID_REQUEST",
+            },
+            Case {
+                name: "protocol-error-5xx",
+                response: map_success_payload_response(
+                    502,
+                    false,
+                    "http://request.example",
+                    "http://upstream.example",
+                    "http://request.example".to_string(),
+                    "text/plain".to_string(),
+                    b"upstream fail",
+                    1,
+                    1.0,
+                    None,
+                ),
+                expected_code: "PROTOCOL_ERROR",
+            },
+            Case {
+                name: "unsupported-content-type",
+                response: map_success_payload_response(
+                    200,
+                    false,
+                    "http://request.example",
+                    "http://upstream.example",
+                    "http://request.example".to_string(),
+                    "application/json".to_string(),
+                    br#"{"ok":true}"#,
+                    1,
+                    1.0,
+                    None,
+                ),
+                expected_code: "UNSUPPORTED_CONTENT_TYPE",
+            },
+            Case {
+                name: "terminal-timeout",
+                response: map_terminal_send_error(
+                    "http://example.test".to_string(),
+                    "timeout".to_string(),
+                    2,
+                    2,
+                    true,
+                    5.0,
+                    None,
+                ),
+                expected_code: "GATEWAY_TIMEOUT",
+            },
+            Case {
+                name: "terminal-transport-unavailable",
+                response: map_terminal_send_error(
+                    "http://example.test".to_string(),
+                    "connection refused".to_string(),
+                    2,
+                    2,
+                    false,
+                    5.0,
+                    None,
+                ),
+                expected_code: "TRANSPORT_UNAVAILABLE",
+            },
+        ];
+
+        for case in cases {
+            let code = case
+                .response
+                .error
+                .as_ref()
+                .map(|err| err.code.as_str())
+                .unwrap_or("<missing>");
+            assert_eq!(code, case.expected_code, "case '{}' failed", case.name);
+        }
     }
 }

@@ -49,12 +49,17 @@ Legend:
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
-| Transport contract integration (`fetchDeck`) | `partial` | browser host Rust tests in `browser/src-tauri/src/lib.rs` + transport-rust unit/integration tests |
+| Transport contract integration (`fetchDeck`) | `partial` | browser host Rust tests in `browser/src-tauri/src/lib.rs` + transport-rust unit/integration tests + explicit normalization guarantees in `transport-rust/README.md` |
 | URL load state transitions | `partial` | browser frontend transport-first URL flow + session-state transitions in `browser/frontend/src/main.ts` and host-session stack helpers in `browser/frontend/src/session-history.ts` |
 | Engine render handoff | `partial` | browser host integration-style tests `browser_e2e_fetch_load_render_sequence_renders_expected_content` and `browser_fixture_load_navigate_and_external_intent_flow_is_deterministic` |
 | Input model determinism | `partial` | host key-sequence checks in `browser/src-tauri/src/lib.rs` (`smoke_key_navigation_and_back_stack`) + browser global key handling in `browser/frontend/src/main.ts` |
 | External intent handoff loop | `partial` | runtime intent emission/clear tests in host Rust + fixture flow `browser_fixture_load_navigate_and_external_intent_flow_is_deterministic` + frontend follow-loop implementation in `browser/frontend/src/main.ts` |
 | Event timeline/export artifacts | `partial` | frontend timeline/export implementation + export-time chronology validation in `browser/frontend/src/main.ts`; automated regression checks still pending |
+
+Transport error taxonomy progress:
+
+- table-driven deterministic trigger checks in `transport-rust/src/lib.rs` (`transport_error_code_trigger_matrix_is_deterministic`)
+- documented trigger matrix in `transport-rust/README.md`
 
 ## Cross-project checklist (current)
 
