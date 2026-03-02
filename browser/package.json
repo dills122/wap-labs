@@ -13,6 +13,8 @@
   "scripts": {
     "dev": "pnpm --dir frontend dev",
     "build": "pnpm --dir frontend build",
+    "contracts:codegen": "cargo run --manifest-path src-tauri/Cargo.toml --bin generate_contracts",
+    "contracts:check": "pnpm run contracts:codegen && git diff --exit-code -- contracts/generated/engine-host.ts contracts/generated/transport-host.ts",
     "tauri:dev": "cd src-tauri && cargo tauri dev",
     "tauri:build": "cd src-tauri && cargo tauri build"
   }

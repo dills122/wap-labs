@@ -1,47 +1,24 @@
 import type {
-  EngineKey,
-  RenderList,
-  ScriptDialogRequest,
-  ScriptTimerRequest,
-  WmlDeckInput
-} from '../../engine-wasm/contracts/wml-engine';
+  LoadDeckContextRequest,
+  ScriptDialogRequestSnapshot,
+  ScriptTimerRequestSnapshot
+} from './generated/engine-host';
 
 export type {
+  DrawCmd,
+  EngineHostClient,
   EngineKey,
+  EngineRuntimeSnapshot,
+  HandleKeyRequest,
+  LoadDeckContextRequest,
+  LoadDeckRequest,
+  NavigateToCardRequest,
   RenderList,
-  ScriptDialogRequest,
-  ScriptTimerRequest,
-  WmlDeckInput
-} from '../../engine-wasm/contracts/wml-engine';
+  ScriptDialogRequestSnapshot,
+  ScriptTimerRequestSnapshot,
+  SetViewportColsRequest
+} from './generated/engine-host';
 
-export interface EngineRuntimeSnapshot {
-  activeCardId?: string;
-  focusedLinkIndex: number;
-  baseUrl: string;
-  contentType: string;
-  externalNavigationIntent?: string;
-  lastScriptExecutionOk?: boolean;
-  lastScriptExecutionTrap?: string;
-  lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
-  lastScriptExecutionErrorCategory?:
-    | 'none'
-    | 'computational'
-    | 'integrity'
-    | 'resource'
-    | 'host-binding';
-  lastScriptRequiresRefresh?: boolean;
-  lastScriptDialogRequests?: ScriptDialogRequest[];
-  lastScriptTimerRequests?: ScriptTimerRequest[];
-}
-
-export interface EngineHostClient {
-  loadDeck(input: { wmlXml: string }): Promise<EngineRuntimeSnapshot>;
-  loadDeckContext(input: WmlDeckInput): Promise<EngineRuntimeSnapshot>;
-  render(): Promise<RenderList>;
-  handleKey(input: { key: EngineKey }): Promise<EngineRuntimeSnapshot>;
-  navigateToCard(input: { cardId: string }): Promise<EngineRuntimeSnapshot>;
-  navigateBack(): Promise<EngineRuntimeSnapshot>;
-  setViewportCols(input: { cols: number }): Promise<EngineRuntimeSnapshot>;
-  snapshot(): Promise<EngineRuntimeSnapshot>;
-  clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
-}
+export type WmlDeckInput = LoadDeckContextRequest;
+export type ScriptDialogRequest = ScriptDialogRequestSnapshot;
+export type ScriptTimerRequest = ScriptTimerRequestSnapshot;

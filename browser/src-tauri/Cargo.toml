@@ -5,6 +5,7 @@ edition = "2021"
 description = "Tauri host shell for the WaveNav desktop browser integration"
 license = "MIT"
 authors = ["Dylan Steele <dylansteele57@gmail.com>"]
+default-run = "wavenav_host"
 
 [lib]
 name = "wavenav_host_lib"
@@ -18,6 +19,7 @@ lowband_transport_rust = { path = "../../transport-rust" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2", features = [] }
+ts-rs = { version = "10", features = ["serde-compat"] }
 wavenav_engine = { path = "../../engine-wasm/engine", default-features = false }
 
 [features]

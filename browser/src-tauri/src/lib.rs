@@ -1,13 +1,19 @@
+pub mod contract_types;
+
+use contract_types::{
+    EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
+    NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
+    SetViewportColsRequest,
+};
 use lowband_transport_rust::{
     fetch_deck_in_process, preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse,
 };
-use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
 use tauri::path::BaseDirectory;
 use tauri::Manager;
 use tauri::State;
-use wavenav_engine::{RenderList, WmlEngine};
+use wavenav_engine::WmlEngine;
 
 struct AppState {
     engine: Mutex<WmlEngine>,
@@ -19,85 +25,6 @@ impl Default for AppState {
             engine: Mutex::new(WmlEngine::new()),
         }
     }
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct LoadDeckRequest {
-    wml_xml: String,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct LoadDeckContextRequest {
-    wml_xml: String,
-    base_url: String,
-    content_type: String,
-    raw_bytes_base64: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct HandleKeyRequest {
-    key: String,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct NavigateToCardRequest {
-    card_id: String,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct SetViewportColsRequest {
-    cols: usize,
-}
-
-#[derive(Debug, Serialize)]
-#[serde(tag = "type", rename_all = "lowercase")]
-enum ScriptDialogRequestSnapshot {
-    Alert {
-        message: String,
-    },
-    Confirm {
-        message: String,
-    },
-    Prompt {
-        message: String,
-        #[serde(rename = "defaultValue")]
-        default_value: Option<String>,
-    },
-}
-
-#[derive(Debug, Serialize)]
-#[serde(tag = "type", rename_all = "lowercase")]
-enum ScriptTimerRequestSnapshot {
-    Schedule {
-        #[serde(rename = "delayMs")]
-        delay_ms: u32,
-        token: Option<String>,
-    },
-    Cancel {
-        token: String,
-    },
-}
-
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-struct EngineRuntimeSnapshot {
-    active_card_id: Option<String>,
-    focused_link_index: usize,
-    base_url: String,
-    content_type: String,
-    external_navigation_intent: Option<String>,
-    last_script_execution_ok: Option<bool>,
-    last_script_execution_trap: Option<String>,
-    last_script_execution_error_class: Option<String>,
-    last_script_execution_error_category: Option<String>,
-    last_script_requires_refresh: Option<bool>,
-    last_script_dialog_requests: Vec<ScriptDialogRequestSnapshot>,
-    last_script_timer_requests: Vec<ScriptTimerRequestSnapshot>,
 }
 
 fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
@@ -168,14 +95,14 @@ fn apply_load_deck_context(
 }
 
 fn apply_render(engine: &WmlEngine) -> Result<RenderList, String> {
-    engine.render()
+    Ok(engine.render()?.into())
 }
 
 fn apply_handle_key(
     engine: &mut WmlEngine,
     request: HandleKeyRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
-    engine.handle_key(request.key)?;
+    engine.handle_key(request.key.as_str().to_string())?;
     Ok(snapshot(engine))
 }
 
@@ -447,14 +374,15 @@ mod tests {
         command_engine_clear_external_navigation_intent, command_engine_handle_key,
         command_engine_load_deck, command_engine_load_deck_context, command_engine_navigate_back,
         command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
-        command_engine_snapshot, ensure_request_id, fetch_deck, health, AppState, HandleKeyRequest,
-        LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest,
+        command_engine_snapshot, contract_types, ensure_request_id, fetch_deck, health, AppState,
+        HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest,
         ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetViewportColsRequest,
     };
+    use contract_types::{DrawCmd, EngineKey};
     use lowband_transport_rust::{
         EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchTiming,
     };
-    use wavenav_engine::{DrawCmd, WmlEngine};
+    use wavenav_engine::WmlEngine;
 
     const BASIC_NAV_WML: &str = r##"
     <wml>
@@ -590,7 +518,7 @@ mod tests {
         let after_enter = apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("enter should navigate");
@@ -618,7 +546,7 @@ mod tests {
         let after_enter = apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("enter should set external intent");
@@ -673,7 +601,7 @@ mod tests {
         apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("enter should invoke script");
@@ -722,7 +650,7 @@ mod tests {
         apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("non-fatal script should not abort");
@@ -745,14 +673,14 @@ mod tests {
         apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "down".to_string(),
+                key: EngineKey::Down,
             },
         )
         .expect("focus should move to second link");
         let err = apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect_err("fatal script should abort key handling");
@@ -838,7 +766,7 @@ mod tests {
         let after_fragment = apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("enter on first link should navigate to fragment card");
@@ -853,7 +781,7 @@ mod tests {
         let after_down = apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "down".to_string(),
+                key: EngineKey::Down,
             },
         )
         .expect("down should advance focus to external link");
@@ -864,7 +792,7 @@ mod tests {
         let after_external = apply_handle_key(
             &mut engine,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("enter on second link should emit external intent");
@@ -1087,28 +1015,12 @@ mod tests {
     }
 
     #[test]
-    fn apply_handle_key_unknown_key_is_noop() {
-        let mut engine = WmlEngine::new();
-        apply_load_deck_context(
-            &mut engine,
-            LoadDeckContextRequest {
-                wml_xml: BASIC_NAV_WML.to_string(),
-                base_url: "http://local.test/start.wml".to_string(),
-                content_type: "text/vnd.wap.wml".to_string(),
-                raw_bytes_base64: None,
-            },
-        )
-        .expect("deck should load");
-        let before = apply_engine_snapshot(&engine);
-        let after = apply_handle_key(
-            &mut engine,
-            HandleKeyRequest {
-                key: "noop".to_string(),
-            },
-        )
-        .expect("unknown key should not fail");
-        assert_eq!(before.active_card_id, after.active_card_id);
-        assert_eq!(before.focused_link_index, after.focused_link_index);
+    fn handle_key_request_rejects_unknown_key_variant() {
+        let parsed = serde_json::from_str::<HandleKeyRequest>(r#"{"key":"noop"}"#);
+        assert!(
+            parsed.is_err(),
+            "unknown key should fail request deserialization"
+        );
     }
 
     #[test]
@@ -1149,7 +1061,7 @@ mod tests {
         let entered = command_engine_handle_key(
             &state,
             HandleKeyRequest {
-                key: "enter".to_string(),
+                key: EngineKey::Enter,
             },
         )
         .expect("enter should navigate");
