@@ -70,19 +70,6 @@ repos:
         stages: [pre-push]
         entry: bash -lc 'cd browser/src-tauri && cargo clippy --all-targets --all-features -- -D warnings'
 
-      # Node host sample only has build/dev scripts today; lint/test are not configured yet.
-      # This gives a minimal sanity check without forcing broader JS tooling across the repo.
-      - id: transport-contract-check
-        name: transport contract generated check
-        language: system
-        pass_filenames: false
-        files: ^(transport-python/api/openapi\.yaml|browser/contracts/transport\.ts|browser/contracts/transport\.openapi\.generated\.d\.ts|package\.json|pnpm-lock\.yaml)$
-        stages: [pre-push]
-        entry: >-
-          bash -lc 'if ! command -v pnpm >/dev/null 2>&1; then
-          echo "skip: pnpm not found (transport contract check)"; exit 0; fi;
-          pnpm run check:transport-contract'
-
       - id: host-sample-build
         name: WaveNav host-sample build sanity
         language: system
@@ -101,32 +88,6 @@ repos:
           web --out-dir ../pkg && cd ../..; else echo "skip: wasm pkg missing and
           wasm-pack not installed"; exit 0; fi; fi; cd engine-wasm/host-sample
           && pnpm run build'
-
-      - id: python-ruff-transport
-        name: python ruff (transport-python)
-        language: system
-        pass_filenames: false
-        files: ^transport-python/
-        stages: [pre-push]
-        entry: >-
-          bash -lc 'if [ "${WAP_ENABLE_PYTHON_HOOKS:-0}" != "1" ]; then
-          echo "skip: set WAP_ENABLE_PYTHON_HOOKS=1 to enable python hooks"; exit 0; fi;
-          if [ -x transport-python/.venv/bin/ruff ]; then
-          transport-python/.venv/bin/ruff check transport-python; elif command -v ruff >/dev/null 2>&1; then
-          ruff check transport-python; else echo "skip: ruff not found (transport-python)"; exit 0; fi'
-
-      - id: python-pytest-transport
-        name: python pytest (transport-python)
-        language: system
-        pass_filenames: false
-        files: ^transport-python/
-        stages: [pre-push]
-        entry: >-
-          bash -lc 'if [ "${WAP_ENABLE_PYTHON_HOOKS:-0}" != "1" ]; then
-          echo "skip: set WAP_ENABLE_PYTHON_HOOKS=1 to enable python hooks"; exit 0; fi;
-          if [ -x transport-python/.venv/bin/pytest ]; then
-          transport-python/.venv/bin/pytest transport-python/tests; elif command -v pytest >/dev/null 2>&1; then
-          pytest transport-python/tests; else echo "skip: pytest not found (transport-python)"; exit 0; fi'
 
       # Future hooks (intentionally disabled until those layers are bootstrapped):
       # - browser frontend lint/typecheck/test

@@ -5,7 +5,7 @@ ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
 if ! command -v pre-commit >/dev/null 2>&1; then
-  echo "pre-push: pre-commit not installed. Install with: pipx install pre-commit"
+  echo "pre-push: pre-commit not installed. Install it with your package manager."
   exit 1
 fi
 
