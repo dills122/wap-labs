@@ -1,8 +1,10 @@
 import { invoke } from '@tauri-apps/api/core';
 import type {
   FetchResponse as FetchDeckResponse,
+  HostNavigationSource,
   HostSessionState
 } from '../../contracts/transport';
+import type { EngineKey, EngineRuntimeSnapshot, RenderList } from '../../contracts/engine';
 import './styles.css';
 import { resolveKeyboardIntent } from './app/keyboard';
 import { isNetworkUnavailableErrorCode, isProbeReachable } from './app/network';
@@ -26,58 +28,6 @@ import {
 } from './session-history';
 import { inferStatusTone, uiEvents } from './ui-helpers';
 import type { WvStatusPanel } from './components/status-panel';
-
-type EngineKey = 'up' | 'down' | 'enter';
-
-interface DrawText {
-  type: 'text';
-  x: number;
-  y: number;
-  text: string;
-}
-
-interface DrawLink {
-  type: 'link';
-  x: number;
-  y: number;
-  text: string;
-  focused: boolean;
-  href: string;
-}
-
-type DrawCmd = DrawText | DrawLink;
-
-interface RenderList {
-  draw: DrawCmd[];
-}
-
-interface EngineRuntimeSnapshot {
-  activeCardId?: string;
-  focusedLinkIndex: number;
-  baseUrl: string;
-  contentType: string;
-  externalNavigationIntent?: string;
-  lastScriptExecutionOk?: boolean;
-  lastScriptExecutionTrap?: string;
-  lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
-  lastScriptExecutionErrorCategory?:
-    | 'none'
-    | 'computational'
-    | 'integrity'
-    | 'resource'
-    | 'host-binding';
-  lastScriptRequiresRefresh?: boolean;
-  lastScriptDialogRequests?: Array<
-    | { type: 'alert'; message: string }
-    | { type: 'confirm'; message: string }
-    | { type: 'prompt'; message: string; defaultValue?: string }
-  >;
-  lastScriptTimerRequests?: Array<
-    { type: 'schedule'; delayMs: number; token?: string } | { type: 'cancel'; token: string }
-  >;
-}
-
-type NavSource = 'user' | 'external-intent' | 'history-back';
 
 const SAMPLE_WML = `<wml>
   <card id="home">
@@ -491,7 +441,7 @@ const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> =
 
 const loadTransportUrl = async (
   url: string,
-  source: NavSource,
+  source: HostNavigationSource,
   followExternalIntent: boolean,
   pushHistory = true
 ): Promise<EngineRuntimeSnapshot | null> => {

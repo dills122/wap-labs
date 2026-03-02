@@ -6,6 +6,14 @@ import type {
   WmlDeckInput
 } from '../../engine-wasm/contracts/wml-engine';
 
+export type {
+  EngineKey,
+  RenderList,
+  ScriptDialogRequest,
+  ScriptTimerRequest,
+  WmlDeckInput
+} from '../../engine-wasm/contracts/wml-engine';
+
 export interface EngineRuntimeSnapshot {
   activeCardId?: string;
   focusedLinkIndex: number;

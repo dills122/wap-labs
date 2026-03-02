@@ -97,7 +97,7 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [x] Ship browser-style shell with hidden developer drawer
 - [x] Add global keyboard navigation when not in text-entry fields
 - [x] Add hybrid back behavior (engine card-history + host URL fallback)
-- [ ] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
+- [x] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
 - [ ] Add browser-side automated regression checks for navigation state machine (`M1-05`)
 - [ ] Decompose browser high-churn files into boundary modules (`M1-08`)
 - [ ] Wire cache/reload and request-policy metadata from runtime to transport flow (`T0-04`)
