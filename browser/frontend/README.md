@@ -24,9 +24,9 @@ frontend integration:
 
 This frontend now includes a minimal deck harness UI:
 
-- WML textarea input
-- Transport URL fetch (`fetch_deck`) path
-- `Load Deck Context` action
+- Transport-first URL navigation (`fetch_deck` -> `engine_load_deck_context`)
+- Enter-to-navigate from URL bar + `Go` action
+- Debug-only raw WML textarea path (`Load Raw WML (Debug)` under debug section)
 - key driving (`up`, `down`, `enter`)
 - render output viewport
 - runtime snapshot panel
