@@ -21,6 +21,7 @@
   "dependencies": {
     "@tauri-apps/api": "^2.8.0",
     "clsx": "^2.1.1",
+    "lit": "^3.3.2",
     "nanoevents": "^9.1.0"
   },
   "devDependencies": {

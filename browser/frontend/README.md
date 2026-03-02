@@ -46,6 +46,19 @@ Session stack helpers:
 
 - `src/session-history.ts` centralizes host URL/card history behavior used by browser back fallback.
 
+UI component baseline:
+
+- Browser UI uses lightweight native Web Components built with `lit` (no React/Vue/Angular).
+- Component registration entrypoint: `src/components/index.ts`.
+- First component: `wv-status-panel` (`src/components/status-panel.ts`), used for runtime status/tone rendering.
+
+Local checks:
+
+```bash
+pnpm --dir browser/frontend typecheck
+pnpm --dir browser/frontend test
+```
+
 Run from `browser/`:
 
 ```bash

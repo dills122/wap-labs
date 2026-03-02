@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import type { FetchResponse as FetchDeckResponse, HostSessionState } from '../../contracts/transport';
 import './styles.css';
+import { registerBrowserComponents } from './components';
 import {
   canHistoryBack,
   commitHistoryBack,
@@ -9,7 +10,8 @@ import {
   pushHostHistoryEntry,
   updateCurrentHistoryCard
 } from './session-history';
-import { inferStatusTone, statusClassName, uiEvents } from './ui-helpers';
+import { inferStatusTone, uiEvents } from './ui-helpers';
+import type { WvStatusPanel } from './components/status-panel';
 
 type EngineKey = 'up' | 'down' | 'enter';
 
@@ -87,6 +89,8 @@ const SAMPLE_WML = `<wml>
 const MAX_EXTERNAL_INTENT_HOPS = 3;
 const MAX_TIMELINE_EVENTS = 200;
 
+registerBrowserComponents();
+
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) {
   throw new Error('missing #app root');
@@ -126,7 +130,7 @@ app.innerHTML = `
           Viewport Cols
           <input id="viewport-cols" type="number" value="20" min="1" />
         </label>
-        <div id="status" class="status"></div>
+        <wv-status-panel id="status"></wv-status-panel>
 
         <details id="dev-drawer" class="dev-drawer">
           <summary>Developer Tools</summary>
@@ -172,7 +176,7 @@ const baseUrlInput = document.querySelector<HTMLInputElement>('#base-url');
 const viewportColsInput = document.querySelector<HTMLInputElement>('#viewport-cols');
 const viewportEl = document.querySelector<HTMLDivElement>('#viewport');
 const snapshotEl = document.querySelector<HTMLPreElement>('#snapshot');
-const statusEl = document.querySelector<HTMLDivElement>('#status');
+const statusEl = document.querySelector<WvStatusPanel>('#status');
 const fetchUrlInput = document.querySelector<HTMLInputElement>('#fetch-url');
 const transportResponseEl = document.querySelector<HTMLPreElement>('#transport-response');
 const sessionStateEl = document.querySelector<HTMLPreElement>('#session-state');
@@ -240,9 +244,10 @@ const clearTimeline = (): void => {
 };
 
 const setStatus = (message: string): void => {
-  statusEl.textContent = message;
   const tone = inferStatusTone(message);
-  statusEl.className = statusClassName(tone);
+  if (statusEl) {
+    statusEl.setStatus(message, tone);
+  }
   uiEvents.emit('status', { message, tone });
 };
 
