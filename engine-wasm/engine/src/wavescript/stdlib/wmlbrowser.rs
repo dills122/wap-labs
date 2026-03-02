@@ -1,4 +1,5 @@
 use crate::runtime::events::ScriptRuntimeEffects;
+use crate::wavescript::stdlib::dialogs::{default_confirm_result, default_prompt_result};
 use crate::wavescript::value::ScriptValue;
 use crate::wavescript::vm::{VmHost, VmTrap};
 use std::collections::HashMap;
@@ -6,11 +7,18 @@ use std::collections::HashMap;
 const MAX_VAR_NAME_BYTES: usize = 64;
 const MAX_VAR_VALUE_BYTES: usize = 1024;
 const MAX_GO_HREF_BYTES: usize = 2048;
+const MAX_DIALOG_TEXT_BYTES: usize = 1024;
+const MAX_TIMER_TOKEN_BYTES: usize = 64;
 
 pub const WMLBROWSER_GET_VAR: u8 = 0x01;
 pub const WMLBROWSER_SET_VAR: u8 = 0x02;
 pub const WMLBROWSER_GO: u8 = 0x03;
 pub const WMLBROWSER_PREV: u8 = 0x04;
+pub const WMLBROWSER_ALERT: u8 = 0x05;
+pub const WMLBROWSER_CONFIRM: u8 = 0x06;
+pub const WMLBROWSER_PROMPT: u8 = 0x07;
+pub const WMLBROWSER_SET_TIMER: u8 = 0x08;
+pub const WMLBROWSER_CLEAR_TIMER: u8 = 0x09;
 
 pub struct WmlBrowserHost<'a> {
     vars: &'a mut HashMap<String, String>,
@@ -76,6 +84,84 @@ impl<'a> WmlBrowserHost<'a> {
         self.effects.request_prev();
         ScriptValue::Bool(true)
     }
+
+    fn alert(&mut self, args: &[ScriptValue]) -> ScriptValue {
+        let message = args
+            .first()
+            .map(coerce_to_string)
+            .unwrap_or_else(String::new);
+        if message.len() > MAX_DIALOG_TEXT_BYTES {
+            return ScriptValue::Invalid;
+        }
+
+        self.effects.request_alert(message);
+        ScriptValue::Bool(true)
+    }
+
+    fn confirm(&mut self, args: &[ScriptValue]) -> ScriptValue {
+        let message = args
+            .first()
+            .map(coerce_to_string)
+            .unwrap_or_else(String::new);
+        if message.len() > MAX_DIALOG_TEXT_BYTES {
+            return ScriptValue::Invalid;
+        }
+
+        self.effects.request_confirm(message);
+        ScriptValue::Bool(default_confirm_result())
+    }
+
+    fn prompt(&mut self, args: &[ScriptValue]) -> ScriptValue {
+        let message = args
+            .first()
+            .map(coerce_to_string)
+            .unwrap_or_else(String::new);
+        if message.len() > MAX_DIALOG_TEXT_BYTES {
+            return ScriptValue::Invalid;
+        }
+        let default_value = args.get(1).map(coerce_to_string);
+        if default_value
+            .as_ref()
+            .is_some_and(|value| value.len() > MAX_DIALOG_TEXT_BYTES)
+        {
+            return ScriptValue::Invalid;
+        }
+
+        self.effects.request_prompt(message, default_value.clone());
+        ScriptValue::String(default_prompt_result(default_value.as_deref()))
+    }
+
+    fn set_timer(&mut self, args: &[ScriptValue]) -> ScriptValue {
+        let Some(delay_ms) = args.first().and_then(coerce_to_delay_ms) else {
+            return ScriptValue::Invalid;
+        };
+
+        let token = match args.get(1) {
+            Some(value) => {
+                let token = coerce_to_string(value);
+                if token.is_empty() || token.len() > MAX_TIMER_TOKEN_BYTES {
+                    return ScriptValue::Invalid;
+                }
+                Some(token)
+            }
+            None => None,
+        };
+
+        self.effects.request_timer_schedule(delay_ms, token);
+        ScriptValue::Bool(true)
+    }
+
+    fn clear_timer(&mut self, args: &[ScriptValue]) -> ScriptValue {
+        let Some(token) = args.first().map(coerce_to_string) else {
+            return ScriptValue::Invalid;
+        };
+        if token.is_empty() || token.len() > MAX_TIMER_TOKEN_BYTES {
+            return ScriptValue::Invalid;
+        }
+
+        self.effects.request_timer_cancel(token);
+        ScriptValue::Bool(true)
+    }
 }
 
 impl VmHost for WmlBrowserHost<'_> {
@@ -85,6 +171,11 @@ impl VmHost for WmlBrowserHost<'_> {
             WMLBROWSER_SET_VAR => self.set_var(args),
             WMLBROWSER_GO => self.go(args),
             WMLBROWSER_PREV => self.prev(),
+            WMLBROWSER_ALERT => self.alert(args),
+            WMLBROWSER_CONFIRM => self.confirm(args),
+            WMLBROWSER_PROMPT => self.prompt(args),
+            WMLBROWSER_SET_TIMER => self.set_timer(args),
+            WMLBROWSER_CLEAR_TIMER => self.clear_timer(args),
             _ => {
                 return Err(VmTrap::HostCallError {
                     function_id,
@@ -94,6 +185,26 @@ impl VmHost for WmlBrowserHost<'_> {
         };
 
         Ok(result)
+    }
+}
+
+fn coerce_to_delay_ms(value: &ScriptValue) -> Option<u32> {
+    match value {
+        ScriptValue::Int32(value) => {
+            if *value < 0 {
+                None
+            } else {
+                Some(*value as u32)
+            }
+        }
+        ScriptValue::Float64(value) => {
+            if !value.is_finite() || *value < 0.0 || *value > u32::MAX as f64 {
+                None
+            } else {
+                Some(*value as u32)
+            }
+        }
+        _ => None,
     }
 }
 
@@ -153,10 +264,13 @@ fn is_valid_var_char(ch: char) -> bool {
 #[cfg(test)]
 mod tests {
     use super::{
-        coerce_to_string, WmlBrowserHost, WMLBROWSER_GET_VAR, WMLBROWSER_GO, WMLBROWSER_PREV,
-        WMLBROWSER_SET_VAR,
+        coerce_to_string, WmlBrowserHost, WMLBROWSER_ALERT, WMLBROWSER_CLEAR_TIMER,
+        WMLBROWSER_CONFIRM, WMLBROWSER_GET_VAR, WMLBROWSER_GO, WMLBROWSER_PREV, WMLBROWSER_PROMPT,
+        WMLBROWSER_SET_TIMER, WMLBROWSER_SET_VAR,
     };
-    use crate::runtime::events::{ScriptNavigationIntent, ScriptRuntimeEffects};
+    use crate::runtime::events::{
+        ScriptDialogRequest, ScriptNavigationIntent, ScriptRuntimeEffects, ScriptTimerRequest,
+    };
     use crate::wavescript::value::ScriptValue;
     use crate::wavescript::vm::VmHost;
     use std::collections::HashMap;
@@ -299,5 +413,112 @@ mod tests {
             ScriptValue::String(String::new())
         );
         assert!(!effects.requires_refresh());
+    }
+
+    #[test]
+    fn dialog_calls_record_requests_with_deterministic_return_values() {
+        let mut vars = HashMap::new();
+        let mut effects = ScriptRuntimeEffects::default();
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+
+        let alert = host
+            .call(
+                WMLBROWSER_ALERT,
+                &[ScriptValue::String("hello".to_string())],
+            )
+            .expect("alert should not trap");
+        let confirm = host
+            .call(
+                WMLBROWSER_CONFIRM,
+                &[ScriptValue::String("continue?".to_string())],
+            )
+            .expect("confirm should not trap");
+        let prompt = host
+            .call(
+                WMLBROWSER_PROMPT,
+                &[
+                    ScriptValue::String("name".to_string()),
+                    ScriptValue::String("guest".to_string()),
+                ],
+            )
+            .expect("prompt should not trap");
+
+        assert_eq!(alert, ScriptValue::Bool(true));
+        assert_eq!(confirm, ScriptValue::Bool(false));
+        assert_eq!(prompt, ScriptValue::String("guest".to_string()));
+        assert_eq!(
+            effects.dialog_requests(),
+            &[
+                ScriptDialogRequest::Alert {
+                    message: "hello".to_string()
+                },
+                ScriptDialogRequest::Confirm {
+                    message: "continue?".to_string()
+                },
+                ScriptDialogRequest::Prompt {
+                    message: "name".to_string(),
+                    default_value: Some("guest".to_string())
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn timer_calls_record_schedule_and_cancel_requests() {
+        let mut vars = HashMap::new();
+        let mut effects = ScriptRuntimeEffects::default();
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+
+        let scheduled = host
+            .call(
+                WMLBROWSER_SET_TIMER,
+                &[
+                    ScriptValue::Int32(250),
+                    ScriptValue::String("otp".to_string()),
+                ],
+            )
+            .expect("set timer should not trap");
+        let cancelled = host
+            .call(
+                WMLBROWSER_CLEAR_TIMER,
+                &[ScriptValue::String("otp".to_string())],
+            )
+            .expect("clear timer should not trap");
+
+        assert_eq!(scheduled, ScriptValue::Bool(true));
+        assert_eq!(cancelled, ScriptValue::Bool(true));
+        assert_eq!(
+            effects.timer_requests(),
+            &[
+                ScriptTimerRequest::Schedule {
+                    delay_ms: 250,
+                    token: Some("otp".to_string())
+                },
+                ScriptTimerRequest::Cancel {
+                    token: "otp".to_string()
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn timer_schedule_rejects_negative_or_invalid_delay() {
+        let mut vars = HashMap::new();
+        let mut effects = ScriptRuntimeEffects::default();
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+
+        let negative = host
+            .call(WMLBROWSER_SET_TIMER, &[ScriptValue::Int32(-1)])
+            .expect("invalid set timer should not trap");
+        let invalid_type = host
+            .call(
+                WMLBROWSER_SET_TIMER,
+                &[ScriptValue::String("later".to_string())],
+            )
+            .expect("invalid set timer should not trap");
+
+        assert_eq!(negative, ScriptValue::Invalid);
+        assert_eq!(invalid_type, ScriptValue::Invalid);
+        assert!(effects.timer_requests().is_empty());
     }
 }

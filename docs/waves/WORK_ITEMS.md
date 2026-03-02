@@ -385,7 +385,7 @@ Reference architecture:
 
 ### W0-03 VM core baseline (stack/call/return/limits)
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-02`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/vm.rs`
@@ -399,9 +399,9 @@ Reference architecture:
 7. `Spec`:
 - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-010`
 8. `Architecture Compliance`:
-- [ ] VM loop enforces instruction/call-depth/stack bounds.
-- [ ] VM traps are recoverable runtime errors (no panic/host crash).
-- [ ] Return path preserves deterministic result typing.
+- [x] VM loop enforces instruction/call-depth/stack bounds.
+- [x] VM traps are recoverable runtime errors (no panic/host crash).
+- [x] Return path preserves deterministic result typing.
 
 ### W0-04 `WMLBrowser` var + navigation subset
 
@@ -425,11 +425,13 @@ Reference architecture:
 
 ### W0-05 Timer/dialog integration baseline
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-04`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/stdlib/dialogs.rs`
+- `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
 - `engine-wasm/engine/src/runtime/events.rs`
+- `engine-wasm/engine/src/lib.rs`
 - `browser/src-tauri/src/*`
 4. `Build`:
 - Add timer/event plumbing and dialog hostcall path.

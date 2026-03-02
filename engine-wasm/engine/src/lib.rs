@@ -21,7 +21,9 @@ use layout::flow_layout::layout_card;
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
 use parser::wml_parser::parse_wml;
 use runtime::deck::Deck;
-use runtime::events::{ScriptNavigationIntent, ScriptRuntimeEffects};
+use runtime::events::{
+    ScriptDialogRequest, ScriptNavigationIntent, ScriptRuntimeEffects, ScriptTimerRequest,
+};
 use std::mem;
 use url::Url;
 use wavescript::decoder::{decode_compilation_unit, DecodeError};
@@ -50,6 +52,8 @@ pub struct WmlEngine {
     script_entrypoints: HashMap<String, HashMap<String, usize>>,
     pending_script_effects: ScriptRuntimeEffects,
     last_script_outcome: Option<ScriptExecutionOutcome>,
+    last_script_dialog_requests: Vec<ScriptDialogRequest>,
+    last_script_timer_requests: Vec<ScriptTimerRequest>,
     trace_entries: Vec<EngineTraceEntry>,
     next_trace_seq: u64,
 }
@@ -78,6 +82,8 @@ impl WmlEngine {
             script_entrypoints: HashMap::new(),
             pending_script_effects: ScriptRuntimeEffects::default(),
             last_script_outcome: None,
+            last_script_dialog_requests: Vec::new(),
+            last_script_timer_requests: Vec::new(),
             trace_entries: Vec::new(),
             next_trace_seq: 1,
         }
@@ -110,6 +116,8 @@ impl WmlEngine {
         self.script_entrypoints.clear();
         self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_outcome = None;
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
         self.clear_trace_entries();
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
         Ok(())
@@ -226,6 +234,8 @@ impl WmlEngine {
         let outcome = self.execute_script_ref_internal(&src, "main");
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
         outcome
     }
 
@@ -238,6 +248,8 @@ impl WmlEngine {
         let outcome = self.execute_script_ref_internal(&src, &function_name);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
         outcome
     }
 
@@ -252,6 +264,8 @@ impl WmlEngine {
         let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
         outcome
     }
 
@@ -297,6 +311,22 @@ impl WmlEngine {
         self.last_script_outcome
             .as_ref()
             .map(|outcome| outcome.requires_refresh)
+    }
+
+    /// Read dialog side-effect requests from the last successful script invocation.
+    pub fn last_script_dialog_requests(&self) -> Vec<ScriptDialogRequestLiteral> {
+        self.last_script_dialog_requests
+            .iter()
+            .map(script_dialog_request_to_literal)
+            .collect()
+    }
+
+    /// Read timer side-effect requests from the last successful script invocation.
+    pub fn last_script_timer_requests(&self) -> Vec<ScriptTimerRequestLiteral> {
+        self.last_script_timer_requests
+            .iter()
+            .map(script_timer_request_to_literal)
+            .collect()
     }
 
     /// Get bounded trace buffer entries.
@@ -505,6 +535,16 @@ impl WmlEngine {
         self.last_script_requires_refresh()
     }
 
+    #[wasm_bindgen(js_name = lastScriptDialogRequests)]
+    pub fn last_script_dialog_requests_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.last_script_dialog_requests())
+    }
+
+    #[wasm_bindgen(js_name = lastScriptTimerRequests)]
+    pub fn last_script_timer_requests_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.last_script_timer_requests())
+    }
+
     #[wasm_bindgen(js_name = traceEntries)]
     pub fn trace_entries_wasm(&self) -> Result<JsValue, JsValue> {
         to_js_value(&self.trace_entries())
@@ -608,6 +648,8 @@ impl WmlEngine {
 
         if !outcome.ok {
             self.pending_script_effects = ScriptRuntimeEffects::default();
+            self.last_script_dialog_requests.clear();
+            self.last_script_timer_requests.clear();
             return Err(outcome
                 .trap
                 .unwrap_or_else(|| "script invocation failed".to_string()));
@@ -720,6 +762,48 @@ impl WmlEngine {
 
     fn apply_pending_script_effects(&mut self) -> Result<(), String> {
         let effects = mem::take(&mut self.pending_script_effects);
+        self.last_script_dialog_requests = effects.dialog_requests().to_vec();
+        self.last_script_timer_requests = effects.timer_requests().to_vec();
+        for dialog in effects.dialog_requests() {
+            match dialog {
+                ScriptDialogRequest::Alert { message } => {
+                    self.push_trace("DIALOG_ALERT", message.clone());
+                }
+                ScriptDialogRequest::Confirm { message } => {
+                    self.push_trace("DIALOG_CONFIRM", message.clone());
+                }
+                ScriptDialogRequest::Prompt {
+                    message,
+                    default_value,
+                } => {
+                    self.push_trace(
+                        "DIALOG_PROMPT",
+                        format!(
+                            "message={message};default={}",
+                            default_value.clone().unwrap_or_default()
+                        ),
+                    );
+                }
+            }
+        }
+
+        for timer in effects.timer_requests() {
+            match timer {
+                ScriptTimerRequest::Schedule { delay_ms, token } => {
+                    self.push_trace(
+                        "TIMER_SCHEDULE",
+                        format!(
+                            "delayMs={delay_ms};token={}",
+                            token.clone().unwrap_or_default()
+                        ),
+                    );
+                }
+                ScriptTimerRequest::Cancel { token } => {
+                    self.push_trace("TIMER_CANCEL", token.clone());
+                }
+            }
+        }
+
         let nav_intent = effects.navigation_intent().clone();
 
         match nav_intent {
@@ -894,6 +978,35 @@ pub struct ScriptInvocationOutcome {
     pub result: ScriptValueLiteral,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+pub enum ScriptDialogRequestLiteral {
+    Alert {
+        message: String,
+    },
+    Confirm {
+        message: String,
+    },
+    Prompt {
+        message: String,
+        #[serde(rename = "defaultValue")]
+        default_value: Option<String>,
+    },
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "lowercase")]
+pub enum ScriptTimerRequestLiteral {
+    Schedule {
+        #[serde(rename = "delayMs")]
+        delay_ms: u32,
+        token: Option<String>,
+    },
+    Cancel {
+        token: String,
+    },
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct EngineTraceEntry {
     pub seq: u64,
@@ -1015,11 +1128,42 @@ fn script_nav_intent_to_literal(intent: &ScriptNavigationIntent) -> ScriptNaviga
     }
 }
 
+fn script_dialog_request_to_literal(request: &ScriptDialogRequest) -> ScriptDialogRequestLiteral {
+    match request {
+        ScriptDialogRequest::Alert { message } => ScriptDialogRequestLiteral::Alert {
+            message: message.clone(),
+        },
+        ScriptDialogRequest::Confirm { message } => ScriptDialogRequestLiteral::Confirm {
+            message: message.clone(),
+        },
+        ScriptDialogRequest::Prompt {
+            message,
+            default_value,
+        } => ScriptDialogRequestLiteral::Prompt {
+            message: message.clone(),
+            default_value: default_value.clone(),
+        },
+    }
+}
+
+fn script_timer_request_to_literal(request: &ScriptTimerRequest) -> ScriptTimerRequestLiteral {
+    match request {
+        ScriptTimerRequest::Schedule { delay_ms, token } => ScriptTimerRequestLiteral::Schedule {
+            delay_ms: *delay_ms,
+            token: token.clone(),
+        },
+        ScriptTimerRequest::Cancel { token } => ScriptTimerRequestLiteral::Cancel {
+            token: token.clone(),
+        },
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{
         convert_script_call_args, parse_script_href, ParsedScriptRef, ScriptCallArgLiteral,
-        ScriptNavigationIntentLiteral, ScriptValueLiteral, WmlEngine,
+        ScriptDialogRequestLiteral, ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral,
+        ScriptValueLiteral, WmlEngine,
     };
     use crate::layout::flow_layout::layout_card;
     use crate::render::render_list::DrawCmd;
@@ -1695,6 +1839,36 @@ mod tests {
     }
 
     #[test]
+    fn execute_script_ref_does_not_publish_dialog_or_timer_effects() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let mut unit = Vec::new();
+        push_string(&mut unit, "hello");
+        unit.push(0x20);
+        unit.push(0x05);
+        unit.push(0x01); // alert(message)
+        unit.push(0x01);
+        unit.push(25);
+        push_string(&mut unit, "otp");
+        unit.push(0x20);
+        unit.push(0x08);
+        unit.push(0x02); // setTimer(delay, token)
+        unit.push(0x00);
+        engine.register_script_unit("raw-effects.wmlsc".to_string(), unit);
+
+        let outcome = engine.execute_script_ref_internal("raw-effects.wmlsc", "main");
+        assert!(outcome.ok);
+        assert!(engine.last_script_dialog_requests().is_empty());
+        assert!(engine.last_script_timer_requests().is_empty());
+    }
+
+    #[test]
     fn invoke_script_ref_applies_effects_and_returns_invocation_outcome() {
         let mut engine = WmlEngine::new();
         let xml = r##"
@@ -1759,6 +1933,73 @@ mod tests {
         assert!(err.contains("unsupported opcode"));
         assert_eq!(engine.active_card_id().expect("active card"), "home");
         assert_eq!(engine.last_script_execution_ok(), Some(false));
+    }
+
+    #[test]
+    fn invoke_script_ref_records_dialog_and_timer_effect_traces() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let mut unit = Vec::new();
+        push_string(&mut unit, "wake up");
+        unit.push(0x20);
+        unit.push(0x05);
+        unit.push(0x01); // alert(message)
+        unit.push(0x01);
+        unit.push(25); // delay ms
+        push_string(&mut unit, "otp");
+        unit.push(0x20);
+        unit.push(0x08);
+        unit.push(0x02); // setTimer(delayMs, token)
+        push_string(&mut unit, "otp");
+        unit.push(0x20);
+        unit.push(0x09);
+        unit.push(0x01); // clearTimer(token)
+        unit.push(0x00);
+        engine.register_script_unit("effects.wmlsc".to_string(), unit);
+
+        let outcome = engine
+            .invoke_script_ref_internal("effects.wmlsc", "main", &[])
+            .expect("invoke should succeed");
+        assert!(outcome.result != ScriptValueLiteral::Invalid { invalid: true });
+
+        let traces = engine.trace_entries();
+        assert!(
+            traces.iter().any(|entry| entry.kind == "DIALOG_ALERT"),
+            "missing dialog trace"
+        );
+        assert!(
+            traces.iter().any(|entry| entry.kind == "TIMER_SCHEDULE"),
+            "missing timer schedule trace"
+        );
+        assert!(
+            traces.iter().any(|entry| entry.kind == "TIMER_CANCEL"),
+            "missing timer cancel trace"
+        );
+
+        assert_eq!(
+            engine.last_script_dialog_requests(),
+            vec![ScriptDialogRequestLiteral::Alert {
+                message: "wake up".to_string(),
+            }]
+        );
+        assert_eq!(
+            engine.last_script_timer_requests(),
+            vec![
+                ScriptTimerRequestLiteral::Schedule {
+                    delay_ms: 25,
+                    token: Some("otp".to_string()),
+                },
+                ScriptTimerRequestLiteral::Cancel {
+                    token: "otp".to_string(),
+                },
+            ]
+        );
     }
 
     #[test]

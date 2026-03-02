@@ -495,6 +495,19 @@ mod tests {
     }
 
     #[test]
+    fn execute_return_without_value_uses_deterministic_empty_string() {
+        let vm = Vm::default();
+        // main: call fn@5 args=0 locals=0; halt
+        // fn@5: ret (no pushed value)
+        let unit = decode_compilation_unit(&[0x12, 5, 0, 0, 0x00, 0x13]).expect("unit decode");
+
+        let value = vm
+            .execute(&unit)
+            .expect("return without value should still complete");
+        assert_eq!(value, ScriptValue::empty_string());
+    }
+
+    #[test]
     fn execute_call_depth_limit_traps() {
         let vm = Vm::new(ExecutionLimits {
             max_steps: 32,
@@ -572,5 +585,20 @@ mod tests {
             .execute_with_host(&unit, &mut host)
             .expect("hostcall should execute");
         assert_eq!(value, ScriptValue::String("ok".to_string()));
+    }
+
+    #[test]
+    fn execute_trap_is_recoverable_for_subsequent_runs() {
+        let vm = Vm::default();
+        let trap_unit = decode_compilation_unit(&[0xff]).expect("trap unit decode");
+        let ok_unit = decode_compilation_unit(&[0x01, 7, 0x00]).expect("ok unit decode");
+
+        let err = vm.execute(&trap_unit).expect_err("first run must trap");
+        assert_eq!(err, VmTrap::UnsupportedOpcode(0xff));
+
+        let value = vm
+            .execute(&ok_unit)
+            .expect("subsequent execution must remain functional");
+        assert_eq!(value, ScriptValue::Int32(7));
     }
 }
