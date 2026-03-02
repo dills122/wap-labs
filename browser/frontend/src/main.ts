@@ -1,6 +1,14 @@
 import { invoke } from '@tauri-apps/api/core';
 import type { FetchResponse as FetchDeckResponse, HostSessionState } from '../../contracts/transport';
 import './styles.css';
+import {
+  canHistoryBack,
+  commitHistoryBack,
+  createHostHistoryState,
+  peekHistoryBack,
+  pushHostHistoryEntry,
+  updateCurrentHistoryCard
+} from './session-history';
 
 type EngineKey = 'up' | 'down' | 'enter';
 
@@ -46,11 +54,6 @@ interface TimelineEntry {
 }
 
 type NavSource = 'user' | 'external-intent' | 'history-back';
-
-interface HostHistoryEntry {
-  url: string;
-  activeCardId?: string;
-}
 
 const SAMPLE_WML = `<wml>
   <card id="home">
@@ -183,28 +186,9 @@ let hostSessionState: HostSessionState = {
   navigationStatus: 'idle',
   requestedUrl: fetchUrlInput.value
 };
-const hostHistory: HostHistoryEntry[] = [];
-let hostHistoryIndex = -1;
+const hostHistory = createHostHistoryState();
 let timelineSeq = 0;
 const timelineEntries: TimelineEntry[] = [];
-
-const pushHostHistory = (url: string, activeCardId?: string): void => {
-  const normalized = url.trim();
-  if (!normalized) {
-    return;
-  }
-  if (hostHistoryIndex >= 0 && hostHistory[hostHistoryIndex]?.url === normalized) {
-    if (activeCardId) {
-      hostHistory[hostHistoryIndex].activeCardId = activeCardId;
-    }
-    return;
-  }
-  if (hostHistoryIndex < hostHistory.length - 1) {
-    hostHistory.splice(hostHistoryIndex + 1);
-  }
-  hostHistory.push({ url: normalized, activeCardId });
-  hostHistoryIndex = hostHistory.length - 1;
-};
 
 const cloneSessionState = (): HostSessionState => ({ ...hostSessionState });
 
@@ -257,7 +241,12 @@ const setSessionState = (next: HostSessionState): void => {
 };
 
 const mergeSessionState = (patch: Partial<HostSessionState>): void => {
-  setSessionState({ ...hostSessionState, ...patch });
+  setSessionState({
+    ...hostSessionState,
+    ...patch,
+    historyIndex: hostHistory.index,
+    history: hostHistory.entries
+  });
   recordTimeline('session-state', 'state', { patch });
 };
 
@@ -267,9 +256,7 @@ const syncSessionFromSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
     focusedLinkIndex: snapshot.focusedLinkIndex,
     externalNavigationIntent: snapshot.externalNavigationIntent
   });
-  if (hostHistoryIndex >= 0 && snapshot.activeCardId) {
-    hostHistory[hostHistoryIndex].activeCardId = snapshot.activeCardId;
-  }
+  updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
 };
 
 setSessionState(hostSessionState);
@@ -443,9 +430,8 @@ const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> =
     return 'engine';
   }
 
-  if (hostHistoryIndex > 0) {
-    const targetIndex = hostHistoryIndex - 1;
-    const previous = hostHistory[targetIndex];
+  if (canHistoryBack(hostHistory)) {
+    const previous = peekHistoryBack(hostHistory);
     if (previous?.url) {
       const prevSnapshot = await loadTransportUrl(previous.url, 'history-back', true, false);
       if (prevSnapshot) {
@@ -458,10 +444,17 @@ const navigateBackWithFallback = async (): Promise<'engine' | 'host' | 'none'> =
           drawRenderList(renderList);
           syncSessionFromSnapshot(restored);
         }
-        hostHistoryIndex = targetIndex;
+        const committed = commitHistoryBack(hostHistory);
+        if (!committed) {
+          return 'none';
+        }
         fetchUrlInput.value = previous.url;
+        mergeSessionState({
+          historyIndex: hostHistory.index,
+          history: hostHistory.entries
+        });
         recordTimeline('host-history-back', 'state', {
-          historyIndex: hostHistoryIndex,
+          historyIndex: hostHistory.index,
           url: previous.url,
           restoredCardId: previous.activeCardId
         });
@@ -494,6 +487,7 @@ const loadTransportUrl = async (
   mergeSessionState({
     navigationStatus: 'loading',
     requestedUrl,
+    navigationSource: source,
     lastError: undefined
   });
   if (source === 'user') {
@@ -573,10 +567,15 @@ const loadTransportUrl = async (
     activeCardId: snapshot.activeCardId,
     focusedLinkIndex: snapshot.focusedLinkIndex,
     externalNavigationIntent: snapshot.externalNavigationIntent,
+    navigationSource: source,
     lastError: undefined
   });
   if (pushHistory) {
-    pushHostHistory(transport.finalUrl, snapshot.activeCardId);
+    pushHostHistoryEntry(hostHistory, transport.finalUrl, snapshot.activeCardId, source);
+    mergeSessionState({
+      historyIndex: hostHistory.index,
+      history: hostHistory.entries
+    });
   }
   setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
 

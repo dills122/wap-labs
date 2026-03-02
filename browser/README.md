@@ -74,9 +74,9 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 
-1. Expand frontend harness into browser chrome and full navigation UX.
-2. Add deterministic timeline/debug artifact export parity and validation checks.
-3. Add history/session persistence semantics to host state.
+1. Complete `T0-02`: freeze transport normalization guarantees (`wmlXml`, `baseUrl`, `contentType`, raw-bytes metadata) across host contracts/docs.
+2. Complete `T0-03`: align transport/browser error taxonomy with deterministic host-facing semantics.
+3. Add automated browser-side regression checks for keyboard + hybrid back behavior.
 
 ## Planning + Traceability
 
@@ -92,3 +92,6 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [x] Implement transport fetch -> engine loadDeckContext handoff
 - [x] Add integration fixtures for load/nav/external-intent loops
 - [x] Add event timeline export parity and chronology validation checks
+- [x] Ship browser-style shell with hidden developer drawer
+- [x] Add global keyboard navigation when not in text-entry fields
+- [x] Add hybrid back behavior (engine card-history + host URL fallback)

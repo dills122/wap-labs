@@ -46,6 +46,7 @@ Project planning links:
 
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
+- Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
 
@@ -288,11 +289,13 @@ These were the first tickets prepared before Waves browser implementation starte
 
 ### T0-02 Transport normalization guarantees for engine handoff
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`
 - `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/frontend/src/session-history.ts`
 - `transport-rust/README.md`
 4. `Build`:
 - Freeze normalization guarantees (`wmlXml`, `baseUrl`, `contentType`, optional raw bytes) and failure semantics.

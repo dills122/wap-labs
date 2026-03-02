@@ -38,6 +38,20 @@ export interface EngineDeckInput {
   rawBytesBase64?: string;
 }
 
+export type HostNavigationSource =
+  | 'user'
+  | 'external-intent'
+  | 'history-back'
+  | 'reload'
+  | 'engine-back'
+  | 'keyboard';
+
+export interface HostHistoryEntry {
+  url: string;
+  activeCardId?: string;
+  source?: HostNavigationSource;
+}
+
 export interface FetchResponse {
   ok: boolean;
   status: number;
@@ -64,4 +78,7 @@ export interface HostSessionState {
   focusedLinkIndex?: number;
   externalNavigationIntent?: string;
   lastError?: string;
+  navigationSource?: HostNavigationSource;
+  historyIndex?: number;
+  history?: HostHistoryEntry[];
 }

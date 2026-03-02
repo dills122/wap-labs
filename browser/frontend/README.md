@@ -42,6 +42,10 @@ Developer tools drawer:
 - collapsed by default
 - toggle via keyboard shortcut: `Ctrl+Shift+D`
 
+Session stack helpers:
+
+- `src/session-history.ts` centralizes host URL/card history behavior used by browser back fallback.
+
 Run from `browser/`:
 
 ```bash
