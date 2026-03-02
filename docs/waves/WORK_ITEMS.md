@@ -108,7 +108,7 @@ These were the first tickets prepared before Waves browser implementation starte
 
 ### P0-01 Repo bootstrap alignment for `browser/`
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: none
 3. `Files`:
 - `browser/README.md`
@@ -883,6 +883,7 @@ Compliance target for this lane:
 4. `Build`:
 - Implement explicit fatal vs non-fatal execution error classes and map non-fatal computational failures to `invalid` semantics.
 - Keep host contract deterministic: invocation-abort vs recoverable-result outcomes must be machine-checkable.
+ - Progress (`2026-03-02`): added structured execution `error_class` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, and added fatal-abort recovery coverage.
 5. `Tests`:
 - Conformance fixtures for arithmetic/conversion/runtime-error classes with expected fatal/non-fatal outcomes.
 - Integration fixtures proving host/runtime liveness after fatal script invocation failure.

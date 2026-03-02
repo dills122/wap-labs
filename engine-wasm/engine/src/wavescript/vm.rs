@@ -214,7 +214,7 @@ impl Vm {
                     let arg_count = usize::from(read_u8(unit.bytes(), &mut pc, opcode)?);
                     let local_count = usize::from(read_u8(unit.bytes(), &mut pc, opcode)?);
 
-                    if target >= unit.bytes().len() {
+                    if !unit.is_instruction_boundary(target) {
                         return Err(VmTrap::InvalidCallTarget { target });
                     }
                     if frames.len() > self.limits.max_call_depth {
@@ -333,7 +333,7 @@ fn pop_int32(stack: &mut Vec<ScriptValue>) -> Result<i32, VmTrap> {
 #[cfg(test)]
 mod tests {
     use super::{pop_int32, ExecutionLimits, Vm, VmHost, VmTrap};
-    use crate::wavescript::decoder::decode_compilation_unit;
+    use crate::wavescript::decoder::{decode_compilation_unit, DecodeError};
     use crate::wavescript::value::ScriptValue;
 
     #[derive(Default)]
@@ -365,13 +365,15 @@ mod tests {
 
     #[test]
     fn execute_rejects_unknown_opcode() {
-        let vm = Vm::default();
-        let unit = decode_compilation_unit(&[0xff]).expect("unit must decode");
-
-        let err = vm
-            .execute(&unit)
-            .expect_err("unknown opcode should trap deterministically");
-        assert_eq!(err, VmTrap::UnsupportedOpcode(0xff));
+        let err =
+            decode_compilation_unit(&[0xff]).expect_err("unknown opcode should fail at decode");
+        assert_eq!(
+            err,
+            DecodeError::UnsupportedOpcode {
+                pc: 0,
+                opcode: 0xff
+            }
+        );
     }
 
     #[test]
@@ -431,11 +433,14 @@ mod tests {
 
     #[test]
     fn execute_traps_on_truncated_push_immediate() {
-        let vm = Vm::default();
-        let unit = decode_compilation_unit(&[0x01]).expect("unit decode");
-
-        let err = vm.execute(&unit).expect_err("missing immediate must trap");
-        assert_eq!(err, VmTrap::TruncatedImmediate { opcode: 0x01 });
+        let err = decode_compilation_unit(&[0x01]).expect_err("missing immediate must fail");
+        assert_eq!(
+            err,
+            DecodeError::TruncatedImmediate {
+                pc: 0,
+                opcode: 0x01
+            }
+        );
     }
 
     #[test]
@@ -533,11 +538,9 @@ mod tests {
 
     #[test]
     fn execute_invalid_call_target_traps() {
-        let vm = Vm::default();
-        let unit = decode_compilation_unit(&[0x12, 255, 0, 0]).expect("unit decode");
-
-        let err = vm.execute(&unit).expect_err("invalid target must trap");
-        assert_eq!(err, VmTrap::InvalidCallTarget { target: 255 });
+        let err =
+            decode_compilation_unit(&[0x12, 255, 0, 0]).expect_err("invalid target must fail");
+        assert_eq!(err, DecodeError::InvalidCallTarget { pc: 0, target: 255 });
     }
 
     #[test]
@@ -590,11 +593,11 @@ mod tests {
     #[test]
     fn execute_trap_is_recoverable_for_subsequent_runs() {
         let vm = Vm::default();
-        let trap_unit = decode_compilation_unit(&[0xff]).expect("trap unit decode");
+        let trap_unit = decode_compilation_unit(&[0x02, 0x00]).expect("trap unit decode");
         let ok_unit = decode_compilation_unit(&[0x01, 7, 0x00]).expect("ok unit decode");
 
         let err = vm.execute(&trap_unit).expect_err("first run must trap");
-        assert_eq!(err, VmTrap::UnsupportedOpcode(0xff));
+        assert_eq!(err, VmTrap::StackUnderflow);
 
         let value = vm
             .execute(&ok_unit)

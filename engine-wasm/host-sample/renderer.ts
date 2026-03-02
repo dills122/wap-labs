@@ -21,6 +21,7 @@ export interface EngineSnapshot {
   externalNavigationIntent?: string;
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
+  lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
   lastScriptRequiresRefresh?: boolean;
 }
 
@@ -53,6 +54,7 @@ export interface EngineHost {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
+  lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
@@ -129,6 +131,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         externalNavigationIntent: engine.externalNavigationIntent(),
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),
+        lastScriptExecutionErrorClass: engine.lastScriptExecutionErrorClass() ?? undefined,
         lastScriptRequiresRefresh: engine.lastScriptRequiresRefresh()
       };
     },
@@ -191,6 +194,9 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     },
     lastScriptExecutionOk() {
       return engine.lastScriptExecutionOk();
+    },
+    lastScriptExecutionErrorClass() {
+      return engine.lastScriptExecutionErrorClass() as 'none' | 'non-fatal' | 'fatal' | undefined;
     },
     lastScriptRequiresRefresh() {
       return engine.lastScriptRequiresRefresh();

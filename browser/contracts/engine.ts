@@ -14,6 +14,7 @@ export interface EngineRuntimeSnapshot {
   externalNavigationIntent?: string;
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
+  lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
   lastScriptRequiresRefresh?: boolean;
   lastScriptDialogRequests?: ScriptDialogRequest[];
   lastScriptTimerRequests?: ScriptTimerRequest[];

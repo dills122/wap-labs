@@ -306,6 +306,13 @@ impl WmlEngine {
         self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
     }
 
+    /// Read classified error class from the last script execution.
+    pub fn last_script_execution_error_class(&self) -> Option<String> {
+        self.last_script_outcome
+            .as_ref()
+            .map(|outcome| outcome.error_class.as_str().to_string())
+    }
+
     /// Read refresh requirement from the last script execution.
     pub fn last_script_requires_refresh(&self) -> Option<bool> {
         self.last_script_outcome
@@ -530,6 +537,11 @@ impl WmlEngine {
         self.last_script_execution_ok()
     }
 
+    #[wasm_bindgen(js_name = lastScriptExecutionErrorClass)]
+    pub fn last_script_execution_error_class_wasm(&self) -> Option<String> {
+        self.last_script_execution_error_class()
+    }
+
     #[wasm_bindgen(js_name = lastScriptRequiresRefresh)]
     pub fn last_script_requires_refresh_wasm(&self) -> Option<bool> {
         self.last_script_requires_refresh()
@@ -561,7 +573,7 @@ impl WmlEngine {
         let decoded_unit = match decode_compilation_unit(bytes) {
             Ok(unit) => unit,
             Err(err) => {
-                return ScriptExecutionOutcome::trap(format_decode_error(err));
+                return ScriptExecutionOutcome::fatal(format_decode_error(err));
             }
         };
 
@@ -572,7 +584,7 @@ impl WmlEngine {
                 ScriptNavigationIntentLiteral::None,
                 false,
             ),
-            Err(trap) => ScriptExecutionOutcome::trap(format_vm_trap(trap)),
+            Err(trap) => classify_vm_trap_outcome(trap, ScriptNavigationIntentLiteral::None, false),
         }
     }
 
@@ -591,7 +603,7 @@ impl WmlEngine {
         args: &[ScriptValue],
     ) -> ScriptExecutionOutcome {
         let Some(bytes) = self.script_units.get(src) else {
-            return ScriptExecutionOutcome::trap(format!(
+            return ScriptExecutionOutcome::fatal(format!(
                 "loader: script unit not registered ({src})"
             ));
         };
@@ -599,7 +611,7 @@ impl WmlEngine {
         let decoded_unit = match decode_compilation_unit(bytes) {
             Ok(unit) => unit,
             Err(err) => {
-                return ScriptExecutionOutcome::trap(format_decode_error(err));
+                return ScriptExecutionOutcome::fatal(format_decode_error(err));
             }
         };
 
@@ -607,12 +619,12 @@ impl WmlEngine {
             0
         } else {
             let Some(entrypoints) = self.script_entrypoints.get(src) else {
-                return ScriptExecutionOutcome::trap(format!(
+                return ScriptExecutionOutcome::fatal(format!(
                     "loader: function entry point not registered ({src}#{function_name})"
                 ));
             };
             let Some(entry_pc) = entrypoints.get(function_name) else {
-                return ScriptExecutionOutcome::trap(format!(
+                return ScriptExecutionOutcome::fatal(format!(
                     "loader: function entry point not registered ({src}#{function_name})"
                 ));
             };
@@ -633,7 +645,11 @@ impl WmlEngine {
                 script_nav_intent_to_literal(self.pending_script_effects.navigation_intent()),
                 self.pending_script_effects.requires_refresh(),
             ),
-            Err(trap) => ScriptExecutionOutcome::trap(format_vm_trap(trap)),
+            Err(trap) => classify_vm_trap_outcome(
+                trap,
+                script_nav_intent_to_literal(self.pending_script_effects.navigation_intent()),
+                self.pending_script_effects.requires_refresh(),
+            ),
         }
     }
 
@@ -646,7 +662,7 @@ impl WmlEngine {
         let outcome = self.execute_script_ref_call_internal(src, function_name, args);
         self.last_script_outcome = Some(outcome.clone());
 
-        if !outcome.ok {
+        if outcome.invocation_aborted {
             self.pending_script_effects = ScriptRuntimeEffects::default();
             self.last_script_dialog_requests.clear();
             self.last_script_timer_requests.clear();
@@ -837,6 +853,10 @@ impl WmlEngine {
             focused_link_index: self.focused_link_idx,
             external_navigation_intent: self.external_nav_intent.clone(),
             script_ok: self.last_script_outcome.as_ref().map(|outcome| outcome.ok),
+            script_error_class: self
+                .last_script_outcome
+                .as_ref()
+                .map(|outcome| outcome.error_class.clone()),
             script_trap: self
                 .last_script_outcome
                 .as_ref()
@@ -914,6 +934,15 @@ fn format_decode_error(err: DecodeError) -> String {
         DecodeError::UnitTooLarge { size, limit } => {
             format!("decode: unit too large (size={size}, limit={limit})")
         }
+        DecodeError::UnsupportedOpcode { pc, opcode } => {
+            format!("decode: unsupported opcode 0x{opcode:02x} at pc={pc}")
+        }
+        DecodeError::TruncatedImmediate { pc, opcode } => {
+            format!("decode: truncated immediate for opcode 0x{opcode:02x} at pc={pc}")
+        }
+        DecodeError::InvalidCallTarget { pc, target } => {
+            format!("decode: invalid call target {target} from pc={pc}")
+        }
     }
 }
 
@@ -966,6 +995,8 @@ pub struct ScriptExecutionOutcome {
     pub ok: bool,
     pub result: ScriptValueLiteral,
     pub trap: Option<String>,
+    pub error_class: ScriptErrorClassLiteral,
+    pub invocation_aborted: bool,
     pub navigation_intent: ScriptNavigationIntentLiteral,
     pub requires_refresh: bool,
 }
@@ -1016,6 +1047,7 @@ pub struct EngineTraceEntry {
     pub focused_link_index: usize,
     pub external_navigation_intent: Option<String>,
     pub script_ok: Option<bool>,
+    pub script_error_class: Option<ScriptErrorClassLiteral>,
     pub script_trap: Option<String>,
 }
 
@@ -1029,19 +1061,96 @@ impl ScriptExecutionOutcome {
             ok: true,
             result,
             trap: None,
+            error_class: ScriptErrorClassLiteral::None,
+            invocation_aborted: false,
             navigation_intent,
             requires_refresh,
         }
     }
 
-    fn trap(message: String) -> Self {
+    fn non_fatal(
+        message: String,
+        navigation_intent: ScriptNavigationIntentLiteral,
+        requires_refresh: bool,
+    ) -> Self {
+        Self {
+            ok: true,
+            result: ScriptValueLiteral::Invalid { invalid: true },
+            trap: Some(message),
+            error_class: ScriptErrorClassLiteral::NonFatal,
+            invocation_aborted: false,
+            navigation_intent,
+            requires_refresh,
+        }
+    }
+
+    fn fatal(message: String) -> Self {
         Self {
             ok: false,
             result: ScriptValueLiteral::Invalid { invalid: true },
             trap: Some(message),
+            error_class: ScriptErrorClassLiteral::Fatal,
+            invocation_aborted: true,
             navigation_intent: ScriptNavigationIntentLiteral::None,
             requires_refresh: false,
         }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ScriptErrorClassLiteral {
+    None,
+    NonFatal,
+    Fatal,
+}
+
+impl ScriptErrorClassLiteral {
+    fn as_str(&self) -> &'static str {
+        match self {
+            Self::None => "none",
+            Self::NonFatal => "non-fatal",
+            Self::Fatal => "fatal",
+        }
+    }
+}
+
+fn classify_vm_trap_outcome(
+    trap: VmTrap,
+    navigation_intent: ScriptNavigationIntentLiteral,
+    requires_refresh: bool,
+) -> ScriptExecutionOutcome {
+    let class = classify_vm_trap(&trap);
+    let message = format_vm_trap(trap);
+    match class {
+        ScriptErrorClassLiteral::NonFatal => {
+            ScriptExecutionOutcome::non_fatal(message, navigation_intent, requires_refresh)
+        }
+        ScriptErrorClassLiteral::None => ScriptExecutionOutcome::ok(
+            ScriptValueLiteral::Invalid { invalid: true },
+            navigation_intent,
+            requires_refresh,
+        ),
+        ScriptErrorClassLiteral::Fatal => ScriptExecutionOutcome::fatal(message),
+    }
+}
+
+fn classify_vm_trap(trap: &VmTrap) -> ScriptErrorClassLiteral {
+    match trap {
+        VmTrap::TypeError(_) | VmTrap::StackUnderflow => ScriptErrorClassLiteral::NonFatal,
+        VmTrap::EmptyUnit
+        | VmTrap::InvalidEntryPoint { .. }
+        | VmTrap::UnsupportedOpcode(_)
+        | VmTrap::TruncatedImmediate { .. }
+        | VmTrap::StackOverflow { .. }
+        | VmTrap::InvalidLocalIndex { .. }
+        | VmTrap::InvalidCallTarget { .. }
+        | VmTrap::CallDepthExceeded { .. }
+        | VmTrap::ReturnFromRootFrame
+        | VmTrap::ExecutionLimitExceeded { .. }
+        | VmTrap::Utf8ImmediateDecode
+        | VmTrap::HostCallUnavailable { .. }
+        | VmTrap::HostCallError { .. } => ScriptErrorClassLiteral::Fatal,
     }
 }
 
@@ -1161,13 +1270,14 @@ fn script_timer_request_to_literal(request: &ScriptTimerRequest) -> ScriptTimerR
 #[cfg(test)]
 mod tests {
     use super::{
-        convert_script_call_args, parse_script_href, ParsedScriptRef, ScriptCallArgLiteral,
-        ScriptDialogRequestLiteral, ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral,
-        ScriptValueLiteral, WmlEngine,
+        classify_vm_trap, convert_script_call_args, parse_script_href, ParsedScriptRef,
+        ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorClassLiteral,
+        ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral, ScriptValueLiteral, WmlEngine,
     };
     use crate::layout::flow_layout::layout_card;
     use crate::render::render_list::DrawCmd;
     use crate::wavescript::value::ScriptValue;
+    use crate::wavescript::vm::VmTrap;
 
     const SAMPLE: &str = r##"
     <wml>
@@ -1566,6 +1676,8 @@ mod tests {
 
         let outcome = engine.execute_script_unit_internal(&[]);
         assert!(!outcome.ok);
+        assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
+        assert!(outcome.invocation_aborted);
         assert_eq!(
             outcome.trap.as_deref(),
             Some("decode: empty compilation unit")
@@ -1577,12 +1689,17 @@ mod tests {
     }
 
     #[test]
-    fn execute_script_unit_unknown_opcode_returns_vm_trap() {
+    fn execute_script_unit_unknown_opcode_returns_decode_fatal() {
         let engine = WmlEngine::new();
 
         let outcome = engine.execute_script_unit_internal(&[0xff]);
         assert!(!outcome.ok);
-        assert_eq!(outcome.trap.as_deref(), Some("vm: unsupported opcode 0xff"));
+        assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
+        assert!(outcome.invocation_aborted);
+        assert_eq!(
+            outcome.trap.as_deref(),
+            Some("decode: unsupported opcode 0xff at pc=0")
+        );
         assert_eq!(
             outcome.result,
             super::ScriptValueLiteral::Invalid { invalid: true }
@@ -1600,14 +1717,37 @@ mod tests {
     }
 
     #[test]
-    fn execute_script_unit_truncated_immediate_returns_vm_trap() {
+    fn execute_script_unit_truncated_immediate_returns_decode_fatal() {
         let engine = WmlEngine::new();
 
         let outcome = engine.execute_script_unit_internal(&[0x01]);
         assert!(!outcome.ok);
+        assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
+        assert!(outcome.invocation_aborted);
         assert_eq!(
             outcome.trap.as_deref(),
-            Some("vm: truncated immediate for opcode 0x01")
+            Some("decode: truncated immediate for opcode 0x01 at pc=0")
+        );
+    }
+
+    #[test]
+    fn execute_script_unit_type_mismatch_is_non_fatal_invalid() {
+        let engine = WmlEngine::new();
+        let outcome = engine.execute_script_unit_internal(&[0x03, 1, b'x', 0x01, 1, 0x02, 0x00]);
+
+        assert!(outcome.ok);
+        assert_eq!(
+            outcome.error_class,
+            super::ScriptErrorClassLiteral::NonFatal
+        );
+        assert!(!outcome.invocation_aborted);
+        assert_eq!(
+            outcome.result,
+            super::ScriptValueLiteral::Invalid { invalid: true }
+        );
+        assert_eq!(
+            outcome.trap.as_deref(),
+            Some("vm: type error (expected int32)")
         );
     }
 
@@ -1618,6 +1758,55 @@ mod tests {
         let outcome = engine.execute_script_unit_internal(&[0x13]);
         assert!(!outcome.ok);
         assert_eq!(outcome.trap.as_deref(), Some("vm: return from root frame"));
+    }
+
+    #[test]
+    fn execute_script_unit_stack_underflow_is_non_fatal_invalid() {
+        let engine = WmlEngine::new();
+        let outcome = engine.execute_script_unit_internal(&[0x02, 0x00]);
+
+        assert!(outcome.ok);
+        assert_eq!(
+            outcome.error_class,
+            super::ScriptErrorClassLiteral::NonFatal
+        );
+        assert!(!outcome.invocation_aborted);
+        assert_eq!(
+            outcome.result,
+            super::ScriptValueLiteral::Invalid { invalid: true }
+        );
+        assert_eq!(outcome.trap.as_deref(), Some("vm: stack underflow"));
+    }
+
+    #[test]
+    fn vm_trap_classification_matrix_is_explicit() {
+        let non_fatal_cases = [VmTrap::TypeError("expected int32"), VmTrap::StackUnderflow];
+        for trap in non_fatal_cases {
+            assert_eq!(
+                classify_vm_trap(&trap),
+                ScriptErrorClassLiteral::NonFatal,
+                "trap should classify as non-fatal: {trap:?}"
+            );
+        }
+
+        let fatal_cases = [
+            VmTrap::UnsupportedOpcode(0xff),
+            VmTrap::InvalidLocalIndex { index: 99 },
+            VmTrap::InvalidCallTarget { target: 77 },
+            VmTrap::HostCallUnavailable { function_id: 2 },
+            VmTrap::HostCallError {
+                function_id: 2,
+                message: "x".to_string(),
+            },
+            VmTrap::ExecutionLimitExceeded { limit: 1 },
+        ];
+        for trap in fatal_cases {
+            assert_eq!(
+                classify_vm_trap(&trap),
+                ScriptErrorClassLiteral::Fatal,
+                "trap should classify as fatal: {trap:?}"
+            );
+        }
     }
 
     #[test]
@@ -1933,6 +2122,105 @@ mod tests {
         assert!(err.contains("unsupported opcode"));
         assert_eq!(engine.active_card_id().expect("active card"), "home");
         assert_eq!(engine.last_script_execution_ok(), Some(false));
+    }
+
+    #[test]
+    fn invoke_script_ref_non_fatal_returns_invalid_without_abort() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit(
+            "nonfatal.wmlsc".to_string(),
+            vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
+        );
+
+        let outcome = engine
+            .invoke_script_ref_internal("nonfatal.wmlsc", "main", &[])
+            .expect("non-fatal type error should not abort invocation");
+        assert_eq!(
+            outcome.result,
+            ScriptValueLiteral::Invalid { invalid: true }
+        );
+        assert_eq!(engine.last_script_execution_ok(), Some(true));
+        assert_eq!(
+            engine.last_script_execution_error_class().as_deref(),
+            Some("non-fatal")
+        );
+    }
+
+    #[test]
+    fn invoke_script_ref_non_fatal_preserves_deferred_navigation_effects() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#next");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go("#next")
+        unit.push(0x02); // add => non-fatal (stack underflow / type mismatch)
+        unit.push(0x00);
+        engine.register_script_unit("nonfatal-nav.wmlsc".to_string(), unit);
+
+        let outcome = engine
+            .invoke_script_ref_internal("nonfatal-nav.wmlsc", "main", &[])
+            .expect("non-fatal error should not abort invocation");
+        assert_eq!(
+            outcome.result,
+            ScriptValueLiteral::Invalid { invalid: true }
+        );
+        assert_eq!(
+            outcome.navigation_intent,
+            ScriptNavigationIntentLiteral::Go {
+                href: "#next".to_string()
+            }
+        );
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_eq!(
+            engine.last_script_execution_error_class().as_deref(),
+            Some("non-fatal")
+        );
+    }
+
+    #[test]
+    fn fatal_invocation_failure_keeps_engine_recoverable() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
+        engine.register_script_unit("good.wmlsc".to_string(), vec![0x01, 2, 0x01, 3, 0x02, 0x00]);
+
+        let err = engine
+            .invoke_script_ref_internal("fatal.wmlsc", "main", &[])
+            .expect_err("fatal decode error should abort invocation");
+        assert!(err.contains("unsupported opcode"));
+        assert_eq!(
+            engine.last_script_execution_error_class().as_deref(),
+            Some("fatal")
+        );
+
+        let outcome = engine
+            .invoke_script_ref_internal("good.wmlsc", "main", &[])
+            .expect("engine should stay recoverable after fatal invocation");
+        assert_eq!(outcome.result, ScriptValueLiteral::Number(5.0));
+        assert_eq!(
+            engine.last_script_execution_error_class().as_deref(),
+            Some("none")
+        );
     }
 
     #[test]

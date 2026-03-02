@@ -65,6 +65,8 @@ export interface ScriptExecutionOutcome {
   ok: boolean;
   result: ScriptValueLiteral;
   trap?: string;
+  errorClass: 'none' | 'non-fatal' | 'fatal';
+  invocationAborted: boolean;
   effects: ScriptPostInvocationEffects;
 }
 
@@ -92,6 +94,7 @@ export interface EngineTraceEntry {
   focused_link_index: number;
   external_navigation_intent?: string;
   script_ok?: boolean;
+  script_error_class?: 'none' | 'non-fatal' | 'fatal';
   script_trap?: string;
 }
 
@@ -159,6 +162,7 @@ export interface WmlEngineWasm {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
+  lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   lastScriptDialogRequests(): ScriptDialogRequest[];
   lastScriptTimerRequests(): ScriptTimerRequest[];
@@ -203,6 +207,7 @@ export interface WmlEngineNative {
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
+  lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   lastScriptDialogRequests(): ScriptDialogRequest[];
   lastScriptTimerRequests(): ScriptTimerRequest[];

@@ -163,8 +163,9 @@ Legend:
   - SCRs: `WMLS-C-109 (M)`, `WMLS-C-110 (M)`, `WMLS-C-111 (M)`
 - AC:
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
-  - [ ] Fatal errors terminate current script invocation safely.
-  - [ ] Host remains alive and recoverable after script failure.
+  - [x] Fatal errors terminate current script invocation safely.
+  - [x] Host remains alive and recoverable after script failure.
+  - Note (`2026-03-02`): VM computational `TypeError` and `StackUnderflow` traps are now classified as non-fatal and returned as `invalid`; a regression test matrix now asserts explicit fatal/non-fatal trap class mappings. Broader chapter-12 non-fatal class coverage remains tracked under `W1-06`.
 
 ### RQ-WMLS-011: Content-type handling
 

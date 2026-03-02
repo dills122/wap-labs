@@ -42,6 +42,7 @@ interface EngineRuntimeSnapshot {
   externalNavigationIntent?: string;
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
+  lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
   lastScriptRequiresRefresh?: boolean;
   lastScriptDialogRequests?: Array<
     | { type: 'alert'; message: string }

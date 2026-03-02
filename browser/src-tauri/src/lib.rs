@@ -93,6 +93,7 @@ struct EngineRuntimeSnapshot {
     external_navigation_intent: Option<String>,
     last_script_execution_ok: Option<bool>,
     last_script_execution_trap: Option<String>,
+    last_script_execution_error_class: Option<String>,
     last_script_requires_refresh: Option<bool>,
     last_script_dialog_requests: Vec<ScriptDialogRequestSnapshot>,
     last_script_timer_requests: Vec<ScriptTimerRequestSnapshot>,
@@ -107,6 +108,7 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         external_navigation_intent: engine.external_navigation_intent(),
         last_script_execution_ok: engine.last_script_execution_ok(),
         last_script_execution_trap: engine.last_script_execution_trap(),
+        last_script_execution_error_class: engine.last_script_execution_error_class(),
         last_script_requires_refresh: engine.last_script_requires_refresh(),
         last_script_dialog_requests: engine
             .last_script_dialog_requests()
