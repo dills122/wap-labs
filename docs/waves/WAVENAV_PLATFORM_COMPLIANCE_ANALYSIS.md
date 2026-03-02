@@ -1,7 +1,7 @@
 # WaveNav Platform Compliance Analysis (WAP UA Runtime)
 
-Date: 2026-03-01  
-Scope: `docs/source-material/`, `docs/source-material/sub-set/`, `docs/source-material/WMLScript/` plus in-repo backlog/work tracking.
+Date: 2026-03-02  
+Scope: canonical root-level `docs/source-material/` corpus plus in-repo backlog/work tracking.
 
 ## Implementation Requirements Matrix
 
@@ -187,3 +187,8 @@ Scope: `docs/source-material/`, `docs/source-material/sub-set/`, `docs/source-ma
   - WMLScript lineage (`WAP-193`, `WAP-194`, `WAP-194_103`)
   - WAE lineage (`WAP-236`, `WAP-237`)
   - security/security-PKI/architecture/deferred families
+
+### Rerun delta check (base 13-file wave)
+
+- Net-new high-impact compliance misses discovered: none beyond currently tracked closure lanes.
+- Table-normalization check for this wave reported no unresolved table-caption ambiguities (`38/38` normalized in `tmp/docling-rerun/cleanup-report.txt`).

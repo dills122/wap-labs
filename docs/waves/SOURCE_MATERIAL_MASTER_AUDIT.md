@@ -152,6 +152,7 @@ Foldered duplicates (`sub-set/`, `WMLScript/`) are convenience mirrors only.
 
 1. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synced with contract changes.
 2. Promote `planned` entries in `docs/waves/SPEC_TEST_COVERAGE.md` into implemented tests in each project backlog.
+3. Execute Phase `S1` spec-processing governance tickets in `docs/waves/WORK_ITEMS.md` to finalize provenance, canonical-path normalization, and extraction-quality gates.
 
 ## Quality gates
 

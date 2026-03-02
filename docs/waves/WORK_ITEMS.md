@@ -1407,6 +1407,8 @@ Reference:
 - `docs/waves/*TRACEABILITY*.md`
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
+- `docs/waves/WAVESCRIPT_VM_ARCHITECTURE.md`
+- `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md`
 4. `Build`:
 - Normalize source references to canonical root-level `docs/source-material/*.pdf` paths (except when a mirror path is explicitly intentional and labeled).
 - Remove inconsistent mirror-folder references that can cause provenance drift in audits.

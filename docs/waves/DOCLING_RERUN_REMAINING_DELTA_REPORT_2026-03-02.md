@@ -71,3 +71,6 @@ Rerun-validation status has been recorded in:
 - `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
 - `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md`
 
+## Follow-up tracking
+
+- Remaining extraction-governance actions from this rerun wave are tracked in `docs/waves/WORK_ITEMS.md` Phase `S1` (`S1-01`..`S1-06`).

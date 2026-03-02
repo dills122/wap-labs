@@ -18,10 +18,10 @@ This document defines how WaveScript VM support should be integrated into Waves,
 
 Primary source references:
 
-- `docs/source-material/WMLScript/WAP-193-WMLScript-20001025-a.pdf`
-- `docs/source-material/WMLScript/WAP-193_101-WMLScript-20010928-a.pdf`
-- `docs/source-material/WMLScript/WAP-194-WMLScriptLibraries-20000925-a.pdf`
-- `docs/source-material/WMLScript/WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
+- `docs/source-material/WAP-193-WMLScript-20001025-a.pdf`
+- `docs/source-material/WAP-193_101-WMLScript-20010928-a.pdf`
+- `docs/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf`
+- `docs/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
 
 Secondary implementation reference (tutorial material):
 
