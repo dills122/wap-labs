@@ -65,6 +65,22 @@ Next execution block is architecture hardening across all active libraries befor
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
+## Next In Line (Bedrock Compliance Sprint Candidate - 2026-03-02)
+
+This sprint slice prioritizes bedrock conformance closure over feature breadth:
+
+1. `W1-02` Bytecode structural verification (header/pools/indexes/jumps).
+2. `W1-06` Fatal vs non-fatal script error taxonomy and `invalid` result semantics.
+3. `R0-03` History/context fidelity completion (request-shape history entries).
+4. `R0-06` Transport/request-policy and postfield plumbing (`cache-control`, `sendreferer`, postfield flow).
+5. `T0-15` WAP caching model baseline and invalidation semantics.
+6. `R0-09` BACK key hard-availability and `do type=prev` precedence conformance.
+
+Sprint acceptance target:
+
+- All six tickets have executable acceptance fixtures mapped in `docs/waves/SPEC_TEST_COVERAGE.md`.
+- `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md` high-priority misses are reduced for history, cache, and script error semantics.
+
 ## Kickoff Guardrail (Historical)
 
 This board was prepared before implementation kickoff. Keep ticket statuses current as execution continues.
@@ -551,6 +567,26 @@ These were the first tickets prepared before Waves browser implementation starte
 7. `Spec`:
 - `RQ-TRN-001..019`, `RQ-TRX-001..010`
 
+### T0-15 WAP caching model baseline and invalidation semantics
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-04`, `R0-06`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `browser/contracts/transport.ts`
+- `browser/src-tauri/src/lib.rs`
+- `docs/waves/WAE_SPEC_TRACEABILITY.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Implement a deterministic cache-policy baseline for deck/script/media retrieval and invalidation triggers.
+- Ensure `cache-control=no-cache` and task-driven reload semantics route through one shared policy model.
+5. `Tests`:
+- Fixture matrix for cache hit, forced reload, stale invalidation, and request-policy override cases.
+6. `Accept`:
+- Cache behavior is explicit, deterministic, and verifiably aligned with the declared WAP profile.
+7. `Spec`:
+- `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
+
 ## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:
@@ -834,6 +870,27 @@ Compliance target for this lane:
 7. `Spec`:
 - `RQ-WMLS-001..022` (mandatory subsets first)
 
+### W1-06 Fatal/non-fatal script error taxonomy closure
+
+1. `Status`: `todo`
+2. `Depends On`: `W1-02`, `W1-04`
+3. `Files`:
+- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/value.rs`
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/contracts/wml-engine.ts`
+- `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Implement explicit fatal vs non-fatal execution error classes and map non-fatal computational failures to `invalid` semantics.
+- Keep host contract deterministic: invocation-abort vs recoverable-result outcomes must be machine-checkable.
+5. `Tests`:
+- Conformance fixtures for arithmetic/conversion/runtime-error classes with expected fatal/non-fatal outcomes.
+- Integration fixtures proving host/runtime liveness after fatal script invocation failure.
+6. `Accept`:
+- Error handling behavior aligns with chapter `12` taxonomy and no longer relies on generic trap collapsing.
+7. `Spec`:
+- `RQ-WMLS-006`, `RQ-WMLS-010`
+
 ## Phase R: WAP-191 Full-Stack Conformance Completion
 
 Reference:
@@ -991,6 +1048,26 @@ Reference:
 - Section `14` and `15.2/15.3/15.4` obligations are concretely represented in testable artifacts.
 7. `Spec`:
 - `WML-60`, `WML-61`, `WML-62`, `WML-63`, `WML-64`, `WML-65`, `WML-70`
+
+### R0-09 BACK key hard-availability and `do type=prev` precedence
+
+1. `Status`: `todo`
+2. `Depends On`: `R0-02`, `R0-03`
+3. `Files`:
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `browser/frontend/src/*`
+- `browser/contracts/transport.ts`
+- `docs/waves/WAE_SPEC_TRACEABILITY.md`
+4. `Build`:
+- Guarantee BACK is always user-accessible and maps to deterministic history pop semantics.
+- Implement WML1 override behavior where first-in-document-order `do type="prev"` takes precedence for BACK behavior.
+5. `Tests`:
+- Fixture set for BACK availability, stack-pop behavior, and `do type=prev` precedence with conflicting bindings.
+6. `Accept`:
+- BACK semantics are always available and precedence rules are deterministic across runtime + host UI paths.
+7. `Spec`:
+- `RQ-WAE-017`, section `9.2`, section `9.7`
 
 ## Phase S: Source-Material Deep Audit (Prepared)
 
@@ -1304,7 +1381,7 @@ Reference:
 
 ### S1-01 Table-fidelity manual spot-check lane for ambiguous captions
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `S0-14`
 3. `Files`:
 - `tmp/docling-rerun-remaining/cleanup-report.txt`
@@ -1320,6 +1397,8 @@ Reference:
 - Every flagged ambiguous table caption has explicit final status (`normalized`, `intentionally prose`, `needs follow-up extraction`).
 7. `Spec`:
 - `WAP-191_104` (`Table 1` spot-check from rerun cleanup report).
+8. `Notes`:
+- Manual spot-check confirms `Table 1. Pre-defined DO types` content is present as a normalized markdown table, with caption placement causing the detector false-positive.
 
 ### S1-02 Markdown cleaner hardening for heavy TOC/legal-noise specs
 
@@ -1401,7 +1480,7 @@ Reference:
 
 ### S1-06 Canonical source-reference path normalization across traceability docs
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `S1-04`
 3. `Files`:
 - `docs/waves/*TRACEABILITY*.md`
@@ -1418,3 +1497,5 @@ Reference:
 - Traceability docs consistently resolve to canonical source files, reducing audit ambiguity.
 7. `Spec`:
 - Source-material governance rule from `SOURCE_MATERIAL_MASTER_AUDIT` canonical-source policy.
+8. `Notes`:
+- Canonical-path normalization completed across active Waves traceability/compliance docs on `2026-03-02`.

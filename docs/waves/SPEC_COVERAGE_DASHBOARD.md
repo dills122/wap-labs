@@ -100,7 +100,7 @@ Status: Active
 - Status: in progress (active implementation, bedrock-first closure lane added)
 - Deliverables:
   - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md` (active baseline + bedrock priority groups)
-  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-05`)
+  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-06`)
 - Priority closure focus:
   - bytecode structural verification gates
   - external-call/pragma/access-control conformance
@@ -111,7 +111,7 @@ Status: Active
 - Status: in progress (cleaned-source table-grounded closure lane added)
 - Deliverables:
   - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` (`RQ-TRN-016`..`RQ-TRN-019`)
-  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`, `T0-14`)
+  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`, `T0-14`, `T0-15`)
 - Priority closure focus:
   - WTP TID/MPL replay-window behavior
   - WSP connectionless primitive-profile gating
@@ -150,6 +150,8 @@ Status: Active
   - table-fidelity ambiguity resolution
   - cleaned-markdown stability and provenance tracking
   - extraction-noise regression visibility
+- Current checkpoint:
+  - `S1-01` and `S1-06` completed; remaining governance work stays in `S1-02`..`S1-05`
 
 
 ## Quality gate summary

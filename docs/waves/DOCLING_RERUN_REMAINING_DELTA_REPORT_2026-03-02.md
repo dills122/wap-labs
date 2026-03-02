@@ -33,15 +33,18 @@ From `cleanup-report.txt`:
 - Cleaned lines: `31483`
 - Removed artifact lines: `2592`
 - `Table N.` captions detected: `32`
-- Captions with normalized markdown tables near caption: `31`
+- Captions with normalized markdown tables near caption: `31` (automated detector output)
 
-### Table normalization ambiguity
+### Table normalization ambiguity (resolved by manual spot-check)
 
-One caption remains flagged non-normalized by automated detection:
+One caption was flagged non-normalized by automated detection:
 
 - `WAP-191_104-WML-20010718-a` -> `Table 1.`
 
-Note: this appears to be a mixed prose/table region and may require manual spot-check against PDF if strict table fidelity is required for that section.
+Manual disposition:
+
+- `WAP-191_104` `Table 1.` is present as a normalized markdown table (`Type`/`Description` rows preserved); detector miss was due to caption placement distance from table block.
+- Effective unresolved table-caption ambiguity after manual review: `0`.
 
 ## Compliance/work-item delta impact
 
@@ -73,4 +76,4 @@ Rerun-validation status has been recorded in:
 
 ## Follow-up tracking
 
-- Remaining extraction-governance actions from this rerun wave are tracked in `docs/waves/WORK_ITEMS.md` Phase `S1` (`S1-01`..`S1-06`).
+- Remaining extraction-governance actions from this rerun wave are tracked in `docs/waves/WORK_ITEMS.md` Phase `S1` (`S1-02`..`S1-05`).

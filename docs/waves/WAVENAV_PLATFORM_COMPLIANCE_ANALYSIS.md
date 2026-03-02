@@ -172,6 +172,19 @@ Scope: canonical root-level `docs/source-material/` corpus plus in-repo backlog/
 - Not achievable in one sprint:
   - full protocol-complete WAP transport replacement with broad bearer/profile parity.
 
+### Sprint-ready bedrock slice (implementation ticket cut)
+
+- `W1-02`: bytecode structural verification gates.
+- `W1-06`: fatal/non-fatal script error taxonomy and `invalid` semantics.
+- `R0-03`: history entry schema + context fidelity closure.
+- `R0-06`: runtime-to-transport request-policy plumbing (`cache-control`, `sendreferer`, postfield context).
+- `T0-15`: WAP caching baseline and invalidation semantics.
+- `R0-09`: BACK hard-availability + `do type=prev` precedence behavior.
+
+Expected sprint outcome:
+
+- High-priority misses for `UA-RQ-002/003/005/018/026` materially reduced with test-backed acceptance criteria.
+
 ### Remaining architecture-level unresolved item
 
 - The primary unresolved cross-cutting decision is networking target profile and migration gates:
