@@ -2749,6 +2749,76 @@ mod tests {
     }
 
     #[test]
+    fn trace_entries_include_script_error_taxonomy_for_non_fatal() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="script:nonfatal.wmlsc#main">Run</a>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit(
+            "nonfatal.wmlsc".to_string(),
+            vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
+        );
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("non-fatal script should not abort action handling");
+
+        let script_ok = engine
+            .trace_entries
+            .iter()
+            .find(|entry| entry.kind == "SCRIPT_OK")
+            .expect("SCRIPT_OK trace should be present");
+        assert_eq!(script_ok.script_ok, Some(true));
+        assert_eq!(
+            script_ok.script_error_class,
+            Some(ScriptErrorClassLiteral::NonFatal)
+        );
+        assert_eq!(
+            script_ok.script_error_category,
+            Some(ScriptErrorCategoryLiteral::Computational)
+        );
+    }
+
+    #[test]
+    fn trace_entries_include_script_error_taxonomy_for_fatal() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="script:fatal.wmlsc#main">Run</a>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
+
+        let err = engine
+            .handle_key_internal("enter")
+            .expect_err("fatal decode error should abort action handling");
+        assert!(err.contains("unsupported opcode"));
+
+        let script_trap = engine
+            .trace_entries
+            .iter()
+            .find(|entry| entry.kind == "SCRIPT_TRAP")
+            .expect("SCRIPT_TRAP trace should be present");
+        assert_eq!(script_trap.script_ok, Some(false));
+        assert_eq!(
+            script_trap.script_error_class,
+            Some(ScriptErrorClassLiteral::Fatal)
+        );
+        assert_eq!(
+            script_trap.script_error_category,
+            Some(ScriptErrorCategoryLiteral::Integrity)
+        );
+    }
+
+    #[test]
     fn clear_trace_entries_resets_trace_state() {
         let mut engine = WmlEngine::new();
         engine.push_trace("TEST", "x".to_string());

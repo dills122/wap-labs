@@ -692,6 +692,87 @@ mod tests {
     }
 
     #[test]
+    fn snapshot_exposes_script_error_class_and_category() {
+        let mut engine = WmlEngine::new();
+        let script_deck = r##"
+        <wml>
+          <card id="home">
+            <a href="script:nonfatal.wmlsc#main">Run non-fatal</a>
+            <a href="script:fatal.wmlsc#main">Run fatal</a>
+          </card>
+        </wml>
+        "##;
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: script_deck.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+
+        engine.register_script_unit(
+            "nonfatal.wmlsc".to_string(),
+            vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
+        );
+        engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
+
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect("non-fatal script should not abort");
+
+        let nonfatal_snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(nonfatal_snapshot.last_script_execution_ok, Some(true));
+        assert_eq!(
+            nonfatal_snapshot
+                .last_script_execution_error_class
+                .as_deref(),
+            Some("non-fatal")
+        );
+        assert_eq!(
+            nonfatal_snapshot
+                .last_script_execution_error_category
+                .as_deref(),
+            Some("computational")
+        );
+
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "down".to_string(),
+            },
+        )
+        .expect("focus should move to second link");
+        let err = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: "enter".to_string(),
+            },
+        )
+        .expect_err("fatal script should abort key handling");
+        assert!(err.contains("unsupported opcode"));
+
+        let fatal_snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(fatal_snapshot.last_script_execution_ok, Some(false));
+        assert_eq!(
+            fatal_snapshot.last_script_execution_error_class.as_deref(),
+            Some("fatal")
+        );
+        assert_eq!(
+            fatal_snapshot
+                .last_script_execution_error_category
+                .as_deref(),
+            Some("integrity")
+        );
+    }
+
+    #[test]
     fn browser_flow_http_fetch_then_engine_load_succeeds() {
         let wml = r#"<wml><card id="home"><p>HTTP Fetch Deck</p></card></wml>"#;
         let response = mock_fetch_ok("http://example.test/index.wml", "text/vnd.wap.wml", wml);
