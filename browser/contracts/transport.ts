@@ -13,6 +13,7 @@ export interface TransportClient {
 }
 
 export interface HostSessionState {
+  navigationStatus: 'idle' | 'loading' | 'loaded' | 'error';
   requestedUrl: string;
   finalUrl?: string;
   contentType?: string;

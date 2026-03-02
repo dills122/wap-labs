@@ -2,6 +2,7 @@ import { invoke } from '@tauri-apps/api/core';
 import './styles.css';
 
 type EngineKey = 'up' | 'down' | 'enter';
+type HostNavigationStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
 interface DrawText {
   type: 'text';
@@ -66,6 +67,17 @@ interface FetchDeckResponse {
   engineDeckInput?: EngineDeckInput;
 }
 
+interface HostSessionState {
+  navigationStatus: HostNavigationStatus;
+  requestedUrl: string;
+  finalUrl?: string;
+  contentType?: string;
+  activeCardId?: string;
+  focusedLinkIndex?: number;
+  externalNavigationIntent?: string;
+  lastError?: string;
+}
+
 const SAMPLE_WML = `<wml>
   <card id="home">
     <p>WaveNav native engine harness</p>
@@ -78,6 +90,8 @@ const SAMPLE_WML = `<wml>
   </card>
 </wml>`;
 
+const MAX_EXTERNAL_INTENT_HOPS = 3;
+
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) {
   throw new Error('missing #app root');
@@ -87,13 +101,12 @@ app.innerHTML = `
   <h1>Waves Native Engine Harness</h1>
   <div class="layout">
     <section class="panel">
-      <h2>Deck Input</h2>
-      <textarea id="wml-input"></textarea>
+      <h2>Navigation</h2>
+      <label>
+        Transport URL
+        <input id="fetch-url" type="text" value="http://127.0.0.1:3000/" />
+      </label>
       <div class="row">
-        <label>
-          Base URL
-          <input id="base-url" type="text" value="http://local.test/start.wml" />
-        </label>
         <label>
           Viewport Cols
           <input id="viewport-cols" type="number" value="20" min="1" />
@@ -101,8 +114,7 @@ app.innerHTML = `
       </div>
       <div class="actions">
         <button id="btn-health">Health</button>
-        <button id="btn-fetch-url">Fetch URL</button>
-        <button id="btn-load-context">Load Deck Context</button>
+        <button id="btn-fetch-url">Go</button>
         <button id="btn-render">Render</button>
         <button id="btn-up">Key Up</button>
         <button id="btn-down">Key Down</button>
@@ -111,13 +123,26 @@ app.innerHTML = `
         <button id="btn-snapshot">Snapshot</button>
         <button id="btn-clear-intent">Clear External Intent</button>
       </div>
+      <details id="debug-raw-mode" style="margin-top: 12px;">
+        <summary>Debug: Raw WML paste mode</summary>
+        <div style="margin-top: 8px;">
+          <label>
+            Base URL
+            <input id="base-url" type="text" value="http://local.test/start.wml" />
+          </label>
+          <textarea id="wml-input"></textarea>
+          <div class="actions">
+            <button id="btn-load-context">Load Raw WML (Debug)</button>
+          </div>
+        </div>
+      </details>
       <div id="status" class="status"></div>
     </section>
     <section class="panel">
       <h2>Viewport</h2>
       <div id="viewport" class="viewport"></div>
-      <h2 style="margin-top: 14px;">Transport URL</h2>
-      <input id="fetch-url" type="text" value="http://127.0.0.1:3000/" />
+      <h2 style="margin-top: 14px;">Session State</h2>
+      <pre id="session-state"></pre>
       <h2 style="margin-top: 14px;">Transport Response</h2>
       <pre id="transport-response"></pre>
       <h2 style="margin-top: 14px;">Runtime Snapshot</h2>
@@ -134,6 +159,7 @@ const snapshotEl = document.querySelector<HTMLPreElement>('#snapshot');
 const statusEl = document.querySelector<HTMLDivElement>('#status');
 const fetchUrlInput = document.querySelector<HTMLInputElement>('#fetch-url');
 const transportResponseEl = document.querySelector<HTMLPreElement>('#transport-response');
+const sessionStateEl = document.querySelector<HTMLPreElement>('#session-state');
 
 if (
   !wmlInput ||
@@ -143,12 +169,18 @@ if (
   !snapshotEl ||
   !statusEl ||
   !fetchUrlInput ||
-  !transportResponseEl
+  !transportResponseEl ||
+  !sessionStateEl
 ) {
   throw new Error('missing expected UI element');
 }
 
 wmlInput.value = SAMPLE_WML;
+
+let hostSessionState: HostSessionState = {
+  navigationStatus: 'idle',
+  requestedUrl: fetchUrlInput.value
+};
 
 const setStatus = (message: string): void => {
   statusEl.textContent = message;
@@ -161,6 +193,25 @@ const setSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
 const setTransportResponse = (response: FetchDeckResponse | null): void => {
   transportResponseEl.textContent = response ? JSON.stringify(response, null, 2) : '';
 };
+
+const setSessionState = (next: HostSessionState): void => {
+  hostSessionState = next;
+  sessionStateEl.textContent = JSON.stringify(hostSessionState, null, 2);
+};
+
+const mergeSessionState = (patch: Partial<HostSessionState>): void => {
+  setSessionState({ ...hostSessionState, ...patch });
+};
+
+const syncSessionFromSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
+  mergeSessionState({
+    activeCardId: snapshot.activeCardId,
+    focusedLinkIndex: snapshot.focusedLinkIndex,
+    externalNavigationIntent: snapshot.externalNavigationIntent
+  });
+};
+
+setSessionState(hostSessionState);
 
 const drawRenderList = (renderList: RenderList): void => {
   const byLine = new Map<number, string[]>();
@@ -189,11 +240,13 @@ const escapeHtml = (input: string): string =>
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
 
-const renderAndSnapshot = async (): Promise<void> => {
+const renderAndSnapshot = async (): Promise<EngineRuntimeSnapshot> => {
   const snapshot = await invoke<EngineRuntimeSnapshot>('engine_snapshot');
   const renderList = await invoke<RenderList>('engine_render');
   setSnapshot(snapshot);
   drawRenderList(renderList);
+  syncSessionFromSnapshot(snapshot);
+  return snapshot;
 };
 
 const setViewportCols = async (): Promise<void> => {
@@ -206,13 +259,117 @@ const setViewportCols = async (): Promise<void> => {
   });
 };
 
-const withAction = (action: () => Promise<void>) => async (): Promise<void> => {
-  try {
-    await action();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    setStatus(`Error: ${message}`);
+const withAction =
+  (action: (event?: Event) => Promise<void>) =>
+  async (event?: Event): Promise<void> => {
+    try {
+      await action(event);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      mergeSessionState({ navigationStatus: 'error', lastError: message });
+      setStatus(`Error: ${message}`);
+    }
+  };
+
+const loadTransportUrl = async (
+  url: string,
+  source: 'user' | 'external-intent',
+  followExternalIntent: boolean
+): Promise<EngineRuntimeSnapshot | null> => {
+  const requestedUrl = url.trim();
+  if (!requestedUrl) {
+    throw new Error('URL is required');
   }
+
+  await setViewportCols();
+  mergeSessionState({
+    navigationStatus: 'loading',
+    requestedUrl,
+    lastError: undefined
+  });
+  setStatus(source === 'user' ? `Loading ${requestedUrl}...` : `Following external intent: ${requestedUrl}`);
+
+  const transport = await invoke<FetchDeckResponse>('fetch_deck', {
+    request: {
+      url: requestedUrl,
+      method: 'GET',
+      timeoutMs: 5000,
+      retries: 1
+    }
+  });
+  setTransportResponse(transport);
+
+  if (!transport.ok) {
+    const errorMessage = transport.error?.message ?? 'unknown transport failure';
+    mergeSessionState({
+      navigationStatus: 'error',
+      finalUrl: transport.finalUrl,
+      contentType: transport.contentType,
+      lastError: errorMessage
+    });
+    setStatus(`Fetch failed: ${errorMessage}`);
+    return null;
+  }
+
+  const deckInput = transport.engineDeckInput ?? {
+    wmlXml: transport.wml ?? '',
+    baseUrl: transport.finalUrl,
+    contentType: transport.contentType,
+    rawBytesBase64: undefined
+  };
+  if (!deckInput.wmlXml) {
+    mergeSessionState({
+      navigationStatus: 'error',
+      finalUrl: transport.finalUrl,
+      contentType: transport.contentType,
+      lastError: 'Fetch succeeded but returned no WML payload.'
+    });
+    setStatus('Fetch succeeded but returned no WML payload.');
+    return null;
+  }
+
+  const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
+    request: {
+      wmlXml: deckInput.wmlXml,
+      baseUrl: deckInput.baseUrl,
+      contentType: deckInput.contentType,
+      rawBytesBase64: deckInput.rawBytesBase64 ?? null
+    }
+  });
+  setSnapshot(snapshot);
+  const renderList = await invoke<RenderList>('engine_render');
+  drawRenderList(renderList);
+
+  mergeSessionState({
+    navigationStatus: 'loaded',
+    finalUrl: transport.finalUrl,
+    contentType: transport.contentType,
+    activeCardId: snapshot.activeCardId,
+    focusedLinkIndex: snapshot.focusedLinkIndex,
+    externalNavigationIntent: snapshot.externalNavigationIntent,
+    lastError: undefined
+  });
+  setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
+
+  if (followExternalIntent && snapshot.externalNavigationIntent) {
+    let nextUrl = snapshot.externalNavigationIntent;
+    for (let hop = 1; hop <= MAX_EXTERNAL_INTENT_HOPS; hop += 1) {
+      await invoke<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent');
+      fetchUrlInput.value = nextUrl;
+      const nextSnapshot = await loadTransportUrl(nextUrl, 'external-intent', false);
+      if (!nextSnapshot || !nextSnapshot.externalNavigationIntent) {
+        break;
+      }
+      nextUrl = nextSnapshot.externalNavigationIntent;
+      if (hop === MAX_EXTERNAL_INTENT_HOPS) {
+        const message = `External intent hop limit reached (${MAX_EXTERNAL_INTENT_HOPS}).`;
+        mergeSessionState({ navigationStatus: 'error', lastError: message });
+        setStatus(message);
+      }
+    }
+  }
+
+  return snapshot;
 };
 
 document.querySelector<HTMLButtonElement>('#btn-health')?.addEventListener(
@@ -238,53 +395,34 @@ document.querySelector<HTMLButtonElement>('#btn-load-context')?.addEventListener
     setSnapshot(snapshot);
     const renderList = await invoke<RenderList>('engine_render');
     drawRenderList(renderList);
-    setStatus('Deck loaded and rendered.');
+    mergeSessionState({
+      navigationStatus: 'loaded',
+      requestedUrl: baseUrlInput.value,
+      finalUrl: baseUrlInput.value,
+      contentType: 'text/vnd.wap.wml',
+      activeCardId: snapshot.activeCardId,
+      focusedLinkIndex: snapshot.focusedLinkIndex,
+      externalNavigationIntent: snapshot.externalNavigationIntent,
+      lastError: undefined
+    });
+    setStatus('Raw WML loaded and rendered (debug mode).');
   })
 );
 
 document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.addEventListener(
   'click',
   withAction(async () => {
-    await setViewportCols();
-    const transport = await invoke<FetchDeckResponse>('fetch_deck', {
-      request: {
-        url: fetchUrlInput.value,
-        method: 'GET',
-        timeoutMs: 5000,
-        retries: 1
-      }
-    });
-    setTransportResponse(transport);
+    await loadTransportUrl(fetchUrlInput.value, 'user', true);
+  })
+);
 
-    if (!transport.ok) {
-      const errorMessage = transport.error?.message ?? 'unknown transport failure';
-      setStatus(`Fetch failed: ${errorMessage}`);
-      return;
+fetchUrlInput.addEventListener(
+  'keydown',
+  withAction(async (event?: Event) => {
+    if (event instanceof KeyboardEvent && event.key === 'Enter') {
+      event.preventDefault();
+      await loadTransportUrl(fetchUrlInput.value, 'user', true);
     }
-
-    const deckInput = transport.engineDeckInput ?? {
-      wmlXml: transport.wml ?? '',
-      baseUrl: transport.finalUrl,
-      contentType: transport.contentType,
-      rawBytesBase64: undefined
-    };
-    if (!deckInput.wmlXml) {
-      setStatus('Fetch succeeded but returned no WML payload.');
-      return;
-    }
-
-    const snapshot = await invoke<EngineRuntimeSnapshot>('engine_load_deck_context', {
-      request: {
-        wmlXml: deckInput.wmlXml,
-        baseUrl: deckInput.baseUrl,
-        contentType: deckInput.contentType,
-        rawBytesBase64: deckInput.rawBytesBase64 ?? null
-      }
-    });
-    setSnapshot(snapshot);
-    const renderList = await invoke<RenderList>('engine_render');
-    drawRenderList(renderList);
-    setStatus(`Fetched and loaded deck from ${transport.finalUrl}`);
   })
 );
 
@@ -306,6 +444,7 @@ const bindKeyButton = (id: string, key: EngineKey): void => {
       setSnapshot(snapshot);
       const renderList = await invoke<RenderList>('engine_render');
       drawRenderList(renderList);
+      syncSessionFromSnapshot(snapshot);
       setStatus(`Handled key: ${key}`);
     })
   );
@@ -322,6 +461,7 @@ document.querySelector<HTMLButtonElement>('#btn-back')?.addEventListener(
     setSnapshot(snapshot);
     const renderList = await invoke<RenderList>('engine_render');
     drawRenderList(renderList);
+    syncSessionFromSnapshot(snapshot);
     setStatus('navigateBack invoked.');
   })
 );
@@ -339,6 +479,7 @@ document.querySelector<HTMLButtonElement>('#btn-clear-intent')?.addEventListener
   withAction(async () => {
     const snapshot = await invoke<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent');
     setSnapshot(snapshot);
+    syncSessionFromSnapshot(snapshot);
     setStatus('Cleared external navigation intent.');
   })
 );

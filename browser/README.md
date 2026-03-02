@@ -10,6 +10,10 @@ Implemented now:
 - Host-side transport contract in `contracts/transport.ts`
 - Host-side native engine contract in `contracts/engine.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
+- Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
+- Deterministic host session state model (`idle/loading/loaded/error`)
+- External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)
+- Debug-only raw WML paste path (`Load Raw WML (Debug)` under debug section)
 - Native engine harness commands in `src-tauri/src/lib.rs`:
   - `engine_load_deck`
   - `engine_load_deck_context`
@@ -23,6 +27,7 @@ Implemented now:
 - In-process Rust transport library under `../transport-rust/`:
   - `http://`/`https://` fetch
   - `wap://`/`waps://` gateway bridge mapping
+  - per-request correlation ID plumbing and structured request lifecycle logs
   - retry/timeout and error taxonomy mapping
   - WBXML decode using `wbxml2xml` utility
   - startup preflight for decoder availability
@@ -30,7 +35,6 @@ Implemented now:
 Not implemented yet:
 
 - Full browser chrome (address bar/history panes/history/devtools)
-- End-to-end UI fetch -> transport fetch -> engine load flow
 - Production packaging/signing
 
 ## Direction
@@ -68,9 +72,9 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 
-1. Connect frontend URL flow to `fetch_deck` + `engine_load_deck_context`.
-2. Expand frontend harness into browser chrome and URL navigation UX.
-3. Add fixture-driven integration checks for load/render/nav parity.
+1. Expand frontend harness into browser chrome and full navigation UX.
+2. Add fixture-driven integration checks for load/render/nav/external-intent parity.
+3. Add history/session persistence semantics to host state.
 
 ## Planning + Traceability
 
@@ -82,6 +86,6 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 ## Current checklist (planning)
 
 - [ ] Freeze Tauri command and TypeScript contract parity
-- [ ] Add deterministic URL load and runtime status model
-- [ ] Implement transport fetch -> engine loadDeckContext handoff
+- [x] Add deterministic URL load and runtime status model
+- [x] Implement transport fetch -> engine loadDeckContext handoff
 - [ ] Add integration fixtures for load/nav/external-intent loops

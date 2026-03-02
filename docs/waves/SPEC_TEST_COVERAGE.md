@@ -49,11 +49,11 @@ Legend:
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
-| Transport contract integration (`fetchDeck`) | `planned` | `B1-01` integration test path |
-| URL load state transitions | `planned` | `B1-02` UI flow checks |
-| Engine render handoff | `planned` | `B1-03` e2e smoke |
-| Input model determinism | `planned` | `B2-01` key-sequence checks |
-| External intent handoff loop | `planned` | `B2-02` integration scenario |
+| Transport contract integration (`fetchDeck`) | `partial` | browser host Rust tests in `browser/src-tauri/src/lib.rs` + transport-rust unit/integration tests |
+| URL load state transitions | `partial` | browser frontend transport-first URL flow + session-state transitions in `browser/frontend/src/main.ts` |
+| Engine render handoff | `partial` | browser host integration-style test `browser_e2e_fetch_load_render_sequence_renders_expected_content` |
+| Input model determinism | `partial` | host key-sequence checks in `browser/src-tauri/src/lib.rs` (`smoke_key_navigation_and_back_stack`) |
+| External intent handoff loop | `partial` | runtime intent emission/clear tests in host Rust + frontend follow-loop implementation in `browser/frontend/src/main.ts` |
 | Event timeline/export artifacts | `planned` | `B3-02` debug export checks |
 
 ## Cross-project checklist (immediate)
