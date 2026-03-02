@@ -5,6 +5,7 @@
 - `wap-test-environment/README.md`: legacy stack setup and real-world validation runbook
 - `browser-emulator/README.md`: browser emulator build track (transport + WASM engine + host harness)
 - `development-prerequisites.md`: canonical prerequisite matrix + local bootstrap workflow
+- `../gateway-kannel/PARITY_PLAN.md`: Kannel baseline parity matrix and fixture format for embedded-gateway migration
 
 ## Cross-Layer Architecture
 
@@ -40,7 +41,7 @@
 Authoritative implementation set:
 
 - `wml-engine/README.md`: engine docs entrypoint and read order
-- `wml-engine/source-material-review.md`: extracted normative notes from reviewed local subset PDFs
+- `wml-engine/source-material-review.md`: extracted normative notes from reviewed canonical local PDFs
 - `wml-engine/requirements-matrix.md`: requirement to module/test traceability
 - `wml-engine/architecture.md`: maintainable internal module architecture
 - `wml-engine/ticket-plan.md`: active phased implementation backlog

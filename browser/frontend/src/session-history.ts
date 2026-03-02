@@ -36,10 +36,7 @@ export const pushHostHistoryEntry = (
   state.index = state.entries.length - 1;
 };
 
-export const updateCurrentHistoryCard = (
-  state: HostHistoryState,
-  activeCardId?: string
-): void => {
+export const updateCurrentHistoryCard = (state: HostHistoryState, activeCardId?: string): void => {
   if (!activeCardId || state.index < 0) {
     return;
   }

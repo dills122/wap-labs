@@ -281,10 +281,7 @@ Open WinWAP -> `Browser Options`:
 
 Save and restart WinWAP.
 
-WinWAP Setup Example:
-
-![Setup slide 1](./images/winwap-setup-slide-1.png)
-![Setup slide 1](./images/winwap-setup-slide-2.png)
+WinWAP setup screenshots were referenced here previously, but the image assets are not present in-repo. Use the tab-by-tab settings listed above as source of truth.
 
 #### 8. Configure Openwave WAP Gateway (Optional)
 
@@ -308,10 +305,10 @@ Inside WinWAP/Openwave browse to:
 - `http://wap/login`
 - fallback: `http://10.0.2.2/login`
 
-Should see pages similar to tihs
+Should see pages similar to this:
 
-![WML Link Tree](./images/example-wap-link-tree-page-card.png)
-![Fake Session View](./images/example-wap-fake-session-portal.png)
+- A WML link-tree style card page
+- A fake session portal card/view
 
 Watch logs on host:
 

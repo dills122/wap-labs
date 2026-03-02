@@ -2,6 +2,8 @@
   "name": "marketing-site",
   "type": "module",
   "version": "0.0.1",
+  "license": "MIT",
+  "author": "Dylan Steele <dylansteele57@gmail.com>",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -10,5 +12,10 @@
   },
   "dependencies": {
     "astro": "^5.17.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dills122/wap-labs.git"
+  },
+  "homepage": "https://dills122.github.io/wap-labs/"
 }

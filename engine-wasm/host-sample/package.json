@@ -2,6 +2,8 @@
   "name": "@wavenav/host-sample",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Dylan Steele <dylansteele57@gmail.com>",
   "type": "module",
   "scripts": {
     "examples:generate": "node ./scripts/generate-example-manifest.mjs",
@@ -9,13 +11,29 @@
     "dev": "vite",
     "prebuild": "pnpm run examples:generate",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"**/*.ts\"",
+    "format": "prettier --ignore-path ../../.prettierignore --write \"**/*.{ts,css,html}\"",
+    "format:check": "prettier --ignore-path ../../.prettierignore --check \"**/*.{ts,css,html}\""
   },
   "devDependencies": {
-    "typescript": "^5.9.2",
-    "vite": "^7.1.3"
+    "@types/node": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
   },
   "dependencies": {
-    "lit": "^3.3.2"
-  }
+    "lit": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dills122/wap-labs.git"
+  },
+  "homepage": "https://dills122.github.io/wap-labs/"
 }

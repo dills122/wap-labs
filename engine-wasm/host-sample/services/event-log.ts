@@ -45,7 +45,8 @@ export class ExampleEventLog {
 
   renderActive(): void {
     const items = this.logs.get(this.activeExampleKey) ?? [];
-    this.output.textContent = items.length > 0 ? items.join('\n') : 'No events yet for this example.';
+    this.output.textContent =
+      items.length > 0 ? items.join('\n') : 'No events yet for this example.';
   }
 
   exportActive(format: EventLogExportFormat): EventLogExport | null {
@@ -74,7 +75,12 @@ export class ExampleEventLog {
     return {
       filename: `wavenav-event-log-${this.activeExampleKey}.txt`,
       mimeType: 'text/plain;charset=utf-8',
-      payload: [`exampleKey: ${this.activeExampleKey}`, `exportedAt: ${exportedAt}`, '', ...events].join('\n')
+      payload: [
+        `exampleKey: ${this.activeExampleKey}`,
+        `exportedAt: ${exportedAt}`,
+        '',
+        ...events
+      ].join('\n')
     };
   }
 }

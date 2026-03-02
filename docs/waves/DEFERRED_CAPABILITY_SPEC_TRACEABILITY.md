@@ -1,7 +1,7 @@
 # Waves Deferred Capability Spec Traceability
 
 Version: v0.1  
-Status: S0-10 complete (initial extraction)
+Status: S0-10 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
@@ -9,9 +9,9 @@ Record deferred-but-reviewed capability specs so scope decisions remain explicit
 
 ## Source set reviewed (S0-10)
 
-- `docs/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf`
-- `docs/source-material/WAP-161_101-WMLScriptCrypto-20010730-a.pdf`
-- `docs/source-material/WAP-248-UAProf-20011020-a.pdf`
+- `spec-processing/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf`
+- `spec-processing/source-material/WAP-161_101-WMLScriptCrypto-20010730-a.pdf`
+- `spec-processing/source-material/WAP-248-UAProf-20011020-a.pdf`
 
 ## Requirements and defer decisions
 

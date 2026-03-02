@@ -5,19 +5,21 @@ import path from 'node:path';
 
 const root = process.cwd();
 const tsPath = path.join(root, 'browser/contracts/transport.ts');
+const generatedTsPath = path.join(root, 'browser/contracts/generated/transport-host.ts');
 const rustPath = path.join(root, 'transport-rust/src/lib.rs');
 
 const ts = fs.readFileSync(tsPath, 'utf8');
+const generatedTs = fs.readFileSync(generatedTsPath, 'utf8');
 const rust = fs.readFileSync(rustPath, 'utf8');
 
-const unionMatch = ts.match(/export interface TransportErrorInfo[\s\S]*?code:\s*([\s\S]*?);/);
+const unionMatch = generatedTs.match(/export type FetchErrorInfo = \{[\s\S]*?code:\s*([^,\n]+)\s*,/);
 if (!unionMatch) {
-  console.error('TransportErrorInfo.code union not found in browser/contracts/transport.ts');
+  console.error('FetchErrorInfo.code union not found in browser/contracts/generated/transport-host.ts');
   process.exit(1);
 }
 
 const tsCodes = new Set(
-  [...unionMatch[1].matchAll(/'([A-Z_]+)'/g)].map((m) => m[1])
+  [...unionMatch[1].matchAll(/["']([A-Z_]+)["']/g)].map((m) => m[1])
 );
 if (tsCodes.size === 0) {
   console.error('No error codes parsed from TransportErrorInfo.code union');
@@ -49,8 +51,13 @@ if (tsOnly.length || rustOnly.length) {
   process.exit(1);
 }
 
-if (!/requestId\?: string;/.test(ts)) {
-  console.error('FetchRequest.requestId is missing from browser/contracts/transport.ts');
+if (!/requestId\?: string/.test(generatedTs)) {
+  console.error('FetchDeckRequest.requestId is missing from browser/contracts/generated/transport-host.ts');
+  process.exit(1);
+}
+
+if (!/export type FetchRequest = FetchDeckRequest;/.test(ts)) {
+  console.error('browser/contracts/transport.ts must alias FetchRequest to generated FetchDeckRequest');
   process.exit(1);
 }
 

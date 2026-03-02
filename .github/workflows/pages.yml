@@ -30,7 +30,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: |
             marketing-site/pnpm-lock.yaml
-            engine-wasm/host-sample/pnpm-lock.yaml
+            pnpm-lock.yaml
 
       - name: Install marketing-site dependencies
         run: pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile
@@ -66,7 +66,7 @@ jobs:
         run: wasm-pack build --target web --out-dir ../pkg
 
       - name: Install simulator dependencies
-        run: pnpm --dir engine-wasm/host-sample install --frozen-lockfile --config.shared-workspace-lockfile=false
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build simulator
         run: pnpm --dir engine-wasm/host-sample run build

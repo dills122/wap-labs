@@ -25,7 +25,7 @@ Non-authoritative historical docs are retained only for context:
 ## Read Order
 
 1. `spec-derived-requirements.md` (what must be true)
-2. `source-material-review.md` (what was extracted from local subset PDFs)
+2. `source-material-review.md` (what was extracted from the reviewed canonical local PDFs)
 3. `requirements-matrix.md` (normative requirement -> module -> tests)
 4. `architecture.md` (how to structure the engine)
 5. `ticket-plan.md` (step-by-step spec-referenced backlog)

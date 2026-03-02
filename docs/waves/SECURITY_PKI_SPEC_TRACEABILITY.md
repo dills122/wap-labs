@@ -1,7 +1,7 @@
 # Waves Security PKI/WIM Spec Traceability
 
 Version: v0.1  
-Status: S0-08 complete (initial extraction)
+Status: S0-08 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
@@ -9,15 +9,15 @@ Capture certificate, trust-distribution, and WIM storage requirements that defin
 
 ## Source set reviewed (S0-08)
 
-- `docs/source-material/WAP-211-WAPCert-20010522-a.pdf`
-- `docs/source-material/WAP-211_104-WAPCert-20010928-a.pdf`
-- `docs/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf`
-- `docs/source-material/WAP-217-WPKI-20010424-a.pdf`
-- `docs/source-material/WAP-217_103-WPKI-20011102-a.pdf`
-- `docs/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf`
-- `docs/source-material/WAP-260-WIM-20010712-a.pdf`
-- `docs/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf`
-- `docs/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf`
+- `spec-processing/source-material/WAP-211-WAPCert-20010522-a.pdf`
+- `spec-processing/source-material/WAP-211_104-WAPCert-20010928-a.pdf`
+- `spec-processing/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf`
+- `spec-processing/source-material/WAP-217-WPKI-20010424-a.pdf`
+- `spec-processing/source-material/WAP-217_103-WPKI-20011102-a.pdf`
+- `spec-processing/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf`
+- `spec-processing/source-material/WAP-260-WIM-20010712-a.pdf`
+- `spec-processing/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf`
+- `spec-processing/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf`
 
 ## Normative precedence
 

@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.1  
-Status: S0-07 complete (initial extraction)
+Status: S0-07 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
@@ -9,14 +9,14 @@ Capture WML/WBXML runtime-markup requirements that govern deterministic deck/car
 
 ## Source set reviewed (S0-07)
 
-- `docs/source-material/WAP-191-WML-20000219-a.pdf`
-- `docs/source-material/WAP-191_102-WML-20001213-a.pdf`
-- `docs/source-material/WAP-191_104-WML-20010718-a.pdf`
-- `docs/source-material/WAP-191_105-WML-20020212-a.pdf`
-- `docs/source-material/WAP-238-WML-20010911-a.pdf`
-- `docs/source-material/spec-wml-19990616.pdf`
-- `docs/source-material/WAP-192-WBXML-20010725-a.pdf`
-- `docs/source-material/WAP-192_105-WBXML-20011015-a.pdf`
+- `spec-processing/source-material/WAP-191-WML-20000219-a.pdf`
+- `spec-processing/source-material/WAP-191_102-WML-20001213-a.pdf`
+- `spec-processing/source-material/WAP-191_104-WML-20010718-a.pdf`
+- `spec-processing/source-material/WAP-191_105-WML-20020212-a.pdf`
+- `spec-processing/source-material/WAP-238-WML-20010911-a.pdf`
+- `spec-processing/source-material/spec-wml-19990616.pdf`
+- `spec-processing/source-material/WAP-192-WBXML-20010725-a.pdf`
+- `spec-processing/source-material/WAP-192_105-WBXML-20011015-a.pdf`
 
 ## Normative precedence
 
@@ -138,3 +138,6 @@ Legend:
 ## Notes
 
 - This traceability pass is derived from direct local-spec review plus existing deep extraction notes in `docs/wml-engine/source-material-review.md`.
+- Full WAP-191 implementation-gap and execution planning follow-up is tracked in:
+  - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
+  - Phase R tickets in `docs/waves/WORK_ITEMS.md`

@@ -3,11 +3,26 @@
   "private": true,
   "version": "0.1.0",
   "description": "Root scripts for WaveNav/Lowband polyglot repository",
+  "license": "MIT",
+  "author": "Dylan Steele <dylansteele57@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dills122/wap-labs.git"
+  },
+  "homepage": "https://dills122.github.io/wap-labs/",
   "packageManager": "pnpm@10.23.0",
   "scripts": {
     "lint:node": "pnpm -r --if-present run lint",
+    "format:node": "pnpm -r --if-present run format",
+    "format:check:node": "pnpm -r --if-present run format:check",
     "test:node": "pnpm -r --if-present run test",
     "build:node": "pnpm -r --if-present run build",
     "typecheck:node": "pnpm -r --if-present run typecheck"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "globals": "catalog:"
   }
 }

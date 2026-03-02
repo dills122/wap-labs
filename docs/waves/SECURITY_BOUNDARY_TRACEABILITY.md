@@ -1,7 +1,7 @@
 # Waves Security Boundary Traceability
 
 Version: v0.1  
-Status: S0-04 complete (initial extraction)
+Status: S0-04 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
@@ -13,14 +13,14 @@ Capture security-related requirements from WAP transport security specs and map 
 
 ## Source set reviewed (S0-04)
 
-- `docs/source-material/WAP-261-WTLS-20010406-a.pdf`
-- `docs/source-material/WAP-261_100-WTLS-20010926-a.pdf`
-- `docs/source-material/WAP-261_101-WTLS-20011027-a.pdf`
-- `docs/source-material/WAP-261_102-WTLS-20011027-a.pdf`
-- `docs/source-material/WAP-219-TLS-20010411-a.pdf`
-- `docs/source-material/WAP-219_100-TLS-20011029-a.pdf`
-- `docs/source-material/WAP-187-TransportE2ESec-20010628-a.pdf`
-- `docs/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf`
+- `spec-processing/source-material/WAP-261-WTLS-20010406-a.pdf`
+- `spec-processing/source-material/WAP-261_100-WTLS-20010926-a.pdf`
+- `spec-processing/source-material/WAP-261_101-WTLS-20011027-a.pdf`
+- `spec-processing/source-material/WAP-261_102-WTLS-20011027-a.pdf`
+- `spec-processing/source-material/WAP-219-TLS-20010411-a.pdf`
+- `spec-processing/source-material/WAP-219_100-TLS-20011029-a.pdf`
+- `spec-processing/source-material/WAP-187-TransportE2ESec-20010628-a.pdf`
+- `spec-processing/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf`
 
 ## Normative precedence
 

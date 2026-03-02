@@ -1,9 +1,9 @@
 # Waves Source Material Review Ledger
 
 Version: v0.1
-Status: complete
+Status: complete (docling rerun validation pass complete for in-scope high-value domains)
 
-This ledger tracks review state for all canonical root-level source PDFs in `docs/source-material` (94 files).
+This ledger tracks review state for all canonical root-level source PDFs in `spec-processing/source-material` (94 files).
 
 Legend:
 - `deep-extracted`: normative sections reviewed and mapped into traceability docs

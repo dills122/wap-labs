@@ -9,6 +9,15 @@ Implemented now:
 - Tauri Rust shell scaffold under `src-tauri/`
 - Host-side transport contract in `contracts/transport.ts`
 - Host-side native engine contract in `contracts/engine.ts`
+- Rust-sourced engine host contract generation:
+  - generator: `src-tauri/src/bin/generate_contracts.rs`
+  - output: `contracts/generated/engine-host.ts`
+- Rust-sourced transport host contract generation:
+  - generator: `src-tauri/src/bin/generate_contracts.rs`
+  - output: `contracts/generated/transport-host.ts`
+- Rust-sourced typed Tauri invoke client generation:
+  - generator: `src-tauri/src/bin/generate_contracts.rs`
+  - output: `contracts/generated/tauri-host-client.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
@@ -52,6 +61,15 @@ The desktop host will be a WAP-only browser shell:
 
 - Desktop/transport contract: `browser/contracts/transport.ts`
 - Engine contract: `engine-wasm/contracts/wml-engine.ts`
+- Rust-generated host engine contract: `browser/contracts/generated/engine-host.ts`
+- Rust-generated host transport contract: `browser/contracts/generated/transport-host.ts`
+- Rust-generated typed Tauri client: `browser/contracts/generated/tauri-host-client.ts`
+
+Regenerate host contract types from Rust:
+
+```bash
+pnpm --dir browser run contracts:codegen
+```
 
 ## Transport runtime knobs
 
@@ -76,8 +94,9 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 1. Execute `M1-01`: contract-source unification in browser host/frontend (remove local type duplication and import shared contracts).
 2. Execute `M1-05`: add automated browser navigation state-machine checks (load transitions, external intent loop, hybrid back).
-3. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
-4. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
+3. Execute cross-layer compliance follow-up integration tickets from `docs/waves/WORK_ITEMS.md`: `T0-04` and `T0-05` (request-policy + UA capability header flow wiring).
+4. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
+5. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
 
 ## Planning + Traceability
 
@@ -96,6 +115,8 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [x] Ship browser-style shell with hidden developer drawer
 - [x] Add global keyboard navigation when not in text-entry fields
 - [x] Add hybrid back behavior (engine card-history + host URL fallback)
-- [ ] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
-- [ ] Add browser-side automated regression checks for navigation state machine (`M1-05`)
+- [x] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
+- [x] Add browser-side automated regression checks for navigation state machine (`M1-05`)
 - [ ] Decompose browser high-churn files into boundary modules (`M1-08`)
+- [ ] Wire cache/reload and request-policy metadata from runtime to transport flow (`T0-04`)
+- [ ] Wire profile-gated UA capability header controls in host flow (`T0-05`)

@@ -36,7 +36,7 @@ Historical draft references are intentionally non-authoritative and should not b
 
 These are based on locally reviewed source material in:
 
-- `docs/source-material/` (canonical root set; see `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`)
+- `spec-processing/source-material/` (canonical root set; see `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`)
 - `docs/waves/*TRACEABILITY*.md` and related review docs
 
 ## Build and Run (Current)

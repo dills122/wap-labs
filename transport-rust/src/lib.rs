@@ -9,20 +9,26 @@ use std::fs;
 use std::process::Command;
 use std::time::{Duration, Instant};
 use tempfile::tempdir;
+use ts_rs::TS;
 use url::Url;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchDeckRequest {
     pub url: String,
+    #[ts(optional)]
     pub method: Option<String>,
+    #[ts(optional)]
     pub headers: Option<HashMap<String, String>>,
+    #[ts(type = "number", optional)]
     pub timeout_ms: Option<u64>,
+    #[ts(optional)]
     pub retries: Option<u8>,
+    #[ts(optional)]
     pub request_id: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchTiming {
     pub encode: f64,
@@ -30,33 +36,41 @@ pub struct FetchTiming {
     pub decode: f64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchErrorInfo {
+    #[ts(
+        type = "\"INVALID_REQUEST\" | \"GATEWAY_TIMEOUT\" | \"UNSUPPORTED_CONTENT_TYPE\" | \"WBXML_DECODE_FAILED\" | \"PROTOCOL_ERROR\" | \"TRANSPORT_UNAVAILABLE\""
+    )]
     pub code: String,
     pub message: String,
+    #[ts(type = "Record<string, unknown>", optional)]
     pub details: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct EngineDeckInputPayload {
     pub wml_xml: String,
     pub base_url: String,
     pub content_type: String,
+    #[ts(optional)]
     pub raw_bytes_base64: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchDeckResponse {
     pub ok: bool,
     pub status: u16,
     pub final_url: String,
     pub content_type: String,
+    #[ts(optional)]
     pub wml: Option<String>,
+    #[ts(optional)]
     pub error: Option<FetchErrorInfo>,
     pub timing_ms: FetchTiming,
+    #[ts(optional)]
     pub engine_deck_input: Option<EngineDeckInputPayload>,
 }
 

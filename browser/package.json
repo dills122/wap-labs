@@ -2,10 +2,19 @@
   "name": "@wavenav/desktop-host-tauri",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Dylan Steele <dylansteele57@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dills122/wap-labs.git"
+  },
+  "homepage": "https://dills122.github.io/wap-labs/",
   "type": "module",
   "scripts": {
     "dev": "pnpm --dir frontend dev",
     "build": "pnpm --dir frontend build",
+    "contracts:codegen": "cargo run --manifest-path src-tauri/Cargo.toml --bin generate_contracts",
+    "contracts:check": "pnpm run contracts:codegen && git diff --exit-code -- contracts/generated/engine-host.ts contracts/generated/transport-host.ts contracts/generated/tauri-host-client.ts",
     "tauri:dev": "cd src-tauri && cargo tauri dev",
     "tauri:build": "cd src-tauri && cargo tauri build"
   }

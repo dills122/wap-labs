@@ -1,7 +1,7 @@
 # Waves WMLScript Spec Traceability
 
 Version: v0.1  
-Status: Planning baseline (implementation not started)
+Status: Active implementation baseline (incremental conformance closure + docling rerun validation pass)
 
 ## Purpose
 
@@ -9,16 +9,35 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 
 ## Source set reviewed (full pass)
 
-- `docs/source-material/WMLScript/WAP-193-WMLScript-20001025-a.pdf`
-- `docs/source-material/WMLScript/WAP-193_101-WMLScript-20010928-a.pdf`
-- `docs/source-material/WMLScript/WAP-194-WMLScriptLibraries-20000925-a.pdf`
-- `docs/source-material/WMLScript/WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
+- `spec-processing/source-material/WAP-193-WMLScript-20001025-a.pdf`
+- `spec-processing/source-material/WAP-193_101-WMLScript-20010928-a.pdf`
+- `spec-processing/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf`
+- `spec-processing/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf`
 
 ## Normative precedence for Waves
 
 1. Use `WAP-193_101` as the primary WMLScript core baseline (same core content, updated SCR formatting and split encoder/interpreter IDs).
 2. Use `WAP-194` as the standard library baseline.
 3. Apply `WAP-194_103` on top of `WAP-194` for immediate-refresh conformance clarification (section 11.7 / SCR addition).
+
+## Compliance target and prioritization
+
+- Target: achieve and maintain approximately `90-95%` practical WMLScript/WMLSL conformance for in-scope Waves runtime behavior.
+- Strategy: close bedrock compliance gaps first, then broaden library/function coverage.
+- Bedrock-first requirement groups:
+  - `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003` (external callable model, pragmas, URL/script invocation ownership)
+  - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006` (function semantics, locals/initialization, conversion/type behavior)
+  - `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010` (bytecode structure verification and trap model)
+  - `RQ-WMLS-011` (WMLScript content-type routing/handoff)
+- Full closure of optional/profile-gated items (`O`) remains explicitly staged behind mandatory (`M`) bedrock behavior.
+
+## Current implementation posture
+
+- Waves has active WaveScript/WMLScript runtime implementation in `engine-wasm/engine/src/wavescript/*`.
+- Existing implementation is a conformance progression baseline, not yet full section `9/10/11` binary-format parity.
+- Work-plan source of truth for closure sequencing:
+  - `docs/waves/WORK_ITEMS.md` (`Phase W`, `Phase W1`)
+  - `docs/waves/SPEC_TEST_COVERAGE.md`
 
 ## Requirement matrix
 
@@ -144,8 +163,17 @@ Legend:
   - SCRs: `WMLS-C-109 (M)`, `WMLS-C-110 (M)`, `WMLS-C-111 (M)`
 - AC:
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
-  - [ ] Fatal errors terminate current script invocation safely.
-  - [ ] Host remains alive and recoverable after script failure.
+  - [x] Fatal errors terminate current script invocation safely.
+  - [x] Host remains alive and recoverable after script failure.
+  - Note (`2026-03-02`): VM computational `TypeError` and `StackUnderflow` traps are now classified as non-fatal and returned as `invalid`; regression matrix tests now assert both fatal/non-fatal class and category mappings across all current `VmTrap` variants.
+  - Current implementation-class matrix:
+    - Non-fatal: `TypeError`, `StackUnderflow` -> `invalid`, invocation continues to boundary.
+    - Fatal: decode/integrity/resource/host-binding failures (`UnsupportedOpcode`, `TruncatedImmediate`, `Invalid*Index/Target`, `CallDepthExceeded`, `ExecutionLimitExceeded`, `HostCall*`, etc.) -> invocation abort.
+  - Current implementation-category matrix:
+    - `computational`: `TypeError`, `StackUnderflow`
+    - `integrity`: malformed decode/control-flow/local index/UTF-8/return-frame invariants
+    - `resource`: stack/call-depth/step-limit exhaustion
+    - `host-binding`: unavailable/failed host call bindings
 
 ### RQ-WMLS-011: Content-type handling
 

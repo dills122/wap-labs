@@ -85,9 +85,19 @@ Agents MUST:
 - preserve layer boundaries
 - prefer localized, contract-first changes
 - keep behavior deterministic and test-backed
+- keep completed backlog artifacts immutable; add linked follow-up tickets instead of rewriting `done` tickets when new compliance gaps are found
 
 Agents MUST NOT:
 
 - move network behavior into `engine-wasm`
 - move WBXML parsing into TypeScript/Tauri frontend code
 - introduce broad cross-layer refactors without explicit request
+
+## Backlog Lifecycle Policy
+
+- Do not change the status of an existing `done` ticket to `todo`/`in-progress` during later audits.
+- If an implemented ticket is found incomplete or spec-inaccurate, create a new ticket that:
+  - references the original `done` ticket in `Depends On` and notes
+  - scopes only the corrective delta
+  - carries explicit spec references and acceptance checks
+- Preserve historical ticket intent and implementation traceability; corrections happen through additive follow-up work items.

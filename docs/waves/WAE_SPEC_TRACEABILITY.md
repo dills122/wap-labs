@@ -1,7 +1,7 @@
 # Waves WAE Spec Traceability
 
 Version: v0.1  
-Status: S0-01 complete (initial extraction)
+Status: S0-01 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
@@ -9,8 +9,8 @@ Capture WAE normative requirements relevant to Waves and map them to implementat
 
 ## Source set reviewed (S0-01)
 
-- `docs/source-material/WAP-236-WAESpec-20020207-a.pdf`
-- `docs/source-material/WAP-237-WAEMT-20010515-a.pdf`
+- `spec-processing/source-material/WAP-236-WAESpec-20020207-a.pdf`
+- `spec-processing/source-material/WAP-237-WAEMT-20010515-a.pdf`
 
 ## Normative precedence
 

@@ -1,0 +1,49 @@
+## Specification Information Note WAP-187\_101-TransportE2ESec-20011009-a
+
+Version 09-Oct-2001
+
+for
+
+Wireless Application Protocol WAP-187-TransportE2ESec-20010628-a WAP Transport Layer End-to-end Security Version 28-Jun-2001
+
+You may use this document or any part of the document for internal or educational purposes only, provided you do not modify, edit or take out of context the information in this document in any manner. You may not use this document in any other manner without the prior written permission of the WAP Forum™. The WAP Forum authorises you to copy this document, provided that you retain all copyright and other proprietary notices contained in the original materials on any copies of the materials and that you comply strictly with these terms. This copyright permission does not constitute an endorsement of the products or services offered by you .
+
+The WAP Forum™ assumes no responsibility for errors or omissions in this document. In no event shall the WAP Forum be liable for any special, indirect or consequential damages or any damages whatsoever arising out of or in connection with the use of this information .
+
+WAP Forum™ members have agreed to use reasonable endeavors to disclose in a timely manner to the WAP Forum the existence of all intellectual property rights (IPR's) essential to the present document. The members do not have an obligation to conduct IPR searches. This information is publicly available to members and non-members of the WAP Forum and may be found on the "WAP IPR Declarations" list at http://www.wapforum.org/what/ipr.htm. Essential IPR is available for license on the basis set out in the schedule to the WAP Forum Application Form.
+
+Comments regarding this document can be submitted to the WAP Forum ™ in the manner published at http://www.wapforum.org/.
+
+## 1. Scope
+
+This document provides changes and corrections to the following document files:
+
+- -WAP-187-TransportE2ESec-20010628-a
+
+It includes changes from the following change requests:
+
+- -none
+
+## 2. Notation
+
+In the subsections describing the changes new text is underlined. Removed text has strikethrough marks. The presented text is copied from the specification. Text that is not presented is not affected at all. The change descriptions may also include editor's notes similar to the one below. The notes are not part of the actual changes and must not be included in the changed text.
+
+Editor's note: Framed notes like these only clarify where and how the changes shall be applied.
+
+## 3. Correction of Misspelling in SCR Entry
+
+## 3.1 Change Classification
+
+Class 3 - Clerical corrections
+
+## 3.2 Change Summary
+
+SCR item E2E-C-012 has reference to a WTLS SCR item, but there is a misspelling. A hyphen required by the item name syntax is missing.
+
+## 3.3 Change Description
+
+Editor's note: On page 21 update first row in the table and insert hyphen '-' before the numbers.
+
+| Item   | Function   | Reference   | Status   | Requirement   |
+|--------|------------|-------------|----------|---------------|
+|        |            |             |          | WTLS-C-191    |

@@ -2,6 +2,9 @@
 name = "lowband_transport_rust"
 version = "0.1.0"
 edition = "2021"
+description = "Lowband in-process transport library for the WaveNav stack"
+license = "MIT"
+authors = ["Dylan Steele <dylansteele57@gmail.com>"]
 
 [lib]
 name = "lowband_transport_rust"
@@ -15,6 +18,7 @@ reqwest = { version = "0.12", default-features = false, features = ["blocking", 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tempfile = "3"
+ts-rs = { version = "10", features = ["serde-compat"] }
 url = "2"
 
 [dev-dependencies]

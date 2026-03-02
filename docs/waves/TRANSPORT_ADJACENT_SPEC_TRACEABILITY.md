@@ -1,7 +1,7 @@
 # Waves Transport-Adjacent Spec Traceability
 
 Version: v0.1  
-Status: S0-06 complete (initial extraction)
+Status: S0-06 complete (initial extraction + docling rerun validation pass)
 
 ## Purpose
 
@@ -9,13 +9,13 @@ Capture transport-adjacent requirements that affect Waves interoperability bound
 
 ## Source set reviewed (S0-06)
 
-- `docs/source-material/WAP-229-HTTP-20010329-a.pdf`
-- `docs/source-material/WAP-229_001-HTTP-20011031-a.pdf`
-- `docs/source-material/WAP-223-HTTPSM-20001213-a.pdf`
-- `docs/source-material/WAP-223_101-HTTPSM-20010928-a.pdf`
-- `docs/source-material/WAP-225-TCP-20010331-a.pdf`
-- `docs/source-material/WAP-202-WCMP-20010624-a.pdf`
-- `docs/source-material/WAP-159-WDPWCMPAdapt-20010713-a.pdf`
+- `spec-processing/source-material/WAP-229-HTTP-20010329-a.pdf`
+- `spec-processing/source-material/WAP-229_001-HTTP-20011031-a.pdf`
+- `spec-processing/source-material/WAP-223-HTTPSM-20001213-a.pdf`
+- `spec-processing/source-material/WAP-223_101-HTTPSM-20010928-a.pdf`
+- `spec-processing/source-material/WAP-225-TCP-20010331-a.pdf`
+- `spec-processing/source-material/WAP-202-WCMP-20010624-a.pdf`
+- `spec-processing/source-material/WAP-159-WDPWCMPAdapt-20010713-a.pdf`
 
 ## Normative precedence
 
