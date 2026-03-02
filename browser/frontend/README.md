@@ -24,9 +24,10 @@ frontend integration:
 
 This frontend now includes a minimal deck harness UI:
 
-- Transport-first URL navigation (`fetch_deck` -> `engine_load_deck_context`)
-- Enter-to-navigate from URL bar + `Go` action
-- Debug-only raw WML textarea path (`Load Raw WML (Debug)` under debug section)
+- transport-first URL navigation (`fetch_deck` -> `engine_load_deck_context`)
+- deterministic host session-state panel (`idle/loading/loaded/error` + URL/card/focus/error)
+- automatic external intent follow loop (`externalNavigationIntent` fetch/load cycle)
+- debug-only raw WML textarea path (`Load Raw WML (Debug)`)
 - key driving (`up`, `down`, `enter`)
 - render output viewport
 - runtime snapshot panel

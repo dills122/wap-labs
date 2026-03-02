@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 0,
+  "finalUrl": "http://example.test/home.wml",
+  "contentType": "text/plain",
+  "errorCode": "INVALID_REQUEST"
+}

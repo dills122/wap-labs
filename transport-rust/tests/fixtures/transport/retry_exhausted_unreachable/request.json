@@ -1,0 +1,6 @@
+{
+  "url": "http://127.0.0.1:9/unreachable.wml",
+  "method": "GET",
+  "timeoutMs": 100,
+  "retries": 2
+}

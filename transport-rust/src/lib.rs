@@ -906,6 +906,7 @@ mod tests {
         map_terminal_send_error, normalize_content_type, normalized_request_id,
         preflight_wbxml_decoder, wbxml2xml_bin, FetchDeckRequest, LibwbxmlDecodeError,
     };
+    use serde::Deserialize;
     use std::collections::HashMap;
     use std::fs;
     use std::path::PathBuf;
@@ -1049,6 +1050,46 @@ mod tests {
             out.insert(file.to_string(), expected.to_string());
         }
         out
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct FixtureMapInput {
+        status: u16,
+        is_wap_scheme: bool,
+        request_url: String,
+        upstream_url: String,
+        final_url: String,
+        content_type: String,
+        body: String,
+        attempt: u8,
+        elapsed_ms: f64,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct FixtureExpected {
+        ok: bool,
+        status: u16,
+        final_url: String,
+        content_type: String,
+        error_code: Option<String>,
+    }
+
+    fn transport_fixture_path(name: &str, file: &str) -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("tests")
+            .join("fixtures")
+            .join("transport")
+            .join(name)
+            .join(file)
+    }
+
+    fn read_json_fixture<T: for<'de> Deserialize<'de>>(name: &str, file: &str) -> T {
+        let path = transport_fixture_path(name, file);
+        let raw = fs::read(&path).unwrap_or_else(|_| panic!("failed reading {}", path.display()));
+        serde_json::from_slice(&raw)
+            .unwrap_or_else(|_| panic!("failed parsing fixture {}", path.display()))
     }
 
     #[test]
@@ -1628,6 +1669,33 @@ mod tests {
     }
 
     #[test]
+    fn transport_fixture_mapped_unsupported_content_type() {
+        let input: FixtureMapInput =
+            read_json_fixture("unsupported_content_type_mapped", "map_input.json");
+        let expected: FixtureExpected =
+            read_json_fixture("unsupported_content_type_mapped", "expected.json");
+        let response = map_success_payload_response(
+            input.status,
+            input.is_wap_scheme,
+            &input.request_url,
+            &input.upstream_url,
+            input.final_url,
+            input.content_type,
+            input.body.as_bytes(),
+            input.attempt,
+            input.elapsed_ms,
+        );
+        assert_eq!(response.ok, expected.ok);
+        assert_eq!(response.status, expected.status);
+        assert_eq!(response.final_url, expected.final_url);
+        assert_eq!(response.content_type, expected.content_type);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            expected.error_code.as_deref()
+        );
+    }
+
+    #[test]
     fn transport_map_success_payload_wmlc_decode_failure_maps_error() {
         let response = with_env_var_locked("WBXML2XML_BIN", "__missing_decoder__", || {
             map_success_payload_response(
@@ -1703,6 +1771,33 @@ mod tests {
         );
         assert!(!response.ok);
         assert_eq!(response.final_url, "wap://example.test/start.wml");
+    }
+
+    #[test]
+    fn transport_fixture_mapped_protocol_error_5xx() {
+        let input: FixtureMapInput =
+            read_json_fixture("protocol_error_5xx_mapped", "map_input.json");
+        let expected: FixtureExpected =
+            read_json_fixture("protocol_error_5xx_mapped", "expected.json");
+        let response = map_success_payload_response(
+            input.status,
+            input.is_wap_scheme,
+            &input.request_url,
+            &input.upstream_url,
+            input.final_url,
+            input.content_type,
+            input.body.as_bytes(),
+            input.attempt,
+            input.elapsed_ms,
+        );
+        assert_eq!(response.ok, expected.ok);
+        assert_eq!(response.status, expected.status);
+        assert_eq!(response.final_url, expected.final_url);
+        assert_eq!(response.content_type, expected.content_type);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            expected.error_code.as_deref()
+        );
     }
 
     #[test]

@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 0,
+  "finalUrl": "http://127.0.0.1:9/unreachable.wml",
+  "contentType": "text/plain",
+  "errorCode": "TRANSPORT_UNAVAILABLE"
+}

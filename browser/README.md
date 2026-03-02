@@ -11,7 +11,9 @@ Implemented now:
 - Host-side native engine contract in `contracts/engine.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
-- Debug-only raw WML paste path (manual `Load Raw WML` lives under debug section)
+- Deterministic host session state model (`idle/loading/loaded/error`)
+- External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)
+- Debug-only raw WML paste path (`Load Raw WML (Debug)` under debug section)
 - Native engine harness commands in `src-tauri/src/lib.rs`:
   - `engine_load_deck`
   - `engine_load_deck_context`
@@ -71,7 +73,7 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 ## Next implementation slice
 
 1. Expand frontend harness into browser chrome and full navigation UX.
-2. Add fixture-driven integration checks for load/render/nav parity.
+2. Add fixture-driven integration checks for load/render/nav/external-intent parity.
 3. Add history/session persistence semantics to host state.
 
 ## Planning + Traceability
@@ -84,6 +86,6 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 ## Current checklist (planning)
 
 - [ ] Freeze Tauri command and TypeScript contract parity
-- [ ] Add deterministic URL load and runtime status model
+- [x] Add deterministic URL load and runtime status model
 - [x] Implement transport fetch -> engine loadDeckContext handoff
 - [ ] Add integration fixtures for load/nav/external-intent loops

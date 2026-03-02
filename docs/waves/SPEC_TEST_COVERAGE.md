@@ -40,20 +40,20 @@ Legend:
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
-| `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `planned` | transport unit/integration test suite (to be added in transport-python implementation phase) |
+| `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `partial` | transport-rust unit tests + fixture harness scenarios under `transport-rust/tests/fixtures/transport/` |
 | `RQ-TRN-005..009` WTP semantics and SIN overlays | `planned` | protocol-level tests/fuzz fixtures (planned) |
-| `RQ-TRN-010..015` WSP/session/method/capability behavior | `planned` | parser/session integration tests (planned) |
+| `RQ-TRN-010..015` WSP/session/method/capability behavior | `partial` | transport-rust request validation/gateway mapping tests + fixture harness |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
 
 ## Browser host (`browser`)
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
-| Transport contract integration (`fetchDeck`) | `planned` | `B1-01` integration test path |
-| URL load state transitions | `planned` | `B1-02` UI flow checks |
-| Engine render handoff | `planned` | `B1-03` e2e smoke |
-| Input model determinism | `planned` | `B2-01` key-sequence checks |
-| External intent handoff loop | `planned` | `B2-02` integration scenario |
+| Transport contract integration (`fetchDeck`) | `partial` | browser host Rust tests in `browser/src-tauri/src/lib.rs` + transport-rust unit/integration tests |
+| URL load state transitions | `partial` | browser frontend transport-first URL flow + session-state transitions in `browser/frontend/src/main.ts` |
+| Engine render handoff | `partial` | browser host integration-style test `browser_e2e_fetch_load_render_sequence_renders_expected_content` |
+| Input model determinism | `partial` | host key-sequence checks in `browser/src-tauri/src/lib.rs` (`smoke_key_navigation_and_back_stack`) |
+| External intent handoff loop | `partial` | runtime intent emission/clear tests in host Rust + frontend follow-loop implementation in `browser/frontend/src/main.ts` |
 | Event timeline/export artifacts | `planned` | `B3-02` debug export checks |
 
 ## Cross-project checklist (immediate)

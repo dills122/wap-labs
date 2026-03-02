@@ -136,7 +136,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B0-01 Finalize Tauri host skeleton boot path
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: none
 3. `Files`:
 - `browser/src-tauri/src/lib.rs`
@@ -152,7 +152,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B0-02 Host contract parity and session model scaffold
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B0-01`
 3. `Files`:
 - `browser/contracts/transport.ts`
@@ -168,13 +168,13 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B1-01 Tauri command: fetch deck from Python sidecar
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B0-01`, `B0-02`
 3. `Files`:
 - `browser/src-tauri/src/lib.rs`
 - `browser/contracts/transport.ts`
 4. `Build`:
-- Implement `fetch_deck` command calling `transport-python` API/sidecar.
+- Implement `fetch_deck` command calling in-process `transport-rust`.
 - Return normalized payload (`wml`, `finalUrl`, `contentType`, error mapping).
 5. `Tests`:
 - Integration test against mocked or local sidecar endpoint.
@@ -183,7 +183,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B1-02 Browser UI: URL load flow and status/error surfaces
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B1-01`
 3. `Files`:
 - `browser/frontend/src/*`
@@ -197,7 +197,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B1-03 Wire fetched deck into wasm runtime
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B1-02`
 3. `Files`:
 - `browser/frontend/src/*`
@@ -214,7 +214,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B2-01 Input model bridge (directional + enter + softkey placeholders)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B1-03`
 3. `Files`:
 - `browser/frontend/src/*`
@@ -227,7 +227,7 @@ These are the first tickets to pull once Waves browser implementation officially
 
 ### B2-02 External intent handoff and host-level navigation policy
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `B2-01`
 3. `Files`:
 - `browser/frontend/src/*`

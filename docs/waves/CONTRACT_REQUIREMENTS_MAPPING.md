@@ -58,7 +58,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `FetchResponse.error.code` values | `RQ-TRN-004`, `RQ-TRN-007`, `RQ-TRX-006`, `RQ-TRX-007` |
 | `timingMs` structure | `RQ-TRN-007`, `RQ-TRN-011` |
 | `TransportClient.fetchDeck` behavior | `RQ-TRN-001..015`, `RQ-TRX-001..010` (profile-dependent) |
-| `HostSessionState` runtime fields | `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017` |
+| `HostSessionState` runtime fields (including `navigationStatus`) | `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `HostSessionState.externalNavigationIntent` | `RQ-WAE-010`, `RQ-RMK-003` |
 
 Generation rule:
