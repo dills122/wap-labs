@@ -883,7 +883,7 @@ Compliance target for this lane:
 4. `Build`:
 - Implement explicit fatal vs non-fatal execution error classes and map non-fatal computational failures to `invalid` semantics.
 - Keep host contract deterministic: invocation-abort vs recoverable-result outcomes must be machine-checkable.
- - Progress (`2026-03-02`): added structured execution `error_class` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, and added fatal-abort recovery coverage.
+ - Progress (`2026-03-02`): added structured execution `error_class` + `error_category` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, added fatal-abort recovery coverage, and enforced explicit `VmTrap` class/category matrix tests across all current variants.
 5. `Tests`:
 - Conformance fixtures for arithmetic/conversion/runtime-error classes with expected fatal/non-fatal outcomes.
 - Integration fixtures proving host/runtime liveness after fatal script invocation failure.

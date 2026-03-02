@@ -165,7 +165,15 @@ Legend:
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
   - [x] Fatal errors terminate current script invocation safely.
   - [x] Host remains alive and recoverable after script failure.
-  - Note (`2026-03-02`): VM computational `TypeError` and `StackUnderflow` traps are now classified as non-fatal and returned as `invalid`; a regression test matrix now asserts explicit fatal/non-fatal trap class mappings. Broader chapter-12 non-fatal class coverage remains tracked under `W1-06`.
+  - Note (`2026-03-02`): VM computational `TypeError` and `StackUnderflow` traps are now classified as non-fatal and returned as `invalid`; regression matrix tests now assert both fatal/non-fatal class and category mappings across all current `VmTrap` variants.
+  - Current implementation-class matrix:
+    - Non-fatal: `TypeError`, `StackUnderflow` -> `invalid`, invocation continues to boundary.
+    - Fatal: decode/integrity/resource/host-binding failures (`UnsupportedOpcode`, `TruncatedImmediate`, `Invalid*Index/Target`, `CallDepthExceeded`, `ExecutionLimitExceeded`, `HostCall*`, etc.) -> invocation abort.
+  - Current implementation-category matrix:
+    - `computational`: `TypeError`, `StackUnderflow`
+    - `integrity`: malformed decode/control-flow/local index/UTF-8/return-frame invariants
+    - `resource`: stack/call-depth/step-limit exhaustion
+    - `host-binding`: unavailable/failed host call bindings
 
 ### RQ-WMLS-011: Content-type handling
 

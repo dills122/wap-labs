@@ -22,6 +22,12 @@ export interface EngineSnapshot {
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
+  lastScriptExecutionErrorCategory?:
+    | 'none'
+    | 'computational'
+    | 'integrity'
+    | 'resource'
+    | 'host-binding';
   lastScriptRequiresRefresh?: boolean;
 }
 
@@ -55,6 +61,13 @@ export interface EngineHost {
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
   lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
+  lastScriptExecutionErrorCategory():
+    | 'none'
+    | 'computational'
+    | 'integrity'
+    | 'resource'
+    | 'host-binding'
+    | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
@@ -132,6 +145,14 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),
         lastScriptExecutionErrorClass: engine.lastScriptExecutionErrorClass() ?? undefined,
+        lastScriptExecutionErrorCategory:
+          (engine.lastScriptExecutionErrorCategory() as
+            | 'none'
+            | 'computational'
+            | 'integrity'
+            | 'resource'
+            | 'host-binding'
+            | undefined) ?? undefined,
         lastScriptRequiresRefresh: engine.lastScriptRequiresRefresh()
       };
     },
@@ -197,6 +218,15 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     },
     lastScriptExecutionErrorClass() {
       return engine.lastScriptExecutionErrorClass() as 'none' | 'non-fatal' | 'fatal' | undefined;
+    },
+    lastScriptExecutionErrorCategory() {
+      return engine.lastScriptExecutionErrorCategory() as
+        | 'none'
+        | 'computational'
+        | 'integrity'
+        | 'resource'
+        | 'host-binding'
+        | undefined;
     },
     lastScriptRequiresRefresh() {
       return engine.lastScriptRequiresRefresh();

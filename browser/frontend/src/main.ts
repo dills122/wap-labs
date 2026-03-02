@@ -43,6 +43,12 @@ interface EngineRuntimeSnapshot {
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptExecutionErrorClass?: 'none' | 'non-fatal' | 'fatal';
+  lastScriptExecutionErrorCategory?:
+    | 'none'
+    | 'computational'
+    | 'integrity'
+    | 'resource'
+    | 'host-binding';
   lastScriptRequiresRefresh?: boolean;
   lastScriptDialogRequests?: Array<
     | { type: 'alert'; message: string }

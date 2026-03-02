@@ -11,6 +11,7 @@ export function renderRuntimeState(element: HTMLPreElement, snapshot: EngineSnap
     `lastScriptExecutionOk: ${snapshot.lastScriptExecutionOk ?? '(none)'}`,
     `lastScriptExecutionTrap: ${snapshot.lastScriptExecutionTrap ?? '(none)'}`,
     `lastScriptExecutionErrorClass: ${snapshot.lastScriptExecutionErrorClass ?? '(none)'}`,
+    `lastScriptExecutionErrorCategory: ${snapshot.lastScriptExecutionErrorCategory ?? '(none)'}`,
     `lastScriptRequiresRefresh: ${snapshot.lastScriptRequiresRefresh ?? '(none)'}`
   ].join('\n');
 }

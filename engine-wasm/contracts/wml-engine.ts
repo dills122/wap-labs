@@ -66,6 +66,7 @@ export interface ScriptExecutionOutcome {
   result: ScriptValueLiteral;
   trap?: string;
   errorClass: 'none' | 'non-fatal' | 'fatal';
+  errorCategory: 'none' | 'computational' | 'integrity' | 'resource' | 'host-binding';
   invocationAborted: boolean;
   effects: ScriptPostInvocationEffects;
 }
@@ -95,6 +96,7 @@ export interface EngineTraceEntry {
   external_navigation_intent?: string;
   script_ok?: boolean;
   script_error_class?: 'none' | 'non-fatal' | 'fatal';
+  script_error_category?: 'none' | 'computational' | 'integrity' | 'resource' | 'host-binding';
   script_trap?: string;
 }
 
@@ -163,6 +165,13 @@ export interface WmlEngineWasm {
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
   lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
+  lastScriptExecutionErrorCategory():
+    | 'none'
+    | 'computational'
+    | 'integrity'
+    | 'resource'
+    | 'host-binding'
+    | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   lastScriptDialogRequests(): ScriptDialogRequest[];
   lastScriptTimerRequests(): ScriptTimerRequest[];
@@ -208,6 +217,13 @@ export interface WmlEngineNative {
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
   lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
+  lastScriptExecutionErrorCategory():
+    | 'none'
+    | 'computational'
+    | 'integrity'
+    | 'resource'
+    | 'host-binding'
+    | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   lastScriptDialogRequests(): ScriptDialogRequest[];
   lastScriptTimerRequests(): ScriptTimerRequest[];

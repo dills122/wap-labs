@@ -313,6 +313,13 @@ impl WmlEngine {
             .map(|outcome| outcome.error_class.as_str().to_string())
     }
 
+    /// Read classified error category from the last script execution.
+    pub fn last_script_execution_error_category(&self) -> Option<String> {
+        self.last_script_outcome
+            .as_ref()
+            .map(|outcome| outcome.error_category.as_str().to_string())
+    }
+
     /// Read refresh requirement from the last script execution.
     pub fn last_script_requires_refresh(&self) -> Option<bool> {
         self.last_script_outcome
@@ -542,6 +549,11 @@ impl WmlEngine {
         self.last_script_execution_error_class()
     }
 
+    #[wasm_bindgen(js_name = lastScriptExecutionErrorCategory)]
+    pub fn last_script_execution_error_category_wasm(&self) -> Option<String> {
+        self.last_script_execution_error_category()
+    }
+
     #[wasm_bindgen(js_name = lastScriptRequiresRefresh)]
     pub fn last_script_requires_refresh_wasm(&self) -> Option<bool> {
         self.last_script_requires_refresh()
@@ -573,7 +585,10 @@ impl WmlEngine {
         let decoded_unit = match decode_compilation_unit(bytes) {
             Ok(unit) => unit,
             Err(err) => {
-                return ScriptExecutionOutcome::fatal(format_decode_error(err));
+                return ScriptExecutionOutcome::fatal(
+                    format_decode_error(err),
+                    ScriptErrorCategoryLiteral::Integrity,
+                );
             }
         };
 
@@ -603,15 +618,19 @@ impl WmlEngine {
         args: &[ScriptValue],
     ) -> ScriptExecutionOutcome {
         let Some(bytes) = self.script_units.get(src) else {
-            return ScriptExecutionOutcome::fatal(format!(
-                "loader: script unit not registered ({src})"
-            ));
+            return ScriptExecutionOutcome::fatal(
+                format!("loader: script unit not registered ({src})"),
+                ScriptErrorCategoryLiteral::HostBinding,
+            );
         };
 
         let decoded_unit = match decode_compilation_unit(bytes) {
             Ok(unit) => unit,
             Err(err) => {
-                return ScriptExecutionOutcome::fatal(format_decode_error(err));
+                return ScriptExecutionOutcome::fatal(
+                    format_decode_error(err),
+                    ScriptErrorCategoryLiteral::Integrity,
+                );
             }
         };
 
@@ -619,14 +638,16 @@ impl WmlEngine {
             0
         } else {
             let Some(entrypoints) = self.script_entrypoints.get(src) else {
-                return ScriptExecutionOutcome::fatal(format!(
-                    "loader: function entry point not registered ({src}#{function_name})"
-                ));
+                return ScriptExecutionOutcome::fatal(
+                    format!("loader: function entry point not registered ({src}#{function_name})"),
+                    ScriptErrorCategoryLiteral::HostBinding,
+                );
             };
             let Some(entry_pc) = entrypoints.get(function_name) else {
-                return ScriptExecutionOutcome::fatal(format!(
-                    "loader: function entry point not registered ({src}#{function_name})"
-                ));
+                return ScriptExecutionOutcome::fatal(
+                    format!("loader: function entry point not registered ({src}#{function_name})"),
+                    ScriptErrorCategoryLiteral::HostBinding,
+                );
             };
             *entry_pc
         };
@@ -857,6 +878,10 @@ impl WmlEngine {
                 .last_script_outcome
                 .as_ref()
                 .map(|outcome| outcome.error_class.clone()),
+            script_error_category: self
+                .last_script_outcome
+                .as_ref()
+                .map(|outcome| outcome.error_category.clone()),
             script_trap: self
                 .last_script_outcome
                 .as_ref()
@@ -996,6 +1021,7 @@ pub struct ScriptExecutionOutcome {
     pub result: ScriptValueLiteral,
     pub trap: Option<String>,
     pub error_class: ScriptErrorClassLiteral,
+    pub error_category: ScriptErrorCategoryLiteral,
     pub invocation_aborted: bool,
     pub navigation_intent: ScriptNavigationIntentLiteral,
     pub requires_refresh: bool,
@@ -1048,6 +1074,7 @@ pub struct EngineTraceEntry {
     pub external_navigation_intent: Option<String>,
     pub script_ok: Option<bool>,
     pub script_error_class: Option<ScriptErrorClassLiteral>,
+    pub script_error_category: Option<ScriptErrorCategoryLiteral>,
     pub script_trap: Option<String>,
 }
 
@@ -1062,6 +1089,7 @@ impl ScriptExecutionOutcome {
             result,
             trap: None,
             error_class: ScriptErrorClassLiteral::None,
+            error_category: ScriptErrorCategoryLiteral::None,
             invocation_aborted: false,
             navigation_intent,
             requires_refresh,
@@ -1070,6 +1098,7 @@ impl ScriptExecutionOutcome {
 
     fn non_fatal(
         message: String,
+        category: ScriptErrorCategoryLiteral,
         navigation_intent: ScriptNavigationIntentLiteral,
         requires_refresh: bool,
     ) -> Self {
@@ -1078,18 +1107,20 @@ impl ScriptExecutionOutcome {
             result: ScriptValueLiteral::Invalid { invalid: true },
             trap: Some(message),
             error_class: ScriptErrorClassLiteral::NonFatal,
+            error_category: category,
             invocation_aborted: false,
             navigation_intent,
             requires_refresh,
         }
     }
 
-    fn fatal(message: String) -> Self {
+    fn fatal(message: String, category: ScriptErrorCategoryLiteral) -> Self {
         Self {
             ok: false,
             result: ScriptValueLiteral::Invalid { invalid: true },
             trap: Some(message),
             error_class: ScriptErrorClassLiteral::Fatal,
+            error_category: category,
             invocation_aborted: true,
             navigation_intent: ScriptNavigationIntentLiteral::None,
             requires_refresh: false,
@@ -1115,23 +1146,49 @@ impl ScriptErrorClassLiteral {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ScriptErrorCategoryLiteral {
+    None,
+    Computational,
+    Integrity,
+    Resource,
+    HostBinding,
+}
+
+impl ScriptErrorCategoryLiteral {
+    fn as_str(&self) -> &'static str {
+        match self {
+            Self::None => "none",
+            Self::Computational => "computational",
+            Self::Integrity => "integrity",
+            Self::Resource => "resource",
+            Self::HostBinding => "host-binding",
+        }
+    }
+}
+
 fn classify_vm_trap_outcome(
     trap: VmTrap,
     navigation_intent: ScriptNavigationIntentLiteral,
     requires_refresh: bool,
 ) -> ScriptExecutionOutcome {
     let class = classify_vm_trap(&trap);
+    let category = classify_vm_trap_category(&trap);
     let message = format_vm_trap(trap);
     match class {
-        ScriptErrorClassLiteral::NonFatal => {
-            ScriptExecutionOutcome::non_fatal(message, navigation_intent, requires_refresh)
-        }
+        ScriptErrorClassLiteral::NonFatal => ScriptExecutionOutcome::non_fatal(
+            message,
+            category,
+            navigation_intent,
+            requires_refresh,
+        ),
         ScriptErrorClassLiteral::None => ScriptExecutionOutcome::ok(
             ScriptValueLiteral::Invalid { invalid: true },
             navigation_intent,
             requires_refresh,
         ),
-        ScriptErrorClassLiteral::Fatal => ScriptExecutionOutcome::fatal(message),
+        ScriptErrorClassLiteral::Fatal => ScriptExecutionOutcome::fatal(message, category),
     }
 }
 
@@ -1151,6 +1208,26 @@ fn classify_vm_trap(trap: &VmTrap) -> ScriptErrorClassLiteral {
         | VmTrap::Utf8ImmediateDecode
         | VmTrap::HostCallUnavailable { .. }
         | VmTrap::HostCallError { .. } => ScriptErrorClassLiteral::Fatal,
+    }
+}
+
+fn classify_vm_trap_category(trap: &VmTrap) -> ScriptErrorCategoryLiteral {
+    match trap {
+        VmTrap::TypeError(_) | VmTrap::StackUnderflow => ScriptErrorCategoryLiteral::Computational,
+        VmTrap::EmptyUnit
+        | VmTrap::InvalidEntryPoint { .. }
+        | VmTrap::UnsupportedOpcode(_)
+        | VmTrap::TruncatedImmediate { .. }
+        | VmTrap::InvalidLocalIndex { .. }
+        | VmTrap::InvalidCallTarget { .. }
+        | VmTrap::Utf8ImmediateDecode => ScriptErrorCategoryLiteral::Integrity,
+        VmTrap::StackOverflow { .. }
+        | VmTrap::CallDepthExceeded { .. }
+        | VmTrap::ExecutionLimitExceeded { .. } => ScriptErrorCategoryLiteral::Resource,
+        VmTrap::HostCallUnavailable { .. } | VmTrap::HostCallError { .. } => {
+            ScriptErrorCategoryLiteral::HostBinding
+        }
+        VmTrap::ReturnFromRootFrame => ScriptErrorCategoryLiteral::Integrity,
     }
 }
 
@@ -1270,9 +1347,10 @@ fn script_timer_request_to_literal(request: &ScriptTimerRequest) -> ScriptTimerR
 #[cfg(test)]
 mod tests {
     use super::{
-        classify_vm_trap, convert_script_call_args, parse_script_href, ParsedScriptRef,
-        ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorClassLiteral,
-        ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral, ScriptValueLiteral, WmlEngine,
+        classify_vm_trap, classify_vm_trap_category, convert_script_call_args, parse_script_href,
+        ParsedScriptRef, ScriptCallArgLiteral, ScriptDialogRequestLiteral,
+        ScriptErrorCategoryLiteral, ScriptErrorClassLiteral, ScriptNavigationIntentLiteral,
+        ScriptTimerRequestLiteral, ScriptValueLiteral, WmlEngine,
     };
     use crate::layout::flow_layout::layout_card;
     use crate::render::render_list::DrawCmd;
@@ -1677,6 +1755,10 @@ mod tests {
         let outcome = engine.execute_script_unit_internal(&[]);
         assert!(!outcome.ok);
         assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
+        assert_eq!(
+            outcome.error_category,
+            super::ScriptErrorCategoryLiteral::Integrity
+        );
         assert!(outcome.invocation_aborted);
         assert_eq!(
             outcome.trap.as_deref(),
@@ -1695,6 +1777,10 @@ mod tests {
         let outcome = engine.execute_script_unit_internal(&[0xff]);
         assert!(!outcome.ok);
         assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
+        assert_eq!(
+            outcome.error_category,
+            super::ScriptErrorCategoryLiteral::Integrity
+        );
         assert!(outcome.invocation_aborted);
         assert_eq!(
             outcome.trap.as_deref(),
@@ -1723,6 +1809,10 @@ mod tests {
         let outcome = engine.execute_script_unit_internal(&[0x01]);
         assert!(!outcome.ok);
         assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
+        assert_eq!(
+            outcome.error_category,
+            super::ScriptErrorCategoryLiteral::Integrity
+        );
         assert!(outcome.invocation_aborted);
         assert_eq!(
             outcome.trap.as_deref(),
@@ -1739,6 +1829,10 @@ mod tests {
         assert_eq!(
             outcome.error_class,
             super::ScriptErrorClassLiteral::NonFatal
+        );
+        assert_eq!(
+            outcome.error_category,
+            super::ScriptErrorCategoryLiteral::Computational
         );
         assert!(!outcome.invocation_aborted);
         assert_eq!(
@@ -1770,6 +1864,10 @@ mod tests {
             outcome.error_class,
             super::ScriptErrorClassLiteral::NonFatal
         );
+        assert_eq!(
+            outcome.error_category,
+            super::ScriptErrorCategoryLiteral::Computational
+        );
         assert!(!outcome.invocation_aborted);
         assert_eq!(
             outcome.result,
@@ -1780,31 +1878,107 @@ mod tests {
 
     #[test]
     fn vm_trap_classification_matrix_is_explicit() {
-        let non_fatal_cases = [VmTrap::TypeError("expected int32"), VmTrap::StackUnderflow];
-        for trap in non_fatal_cases {
-            assert_eq!(
-                classify_vm_trap(&trap),
-                ScriptErrorClassLiteral::NonFatal,
-                "trap should classify as non-fatal: {trap:?}"
-            );
+        fn expected_class(trap: &VmTrap) -> ScriptErrorClassLiteral {
+            match trap {
+                VmTrap::TypeError(_) | VmTrap::StackUnderflow => ScriptErrorClassLiteral::NonFatal,
+                VmTrap::EmptyUnit
+                | VmTrap::InvalidEntryPoint { .. }
+                | VmTrap::UnsupportedOpcode(_)
+                | VmTrap::TruncatedImmediate { .. }
+                | VmTrap::StackOverflow { .. }
+                | VmTrap::InvalidLocalIndex { .. }
+                | VmTrap::InvalidCallTarget { .. }
+                | VmTrap::CallDepthExceeded { .. }
+                | VmTrap::ReturnFromRootFrame
+                | VmTrap::ExecutionLimitExceeded { .. }
+                | VmTrap::Utf8ImmediateDecode
+                | VmTrap::HostCallUnavailable { .. }
+                | VmTrap::HostCallError { .. } => ScriptErrorClassLiteral::Fatal,
+            }
         }
 
-        let fatal_cases = [
+        let matrix = vec![
+            VmTrap::EmptyUnit,
+            VmTrap::InvalidEntryPoint { entry_pc: 1 },
             VmTrap::UnsupportedOpcode(0xff),
-            VmTrap::InvalidLocalIndex { index: 99 },
-            VmTrap::InvalidCallTarget { target: 77 },
-            VmTrap::HostCallUnavailable { function_id: 2 },
+            VmTrap::TruncatedImmediate { opcode: 0x01 },
+            VmTrap::StackOverflow { limit: 1 },
+            VmTrap::StackUnderflow,
+            VmTrap::TypeError("expected int32"),
+            VmTrap::InvalidLocalIndex { index: 0 },
+            VmTrap::InvalidCallTarget { target: 0 },
+            VmTrap::CallDepthExceeded { limit: 1 },
+            VmTrap::ReturnFromRootFrame,
+            VmTrap::ExecutionLimitExceeded { limit: 1 },
+            VmTrap::Utf8ImmediateDecode,
+            VmTrap::HostCallUnavailable { function_id: 1 },
             VmTrap::HostCallError {
-                function_id: 2,
+                function_id: 1,
                 message: "x".to_string(),
             },
-            VmTrap::ExecutionLimitExceeded { limit: 1 },
         ];
-        for trap in fatal_cases {
+
+        for trap in matrix {
+            let expected = expected_class(&trap);
             assert_eq!(
                 classify_vm_trap(&trap),
-                ScriptErrorClassLiteral::Fatal,
-                "trap should classify as fatal: {trap:?}"
+                expected,
+                "trap class mismatch for {trap:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn vm_trap_error_category_matrix_is_explicit() {
+        fn expected_category(trap: &VmTrap) -> ScriptErrorCategoryLiteral {
+            match trap {
+                VmTrap::TypeError(_) | VmTrap::StackUnderflow => {
+                    ScriptErrorCategoryLiteral::Computational
+                }
+                VmTrap::EmptyUnit
+                | VmTrap::InvalidEntryPoint { .. }
+                | VmTrap::UnsupportedOpcode(_)
+                | VmTrap::TruncatedImmediate { .. }
+                | VmTrap::InvalidLocalIndex { .. }
+                | VmTrap::InvalidCallTarget { .. }
+                | VmTrap::Utf8ImmediateDecode
+                | VmTrap::ReturnFromRootFrame => ScriptErrorCategoryLiteral::Integrity,
+                VmTrap::StackOverflow { .. }
+                | VmTrap::CallDepthExceeded { .. }
+                | VmTrap::ExecutionLimitExceeded { .. } => ScriptErrorCategoryLiteral::Resource,
+                VmTrap::HostCallUnavailable { .. } | VmTrap::HostCallError { .. } => {
+                    ScriptErrorCategoryLiteral::HostBinding
+                }
+            }
+        }
+
+        let matrix = vec![
+            VmTrap::EmptyUnit,
+            VmTrap::InvalidEntryPoint { entry_pc: 1 },
+            VmTrap::UnsupportedOpcode(0xff),
+            VmTrap::TruncatedImmediate { opcode: 0x01 },
+            VmTrap::StackOverflow { limit: 1 },
+            VmTrap::StackUnderflow,
+            VmTrap::TypeError("expected int32"),
+            VmTrap::InvalidLocalIndex { index: 0 },
+            VmTrap::InvalidCallTarget { target: 0 },
+            VmTrap::CallDepthExceeded { limit: 1 },
+            VmTrap::ReturnFromRootFrame,
+            VmTrap::ExecutionLimitExceeded { limit: 1 },
+            VmTrap::Utf8ImmediateDecode,
+            VmTrap::HostCallUnavailable { function_id: 1 },
+            VmTrap::HostCallError {
+                function_id: 1,
+                message: "x".to_string(),
+            },
+        ];
+
+        for trap in matrix {
+            let expected = expected_category(&trap);
+            assert_eq!(
+                classify_vm_trap_category(&trap),
+                expected,
+                "trap category mismatch for {trap:?}"
             );
         }
     }
@@ -2150,6 +2324,10 @@ mod tests {
             engine.last_script_execution_error_class().as_deref(),
             Some("non-fatal")
         );
+        assert_eq!(
+            engine.last_script_execution_error_category().as_deref(),
+            Some("computational")
+        );
     }
 
     #[test]
@@ -2190,6 +2368,10 @@ mod tests {
             engine.last_script_execution_error_class().as_deref(),
             Some("non-fatal")
         );
+        assert_eq!(
+            engine.last_script_execution_error_category().as_deref(),
+            Some("computational")
+        );
     }
 
     #[test]
@@ -2212,6 +2394,10 @@ mod tests {
             engine.last_script_execution_error_class().as_deref(),
             Some("fatal")
         );
+        assert_eq!(
+            engine.last_script_execution_error_category().as_deref(),
+            Some("integrity")
+        );
 
         let outcome = engine
             .invoke_script_ref_internal("good.wmlsc", "main", &[])
@@ -2219,6 +2405,10 @@ mod tests {
         assert_eq!(outcome.result, ScriptValueLiteral::Number(5.0));
         assert_eq!(
             engine.last_script_execution_error_class().as_deref(),
+            Some("none")
+        );
+        assert_eq!(
+            engine.last_script_execution_error_category().as_deref(),
             Some("none")
         );
     }
