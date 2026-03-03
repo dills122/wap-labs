@@ -11,6 +11,7 @@ const MAX_EXTERNAL_INTENT_HOPS = 3;
 const NETWORK_PROBE_MAX_ATTEMPTS = 3;
 const NETWORK_PROBE_DELAY_MS = 1200;
 const NETWORK_PROBE_TIMEOUT_MS = 1800;
+const ENGINE_TIMER_TICK_MS = 100;
 
 export class BrowserController {
   private readonly hostClient: TauriHostClient;
@@ -24,6 +25,8 @@ export class BrowserController {
   private readonly listenerCleanup: Array<() => void> = [];
 
   private listenersBound = false;
+  private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
+  private timerTickInFlight = false;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -67,10 +70,12 @@ export class BrowserController {
       this.unbindListeners();
     }
     this.bindListeners();
+    this.startTimerRuntimeLoop();
     await this.runStartupNetworkProbe();
   }
 
   dispose(): void {
+    this.stopTimerRuntimeLoop();
     this.unbindListeners();
   }
 
@@ -360,6 +365,7 @@ export class BrowserController {
 
   private async applyEngineKey(key: EngineKey): Promise<void> {
     const snapshot = await this.navigation.applyEngineKey(key);
+    this.applyTimerRequestsFromSnapshot(snapshot);
     if (snapshot.externalNavigationIntent) {
       this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
       await this.loadTransportUrl(snapshot.externalNavigationIntent, 'external-intent', true, true);
@@ -398,6 +404,9 @@ export class BrowserController {
       followExternalIntent,
       pushHistory
     });
+    if (snapshot) {
+      this.applyTimerRequestsFromSnapshot(snapshot);
+    }
 
     const state = this.navigation.getSessionState();
     if (state.finalUrl) {
@@ -410,6 +419,59 @@ export class BrowserController {
     }
 
     return snapshot;
+  }
+
+  private startTimerRuntimeLoop(): void {
+    if (this.timerLoopHandle) {
+      return;
+    }
+    this.timerLoopHandle = setInterval(() => {
+      void this.tickEngineTimerRuntime();
+    }, ENGINE_TIMER_TICK_MS);
+  }
+
+  private stopTimerRuntimeLoop(): void {
+    if (!this.timerLoopHandle) {
+      return;
+    }
+    clearInterval(this.timerLoopHandle);
+    this.timerLoopHandle = null;
+  }
+
+  private applyTimerRequestsFromSnapshot(_snapshot: EngineRuntimeSnapshot): void {
+    // Engine-managed card timers are progressed by the host clock tick loop.
+  }
+
+  private async tickEngineTimerRuntime(): Promise<void> {
+    if (this.timerTickInFlight) {
+      return;
+    }
+    this.timerTickInFlight = true;
+    try {
+      const before = this.presenter.getSessionState().activeCardId;
+      const snapshot = await this.navigation.applyEngineTimerTick(ENGINE_TIMER_TICK_MS);
+      this.applyTimerRequestsFromSnapshot(snapshot);
+      if (snapshot.externalNavigationIntent) {
+        this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
+        await this.loadTransportUrl(
+          snapshot.externalNavigationIntent,
+          'external-intent',
+          true,
+          true
+        );
+      }
+      if (before && snapshot.activeCardId && before !== snapshot.activeCardId) {
+        this.presenter.recordTimeline('engine-timer-transition', 'state', {
+          from: before,
+          to: snapshot.activeCardId
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.presenter.recordTimeline('engine-timer-tick', 'error', { message });
+    } finally {
+      this.timerTickInFlight = false;
+    }
   }
 
   private async runStartupNetworkProbe(): Promise<void> {
