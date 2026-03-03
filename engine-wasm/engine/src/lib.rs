@@ -1419,6 +1419,8 @@ mod tests {
     const FIXTURE_LINK_WRAP: &str = include_str!("../tests/fixtures/phase-a/link-wrap.wml");
     const FIXTURE_MISSING_FRAGMENT: &str =
         include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
+    const FIXTURE_TASK_ACTION_ORDER: &str =
+        include_str!("../tests/fixtures/phase-a/task-action-order.wml");
 
     fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
         let card = engine
@@ -1451,6 +1453,31 @@ mod tests {
         bytes.push(0x03);
         bytes.push(raw.len() as u8);
         bytes.extend_from_slice(raw);
+    }
+
+    fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
+        let kinds: Vec<String> = engine
+            .trace_entries()
+            .into_iter()
+            .map(|entry| entry.kind)
+            .collect();
+        let mut cursor = 0usize;
+        for kind in kinds {
+            if cursor < expected.len() && kind == expected[cursor] {
+                cursor += 1;
+            }
+        }
+        assert_eq!(
+            cursor,
+            expected.len(),
+            "expected trace subsequence {:?} not found in {:?}",
+            expected,
+            engine
+                .trace_entries()
+                .iter()
+                .map(|entry| entry.kind.as_str())
+                .collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -2747,6 +2774,118 @@ mod tests {
         let traces = engine.trace_entries();
         assert!(traces.iter().any(|entry| entry.kind == "ACTION_ACCEPT"));
         assert!(traces.iter().any(|entry| entry.kind == "ACTION_REFRESH"));
+    }
+
+    #[test]
+    fn fixture_accept_go_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-go");
+        assert_eq!(engine.active_card_id().expect("active card"), "accept-go");
+
+        engine.clear_trace_entries();
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept go should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "target");
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]);
+    }
+
+    #[test]
+    fn fixture_accept_prev_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-prev link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-prev");
+        assert_eq!(engine.active_card_id().expect("active card"), "accept-prev");
+
+        engine.clear_trace_entries();
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept prev should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_trace_kinds_subsequence(
+            &engine,
+            &["KEY", "ACTION_ACCEPT", "ACTION_PREV", "ACTION_BACK"],
+        );
+    }
+
+    #[test]
+    fn fixture_accept_refresh_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-prev link");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-refresh link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-refresh");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-refresh"
+        );
+
+        engine.clear_trace_entries();
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept refresh should succeed");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-refresh"
+        );
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_REFRESH"]);
+    }
+
+    #[test]
+    fn fixture_accept_failure_rolls_back_and_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-prev link");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-refresh link");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-broken link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-broken");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-broken"
+        );
+        assert_eq!(engine.nav_stack.len(), 1);
+
+        engine.clear_trace_entries();
+        let err = engine
+            .handle_key("enter".to_string())
+            .expect_err("accept go #missing should fail");
+        assert!(err.contains("Card id not found"));
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-broken"
+        );
+        assert_eq!(engine.nav_stack.len(), 1);
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]);
     }
 
     #[test]
