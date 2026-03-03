@@ -15,6 +15,20 @@ const browserShellTemplate = (defaultUrl: string) => `
         <input id="fetch-url" type="text" value="${defaultUrl}" aria-label="Address" />
         <button id="btn-fetch-url" class="chrome-btn primary">${WAVES_COPY.shell.go}</button>
       </div>
+      <div class="mode-row">
+        <label class="mode-field">
+          <span>${WAVES_COPY.shell.mode}</span>
+          <select id="run-mode">
+            <option value="local">${WAVES_COPY.shell.localMode}</option>
+            <option value="network">${WAVES_COPY.shell.networkMode}</option>
+          </select>
+        </label>
+        <label id="local-example-wrap" class="mode-field">
+          <span>${WAVES_COPY.shell.localExample}</span>
+          <select id="local-example"></select>
+        </label>
+        <button id="btn-load-local" class="chrome-btn">${WAVES_COPY.shell.loadLocal}</button>
+      </div>
     </header>
 
     <main class="browser-main">
@@ -103,6 +117,10 @@ export interface BrowserShellRefs {
   activeUrlLabelEl: HTMLSpanElement;
   devDrawerEl: HTMLDetailsElement;
   toastEl: HTMLDivElement;
+  runModeSelectEl: HTMLSelectElement;
+  localExampleSelectEl: HTMLSelectElement;
+  loadLocalBtnEl: HTMLButtonElement;
+  localExampleWrapEl: HTMLLabelElement;
 }
 
 export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
@@ -125,6 +143,10 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
   const activeUrlLabelEl = document.querySelector<HTMLSpanElement>('#active-url-label');
   const devDrawerEl = document.querySelector<HTMLDetailsElement>('#dev-drawer');
   const toastEl = document.querySelector<HTMLDivElement>('#toast');
+  const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
+  const localExampleSelectEl = document.querySelector<HTMLSelectElement>('#local-example');
+  const loadLocalBtnEl = document.querySelector<HTMLButtonElement>('#btn-load-local');
+  const localExampleWrapEl = document.querySelector<HTMLLabelElement>('#local-example-wrap');
 
   if (
     !wmlInput ||
@@ -139,7 +161,11 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
     !timelineEl ||
     !activeUrlLabelEl ||
     !devDrawerEl ||
-    !toastEl
+    !toastEl ||
+    !runModeSelectEl ||
+    !localExampleSelectEl ||
+    !loadLocalBtnEl ||
+    !localExampleWrapEl
   ) {
     throw new Error('missing expected UI element');
   }
@@ -157,6 +183,10 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
     timelineEl,
     activeUrlLabelEl,
     devDrawerEl,
-    toastEl
+    toastEl,
+    runModeSelectEl,
+    localExampleSelectEl,
+    loadLocalBtnEl,
+    localExampleWrapEl
   };
 };

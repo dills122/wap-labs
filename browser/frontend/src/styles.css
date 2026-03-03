@@ -85,6 +85,35 @@ body[data-boot-phase='deck-ready'] .browser-shell {
   align-items: center;
 }
 
+.mode-row {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.mode-field {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: rgba(248, 251, 255, 0.92);
+}
+
+.mode-row select {
+  min-width: 150px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.2);
+  color: #f8fbff;
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 13px;
+}
+
+.mode-row option {
+  color: #1f2937;
+}
+
 .chrome-btn {
   border: 1px solid rgba(255, 255, 255, 0.34);
   background: rgba(255, 255, 255, 0.2);
@@ -108,6 +137,12 @@ body[data-boot-phase='deck-ready'] .browser-shell {
 
 .chrome-btn.primary:hover {
   background: #6ac9ff;
+}
+
+.chrome-btn:disabled,
+.mode-row select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .browser-main {
@@ -374,6 +409,11 @@ pre {
 
   .nav-row {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .mode-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
   }
 
   .nav-row input[type='text'] {
