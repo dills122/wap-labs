@@ -22,4 +22,4 @@ ts-rs = { version = "10", features = ["serde-compat"] }
 url = "2"
 
 [dev-dependencies]
-toml = "0.8"
+toml = "1.0"
