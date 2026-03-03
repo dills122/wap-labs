@@ -15,6 +15,7 @@
     "lint:node": "pnpm -r --if-present run lint",
     "format:node": "pnpm -r --if-present run format",
     "format:check:node": "pnpm -r --if-present run format:check",
+    "format:staged": "lint-staged --concurrent false",
     "test:node": "pnpm -r --if-present run test",
     "build:node": "pnpm -r --if-present run build",
     "typecheck:node": "pnpm -r --if-present run typecheck"
@@ -23,6 +24,19 @@
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "eslint-config-prettier": "catalog:",
-    "globals": "catalog:"
+    "globals": "catalog:",
+    "lint-staged": "^16.1.6",
+    "prettier": "catalog:"
+  },
+  "lint-staged": {
+    "browser/frontend/src/**/*.{ts,css}": [
+      "prettier --write"
+    ],
+    "engine-wasm/host-sample/**/*.{ts,css,html}": [
+      "prettier --ignore-path .prettierignore --write"
+    ],
+    "{engine-wasm/engine,browser/src-tauri}/**/*.rs": [
+      "rustfmt --edition 2021"
+    ]
   }
 }

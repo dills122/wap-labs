@@ -98,7 +98,7 @@ Bootstrap/refresh local tool and dependency setup:
 
 Local hook behavior:
 
-- commit: auto-formats Rust (`engine-wasm/engine`) and stages fixes
+- commit: runs `lint-staged` on staged files only (Prettier + rustfmt)
 - push: runs strict pre-push checks
 
 Node version note:
