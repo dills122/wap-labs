@@ -1,30 +1,94 @@
 # WAP Labs
 
-WAP Labs contains two parallel tracks:
+WAP Labs is focused on building a modern, deterministic WAP browser stack:
 
-1. A legacy WAP 1.x test environment (Kannel + WML server + optional XP VM microbrowsers).
-2. A modern WAP browser emulator build: WaveNav browser + Lowband transport + host harness.
+- `browser/`: Waves desktop host (Tauri frontend + native command bridge)
+- `engine-wasm/`: WaveNav runtime engine (Rust core with wasm + native targets)
+- `transport-rust/`: Lowband transport and WAP/WML handoff pipeline
+
+The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`, `wml-server/`), but it is no longer the primary product focus.
 
 ## Start Here
 
-- Legacy test environment guide: `docs/wap-test-environment/README.md`
-- Browser emulator build guide: `docs/browser-emulator/README.md`
+- Browser/engine architecture and roadmap: `docs/waves/TECHNICAL_ARCHITECTURE.md`
+- Browser integration work board: `docs/waves/WORK_ITEMS.md`
+- Maintenance and tech debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- Engine implementation board: `docs/wml-engine/work-items.md`
+- Frame-interface migration plan: `docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`
 - Development prerequisites + bootstrap: `docs/development-prerequisites.md`
 - Documentation index: `docs/README.md`
+
+Secondary docs:
+
+- Legacy test environment guide: `docs/wap-test-environment/README.md`
+- Browser emulator quickstart: `docs/browser-emulator/README.md`
 - Spec-processing subproject: `spec-processing/README.md`
 
-## Repo Map
+## Progress Snapshot
 
-- `docker/kannel/`: gateway image/config for local lab stack
-- `wml-server/`: local WML demo server and emulator UI
-- `transport-rust/`: Lowband in-process transport library for browser host
-- `engine-wasm/`: WaveNav Rust/WASM engine and host sample
-- `browser/`: Waves Tauri desktop host integration area
-- `marketing-site/`: Astro-based developer landing site (GitHub Pages root)
-- `docs/`: architecture, spec mapping, and implementation plans
-- `spec-processing/`: source-spec corpus, parsing/cleanup workflow, and provenance tooling
+Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md` (updated 2026-03-03).
 
-## Quick Commands
+| Track | Implemented | Roadmap / In Progress |
+|---|---|---|
+| Waves desktop app (`browser/`) | Core browser shell works: load pages, move around cards, follow links, go back, and inspect runtime state | Better release safety checks, cleaner internal structure, and finishing request/network policy behavior |
+| WaveNav runtime (`engine-wasm/`) | MVP runtime is in place: parse WML, navigate cards, manage focus, and render stable output | Broader parity coverage, parser hardening, and follow-up behavior work for deeper spec correctness |
+| Lowband transport (`transport-rust/`) | Stable fetch + normalization baseline with clear error categories | More modular internals, stronger CI checks, and additional conformance scenarios |
+| Frame-based render/input migration | Migration plan and phased work tickets are defined | Move hosts to a shared frame/input boundary and retire legacy render/input paths |
+| Legacy/demo stack (`gateway-kannel/`, `wml-server/`) | Still available for compatibility smoke checks | Maintenance only; not the main build track |
+
+## Repo Map (Product-First)
+
+- `browser/`: Waves desktop host product surface (frontend + Tauri integration)
+- `engine-wasm/`: Runtime engine, wasm bindings, and host sample harness
+- `transport-rust/`: In-process transport library and contract handoff
+- `docs/`: architecture, contracts, traceability, and work boards
+- `gateway-kannel/`, `docker/kannel/`: legacy gateway test environment
+- `wml-server/`: local demo/fixture WML server
+- `marketing-site/`: project site and hosted simulator entrypoint
+- `spec-processing/`: canonical source-spec processing and provenance
+
+## Quick Commands (Browser/Engine)
+
+Bootstrap:
+
+```bash
+./scripts/init-refresh.sh
+```
+
+Run browser frontend shell:
+
+```bash
+pnpm --dir browser run dev
+```
+
+Run desktop Tauri host:
+
+```bash
+pnpm --dir browser run tauri:dev
+```
+
+Run engine host-sample harness:
+
+```bash
+make dev-wavenav-host
+```
+
+Build engine wasm package directly:
+
+```bash
+cd engine-wasm/engine
+wasm-pack build --target web --out-dir ../pkg
+```
+
+Quality checks:
+
+```bash
+make ci-local
+make lint-rust-transport
+make test-rust-transport
+```
+
+## Quick Commands (Legacy/Compatibility)
 
 Legacy stack:
 
@@ -38,23 +102,6 @@ make smoke-transport-wap
 ```
 
 `make smoke-transport-wap` defaults to `GATEWAY_HTTP_BASE=http://localhost:3000/gateway` so host-side smoke remains stable while still exercising Kannel through the existing proxy path.
-
-WaveNav engine + quick host harness:
-
-```bash
-cd engine-wasm/engine
-wasm-pack build --target web --out-dir ../pkg
-
-cd ../host-sample
-pnpm install
-pnpm run dev
-```
-
-All-in-one local host dev start (build wasm + run Vite):
-
-```bash
-make dev-wavenav-host
-```
 
 Marketing site local dev:
 
