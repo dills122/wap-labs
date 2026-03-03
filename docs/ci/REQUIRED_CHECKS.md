@@ -2,6 +2,8 @@
 
 This document defines the intended required GitHub branch-protection checks for `main`.
 
+For a full workflow reference (triggers, jobs, caches, deployment, and troubleshooting), see `docs/ci/CI_SETUP.md`.
+
 ## Required workflow checks
 
 Configure branch protection to require these job names from `.github/workflows/ci.yml`:
@@ -14,6 +16,17 @@ Configure branch protection to require these job names from `.github/workflows/c
 - `WML Server Sanity`
 
 `Marketing Site Build` may be required or optional depending on whether site changes should block product-layer merges.
+
+For `.github/workflows/security.yml`, require at least:
+
+- `Dependency Review`
+- `Rust Advisory Audit`
+- `Node Dependency Audit`
+
+For `.github/workflows/codeql.yml`, require:
+
+- `Analyze (javascript-typescript)`
+- `Analyze (rust)`
 
 ## Manual / optional workflows
 
