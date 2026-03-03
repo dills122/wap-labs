@@ -5,6 +5,7 @@ import type {
   HostSessionState
 } from '../../../contracts/transport';
 import type {
+  AdvanceTimeRequest,
   EngineRuntimeSnapshot,
   HandleKeyRequest,
   LoadDeckContextRequest,
@@ -30,6 +31,7 @@ export interface NavigationHostClient {
   engineSnapshot(): Promise<EngineRuntimeSnapshot>;
   engineNavigateBack(): Promise<EngineRuntimeSnapshot>;
   engineNavigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
+  engineAdvanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
   engineClearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
 }
 
@@ -52,6 +54,7 @@ export interface LoadTransportOptions {
 export interface NavigationStateMachine {
   loadTransportUrl(options: LoadTransportOptions): Promise<EngineRuntimeSnapshot | null>;
   applyEngineKey(key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot>;
+  applyEngineTimerTick(deltaMs: number): Promise<EngineRuntimeSnapshot>;
   navigateBackWithFallback(): Promise<BackNavigationMode>;
   getSessionState(): HostSessionState;
   getHistoryState(): HostHistoryState;
@@ -235,6 +238,12 @@ export const createNavigationStateMachine = (
     return snapshot;
   };
 
+  const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot> => {
+    const snapshot = await hostClient.engineAdvanceTimeMs({ deltaMs });
+    await renderSnapshot(snapshot);
+    return snapshot;
+  };
+
   const navigateBackWithFallback = async (): Promise<BackNavigationMode> => {
     const before = await hostClient.engineSnapshot();
     const after = await hostClient.engineNavigateBack();
@@ -289,6 +298,7 @@ export const createNavigationStateMachine = (
   return {
     loadTransportUrl,
     applyEngineKey,
+    applyEngineTimerTick,
     navigateBackWithFallback,
     getSessionState: () => hostSessionState,
     getHistoryState: () => hostHistory

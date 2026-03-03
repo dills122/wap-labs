@@ -6,9 +6,9 @@ use lowband_transport_rust::{
 };
 use ts_rs::TS;
 use wavenav_host_lib::contract_types::{
-    DrawCmd, EngineKey, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetViewportColsRequest,
+    AdvanceTimeRequest, DrawCmd, EngineKey, EngineRuntimeSnapshot, HandleKeyRequest,
+    LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest, RenderList,
+    ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetViewportColsRequest,
 };
 
 fn push_decl<T: TS>(out: &mut String) {
@@ -37,6 +37,7 @@ fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
     push_decl::<HandleKeyRequest>(&mut output);
     push_decl::<NavigateToCardRequest>(&mut output);
     push_decl::<SetViewportColsRequest>(&mut output);
+    push_decl::<AdvanceTimeRequest>(&mut output);
     push_decl::<ScriptDialogRequestSnapshot>(&mut output);
     push_decl::<ScriptTimerRequestSnapshot>(&mut output);
     push_decl::<EngineRuntimeSnapshot>(&mut output);
@@ -56,6 +57,9 @@ fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
     output.push_str("  navigateBack(): Promise<EngineRuntimeSnapshot>;\n");
     output.push_str(
         "  setViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;\n",
+    );
+    output.push_str(
+        "  advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;\n",
     );
     output.push_str("  snapshot(): Promise<EngineRuntimeSnapshot>;\n");
     output.push_str("  clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;\n");
@@ -99,7 +103,8 @@ import type {
   LoadDeckRequest,
   NavigateToCardRequest,
   RenderList,
-  SetViewportColsRequest
+  SetViewportColsRequest,
+  AdvanceTimeRequest
 } from './engine-host';
 import type { FetchDeckRequest, FetchDeckResponse } from './transport-host';
 
@@ -115,6 +120,7 @@ export interface TauriHostClient {
   engineNavigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
   engineNavigateBack(): Promise<EngineRuntimeSnapshot>;
   engineSetViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
+  engineAdvanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
   engineSnapshot(): Promise<EngineRuntimeSnapshot>;
   engineClearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
 }
@@ -132,6 +138,8 @@ export const createTauriHostClient = (invokeFn: TauriInvoke): TauriHostClient =>
   engineNavigateBack: () => invokeFn<EngineRuntimeSnapshot>('engine_navigate_back'),
   engineSetViewportCols: (request) =>
     invokeFn<EngineRuntimeSnapshot>('engine_set_viewport_cols', { request }),
+  engineAdvanceTimeMs: (request) =>
+    invokeFn<EngineRuntimeSnapshot>('engine_advance_time_ms', { request }),
   engineSnapshot: () => invokeFn<EngineRuntimeSnapshot>('engine_snapshot'),
   engineClearExternalNavigationIntent: () =>
     invokeFn<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent')

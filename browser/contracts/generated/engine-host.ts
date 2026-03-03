@@ -13,6 +13,8 @@ export type NavigateToCardRequest = { cardId: string, };
 
 export type SetViewportColsRequest = { cols: number, };
 
+export type AdvanceTimeRequest = { deltaMs: number, };
+
 export type ScriptDialogRequestSnapshot = { "type": "alert", message: string, } | { "type": "confirm", message: string, } | { "type": "prompt", message: string, defaultValue?: string, };
 
 export type ScriptTimerRequestSnapshot = { "type": "schedule", delayMs: number, token?: string, } | { "type": "cancel", token: string, };
@@ -31,6 +33,7 @@ export interface EngineHostClient {
   navigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
   navigateBack(): Promise<EngineRuntimeSnapshot>;
   setViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
+  advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
   snapshot(): Promise<EngineRuntimeSnapshot>;
   clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
 }
