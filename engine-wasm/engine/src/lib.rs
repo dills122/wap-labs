@@ -3146,6 +3146,51 @@ mod tests {
     }
 
     #[test]
+    fn timer_large_single_tick_expires_once_for_host_coarse_clock() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="5"/>
+            <onevent type="ontimer"><go href="#next"/></onevent>
+            <p>Timed card</p>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("fragment nav should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+
+        engine
+            .advance_time_ms(5_000)
+            .expect("coarse tick should expire timer");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        let expire_count_after_first_tick = engine
+            .trace_entries()
+            .iter()
+            .filter(|entry| entry.kind == "TIMER_EXPIRE")
+            .count();
+        assert_eq!(expire_count_after_first_tick, 1);
+
+        engine
+            .advance_time_ms(5_000)
+            .expect("further ticks after expiry should no-op");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        let expire_count_after_second_tick = engine
+            .trace_entries()
+            .iter()
+            .filter(|entry| entry.kind == "TIMER_EXPIRE")
+            .count();
+        assert_eq!(expire_count_after_second_tick, 1);
+    }
+
+    #[test]
     fn timer_stops_on_card_exit() {
         let mut engine = WmlEngine::new();
         let xml = r##"

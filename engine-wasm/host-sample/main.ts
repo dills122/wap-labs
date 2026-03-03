@@ -11,6 +11,8 @@ import './ui/runtime-inspector-panel';
 import type { RuntimeInspectorPanel } from './ui/runtime-inspector-panel';
 
 const LIVE_RELOAD_DEBOUNCE_MS = 250;
+const AUTO_TICK_DEFAULT_MS = 100;
+const AUTO_TICK_STEPS = new Set([100, 250, 500, 1000]);
 
 async function main() {
   const canvas = document.querySelector<HTMLCanvasElement>('#wap-screen');
@@ -26,6 +28,8 @@ async function main() {
   const pressEnterButton = document.querySelector<HTMLButtonElement>('#press-enter');
   const tick100msButton = document.querySelector<HTMLButtonElement>('#tick-100ms');
   const tick1sButton = document.querySelector<HTMLButtonElement>('#tick-1s');
+  const autoTickStepSelect = document.querySelector<HTMLSelectElement>('#auto-tick-step');
+  const toggleAutoTickButton = document.querySelector<HTMLButtonElement>('#toggle-auto-tick');
   const clearIntentButton = document.querySelector<HTMLButtonElement>('#clear-intent');
   const copyIntentButton = document.querySelector<HTMLButtonElement>('#copy-intent');
   const probeExecuteScriptButton =
@@ -66,6 +70,8 @@ async function main() {
     !pressEnterButton ||
     !tick100msButton ||
     !tick1sButton ||
+    !autoTickStepSelect ||
+    !toggleAutoTickButton ||
     !clearIntentButton ||
     !copyIntentButton ||
     !probeExecuteScriptButton ||
@@ -200,6 +206,30 @@ async function main() {
     }
   };
 
+  let autoTickStepMs = AUTO_TICK_DEFAULT_MS;
+  autoTickStepSelect.value = String(autoTickStepMs);
+  let autoTickTimer: ReturnType<typeof setInterval> | null = null;
+  const applyAutoTickButtonState = () => {
+    const running = autoTickTimer !== null;
+    toggleAutoTickButton.setAttribute('aria-pressed', running ? 'true' : 'false');
+    toggleAutoTickButton.textContent = running
+      ? `Auto Tick: On (${autoTickStepMs}ms)`
+      : 'Auto Tick: Off';
+  };
+  const stopAutoTick = (reason?: string) => {
+    if (!autoTickTimer) {
+      return;
+    }
+    clearInterval(autoTickTimer);
+    autoTickTimer = null;
+    applyAutoTickButtonState();
+    if (reason) {
+      const snapshot = updateRuntimeState();
+      status.textContent = reason;
+      appendEvent('AUTO_TICK_STOP', snapshot);
+    }
+  };
+
   let liveTimer: ReturnType<typeof setTimeout> | null = null;
   const queueLiveReload = () => {
     if (!liveCheckbox.checked) {
@@ -242,20 +272,65 @@ async function main() {
   pressUpButton.addEventListener('click', () => pressKey('up'));
   pressDownButton.addEventListener('click', () => pressKey('down'));
   pressEnterButton.addEventListener('click', () => pressKey('enter'));
-  const tickTime = (deltaMs: number) => {
+  const tickTime = (deltaMs: number, source: 'manual' | 'auto' = 'manual') => {
     try {
+      const beforeCardId = host.snapshot().activeCardId;
       host.advanceTimeMs(deltaMs);
       const snapshot = updateRuntimeState();
-      status.textContent = `Advanced timer clock by ${deltaMs}ms. Active card: ${snapshot.activeCardId}`;
-      appendEvent(`TICK ${deltaMs}ms`, snapshot);
+      if (source === 'manual') {
+        status.textContent = `Advanced timer clock by ${deltaMs}ms. Active card: ${snapshot.activeCardId}`;
+        appendEvent(`TICK ${deltaMs}ms`, snapshot);
+        return;
+      }
+      if (snapshot.activeCardId !== beforeCardId) {
+        status.textContent = `Auto tick advanced card: ${beforeCardId} -> ${snapshot.activeCardId}`;
+        appendEvent(`AUTO_TICK_NAV ${beforeCardId}->${snapshot.activeCardId}`, snapshot);
+      }
     } catch (error) {
-      status.textContent = `Tick error (${deltaMs}ms): ${String(error)}`;
       const snapshot = updateRuntimeState();
+      if (source === 'auto') {
+        stopAutoTick();
+        status.textContent = `Auto tick error (${deltaMs}ms): ${String(error)}`;
+        appendEvent(`AUTO_TICK_ERROR ${deltaMs}ms ${String(error)}`, snapshot);
+        return;
+      }
+      status.textContent = `Tick error (${deltaMs}ms): ${String(error)}`;
       appendEvent(`TICK_ERROR ${deltaMs}ms ${String(error)}`, snapshot);
     }
   };
+  const startAutoTick = () => {
+    if (autoTickTimer) {
+      return;
+    }
+    autoTickTimer = setInterval(() => tickTime(autoTickStepMs, 'auto'), autoTickStepMs);
+    applyAutoTickButtonState();
+    const snapshot = updateRuntimeState();
+    status.textContent = `Auto tick started (${autoTickStepMs}ms).`;
+    appendEvent('AUTO_TICK_START', snapshot);
+  };
   tick100msButton.addEventListener('click', () => tickTime(100));
   tick1sButton.addEventListener('click', () => tickTime(1000));
+  autoTickStepSelect.addEventListener('change', () => {
+    const parsed = Number.parseInt(autoTickStepSelect.value, 10);
+    if (!AUTO_TICK_STEPS.has(parsed)) {
+      autoTickStepSelect.value = String(autoTickStepMs);
+      return;
+    }
+    autoTickStepMs = parsed;
+    if (autoTickTimer) {
+      stopAutoTick();
+      startAutoTick();
+      return;
+    }
+    applyAutoTickButtonState();
+  });
+  toggleAutoTickButton.addEventListener('click', () => {
+    if (autoTickTimer) {
+      stopAutoTick(`Auto tick stopped (${autoTickStepMs}ms).`);
+      return;
+    }
+    startAutoTick();
+  });
   pressBackButton.addEventListener('click', () => {
     const handled = host.navigateBack();
     const snapshot = updateRuntimeState();
@@ -340,12 +415,16 @@ async function main() {
     event.preventDefault();
     pressKey(key);
   });
+  window.addEventListener('beforeunload', () => {
+    stopAutoTick();
+  });
 
   renderExampleMetadata(exampleMetadataElements, defaultExample);
   exampleMetaSection.apply();
   editorSection.apply();
   eventLogSection.apply();
   traceSection.apply();
+  applyAutoTickButtonState();
   const initialSnapshot = updateRuntimeState();
   appendEvent('BOOT');
   appendEvent('INITIAL_LOAD', initialSnapshot);

@@ -67,6 +67,16 @@
           <button id="tick-100ms" type="button">Tick +100ms</button>
           <button id="tick-1s" type="button">Tick +1s</button>
         </div>
+        <div class="row">
+          <label for="auto-tick-step">Auto Tick Step</label>
+          <select id="auto-tick-step">
+            <option value="100">100ms</option>
+            <option value="250">250ms</option>
+            <option value="500">500ms</option>
+            <option value="1000">1000ms</option>
+          </select>
+          <button id="toggle-auto-tick" type="button" aria-pressed="false">Auto Tick: Off</button>
+        </div>
         <p id="status" class="status">Ready.</p>
         <div class="runtime-actions">
           <button id="clear-intent" type="button">Clear Intent</button>
