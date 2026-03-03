@@ -9,7 +9,7 @@ import { registerBrowserComponents } from './components';
 
 const SAMPLE_WML = `<wml>
   <card id="home">
-    <p>WaveNav native engine harness</p>
+    <p>WAP/WML based browser 1.x</p>
     <a href="#next">Go to next card</a>
     <a href="https://example.org/">External link</a>
   </card>

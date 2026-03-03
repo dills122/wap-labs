@@ -66,7 +66,7 @@ export class BrowserController {
     this.presenter.recordTimeline('bootstrap', 'state', {
       requestedUrl: this.refs.fetchUrlInput.value
     });
-    this.presenter.setStatus('Ready.');
+    this.presenter.setStatus('Starting WAP/WML based browser 1.x...');
 
     if (this.listenersBound) {
       this.unbindListeners();

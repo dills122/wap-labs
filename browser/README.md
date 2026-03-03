@@ -22,6 +22,8 @@ Implemented now:
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
 - Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
+- Help menu placeholder for updates (`Check for Updates (Coming Soon)`)
+- Update hook baseline: menu event emits `waves://updater/check-requested` for future updater wiring
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)

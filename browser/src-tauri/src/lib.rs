@@ -12,9 +12,13 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
 use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
 use tauri::path::BaseDirectory;
+use tauri::Emitter;
 use tauri::Manager;
 use tauri::State;
 use wavenav_engine::WmlEngine;
+
+const MENU_CHECK_FOR_UPDATES_ID: &str = "check-for-updates";
+const EVENT_UPDATER_CHECK_REQUESTED: &str = "waves://updater/check-requested";
 
 struct AppState {
     engine: Mutex<WmlEngine>,
@@ -225,6 +229,19 @@ fn ensure_request_id(request: &mut FetchDeckRequest) {
     }
 }
 
+fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
+    if let Err(error) = app.emit(
+        EVENT_UPDATER_CHECK_REQUESTED,
+        serde_json::json!({
+            "source": "menu",
+            "placeholder": true
+        }),
+    ) {
+        eprintln!("failed to emit updater check event: {error}");
+    }
+    println!("Check for Updates requested (hook ready, updater not yet implemented)");
+}
+
 fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>> {
     let about_metadata = AboutMetadataBuilder::new()
         .name(Some("Waves Browser"))
@@ -293,6 +310,8 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
         )
         .item(
             &SubmenuBuilder::new(app, "Help")
+                .text(MENU_CHECK_FOR_UPDATES_ID, "Check for Updates (Coming Soon)")
+                .separator()
                 .about(Some(about_metadata))
                 .build()?,
         );
@@ -444,6 +463,11 @@ pub fn run() {
     tauri::Builder::default()
         .manage(AppState::default())
         .menu(build_app_menu)
+        .on_menu_event(|app, event| {
+            if event.id() == MENU_CHECK_FOR_UPDATES_ID {
+                handle_check_for_updates_menu(app);
+            }
+        })
         .setup(|app| {
             configure_bundled_wbxml_decoder(app.handle())?;
             preflight_wbxml_decoder_available()?;

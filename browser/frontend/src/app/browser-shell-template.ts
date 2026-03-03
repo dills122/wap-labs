@@ -5,7 +5,7 @@ const BROWSER_SHELL_TEMPLATE = `
     <header class="browser-chrome">
       <div class="title-row">
         <div class="brand">Waves</div>
-        <div class="caption">Desktop WAP Browser Preview</div>
+        <div class="caption">WAP/WML based browser 1.x</div>
       </div>
       <div class="nav-row">
         <button id="btn-back" class="chrome-btn">Back</button>
