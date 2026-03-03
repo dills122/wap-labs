@@ -30,6 +30,8 @@ This frontend now includes a browser-style shell with a hidden developer harness
 - global keyboard navigation when not in text-entry fields (`ArrowUp`, `ArrowDown`, `Enter`, `Backspace`)
 - hybrid back behavior: engine card-history first, then browser URL history fallback across fetched decks
 - deterministic host session-state panel (`idle/loading/loaded/error` + URL/card/focus/error)
+- startup boot sequencing states (`booting` -> `shell-ready` -> `engine-ready` -> `deck-ready`)
+- first-render viewport skeleton placeholder to avoid blank deck area while initial load is in flight
 - automatic external intent follow loop (`externalNavigationIntent` fetch/load cycle)
 - debug-only raw WML textarea path (`Load Raw WML (Debug)`)
 - key driving (`up`, `down`, `enter`)

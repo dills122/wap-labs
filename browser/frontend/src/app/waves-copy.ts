@@ -30,7 +30,8 @@ const locale = {
     sessionState: 'Session State',
     transportResponse: 'Transport Response',
     runtimeSnapshot: 'Runtime Snapshot',
-    eventTimeline: 'Event Timeline'
+    eventTimeline: 'Event Timeline',
+    firstRenderPending: 'Waiting for first deck render...'
   },
   sampleDeck: {
     intro: WAVES_CONFIG.appTagline,
@@ -59,6 +60,9 @@ const locale = {
     starting: `Starting ${WAVES_CONFIG.appTagline}...`,
     ready: 'Ready.',
     readyNetwork: 'Ready. Network available.',
+    bootShellReady: 'Shell ready.',
+    bootEngineReady: 'Engine ready.',
+    bootDeckReady: 'Deck ready.',
     health: (message: string) => `Health: ${message}`,
     rawWmlLoaded: 'Raw WML loaded and rendered (debug mode).',
     renderedCurrentCard: 'Rendered current card.',

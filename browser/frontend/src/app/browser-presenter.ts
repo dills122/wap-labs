@@ -14,6 +14,8 @@ import { inferStatusTone, uiEvents } from '../ui-helpers';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
+export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
+
 export class BrowserPresenter {
   private readonly refs: BrowserShellRefs;
 
@@ -24,6 +26,7 @@ export class BrowserPresenter {
   private timelineState = createTimelineState();
 
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
+  private hasRenderedContent = false;
 
   constructor(refs: BrowserShellRefs, initialSession: HostSessionState, maxTimelineEvents: number) {
     this.refs = refs;
@@ -79,6 +82,38 @@ export class BrowserPresenter {
     uiEvents.emit('status', { message, tone });
   }
 
+  setBootPhase(phase: BootPhase): void {
+    document.body.setAttribute('data-boot-phase', phase);
+    this.recordTimeline('boot-phase', 'state', { phase });
+  }
+
+  hasRenderedDeck(): boolean {
+    return this.hasRenderedContent;
+  }
+
+  setViewportSkeleton(visible: boolean): void {
+    if (visible) {
+      this.refs.viewportEl.classList.add('viewport-skeleton');
+      this.refs.viewportEl.setAttribute('aria-busy', 'true');
+      if (!this.hasRenderedContent) {
+        this.refs.viewportEl.innerHTML = `
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line skeleton-line-wide"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line skeleton-line-short"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line skeleton-line-wide"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-hint">${escapeHtml(WAVES_COPY.shell.firstRenderPending)}</div>
+        `;
+      }
+      return;
+    }
+
+    this.refs.viewportEl.classList.remove('viewport-skeleton');
+    this.refs.viewportEl.setAttribute('aria-busy', 'false');
+  }
+
   showToast(
     message: string,
     tone: 'error' | 'ok' = 'error',
@@ -118,6 +153,8 @@ export class BrowserPresenter {
       .sort((a, b) => a[0] - b[0])
       .map(([, chunks]) => chunks.join(' '));
 
+    this.hasRenderedContent = true;
+    this.setViewportSkeleton(false);
     this.refs.viewportEl.innerHTML = lines
       .map((line) => `<div class="line">${escapeHtml(line)}</div>`)
       .join('');

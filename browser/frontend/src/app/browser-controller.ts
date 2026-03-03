@@ -25,6 +25,7 @@ export class BrowserController {
   private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
   private timerTickInFlight = false;
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
+  private bootDeckReadyEmitted = false;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -36,7 +37,14 @@ export class BrowserController {
       {
         onSessionState: (session) => this.presenter.setSessionState(session),
         onSnapshot: (snapshot) => this.presenter.setSnapshot(snapshot),
-        onRender: (render) => this.presenter.drawRenderList(render),
+        onRender: (render) => {
+          this.presenter.drawRenderList(render);
+          if (!this.bootDeckReadyEmitted) {
+            this.bootDeckReadyEmitted = true;
+            this.presenter.setBootPhase('deck-ready');
+            this.presenter.setStatus(WAVES_COPY.status.bootDeckReady);
+          }
+        },
         onTransportResponse: (response) => this.presenter.setTransportResponse(response),
         onNetworkUnavailable: () => {
           this.presenter.showToast(WAVES_COPY.status.networkUnavailableToast, 'error');
@@ -50,22 +58,26 @@ export class BrowserController {
   }
 
   async init(sampleWml: string): Promise<void> {
+    this.bootDeckReadyEmitted = false;
     this.refs.wmlInput.value = sampleWml;
     this.presenter.setSessionState({
       navigationStatus: 'idle',
       requestedUrl: this.refs.fetchUrlInput.value
     });
     this.presenter.clearTimeline();
+    this.presenter.setBootPhase('shell-ready');
     this.presenter.recordTimeline('bootstrap', 'state', {
       requestedUrl: this.refs.fetchUrlInput.value
     });
-    this.presenter.setStatus(WAVES_COPY.status.starting);
+    this.presenter.setStatus(WAVES_COPY.status.bootShellReady);
 
     if (this.listenersBound) {
       this.unbindListeners();
     }
     this.bindListeners();
     this.startTimerRuntimeLoop();
+    this.presenter.setBootPhase('engine-ready');
+    this.presenter.setStatus(WAVES_COPY.status.bootEngineReady);
     await this.runStartupNetworkProbe();
   }
 
@@ -388,6 +400,10 @@ export class BrowserController {
   ): Promise<EngineRuntimeSnapshot | null> {
     await this.setViewportCols();
     const requestedUrl = url.trim();
+    const needsFirstRenderSkeleton = !this.presenter.hasRenderedDeck();
+    if (needsFirstRenderSkeleton) {
+      this.presenter.setViewportSkeleton(true);
+    }
     if (source === 'user') {
       this.presenter.setStatus(WAVES_COPY.status.loading(requestedUrl));
     } else if (source === 'external-intent') {
@@ -396,30 +412,38 @@ export class BrowserController {
       this.presenter.setStatus(WAVES_COPY.status.loadingPreviousPage(requestedUrl));
     }
 
-    const snapshot = await this.navigation.loadTransportUrl({
-      url: requestedUrl,
-      source,
-      followExternalIntent,
-      pushHistory
-    });
-    if (snapshot) {
-      this.scriptTimerRegistry.reset();
-      this.applyTimerRequestsFromSnapshot(snapshot);
-    }
+    try {
+      const snapshot = await this.navigation.loadTransportUrl({
+        url: requestedUrl,
+        source,
+        followExternalIntent,
+        pushHistory
+      });
+      if (snapshot) {
+        this.scriptTimerRegistry.reset();
+        this.applyTimerRequestsFromSnapshot(snapshot);
+      }
 
-    const state = this.navigation.getSessionState();
-    if (state.finalUrl) {
-      this.refs.fetchUrlInput.value = state.finalUrl;
-    }
-    if (state.navigationStatus === 'error') {
-      this.presenter.setStatus(
-        WAVES_COPY.status.fetchFailed(state.lastError ?? WAVES_COPY.errors.unknownTransportFailure)
-      );
-    } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
-      this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));
-    }
+      const state = this.navigation.getSessionState();
+      if (state.finalUrl) {
+        this.refs.fetchUrlInput.value = state.finalUrl;
+      }
+      if (state.navigationStatus === 'error') {
+        this.presenter.setStatus(
+          WAVES_COPY.status.fetchFailed(
+            state.lastError ?? WAVES_COPY.errors.unknownTransportFailure
+          )
+        );
+      } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
+        this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));
+      }
 
-    return snapshot;
+      return snapshot;
+    } finally {
+      if (needsFirstRenderSkeleton && !this.presenter.hasRenderedDeck()) {
+        this.presenter.setViewportSkeleton(false);
+      }
+    }
   }
 
   private startTimerRuntimeLoop(): void {
