@@ -148,6 +148,7 @@ mod tests {
             ])],
             accept_action_href: None,
             onenterforward_href: None,
+            onenterbackward_href: None,
         };
 
         let out = layout_card(&card, 10, 0);
@@ -167,6 +168,7 @@ mod tests {
             )])],
             accept_action_href: None,
             onenterforward_href: None,
+            onenterbackward_href: None,
         };
 
         let out = layout_card(&card, 5, 0);
@@ -193,6 +195,7 @@ mod tests {
             }])],
             accept_action_href: None,
             onenterforward_href: None,
+            onenterbackward_href: None,
         };
 
         let out = layout_card(&card, 4, 0);

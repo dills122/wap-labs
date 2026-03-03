@@ -6,4 +6,5 @@ pub struct Card {
     pub nodes: Vec<Node>,
     pub accept_action_href: Option<String>,
     pub onenterforward_href: Option<String>,
+    pub onenterbackward_href: Option<String>,
 }

@@ -1,0 +1,33 @@
+<!--
+label: Card Entry Forward+Backward
+description: Demonstrates deterministic re-entry behavior when a card defines both onenterforward and onenterbackward handlers.
+goal: Confirm forward entry and backward re-entry actions trigger at the expected navigation boundaries.
+work-items: A2-03
+spec-items: WML-R-008
+testing-ac:
+- Press Enter on "Enter transit"; activeCardId should become next because transit runs onenterforward.
+- Press Back once; activeCardId should become rewind because transit runs onenterbackward on re-entry.
+- Confirm runtime trace shows ACTION_BACK and subsequent ACTION_FRAGMENT for rewind.
+-->
+<wml>
+  <card id="home">
+    <p>Start card.</p>
+    <a href="#transit">Enter transit</a>
+  </card>
+  <card id="transit">
+    <onevent type="onenterforward">
+      <go href="#next"/>
+    </onevent>
+    <onevent type="onenterbackward">
+      <go href="#rewind"/>
+    </onevent>
+    <p>Transit card should not remain active after either entry event.</p>
+  </card>
+  <card id="next">
+    <p>Reached from onenterforward.</p>
+  </card>
+  <card id="rewind">
+    <p>Reached from onenterbackward.</p>
+    <a href="#home">Return home</a>
+  </card>
+</wml>

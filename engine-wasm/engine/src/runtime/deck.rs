@@ -35,12 +35,14 @@ mod tests {
                 nodes: vec![],
                 accept_action_href: None,
                 onenterforward_href: None,
+                onenterbackward_href: None,
             },
             Card {
                 id: "dup".to_string(),
                 nodes: vec![],
                 accept_action_href: None,
                 onenterforward_href: None,
+                onenterbackward_href: None,
             },
         ]);
 
@@ -54,6 +56,7 @@ mod tests {
             nodes: vec![],
             accept_action_href: None,
             onenterforward_href: None,
+            onenterbackward_href: None,
         }]);
 
         assert_eq!(deck.card_index("missing"), None);
