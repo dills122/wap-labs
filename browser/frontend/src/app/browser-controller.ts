@@ -7,12 +7,8 @@ import { createNavigationStateMachine } from './navigation-state';
 import { ScriptTimerRegistry } from './script-timer-registry';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
-
-const MAX_EXTERNAL_INTENT_HOPS = 3;
-const NETWORK_PROBE_MAX_ATTEMPTS = 3;
-const NETWORK_PROBE_DELAY_MS = 1200;
-const NETWORK_PROBE_TIMEOUT_MS = 1800;
-const ENGINE_TIMER_TICK_MS = 100;
+import { WAVES_CONFIG } from './waves-config';
+import { WAVES_COPY } from './waves-copy';
 
 export class BrowserController {
   private readonly hostClient: TauriHostClient;
@@ -43,16 +39,13 @@ export class BrowserController {
         onRender: (render) => this.presenter.drawRenderList(render),
         onTransportResponse: (response) => this.presenter.setTransportResponse(response),
         onNetworkUnavailable: () => {
-          this.presenter.showToast(
-            'No network available currently. WAP server/gateway is unreachable.',
-            'error'
-          );
+          this.presenter.showToast(WAVES_COPY.status.networkUnavailableToast, 'error');
         },
         onStateEvent: (action, details) => {
           this.presenter.recordTimeline(action, 'state', details);
         }
       },
-      MAX_EXTERNAL_INTENT_HOPS
+      WAVES_CONFIG.maxExternalIntentHops
     );
   }
 
@@ -66,7 +59,7 @@ export class BrowserController {
     this.presenter.recordTimeline('bootstrap', 'state', {
       requestedUrl: this.refs.fetchUrlInput.value
     });
-    this.presenter.setStatus('Starting WAP/WML based browser 1.x...');
+    this.presenter.setStatus(WAVES_COPY.status.starting);
 
     if (this.listenersBound) {
       this.unbindListeners();
@@ -89,7 +82,7 @@ export class BrowserController {
         'click',
         this.withAction('health', async () => {
           const message = await this.hostClient.health();
-          this.presenter.setStatus(`Health: ${message}`);
+          this.presenter.setStatus(WAVES_COPY.status.health(message));
         })
       );
     }
@@ -119,7 +112,7 @@ export class BrowserController {
             externalNavigationIntent: snapshot.externalNavigationIntent,
             lastError: undefined
           });
-          this.presenter.setStatus('Raw WML loaded and rendered (debug mode).');
+          this.presenter.setStatus(WAVES_COPY.status.rawWmlLoaded);
         })
       );
     }
@@ -167,7 +160,7 @@ export class BrowserController {
         'click',
         this.withAction('render', async () => {
           await this.renderAndSnapshot();
-          this.presenter.setStatus('Rendered current card.');
+          this.presenter.setStatus(WAVES_COPY.status.renderedCurrentCard);
         })
       );
     }
@@ -184,11 +177,11 @@ export class BrowserController {
         this.withAction('navigate-back', async () => {
           const mode = await this.navigateBackWithFallback();
           if (mode === 'engine') {
-            this.presenter.setStatus('navigateBack invoked (engine history).');
+            this.presenter.setStatus(WAVES_COPY.status.navigateBackEngine);
           } else if (mode === 'host') {
-            this.presenter.setStatus('navigateBack invoked (browser history).');
+            this.presenter.setStatus(WAVES_COPY.status.navigateBackBrowser);
           } else {
-            this.presenter.setStatus('No back history available.');
+            this.presenter.setStatus(WAVES_COPY.status.navigateBackNone);
           }
         })
       );
@@ -201,7 +194,7 @@ export class BrowserController {
         'click',
         this.withAction('snapshot', async () => {
           await this.renderAndSnapshot();
-          this.presenter.setStatus('Snapshot refreshed.');
+          this.presenter.setStatus(WAVES_COPY.status.snapshotRefreshed);
         })
       );
     }
@@ -217,7 +210,7 @@ export class BrowserController {
           this.presenter.patchSessionState({
             externalNavigationIntent: snapshot.externalNavigationIntent
           });
-          this.presenter.setStatus('Cleared external navigation intent.');
+          this.presenter.setStatus(WAVES_COPY.status.clearedExternalIntent);
         })
       );
     }
@@ -229,10 +222,10 @@ export class BrowserController {
         'click',
         this.withAction('export-timeline', async () => {
           if (this.presenter.timelineLength() === 0) {
-            throw new Error('No timeline events to export yet.');
+            throw new Error(WAVES_COPY.status.noTimelineToExport);
           }
           this.presenter.exportTimeline();
-          this.presenter.setStatus('Exported timeline JSON.');
+          this.presenter.setStatus(WAVES_COPY.status.exportedTimeline);
         })
       );
     }
@@ -244,7 +237,7 @@ export class BrowserController {
         'click',
         this.withAction('clear-timeline', async () => {
           this.presenter.clearTimeline();
-          this.presenter.setStatus('Cleared event timeline.');
+          this.presenter.setStatus(WAVES_COPY.status.clearedTimeline);
         })
       );
     }
@@ -292,7 +285,9 @@ export class BrowserController {
     if (intent.type === 'toggle-dev-tools') {
       this.refs.devDrawerEl.open = !this.refs.devDrawerEl.open;
       this.presenter.setStatus(
-        this.refs.devDrawerEl.open ? 'Developer tools opened.' : 'Developer tools hidden.'
+        this.refs.devDrawerEl.open
+          ? WAVES_COPY.status.developerToolsOpened
+          : WAVES_COPY.status.developerToolsHidden
       );
       return;
     }
@@ -300,7 +295,7 @@ export class BrowserController {
     if (intent.type === 'engine-key') {
       void this.withAction(`keyboard-${intent.key}`, async () => {
         await this.applyEngineKey(intent.key);
-        this.presenter.setStatus(`Keyboard: ${intent.key}`);
+        this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
       })();
       return;
     }
@@ -309,11 +304,11 @@ export class BrowserController {
       void this.withAction('keyboard-backspace', async () => {
         const mode = await this.navigateBackWithFallback();
         if (mode === 'engine') {
-          this.presenter.setStatus('Keyboard: back (engine history)');
+          this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);
         } else if (mode === 'host') {
-          this.presenter.setStatus('Keyboard: back (browser history)');
+          this.presenter.setStatus(WAVES_COPY.status.keyboardBackBrowser);
         } else {
-          this.presenter.setStatus('Keyboard: no back history');
+          this.presenter.setStatus(WAVES_COPY.status.keyboardBackNone);
         }
       })();
     }
@@ -344,7 +339,7 @@ export class BrowserController {
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         this.presenter.patchSessionState({ navigationStatus: 'error', lastError: message });
-        this.presenter.setStatus(`Error: ${message}`);
+        this.presenter.setStatus(WAVES_COPY.status.error(message));
         this.presenter.recordTimeline(actionName, 'error', { message });
       }
     };
@@ -394,11 +389,11 @@ export class BrowserController {
     await this.setViewportCols();
     const requestedUrl = url.trim();
     if (source === 'user') {
-      this.presenter.setStatus(`Loading ${requestedUrl}...`);
+      this.presenter.setStatus(WAVES_COPY.status.loading(requestedUrl));
     } else if (source === 'external-intent') {
-      this.presenter.setStatus(`Following external intent: ${requestedUrl}`);
+      this.presenter.setStatus(WAVES_COPY.status.followingExternalIntent(requestedUrl));
     } else {
-      this.presenter.setStatus(`Loading previous page: ${requestedUrl}`);
+      this.presenter.setStatus(WAVES_COPY.status.loadingPreviousPage(requestedUrl));
     }
 
     const snapshot = await this.navigation.loadTransportUrl({
@@ -417,9 +412,11 @@ export class BrowserController {
       this.refs.fetchUrlInput.value = state.finalUrl;
     }
     if (state.navigationStatus === 'error') {
-      this.presenter.setStatus(`Fetch failed: ${state.lastError ?? 'unknown transport failure'}`);
+      this.presenter.setStatus(
+        WAVES_COPY.status.fetchFailed(state.lastError ?? 'unknown transport failure')
+      );
     } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
-      this.presenter.setStatus(`Fetched and loaded deck from ${state.finalUrl}`);
+      this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));
     }
 
     return snapshot;
@@ -431,7 +428,7 @@ export class BrowserController {
     }
     this.timerLoopHandle = setInterval(() => {
       void this.tickEngineTimerRuntime();
-    }, ENGINE_TIMER_TICK_MS);
+    }, WAVES_CONFIG.engineTimerTickMs);
   }
 
   private stopTimerRuntimeLoop(): void {
@@ -468,9 +465,9 @@ export class BrowserController {
     this.timerTickInFlight = true;
     try {
       const before = this.presenter.getSessionState().activeCardId;
-      const snapshot = await this.navigation.applyEngineTimerTick(ENGINE_TIMER_TICK_MS);
+      const snapshot = await this.navigation.applyEngineTimerTick(WAVES_CONFIG.engineTimerTickMs);
       this.applyTimerRequestsFromSnapshot(snapshot);
-      const expired = this.scriptTimerRegistry.advance(ENGINE_TIMER_TICK_MS);
+      const expired = this.scriptTimerRegistry.advance(WAVES_CONFIG.engineTimerTickMs);
       for (const timer of expired) {
         this.presenter.recordTimeline('script-timer-expire', 'state', {
           id: timer.id,
@@ -508,7 +505,7 @@ export class BrowserController {
       return;
     }
 
-    for (let attempt = 1; attempt <= NETWORK_PROBE_MAX_ATTEMPTS; attempt += 1) {
+    for (let attempt = 1; attempt <= WAVES_CONFIG.networkProbeMaxAttempts; attempt += 1) {
       this.presenter.recordTimeline('startup-network-probe', 'state', {
         attempt,
         targetUrl
@@ -517,22 +514,22 @@ export class BrowserController {
         const probe = await this.hostClient.fetchDeck({
           url: targetUrl,
           method: 'GET',
-          timeoutMs: NETWORK_PROBE_TIMEOUT_MS,
+          timeoutMs: WAVES_CONFIG.networkProbeTimeoutMs,
           retries: 0
         });
         if (isProbeReachable(probe)) {
-          this.presenter.setStatus('Ready. Network available.');
+          this.presenter.setStatus(WAVES_COPY.status.readyNetwork);
           return;
         }
       } catch {
         // Keep retrying on invocation errors.
       }
-      if (attempt < NETWORK_PROBE_MAX_ATTEMPTS) {
-        await wait(NETWORK_PROBE_DELAY_MS);
+      if (attempt < WAVES_CONFIG.networkProbeMaxAttempts) {
+        await wait(WAVES_CONFIG.networkProbeDelayMs);
       }
     }
 
-    const message = 'No network available currently. Could not reach WAP server/gateway.';
+    const message = WAVES_COPY.status.networkUnavailable;
     this.presenter.patchSessionState({
       navigationStatus: 'error',
       lastError: message
@@ -551,7 +548,7 @@ export class BrowserController {
       'click',
       this.withAction(`handle-key-${key}`, async () => {
         await this.applyEngineKey(key);
-        this.presenter.setStatus(`Handled key: ${key}`);
+        this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
       })
     );
   }

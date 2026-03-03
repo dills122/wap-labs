@@ -11,6 +11,7 @@ import {
 } from './timeline';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { inferStatusTone, uiEvents } from '../ui-helpers';
+import { WAVES_COPY } from './waves-copy';
 
 export class BrowserPresenter {
   private readonly refs: BrowserShellRefs;
@@ -36,7 +37,8 @@ export class BrowserPresenter {
   setSessionState(next: HostSessionState): void {
     this.hostSessionState = next;
     this.refs.sessionStateEl.textContent = JSON.stringify(this.hostSessionState, null, 2);
-    const shownUrl = this.hostSessionState.finalUrl ?? this.hostSessionState.requestedUrl ?? 'idle';
+    const shownUrl =
+      this.hostSessionState.finalUrl ?? this.hostSessionState.requestedUrl ?? WAVES_COPY.shell.idle;
     this.refs.activeUrlLabelEl.textContent = shownUrl;
   }
 

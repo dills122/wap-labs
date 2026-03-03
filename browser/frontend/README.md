@@ -57,6 +57,8 @@ App logic modules:
 
 - `src/app/timeline.ts`: timeline state, export building, and validation.
 - `src/app/keyboard.ts`: deterministic keyboard-intent mapping.
+- `src/app/waves-config.ts`: centralized runtime/app constants for Waves frontend.
+- `src/app/waves-copy.ts`: centralized copy catalog (i18n-ready shape).
 
 Local checks:
 

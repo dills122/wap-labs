@@ -24,6 +24,9 @@ Implemented now:
 - Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
 - Help menu placeholder for updates (`Check for Updates (Coming Soon)`)
 - Update hook baseline: menu event emits `waves://updater/check-requested` for future updater wiring
+- Shared constants baseline:
+  - frontend runtime + copy: `frontend/src/app/waves-config.ts`, `frontend/src/app/waves-copy.ts`
+  - tauri app/menu/event constants: `src-tauri/src/waves_config.rs`
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)

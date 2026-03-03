@@ -1,4 +1,6 @@
-const FALLBACK_START_URL = 'http://127.0.0.1:3000/';
+import { WAVES_CONFIG } from './waves-config';
+
+const FALLBACK_START_URL = WAVES_CONFIG.defaultStartUrl;
 const ALLOWED_PROTOCOLS = new Set(['http:', 'https:', 'wap:', 'waps:']);
 
 export const defaultStartUrl = (candidate = import.meta.env.VITE_WAVES_DEFAULT_URL): string => {
