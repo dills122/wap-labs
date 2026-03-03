@@ -1,0 +1,24 @@
+<!--
+label: Timer Host Clock Lifecycle
+description: Demonstrates host-driven deterministic timer ticking for non-zero `<timer value>` expiry.
+goal: Verify auto tick advances runtime clock and ontimer dispatch transitions cards without manual key input.
+work-items: A5-03
+spec-items: WML-R-014
+testing-ac:
+- Select this example and press Enter on "Start timed card".
+- Enable Auto Tick with 100ms step and wait until the card transitions.
+- Confirm activeCardId transitions from timed to done and trace contains TIMER_TICK, TIMER_EXPIRE, and ACTION_ONTIMER.
+-->
+<wml>
+  <card id="home">
+    <a href="#timed">Start timed card</a>
+  </card>
+  <card id="timed">
+    <timer value="15"/>
+    <onevent type="ontimer"><go href="#done"/></onevent>
+    <p>Auto tick should move this card after 1.5 seconds.</p>
+  </card>
+  <card id="done">
+    <p>Timer completed through host clock lifecycle.</p>
+  </card>
+</wml>
