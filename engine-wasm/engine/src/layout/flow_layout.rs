@@ -146,9 +146,9 @@ mod tests {
                     href: "#next".to_string(),
                 },
             ])],
-            accept_action_href: None,
-            onenterforward_href: None,
-            onenterbackward_href: None,
+            accept_action: None,
+            onenterforward_action: None,
+            onenterbackward_action: None,
         };
 
         let out = layout_card(&card, 10, 0);
@@ -166,9 +166,9 @@ mod tests {
             nodes: vec![Node::Paragraph(vec![InlineNode::Text(
                 "supercalifragilistic".to_string(),
             )])],
-            accept_action_href: None,
-            onenterforward_href: None,
-            onenterbackward_href: None,
+            accept_action: None,
+            onenterforward_action: None,
+            onenterbackward_action: None,
         };
 
         let out = layout_card(&card, 5, 0);
@@ -193,9 +193,9 @@ mod tests {
                 text: "abcdefghijkl".to_string(),
                 href: "#next".to_string(),
             }])],
-            accept_action_href: None,
-            onenterforward_href: None,
-            onenterbackward_href: None,
+            accept_action: None,
+            onenterforward_action: None,
+            onenterbackward_action: None,
         };
 
         let out = layout_card(&card, 4, 0);

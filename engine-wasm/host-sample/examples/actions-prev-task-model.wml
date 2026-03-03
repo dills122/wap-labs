@@ -1,0 +1,32 @@
+<!--
+label: Prev Task Model
+description: Demonstrates deterministic `<prev/>` handling for accept and intrinsic card-entry events.
+goal: Verify task-model `prev` actions are executed consistently in runtime-owned action/event plumbing.
+work-items: A5-02
+spec-items: WML-R-012,WML-R-015
+testing-ac:
+- Press Enter on "To middle" and then Enter again; activeCardId should return to home (accept prev).
+- From home, Enter "To middle", then Enter "To next".
+- Press Back once; activeCardId should become home because middle runs onenterbackward prev.
+-->
+<wml>
+  <card id="home">
+    <p>Prev task demo.</p>
+    <a href="#mid-accept">To middle (accept prev)</a>
+    <a href="#mid-back">To middle (onenterbackward prev)</a>
+  </card>
+
+  <card id="mid-accept">
+    <do type="accept"><prev/></do>
+    <p>No links on this card; Enter should invoke accept prev.</p>
+  </card>
+
+  <card id="mid-back">
+    <onevent type="onenterbackward"><prev/></onevent>
+    <a href="#next">To next</a>
+  </card>
+
+  <card id="next">
+    <p>Use host Back to trigger onenterbackward prev in mid-back.</p>
+  </card>
+</wml>
