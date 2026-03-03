@@ -1,4 +1,4 @@
-import type { HostExample } from '../.generated/examples';
+import type { HostExample } from '../../examples/generated/examples';
 
 interface ExampleMetadataElements {
   title: HTMLHeadingElement;

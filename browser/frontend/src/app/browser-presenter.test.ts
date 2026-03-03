@@ -48,6 +48,7 @@ const createRefs = (): BrowserShellRefs => {
 };
 
 const initialSession: HostSessionState = {
+  runMode: 'local',
   navigationStatus: 'idle',
   requestedUrl: 'http://127.0.0.1:3000/'
 };

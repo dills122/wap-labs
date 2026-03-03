@@ -16,8 +16,8 @@ It provides:
 
 Example management:
 
-- Store examples as standalone files in `host-sample/examples/*.wml`
-- A build step generates `host-sample/.generated/examples.ts` for fast runtime loading
+- Store examples as standalone files in `engine-wasm/examples/source/*.wml`
+- A build step generates `engine-wasm/examples/generated/examples.ts` for shared runtime loading
 - For every new demoable engine feature, add a new example or update an existing one that exercises that feature.
 - Each example must include a top metadata comment block with required keys:
   - `label`

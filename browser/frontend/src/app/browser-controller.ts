@@ -71,6 +71,7 @@ export class BrowserController {
     this.bootDeckReadyEmitted = false;
     this.refs.wmlInput.value = sampleWml;
     this.presenter.setSessionState({
+      runMode: this.runMode,
       navigationStatus: 'idle',
       requestedUrl: this.refs.fetchUrlInput.value
     });
@@ -362,6 +363,7 @@ export class BrowserController {
     this.runMode = mode;
     this.refs.runModeSelectEl.value = mode;
     this.applyModeUiState();
+    this.presenter.patchSessionState({ runMode: mode });
     if (mode === 'local') {
       this.presenter.setStatus(WAVES_COPY.status.localModeEnabled);
       if (options.loadLocalOnEnter || !this.presenter.hasRenderedDeck()) {
@@ -407,6 +409,7 @@ export class BrowserController {
       this.presenter.setTransportResponse(null);
       this.refs.fetchUrlInput.value = example.baseUrl;
       this.presenter.patchSessionState({
+        runMode: this.runMode,
         navigationStatus: 'loaded',
         requestedUrl: example.baseUrl,
         finalUrl: example.baseUrl,
@@ -436,6 +439,7 @@ export class BrowserController {
   private syncLocalSessionFromSnapshot(snapshot: EngineRuntimeSnapshot): void {
     const resolvedUrl = snapshot.baseUrl || this.refs.fetchUrlInput.value;
     this.presenter.patchSessionState({
+      runMode: this.runMode,
       navigationStatus: 'loaded',
       requestedUrl: resolvedUrl,
       finalUrl: resolvedUrl,
