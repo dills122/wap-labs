@@ -25,7 +25,7 @@ Status keys:
 - `engine-wasm/`
 - `transport-rust/`
 3. `Build`:
-- Execute `M1-01` through `M1-08` as the active maintenance sprint before new feature expansion.
+- Execute remaining `M1-*` items as the active maintenance sprint before new feature expansion.
 4. `Accept`:
 - Sprint checklist and status are reflected in:
 - `docs/waves/WORK_ITEMS.md`
@@ -35,7 +35,7 @@ Status keys:
 
 ### M1-01 Contract-source unification in browser host/frontend
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `browser/frontend/src/main.ts`
 - `browser/contracts/engine.ts`
@@ -47,6 +47,8 @@ Status keys:
 - `pnpm --dir browser/frontend build`
 5. `Accept`:
 - Browser frontend compiles with contract imports as single source of truth for engine/transport shapes.
+6. `Notes`:
+- Completed by consolidating frontend engine/transport typing through shared contract imports and generated host clients.
 
 ### M1-02 Engine native/wasm parity regression suite for critical flows
 
@@ -93,7 +95,7 @@ Status keys:
 
 ### M1-05 Browser frontend navigation state-machine test automation
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `browser/frontend/src/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
@@ -103,6 +105,8 @@ Status keys:
 - Deterministic scripted assertions integrated into browser/frontend checks.
 5. `Accept`:
 - Browser interaction regressions are caught without relying only on manual checks.
+6. `Notes`:
+- Completed with deterministic navigation-state and presenter/controller regression tests in `browser/frontend/src/app/*.test.ts`.
 
 ### M1-06 CI guardrails for contract drift and worklist drift
 

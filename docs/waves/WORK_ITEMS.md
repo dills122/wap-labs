@@ -54,14 +54,13 @@ Project planning links:
 
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
-1. `M1-01` Contract-source unification in browser host/frontend.
-2. `M1-02` Engine native/wasm parity regression suite for critical flows.
-3. `M1-04` Transport module decomposition and mapping isolation.
-4. `M1-05` Browser frontend navigation state-machine test automation.
-5. `M1-06` CI guardrails for contract drift and worklist drift.
-6. `M1-07` Parser robustness hardening without feature-scope expansion.
-7. `M1-08` Split high-churn files into boundary modules.
-8. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
+1. `M1-02` Engine native/wasm parity regression suite for critical flows.
+2. `M1-04` Transport module decomposition and mapping isolation.
+3. `M1-06` CI guardrails for contract drift and worklist drift.
+4. `M1-07` Parser robustness hardening without feature-scope expansion.
+5. `M1-08` Split high-churn files into boundary modules.
+6. `M1-09` Engine-host frame interface migration execution.
+7. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
