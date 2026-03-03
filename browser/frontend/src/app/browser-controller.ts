@@ -324,7 +324,7 @@ export class BrowserController {
   private async setViewportCols(): Promise<void> {
     const cols = Number(this.refs.viewportColsInput.value);
     if (!Number.isFinite(cols) || cols < 1) {
-      throw new Error('viewport cols must be a positive number');
+      throw new Error(WAVES_COPY.errors.viewportColsPositive);
     }
     await this.hostClient.engineSetViewportCols({ cols });
   }
@@ -413,7 +413,7 @@ export class BrowserController {
     }
     if (state.navigationStatus === 'error') {
       this.presenter.setStatus(
-        WAVES_COPY.status.fetchFailed(state.lastError ?? 'unknown transport failure')
+        WAVES_COPY.status.fetchFailed(state.lastError ?? WAVES_COPY.errors.unknownTransportFailure)
       );
     } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
       this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));

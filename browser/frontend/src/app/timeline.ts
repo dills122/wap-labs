@@ -1,4 +1,6 @@
 import type { HostSessionState } from '../../../contracts/transport';
+import { WAVES_CONFIG } from './waves-config';
+import { WAVES_COPY } from './waves-copy';
 
 export interface TimelineEntry {
   seq: number;
@@ -61,7 +63,7 @@ export const buildTimelineExport = (
   entries: TimelineEntry[],
   latestSessionState: HostSessionState
 ): TimelineExportPayload => ({
-  schemaVersion: 1,
+  schemaVersion: WAVES_CONFIG.timelineSchemaVersion,
   timelineLength: entries.length,
   latestSessionState,
   timeline: entries.map((entry) => ({
@@ -76,7 +78,7 @@ export const buildTimelineExport = (
 export const validateTimelineExport = (payload: { timeline?: unknown }): void => {
   const timeline = payload.timeline;
   if (!Array.isArray(timeline) || timeline.length === 0) {
-    throw new Error('Timeline export requires at least one event.');
+    throw new Error(WAVES_COPY.errors.timelineRequiresEvent);
   }
   const hasState = timeline.some(
     (entry) =>
@@ -93,6 +95,6 @@ export const validateTimelineExport = (payload: { timeline?: unknown }): void =>
       (entry as { phase: string }).phase !== 'state'
   );
   if (!hasState || !hasAction) {
-    throw new Error('Timeline export must contain both action and state chronology.');
+    throw new Error(WAVES_COPY.errors.timelineRequiresChronology);
   }
 };

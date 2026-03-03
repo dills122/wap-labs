@@ -22,7 +22,10 @@ export interface UiEvents {
 export const uiEvents = createNanoEvents<UiEvents>();
 
 export const inferStatusTone = (message: string): StatusTone => {
-  if (message.startsWith('Error:') || message.startsWith('Fetch failed:')) {
+  if (
+    message.startsWith(WAVES_COPY.statusPrefix.error) ||
+    message.startsWith(WAVES_COPY.statusPrefix.fetchFailed)
+  ) {
     return 'error';
   }
   if (
@@ -31,7 +34,10 @@ export const inferStatusTone = (message: string): StatusTone => {
   ) {
     return 'loading';
   }
-  if (message.startsWith('Ready') || message.startsWith('Fetched and loaded')) {
+  if (
+    message.startsWith(WAVES_COPY.statusPrefix.ready) ||
+    message.startsWith(WAVES_COPY.statusPrefix.fetchedAndLoaded)
+  ) {
     return 'ok';
   }
   return 'idle';

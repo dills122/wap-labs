@@ -1,13 +1,21 @@
 export const WAVES_CONFIG = {
   appName: 'Waves Browser',
   appTagline: 'WAP/WML based browser 1.x',
+  appDescription: 'Waves is a WAP/WML based browser 1.x.',
   defaultStartUrl: 'http://127.0.0.1:3000/',
   defaultDebugBaseUrl: 'http://local.test/start.wml',
   defaultViewportCols: 20,
   maxTimelineEvents: 200,
+  timelineSchemaVersion: 1,
+  timelineExportFilename: 'waves-event-timeline.json',
+  timelineExportJsonIndent: 2,
   maxExternalIntentHops: 3,
+  transportFetchTimeoutMs: 5000,
+  transportFetchRetries: 1,
   networkProbeMaxAttempts: 3,
   networkProbeDelayMs: 1200,
   networkProbeTimeoutMs: 1800,
-  engineTimerTickMs: 100
+  engineTimerTickMs: 100,
+  toastTtlMs: 6000,
+  scriptTimerAnonymousIdPadLength: 6
 } as const;

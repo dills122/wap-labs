@@ -1,14 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
+import { WAVES_COPY } from './app/waves-copy';
 import { inferStatusTone, statusClassName, uiEvents } from './ui-helpers';
 
 describe('ui-helpers', () => {
   it('infers status tones from deterministic message prefixes', () => {
-    expect(inferStatusTone('Error: boom')).toBe('error');
-    expect(inferStatusTone('Fetch failed: timeout')).toBe('error');
-    expect(inferStatusTone('Loading http://x')).toBe('loading');
-    expect(inferStatusTone('Following external intent: http://x')).toBe('loading');
-    expect(inferStatusTone('Ready.')).toBe('ok');
-    expect(inferStatusTone('Fetched and loaded deck from http://x')).toBe('ok');
+    expect(inferStatusTone(`${WAVES_COPY.statusPrefix.error} boom`)).toBe('error');
+    expect(inferStatusTone(`${WAVES_COPY.statusPrefix.fetchFailed} timeout`)).toBe('error');
+    expect(inferStatusTone(`${WAVES_COPY.statusPrefix.loading}http://x`)).toBe('loading');
+    expect(inferStatusTone(`${WAVES_COPY.statusPrefix.followingExternalIntent} http://x`)).toBe(
+      'loading'
+    );
+    expect(inferStatusTone(WAVES_COPY.status.ready)).toBe('ok');
+    expect(inferStatusTone(WAVES_COPY.status.fetchedAndLoadedDeck('http://x'))).toBe('ok');
     expect(inferStatusTone('Rendered current card.')).toBe('idle');
   });
 

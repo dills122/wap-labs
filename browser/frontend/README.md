@@ -60,6 +60,11 @@ App logic modules:
 - `src/app/waves-config.ts`: centralized runtime/app constants for Waves frontend.
 - `src/app/waves-copy.ts`: centralized copy catalog (i18n-ready shape).
 
+Internationalization baseline:
+
+- User-facing labels/status/error copy is sourced from `src/app/waves-copy.ts`.
+- Runtime tuning/constants are sourced from `src/app/waves-config.ts`.
+
 Local checks:
 
 ```bash

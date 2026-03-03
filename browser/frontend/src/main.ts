@@ -28,6 +28,12 @@ const bootstrap = async (): Promise<void> => {
   activeController?.dispose();
   activeController = undefined;
 
+  document.title = WAVES_CONFIG.appName;
+  const descriptionMeta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+  if (descriptionMeta) {
+    descriptionMeta.content = WAVES_COPY.app.description;
+  }
+
   registerBrowserComponents();
 
   const refs = mountBrowserShell(defaultStartUrl());

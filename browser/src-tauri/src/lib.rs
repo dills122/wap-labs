@@ -235,9 +235,9 @@ fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
             "placeholder": true
         }),
     ) {
-        eprintln!("failed to emit updater check event: {error}");
+        eprintln!("{}: {error}", waves_config::LOG_UPDATER_EVENT_EMIT_FAILED);
     }
-    println!("Check for Updates requested (hook ready, updater not yet implemented)");
+    println!("{}", waves_config::LOG_UPDATER_CHECK_REQUESTED);
 }
 
 fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>> {
@@ -277,7 +277,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
     )))]
     {
         menu = menu.item(
-            &SubmenuBuilder::new(app, "File")
+            &SubmenuBuilder::new(app, waves_config::MENU_FILE_LABEL)
                 .close_window()
                 .separator()
                 .quit()
@@ -287,7 +287,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
 
     menu = menu
         .item(
-            &SubmenuBuilder::new(app, "Edit")
+            &SubmenuBuilder::new(app, waves_config::MENU_EDIT_LABEL)
                 .undo()
                 .redo()
                 .separator()
@@ -299,7 +299,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
                 .build()?,
         )
         .item(
-            &SubmenuBuilder::new(app, "Window")
+            &SubmenuBuilder::new(app, waves_config::MENU_WINDOW_LABEL)
                 .minimize()
                 .maximize()
                 .separator()
@@ -307,7 +307,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
                 .build()?,
         )
         .item(
-            &SubmenuBuilder::new(app, "Help")
+            &SubmenuBuilder::new(app, waves_config::MENU_HELP_LABEL)
                 .text(
                     waves_config::MENU_CHECK_FOR_UPDATES_ID,
                     waves_config::MENU_CHECK_FOR_UPDATES_LABEL,

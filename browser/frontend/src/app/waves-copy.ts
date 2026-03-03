@@ -3,7 +3,8 @@ import { WAVES_CONFIG } from './waves-config';
 const locale = {
   app: {
     brand: 'Waves',
-    tagline: WAVES_CONFIG.appTagline
+    tagline: WAVES_CONFIG.appTagline,
+    description: WAVES_CONFIG.appDescription
   },
   shell: {
     back: 'Back',
@@ -39,8 +40,20 @@ const locale = {
     home: 'Go home'
   },
   statusPrefix: {
+    error: 'Error:',
+    fetchFailed: 'Fetch failed:',
     loading: 'Loading ',
-    followingExternalIntent: 'Following external intent:'
+    followingExternalIntent: 'Following external intent:',
+    ready: 'Ready',
+    fetchedAndLoaded: 'Fetched and loaded'
+  },
+  errors: {
+    urlRequired: 'URL is required',
+    unknownTransportFailure: 'unknown transport failure',
+    missingWmlPayload: 'Fetch succeeded but returned no WML payload.',
+    viewportColsPositive: 'viewport cols must be a positive number',
+    timelineRequiresEvent: 'Timeline export requires at least one event.',
+    timelineRequiresChronology: 'Timeline export must contain both action and state chronology.'
   },
   status: {
     starting: `Starting ${WAVES_CONFIG.appTagline}...`,

@@ -27,6 +27,8 @@ Implemented now:
 - Shared constants baseline:
   - frontend runtime + copy: `frontend/src/app/waves-config.ts`, `frontend/src/app/waves-copy.ts`
   - tauri app/menu/event constants: `src-tauri/src/waves_config.rs`
+- I18n prep baseline:
+  - frontend user-facing strings route through `frontend/src/app/waves-copy.ts`
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)

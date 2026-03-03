@@ -11,6 +11,7 @@ import {
 } from './timeline';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { inferStatusTone, uiEvents } from '../ui-helpers';
+import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
 export class BrowserPresenter {
@@ -78,7 +79,11 @@ export class BrowserPresenter {
     uiEvents.emit('status', { message, tone });
   }
 
-  showToast(message: string, tone: 'error' | 'ok' = 'error', ttlMs = 6000): void {
+  showToast(
+    message: string,
+    tone: 'error' | 'ok' = 'error',
+    ttlMs = WAVES_CONFIG.toastTtlMs
+  ): void {
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
     }
@@ -124,13 +129,13 @@ export class BrowserPresenter {
       this.getSessionState()
     );
     validateTimelineExport(payload);
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    const blob = new Blob([JSON.stringify(payload, null, WAVES_CONFIG.timelineExportJsonIndent)], {
       type: 'application/json'
     });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'waves-event-timeline.json';
+    anchor.download = WAVES_CONFIG.timelineExportFilename;
     document.body.append(anchor);
     anchor.click();
     anchor.remove();
