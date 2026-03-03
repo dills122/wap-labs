@@ -7,8 +7,16 @@ import { createNavigationStateMachine } from './navigation-state';
 import { ScriptTimerRegistry } from './script-timer-registry';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
+import {
+  defaultLocalDeckExample,
+  findLocalDeckExample,
+  LOCAL_DECK_EXAMPLES,
+  type LocalDeckExample
+} from './local-examples';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
+
+type RunMode = 'local' | 'network';
 
 export class BrowserController {
   private readonly hostClient: TauriHostClient;
@@ -26,6 +34,8 @@ export class BrowserController {
   private timerTickInFlight = false;
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
   private bootDeckReadyEmitted = false;
+  private runMode: RunMode = 'local';
+  private activeLocalExampleKey = defaultLocalDeckExample().key;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -61,6 +71,7 @@ export class BrowserController {
     this.bootDeckReadyEmitted = false;
     this.refs.wmlInput.value = sampleWml;
     this.presenter.setSessionState({
+      runMode: this.runMode,
       navigationStatus: 'idle',
       requestedUrl: this.refs.fetchUrlInput.value
     });
@@ -74,11 +85,12 @@ export class BrowserController {
     if (this.listenersBound) {
       this.unbindListeners();
     }
+    this.populateLocalExampleOptions();
     this.bindListeners();
     this.startTimerRuntimeLoop();
     this.presenter.setBootPhase('engine-ready');
-    this.presenter.setStatus(WAVES_COPY.status.bootEngineReady);
-    await this.runStartupNetworkProbe();
+    const selectedMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
+    await this.setRunMode(selectedMode, { loadLocalOnEnter: true });
   }
 
   dispose(): void {
@@ -135,6 +147,10 @@ export class BrowserController {
         fetchUrlBtn,
         'click',
         this.withAction('fetch-url', async () => {
+          if (this.runMode === 'local') {
+            await this.loadSelectedLocalDeck();
+            return;
+          }
           await this.loadTransportUrl(this.refs.fetchUrlInput.value, 'user', true, true);
         })
       );
@@ -146,6 +162,10 @@ export class BrowserController {
         reloadBtn,
         'click',
         this.withAction('reload', async () => {
+          if (this.runMode === 'local') {
+            await this.loadSelectedLocalDeck();
+            return;
+          }
           const state = this.presenter.getSessionState();
           const reloadUrl = state.finalUrl ?? state.requestedUrl ?? this.refs.fetchUrlInput.value;
           this.refs.fetchUrlInput.value = reloadUrl;
@@ -160,8 +180,41 @@ export class BrowserController {
       this.withAction('fetch-url-enter', async (event?: Event) => {
         if (event instanceof KeyboardEvent && event.key === 'Enter') {
           event.preventDefault();
+          if (this.runMode === 'local') {
+            await this.loadSelectedLocalDeck();
+            return;
+          }
           await this.loadTransportUrl(this.refs.fetchUrlInput.value, 'user', true, true);
         }
+      })
+    );
+
+    this.bindEvent(
+      this.refs.runModeSelectEl,
+      'change',
+      this.withAction('change-mode', async () => {
+        const nextMode: RunMode =
+          this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
+        await this.setRunMode(nextMode, { loadLocalOnEnter: false });
+      })
+    );
+
+    this.bindEvent(
+      this.refs.localExampleSelectEl,
+      'change',
+      this.withAction('select-local-example', async () => {
+        this.activeLocalExampleKey = this.refs.localExampleSelectEl.value;
+        if (this.runMode === 'local') {
+          await this.loadSelectedLocalDeck();
+        }
+      })
+    );
+
+    this.bindEvent(
+      this.refs.loadLocalBtnEl,
+      'click',
+      this.withAction('load-local-example', async () => {
+        await this.loadSelectedLocalDeck();
       })
     );
 
@@ -278,6 +331,127 @@ export class BrowserController {
     });
   }
 
+  private populateLocalExampleOptions(): void {
+    this.refs.localExampleSelectEl.replaceChildren();
+    for (const example of LOCAL_DECK_EXAMPLES) {
+      const option = document.createElement('option');
+      option.value = example.key;
+      option.textContent = example.label;
+      this.refs.localExampleSelectEl.append(option);
+    }
+    const fallback = defaultLocalDeckExample();
+    const active = findLocalDeckExample(this.activeLocalExampleKey) ?? fallback;
+    this.activeLocalExampleKey = active.key;
+    this.refs.localExampleSelectEl.value = active.key;
+  }
+
+  private applyModeUiState(): void {
+    const localMode = this.runMode === 'local';
+    this.refs.fetchUrlInput.disabled = localMode;
+    this.refs.fetchUrlInput.setAttribute('aria-disabled', localMode ? 'true' : 'false');
+    const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
+    if (fetchButton) {
+      fetchButton.disabled = localMode;
+      fetchButton.setAttribute('aria-disabled', localMode ? 'true' : 'false');
+    }
+    this.refs.loadLocalBtnEl.disabled = !localMode;
+    this.refs.localExampleSelectEl.disabled = !localMode;
+    this.refs.localExampleWrapEl.style.opacity = localMode ? '1' : '0.72';
+  }
+
+  private async setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void> {
+    this.runMode = mode;
+    this.refs.runModeSelectEl.value = mode;
+    this.applyModeUiState();
+    this.presenter.patchSessionState({ runMode: mode });
+    if (mode === 'local') {
+      this.presenter.setStatus(WAVES_COPY.status.localModeEnabled);
+      if (options.loadLocalOnEnter || !this.presenter.hasRenderedDeck()) {
+        await this.loadSelectedLocalDeck();
+      }
+      return;
+    }
+
+    this.presenter.setStatus(WAVES_COPY.status.networkModeEnabled);
+    await this.runStartupNetworkProbe();
+  }
+
+  private async loadSelectedLocalDeck(): Promise<void> {
+    const selected = this.refs.localExampleSelectEl.value || this.activeLocalExampleKey;
+    const example = findLocalDeckExample(selected);
+    if (!example) {
+      throw new Error(`Unknown local example key: ${selected}`);
+    }
+    this.activeLocalExampleKey = example.key;
+    await this.loadLocalDeck(example);
+  }
+
+  private async loadLocalDeck(example: LocalDeckExample): Promise<void> {
+    await this.setViewportCols();
+    const needsFirstRenderSkeleton = !this.presenter.hasRenderedDeck();
+    if (needsFirstRenderSkeleton) {
+      this.presenter.setViewportSkeleton(true);
+    }
+
+    try {
+      this.presenter.setStatus(WAVES_COPY.status.loading(example.baseUrl));
+      const snapshot = await this.hostClient.engineLoadDeckContext({
+        wmlXml: example.wml,
+        baseUrl: example.baseUrl,
+        contentType: 'text/vnd.wap.wml'
+      });
+      this.presenter.setSnapshot(snapshot);
+      this.presenter.drawRenderList(await this.hostClient.engineRender());
+      if (!this.bootDeckReadyEmitted) {
+        this.bootDeckReadyEmitted = true;
+        this.presenter.setBootPhase('deck-ready');
+      }
+      this.presenter.setTransportResponse(null);
+      this.refs.fetchUrlInput.value = example.baseUrl;
+      this.presenter.patchSessionState({
+        runMode: this.runMode,
+        navigationStatus: 'loaded',
+        requestedUrl: example.baseUrl,
+        finalUrl: example.baseUrl,
+        contentType: 'text/vnd.wap.wml',
+        activeCardId: snapshot.activeCardId,
+        focusedLinkIndex: snapshot.focusedLinkIndex,
+        externalNavigationIntent: snapshot.externalNavigationIntent,
+        navigationSource: 'user',
+        lastError: undefined
+      });
+      this.scriptTimerRegistry.reset();
+      this.applyTimerRequestsFromSnapshot(snapshot);
+      this.presenter.setStatus(WAVES_COPY.status.loadedLocalDeck(example.label));
+    } finally {
+      if (needsFirstRenderSkeleton && !this.presenter.hasRenderedDeck()) {
+        this.presenter.setViewportSkeleton(false);
+      }
+    }
+  }
+
+  private async handleExternalIntentInLocalMode(intentUrl: string): Promise<void> {
+    this.refs.fetchUrlInput.value = intentUrl;
+    this.presenter.patchSessionState({ externalNavigationIntent: intentUrl });
+    this.presenter.setStatus(WAVES_COPY.status.localExternalIntentCaptured(intentUrl));
+  }
+
+  private syncLocalSessionFromSnapshot(snapshot: EngineRuntimeSnapshot): void {
+    const resolvedUrl = snapshot.baseUrl || this.refs.fetchUrlInput.value;
+    this.presenter.patchSessionState({
+      runMode: this.runMode,
+      navigationStatus: 'loaded',
+      requestedUrl: resolvedUrl,
+      finalUrl: resolvedUrl,
+      contentType: snapshot.contentType,
+      activeCardId: snapshot.activeCardId,
+      focusedLinkIndex: snapshot.focusedLinkIndex,
+      externalNavigationIntent: snapshot.externalNavigationIntent,
+      navigationSource: 'user',
+      lastError: undefined
+    });
+  }
+
   private readonly handleWindowKeydown = (event: Event): void => {
     if (!(event instanceof KeyboardEvent)) {
       return;
@@ -374,15 +548,44 @@ export class BrowserController {
   }
 
   private async applyEngineKey(key: EngineKey): Promise<void> {
-    const snapshot = await this.navigation.applyEngineKey(key);
+    const snapshot =
+      this.runMode === 'local'
+        ? await this.hostClient.engineHandleKey({ key })
+        : await this.navigation.applyEngineKey(key);
+    if (this.runMode === 'local') {
+      this.presenter.setSnapshot(snapshot);
+      this.presenter.drawRenderList(await this.hostClient.engineRender());
+      this.syncLocalSessionFromSnapshot(snapshot);
+    }
     this.applyTimerRequestsFromSnapshot(snapshot);
     if (snapshot.externalNavigationIntent) {
-      this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
-      await this.loadTransportUrl(snapshot.externalNavigationIntent, 'external-intent', true, true);
+      if (this.runMode === 'local') {
+        await this.handleExternalIntentInLocalMode(snapshot.externalNavigationIntent);
+      } else {
+        this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
+        await this.loadTransportUrl(
+          snapshot.externalNavigationIntent,
+          'external-intent',
+          true,
+          true
+        );
+      }
     }
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {
+    if (this.runMode === 'local') {
+      const before = await this.hostClient.engineSnapshot();
+      const after = await this.hostClient.engineNavigateBack();
+      this.presenter.setSnapshot(after);
+      this.presenter.drawRenderList(await this.hostClient.engineRender());
+      this.syncLocalSessionFromSnapshot(after);
+      const engineHandled =
+        before.activeCardId !== after.activeCardId ||
+        before.focusedLinkIndex !== after.focusedLinkIndex;
+      return engineHandled ? 'engine' : 'none';
+    }
+
     const mode = await this.navigation.navigateBackWithFallback();
     const state = this.navigation.getSessionState();
     const resolvedUrl = state.finalUrl ?? state.requestedUrl;
@@ -398,6 +601,10 @@ export class BrowserController {
     followExternalIntent: boolean,
     pushHistory = true
   ): Promise<EngineRuntimeSnapshot | null> {
+    if (this.runMode === 'local') {
+      await this.loadSelectedLocalDeck();
+      return null;
+    }
     await this.setViewportCols();
     const requestedUrl = url.trim();
     const needsFirstRenderSkeleton = !this.presenter.hasRenderedDeck();
@@ -489,7 +696,15 @@ export class BrowserController {
     this.timerTickInFlight = true;
     try {
       const before = this.presenter.getSessionState().activeCardId;
-      const snapshot = await this.navigation.applyEngineTimerTick(WAVES_CONFIG.engineTimerTickMs);
+      const snapshot =
+        this.runMode === 'local'
+          ? await this.hostClient.engineAdvanceTimeMs({ deltaMs: WAVES_CONFIG.engineTimerTickMs })
+          : await this.navigation.applyEngineTimerTick(WAVES_CONFIG.engineTimerTickMs);
+      if (this.runMode === 'local') {
+        this.presenter.setSnapshot(snapshot);
+        this.presenter.drawRenderList(await this.hostClient.engineRender());
+        this.syncLocalSessionFromSnapshot(snapshot);
+      }
       this.applyTimerRequestsFromSnapshot(snapshot);
       const expired = this.scriptTimerRegistry.advance(WAVES_CONFIG.engineTimerTickMs);
       for (const timer of expired) {
@@ -501,13 +716,17 @@ export class BrowserController {
         });
       }
       if (snapshot.externalNavigationIntent) {
-        this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
-        await this.loadTransportUrl(
-          snapshot.externalNavigationIntent,
-          'external-intent',
-          true,
-          true
-        );
+        if (this.runMode === 'local') {
+          await this.handleExternalIntentInLocalMode(snapshot.externalNavigationIntent);
+        } else {
+          this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
+          await this.loadTransportUrl(
+            snapshot.externalNavigationIntent,
+            'external-intent',
+            true,
+            true
+          );
+        }
       }
       if (before && snapshot.activeCardId && before !== snapshot.activeCardId) {
         this.presenter.recordTimeline('engine-timer-transition', 'state', {

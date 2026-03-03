@@ -1,9 +1,13 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = process.cwd();
-const EXAMPLES_DIR = path.join(ROOT, 'examples');
-const OUTPUT_DIR = path.join(ROOT, '.generated');
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const HOST_SAMPLE_DIR = path.resolve(SCRIPT_DIR, '..');
+const ENGINE_WASM_DIR = path.resolve(HOST_SAMPLE_DIR, '..');
+const ROOT = HOST_SAMPLE_DIR;
+const EXAMPLES_DIR = path.join(ENGINE_WASM_DIR, 'examples', 'source');
+const OUTPUT_DIR = path.join(ENGINE_WASM_DIR, 'examples', 'generated');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'examples.ts');
 
 function toTitleCase(value) {
@@ -141,9 +145,9 @@ async function main() {
     });
   }
 
-  const content = `/* eslint-disable */
+const content = `/* eslint-disable */
 // AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY.
-// Source: host-sample/examples/*.wml
+// Source: engine-wasm/examples/source/*.wml
 
 export interface HostExample {
   key: string;

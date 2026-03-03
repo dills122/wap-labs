@@ -16,6 +16,10 @@ const createRefs = (): BrowserShellRefs => {
   const wmlInput = document.createElement('textarea');
   const baseUrlInput = document.createElement('input');
   const viewportColsInput = document.createElement('input');
+  const runModeSelectEl = document.createElement('select');
+  const localExampleSelectEl = document.createElement('select');
+  const loadLocalBtnEl = document.createElement('button');
+  const localExampleWrapEl = document.createElement('label');
   const statusEl = {
     setStatus: () => {
       // no-op
@@ -35,11 +39,16 @@ const createRefs = (): BrowserShellRefs => {
     timelineEl,
     activeUrlLabelEl,
     devDrawerEl,
-    toastEl
+    toastEl,
+    runModeSelectEl,
+    localExampleSelectEl,
+    loadLocalBtnEl,
+    localExampleWrapEl
   };
 };
 
 const initialSession: HostSessionState = {
+  runMode: 'local',
   navigationStatus: 'idle',
   requestedUrl: 'http://127.0.0.1:3000/'
 };

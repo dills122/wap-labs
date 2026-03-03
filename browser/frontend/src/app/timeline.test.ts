@@ -20,6 +20,7 @@ describe('app/timeline', () => {
 
   it('appends entries and increments sequence', () => {
     const next = appendTimelineEntry(createTimelineState(), 200, 'bootstrap', 'state', {
+      runMode: 'network',
       navigationStatus: 'idle',
       requestedUrl: 'http://local.test'
     });
@@ -31,14 +32,17 @@ describe('app/timeline', () => {
   it('enforces max timeline window', () => {
     let state = createTimelineState();
     state = appendTimelineEntry(state, 2, 'a', 'state', {
+      runMode: 'network',
       navigationStatus: 'idle',
       requestedUrl: 'a'
     });
     state = appendTimelineEntry(state, 2, 'b', 'ok', {
+      runMode: 'network',
       navigationStatus: 'loaded',
       requestedUrl: 'b'
     });
     state = appendTimelineEntry(state, 2, 'c', 'error', {
+      runMode: 'network',
       navigationStatus: 'error',
       requestedUrl: 'c'
     });
@@ -51,16 +55,18 @@ describe('app/timeline', () => {
   it('builds and validates timeline export payload', () => {
     const state = appendTimelineEntry(
       appendTimelineEntry(createTimelineState(), 200, 'bootstrap', 'state', {
+        runMode: 'network',
         navigationStatus: 'idle',
         requestedUrl: 'http://local.test'
       }),
       200,
       'fetch',
       'ok',
-      { navigationStatus: 'loaded', requestedUrl: 'http://local.test' }
+      { runMode: 'network', navigationStatus: 'loaded', requestedUrl: 'http://local.test' }
     );
 
     const payload = buildTimelineExport(state.entries, {
+      runMode: 'network',
       navigationStatus: 'loaded',
       requestedUrl: 'http://local.test'
     });

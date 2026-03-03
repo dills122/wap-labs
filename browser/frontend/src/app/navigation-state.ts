@@ -70,6 +70,7 @@ export const createNavigationStateMachine = (
 ): NavigationStateMachine => {
   const hostHistory = createHostHistoryState();
   let hostSessionState: HostSessionState = {
+    runMode: 'network',
     navigationStatus: 'idle',
     requestedUrl: initialRequestedUrl.trim()
   };

@@ -1,5 +1,5 @@
 import { bootWmlEngine } from './renderer';
-import { EXAMPLES } from './.generated/examples';
+import { EXAMPLES } from '../examples/generated/examples';
 import type { EngineSnapshot } from './renderer';
 import { mapKeyboardKey } from './utils/keyboard';
 import { createCollapsible } from './ui/collapsible';

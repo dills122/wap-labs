@@ -31,7 +31,12 @@ const locale = {
     transportResponse: 'Transport Response',
     runtimeSnapshot: 'Runtime Snapshot',
     eventTimeline: 'Event Timeline',
-    firstRenderPending: 'Waiting for first deck render...'
+    firstRenderPending: 'Waiting for first deck render...',
+    mode: 'Mode',
+    localMode: 'Local',
+    networkMode: 'Network',
+    localExample: 'Local Example',
+    loadLocal: 'Load Local'
   },
   sampleDeck: {
     intro: WAVES_CONFIG.appTagline,
@@ -63,6 +68,11 @@ const locale = {
     bootShellReady: 'Shell ready.',
     bootEngineReady: 'Engine ready.',
     bootDeckReady: 'Deck ready.',
+    localModeEnabled: 'Local mode enabled. Network fetches are disabled.',
+    networkModeEnabled: 'Network mode enabled.',
+    loadedLocalDeck: (label: string) => `Loaded local example: ${label}`,
+    localExternalIntentCaptured: (url: string) =>
+      `Local mode captured external intent: ${url} (not fetched).`,
     health: (message: string) => `Health: ${message}`,
     rawWmlLoaded: 'Raw WML loaded and rendered (debug mode).',
     renderedCurrentCard: 'Rendered current card.',

@@ -20,6 +20,7 @@ export type FetchResponse = FetchDeckResponse & { raw?: RawPayload };
 export type TransportErrorInfo = FetchErrorInfo;
 export type EngineDeckInput = EngineDeckInputPayload;
 export type TimingMs = FetchTiming;
+export type RunMode = 'local' | 'network';
 
 export interface RawPayload {
   bytesBase64: string;
@@ -41,6 +42,7 @@ export interface HostHistoryEntry {
 }
 
 export interface HostSessionState {
+  runMode: RunMode;
   navigationStatus: 'idle' | 'loading' | 'loaded' | 'error';
   requestedUrl: string;
   finalUrl?: string;

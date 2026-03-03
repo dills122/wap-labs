@@ -41,6 +41,7 @@ const bootstrap = async (): Promise<void> => {
   const hostClient = createTauriHostClient(invoke);
 
   const initialSession: HostSessionState = {
+    runMode: 'local',
     navigationStatus: 'idle',
     requestedUrl: refs.fetchUrlInput.value
   };
