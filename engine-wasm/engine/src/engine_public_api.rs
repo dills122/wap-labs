@@ -1,0 +1,300 @@
+use crate::*;
+impl WmlEngine {
+    /// Construct a new engine instance with empty runtime state.
+    pub fn new() -> WmlEngine {
+        WmlEngine {
+            deck: None,
+            active_card_idx: 0,
+            nav_stack: Vec::new(),
+            focused_link_idx: 0,
+            external_nav_intent: None,
+            viewport_cols: DEFAULT_VIEWPORT_COLS,
+            base_url: String::new(),
+            content_type: String::new(),
+            raw_bytes_base64: None,
+            vars: HashMap::new(),
+            script_units: HashMap::new(),
+            script_entrypoints: HashMap::new(),
+            pending_script_effects: ScriptRuntimeEffects::default(),
+            last_script_outcome: None,
+            last_script_dialog_requests: Vec::new(),
+            last_script_timer_requests: Vec::new(),
+            trace_entries: Vec::new(),
+            next_trace_seq: 1,
+            timer_dispatch_depth: 0,
+            active_timer: None,
+        }
+    }
+
+    /// Load a WML deck using default metadata (`text/vnd.wap.wml`).
+    pub fn load_deck(&mut self, xml: &str) -> Result<(), String> {
+        self.load_deck_context(xml, "", "text/vnd.wap.wml", None)
+    }
+
+    /// Load a WML deck with explicit transport metadata for traceability.
+    pub fn load_deck_context(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+    ) -> Result<(), String> {
+        let deck = parse_wml(wml_xml)?;
+        self.deck = Some(deck);
+        self.active_card_idx = 0;
+        self.nav_stack.clear();
+        self.focused_link_idx = 0;
+        self.external_nav_intent = None;
+        self.base_url = base_url.to_string();
+        self.content_type = content_type.to_string();
+        self.raw_bytes_base64 = raw_bytes_base64;
+        self.vars.clear();
+        self.script_units.clear();
+        self.script_entrypoints.clear();
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_outcome = None;
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
+        self.clear_trace_entries();
+        self.active_timer = None;
+        self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
+        self.start_or_resume_timer_for_active_card(false)?;
+        Ok(())
+    }
+
+    /// Read a runtime variable.
+    pub fn get_var(&self, name: String) -> Option<String> {
+        self.vars.get(&name).cloned()
+    }
+
+    /// Set a runtime variable if `name` passes deterministic validation.
+    pub fn set_var(&mut self, name: String, value: String) -> bool {
+        if !is_valid_var_name(&name) {
+            return false;
+        }
+        self.vars.insert(name, value);
+        true
+    }
+
+    /// Render active card into draw commands for the current viewport width.
+    pub fn render(&self) -> Result<RenderList, String> {
+        let card = self.active_card_internal()?;
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        Ok(layout.render_list)
+    }
+
+    /// Handle one input key (`up`, `down`, `enter`).
+    pub fn handle_key(&mut self, key: String) -> Result<(), String> {
+        self.handle_key_internal(&key)
+    }
+
+    /// Navigate directly to a card id and push history.
+    pub fn navigate_to_card(&mut self, id: String) -> Result<(), String> {
+        self.navigate_to_card_internal(&id)
+    }
+
+    /// Navigate back in history. Returns `false` when history is empty.
+    pub fn navigate_back(&mut self) -> bool {
+        self.navigate_back_internal()
+    }
+
+    /// Advance simulated runtime clock for card timer lifecycle behavior.
+    pub fn advance_time_ms(&mut self, delta_ms: u32) -> Result<(), String> {
+        self.advance_time_ms_internal(delta_ms)
+    }
+
+    /// Set viewport width in columns.
+    pub fn set_viewport_cols(&mut self, cols: usize) {
+        self.viewport_cols = cols.max(1);
+    }
+
+    /// Get active card id.
+    pub fn active_card_id(&self) -> Result<String, String> {
+        let card = self.active_card_internal()?;
+        Ok(card.id.clone())
+    }
+
+    /// Get focused link index for the active card layout.
+    pub fn focused_link_index(&self) -> usize {
+        self.focused_link_idx
+    }
+
+    /// Get deck base URL metadata from last `loadDeckContext`.
+    pub fn base_url(&self) -> String {
+        self.base_url.clone()
+    }
+
+    /// Get content type metadata from last `loadDeckContext`.
+    pub fn content_type(&self) -> String {
+        self.content_type.clone()
+    }
+
+    /// Get host-resolved external navigation intent when one is pending.
+    pub fn external_navigation_intent(&self) -> Option<String> {
+        self.external_nav_intent.clone()
+    }
+
+    /// Clear pending external navigation intent.
+    pub fn clear_external_navigation_intent(&mut self) {
+        self.external_nav_intent = None;
+    }
+
+    /// Execute a raw bytecode unit with no runtime host bindings.
+    pub fn execute_script_unit(&self, bytes: Vec<u8>) -> ScriptExecutionOutcome {
+        self.execute_script_unit_internal(&bytes)
+    }
+
+    /// Register a bytecode unit by source key.
+    pub fn register_script_unit(&mut self, src: String, bytes: Vec<u8>) {
+        self.script_units.insert(src, bytes);
+    }
+
+    /// Clear all registered units and function entry points.
+    pub fn clear_script_units(&mut self) {
+        self.script_units.clear();
+        self.script_entrypoints.clear();
+    }
+
+    /// Register an entry point program counter for `src#function_name`.
+    pub fn register_script_entry_point(
+        &mut self,
+        src: String,
+        function_name: String,
+        entry_pc: usize,
+    ) {
+        self.script_entrypoints
+            .entry(src)
+            .or_default()
+            .insert(function_name, entry_pc);
+    }
+
+    /// Clear all registered entry points.
+    pub fn clear_script_entry_points(&mut self) {
+        self.script_entrypoints.clear();
+    }
+
+    /// Execute script reference without applying deferred runtime effects.
+    pub fn execute_script_ref(&mut self, src: String) -> ScriptExecutionOutcome {
+        let outcome = self.execute_script_ref_internal(&src, "main");
+        self.last_script_outcome = Some(outcome.clone());
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
+        outcome
+    }
+
+    /// Execute script function without applying deferred runtime effects.
+    pub fn execute_script_ref_function(
+        &mut self,
+        src: String,
+        function_name: String,
+    ) -> ScriptExecutionOutcome {
+        let outcome = self.execute_script_ref_internal(&src, &function_name);
+        self.last_script_outcome = Some(outcome.clone());
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
+        outcome
+    }
+
+    /// Execute script function call without applying deferred runtime effects.
+    pub fn execute_script_ref_call(
+        &mut self,
+        src: String,
+        function_name: String,
+        args: Vec<ScriptCallArgLiteral>,
+    ) -> ScriptExecutionOutcome {
+        let vm_args = convert_script_call_args(&args);
+        let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
+        self.last_script_outcome = Some(outcome.clone());
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
+        outcome
+    }
+
+    /// Invoke script reference and apply deferred runtime effects at boundary.
+    pub fn invoke_script_ref(&mut self, src: String) -> Result<ScriptInvocationOutcome, String> {
+        self.invoke_script_ref_internal(&src, "main", &[])
+    }
+
+    /// Invoke script function and apply deferred runtime effects at boundary.
+    pub fn invoke_script_ref_function(
+        &mut self,
+        src: String,
+        function_name: String,
+    ) -> Result<ScriptInvocationOutcome, String> {
+        self.invoke_script_ref_internal(&src, &function_name, &[])
+    }
+
+    /// Invoke script function call and apply deferred runtime effects.
+    pub fn invoke_script_ref_call(
+        &mut self,
+        src: String,
+        function_name: String,
+        args: Vec<ScriptCallArgLiteral>,
+    ) -> Result<ScriptInvocationOutcome, String> {
+        let vm_args = convert_script_call_args(&args);
+        self.invoke_script_ref_internal(&src, &function_name, &vm_args)
+    }
+
+    /// Read last script trap message, if any.
+    pub fn last_script_execution_trap(&self) -> Option<String> {
+        self.last_script_outcome
+            .as_ref()
+            .and_then(|outcome| outcome.trap.clone())
+    }
+
+    /// Read `ok` status from the last script execution.
+    pub fn last_script_execution_ok(&self) -> Option<bool> {
+        self.last_script_outcome.as_ref().map(|outcome| outcome.ok)
+    }
+
+    /// Read classified error class from the last script execution.
+    pub fn last_script_execution_error_class(&self) -> Option<String> {
+        self.last_script_outcome
+            .as_ref()
+            .map(|outcome| outcome.error_class.as_str().to_string())
+    }
+
+    /// Read classified error category from the last script execution.
+    pub fn last_script_execution_error_category(&self) -> Option<String> {
+        self.last_script_outcome
+            .as_ref()
+            .map(|outcome| outcome.error_category.as_str().to_string())
+    }
+
+    /// Read refresh requirement from the last script execution.
+    pub fn last_script_requires_refresh(&self) -> Option<bool> {
+        self.last_script_outcome
+            .as_ref()
+            .map(|outcome| outcome.requires_refresh)
+    }
+
+    /// Read dialog side-effect requests from the last successful script invocation.
+    pub fn last_script_dialog_requests(&self) -> Vec<ScriptDialogRequestLiteral> {
+        self.last_script_dialog_requests
+            .iter()
+            .map(script_dialog_request_to_literal)
+            .collect()
+    }
+
+    /// Read timer side-effect requests from the last successful script invocation.
+    pub fn last_script_timer_requests(&self) -> Vec<ScriptTimerRequestLiteral> {
+        self.last_script_timer_requests
+            .iter()
+            .map(script_timer_request_to_literal)
+            .collect()
+    }
+
+    /// Get bounded trace buffer entries.
+    pub fn trace_entries(&self) -> Vec<EngineTraceEntry> {
+        self.trace_entries.clone()
+    }
+
+    /// Clear trace entries and reset trace sequence numbering.
+    pub fn clear_trace_entries(&mut self) {
+        self.trace_entries.clear();
+        self.next_trace_seq = 1;
+    }
+}
