@@ -54,6 +54,16 @@ jobs:
         if: ${{ matrix.language == 'rust' }}
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust build artifacts
+        if: ${{ matrix.language == 'rust' }}
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-codeql-rust
+          workspaces: |
+            engine-wasm/engine -> target
+            transport-rust -> target
+            browser/src-tauri -> target
+
       - name: Build Rust crates for extraction
         if: ${{ matrix.language == 'rust' }}
         run: |

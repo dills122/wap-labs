@@ -36,6 +36,15 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-security-rust-audit
+          workspaces: |
+            engine-wasm/engine -> target
+            transport-rust -> target
+            browser/src-tauri -> target
+
       - name: Install cargo-audit
         uses: taiki-e/install-action@cargo-audit
 
@@ -73,6 +82,13 @@ jobs:
 
       - name: Audit workspace dependencies (high+)
         run: pnpm audit --audit-level high
+
+      - name: Setup Node cache for wml-server npm audit
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: wml-server/package-lock.json
 
       - name: Audit npm-only wml-server dependencies (high+)
         run: npm --prefix wml-server audit --audit-level=high

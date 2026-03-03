@@ -2,6 +2,8 @@
 
 This document defines the intended required GitHub branch-protection checks for `main`.
 
+For a full workflow reference (triggers, jobs, caches, deployment, and troubleshooting), see `docs/ci/CI_SETUP.md`.
+
 ## Required workflow checks
 
 Configure branch protection to require these job names from `.github/workflows/ci.yml`:
