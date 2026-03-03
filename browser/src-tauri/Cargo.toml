@@ -19,7 +19,7 @@ lowband_transport_rust = { path = "../../transport-rust" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2", features = [] }
-ts-rs = { version = "10", features = ["serde-compat"] }
+ts-rs = { version = "12", features = ["serde-compat"] }
 wavenav_engine = { path = "../../engine-wasm/engine", default-features = false }
 
 [features]
