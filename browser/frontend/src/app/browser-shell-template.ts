@@ -23,7 +23,16 @@ const browserShellTemplate = (defaultUrl: string) => `
           <span>${WAVES_COPY.shell.deckView}</span>
           <span id="active-url-label" class="muted-url">${WAVES_COPY.shell.idle}</span>
         </div>
-        <div id="viewport" class="viewport"></div>
+        <div id="viewport" class="viewport viewport-skeleton" aria-busy="true">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line skeleton-line-wide"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line skeleton-line-short"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line skeleton-line-wide"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-hint">${WAVES_COPY.shell.firstRenderPending}</div>
+        </div>
         <div class="softkey-row">
           <button id="btn-up">${WAVES_COPY.shell.up}</button>
           <button id="btn-enter">${WAVES_COPY.shell.select}</button>

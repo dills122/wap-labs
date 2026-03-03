@@ -5,10 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Waves is a WAP/WML based browser 1.x." />
     <link rel="icon" type="image/svg+xml" href="/waves-icon.svg" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #eef3fb;
+      }
+
+      body[data-boot-phase='booting'] #app {
+        display: grid;
+        min-height: 100vh;
+        place-items: center;
+      }
+
+      .boot-splash {
+        width: min(540px, calc(100vw - 40px));
+        border-radius: 14px;
+        border: 1px solid #cad5e6;
+        background: #ffffff;
+        box-shadow: 0 16px 35px rgba(15, 26, 42, 0.14);
+        padding: 18px 20px;
+        color: #1f2937;
+        font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+      }
+
+      .boot-splash-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .boot-splash-status {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #5f6f86;
+      }
+    </style>
     <title>Waves Browser</title>
     <script type="module" src="/src/main.ts"></script>
   </head>
-  <body>
-    <div id="app"></div>
+  <body data-boot-phase="booting">
+    <div id="app">
+      <div class="boot-splash" role="status" aria-live="polite">
+        <div class="boot-splash-title">Waves Browser</div>
+        <div class="boot-splash-status">Initializing host shell...</div>
+      </div>
+    </div>
   </body>
 </html>

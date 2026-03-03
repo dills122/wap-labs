@@ -1,5 +1,9 @@
 :root {
   color-scheme: light;
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 240ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --bg: #eef3fb;
   --panel: #ffffff;
   --ink: #1f2937;
@@ -37,6 +41,18 @@ body {
   background: var(--panel);
   box-shadow: 0 16px 35px rgba(15, 26, 42, 0.14);
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard);
+}
+
+body[data-boot-phase='shell-ready'] .browser-shell,
+body[data-boot-phase='engine-ready'] .browser-shell,
+body[data-boot-phase='deck-ready'] .browser-shell {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .browser-chrome {
@@ -250,6 +266,34 @@ button:hover {
   padding: 14px;
   background: var(--screen);
   font-family: 'Courier New', Courier, monospace;
+  transition: border-color var(--motion-fast) var(--ease-standard);
+}
+
+.viewport-skeleton {
+  border-color: #dbe6f3;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #e8eef7 20%, #f3f7fc 50%, #e8eef7 80%);
+  background-size: 220% 100%;
+  animation: skeleton-shimmer 1.2s linear infinite;
+}
+
+.skeleton-line-wide {
+  width: 84%;
+}
+
+.skeleton-line-short {
+  width: 55%;
+}
+
+.skeleton-hint {
+  margin-top: 14px;
+  color: #6c7f96;
+  font-size: 12px;
 }
 
 .line {
@@ -303,6 +347,15 @@ pre {
   word-break: break-word;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 12px;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
 }
 
 #timeline {

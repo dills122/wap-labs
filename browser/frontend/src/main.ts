@@ -25,6 +25,7 @@ const SAMPLE_WML = `<wml>
 let activeController: BrowserController | undefined;
 
 const bootstrap = async (): Promise<void> => {
+  document.body.setAttribute('data-boot-phase', 'booting');
   activeController?.dispose();
   activeController = undefined;
 
