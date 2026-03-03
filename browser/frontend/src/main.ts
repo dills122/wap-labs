@@ -5,6 +5,7 @@ import './styles.css';
 import { BrowserController } from './app/browser-controller';
 import { BrowserPresenter } from './app/browser-presenter';
 import { mountBrowserShell } from './app/browser-shell-template';
+import { defaultStartUrl } from './app/defaults';
 import { registerBrowserComponents } from './components';
 
 const SAMPLE_WML = `<wml>
@@ -29,7 +30,7 @@ const bootstrap = async (): Promise<void> => {
 
   registerBrowserComponents();
 
-  const refs = mountBrowserShell();
+  const refs = mountBrowserShell(defaultStartUrl());
   const hostClient = createTauriHostClient(invoke);
 
   const initialSession: HostSessionState = {

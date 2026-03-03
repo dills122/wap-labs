@@ -84,6 +84,7 @@ pnpm --dir browser run tauri:icons
 ## Transport runtime knobs
 
 - `GATEWAY_HTTP_BASE` (default `http://localhost:13002`)
+- `VITE_WAVES_DEFAULT_URL` (frontend startup URL, default `http://127.0.0.1:3000/`)
 - Decoder backend order:
   - preferred: in-process `libwbxml` shared library
   - fallback: `wbxml2xml` CLI

@@ -1,6 +1,6 @@
 import type { WvStatusPanel } from '../components/status-panel';
 
-const BROWSER_SHELL_TEMPLATE = `
+const browserShellTemplate = (defaultUrl: string) => `
   <div class="browser-shell">
     <header class="browser-chrome">
       <div class="title-row">
@@ -10,7 +10,7 @@ const BROWSER_SHELL_TEMPLATE = `
       <div class="nav-row">
         <button id="btn-back" class="chrome-btn">Back</button>
         <button id="btn-reload" class="chrome-btn">Reload</button>
-        <input id="fetch-url" type="text" value="http://127.0.0.1:3000/" aria-label="Address" />
+        <input id="fetch-url" type="text" value="${defaultUrl}" aria-label="Address" />
         <button id="btn-fetch-url" class="chrome-btn primary">Go</button>
       </div>
     </header>
@@ -94,12 +94,12 @@ export interface BrowserShellRefs {
   toastEl: HTMLDivElement;
 }
 
-export const mountBrowserShell = (): BrowserShellRefs => {
+export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
   const app = document.querySelector<HTMLDivElement>('#app');
   if (!app) {
     throw new Error('missing #app root');
   }
-  app.innerHTML = BROWSER_SHELL_TEMPLATE;
+  app.innerHTML = browserShellTemplate(defaultUrl);
 
   const wmlInput = document.querySelector<HTMLTextAreaElement>('#wml-input');
   const baseUrlInput = document.querySelector<HTMLInputElement>('#base-url');

@@ -72,3 +72,9 @@ Run from `browser/`:
 pnpm install
 pnpm tauri:dev
 ```
+
+Optional startup URL override:
+
+```bash
+VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
+```
