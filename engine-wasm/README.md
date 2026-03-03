@@ -92,16 +92,39 @@ npm run dev
 
 Then open the printed local URL and use the in-browser tester.
 
-## Rust module layout
+## Rust source layout
 
-- `engine/src/lib.rs`
-- `engine/src/parser/wml_parser.rs`
+Engine entry and bindings:
+- `engine/src/lib.rs` (crate root and `WmlEngine` state)
+- `engine/src/engine_public_api.rs` (public Rust API surface)
+- `engine/src/engine_runtime_internal.rs` (internal runtime transitions and navigation/timer behavior)
+- `engine/src/engine_script_types.rs` (script outcomes, literals, and classification helpers)
+- `engine/src/engine_wasm_bindings.rs` (wasm-bindgen JS boundary wrappers)
+- `engine/src/engine_tests.rs` (engine integration-style unit tests)
+
+Parser:
+- `engine/src/parser/wml_parser/mod.rs` (public parser entrypoint `parse_wml`)
+- `engine/src/parser/wml_parser/actions.rs` (`<do>`, `<onevent>`, task/timer action parsing)
+- `engine/src/parser/wml_parser/nodes.rs` (card and inline node parsing)
+- `engine/src/parser/wml_parser/xml.rs` (tag scanning, attribute extraction, text/entity normalization)
+- `engine/src/parser/wml_parser/tests.rs` (parser tests)
+
+Core runtime/rendering support:
 - `engine/src/runtime/deck.rs`
 - `engine/src/runtime/card.rs`
 - `engine/src/runtime/node.rs`
 - `engine/src/layout/flow_layout.rs`
 - `engine/src/nav/focus.rs`
 - `engine/src/render/render_list.rs`
+
+Wavescript runtime:
+- `engine/src/wavescript/vm.rs` + `engine/src/wavescript/vm_tests.rs`
+- `engine/src/wavescript/stdlib/wmlbrowser.rs` + `engine/src/wavescript/stdlib/wmlbrowser_tests.rs`
+- `engine/src/wavescript/decoder.rs`, `engine/src/wavescript/value.rs`
+
+Placement guidance:
+- Keep parser changes inside `parser/wml_parser/*` by concern (`actions`, `nodes`, `xml`) instead of growing `mod.rs`.
+- Keep wasm-only boundary code in `engine_wasm_bindings.rs`; runtime semantics stay in engine/runtime/parser modules.
 
 ## MVP support
 
