@@ -173,8 +173,10 @@ Cadence:
 - weekly for all ecosystems
 
 Auto-merge behavior:
-- Dependabot pull requests are merged automatically only after all CI signals on the PR head SHA complete successfully.
-- The auto-merge workflow checks both GitHub Checks and commit status contexts and does not merge if any signal is pending, failing, cancelled, or timed out.
+- Dependabot pull requests have GitHub auto-merge enabled via workflow on `pull_request_target`.
+- The workflow uses `gh pr merge --auto --squash`, so GitHub merges only after required branch-protection checks and rules pass.
+- On Dependabot rebases/synchronizations, the workflow re-runs and re-enables auto-merge for the updated head.
+- Repository setting prerequisite: `Allow auto-merge` must be enabled in GitHub repository settings.
 
 ## Branch Protection Guidance
 

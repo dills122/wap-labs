@@ -3,130 +3,19 @@ name: Dependabot Auto Merge
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
-  check_suite:
-    types: [completed]
-  status:
 
 permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: dependabot-automerge-${{ github.event.pull_request.number || github.event.check_suite.head_sha || github.event.sha }}
-  cancel-in-progress: false
-
 jobs:
-  automerge:
-    name: Auto-merge Dependabot PRs
+  enable-automerge:
+    name: Enable Auto-merge for Dependabot PRs
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     steps:
-      - name: Merge when all checks pass
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const allowedConclusions = new Set(["success", "neutral", "skipped"]);
-
-            async function resolvePullRequest() {
-              if (context.eventName === "pull_request_target") {
-                return context.payload.pull_request;
-              }
-
-              const headSha = context.eventName === "check_suite"
-                ? context.payload.check_suite?.head_sha
-                : context.payload.sha;
-
-              if (!headSha) {
-                core.info("No head SHA available for this event.");
-                return null;
-              }
-
-              const response = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-                owner,
-                repo,
-                commit_sha: headSha,
-              });
-
-              return response.data.find((candidate) => candidate.state === "open") ?? null;
-            }
-
-            const resolvedPr = await resolvePullRequest();
-            if (!resolvedPr) {
-              core.info("No open pull request found for this event.");
-              return;
-            }
-
-            const pull_number = resolvedPr.number;
-            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
-
-            if (pr.state !== "open" || pr.draft) {
-              core.info(`PR #${pull_number} is not mergeable yet (state=${pr.state}, draft=${pr.draft}).`);
-              return;
-            }
-
-            if (pr.user?.login !== "dependabot[bot]") {
-              core.info(`PR #${pull_number} is not from dependabot[bot].`);
-              return;
-            }
-
-            const headSha = pr.head.sha;
-
-            const checkRuns = await github.paginate(github.rest.checks.listForRef, {
-              owner,
-              repo,
-              ref: headSha,
-              per_page: 100,
-              filter: "latest",
-            });
-
-            const { data: combinedStatus } = await github.rest.repos.getCombinedStatusForRef({
-              owner,
-              repo,
-              ref: headSha,
-            });
-
-            const totalSignals = checkRuns.length + combinedStatus.statuses.length;
-            if (totalSignals === 0) {
-              core.info(`PR #${pull_number} has no checks/statuses yet; waiting.`);
-              return;
-            }
-
-            const pendingCheckRuns = checkRuns.filter((run) => run.status !== "completed");
-            if (pendingCheckRuns.length > 0) {
-              core.info(`PR #${pull_number} still has ${pendingCheckRuns.length} in-progress check run(s).`);
-              return;
-            }
-
-            const failingCheckRuns = checkRuns.filter(
-              (run) => !allowedConclusions.has(run.conclusion ?? "")
-            );
-            if (failingCheckRuns.length > 0) {
-              core.info(
-                `PR #${pull_number} has failing check run(s): ${failingCheckRuns
-                  .map((run) => `${run.name}=${run.conclusion}`)
-                  .join(", ")}`
-              );
-              return;
-            }
-
-            const failingStatuses = combinedStatus.statuses.filter((status) => status.state !== "success");
-            if (failingStatuses.length > 0) {
-              core.info(
-                `PR #${pull_number} has non-success statuses: ${failingStatuses
-                  .map((status) => `${status.context}=${status.state}`)
-                  .join(", ")}`
-              );
-              return;
-            }
-
-            try {
-              const merge = await github.rest.pulls.merge({
-                owner,
-                repo,
-                pull_number,
-              });
-              core.info(`Merged PR #${pull_number}: ${merge.data.message}`);
-            } catch (error) {
-              core.info(`Merge attempt for PR #${pull_number} was not completed: ${error.message}`);
-            }
+      - name: Enable GitHub auto-merge (squash)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"
