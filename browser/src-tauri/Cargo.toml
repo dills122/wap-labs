@@ -2,7 +2,7 @@
 name = "wavenav_host"
 version = "0.1.0"
 edition = "2021"
-description = "Tauri host shell for the WaveNav desktop browser integration"
+description = "WAP/WML based browser 1.x"
 license = "MIT"
 authors = ["Dylan Steele <dylansteele57@gmail.com>"]
 default-run = "wavenav_host"

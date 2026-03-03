@@ -57,6 +57,13 @@ App logic modules:
 
 - `src/app/timeline.ts`: timeline state, export building, and validation.
 - `src/app/keyboard.ts`: deterministic keyboard-intent mapping.
+- `src/app/waves-config.ts`: centralized runtime/app constants for Waves frontend.
+- `src/app/waves-copy.ts`: centralized copy catalog (i18n-ready shape).
+
+Internationalization baseline:
+
+- User-facing labels/status/error copy is sourced from `src/app/waves-copy.ts`.
+- Runtime tuning/constants are sourced from `src/app/waves-config.ts`.
 
 Local checks:
 
@@ -71,4 +78,10 @@ Run from `browser/`:
 ```bash
 pnpm install
 pnpm tauri:dev
+```
+
+Optional startup URL override:
+
+```bash
+VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
 ```

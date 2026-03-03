@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { createNanoEvents } from 'nanoevents';
+import { WAVES_COPY } from './app/waves-copy';
 
 export type StatusTone = 'idle' | 'loading' | 'ok' | 'error';
 
@@ -21,13 +22,22 @@ export interface UiEvents {
 export const uiEvents = createNanoEvents<UiEvents>();
 
 export const inferStatusTone = (message: string): StatusTone => {
-  if (message.startsWith('Error:') || message.startsWith('Fetch failed:')) {
+  if (
+    message.startsWith(WAVES_COPY.statusPrefix.error) ||
+    message.startsWith(WAVES_COPY.statusPrefix.fetchFailed)
+  ) {
     return 'error';
   }
-  if (message.startsWith('Loading ') || message.startsWith('Following external intent:')) {
+  if (
+    message.startsWith(WAVES_COPY.statusPrefix.loading) ||
+    message.startsWith(WAVES_COPY.statusPrefix.followingExternalIntent)
+  ) {
     return 'loading';
   }
-  if (message.startsWith('Ready') || message.startsWith('Fetched and loaded')) {
+  if (
+    message.startsWith(WAVES_COPY.statusPrefix.ready) ||
+    message.startsWith(WAVES_COPY.statusPrefix.fetchedAndLoaded)
+  ) {
     return 'ok';
   }
   return 'idle';

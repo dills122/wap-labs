@@ -5,21 +5,22 @@ import './styles.css';
 import { BrowserController } from './app/browser-controller';
 import { BrowserPresenter } from './app/browser-presenter';
 import { mountBrowserShell } from './app/browser-shell-template';
+import { defaultStartUrl } from './app/defaults';
+import { WAVES_CONFIG } from './app/waves-config';
+import { WAVES_COPY } from './app/waves-copy';
 import { registerBrowserComponents } from './components';
 
 const SAMPLE_WML = `<wml>
   <card id="home">
-    <p>WaveNav native engine harness</p>
-    <a href="#next">Go to next card</a>
-    <a href="https://example.org/">External link</a>
+    <p>${WAVES_COPY.sampleDeck.intro}</p>
+    <a href="#next">${WAVES_COPY.sampleDeck.next}</a>
+    <a href="https://example.org/">${WAVES_COPY.sampleDeck.external}</a>
   </card>
   <card id="next">
-    <p>You are on the next card.</p>
-    <a href="#home">Go home</a>
+    <p>${WAVES_COPY.sampleDeck.nextCard}</p>
+    <a href="#home">${WAVES_COPY.sampleDeck.home}</a>
   </card>
 </wml>`;
-
-const MAX_TIMELINE_EVENTS = 200;
 
 let activeController: BrowserController | undefined;
 
@@ -27,9 +28,15 @@ const bootstrap = async (): Promise<void> => {
   activeController?.dispose();
   activeController = undefined;
 
+  document.title = WAVES_CONFIG.appName;
+  const descriptionMeta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+  if (descriptionMeta) {
+    descriptionMeta.content = WAVES_COPY.app.description;
+  }
+
   registerBrowserComponents();
 
-  const refs = mountBrowserShell();
+  const refs = mountBrowserShell(defaultStartUrl());
   const hostClient = createTauriHostClient(invoke);
 
   const initialSession: HostSessionState = {
@@ -37,7 +44,7 @@ const bootstrap = async (): Promise<void> => {
     requestedUrl: refs.fetchUrlInput.value
   };
 
-  const presenter = new BrowserPresenter(refs, initialSession, MAX_TIMELINE_EVENTS);
+  const presenter = new BrowserPresenter(refs, initialSession, WAVES_CONFIG.maxTimelineEvents);
   const controller = new BrowserController(hostClient, presenter, refs);
   activeController = controller;
 

@@ -1,4 +1,5 @@
 import type { ScriptTimerRequestSnapshot } from '../../../contracts/engine';
+import { WAVES_CONFIG } from './waves-config';
 
 interface ScriptTimerEntry {
   id: string;
@@ -65,7 +66,9 @@ export class ScriptTimerRegistry {
 
       const id = request.token
         ? `token:${request.token}`
-        : `anon:${this.sequence.toString().padStart(6, '0')}`;
+        : `anon:${this.sequence
+            .toString()
+            .padStart(WAVES_CONFIG.scriptTimerAnonymousIdPadLength, '0')}`;
       const entry: ScriptTimerEntry = {
         id,
         token: request.token,

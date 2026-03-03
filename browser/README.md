@@ -20,6 +20,15 @@ Implemented now:
   - output: `contracts/generated/tauri-host-client.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
+- App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
+- Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
+- Help menu placeholder for updates (`Check for Updates (Coming Soon)`)
+- Update hook baseline: menu event emits `waves://updater/check-requested` for future updater wiring
+- Shared constants baseline:
+  - frontend runtime + copy: `frontend/src/app/waves-config.ts`, `frontend/src/app/waves-copy.ts`
+  - tauri app/menu/event constants: `src-tauri/src/waves_config.rs`
+- I18n prep baseline:
+  - frontend user-facing strings route through `frontend/src/app/waves-copy.ts`
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)
@@ -71,9 +80,16 @@ Regenerate host contract types from Rust:
 pnpm --dir browser run contracts:codegen
 ```
 
+Regenerate Tauri app icons from canonical SVG source:
+
+```bash
+pnpm --dir browser run tauri:icons
+```
+
 ## Transport runtime knobs
 
 - `GATEWAY_HTTP_BASE` (default `http://localhost:13002`)
+- `VITE_WAVES_DEFAULT_URL` (frontend startup URL, default `http://127.0.0.1:3000/`)
 - Decoder backend order:
   - preferred: in-process `libwbxml` shared library
   - fallback: `wbxml2xml` CLI

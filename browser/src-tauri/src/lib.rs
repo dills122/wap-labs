@@ -1,4 +1,5 @@
 pub mod contract_types;
+pub mod waves_config;
 
 use contract_types::{
     AdvanceTimeRequest, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
@@ -10,7 +11,9 @@ use lowband_transport_rust::{
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
+use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
 use tauri::path::BaseDirectory;
+use tauri::Emitter;
 use tauri::Manager;
 use tauri::State;
 use wavenav_engine::WmlEngine;
@@ -153,7 +156,7 @@ fn lock_engine<'a>(state: &'a AppState) -> Result<std::sync::MutexGuard<'a, WmlE
 
 #[tauri::command]
 fn health() -> String {
-    "wavenav-host-tauri-native-engine".to_string()
+    waves_config::HEALTH_RESPONSE.to_string()
 }
 
 fn bundled_wbxml_resource_relpath() -> &'static str {
@@ -210,7 +213,7 @@ fn fetch_deck(mut request: FetchDeckRequest) -> FetchDeckResponse {
 fn next_request_id() -> String {
     static REQUEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
     let seq = REQUEST_SEQUENCE.fetch_add(1, Ordering::Relaxed);
-    format!("waves-fetch-{seq}")
+    format!("{}{seq}", waves_config::FETCH_REQUEST_ID_PREFIX)
 }
 
 fn ensure_request_id(request: &mut FetchDeckRequest) {
@@ -222,6 +225,99 @@ fn ensure_request_id(request: &mut FetchDeckRequest) {
     if !keep_existing {
         request.request_id = Some(next_request_id());
     }
+}
+
+fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
+    if let Err(error) = app.emit(
+        waves_config::EVENT_UPDATER_CHECK_REQUESTED,
+        serde_json::json!({
+            "source": "menu",
+            "placeholder": true
+        }),
+    ) {
+        eprintln!("{}: {error}", waves_config::LOG_UPDATER_EVENT_EMIT_FAILED);
+    }
+    println!("{}", waves_config::LOG_UPDATER_CHECK_REQUESTED);
+}
+
+fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>> {
+    let about_metadata = AboutMetadataBuilder::new()
+        .name(Some(waves_config::APP_NAME))
+        .version(Some(env!("CARGO_PKG_VERSION")))
+        .short_version(Some(waves_config::APP_SHORT_VERSION))
+        .comments(Some(waves_config::APP_ABOUT_COMMENTS))
+        .copyright(Some(waves_config::APP_COPYRIGHT))
+        .build();
+
+    let mut menu = MenuBuilder::new(app);
+
+    #[cfg(target_os = "macos")]
+    {
+        menu = menu.item(
+            &SubmenuBuilder::new(app, waves_config::APP_NAME)
+                .about(Some(about_metadata.clone()))
+                .separator()
+                .services()
+                .separator()
+                .hide()
+                .hide_others()
+                .show_all()
+                .separator()
+                .quit()
+                .build()?,
+        );
+    }
+
+    #[cfg(not(any(
+        target_os = "linux",
+        target_os = "dragonfly",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd"
+    )))]
+    {
+        menu = menu.item(
+            &SubmenuBuilder::new(app, waves_config::MENU_FILE_LABEL)
+                .close_window()
+                .separator()
+                .quit()
+                .build()?,
+        );
+    }
+
+    menu = menu
+        .item(
+            &SubmenuBuilder::new(app, waves_config::MENU_EDIT_LABEL)
+                .undo()
+                .redo()
+                .separator()
+                .cut()
+                .copy()
+                .paste()
+                .separator()
+                .select_all()
+                .build()?,
+        )
+        .item(
+            &SubmenuBuilder::new(app, waves_config::MENU_WINDOW_LABEL)
+                .minimize()
+                .maximize()
+                .separator()
+                .close_window()
+                .build()?,
+        )
+        .item(
+            &SubmenuBuilder::new(app, waves_config::MENU_HELP_LABEL)
+                .text(
+                    waves_config::MENU_CHECK_FOR_UPDATES_ID,
+                    waves_config::MENU_CHECK_FOR_UPDATES_LABEL,
+                )
+                .separator()
+                .about(Some(about_metadata))
+                .build()?,
+        );
+
+    menu.build()
 }
 
 #[tauri::command]
@@ -367,6 +463,12 @@ fn command_engine_clear_external_navigation_intent(
 pub fn run() {
     tauri::Builder::default()
         .manage(AppState::default())
+        .menu(build_app_menu)
+        .on_menu_event(|app, event| {
+            if event.id() == waves_config::MENU_CHECK_FOR_UPDATES_ID {
+                handle_check_for_updates_menu(app);
+            }
+        })
         .setup(|app| {
             configure_bundled_wbxml_decoder(app.handle())?;
             preflight_wbxml_decoder_available()?;
@@ -387,7 +489,7 @@ pub fn run() {
             engine_clear_external_navigation_intent
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Waves Tauri host");
+        .expect(waves_config::RUN_ERROR_CONTEXT);
 }
 
 #[cfg(test)]
@@ -891,7 +993,7 @@ mod tests {
         ensure_request_id(&mut missing);
         let generated = missing.request_id.clone().unwrap_or_default();
         assert!(
-            generated.starts_with("waves-fetch-"),
+            generated.starts_with(super::waves_config::FETCH_REQUEST_ID_PREFIX),
             "expected generated request id to use waves-fetch-* prefix"
         );
 
@@ -906,7 +1008,7 @@ mod tests {
         ensure_request_id(&mut blank);
         let generated_blank = blank.request_id.unwrap_or_default();
         assert!(
-            generated_blank.starts_with("waves-fetch-"),
+            generated_blank.starts_with(super::waves_config::FETCH_REQUEST_ID_PREFIX),
             "blank request id should be replaced with generated id"
         );
     }
@@ -929,14 +1031,14 @@ mod tests {
     fn next_request_id_sequence_has_expected_prefix() {
         let first = super::next_request_id();
         let second = super::next_request_id();
-        assert!(first.starts_with("waves-fetch-"));
-        assert!(second.starts_with("waves-fetch-"));
+        assert!(first.starts_with(super::waves_config::FETCH_REQUEST_ID_PREFIX));
+        assert!(second.starts_with(super::waves_config::FETCH_REQUEST_ID_PREFIX));
         assert_ne!(first, second, "request ids should be unique");
     }
 
     #[test]
     fn health_command_returns_expected_string() {
-        assert_eq!(health(), "wavenav-host-tauri-native-engine");
+        assert_eq!(health(), super::waves_config::HEALTH_RESPONSE);
     }
 
     #[test]
@@ -976,7 +1078,7 @@ mod tests {
         assert!(!response.ok);
         let generated = detail_string(&response, "requestId").unwrap_or_default();
         assert!(
-            generated.starts_with("waves-fetch-"),
+            generated.starts_with(super::waves_config::FETCH_REQUEST_ID_PREFIX),
             "expected generated request id in transport error details"
         );
     }

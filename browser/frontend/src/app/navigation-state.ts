@@ -20,6 +20,8 @@ import {
   pushHostHistoryEntry,
   type HostHistoryState
 } from '../session-history';
+import { WAVES_CONFIG } from './waves-config';
+import { WAVES_COPY } from './waves-copy';
 
 export type BackNavigationMode = 'engine' | 'host' | 'none';
 
@@ -60,13 +62,11 @@ export interface NavigationStateMachine {
   getHistoryState(): HostHistoryState;
 }
 
-const DEFAULT_MAX_EXTERNAL_INTENT_HOPS = 3;
-
 export const createNavigationStateMachine = (
   hostClient: NavigationHostClient,
   initialRequestedUrl: string,
   hooks: NavigationHooks = {},
-  maxExternalIntentHops = DEFAULT_MAX_EXTERNAL_INTENT_HOPS
+  maxExternalIntentHops: number = WAVES_CONFIG.maxExternalIntentHops
 ): NavigationStateMachine => {
   const hostHistory = createHostHistoryState();
   let hostSessionState: HostSessionState = {
@@ -113,7 +113,7 @@ export const createNavigationStateMachine = (
   ): Promise<EngineRuntimeSnapshot | null> => {
     const requestedUrl = options.url.trim();
     if (!requestedUrl) {
-      throw new Error('URL is required');
+      throw new Error(WAVES_COPY.errors.urlRequired);
     }
     const pushHistory = options.pushHistory ?? true;
 
@@ -134,8 +134,8 @@ export const createNavigationStateMachine = (
     const transport = await hostClient.fetchDeck({
       url: requestedUrl,
       method: 'GET',
-      timeoutMs: 5000,
-      retries: 1
+      timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
+      retries: WAVES_CONFIG.transportFetchRetries
     });
     hooks.onTransportResponse?.(transport);
     hooks.onStateEvent?.('fetch-deck-response', {
@@ -146,7 +146,7 @@ export const createNavigationStateMachine = (
     });
 
     if (!transport.ok) {
-      const errorMessage = transport.error?.message ?? 'unknown transport failure';
+      const errorMessage = transport.error?.message ?? WAVES_COPY.errors.unknownTransportFailure;
       mergeSessionState({
         navigationStatus: 'error',
         finalUrl: transport.finalUrl,
@@ -171,7 +171,7 @@ export const createNavigationStateMachine = (
         navigationStatus: 'error',
         finalUrl: transport.finalUrl,
         contentType: transport.contentType,
-        lastError: 'Fetch succeeded but returned no WML payload.'
+        lastError: WAVES_COPY.errors.missingWmlPayload
       });
       return null;
     }
