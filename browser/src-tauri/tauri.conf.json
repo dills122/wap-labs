@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "WaveNav Host",
+  "productName": "Waves Browser",
   "version": "0.1.0",
   "identifier": "com.wavenav.host",
   "build": {
@@ -12,9 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "WaveNav Host",
+        "title": "Waves Browser",
         "width": 1024,
         "height": 768,
+        "minWidth": 880,
+        "minHeight": 640,
+        "center": true,
         "resizable": true
       }
     ],
@@ -25,9 +28,20 @@
   "bundle": {
     "active": false,
     "targets": "all",
+    "publisher": "WaveNav",
+    "category": "Utility",
+    "shortDescription": "WAP/WML based browser 1.x",
+    "longDescription": "A WAP/WML based browser 1.x for loading and navigating WML decks.",
+    "copyright": "Copyright (c) 2026 WaveNav",
     "resources": [
       "resources/wbxml/**/*"
     ],
-    "icon": []
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   }
 }

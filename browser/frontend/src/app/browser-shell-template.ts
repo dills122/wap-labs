@@ -4,8 +4,8 @@ const BROWSER_SHELL_TEMPLATE = `
   <div class="browser-shell">
     <header class="browser-chrome">
       <div class="title-row">
-        <div class="brand">WaveNav</div>
-        <div class="caption">WAP Browser Preview</div>
+        <div class="brand">Waves</div>
+        <div class="caption">Desktop WAP Browser Preview</div>
       </div>
       <div class="nav-row">
         <button id="btn-back" class="chrome-btn">Back</button>

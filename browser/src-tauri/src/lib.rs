@@ -10,6 +10,7 @@ use lowband_transport_rust::{
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
+use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
 use tauri::path::BaseDirectory;
 use tauri::Manager;
 use tauri::State;
@@ -224,6 +225,81 @@ fn ensure_request_id(request: &mut FetchDeckRequest) {
     }
 }
 
+fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>> {
+    let about_metadata = AboutMetadataBuilder::new()
+        .name(Some("Waves Browser"))
+        .version(Some(env!("CARGO_PKG_VERSION")))
+        .short_version(Some("1.x"))
+        .comments(Some("A WAP/WML based browser 1.x"))
+        .copyright(Some("Copyright (c) 2026 WaveNav"))
+        .build();
+
+    let mut menu = MenuBuilder::new(app);
+
+    #[cfg(target_os = "macos")]
+    {
+        menu = menu.item(
+            &SubmenuBuilder::new(app, "Waves Browser")
+                .about(Some(about_metadata.clone()))
+                .separator()
+                .services()
+                .separator()
+                .hide()
+                .hide_others()
+                .show_all()
+                .separator()
+                .quit()
+                .build()?,
+        );
+    }
+
+    #[cfg(not(any(
+        target_os = "linux",
+        target_os = "dragonfly",
+        target_os = "freebsd",
+        target_os = "netbsd",
+        target_os = "openbsd"
+    )))]
+    {
+        menu = menu.item(
+            &SubmenuBuilder::new(app, "File")
+                .close_window()
+                .separator()
+                .quit()
+                .build()?,
+        );
+    }
+
+    menu = menu
+        .item(
+            &SubmenuBuilder::new(app, "Edit")
+                .undo()
+                .redo()
+                .separator()
+                .cut()
+                .copy()
+                .paste()
+                .separator()
+                .select_all()
+                .build()?,
+        )
+        .item(
+            &SubmenuBuilder::new(app, "Window")
+                .minimize()
+                .maximize()
+                .separator()
+                .close_window()
+                .build()?,
+        )
+        .item(
+            &SubmenuBuilder::new(app, "Help")
+                .about(Some(about_metadata))
+                .build()?,
+        );
+
+    menu.build()
+}
+
 #[tauri::command]
 fn engine_load_deck(
     state: State<AppState>,
@@ -367,6 +443,7 @@ fn command_engine_clear_external_navigation_intent(
 pub fn run() {
     tauri::Builder::default()
         .manage(AppState::default())
+        .menu(build_app_menu)
         .setup(|app| {
             configure_bundled_wbxml_decoder(app.handle())?;
             preflight_wbxml_decoder_available()?;

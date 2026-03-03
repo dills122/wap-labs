@@ -20,6 +20,8 @@ Implemented now:
   - output: `contracts/generated/tauri-host-client.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
+- App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
+- Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)
@@ -69,6 +71,12 @@ Regenerate host contract types from Rust:
 
 ```bash
 pnpm --dir browser run contracts:codegen
+```
+
+Regenerate Tauri app icons from canonical SVG source:
+
+```bash
+pnpm --dir browser run tauri:icons
 ```
 
 ## Transport runtime knobs
