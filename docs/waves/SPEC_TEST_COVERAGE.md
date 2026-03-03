@@ -24,10 +24,10 @@ Legend:
 | `RQ-RMK-009` compatibility/robustness behavior | `partial` | host sample `parser-robustness.wml`; fixture harness baseline implemented in `A4-02`, broader corpus expansion remains planned |
 | `RQ-WAE-016`, `RQ-WAE-017` history and back semantics | `partial` | engine `navigateBack` baseline + host sample `history-back-stack.wml`; browser integration scenarios remain planned |
 | `RQ-WMLS-001..003` external-call/pragma/url invocation model | `partial` | Phase W fixtures + engine tests for `script:` link resolution and deferred invocation boundaries; access-control/pragma conformance follow-up tracked in `W0-08` + `W1-03` |
-| `RQ-WMLS-004..006` function/local/conversion semantics | `partial` | engine WaveScript VM tests in `engine-wasm/engine/src/wavescript/vm.rs` and invocation tests in `engine-wasm/engine/src/lib.rs`; broader spec parity closure tracked in `W1-04` |
+| `RQ-WMLS-004..006` function/local/conversion semantics | `partial` | engine WaveScript VM tests in `engine-wasm/engine/src/wavescript/vm.rs` + `vm_tests.rs` and invocation tests in `engine-wasm/engine/src/engine_tests.rs`; broader spec parity closure tracked in `W1-04` |
 | `RQ-WMLS-008..010` bytecode format/verification/error model | `partial` | decoder bounds + VM trap tests in `engine-wasm/engine/src/wavescript/decoder.rs` and `vm.rs`; structural verification gate closure tracked in `W0-06` + `W1-02` |
 | `RQ-WMLS-011` WMLScript content-type routing | `planned` | transport/host contract and fixture closure tracked in `W1-01` |
-| `RQ-WMLS-017..022` WMLBrowser/dialog/timer/refresh semantics | `partial` | `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs` + runtime effect tests in `engine-wasm/engine/src/lib.rs`; `newContext/getCurrentCard/refresh` closure tracked in `W0-07` |
+| `RQ-WMLS-017..022` WMLBrowser/dialog/timer/refresh semantics | `partial` | `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs` + `wmlbrowser_tests.rs` and runtime effect tests in `engine-wasm/engine/src/engine_tests.rs`; `newContext/getCurrentCard/refresh` closure tracked in `W0-07` |
 | WAP-191 section `11` text/layout semantics (`p`, `br`, `table`, `pre`, `img`) | `planned` | `docs/wml-engine/work-items.md` follow-ups `B5-02`, `B5-03`, `C5-01`, `C5-02` |
 | WAP-191 section `12.5` inter-card process ordering (`go/prev/refresh/noop`) | `planned` | `A5-02` + Waves integration ticket `R0-02` |
 | WAP-191 section `15` conformance ID closure (`WML-01..75`) | `planned` | Waves ticket `R0-01` (matrix + CI gate) |

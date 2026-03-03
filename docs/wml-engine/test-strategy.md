@@ -35,7 +35,7 @@ Create fixtures under `engine-wasm/engine/tests/fixtures/`:
 - `do-go-prev-refresh.wml` (phase 2)
 - `variables-substitution.wml` (phase 3)
 
-Current implemented fixture set lives under `engine-wasm/engine/tests/fixtures/phase-a/` and is validated by snapshot/state regression tests in `engine-wasm/engine/src/lib.rs`.
+Current implemented fixture set lives under `engine-wasm/engine/tests/fixtures/phase-a/` and is validated by snapshot/state regression tests in `engine-wasm/engine/src/engine_tests.rs`.
 
 Each fixture stores expected:
 

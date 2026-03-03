@@ -2334,3 +2334,82 @@ fn phase_a_missing_fragment_fixture_keeps_runtime_state_stable() {
     assert_eq!(engine.active_card_id().expect("active card"), "home");
     assert_eq!(engine.focused_link_index(), 0);
 }
+
+#[test]
+fn m1_02_load_deck_context_public_api_sets_metadata_and_state() {
+    let mut engine = WmlEngine::new();
+
+    engine
+        .load_deck_context(
+            SAMPLE,
+            "http://example.test/decks/start.wml",
+            "application/vnd.wap.xhtml+xml",
+            Some("AAECAw==".to_string()),
+        )
+        .expect("loadDeckContext should succeed");
+
+    assert_eq!(engine.base_url(), "http://example.test/decks/start.wml");
+    assert_eq!(engine.content_type(), "application/vnd.wap.xhtml+xml");
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert_eq!(engine.focused_link_index(), 0);
+
+    let trace = engine.trace_entries();
+    assert!(!trace.is_empty(), "trace should contain LOAD_DECK entry");
+    assert_eq!(trace[0].kind, "LOAD_DECK");
+}
+
+#[test]
+fn m1_02_handle_key_render_and_navigate_back_public_api_flow() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(FIXTURE_BASIC_TWO_CARD)
+        .expect("fixture should load");
+
+    let initial_render = engine.render().expect("initial render");
+    assert_eq!(initial_render.draw.len(), 2);
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert_eq!(engine.focused_link_index(), 0);
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should follow fragment");
+    let after_enter_render = engine.render().expect("render after enter");
+    assert_eq!(engine.active_card_id().expect("active card"), "next");
+    assert!(!after_enter_render.draw.is_empty());
+
+    assert!(engine.navigate_back(), "navigateBack should pop history");
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert_eq!(engine.focused_link_index(), 0);
+    assert!(
+        !engine.navigate_back(),
+        "navigateBack should be false when empty"
+    );
+}
+
+#[test]
+fn m1_02_script_invocation_public_outcome_regression() {
+    let mut engine = WmlEngine::new();
+    engine.load_deck(SAMPLE).expect("sample deck should load");
+    engine.register_script_unit("noop.wmlsc".to_string(), vec![0x00]);
+
+    let invocation = engine
+        .invoke_script_ref("noop.wmlsc".to_string())
+        .expect("invokeScriptRef should succeed");
+    assert_eq!(
+        invocation.navigation_intent,
+        ScriptNavigationIntentLiteral::None
+    );
+    assert!(!invocation.requires_refresh);
+    assert_eq!(invocation.result, ScriptValueLiteral::String(String::new()));
+
+    assert_eq!(engine.last_script_execution_ok(), Some(true));
+    assert_eq!(engine.last_script_execution_trap(), None);
+    assert_eq!(
+        engine.last_script_execution_error_class(),
+        Some("none".to_string())
+    );
+    assert_eq!(
+        engine.last_script_execution_error_category(),
+        Some("none".to_string())
+    );
+}

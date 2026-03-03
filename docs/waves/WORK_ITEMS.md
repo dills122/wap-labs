@@ -58,7 +58,7 @@ Next execution block is architecture hardening across all active libraries befor
 2. `M1-04` Transport module decomposition and mapping isolation.
 3. `M1-06` CI guardrails for contract drift and worklist drift.
 4. `M1-07` Parser robustness hardening without feature-scope expansion.
-5. `M1-08` Split high-churn files into boundary modules.
+5. `M1-08` Split high-churn files into boundary modules (engine scope complete; browser/transport follow-ups remain).
 6. `M1-09` Engine-host frame interface migration execution.
 7. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
 

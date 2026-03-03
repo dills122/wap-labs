@@ -52,9 +52,11 @@ Status keys:
 
 ### M1-02 Engine native/wasm parity regression suite for critical flows
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Files`:
-- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/engine/src/engine_public_api.rs`
+- `engine-wasm/engine/src/engine_wasm_bindings.rs`
+- `engine-wasm/engine/src/engine_tests.rs`
 - `engine-wasm/contracts/wml-engine.ts`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 3. `Build`:
@@ -63,6 +65,8 @@ Status keys:
 - `cd engine-wasm/engine && cargo test`
 5. `Accept`:
 - Parity-critical behavior is covered by deterministic tests and mapped in coverage docs.
+6. `Notes`:
+- Initial public-API regression coverage landed for `loadDeckContext`, `handleKey`, `navigateBack`, `render`, and script invocation outcomes in `engine-wasm/engine/src/engine_tests.rs`.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
@@ -127,7 +131,10 @@ Status keys:
 
 1. `Status`: `todo`
 2. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/mod.rs`
+- `engine-wasm/engine/src/parser/wml_parser/xml.rs`
+- `engine-wasm/engine/src/parser/wml_parser/actions.rs`
+- `engine-wasm/engine/src/parser/wml_parser/nodes.rs`
 - `engine-wasm/engine/tests/fixtures/*`
 3. `Build`:
 - Replace manual tag scanning with an existing Rust XML parser/tokenizer backend.
@@ -142,9 +149,11 @@ Status keys:
 
 ### M1-08 Split high-churn files into boundary modules
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Files`:
-- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/engine/src/lib.rs` (done)
+- `engine-wasm/engine/src/engine_runtime_internal.rs` + `engine_runtime_internal/*` (done)
+- `engine-wasm/engine/src/parser/wml_parser/*` (done)
 - `browser/frontend/src/main.ts`
 - `browser/src-tauri/src/lib.rs`
 - `transport-rust/src/lib.rs`
@@ -154,6 +163,9 @@ Status keys:
 - Existing project test/build commands remain green.
 5. `Accept`:
 - High-churn files are reduced and responsibilities are easier to review.
+6. `Notes`:
+- Engine-side decomposition has landed and merged.
+- Remaining M1-08 scope is browser + transport boundary decomposition.
 
 ### M1-09 Engine-host frame interface migration execution
 
@@ -180,7 +192,7 @@ Status keys:
 
 1. `Status`: `done`
 2. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/xml.rs`
 3. `Build`:
 - Enforce strict tag-boundary checks so `<prev/>` is not parsed as `<p...>`.
 4. `Tests`:
