@@ -24,6 +24,8 @@ async function main() {
   const pressUpButton = document.querySelector<HTMLButtonElement>('#press-up');
   const pressDownButton = document.querySelector<HTMLButtonElement>('#press-down');
   const pressEnterButton = document.querySelector<HTMLButtonElement>('#press-enter');
+  const tick100msButton = document.querySelector<HTMLButtonElement>('#tick-100ms');
+  const tick1sButton = document.querySelector<HTMLButtonElement>('#tick-1s');
   const clearIntentButton = document.querySelector<HTMLButtonElement>('#clear-intent');
   const copyIntentButton = document.querySelector<HTMLButtonElement>('#copy-intent');
   const probeExecuteScriptButton =
@@ -62,6 +64,8 @@ async function main() {
     !pressUpButton ||
     !pressDownButton ||
     !pressEnterButton ||
+    !tick100msButton ||
+    !tick1sButton ||
     !clearIntentButton ||
     !copyIntentButton ||
     !probeExecuteScriptButton ||
@@ -238,6 +242,20 @@ async function main() {
   pressUpButton.addEventListener('click', () => pressKey('up'));
   pressDownButton.addEventListener('click', () => pressKey('down'));
   pressEnterButton.addEventListener('click', () => pressKey('enter'));
+  const tickTime = (deltaMs: number) => {
+    try {
+      host.advanceTimeMs(deltaMs);
+      const snapshot = updateRuntimeState();
+      status.textContent = `Advanced timer clock by ${deltaMs}ms. Active card: ${snapshot.activeCardId}`;
+      appendEvent(`TICK ${deltaMs}ms`, snapshot);
+    } catch (error) {
+      status.textContent = `Tick error (${deltaMs}ms): ${String(error)}`;
+      const snapshot = updateRuntimeState();
+      appendEvent(`TICK_ERROR ${deltaMs}ms ${String(error)}`, snapshot);
+    }
+  };
+  tick100msButton.addEventListener('click', () => tickTime(100));
+  tick1sButton.addEventListener('click', () => tickTime(1000));
   pressBackButton.addEventListener('click', () => {
     const handled = host.navigateBack();
     const snapshot = updateRuntimeState();

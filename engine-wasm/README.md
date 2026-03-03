@@ -133,6 +133,7 @@ Partially supported (phase W0 baseline):
 - `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string)`
 - `render(): RenderList`
 - `handleKey(key: 'up' | 'down' | 'enter')`
+- `advanceTimeMs(deltaMs: number)` (deterministic timer simulation)
 - `navigateToCard(id: string)`
 
 Additional helpers:
