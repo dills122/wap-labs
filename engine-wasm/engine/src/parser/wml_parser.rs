@@ -2,6 +2,8 @@ use crate::runtime::card::Card;
 use crate::runtime::deck::Deck;
 use crate::runtime::node::{InlineNode, Node};
 
+type CardActions = (Option<String>, Option<String>, Option<String>);
+
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     let wml_body = extract_wml_body(xml)?;
     let mut cards = Vec::new();
@@ -44,9 +46,7 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     Ok(Deck::new(cards))
 }
 
-fn parse_card_actions(
-    body: &str,
-) -> Result<(Option<String>, Option<String>, Option<String>), String> {
+fn parse_card_actions(body: &str) -> Result<CardActions, String> {
     let accept_action_href = parse_do_accept_href(body)?;
     let onenterforward_href = parse_onevent_href(body, "onenterforward")?;
     let onenterbackward_href = parse_onevent_href(body, "onenterbackward")?;
