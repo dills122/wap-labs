@@ -1,0 +1,27 @@
+<wml>
+  <card id="home">
+    <a href="#accept-go">Accept go</a>
+    <a href="#accept-prev">Accept prev</a>
+    <a href="#accept-refresh">Accept refresh</a>
+    <a href="#accept-broken">Accept broken</a>
+  </card>
+  <card id="accept-go">
+    <do type="accept"><go href="#target"/></do>
+    <p>Enter should run accept go.</p>
+  </card>
+  <card id="accept-prev">
+    <do type="accept"><prev/></do>
+    <p>Enter should run accept prev.</p>
+  </card>
+  <card id="accept-refresh">
+    <do type="accept"><refresh/></do>
+    <p>Enter should run accept refresh.</p>
+  </card>
+  <card id="accept-broken">
+    <do type="accept"><go href="#missing"/></do>
+    <p>Enter should fail and keep this card active.</p>
+  </card>
+  <card id="target">
+    <p>Reached via accept go.</p>
+  </card>
+</wml>

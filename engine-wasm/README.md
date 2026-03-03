@@ -124,6 +124,7 @@ Partially supported (phase W0 baseline):
 - `WMLBrowser` subset: `getVar`, `setVar`, `go`, `prev`
 - Deferred post-invocation navigation application (`go`/`prev`)
 - Card-entry events: `<onevent type="onenterforward">` and `<onevent type="onenterbackward">` with `<go href>`
+- Task-model `prev`/`refresh` support in `<do type="accept">` and `<onevent type="onenterforward|onenterbackward">`
 
 ## WASM API
 

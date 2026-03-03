@@ -1,0 +1,28 @@
+<!--
+label: Refresh + Rollback
+description: Demonstrates task-model `<refresh/>` execution and rollback behavior when entry-task actions fail.
+goal: Verify refresh does not mutate navigation state and failed onenterforward actions leave invoking card current.
+work-items: A5-02
+spec-items: WML-R-012,WML-R-015,WML-R-017
+testing-ac:
+- Press Enter on "To refresh card", then Enter again; activeCardId should stay refresh-card.
+- Press Back; activeCardId should return to home.
+- Press Down then Enter on "Broken forward entry"; load should fail and activeCardId should remain home.
+-->
+<wml>
+  <card id="home">
+    <p>Refresh + rollback demo.</p>
+    <a href="#refresh-card">To refresh card</a>
+    <a href="#broken-forward">Broken forward entry</a>
+  </card>
+
+  <card id="refresh-card">
+    <do type="accept"><refresh/></do>
+    <p>Enter invokes refresh and stays on this card.</p>
+  </card>
+
+  <card id="broken-forward">
+    <onevent type="onenterforward"><go href="#missing"/></onevent>
+    <p>This card should never become active because entry action fails.</p>
+  </card>
+</wml>

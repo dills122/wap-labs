@@ -1,8 +1,12 @@
-use crate::runtime::card::Card;
+use crate::runtime::card::{Card, CardTaskAction};
 use crate::runtime::deck::Deck;
 use crate::runtime::node::{InlineNode, Node};
 
-type CardActions = (Option<String>, Option<String>, Option<String>);
+type CardActions = (
+    Option<CardTaskAction>,
+    Option<CardTaskAction>,
+    Option<CardTaskAction>,
+);
 
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     let wml_body = extract_wml_body(xml)?;
@@ -25,15 +29,15 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             .ok_or_else(|| format!("Missing closing </card> for card {id}"))?;
 
         let card_body = &wml_body[open_end + 1..close_start];
-        let (accept_action_href, onenterforward_href, onenterbackward_href) =
+        let (accept_action, onenterforward_action, onenterbackward_action) =
             parse_card_actions(card_body)?;
         let nodes = parse_card_nodes(card_body)?;
         cards.push(Card {
             id,
             nodes,
-            accept_action_href,
-            onenterforward_href,
-            onenterbackward_href,
+            accept_action,
+            onenterforward_action,
+            onenterbackward_action,
         });
 
         cursor = close_start + "</card>".len();
@@ -47,17 +51,13 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
 }
 
 fn parse_card_actions(body: &str) -> Result<CardActions, String> {
-    let accept_action_href = parse_do_accept_href(body)?;
-    let onenterforward_href = parse_onevent_href(body, "onenterforward")?;
-    let onenterbackward_href = parse_onevent_href(body, "onenterbackward")?;
-    Ok((
-        accept_action_href,
-        onenterforward_href,
-        onenterbackward_href,
-    ))
+    let accept_action = parse_do_accept_action(body)?;
+    let onenterforward_action = parse_onevent_action(body, "onenterforward")?;
+    let onenterbackward_action = parse_onevent_action(body, "onenterbackward")?;
+    Ok((accept_action, onenterforward_action, onenterbackward_action))
 }
 
-fn parse_do_accept_href(body: &str) -> Result<Option<String>, String> {
+fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "do", cursor) {
         let open_end = body[start..]
@@ -77,11 +77,11 @@ fn parse_do_accept_href(body: &str) -> Result<Option<String>, String> {
         if do_type == "accept" {
             if let Some(href) = extract_attr(open_tag, "href") {
                 if !href.is_empty() {
-                    return Ok(Some(href));
+                    return Ok(Some(CardTaskAction::Go { href }));
                 }
             }
-            if let Some(href) = parse_go_href(do_body) {
-                return Ok(Some(href));
+            if let Some(action) = parse_first_task_action(do_body)? {
+                return Ok(Some(action));
             }
         }
 
@@ -91,7 +91,10 @@ fn parse_do_accept_href(body: &str) -> Result<Option<String>, String> {
     Ok(None)
 }
 
-fn parse_onevent_href(body: &str, target_event_type: &str) -> Result<Option<String>, String> {
+fn parse_onevent_action(
+    body: &str,
+    target_event_type: &str,
+) -> Result<Option<CardTaskAction>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "onevent", cursor) {
         let open_end = body[start..]
@@ -109,7 +112,7 @@ fn parse_onevent_href(body: &str, target_event_type: &str) -> Result<Option<Stri
             .unwrap_or_default()
             .to_ascii_lowercase();
         if event_type == target_event_type {
-            return Ok(parse_go_href(onevent_body));
+            return parse_first_task_action(onevent_body);
         }
 
         cursor = close_start + "</onevent>".len();
@@ -118,15 +121,57 @@ fn parse_onevent_href(body: &str, target_event_type: &str) -> Result<Option<Stri
     Ok(None)
 }
 
-fn parse_go_href(body: &str) -> Option<String> {
-    let start = find_tag_from(body, "go", 0)?;
-    let open_end = body[start..].find('>').map(|idx| start + idx)?;
-    let open_tag = &body[start..=open_end];
-    let href = extract_attr(open_tag, "href")?;
-    if href.is_empty() {
-        return None;
+fn parse_first_task_action(body: &str) -> Result<Option<CardTaskAction>, String> {
+    let mut cursor = 0usize;
+    while cursor < body.len() {
+        let next_go = find_tag_from(body, "go", cursor);
+        let next_prev = find_tag_from(body, "prev", cursor);
+        let next_refresh = find_tag_from(body, "refresh", cursor);
+        let Some((tag, start)) = choose_next_task_tag(next_go, next_prev, next_refresh) else {
+            break;
+        };
+
+        let open_end = body[start..]
+            .find('>')
+            .map(|idx| start + idx)
+            .ok_or_else(|| format!("Malformed <{tag}> tag"))?;
+        let open_tag = &body[start..=open_end];
+        match tag {
+            "go" => {
+                if let Some(href) = extract_attr(open_tag, "href") {
+                    if !href.is_empty() {
+                        return Ok(Some(CardTaskAction::Go { href }));
+                    }
+                }
+            }
+            "prev" => return Ok(Some(CardTaskAction::Prev)),
+            "refresh" => return Ok(Some(CardTaskAction::Refresh)),
+            _ => {}
+        }
+        cursor = open_end + 1;
     }
-    Some(href)
+    Ok(None)
+}
+
+fn choose_next_task_tag(
+    next_go: Option<usize>,
+    next_prev: Option<usize>,
+    next_refresh: Option<usize>,
+) -> Option<(&'static str, usize)> {
+    let mut candidate: Option<(&'static str, usize)> = None;
+    for (tag, pos) in [
+        ("go", next_go),
+        ("prev", next_prev),
+        ("refresh", next_refresh),
+    ] {
+        if let Some(pos) = pos {
+            match candidate {
+                Some((_, current_pos)) if current_pos <= pos => {}
+                _ => candidate = Some((tag, pos)),
+            }
+        }
+    }
+    candidate
 }
 
 fn extract_wml_body(xml: &str) -> Result<&str, String> {
@@ -367,9 +412,10 @@ fn decode_entities(input: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        extract_wml_body, parse_card_nodes, parse_do_accept_href, parse_go_href,
-        parse_inline_nodes, parse_onevent_href, parse_wml,
+        extract_wml_body, parse_card_nodes, parse_do_accept_action, parse_first_task_action,
+        parse_inline_nodes, parse_onevent_action, parse_wml,
     };
+    use crate::runtime::card::CardTaskAction;
     use crate::runtime::node::{InlineNode, Node};
 
     #[test]
@@ -564,11 +610,23 @@ mod tests {
 
         let deck = parse_wml(xml).expect("deck should parse");
         assert_eq!(
-            deck.cards[0].accept_action_href.as_deref(),
-            Some("script:calc.wmlsc#main")
+            deck.cards[0].accept_action,
+            Some(CardTaskAction::Go {
+                href: "script:calc.wmlsc#main".to_string(),
+            })
         );
-        assert_eq!(deck.cards[0].onenterforward_href.as_deref(), Some("#next"));
-        assert_eq!(deck.cards[0].onenterbackward_href.as_deref(), Some("#back"));
+        assert_eq!(
+            deck.cards[0].onenterforward_action,
+            Some(CardTaskAction::Go {
+                href: "#next".to_string(),
+            })
+        );
+        assert_eq!(
+            deck.cards[0].onenterbackward_action,
+            Some(CardTaskAction::Go {
+                href: "#back".to_string(),
+            })
+        );
     }
 
     #[test]
@@ -605,41 +663,81 @@ mod tests {
     }
 
     #[test]
-    fn helper_parse_go_href_handles_missing_or_empty_href() {
-        assert_eq!(parse_go_href("<go href=\"#ok\"/>"), Some("#ok".to_string()));
-        assert_eq!(parse_go_href("<go/>"), None);
-        assert_eq!(parse_go_href("<go href=\"\"/>"), None);
-        assert_eq!(parse_go_href("<noop/>"), None);
-        assert_eq!(parse_go_href("<go href=\"#broken\""), None);
+    fn helper_parse_first_task_action_handles_go_prev_and_malformed() {
+        assert_eq!(
+            parse_first_task_action("<go href=\"#ok\"/>").expect("go should parse"),
+            Some(CardTaskAction::Go {
+                href: "#ok".to_string(),
+            })
+        );
+        assert_eq!(
+            parse_first_task_action("<prev/>").expect("prev should parse"),
+            Some(CardTaskAction::Prev)
+        );
+        assert_eq!(
+            parse_first_task_action("<refresh/>").expect("refresh should parse"),
+            Some(CardTaskAction::Refresh)
+        );
+        assert_eq!(
+            parse_first_task_action("<go/><prev/>").expect("empty go should fall through"),
+            Some(CardTaskAction::Prev)
+        );
+        assert_eq!(
+            parse_first_task_action("<go/><refresh/>")
+                .expect("empty go should fall through to refresh"),
+            Some(CardTaskAction::Refresh)
+        );
+        assert_eq!(
+            parse_first_task_action("<noop/>").expect("no task should parse"),
+            None
+        );
+        let malformed_go =
+            parse_first_task_action("<go href=\"#broken\"").expect_err("malformed go must fail");
+        assert!(malformed_go.contains("Malformed <go> tag"));
     }
 
     #[test]
-    fn helper_parse_do_accept_href_exercises_direct_and_error_paths() {
+    fn helper_parse_do_accept_action_exercises_direct_and_error_paths() {
         assert_eq!(
-            parse_do_accept_href("<do type=\"accept\" href=\"#direct\"></do>")
+            parse_do_accept_action("<do type=\"accept\" href=\"#direct\"></do>")
                 .expect("direct href should parse"),
-            Some("#direct".to_string())
+            Some(CardTaskAction::Go {
+                href: "#direct".to_string(),
+            })
         );
 
         assert_eq!(
-            parse_do_accept_href("<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>")
+            parse_do_accept_action("<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>")
                 .expect("fallback go href should parse"),
-            Some("#fallback".to_string())
+            Some(CardTaskAction::Go {
+                href: "#fallback".to_string(),
+            })
         );
 
-        let malformed = parse_do_accept_href("<do type=\"accept\"")
+        assert_eq!(
+            parse_do_accept_action("<do type=\"accept\"><prev/></do>")
+                .expect("fallback prev should parse"),
+            Some(CardTaskAction::Prev)
+        );
+        assert_eq!(
+            parse_do_accept_action("<do type=\"accept\"><refresh/></do>")
+                .expect("fallback refresh should parse"),
+            Some(CardTaskAction::Refresh)
+        );
+
+        let malformed = parse_do_accept_action("<do type=\"accept\"")
             .expect_err("malformed do open tag must fail");
         assert!(malformed.contains("Malformed <do> opening tag"));
 
-        let missing_close = parse_do_accept_href("<do type=\"accept\">")
+        let missing_close = parse_do_accept_action("<do type=\"accept\">")
             .expect_err("missing do close tag must fail");
         assert!(missing_close.contains("Missing closing </do> tag"));
     }
 
     #[test]
-    fn helper_parse_onevent_href_exercises_non_matching_and_error_paths() {
+    fn helper_parse_onevent_action_exercises_non_matching_and_error_paths() {
         assert_eq!(
-            parse_onevent_href(
+            parse_onevent_action(
                 "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>",
                 "onenterforward"
             )
@@ -648,29 +746,50 @@ mod tests {
         );
 
         assert_eq!(
-            parse_onevent_href(
+            parse_onevent_action(
                 "<onevent type=\"onenterforward\"><go href=\"#next\"/></onevent>",
                 "onenterforward"
             )
             .expect("matching onevent should parse"),
-            Some("#next".to_string())
+            Some(CardTaskAction::Go {
+                href: "#next".to_string(),
+            })
         );
 
         assert_eq!(
-            parse_onevent_href(
+            parse_onevent_action(
                 "<onevent type=\"onenterbackward\"><go href=\"#prev\"/></onevent>",
                 "onenterbackward"
             )
             .expect("matching backward onevent should parse"),
-            Some("#prev".to_string())
+            Some(CardTaskAction::Go {
+                href: "#prev".to_string(),
+            })
         );
 
-        let malformed = parse_onevent_href("<onevent type=\"onenterforward\"", "onenterforward")
+        assert_eq!(
+            parse_onevent_action(
+                "<onevent type=\"onenterforward\"><prev/></onevent>",
+                "onenterforward"
+            )
+            .expect("prev task onevent should parse"),
+            Some(CardTaskAction::Prev)
+        );
+        assert_eq!(
+            parse_onevent_action(
+                "<onevent type=\"onenterforward\"><refresh/></onevent>",
+                "onenterforward"
+            )
+            .expect("refresh task onevent should parse"),
+            Some(CardTaskAction::Refresh)
+        );
+
+        let malformed = parse_onevent_action("<onevent type=\"onenterforward\"", "onenterforward")
             .expect_err("malformed onevent open tag must fail");
         assert!(malformed.contains("Malformed <onevent> opening tag"));
 
         let missing_close =
-            parse_onevent_href("<onevent type=\"onenterforward\">", "onenterforward")
+            parse_onevent_action("<onevent type=\"onenterforward\">", "onenterforward")
                 .expect_err("missing onevent close tag must fail");
         assert!(missing_close.contains("Missing closing </onevent> tag"));
     }

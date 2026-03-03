@@ -20,6 +20,7 @@ mod wavescript;
 use layout::flow_layout::layout_card;
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
 use parser::wml_parser::parse_wml;
+use runtime::card::CardTaskAction;
 use runtime::deck::Deck;
 use runtime::events::{
     ScriptDialogRequest, ScriptNavigationIntent, ScriptRuntimeEffects, ScriptTimerRequest,
@@ -698,11 +699,11 @@ impl WmlEngine {
 
     fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
         self.push_trace("KEY", format!("key={key}"));
-        let (layout, accept_action_href) = {
+        let (layout, accept_action) = {
             let card = self.active_card_internal()?;
             (
                 layout_card(card, self.viewport_cols, self.focused_link_idx),
-                card.accept_action_href.clone(),
+                card.accept_action.clone(),
             )
         };
         let link_total = layout.links.len();
@@ -716,9 +717,9 @@ impl WmlEngine {
             }
             "enter" => {
                 if link_total == 0 {
-                    if let Some(href) = accept_action_href {
-                        self.push_trace("ACTION_ACCEPT", href.clone());
-                        self.execute_action_href(&href)?;
+                    if let Some(action) = accept_action {
+                        self.push_trace("ACTION_ACCEPT", String::new());
+                        self.execute_card_task_action(&action)?;
                     }
                     return Ok(());
                 }
@@ -742,42 +743,72 @@ impl WmlEngine {
             .card_index(id)
             .ok_or_else(|| "Card id not found".to_string())?;
 
+        let previous_idx = self.active_card_idx;
+        let previous_focus = self.focused_link_idx;
+        let previous_stack_len = self.nav_stack.len();
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
-        self.run_onenterforward_for_active_card()?;
+        if let Err(err) = self.run_onenterforward_for_active_card() {
+            // Roll back all state for deterministic failure behavior on entry-task failures.
+            self.active_card_idx = previous_idx;
+            self.focused_link_idx = previous_focus;
+            self.nav_stack.truncate(previous_stack_len);
+            return Err(err);
+        }
         Ok(())
     }
 
     fn navigate_back_internal(&mut self) -> bool {
-        let Some(previous_idx) = self.nav_stack.pop() else {
+        let rollback_active_idx = self.active_card_idx;
+        let rollback_focus = self.focused_link_idx;
+        let rollback_stack = self.nav_stack.clone();
+        let Some(back_target_idx) = self.nav_stack.pop() else {
             self.push_trace("ACTION_BACK_EMPTY", String::new());
             return false;
         };
 
-        self.active_card_idx = previous_idx;
+        self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
         if let Err(err) = self.run_onenterbackward_for_active_card() {
             self.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
+            self.active_card_idx = rollback_active_idx;
+            self.focused_link_idx = rollback_focus;
+            self.nav_stack = rollback_stack;
         }
         true
     }
 
     fn run_onenterforward_for_active_card(&mut self) -> Result<(), String> {
-        let href = self.active_card_internal()?.onenterforward_href.clone();
-        if let Some(href) = href {
-            self.execute_action_href(&href)?;
+        let action = self.active_card_internal()?.onenterforward_action.clone();
+        if let Some(action) = action {
+            self.execute_card_task_action(&action)?;
         }
         Ok(())
     }
 
     fn run_onenterbackward_for_active_card(&mut self) -> Result<(), String> {
-        let href = self.active_card_internal()?.onenterbackward_href.clone();
-        if let Some(href) = href {
-            self.execute_action_href(&href)?;
+        let action = self.active_card_internal()?.onenterbackward_action.clone();
+        if let Some(action) = action {
+            self.execute_card_task_action(&action)?;
         }
         Ok(())
+    }
+
+    fn execute_card_task_action(&mut self, action: &CardTaskAction) -> Result<(), String> {
+        match action {
+            CardTaskAction::Go { href } => self.execute_action_href(href),
+            CardTaskAction::Prev => {
+                self.push_trace("ACTION_PREV", String::new());
+                self.navigate_back_internal();
+                Ok(())
+            }
+            CardTaskAction::Refresh => {
+                self.push_trace("ACTION_REFRESH", String::new());
+                Ok(())
+            }
+        }
     }
 
     fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
@@ -1388,6 +1419,8 @@ mod tests {
     const FIXTURE_LINK_WRAP: &str = include_str!("../tests/fixtures/phase-a/link-wrap.wml");
     const FIXTURE_MISSING_FRAGMENT: &str =
         include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
+    const FIXTURE_TASK_ACTION_ORDER: &str =
+        include_str!("../tests/fixtures/phase-a/task-action-order.wml");
 
     fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
         let card = engine
@@ -1420,6 +1453,31 @@ mod tests {
         bytes.push(0x03);
         bytes.push(raw.len() as u8);
         bytes.extend_from_slice(raw);
+    }
+
+    fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
+        let kinds: Vec<String> = engine
+            .trace_entries()
+            .into_iter()
+            .map(|entry| entry.kind)
+            .collect();
+        let mut cursor = 0usize;
+        for kind in kinds {
+            if cursor < expected.len() && kind == expected[cursor] {
+                cursor += 1;
+            }
+        }
+        assert_eq!(
+            cursor,
+            expected.len(),
+            "expected trace subsequence {:?} not found in {:?}",
+            expected,
+            engine
+                .trace_entries()
+                .iter()
+                .map(|entry| entry.kind.as_str())
+                .collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -2658,6 +2716,204 @@ mod tests {
     }
 
     #[test]
+    fn enter_accept_prev_action_navigates_back_when_history_exists() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <do type="accept"><prev/></do>
+            <p>Accept should trigger prev.</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to middle");
+        assert_eq!(engine.active_card_id().expect("active card"), "mid");
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept prev should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        let traces = engine.trace_entries();
+        assert!(traces.iter().any(|entry| entry.kind == "ACTION_ACCEPT"));
+        assert!(traces.iter().any(|entry| entry.kind == "ACTION_PREV"));
+        assert!(traces.iter().any(|entry| entry.kind == "ACTION_BACK"));
+    }
+
+    #[test]
+    fn enter_accept_refresh_action_keeps_current_card_and_history() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <do type="accept"><refresh/></do>
+            <p>Accept should refresh without navigation.</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to middle");
+        assert_eq!(engine.active_card_id().expect("active card"), "mid");
+        assert_eq!(engine.nav_stack.len(), 1);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept refresh should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "mid");
+        assert_eq!(engine.nav_stack.len(), 1);
+        let traces = engine.trace_entries();
+        assert!(traces.iter().any(|entry| entry.kind == "ACTION_ACCEPT"));
+        assert!(traces.iter().any(|entry| entry.kind == "ACTION_REFRESH"));
+    }
+
+    #[test]
+    fn fixture_accept_go_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-go");
+        assert_eq!(engine.active_card_id().expect("active card"), "accept-go");
+
+        engine.clear_trace_entries();
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept go should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "target");
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]);
+    }
+
+    #[test]
+    fn fixture_accept_prev_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-prev link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-prev");
+        assert_eq!(engine.active_card_id().expect("active card"), "accept-prev");
+
+        engine.clear_trace_entries();
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept prev should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_trace_kinds_subsequence(
+            &engine,
+            &["KEY", "ACTION_ACCEPT", "ACTION_PREV", "ACTION_BACK"],
+        );
+    }
+
+    #[test]
+    fn fixture_accept_refresh_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-prev link");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-refresh link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-refresh");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-refresh"
+        );
+
+        engine.clear_trace_entries();
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept refresh should succeed");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-refresh"
+        );
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_REFRESH"]);
+    }
+
+    #[test]
+    fn fixture_accept_failure_rolls_back_and_trace_order_is_deterministic() {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(FIXTURE_TASK_ACTION_ORDER)
+            .expect("task-action fixture should load");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-prev link");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-refresh link");
+        engine
+            .handle_key("down".to_string())
+            .expect("down should focus accept-broken link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to accept-broken");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-broken"
+        );
+        assert_eq!(engine.nav_stack.len(), 1);
+
+        engine.clear_trace_entries();
+        let err = engine
+            .handle_key("enter".to_string())
+            .expect_err("accept go #missing should fail");
+        assert!(err.contains("Card id not found"));
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "accept-broken"
+        );
+        assert_eq!(engine.nav_stack.len(), 1);
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]);
+    }
+
+    #[test]
+    fn onenterforward_failure_rolls_back_navigation_state() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterforward"><go href="#missing"/></onevent>
+            <p>Middle</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let err = engine
+            .handle_key("enter".to_string())
+            .expect_err("onenterforward failure should bubble");
+        assert!(err.contains("Card id not found"));
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert_eq!(engine.focused_link_index(), 0);
+        assert!(engine.nav_stack.is_empty());
+    }
+
+    #[test]
     fn navigate_runs_onenterforward_action() {
         let mut engine = WmlEngine::new();
         let xml = r##"
@@ -2724,6 +2980,79 @@ mod tests {
         assert!(traces
             .iter()
             .any(|entry| entry.kind == "ACTION_FRAGMENT" && entry.detail == "rewind"));
+    }
+
+    #[test]
+    fn navigate_back_runs_onenterbackward_prev_action() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterbackward"><prev/></onevent>
+            <a href="#next">To next</a>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to middle");
+        engine
+            .handle_key("enter".to_string())
+            .expect("middle enter should navigate to next");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+
+        assert!(engine.navigate_back(), "back should pop next -> mid");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "home",
+            "mid onenterbackward prev should immediately rewind one more entry"
+        );
+    }
+
+    #[test]
+    fn onenterbackward_failure_rolls_back_back_navigation_state() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterbackward"><go href="#missing"/></onevent>
+            <a href="#next">To next</a>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to middle");
+        engine
+            .handle_key("enter".to_string())
+            .expect("middle enter should navigate to next");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_eq!(engine.nav_stack.len(), 2);
+
+        let handled = engine.navigate_back();
+        assert!(handled, "back should report handled when history exists");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "next",
+            "failed onenterbackward action should roll back back-navigation state"
+        );
+        assert_eq!(engine.nav_stack.len(), 2);
+        let traces = engine.trace_entries();
+        assert!(traces
+            .iter()
+            .any(|entry| entry.kind == "ACTION_ONENTERBACKWARD_ERROR"));
     }
 
     #[test]

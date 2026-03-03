@@ -1,0 +1,44 @@
+<!--
+label: Task Order + Rollback
+description: Exercises accept-task ordering for go/prev/refresh and failure rollback when task navigation targets are invalid.
+goal: Validate deterministic action trace ordering and no partial state mutation on failed task actions.
+work-items: A5-02
+spec-items: WML-R-012,WML-R-015,WML-R-017
+testing-ac:
+- Enter "Accept go" then Enter again; activeCardId should become target.
+- Back to home, enter "Accept prev" then Enter again; activeCardId should become home.
+- Enter "Accept refresh" then Enter; activeCardId should stay accept-refresh.
+- Enter "Accept broken" then Enter; action should error and activeCardId should remain accept-broken.
+-->
+<wml>
+  <card id="home">
+    <a href="#accept-go">Accept go</a>
+    <a href="#accept-prev">Accept prev</a>
+    <a href="#accept-refresh">Accept refresh</a>
+    <a href="#accept-broken">Accept broken</a>
+  </card>
+
+  <card id="accept-go">
+    <do type="accept"><go href="#target"/></do>
+    <p>Enter should run accept go.</p>
+  </card>
+
+  <card id="accept-prev">
+    <do type="accept"><prev/></do>
+    <p>Enter should run accept prev.</p>
+  </card>
+
+  <card id="accept-refresh">
+    <do type="accept"><refresh/></do>
+    <p>Enter should run accept refresh.</p>
+  </card>
+
+  <card id="accept-broken">
+    <do type="accept"><go href="#missing"/></do>
+    <p>Enter should fail and keep this card active.</p>
+  </card>
+
+  <card id="target">
+    <p>Reached via accept go.</p>
+  </card>
+</wml>
