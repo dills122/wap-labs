@@ -69,6 +69,15 @@ Prefer work that improves:
 - If scope creep is needed, document it clearly as follow-up work.
 - Keep changes localized; avoid “while here” rewrites.
 
+## Feature branch + PR metadata
+
+- Cut a feature branch when work is not a trivial one-file typo/docs fix, or when behavior/tests/contracts/docs change in any runtime layer.
+- For MVP engine/runtime feature work, assume a feature branch by default.
+- When proposing or completing a feature change, provide at least:
+  - suggested branch name
+  - suggested PR title/message
+- Also include a concise commit message recommendation when the change is ready to land.
+
 ## Repo conventions
 
 - Follow `.editorconfig` for whitespace and indentation.
