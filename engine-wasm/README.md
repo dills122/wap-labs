@@ -4,7 +4,7 @@ Rust WML runtime engine with dual targets (native + WebAssembly) (MVP).
 
 ## Objective
 
-Run the WaveNav WML deck/card runtime in the Electron renderer and emit a host-consumable render list.
+Run the WaveNav WML deck/card runtime in Waves host environments (WASM browser harness and native/Tauri host path) and emit host-consumable structured render output.
 
 ## Full Environment Setup
 
