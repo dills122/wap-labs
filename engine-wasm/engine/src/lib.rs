@@ -32,8 +32,6 @@ use runtime::deck::Deck;
 use runtime::events::{
     ScriptDialogRequest, ScriptNavigationIntent, ScriptRuntimeEffects, ScriptTimerRequest,
 };
-use std::mem;
-use url::Url;
 use wavescript::decoder::{decode_compilation_unit, DecodeError};
 use wavescript::stdlib::wmlbrowser::WmlBrowserHost;
 use wavescript::value::ScriptValue;
