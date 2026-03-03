@@ -6,6 +6,8 @@ type CardActions = (
     Option<CardTaskAction>,
     Option<CardTaskAction>,
     Option<CardTaskAction>,
+    Option<CardTaskAction>,
+    Option<u32>,
 );
 
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
@@ -29,8 +31,13 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             .ok_or_else(|| format!("Missing closing </card> for card {id}"))?;
 
         let card_body = &wml_body[open_end + 1..close_start];
-        let (accept_action, onenterforward_action, onenterbackward_action) =
-            parse_card_actions(card_body)?;
+        let (
+            accept_action,
+            onenterforward_action,
+            onenterbackward_action,
+            ontimer_action,
+            timer_value_ds,
+        ) = parse_card_actions(card_body)?;
         let nodes = parse_card_nodes(card_body)?;
         cards.push(Card {
             id,
@@ -38,6 +45,8 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             accept_action,
             onenterforward_action,
             onenterbackward_action,
+            ontimer_action,
+            timer_value_ds,
         });
 
         cursor = close_start + "</card>".len();
@@ -54,7 +63,15 @@ fn parse_card_actions(body: &str) -> Result<CardActions, String> {
     let accept_action = parse_do_accept_action(body)?;
     let onenterforward_action = parse_onevent_action(body, "onenterforward")?;
     let onenterbackward_action = parse_onevent_action(body, "onenterbackward")?;
-    Ok((accept_action, onenterforward_action, onenterbackward_action))
+    let ontimer_action = parse_onevent_action(body, "ontimer")?;
+    let timer_value_ds = parse_timer_value_ds(body)?;
+    Ok((
+        accept_action,
+        onenterforward_action,
+        onenterbackward_action,
+        ontimer_action,
+        timer_value_ds,
+    ))
 }
 
 fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction>, String> {
@@ -172,6 +189,24 @@ fn choose_next_task_tag(
         }
     }
     candidate
+}
+
+fn parse_timer_value_ds(body: &str) -> Result<Option<u32>, String> {
+    let mut cursor = 0usize;
+    while let Some(start) = find_tag_from(body, "timer", cursor) {
+        let open_end = body[start..]
+            .find('>')
+            .map(|idx| start + idx)
+            .ok_or_else(|| "Malformed <timer> tag".to_string())?;
+        let open_tag = &body[start..=open_end];
+        if let Some(raw) = extract_attr(open_tag, "value") {
+            if let Ok(value_ds) = raw.trim().parse::<u32>() {
+                return Ok(Some(value_ds));
+            }
+        }
+        cursor = open_end + 1;
+    }
+    Ok(None)
 }
 
 fn extract_wml_body(xml: &str) -> Result<&str, String> {
@@ -413,7 +448,7 @@ fn decode_entities(input: &str) -> String {
 mod tests {
     use super::{
         extract_wml_body, parse_card_nodes, parse_do_accept_action, parse_first_task_action,
-        parse_inline_nodes, parse_onevent_action, parse_wml,
+        parse_inline_nodes, parse_onevent_action, parse_timer_value_ds, parse_wml,
     };
     use crate::runtime::card::CardTaskAction;
     use crate::runtime::node::{InlineNode, Node};
@@ -601,10 +636,15 @@ mod tests {
             <onevent type="onenterbackward">
               <go href="#back"/>
             </onevent>
+            <onevent type="ontimer">
+              <go href="#timer"/>
+            </onevent>
+            <timer value="0"/>
             <p>Home</p>
           </card>
           <card id="next"><p>Next</p></card>
           <card id="back"><p>Back</p></card>
+          <card id="timer"><p>Timer</p></card>
         </wml>
         "##;
 
@@ -627,6 +667,13 @@ mod tests {
                 href: "#back".to_string(),
             })
         );
+        assert_eq!(
+            deck.cards[0].ontimer_action,
+            Some(CardTaskAction::Go {
+                href: "#timer".to_string(),
+            })
+        );
+        assert_eq!(deck.cards[0].timer_value_ds, Some(0));
     }
 
     #[test]
@@ -792,6 +839,25 @@ mod tests {
             parse_onevent_action("<onevent type=\"onenterforward\">", "onenterforward")
                 .expect_err("missing onevent close tag must fail");
         assert!(missing_close.contains("Missing closing </onevent> tag"));
+    }
+
+    #[test]
+    fn helper_parse_timer_value_ds_handles_valid_invalid_and_malformed() {
+        assert_eq!(
+            parse_timer_value_ds("<timer value=\"10\"/>").expect("timer should parse"),
+            Some(10)
+        );
+        assert_eq!(
+            parse_timer_value_ds("<timer value=\"x\"/>").expect("invalid timer should be ignored"),
+            None
+        );
+        assert_eq!(
+            parse_timer_value_ds("<p>No timer</p>").expect("missing timer should parse"),
+            None
+        );
+        let malformed = parse_timer_value_ds("<timer value=\"3\"")
+            .expect_err("malformed timer tag should fail");
+        assert!(malformed.contains("Malformed <timer> tag"));
     }
 
     #[test]

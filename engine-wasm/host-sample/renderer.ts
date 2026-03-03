@@ -36,6 +36,7 @@ export interface EngineSnapshot {
 export interface EngineHost {
   loadDeck(xml: string): void;
   pressKey(key: KeyName): void;
+  advanceTimeMs(deltaMs: number): void;
   navigateBack(): boolean;
   snapshot(): EngineSnapshot;
   clearExternalNavigationIntent(): void;
@@ -123,6 +124,10 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     },
     pressKey(key: KeyName) {
       engine.handleKey(key);
+      paint();
+    },
+    advanceTimeMs(deltaMs: number) {
+      engine.advanceTimeMs(deltaMs);
       paint();
     },
     navigateBack() {

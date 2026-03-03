@@ -14,4 +14,6 @@ pub struct Card {
     pub accept_action: Option<CardTaskAction>,
     pub onenterforward_action: Option<CardTaskAction>,
     pub onenterbackward_action: Option<CardTaskAction>,
+    pub ontimer_action: Option<CardTaskAction>,
+    pub timer_value_ds: Option<u32>,
 }

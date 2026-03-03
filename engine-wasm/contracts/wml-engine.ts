@@ -132,6 +132,7 @@ export interface WmlEngineWasm {
   ): void;
   render(): RenderList;
   handleKey(key: EngineKey): void;
+  advanceTimeMs(deltaMs: number): void;
   navigateToCard(id: string): void;
   navigateBack(): boolean;
   setViewportCols(cols: number): void;
@@ -184,6 +185,7 @@ export interface WmlEngineNative {
   loadDeckContext(input: WmlDeckInput): void;
   render(): RenderList;
   handleKey(key: EngineKey): void;
+  advanceTimeMs(deltaMs: number): void;
   navigateToCard(id: string): void;
   navigateBack(): boolean;
   setViewportCols(cols: number): void;

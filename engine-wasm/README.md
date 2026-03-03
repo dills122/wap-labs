@@ -125,6 +125,7 @@ Partially supported (phase W0 baseline):
 - Deferred post-invocation navigation application (`go`/`prev`)
 - Card-entry events: `<onevent type="onenterforward">` and `<onevent type="onenterbackward">` with `<go href>`
 - Task-model `prev`/`refresh` support in `<do type="accept">` and `<onevent type="onenterforward|onenterbackward">`
+- Immediate timer dispatch for `<timer value="0"/>` with `<onevent type="ontimer">`
 
 ## WASM API
 
@@ -132,6 +133,7 @@ Partially supported (phase W0 baseline):
 - `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string)`
 - `render(): RenderList`
 - `handleKey(key: 'up' | 'down' | 'enter')`
+- `advanceTimeMs(deltaMs: number)` (deterministic timer simulation)
 - `navigateToCard(id: string)`
 
 Additional helpers:

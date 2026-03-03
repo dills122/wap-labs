@@ -36,6 +36,14 @@ pub use render::render_list::{DrawCmd, RenderList};
 
 const DEFAULT_VIEWPORT_COLS: usize = 20;
 const MAX_TRACE_ENTRIES: usize = 256;
+const MAX_TIMER_DISPATCH_DEPTH: u8 = 8;
+
+#[derive(Clone, Debug)]
+struct CardTimerState {
+    card_idx: usize,
+    remaining_ms: u32,
+    ontimer_action: Option<CardTaskAction>,
+}
 
 #[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
@@ -57,6 +65,8 @@ pub struct WmlEngine {
     last_script_timer_requests: Vec<ScriptTimerRequest>,
     trace_entries: Vec<EngineTraceEntry>,
     next_trace_seq: u64,
+    timer_dispatch_depth: u8,
+    active_timer: Option<CardTimerState>,
 }
 
 impl Default for WmlEngine {
@@ -87,6 +97,8 @@ impl WmlEngine {
             last_script_timer_requests: Vec::new(),
             trace_entries: Vec::new(),
             next_trace_seq: 1,
+            timer_dispatch_depth: 0,
+            active_timer: None,
         }
     }
 
@@ -120,7 +132,9 @@ impl WmlEngine {
         self.last_script_dialog_requests.clear();
         self.last_script_timer_requests.clear();
         self.clear_trace_entries();
+        self.active_timer = None;
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
+        self.start_or_resume_timer_for_active_card(false)?;
         Ok(())
     }
 
@@ -158,6 +172,11 @@ impl WmlEngine {
     /// Navigate back in history. Returns `false` when history is empty.
     pub fn navigate_back(&mut self) -> bool {
         self.navigate_back_internal()
+    }
+
+    /// Advance simulated runtime clock for card timer lifecycle behavior.
+    pub fn advance_time_ms(&mut self, delta_ms: u32) -> Result<(), String> {
+        self.advance_time_ms_internal(delta_ms)
     }
 
     /// Set viewport width in columns.
@@ -409,6 +428,11 @@ impl WmlEngine {
     #[wasm_bindgen(js_name = navigateBack)]
     pub fn navigate_back_wasm(&mut self) -> bool {
         self.navigate_back()
+    }
+
+    #[wasm_bindgen(js_name = advanceTimeMs)]
+    pub fn advance_time_ms_wasm(&mut self, delta_ms: u32) -> Result<(), JsValue> {
+        self.advance_time_ms(delta_ms).map_err(as_js_err)
     }
 
     #[wasm_bindgen(js_name = setViewportCols)]
@@ -746,6 +770,8 @@ impl WmlEngine {
         let previous_idx = self.active_card_idx;
         let previous_focus = self.focused_link_idx;
         let previous_stack_len = self.nav_stack.len();
+        let previous_timer = self.active_timer.clone();
+        self.stop_active_timer_for_exit();
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
@@ -754,6 +780,14 @@ impl WmlEngine {
             self.active_card_idx = previous_idx;
             self.focused_link_idx = previous_focus;
             self.nav_stack.truncate(previous_stack_len);
+            self.active_timer = previous_timer;
+            return Err(err);
+        }
+        if let Err(err) = self.start_or_resume_timer_for_active_card(false) {
+            self.active_card_idx = previous_idx;
+            self.focused_link_idx = previous_focus;
+            self.nav_stack.truncate(previous_stack_len);
+            self.active_timer = previous_timer;
             return Err(err);
         }
         Ok(())
@@ -763,11 +797,13 @@ impl WmlEngine {
         let rollback_active_idx = self.active_card_idx;
         let rollback_focus = self.focused_link_idx;
         let rollback_stack = self.nav_stack.clone();
+        let rollback_timer = self.active_timer.clone();
         let Some(back_target_idx) = self.nav_stack.pop() else {
             self.push_trace("ACTION_BACK_EMPTY", String::new());
             return false;
         };
 
+        self.stop_active_timer_for_exit();
         self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
@@ -776,6 +812,15 @@ impl WmlEngine {
             self.active_card_idx = rollback_active_idx;
             self.focused_link_idx = rollback_focus;
             self.nav_stack = rollback_stack;
+            self.active_timer = rollback_timer;
+            return true;
+        }
+        if let Err(err) = self.start_or_resume_timer_for_active_card(false) {
+            self.push_trace("ACTION_ONTIMER_ERROR", err);
+            self.active_card_idx = rollback_active_idx;
+            self.focused_link_idx = rollback_focus;
+            self.nav_stack = rollback_stack;
+            self.active_timer = rollback_timer;
         }
         true
     }
@@ -806,9 +851,98 @@ impl WmlEngine {
             }
             CardTaskAction::Refresh => {
                 self.push_trace("ACTION_REFRESH", String::new());
+                self.start_or_resume_timer_for_active_card(true)?;
                 Ok(())
             }
         }
+    }
+
+    fn start_or_resume_timer_for_active_card(&mut self, is_refresh: bool) -> Result<(), String> {
+        let (timer_value_ds, ontimer_action) = {
+            let card = self.active_card_internal()?;
+            (card.timer_value_ds, card.ontimer_action.clone())
+        };
+        let Some(value_ds) = timer_value_ds else {
+            self.active_timer = None;
+            return Ok(());
+        };
+        if is_refresh {
+            if let Some(timer) = &self.active_timer {
+                if timer.card_idx == self.active_card_idx {
+                    self.push_trace(
+                        "TIMER_RESUME",
+                        format!("remainingMs={}", timer.remaining_ms),
+                    );
+                    return Ok(());
+                }
+            }
+        }
+        let remaining_ms = value_ds.saturating_mul(100);
+        self.active_timer = Some(CardTimerState {
+            card_idx: self.active_card_idx,
+            remaining_ms,
+            ontimer_action,
+        });
+        self.push_trace("TIMER_START", format!("valueDs={value_ds}"));
+        if remaining_ms != 0 {
+            return Ok(());
+        }
+        self.dispatch_active_timer_expiry()
+    }
+
+    fn stop_active_timer_for_exit(&mut self) {
+        let Some(timer) = self.active_timer.take() else {
+            return;
+        };
+        self.push_trace("TIMER_STOP", format!("remainingMs={}", timer.remaining_ms));
+    }
+
+    fn dispatch_active_timer_expiry(&mut self) -> Result<(), String> {
+        let Some(timer) = self.active_timer.take() else {
+            return Ok(());
+        };
+        self.push_trace("TIMER_EXPIRE", String::new());
+        let Some(action) = timer.ontimer_action else {
+            return Ok(());
+        };
+        if self.timer_dispatch_depth >= MAX_TIMER_DISPATCH_DEPTH {
+            return Err("timer: dispatch depth exceeded".to_string());
+        }
+        self.timer_dispatch_depth += 1;
+        self.push_trace("ACTION_ONTIMER", String::new());
+        let result = self.execute_card_task_action(&action);
+        self.timer_dispatch_depth -= 1;
+        result
+    }
+
+    fn advance_time_ms_internal(&mut self, delta_ms: u32) -> Result<(), String> {
+        let Some(timer_card_idx) = self.active_timer.as_ref().map(|timer| timer.card_idx) else {
+            return Ok(());
+        };
+        if delta_ms == 0 {
+            return Ok(());
+        }
+        if timer_card_idx != self.active_card_idx {
+            self.active_timer = None;
+            return Ok(());
+        }
+        let (before, after) = {
+            let timer = self
+                .active_timer
+                .as_mut()
+                .expect("timer must exist after guard");
+            let before = timer.remaining_ms;
+            timer.remaining_ms = timer.remaining_ms.saturating_sub(delta_ms);
+            (before, timer.remaining_ms)
+        };
+        self.push_trace(
+            "TIMER_TICK",
+            format!("deltaMs={delta_ms};beforeMs={before};afterMs={after}"),
+        );
+        if after == 0 {
+            self.dispatch_active_timer_expiry()?;
+        }
+        Ok(())
     }
 
     fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
@@ -2911,6 +3045,195 @@ mod tests {
         assert_eq!(engine.active_card_id().expect("active card"), "home");
         assert_eq!(engine.focused_link_index(), 0);
         assert!(engine.nav_stack.is_empty());
+    }
+
+    #[test]
+    fn ontimer_zero_dispatches_immediately_on_card_entry() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="0"/>
+            <onevent type="ontimer"><go href="#next"/></onevent>
+            <p>Timed card</p>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("fragment nav should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_trace_kinds_subsequence(
+            &engine,
+            &[
+                "ACTION_FRAGMENT",
+                "TIMER_START",
+                "ACTION_ONTIMER",
+                "ACTION_FRAGMENT",
+            ],
+        );
+    }
+
+    #[test]
+    fn ontimer_failure_on_entry_rolls_back_navigation_state() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="0"/>
+            <onevent type="ontimer"><go href="#missing"/></onevent>
+            <p>Timed card</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        let err = engine
+            .handle_key("enter".to_string())
+            .expect_err("ontimer missing fragment should fail");
+        assert!(err.contains("Card id not found"));
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
+        assert!(engine.nav_stack.is_empty());
+    }
+
+    #[test]
+    fn timer_non_zero_expires_after_deterministic_advance() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="5"/>
+            <onevent type="ontimer"><go href="#next"/></onevent>
+            <p>Timed card</p>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("fragment nav should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+
+        engine
+            .advance_time_ms(400)
+            .expect("advance should decrement timer");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+        engine
+            .advance_time_ms(100)
+            .expect("advance should expire timer");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_trace_kinds_subsequence(
+            &engine,
+            &[
+                "TIMER_START",
+                "TIMER_TICK",
+                "TIMER_TICK",
+                "TIMER_EXPIRE",
+                "ACTION_ONTIMER",
+            ],
+        );
+    }
+
+    #[test]
+    fn timer_stops_on_card_exit() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="10"/>
+            <onevent type="ontimer"><go href="#timer-target"/></onevent>
+            <a href="#manual-next">Manual next</a>
+          </card>
+          <card id="manual-next"><p>Manual next</p></card>
+          <card id="timer-target"><p>Timer target</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to timed");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+        engine
+            .handle_key("enter".to_string())
+            .expect("enter should navigate to manual-next");
+        assert_eq!(engine.active_card_id().expect("active card"), "manual-next");
+
+        engine
+            .advance_time_ms(5_000)
+            .expect("advance with stopped timer should no-op");
+        assert_eq!(engine.active_card_id().expect("active card"), "manual-next");
+        assert!(
+            !engine
+                .trace_entries()
+                .iter()
+                .any(|entry| entry.kind == "ACTION_ONTIMER"
+                    && entry.active_card_id.as_deref() == Some("timer-target")),
+            "timer should not fire after card exit"
+        );
+    }
+
+    #[test]
+    fn timer_refresh_resumes_remaining_time() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="5"/>
+            <onevent type="ontimer"><go href="#next"/></onevent>
+            <do type="accept"><refresh/></do>
+            <p>Refresh should resume timer.</p>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to timed");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+
+        engine.advance_time_ms(300).expect("advance should work");
+        engine
+            .handle_key("enter".to_string())
+            .expect("accept refresh should resume timer");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+        engine.advance_time_ms(100).expect("advance should work");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+        engine
+            .advance_time_ms(100)
+            .expect("remaining timer should expire");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_trace_kinds_subsequence(
+            &engine,
+            &[
+                "TIMER_START",
+                "TIMER_TICK",
+                "ACTION_ACCEPT",
+                "ACTION_REFRESH",
+                "TIMER_RESUME",
+                "TIMER_TICK",
+                "TIMER_TICK",
+                "TIMER_EXPIRE",
+                "ACTION_ONTIMER",
+            ],
+        );
     }
 
     #[test]
