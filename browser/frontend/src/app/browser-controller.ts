@@ -453,7 +453,12 @@ export class BrowserController {
       this.applyTimerRequestsFromSnapshot(snapshot);
       if (snapshot.externalNavigationIntent) {
         this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
-        await this.loadTransportUrl(snapshot.externalNavigationIntent, 'external-intent', true, true);
+        await this.loadTransportUrl(
+          snapshot.externalNavigationIntent,
+          'external-intent',
+          true,
+          true
+        );
       }
       if (before && snapshot.activeCardId && before !== snapshot.activeCardId) {
         this.presenter.recordTimeline('engine-timer-transition', 'state', {
