@@ -1,0 +1,31 @@
+<!--
+label: OnEnterBackward Reentry
+description: Demonstrates card re-entry behavior when navigateBack lands on a card with onenterbackward.
+goal: Verify backward navigation triggers onenterbackward deterministically before the user resumes input.
+work-items: A2-03
+spec-items: WML-R-008
+testing-ac:
+- Press Enter on "To middle", then Enter on "To next"; activeCardId should become next.
+- Press Back once; activeCardId should become rewind (not middle) because mid defines onenterbackward.
+- Confirm runtime trace includes ACTION_BACK followed by ACTION_FRAGMENT for rewind.
+-->
+<wml>
+  <card id="home">
+    <p>Start card.</p>
+    <a href="#mid">To middle</a>
+  </card>
+  <card id="mid">
+    <onevent type="onenterbackward">
+      <go href="#rewind"/>
+    </onevent>
+    <p>Middle card runs backward-entry action.</p>
+    <a href="#next">To next</a>
+  </card>
+  <card id="next">
+    <p>Reached from middle.</p>
+  </card>
+  <card id="rewind">
+    <p>Reached via onenterbackward.</p>
+    <a href="#home">Return home</a>
+  </card>
+</wml>

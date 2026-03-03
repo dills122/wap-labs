@@ -123,6 +123,7 @@ Partially supported (phase W0 baseline):
 - Script href execution for registered `.wmlsc` units
 - `WMLBrowser` subset: `getVar`, `setVar`, `go`, `prev`
 - Deferred post-invocation navigation application (`go`/`prev`)
+- Card-entry events: `<onevent type="onenterforward">` and `<onevent type="onenterbackward">` with `<go href>`
 
 ## WASM API
 

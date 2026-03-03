@@ -23,13 +23,15 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             .ok_or_else(|| format!("Missing closing </card> for card {id}"))?;
 
         let card_body = &wml_body[open_end + 1..close_start];
-        let (accept_action_href, onenterforward_href) = parse_card_actions(card_body)?;
+        let (accept_action_href, onenterforward_href, onenterbackward_href) =
+            parse_card_actions(card_body)?;
         let nodes = parse_card_nodes(card_body)?;
         cards.push(Card {
             id,
             nodes,
             accept_action_href,
             onenterforward_href,
+            onenterbackward_href,
         });
 
         cursor = close_start + "</card>".len();
@@ -42,10 +44,17 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     Ok(Deck::new(cards))
 }
 
-fn parse_card_actions(body: &str) -> Result<(Option<String>, Option<String>), String> {
+fn parse_card_actions(
+    body: &str,
+) -> Result<(Option<String>, Option<String>, Option<String>), String> {
     let accept_action_href = parse_do_accept_href(body)?;
-    let onenterforward_href = parse_onenterforward_href(body)?;
-    Ok((accept_action_href, onenterforward_href))
+    let onenterforward_href = parse_onevent_href(body, "onenterforward")?;
+    let onenterbackward_href = parse_onevent_href(body, "onenterbackward")?;
+    Ok((
+        accept_action_href,
+        onenterforward_href,
+        onenterbackward_href,
+    ))
 }
 
 fn parse_do_accept_href(body: &str) -> Result<Option<String>, String> {
@@ -82,7 +91,7 @@ fn parse_do_accept_href(body: &str) -> Result<Option<String>, String> {
     Ok(None)
 }
 
-fn parse_onenterforward_href(body: &str) -> Result<Option<String>, String> {
+fn parse_onevent_href(body: &str, target_event_type: &str) -> Result<Option<String>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "onevent", cursor) {
         let open_end = body[start..]
@@ -99,7 +108,7 @@ fn parse_onenterforward_href(body: &str) -> Result<Option<String>, String> {
         let event_type = extract_attr(open_tag, "type")
             .unwrap_or_default()
             .to_ascii_lowercase();
-        if event_type == "onenterforward" {
+        if event_type == target_event_type {
             return Ok(parse_go_href(onevent_body));
         }
 
@@ -359,7 +368,7 @@ fn decode_entities(input: &str) -> String {
 mod tests {
     use super::{
         extract_wml_body, parse_card_nodes, parse_do_accept_href, parse_go_href,
-        parse_inline_nodes, parse_onenterforward_href, parse_wml,
+        parse_inline_nodes, parse_onevent_href, parse_wml,
     };
     use crate::runtime::node::{InlineNode, Node};
 
@@ -533,7 +542,7 @@ mod tests {
     }
 
     #[test]
-    fn parses_accept_do_and_onenterforward_go_actions() {
+    fn parses_accept_do_and_card_entry_go_actions() {
         let xml = r##"
         <wml>
           <card id="home">
@@ -543,9 +552,13 @@ mod tests {
             <onevent type="onenterforward">
               <go href="#next"/>
             </onevent>
+            <onevent type="onenterbackward">
+              <go href="#back"/>
+            </onevent>
             <p>Home</p>
           </card>
           <card id="next"><p>Next</p></card>
+          <card id="back"><p>Back</p></card>
         </wml>
         "##;
 
@@ -555,6 +568,7 @@ mod tests {
             Some("script:calc.wmlsc#main")
         );
         assert_eq!(deck.cards[0].onenterforward_href.as_deref(), Some("#next"));
+        assert_eq!(deck.cards[0].onenterbackward_href.as_deref(), Some("#back"));
     }
 
     #[test]
@@ -623,29 +637,41 @@ mod tests {
     }
 
     #[test]
-    fn helper_parse_onenterforward_href_exercises_non_matching_and_error_paths() {
+    fn helper_parse_onevent_href_exercises_non_matching_and_error_paths() {
         assert_eq!(
-            parse_onenterforward_href(
-                "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>"
+            parse_onevent_href(
+                "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>",
+                "onenterforward"
             )
             .expect("non-matching onevent should parse"),
             None
         );
 
         assert_eq!(
-            parse_onenterforward_href(
-                "<onevent type=\"onenterforward\"><go href=\"#next\"/></onevent>"
+            parse_onevent_href(
+                "<onevent type=\"onenterforward\"><go href=\"#next\"/></onevent>",
+                "onenterforward"
             )
             .expect("matching onevent should parse"),
             Some("#next".to_string())
         );
 
-        let malformed = parse_onenterforward_href("<onevent type=\"onenterforward\"")
+        assert_eq!(
+            parse_onevent_href(
+                "<onevent type=\"onenterbackward\"><go href=\"#prev\"/></onevent>",
+                "onenterbackward"
+            )
+            .expect("matching backward onevent should parse"),
+            Some("#prev".to_string())
+        );
+
+        let malformed = parse_onevent_href("<onevent type=\"onenterforward\"", "onenterforward")
             .expect_err("malformed onevent open tag must fail");
         assert!(malformed.contains("Malformed <onevent> opening tag"));
 
-        let missing_close = parse_onenterforward_href("<onevent type=\"onenterforward\">")
-            .expect_err("missing onevent close tag must fail");
+        let missing_close =
+            parse_onevent_href("<onevent type=\"onenterforward\">", "onenterforward")
+                .expect_err("missing onevent close tag must fail");
         assert!(missing_close.contains("Missing closing </onevent> tag"));
     }
 

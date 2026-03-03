@@ -758,11 +758,22 @@ impl WmlEngine {
         self.active_card_idx = previous_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
+        if let Err(err) = self.run_onenterbackward_for_active_card() {
+            self.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
+        }
         true
     }
 
     fn run_onenterforward_for_active_card(&mut self) -> Result<(), String> {
         let href = self.active_card_internal()?.onenterforward_href.clone();
+        if let Some(href) = href {
+            self.execute_action_href(&href)?;
+        }
+        Ok(())
+    }
+
+    fn run_onenterbackward_for_active_card(&mut self) -> Result<(), String> {
+        let href = self.active_card_internal()?.onenterbackward_href.clone();
         if let Some(href) = href {
             self.execute_action_href(&href)?;
         }
@@ -2671,6 +2682,194 @@ mod tests {
             .handle_key("enter".to_string())
             .expect("enter should navigate and run onenterforward");
         assert_eq!(engine.active_card_id().expect("active card"), "next");
+    }
+
+    #[test]
+    fn navigate_back_runs_onenterbackward_action() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterbackward">
+              <go href="#rewind"/>
+            </onevent>
+            <a href="#next">To next</a>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+          <card id="rewind">
+            <p>Rewind</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to middle");
+        engine
+            .handle_key("enter".to_string())
+            .expect("middle enter should navigate to next");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+
+        let handled = engine.navigate_back();
+        assert!(handled, "back should pop existing history entry");
+        assert_eq!(engine.active_card_id().expect("active card"), "rewind");
+        let traces = engine.trace_entries();
+        assert!(traces.iter().any(|entry| entry.kind == "ACTION_BACK"));
+        assert!(traces
+            .iter()
+            .any(|entry| entry.kind == "ACTION_FRAGMENT" && entry.detail == "rewind"));
+    }
+
+    #[test]
+    fn navigate_back_runs_onenterbackward_script_action() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterbackward">
+              <go href="script:nav.wmlsc#main"/>
+            </onevent>
+            <a href="#next">To next</a>
+          </card>
+          <card id="next">
+            <p>Next</p>
+          </card>
+          <card id="rewind">
+            <p>Rewind</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let mut unit = Vec::new();
+        push_string(&mut unit, "#rewind");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #rewind
+        unit.push(0x00); // halt
+        engine.register_script_unit("nav.wmlsc".to_string(), unit);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to middle");
+        engine
+            .handle_key("enter".to_string())
+            .expect("middle enter should navigate to next");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+
+        let handled = engine.navigate_back();
+        assert!(handled, "back should pop existing history entry");
+        assert_eq!(engine.active_card_id().expect("active card"), "rewind");
+        assert_eq!(engine.last_script_execution_ok(), Some(true));
+        assert_eq!(engine.last_script_execution_trap(), None);
+        let traces = engine.trace_entries();
+        assert!(traces
+            .iter()
+            .any(|entry| entry.kind == "ACTION_SCRIPT" && entry.detail == "nav.wmlsc#main"));
+        assert!(traces
+            .iter()
+            .any(|entry| entry.kind == "SCRIPT_OK"
+                && entry.active_card_id.as_deref() == Some("rewind")));
+    }
+
+    #[test]
+    fn navigate_back_onenterbackward_script_navigation_last_call_wins() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid-go-prev">Flow A</a>
+            <a href="#mid-prev-go">Flow B</a>
+          </card>
+          <card id="mid-go-prev">
+            <onevent type="onenterbackward">
+              <go href="script:nav.wmlsc#goThenPrev"/>
+            </onevent>
+            <a href="#next-a">To next-a</a>
+          </card>
+          <card id="mid-prev-go">
+            <onevent type="onenterbackward">
+              <go href="script:nav.wmlsc#prevThenGo"/>
+            </onevent>
+            <a href="#next-b">To next-b</a>
+          </card>
+          <card id="next-a"><p>Next A</p></card>
+          <card id="next-b"><p>Next B</p></card>
+          <card id="rewind"><p>Rewind</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+
+        let mut unit = Vec::new();
+        let go_then_prev_pc = unit.len();
+        push_string(&mut unit, "#rewind");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #rewind
+        unit.push(0x20);
+        unit.push(0x04);
+        unit.push(0x00); // prev
+        unit.push(0x00); // halt
+        let prev_then_go_pc = unit.len();
+        unit.push(0x20);
+        unit.push(0x04);
+        unit.push(0x00); // prev
+        push_string(&mut unit, "#rewind");
+        unit.push(0x20);
+        unit.push(0x03);
+        unit.push(0x01); // go #rewind
+        unit.push(0x00); // halt
+        engine.register_script_unit("nav.wmlsc".to_string(), unit);
+        engine.register_script_entry_point(
+            "nav.wmlsc".to_string(),
+            "goThenPrev".to_string(),
+            go_then_prev_pc,
+        );
+        engine.register_script_entry_point(
+            "nav.wmlsc".to_string(),
+            "prevThenGo".to_string(),
+            prev_then_go_pc,
+        );
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("flow A should enter mid-go-prev");
+        engine
+            .handle_key("enter".to_string())
+            .expect("flow A should enter next-a");
+        assert_eq!(engine.active_card_id().expect("active card"), "next-a");
+        assert!(engine.navigate_back(), "flow A back should be handled");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "home",
+            "goThenPrev should resolve to prev at invocation boundary"
+        );
+
+        engine
+            .handle_key("down".to_string())
+            .expect("move focus to flow B link");
+        engine
+            .handle_key("enter".to_string())
+            .expect("flow B should enter mid-prev-go");
+        engine
+            .handle_key("enter".to_string())
+            .expect("flow B should enter next-b");
+        assert_eq!(engine.active_card_id().expect("active card"), "next-b");
+        assert!(engine.navigate_back(), "flow B back should be handled");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "rewind",
+            "prevThenGo should resolve to go at invocation boundary"
+        );
     }
 
     #[test]
