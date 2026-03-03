@@ -81,6 +81,21 @@ Sprint acceptance target:
 - All six tickets have executable acceptance fixtures mapped in `docs/waves/SPEC_TEST_COVERAGE.md`.
 - `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md` high-priority misses are reduced for history, cache, and script error semantics.
 
+## Frame Interface Migration Program (Planning-Ready)
+
+This migration track defines the engine-host rendering/input boundary transition from legacy render calls to structured frame/input contracts.
+
+Authoritative docs:
+
+- `docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`
+- `docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`
+
+Execution policy:
+
+1. Run migration tickets as additive boundary changes first (`F0`), then renderer/input cutover (`F1-F4`).
+2. Preserve native/wasm parity and deterministic runtime behavior at each phase gate.
+3. Keep migration scope limited to interface and rendering boundary unless explicitly expanded.
+
 ## Kickoff Guardrail (Historical)
 
 This board was prepared before implementation kickoff. Keep ticket statuses current as execution continues.

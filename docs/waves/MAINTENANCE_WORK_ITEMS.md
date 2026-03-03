@@ -151,6 +151,27 @@ Status keys:
 5. `Accept`:
 - High-churn files are reduced and responsibilities are easier to review.
 
+### M1-09 Engine-host frame interface migration execution
+
+1. `Status`: `todo`
+2. `Files`:
+- `docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`
+- `docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/src-tauri/src/contract_types.rs`
+- `browser/contracts/generated/engine-host.ts`
+3. `Build`:
+- Execute the `F0-F4` migration program to move active hosts onto structured frame/input contracts.
+- Keep migration additive and parity-gated until legacy path retirement.
+4. `Tests`:
+- `cd engine-wasm/engine && cargo test`
+- `cd browser/src-tauri && cargo test`
+- `pnpm --dir browser/frontend test`
+- `pnpm --dir browser/frontend build`
+5. `Accept`:
+- Active host paths use `EngineFrame` + `EngineInputEvent`.
+- Contract and coverage docs are updated in the same migration PRs.
+
 ### M0-01 Parser tag-boundary hardening (`<prev/>` false-positive)
 
 1. `Status`: `done`
