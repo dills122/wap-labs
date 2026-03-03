@@ -15,6 +15,17 @@ Configure branch protection to require these job names from `.github/workflows/c
 
 `Marketing Site Build` may be required or optional depending on whether site changes should block product-layer merges.
 
+For `.github/workflows/security.yml`, require at least:
+
+- `Dependency Review`
+- `Rust Advisory Audit`
+- `Node Dependency Audit`
+
+For `.github/workflows/codeql.yml`, require:
+
+- `Analyze (javascript-typescript)`
+- `Analyze (rust)`
+
 ## Manual / optional workflows
 
 - `.github/workflows/transport-wap-smoke.yml` is manual (`workflow_dispatch`) and should not be configured as a required PR status check.

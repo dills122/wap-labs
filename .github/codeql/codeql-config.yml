@@ -1,0 +1,17 @@
+name: "WaveNav CodeQL Config"
+
+paths:
+  - browser
+  - engine-wasm
+  - transport-rust
+  - wml-server
+  - scripts
+
+paths-ignore:
+  - "**/target/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/coverage/**"
+  - "**/node_modules/**"
+  - "engine-wasm/pkg/**"
+  - "browser/contracts/generated/**"
