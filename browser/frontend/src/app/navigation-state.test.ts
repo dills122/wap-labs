@@ -42,6 +42,7 @@ const createHostClientMock = (
     engineSnapshot: async () => snapshot({ activeCardId: 'home' }),
     engineNavigateBack: async () => snapshot({ activeCardId: 'home' }),
     engineNavigateToCard: async () => snapshot({ activeCardId: 'home' }),
+    engineAdvanceTimeMs: async () => snapshot({ activeCardId: 'home' }),
     engineClearExternalNavigationIntent: async () => snapshot({ activeCardId: 'home' })
   };
   return {
@@ -209,5 +210,21 @@ describe('navigation-state', () => {
 
     expect(machine.getHistoryState().entries).toHaveLength(1);
     expect(machine.getHistoryState().entries[0]?.source).toBe('user');
+  });
+
+  it('applies timer tick via host advanceTimeMs and renders snapshot', async () => {
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        engineAdvanceTimeMs: async ({ deltaMs }) =>
+          snapshot({ activeCardId: deltaMs >= 100 ? 'done' : 'timed' })
+      }),
+      'http://seed.test'
+    );
+
+    const timed = await machine.applyEngineTimerTick(50);
+    expect(timed.activeCardId).toBe('timed');
+
+    const done = await machine.applyEngineTimerTick(100);
+    expect(done.activeCardId).toBe('done');
   });
 });

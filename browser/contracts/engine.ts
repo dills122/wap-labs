@@ -5,6 +5,7 @@ import type {
 } from './generated/engine-host';
 
 export type {
+  AdvanceTimeRequest,
   DrawCmd,
   EngineHostClient,
   EngineKey,

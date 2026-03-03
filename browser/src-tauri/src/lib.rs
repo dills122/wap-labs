@@ -1,9 +1,9 @@
 pub mod contract_types;
 
 use contract_types::{
-    EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
-    NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
-    SetViewportColsRequest,
+    AdvanceTimeRequest, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
+    LoadDeckRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
+    ScriptTimerRequestSnapshot, SetViewportColsRequest,
 };
 use lowband_transport_rust::{
     fetch_deck_in_process, preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse,
@@ -125,6 +125,14 @@ fn apply_set_viewport_cols(
 ) -> EngineRuntimeSnapshot {
     engine.set_viewport_cols(request.cols);
     snapshot(engine)
+}
+
+fn apply_advance_time_ms(
+    engine: &mut WmlEngine,
+    request: AdvanceTimeRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.advance_time_ms(request.delta_ms)?;
+    Ok(snapshot(engine))
 }
 
 fn apply_engine_snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
@@ -267,6 +275,14 @@ fn engine_set_viewport_cols(
 }
 
 #[tauri::command]
+fn engine_advance_time_ms(
+    state: State<AppState>,
+    request: AdvanceTimeRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    command_engine_advance_time_ms(state.inner(), request)
+}
+
+#[tauri::command]
 fn engine_snapshot(state: State<AppState>) -> Result<EngineRuntimeSnapshot, String> {
     command_engine_snapshot(state.inner())
 }
@@ -328,6 +344,14 @@ fn command_engine_set_viewport_cols(
     Ok(apply_set_viewport_cols(&mut engine, request))
 }
 
+fn command_engine_advance_time_ms(
+    state: &AppState,
+    request: AdvanceTimeRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    let mut engine = lock_engine(state)?;
+    apply_advance_time_ms(&mut engine, request)
+}
+
 fn command_engine_snapshot(state: &AppState) -> Result<EngineRuntimeSnapshot, String> {
     let engine = lock_engine(state)?;
     Ok(apply_engine_snapshot(&engine))
@@ -358,6 +382,7 @@ pub fn run() {
             engine_navigate_to_card,
             engine_navigate_back,
             engine_set_viewport_cols,
+            engine_advance_time_ms,
             engine_snapshot,
             engine_clear_external_navigation_intent
         ])
@@ -368,15 +393,17 @@ pub fn run() {
 #[cfg(test)]
 mod tests {
     use super::{
-        apply_clear_external_navigation_intent, apply_engine_snapshot, apply_handle_key,
-        apply_load_deck, apply_load_deck_context, apply_navigate_back, apply_navigate_to_card,
-        apply_render, apply_set_viewport_cols, bundled_wbxml_resource_relpath,
+        apply_advance_time_ms, apply_clear_external_navigation_intent, apply_engine_snapshot,
+        apply_handle_key, apply_load_deck, apply_load_deck_context, apply_navigate_back,
+        apply_navigate_to_card, apply_render, apply_set_viewport_cols,
+        bundled_wbxml_resource_relpath, command_engine_advance_time_ms,
         command_engine_clear_external_navigation_intent, command_engine_handle_key,
         command_engine_load_deck, command_engine_load_deck_context, command_engine_navigate_back,
         command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
-        command_engine_snapshot, contract_types, ensure_request_id, fetch_deck, health, AppState,
-        HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest,
-        ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetViewportColsRequest,
+        command_engine_snapshot, contract_types, ensure_request_id, fetch_deck, health,
+        AdvanceTimeRequest, AppState, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
+        NavigateToCardRequest, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
+        SetViewportColsRequest,
     };
     use contract_types::{DrawCmd, EngineKey};
     use lowband_transport_rust::{
@@ -526,6 +553,45 @@ mod tests {
 
         let after_back = apply_navigate_back(&mut engine);
         assert_eq!(after_back.active_card_id.as_deref(), Some("home"));
+    }
+
+    #[test]
+    fn advance_time_command_expires_timer_card_deterministically() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="2"/>
+            <onevent type="ontimer"><go href="#done"/></onevent>
+            <p>Timed</p>
+          </card>
+          <card id="done"><p>Done</p></card>
+        </wml>
+        "##;
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: xml.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate to timer card");
+
+        let snapshot = apply_advance_time_ms(&mut engine, AdvanceTimeRequest { delta_ms: 200 })
+            .expect("advance should trigger ontimer");
+        assert_eq!(snapshot.active_card_id.as_deref(), Some("done"));
     }
 
     #[test]
@@ -1100,5 +1166,44 @@ mod tests {
         )
         .expect("load_deck wrapper should succeed");
         assert_eq!(out.active_card_id.as_deref(), Some("home"));
+    }
+
+    #[test]
+    fn command_engine_advance_time_ms_is_callable() {
+        let state = AppState::default();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="1"/>
+            <onevent type="ontimer"><go href="#done"/></onevent>
+            <p>Timed</p>
+          </card>
+          <card id="done"><p>Done</p></card>
+        </wml>
+        "##;
+        command_engine_load_deck_context(
+            &state,
+            LoadDeckContextRequest {
+                wml_xml: xml.to_string(),
+                base_url: "http://local.test/start.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("load should succeed");
+        command_engine_handle_key(
+            &state,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate to timed");
+
+        let snapshot = command_engine_advance_time_ms(&state, AdvanceTimeRequest { delta_ms: 100 })
+            .expect("advance wrapper should succeed");
+        assert_eq!(snapshot.active_card_id.as_deref(), Some("done"));
     }
 }

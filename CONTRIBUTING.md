@@ -45,7 +45,9 @@ make hooks-install
 
 Hook behavior:
 
-- `pre-commit` hook auto-runs `cargo fmt` for staged Rust files in `engine-wasm/engine` and `browser/src-tauri`, then re-stages changes.
+- `pre-commit` hook runs `lint-staged` on staged files only:
+  - Prettier for `browser/frontend` and `engine-wasm/host-sample`
+  - `rustfmt` for staged Rust files in `engine-wasm/engine` and `browser/src-tauri`
 - `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo clippy -D warnings`, `cargo test` where configured, and configured non-mutating checks).
 
 ## Coding standards
@@ -81,7 +83,7 @@ Node checks are disabled by default in `make` to avoid blocking environments wit
 ENABLE_NODE_CHECKS=1 make ci-local
 ```
 
-Pre-commit node hooks are also opt-in:
+Pre-push node hooks are opt-in:
 
 ```bash
 WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
@@ -89,7 +91,8 @@ WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
 
 ## Git Hooks and CI
 
-- Local hooks are wired from `.githooks/` (`git config core.hooksPath .githooks`) and use `.pre-commit-config.yaml` for pre-push checks.
+- Local hooks are wired from `.githooks/` (`git config core.hooksPath .githooks`).
+- `.githooks/pre-commit` runs `lint-staged` and `.githooks/pre-push` runs `.pre-commit-config.yaml` checks.
 - CI runs in GitHub Actions:
   - `.github/workflows/ci.yml` (required PR/push checks)
   - `.github/workflows/transport-wap-smoke.yml` (manual WAP smoke against Kannel stack)

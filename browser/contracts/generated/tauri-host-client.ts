@@ -8,7 +8,8 @@ import type {
   LoadDeckRequest,
   NavigateToCardRequest,
   RenderList,
-  SetViewportColsRequest
+  SetViewportColsRequest,
+  AdvanceTimeRequest
 } from './engine-host';
 import type { FetchDeckRequest, FetchDeckResponse } from './transport-host';
 
@@ -24,6 +25,7 @@ export interface TauriHostClient {
   engineNavigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
   engineNavigateBack(): Promise<EngineRuntimeSnapshot>;
   engineSetViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
+  engineAdvanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
   engineSnapshot(): Promise<EngineRuntimeSnapshot>;
   engineClearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
 }
@@ -41,6 +43,8 @@ export const createTauriHostClient = (invokeFn: TauriInvoke): TauriHostClient =>
   engineNavigateBack: () => invokeFn<EngineRuntimeSnapshot>('engine_navigate_back'),
   engineSetViewportCols: (request) =>
     invokeFn<EngineRuntimeSnapshot>('engine_set_viewport_cols', { request }),
+  engineAdvanceTimeMs: (request) =>
+    invokeFn<EngineRuntimeSnapshot>('engine_advance_time_ms', { request }),
   engineSnapshot: () => invokeFn<EngineRuntimeSnapshot>('engine_snapshot'),
   engineClearExternalNavigationIntent: () =>
     invokeFn<EngineRuntimeSnapshot>('engine_clear_external_navigation_intent')

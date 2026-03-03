@@ -6,6 +6,7 @@ This document describes all active GitHub Actions automation for this repository
 
 - Main validation workflow: `.github/workflows/ci.yml`
 - Security workflow: `.github/workflows/security.yml`
+- Dependabot auto-merge workflow: `.github/workflows/dependabot-auto-merge.yml`
 - Code scanning workflow: `.github/workflows/codeql.yml`
 - Pages deployment workflow: `.github/workflows/pages.yml`
 - Manual transport smoke workflow: `.github/workflows/transport-wap-smoke.yml`
@@ -155,6 +156,7 @@ Behavior:
 
 File:
 - `.github/dependabot.yml`
+- `.github/workflows/dependabot-auto-merge.yml`
 
 Configured ecosystems:
 - `github-actions` (root)
@@ -169,6 +171,10 @@ Configured ecosystems:
 
 Cadence:
 - weekly for all ecosystems
+
+Auto-merge behavior:
+- Dependabot pull requests are merged automatically only after all CI signals on the PR head SHA complete successfully.
+- The auto-merge workflow checks both GitHub Checks and commit status contexts and does not merge if any signal is pending, failing, cancelled, or timed out.
 
 ## Branch Protection Guidance
 
