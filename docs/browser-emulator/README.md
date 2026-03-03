@@ -20,6 +20,7 @@ Build a faithful WAP-style browser stack that:
 Reference architecture doc:
 
 - `docs/modern-wap-browser-architecture.md`
+- `docs/browser-emulator/TAURI_PROFESSIONAL_POLISH_EXPLORATION.md`
 
 ## WaveNav Engine Plan (Spec-driven)
 
