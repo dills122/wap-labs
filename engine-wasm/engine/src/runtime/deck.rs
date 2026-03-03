@@ -36,6 +36,8 @@ mod tests {
                 accept_action: None,
                 onenterforward_action: None,
                 onenterbackward_action: None,
+                ontimer_action: None,
+                timer_value_ds: None,
             },
             Card {
                 id: "dup".to_string(),
@@ -43,6 +45,8 @@ mod tests {
                 accept_action: None,
                 onenterforward_action: None,
                 onenterbackward_action: None,
+                ontimer_action: None,
+                timer_value_ds: None,
             },
         ]);
 
@@ -57,6 +61,8 @@ mod tests {
             accept_action: None,
             onenterforward_action: None,
             onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
         }]);
 
         assert_eq!(deck.card_index("missing"), None);

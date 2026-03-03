@@ -149,6 +149,8 @@ mod tests {
             accept_action: None,
             onenterforward_action: None,
             onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
         };
 
         let out = layout_card(&card, 10, 0);
@@ -169,6 +171,8 @@ mod tests {
             accept_action: None,
             onenterforward_action: None,
             onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
         };
 
         let out = layout_card(&card, 5, 0);
@@ -196,6 +200,8 @@ mod tests {
             accept_action: None,
             onenterforward_action: None,
             onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
         };
 
         let out = layout_card(&card, 4, 0);

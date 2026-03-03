@@ -1,0 +1,24 @@
+<!--
+label: Timer Ontimer Immediate
+description: Demonstrates immediate ontimer dispatch for `<timer value="0"/>` at card-entry boundaries.
+goal: Verify runtime-owned timer dispatch executes ontimer action deterministically on entry.
+work-items: A5-03
+spec-items: WML-R-014
+testing-ac:
+- Press Enter on "To timed" from home.
+- Confirm activeCardId becomes next immediately (timed card should not remain active).
+- Confirm trace includes TIMER_START and ACTION_ONTIMER before the final ACTION_FRAGMENT to next.
+-->
+<wml>
+  <card id="home">
+    <a href="#timed">To timed</a>
+  </card>
+  <card id="timed">
+    <timer value="0"/>
+    <onevent type="ontimer"><go href="#next"/></onevent>
+    <p>Timed card should auto-advance.</p>
+  </card>
+  <card id="next">
+    <p>Reached via ontimer dispatch.</p>
+  </card>
+</wml>

@@ -36,6 +36,7 @@ pub use render::render_list::{DrawCmd, RenderList};
 
 const DEFAULT_VIEWPORT_COLS: usize = 20;
 const MAX_TRACE_ENTRIES: usize = 256;
+const MAX_TIMER_DISPATCH_DEPTH: u8 = 8;
 
 #[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
@@ -57,6 +58,7 @@ pub struct WmlEngine {
     last_script_timer_requests: Vec<ScriptTimerRequest>,
     trace_entries: Vec<EngineTraceEntry>,
     next_trace_seq: u64,
+    timer_dispatch_depth: u8,
 }
 
 impl Default for WmlEngine {
@@ -87,6 +89,7 @@ impl WmlEngine {
             last_script_timer_requests: Vec::new(),
             trace_entries: Vec::new(),
             next_trace_seq: 1,
+            timer_dispatch_depth: 0,
         }
     }
 
@@ -121,6 +124,7 @@ impl WmlEngine {
         self.last_script_timer_requests.clear();
         self.clear_trace_entries();
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
+        self.run_immediate_timer_for_active_card()?;
         Ok(())
     }
 
@@ -756,6 +760,12 @@ impl WmlEngine {
             self.nav_stack.truncate(previous_stack_len);
             return Err(err);
         }
+        if let Err(err) = self.run_immediate_timer_for_active_card() {
+            self.active_card_idx = previous_idx;
+            self.focused_link_idx = previous_focus;
+            self.nav_stack.truncate(previous_stack_len);
+            return Err(err);
+        }
         Ok(())
     }
 
@@ -773,6 +783,13 @@ impl WmlEngine {
         self.push_trace("ACTION_BACK", String::new());
         if let Err(err) = self.run_onenterbackward_for_active_card() {
             self.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
+            self.active_card_idx = rollback_active_idx;
+            self.focused_link_idx = rollback_focus;
+            self.nav_stack = rollback_stack;
+            return true;
+        }
+        if let Err(err) = self.run_immediate_timer_for_active_card() {
+            self.push_trace("ACTION_ONTIMER_ERROR", err);
             self.active_card_idx = rollback_active_idx;
             self.focused_link_idx = rollback_focus;
             self.nav_stack = rollback_stack;
@@ -806,9 +823,35 @@ impl WmlEngine {
             }
             CardTaskAction::Refresh => {
                 self.push_trace("ACTION_REFRESH", String::new());
+                self.run_immediate_timer_for_active_card()?;
                 Ok(())
             }
         }
+    }
+
+    fn run_immediate_timer_for_active_card(&mut self) -> Result<(), String> {
+        let (timer_value_ds, ontimer_action) = {
+            let card = self.active_card_internal()?;
+            (card.timer_value_ds, card.ontimer_action.clone())
+        };
+        let Some(value_ds) = timer_value_ds else {
+            return Ok(());
+        };
+        self.push_trace("TIMER_START", format!("valueDs={value_ds}"));
+        if value_ds != 0 {
+            return Ok(());
+        }
+        let Some(action) = ontimer_action else {
+            return Ok(());
+        };
+        if self.timer_dispatch_depth >= MAX_TIMER_DISPATCH_DEPTH {
+            return Err("timer: dispatch depth exceeded".to_string());
+        }
+        self.timer_dispatch_depth += 1;
+        self.push_trace("ACTION_ONTIMER", String::new());
+        let result = self.execute_card_task_action(&action);
+        self.timer_dispatch_depth -= 1;
+        result
     }
 
     fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
@@ -2910,6 +2953,62 @@ mod tests {
         assert!(err.contains("Card id not found"));
         assert_eq!(engine.active_card_id().expect("active card"), "home");
         assert_eq!(engine.focused_link_index(), 0);
+        assert!(engine.nav_stack.is_empty());
+    }
+
+    #[test]
+    fn ontimer_zero_dispatches_immediately_on_card_entry() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="0"/>
+            <onevent type="ontimer"><go href="#next"/></onevent>
+            <p>Timed card</p>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        engine
+            .handle_key("enter".to_string())
+            .expect("fragment nav should succeed");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_trace_kinds_subsequence(
+            &engine,
+            &[
+                "ACTION_FRAGMENT",
+                "TIMER_START",
+                "ACTION_ONTIMER",
+                "ACTION_FRAGMENT",
+            ],
+        );
+    }
+
+    #[test]
+    fn ontimer_failure_on_entry_rolls_back_navigation_state() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="0"/>
+            <onevent type="ontimer"><go href="#missing"/></onevent>
+            <p>Timed card</p>
+          </card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        let err = engine
+            .handle_key("enter".to_string())
+            .expect_err("ontimer missing fragment should fail");
+        assert!(err.contains("Card id not found"));
+        assert_eq!(engine.active_card_id().expect("active card"), "home");
         assert!(engine.nav_stack.is_empty());
     }
 
