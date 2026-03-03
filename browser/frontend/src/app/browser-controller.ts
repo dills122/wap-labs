@@ -4,6 +4,7 @@ import type { TauriHostClient } from '../../../contracts/generated/tauri-host-cl
 import { resolveKeyboardIntent } from './keyboard';
 import { isProbeReachable } from './network';
 import { createNavigationStateMachine } from './navigation-state';
+import { ScriptTimerRegistry } from './script-timer-registry';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
 
@@ -27,6 +28,7 @@ export class BrowserController {
   private listenersBound = false;
   private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
   private timerTickInFlight = false;
+  private readonly scriptTimerRegistry = new ScriptTimerRegistry();
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -99,6 +101,7 @@ export class BrowserController {
         'click',
         this.withAction('load-raw-wml', async () => {
           await this.setViewportCols();
+          this.scriptTimerRegistry.reset();
           const snapshot = await this.hostClient.engineLoadDeckContext({
             wmlXml: this.refs.wmlInput.value,
             baseUrl: this.refs.baseUrlInput.value,
@@ -405,6 +408,7 @@ export class BrowserController {
       pushHistory
     });
     if (snapshot) {
+      this.scriptTimerRegistry.reset();
       this.applyTimerRequestsFromSnapshot(snapshot);
     }
 
@@ -439,7 +443,22 @@ export class BrowserController {
   }
 
   private applyTimerRequestsFromSnapshot(_snapshot: EngineRuntimeSnapshot): void {
-    // Engine-managed card timers are progressed by the host clock tick loop.
+    const applied = this.scriptTimerRegistry.applyRequests(_snapshot.lastScriptTimerRequests);
+    for (const scheduled of applied.scheduled) {
+      this.presenter.recordTimeline('script-timer-schedule', 'state', {
+        id: scheduled.id,
+        token: scheduled.token,
+        delayMs: scheduled.delayMs,
+        dueMs: scheduled.dueMs,
+        nowMs: this.scriptTimerRegistry.currentTimeMs()
+      });
+    }
+    for (const token of applied.cancelled) {
+      this.presenter.recordTimeline('script-timer-cancel', 'state', {
+        token,
+        nowMs: this.scriptTimerRegistry.currentTimeMs()
+      });
+    }
   }
 
   private async tickEngineTimerRuntime(): Promise<void> {
@@ -451,6 +470,15 @@ export class BrowserController {
       const before = this.presenter.getSessionState().activeCardId;
       const snapshot = await this.navigation.applyEngineTimerTick(ENGINE_TIMER_TICK_MS);
       this.applyTimerRequestsFromSnapshot(snapshot);
+      const expired = this.scriptTimerRegistry.advance(ENGINE_TIMER_TICK_MS);
+      for (const timer of expired) {
+        this.presenter.recordTimeline('script-timer-expire', 'state', {
+          id: timer.id,
+          token: timer.token,
+          dueMs: timer.dueMs,
+          nowMs: this.scriptTimerRegistry.currentTimeMs()
+        });
+      }
       if (snapshot.externalNavigationIntent) {
         this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
         await this.loadTransportUrl(
