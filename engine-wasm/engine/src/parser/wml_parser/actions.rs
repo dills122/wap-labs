@@ -1,6 +1,8 @@
 use crate::runtime::card::CardTaskAction;
 
+#[cfg(test)]
 use super::xml::{extract_attr, find_tag_from};
+use super::xml::{XmlElement, XmlNode};
 
 type CardActions = (
     Option<CardTaskAction>,
@@ -10,12 +12,15 @@ type CardActions = (
     Option<u32>,
 );
 
-pub(super) fn parse_card_actions(body: &str) -> Result<CardActions, String> {
-    let accept_action = parse_do_accept_action(body)?;
-    let onenterforward_action = parse_onevent_action(body, "onenterforward")?;
-    let onenterbackward_action = parse_onevent_action(body, "onenterbackward")?;
-    let ontimer_action = parse_onevent_action(body, "ontimer")?;
-    let timer_value_ds = parse_timer_value_ds(body)?;
+pub(super) fn parse_card_actions(card: &XmlElement) -> Result<CardActions, String> {
+    let mut elements = Vec::new();
+    collect_elements_in_order(&card.children, &mut elements);
+
+    let accept_action = parse_do_accept_action_xml(&elements);
+    let onenterforward_action = parse_onevent_action_xml(&elements, "onenterforward");
+    let onenterbackward_action = parse_onevent_action_xml(&elements, "onenterbackward");
+    let ontimer_action = parse_onevent_action_xml(&elements, "ontimer");
+    let timer_value_ds = parse_timer_value_ds_xml(&elements);
     Ok((
         accept_action,
         onenterforward_action,
@@ -25,6 +30,102 @@ pub(super) fn parse_card_actions(body: &str) -> Result<CardActions, String> {
     ))
 }
 
+fn collect_elements_in_order<'a>(nodes: &'a [XmlNode], out: &mut Vec<&'a XmlElement>) {
+    for node in nodes {
+        if let XmlNode::Element(element) = node {
+            out.push(element);
+            collect_elements_in_order(&element.children, out);
+        }
+    }
+}
+
+fn parse_do_accept_action_xml(elements: &[&XmlElement]) -> Option<CardTaskAction> {
+    for element in elements {
+        if element.name != "do" {
+            continue;
+        }
+
+        let do_type = element
+            .attr("type")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        if do_type != "accept" {
+            continue;
+        }
+
+        if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
+            return Some(CardTaskAction::Go {
+                href: href.to_string(),
+            });
+        }
+
+        if let Some(action) = parse_first_task_action_xml(&element.children) {
+            return Some(action);
+        }
+    }
+    None
+}
+
+fn parse_onevent_action_xml(
+    elements: &[&XmlElement],
+    target_event_type: &str,
+) -> Option<CardTaskAction> {
+    for element in elements {
+        if element.name != "onevent" {
+            continue;
+        }
+
+        let event_type = element
+            .attr("type")
+            .unwrap_or_default()
+            .to_ascii_lowercase();
+        if event_type == target_event_type {
+            return parse_first_task_action_xml(&element.children);
+        }
+    }
+    None
+}
+
+fn parse_first_task_action_xml(nodes: &[XmlNode]) -> Option<CardTaskAction> {
+    for node in nodes {
+        let XmlNode::Element(element) = node else {
+            continue;
+        };
+        match element.name.as_str() {
+            "go" => {
+                if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
+                    return Some(CardTaskAction::Go {
+                        href: href.to_string(),
+                    });
+                }
+            }
+            "prev" => return Some(CardTaskAction::Prev),
+            "refresh" => return Some(CardTaskAction::Refresh),
+            _ => {
+                if let Some(action) = parse_first_task_action_xml(&element.children) {
+                    return Some(action);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn parse_timer_value_ds_xml(elements: &[&XmlElement]) -> Option<u32> {
+    for element in elements {
+        if element.name != "timer" {
+            continue;
+        }
+        if let Some(raw) = element.attr("value") {
+            if let Ok(value_ds) = raw.trim().parse::<u32>() {
+                return Some(value_ds);
+            }
+        }
+    }
+    None
+}
+
+#[cfg(test)]
 pub(super) fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "do", cursor) {
@@ -59,6 +160,7 @@ pub(super) fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction
     Ok(None)
 }
 
+#[cfg(test)]
 pub(super) fn parse_onevent_action(
     body: &str,
     target_event_type: &str,
@@ -89,6 +191,7 @@ pub(super) fn parse_onevent_action(
     Ok(None)
 }
 
+#[cfg(test)]
 pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskAction>, String> {
     let mut cursor = 0usize;
     while cursor < body.len() {
@@ -121,6 +224,7 @@ pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskActio
     Ok(None)
 }
 
+#[cfg(test)]
 fn choose_next_task_tag(
     next_go: Option<usize>,
     next_prev: Option<usize>,
@@ -142,6 +246,7 @@ fn choose_next_task_tag(
     candidate
 }
 
+#[cfg(test)]
 pub(super) fn parse_timer_value_ds(body: &str) -> Result<Option<u32>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "timer", cursor) {

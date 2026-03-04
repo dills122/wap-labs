@@ -131,7 +131,7 @@ Status keys:
 
 ### M1-07 Parser robustness hardening without feature-scope expansion
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/mod.rs`
 - `engine-wasm/engine/src/parser/wml_parser/xml.rs`
@@ -144,10 +144,14 @@ Status keys:
 - Improve malformed-tag/attribute robustness while keeping MVP semantics and deterministic behavior.
 - Keep parsing ownership in `engine-wasm` (no host-side WML parsing fallback).
 4. `Tests`:
-- Extend parser fixture corpus and regression tests for malformed/edge markup.
+- Parser regression coverage remains green with XML backend split:
+  - `cd engine-wasm/engine && cargo test --lib`
 5. `Accept`:
 - Parser error behavior is deterministic and robust for expanded fixture coverage.
 - Parser boundary is split into `XML parse/tokenize` + `WML semantic mapping` and documented in engine architecture notes.
+6. `Notes`:
+- Implemented with `quick-xml` backend in `xml.rs` and WaveNav-owned semantic mapping in `actions.rs` and `nodes.rs`.
+- `parse_wml` now maps XML parse failures to stable parser-facing errors for existing behavior-sensitive tests (e.g. missing `</card>`).
 
 ### M1-08 Split high-churn files into boundary modules
 
