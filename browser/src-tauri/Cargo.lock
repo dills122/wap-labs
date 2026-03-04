@@ -4355,6 +4355,7 @@ dependencies = [
 name = "wavenav_engine"
 version = "0.1.0"
 dependencies = [
+ "quick-xml",
  "serde",
  "url",
 ]

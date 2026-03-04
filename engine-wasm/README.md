@@ -106,7 +106,7 @@ Parser:
 - `engine/src/parser/wml_parser/mod.rs` (public parser entrypoint `parse_wml`)
 - `engine/src/parser/wml_parser/actions.rs` (`<do>`, `<onevent>`, task/timer action parsing)
 - `engine/src/parser/wml_parser/nodes.rs` (card and inline node parsing)
-- `engine/src/parser/wml_parser/xml.rs` (tag scanning, attribute extraction, text/entity normalization)
+- `engine/src/parser/wml_parser/xml.rs` (XML tokenize/parse backend via `quick-xml`, normalized element/text tree, text/entity decoding)
 - `engine/src/parser/wml_parser/tests.rs` (parser tests)
 
 Core runtime/rendering support:
@@ -198,9 +198,8 @@ Type contract:
 ## Next implementation slice
 
 1. Execute `M1-02`: add parity-critical native/wasm regression coverage for `loadDeckContext`, `handleKey`, `navigateBack`, `render`, and script invocation outcomes.
-2. Execute `M1-07`: parser robustness hardening for malformed/edge markup by adopting an existing XML parser backend and keeping WML semantics in an engine-owned mapper layer.
-3. Execute compliance follow-up queue from `docs/wml-engine/work-items.md`: `A5-01`, `A5-02`, `A5-03`, and `B5-01` (additive tickets; no reopening of completed `A*` tickets).
-4. Track `M1-03` engine API generator as non-priority design/bootstrap work to reduce manual TypeScript API sync.
+2. Execute compliance follow-up queue from `docs/wml-engine/work-items.md`: `A5-01`, `A5-02`, `A5-03`, and `B5-01` (additive tickets; no reopening of completed `A*` tickets).
+3. Track `M1-03` engine API generator as non-priority design/bootstrap work to reduce manual TypeScript API sync.
 
 ## Current checklist (planning/execution)
 
@@ -208,7 +207,7 @@ Type contract:
 - [ ] Keep engine contract and transport/browser mapping synced
 - [ ] Expand fixture corpus to cover pending `RQ-RMK-*` and `RQ-WAE-*` groups
 - [ ] Add parity-critical native/wasm regression coverage (`M1-02`)
-- [ ] Harden parser robustness for malformed/edge markup fixtures (`M1-07`)
+- [x] Harden parser robustness for malformed/edge markup fixtures (`M1-07`)
 - [x] Decompose high-churn engine file boundaries without behavior changes (`M1-08`, engine scope)
 - [ ] Implement history fidelity follow-up (`A5-01`)
 - [ ] Implement inter-card task pipeline conformance follow-up (`A5-02`)

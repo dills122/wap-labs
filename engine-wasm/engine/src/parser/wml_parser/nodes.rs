@@ -1,6 +1,103 @@
 use crate::runtime::node::{InlineNode, Node};
 
-use super::xml::{extract_attr, normalize_text, starts_with_tag_at};
+use super::xml::{extract_attr, normalize_text, starts_with_tag_at, XmlElement, XmlNode};
+
+pub(super) fn parse_card_nodes_xml(card: &XmlElement) -> Result<Vec<Node>, String> {
+    let mut out = Vec::new();
+    map_card_level_nodes(&card.children, &mut out);
+    Ok(out)
+}
+
+fn map_card_level_nodes(nodes: &[XmlNode], out: &mut Vec<Node>) {
+    for node in nodes {
+        match node {
+            XmlNode::Text(text) => {
+                let text = normalize_text(text);
+                if !text.is_empty() {
+                    out.push(Node::Paragraph(vec![InlineNode::Text(text)]));
+                }
+            }
+            XmlNode::Element(element) => match element.name.as_str() {
+                "br" => out.push(Node::Break),
+                "p" => {
+                    let inline = map_inline_nodes(&element.children);
+                    if !inline.is_empty() {
+                        out.push(Node::Paragraph(inline));
+                    }
+                }
+                "a" => {
+                    let href = element.attr("href").unwrap_or_default().to_string();
+                    if !href.is_empty() {
+                        let text = normalize_text(&inline_text_content(&element.children));
+                        let text = if text.is_empty() { href.clone() } else { text };
+                        out.push(Node::Paragraph(vec![InlineNode::Link { text, href }]));
+                    }
+                }
+                _ => map_card_level_nodes(&element.children, out),
+            },
+        }
+    }
+}
+
+fn map_inline_nodes(nodes: &[XmlNode]) -> Vec<InlineNode> {
+    let mut out = Vec::new();
+    let mut pending_text = String::new();
+    map_inline_nodes_recursive(nodes, &mut pending_text, &mut out);
+    flush_pending_inline_text(&mut pending_text, &mut out);
+    out
+}
+
+fn map_inline_nodes_recursive(
+    nodes: &[XmlNode],
+    pending_text: &mut String,
+    out: &mut Vec<InlineNode>,
+) {
+    for node in nodes {
+        match node {
+            XmlNode::Text(text) => pending_text.push_str(text),
+            XmlNode::Element(element) => match element.name.as_str() {
+                "a" => {
+                    flush_pending_inline_text(pending_text, out);
+                    let href = element.attr("href").unwrap_or_default().to_string();
+                    if !href.is_empty() {
+                        let text = normalize_text(&inline_text_content(&element.children));
+                        out.push(InlineNode::Link {
+                            text: if text.is_empty() { href.clone() } else { text },
+                            href,
+                        });
+                    }
+                }
+                "br" => {
+                    flush_pending_inline_text(pending_text, out);
+                    out.push(InlineNode::Text(" ".to_string()));
+                }
+                _ => map_inline_nodes_recursive(&element.children, pending_text, out),
+            },
+        }
+    }
+}
+
+fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode>) {
+    if pending_text.is_empty() {
+        return;
+    }
+    let normalized = normalize_text(pending_text);
+    pending_text.clear();
+    if !normalized.is_empty() {
+        out.push(InlineNode::Text(normalized));
+    }
+}
+
+fn inline_text_content(nodes: &[XmlNode]) -> String {
+    let mut out = String::new();
+    for node in nodes {
+        match node {
+            XmlNode::Text(text) => out.push_str(text),
+            XmlNode::Element(element) => out.push_str(&inline_text_content(&element.children)),
+        }
+    }
+    out
+}
 
 pub(super) fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
     let mut nodes = Vec::new();

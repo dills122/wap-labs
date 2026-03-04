@@ -6,45 +6,45 @@ mod nodes;
 mod xml;
 
 use actions::parse_card_actions;
-use nodes::parse_card_nodes;
-use xml::{extract_attr, extract_wml_body, find_tag_from};
+use nodes::parse_card_nodes_xml;
+use xml::{parse_xml_root, XmlNode};
 
 #[cfg(test)]
 use actions::{
     parse_do_accept_action, parse_first_task_action, parse_onevent_action, parse_timer_value_ds,
 };
 #[cfg(test)]
-use nodes::parse_inline_nodes;
+use nodes::{parse_card_nodes, parse_inline_nodes};
+#[cfg(test)]
+use xml::extract_wml_body;
 
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
-    let wml_body = extract_wml_body(xml)?;
+    let root = parse_xml_root(xml).map_err(map_xml_parse_error)?;
+    if root.name != "wml" {
+        return Err("Missing required <wml> root element".to_string());
+    }
+
     let mut cards = Vec::new();
-    let mut cursor = 0usize;
+    for node in &root.children {
+        let XmlNode::Element(card) = node else {
+            continue;
+        };
+        if card.name != "card" {
+            continue;
+        }
 
-    while let Some(start) = find_tag_from(wml_body, "card", cursor) {
-        let open_end = wml_body[start..]
-            .find('>')
-            .map(|idx| start + idx)
-            .ok_or_else(|| "Malformed <card> opening tag".to_string())?;
-
-        let open_tag = &wml_body[start..=open_end];
-        let id =
-            extract_attr(open_tag, "id").unwrap_or_else(|| format!("card-{}", cards.len() + 1));
-
-        let close_start = wml_body[open_end + 1..]
-            .find("</card>")
-            .map(|idx| open_end + 1 + idx)
-            .ok_or_else(|| format!("Missing closing </card> for card {id}"))?;
-
-        let card_body = &wml_body[open_end + 1..close_start];
+        let id = card
+            .attr("id")
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("card-{}", cards.len() + 1));
         let (
             accept_action,
             onenterforward_action,
             onenterbackward_action,
             ontimer_action,
             timer_value_ds,
-        ) = parse_card_actions(card_body)?;
-        let nodes = parse_card_nodes(card_body)?;
+        ) = parse_card_actions(card)?;
+        let nodes = parse_card_nodes_xml(card)?;
         cards.push(Card {
             id,
             nodes,
@@ -54,8 +54,6 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             ontimer_action,
             timer_value_ds,
         });
-
-        cursor = close_start + "</card>".len();
     }
 
     if cards.is_empty() {
@@ -63,6 +61,13 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     }
 
     Ok(Deck::new(cards))
+}
+
+fn map_xml_parse_error(err: String) -> String {
+    if err.contains("expected `</card>`") {
+        return "Missing closing </card> tag".to_string();
+    }
+    err
 }
 
 #[cfg(test)]
