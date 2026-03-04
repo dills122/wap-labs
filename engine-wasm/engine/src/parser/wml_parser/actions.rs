@@ -1,6 +1,8 @@
 use crate::runtime::card::CardTaskAction;
 
-use super::xml::{extract_attr, find_tag_from, XmlElement, XmlNode};
+#[cfg(test)]
+use super::xml::{extract_attr, find_tag_from};
+use super::xml::{XmlElement, XmlNode};
 
 type CardActions = (
     Option<CardTaskAction>,
@@ -123,6 +125,7 @@ fn parse_timer_value_ds_xml(elements: &[&XmlElement]) -> Option<u32> {
     None
 }
 
+#[cfg(test)]
 pub(super) fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "do", cursor) {
@@ -157,6 +160,7 @@ pub(super) fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction
     Ok(None)
 }
 
+#[cfg(test)]
 pub(super) fn parse_onevent_action(
     body: &str,
     target_event_type: &str,
@@ -187,6 +191,7 @@ pub(super) fn parse_onevent_action(
     Ok(None)
 }
 
+#[cfg(test)]
 pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskAction>, String> {
     let mut cursor = 0usize;
     while cursor < body.len() {
@@ -219,6 +224,7 @@ pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskActio
     Ok(None)
 }
 
+#[cfg(test)]
 fn choose_next_task_tag(
     next_go: Option<usize>,
     next_prev: Option<usize>,
@@ -240,6 +246,7 @@ fn choose_next_task_tag(
     candidate
 }
 
+#[cfg(test)]
 pub(super) fn parse_timer_value_ds(body: &str) -> Result<Option<u32>, String> {
     let mut cursor = 0usize;
     while let Some(start) = find_tag_from(body, "timer", cursor) {

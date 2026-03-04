@@ -113,6 +113,7 @@ fn attach_node(
     }
 }
 
+#[cfg(test)]
 pub(super) fn extract_wml_body(xml: &str) -> Result<&str, String> {
     let open_start = find_tag_from(xml, "wml", 0)
         .ok_or_else(|| "Missing required <wml> root element".to_string())?;
@@ -130,6 +131,7 @@ pub(super) fn extract_wml_body(xml: &str) -> Result<&str, String> {
     Ok(&xml[open_end + 1..close_start])
 }
 
+#[cfg(test)]
 pub(super) fn find_tag_from(xml: &str, tag_name: &str, from: usize) -> Option<usize> {
     let needle = format!("<{tag_name}");
     let mut search = from;
@@ -146,6 +148,7 @@ pub(super) fn find_tag_from(xml: &str, tag_name: &str, from: usize) -> Option<us
     None
 }
 
+#[cfg(test)]
 pub(super) fn starts_with_tag_at(xml: &str, from: usize, tag_name: &str) -> bool {
     if from >= xml.len() {
         return false;
@@ -161,6 +164,7 @@ pub(super) fn starts_with_tag_at(xml: &str, from: usize, tag_name: &str) -> bool
     }
 }
 
+#[cfg(test)]
 pub(super) fn extract_attr(tag: &str, attr: &str) -> Option<String> {
     let needle = format!("{attr}=\"");
     let start = tag.find(&needle)? + needle.len();

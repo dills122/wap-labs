@@ -1,6 +1,8 @@
 use crate::runtime::node::{InlineNode, Node};
 
-use super::xml::{extract_attr, normalize_text, starts_with_tag_at, XmlElement, XmlNode};
+#[cfg(test)]
+use super::xml::{extract_attr, starts_with_tag_at};
+use super::xml::{normalize_text, XmlElement, XmlNode};
 
 pub(super) fn parse_card_nodes_xml(card: &XmlElement) -> Result<Vec<Node>, String> {
     let mut out = Vec::new();
@@ -99,6 +101,7 @@ fn inline_text_content(nodes: &[XmlNode]) -> String {
     out
 }
 
+#[cfg(test)]
 pub(super) fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
     let mut nodes = Vec::new();
     let mut cursor = 0usize;
@@ -186,6 +189,7 @@ pub(super) fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
     Ok(nodes)
 }
 
+#[cfg(test)]
 pub(super) fn parse_inline_nodes(content: &str) -> Result<Vec<InlineNode>, String> {
     let mut nodes = Vec::new();
     let mut cursor = 0usize;
