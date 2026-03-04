@@ -284,3 +284,38 @@ Status keys:
 - No stale “next slice” or checklist entries after implementation merges.
 6. `Notes`:
 - Implemented through `M1-06` CI guardrails (`check-worklist-drift.mjs`) plus contract parity checks in repo hygiene workflow.
+
+### M0-07 Historical backlog pruning pass
+
+1. `Status`: `todo`
+2. `Files`:
+- `docs/waves/WORK_ITEMS.md`
+- `docs/waves/WORK_ITEMS_ARCHIVE.md` (new)
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- `README.md`
+3. `Build`:
+- Move pre-implementation kickoff/planning-only ticket groups that are no longer actionable into a dedicated archive file (`docs/waves/WORK_ITEMS_ARCHIVE.md`), not inline in active boards.
+- Keep active queues focused on executable work items only.
+4. `Tests`:
+- Manual consistency pass for active-vs-archive file boundaries, status markers, and README references.
+5. `Accept`:
+- Active boards only contain actionable work; historical tickets remain preserved in archive file with traceable IDs.
+
+### M0-08 Cross-board status sync cadence
+
+1. `Status`: `todo`
+2. `Files`:
+- `docs/waves/WORK_ITEMS.md`
+- `docs/waves/WORK_ITEMS_ARCHIVE.md`
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- `browser/README.md`
+- `engine-wasm/README.md`
+- `transport-rust/README.md`
+- `README.md`
+3. `Build`:
+- Define and document a standing rule: when a ticket status changes, update corresponding board and README “next slice/checklist/snapshot” pointers in the same PR.
+- Keep updates additive and deterministic across layers.
+4. `Tests`:
+- Manual PR checklist verification against one representative ticket transition.
+5. `Accept`:
+- Status transitions no longer leave board/readme mismatches after merge.
