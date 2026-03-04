@@ -13,7 +13,9 @@
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + in-process Rust transport)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
+- `waves/WORK_ITEMS_ARCHIVE.md`: archived/historical Waves integration tickets
 - `waves/MAINTENANCE_WORK_ITEMS.md`: Waves maintenance and technical-debt board
+- `waves/MAINTENANCE_WORK_ITEMS_ARCHIVE.md`: archived/historical Waves maintenance tickets
 - `waves/WAVESCRIPT_VM_ARCHITECTURE.md`: WaveScript VM/runtime design and milestone plan
 - `waves/WMLSCRIPT_SPEC_TRACEABILITY.md`: WMLScript spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`: WML/WBXML runtime-markup requirements and acceptance-criteria traceability matrix
@@ -22,6 +24,7 @@
 - `waves/TRANSPORT_RUST_PHASE_PLAN.md`: active phased implementation plan for `transport-rust` (FFI decode, streaming, protocol, and WTLS stages)
 - `waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`: canonical migration plan for EngineFrame-based host integration
 - `waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`: ticketized execution board for frame/input interface migration
+- `waves/ENGINE_HOST_FRAME_WORK_ITEMS_ARCHIVE.md`: archived/historical frame migration tickets
 - `waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`: HTTP/TCP/HTTPSM/WCMP transport-adjacent requirements and interoperability-boundary traceability
 - `waves/SECURITY_BOUNDARY_TRACEABILITY.md`: WTLS/TLS/end-to-end security traceability and Waves boundary policy mapping
 - `waves/SECURITY_PKI_SPEC_TRACEABILITY.md`: WAPCert/WPKI/WIM trust and PKI-profile boundary traceability
@@ -51,6 +54,7 @@ Authoritative implementation set:
 - `wml-engine/architecture.md`: maintainable internal module architecture
 - `wml-engine/ticket-plan.md`: active phased implementation backlog
 - `wml-engine/work-items.md`: PR-sized execution board for current implementation cycle
+- `wml-engine/work-items-archive.md`: archived/historical engine execution tickets
 - `wml-engine/test-strategy.md`: fixture and verification strategy
 - `wml-engine/wavescript-security.md`: WaveScript VM sandbox and security guardrails
 

@@ -26,7 +26,7 @@ Secondary docs:
 
 ## Progress Snapshot
 
-Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md` (updated 2026-03-03).
+Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md` (updated 2026-03-04).
 
 | Track | Implemented | Roadmap / In Progress |
 |---|---|---|
