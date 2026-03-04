@@ -132,9 +132,6 @@ jobs:
       - name: Workspace format check
         run: pnpm format:check:node
 
-      - name: Browser contract codegen drift check
-        run: pnpm --dir browser run contracts:check
-
   rust-engine:
     name: Rust Engine
     needs: [changes]
@@ -328,6 +325,19 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
           sudo apt-get install -y libwebkit2gtk-4.1-dev || sudo apt-get install -y libwebkit2gtk-4.0-dev
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install root Node deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
