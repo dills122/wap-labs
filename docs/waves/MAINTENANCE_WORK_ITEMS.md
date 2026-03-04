@@ -52,7 +52,7 @@ Status keys:
 
 ### M1-02 Engine native/wasm parity regression suite for critical flows
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Files`:
 - `engine-wasm/engine/src/engine_public_api.rs`
 - `engine-wasm/engine/src/engine_wasm_bindings.rs`
@@ -63,12 +63,14 @@ Status keys:
 - Add parity-critical tests for `loadDeckContext`, `handleKey`, `navigateBack`, `render`, and script invocation outcomes.
 4. `Tests`:
 - `cd engine-wasm/engine && cargo test`
+- `cd engine-wasm/engine && cargo clippy --all-targets --all-features -- -D warnings`
+- `cd engine-wasm/engine && wasm-pack test --node`
 5. `Accept`:
 - Parity-critical behavior is covered by deterministic tests and mapped in coverage docs.
 6. `Notes`:
 - Initial public-API regression coverage landed for `loadDeckContext`, `handleKey`, `navigateBack`, `render`, and script invocation outcomes in `engine-wasm/engine/src/engine_tests.rs`.
 - Added explicit ingestion-surface parity assertions (`loadDeck` vs `loadDeckContext`) and stable invocation error-surface checks via `m1_02_*` tests.
-- Added wasm-boundary regression tests for wrapper methods in `engine-wasm/engine/src/engine_wasm_bindings_tests.rs` (`wasm-bindgen-test`), with execution intended via `wasm-pack test --node`.
+- Added wasm-boundary regression tests for wrapper methods in `engine-wasm/engine/src/engine_wasm_bindings_tests.rs` (`wasm-bindgen-test`) and validated execution in node lane (`3 passed`) via `wasm-pack test --node`.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
@@ -116,7 +118,7 @@ Status keys:
 
 ### M1-06 CI guardrails for contract drift and worklist drift
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `scripts/check-transport-contract-parity.mjs`
 - `scripts/` (new engine contract parity check)
@@ -125,9 +127,15 @@ Status keys:
 - Enforce transport and engine contract parity checks in CI.
 - Add a lightweight docs drift check for next-slice pointers in active readmes/worklists.
 4. `Tests`:
-- CI run with intentional drift to confirm failing behavior.
+- `node scripts/check-transport-contract-parity.mjs`
+- `node scripts/check-engine-contract-parity.mjs`
+- `node scripts/check-worklist-drift.mjs`
 5. `Accept`:
 - Contract/docs drift is blocked before merge.
+6. `Notes`:
+- Added `scripts/check-engine-contract-parity.mjs` to enforce key and `loadDeckContext` request-shape parity between engine-owned and browser-generated contracts.
+- Added `scripts/check-worklist-drift.mjs` to validate next-slice pointers across active readmes/worklists against `M1-*` status entries.
+- Wired both checks into `.github/workflows/ci.yml` `repo-hygiene` job.
 
 ### M1-07 Parser robustness hardening without feature-scope expansion
 

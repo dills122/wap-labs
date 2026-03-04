@@ -97,3 +97,4 @@ Prefer work that improves:
 
 please refer to `docs/agents/AGENT_STANDARDS.md` for a more in depth, language specific reference on standards
 and `docs/agents/RUST_STEERING.md` for Rust-specific implementation rules.
+Use `docs/agents/SHELL_STEERING.md` and `docs/agents/SCRIPTING_STEERING.md` for reusable shell/script guidance (POSIX-first, Alpine-compatible where possible, reuse existing tools before custom scripting).

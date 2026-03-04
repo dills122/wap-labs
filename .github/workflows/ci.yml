@@ -46,7 +46,9 @@ jobs:
               - "eslint.shared.mjs"
               - ".prettierrc.json"
               - ".prettierignore"
+              - "scripts/check-engine-contract-parity.mjs"
               - "scripts/check-transport-contract-parity.mjs"
+              - "scripts/check-worklist-drift.mjs"
             rust_engine:
               - "engine-wasm/engine/**"
               - "engine-wasm/contracts/**"
@@ -135,6 +137,12 @@ jobs:
 
       - name: Transport contract parity check
         run: node scripts/check-transport-contract-parity.mjs
+
+      - name: Engine contract parity check
+        run: node scripts/check-engine-contract-parity.mjs
+
+      - name: Worklist drift check
+        run: node scripts/check-worklist-drift.mjs
 
   rust-engine:
     name: Rust Engine

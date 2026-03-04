@@ -38,6 +38,8 @@
 
 - `agents/AGENT_STANDARDS.md`: multi-language contributor/agent standards
 - `agents/RUST_STEERING.md`: Rust-specific steering for WaveNav engine development
+- `agents/SHELL_STEERING.md`: POSIX-first shell steering and Alpine portability rules
+- `agents/SCRIPTING_STEERING.md`: reusable scripting policy and tool-reuse-first guidance
 
 ## WaveNav Engine Documentation Set
 

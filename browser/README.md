@@ -108,11 +108,10 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 
-1. Execute `M1-06`: add CI guardrails for contract drift and worklist drift.
-2. Execute cross-layer compliance follow-up integration tickets from `docs/waves/WORK_ITEMS.md`: `T0-04` and `T0-05` (request-policy + UA capability header flow wiring).
-3. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
-4. Execute `M1-09`: migrate host rendering/input boundary to structured frame/input contracts (`F0-F4`).
-5. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
+1. Execute cross-layer compliance follow-up integration tickets from `docs/waves/WORK_ITEMS.md`: `T0-04` and `T0-05` (request-policy + UA capability header flow wiring).
+2. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
+3. Execute `M1-09`: migrate host rendering/input boundary to structured frame/input contracts (`F0-F4`).
+4. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
 
 ## Planning + Traceability
 

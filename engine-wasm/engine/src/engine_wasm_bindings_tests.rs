@@ -3,8 +3,6 @@ use js_sys::{Array, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
-wasm_bindgen_test_configure!(run_in_browser);
-
 const SAMPLE: &str = r##"
 <wml>
   <card id="home">
