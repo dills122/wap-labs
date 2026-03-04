@@ -4,6 +4,10 @@ Purpose: preserve completed historical engine tickets moved out of the active bo
 
 This file is archival. New work should be added to `docs/wml-engine/work-items.md` via new ticket IDs.
 
+Active board:
+
+- `docs/wml-engine/work-items.md`
+
 ## Phase A Completed Queue (Archived)
 
 ## Phase A Implementation Queue

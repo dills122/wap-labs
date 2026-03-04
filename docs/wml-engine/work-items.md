@@ -9,6 +9,10 @@ Status keys:
 - `blocked`
 - `done`
 
+Archive:
+
+- `docs/wml-engine/work-items-archive.md`
+
 ## Current Execution Scope
 
 Target scope is Phase A (`P0`) only:

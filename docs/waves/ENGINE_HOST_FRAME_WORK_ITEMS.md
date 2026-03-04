@@ -9,6 +9,10 @@ Status keys:
 - `blocked`
 - `done`
 
+Archive:
+
+- `docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS_ARCHIVE.md`
+
 ## Program Guardrails
 
 1. Keep changes layered:

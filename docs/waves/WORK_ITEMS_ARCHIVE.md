@@ -4,6 +4,10 @@ Purpose: preserve historical/completed tickets moved out of the active execution
 
 This file is archival. New work should be added to `docs/waves/WORK_ITEMS.md` via new ticket IDs.
 
+Active board:
+
+- `docs/waves/WORK_ITEMS.md`
+
 ## Initial Backlog (Prepared)
 
 Historical kickoff `P0` tickets are archived as completed:

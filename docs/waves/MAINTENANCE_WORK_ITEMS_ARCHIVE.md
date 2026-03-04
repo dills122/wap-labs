@@ -4,6 +4,10 @@ Purpose: preserve completed historical maintenance tickets moved out of the acti
 
 This file is archival. New work should be added to `docs/waves/MAINTENANCE_WORK_ITEMS.md` via new ticket IDs.
 
+Active board:
+
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+
 ## M1 Completed Tickets (Archived)
 
 ### M1-01 Contract-source unification in browser host/frontend
@@ -204,4 +208,3 @@ This file is archival. New work should be added to `docs/waves/MAINTENANCE_WORK_
 - No stale “next slice” or checklist entries after implementation merges.
 6. `Notes`:
 - Implemented through `M1-06` CI guardrails (`check-worklist-drift.mjs`) plus contract parity checks in repo hygiene workflow.
-

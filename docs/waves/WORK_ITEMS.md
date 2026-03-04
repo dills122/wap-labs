@@ -10,6 +10,10 @@ Status keys:
 
 Current mode: active execution. Completed and in-progress tickets are tracked below.
 
+Archive:
+
+- `docs/waves/WORK_ITEMS_ARCHIVE.md`
+
 ## Baseline Assumptions
 
 These assumptions are active for this board and should not be re-litigated in each ticket:
