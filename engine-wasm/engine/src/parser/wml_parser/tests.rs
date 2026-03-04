@@ -450,3 +450,88 @@ fn helper_parse_inline_nodes_reports_malformed_tags() {
         parse_inline_nodes("<unknown").expect_err("malformed inline tag should fail");
     assert!(malformed_tag.contains("Malformed inline tag"));
 }
+
+#[test]
+fn helper_parse_card_nodes_parses_mixed_content_paths() {
+    let nodes = parse_card_nodes(
+        r##"lead<br/><p>one <a href="#a">A</a><br/>two <span>three</span></p><a href="#next"></a><a>NoHref</a><unknown attr="x">drop</unknown>tail"##,
+    )
+    .expect("mixed card nodes should parse");
+
+    assert!(matches!(
+        &nodes[0],
+        Node::Paragraph(items) if matches!(&items[0], InlineNode::Text(t) if t == "lead")
+    ));
+    assert!(matches!(&nodes[1], Node::Break));
+    assert!(matches!(&nodes[2], Node::Paragraph(_)));
+    assert!(matches!(
+        &nodes[3],
+        Node::Paragraph(items)
+            if matches!(
+                &items[0],
+                InlineNode::Link { text, href } if text == "#next" && href == "#next"
+            )
+    ));
+    assert!(
+        nodes.iter().any(|node| matches!(
+            node,
+            Node::Paragraph(items) if matches!(&items[0], InlineNode::Text(t) if t == "tail")
+        )),
+        "expected trailing tail paragraph in parsed nodes: {nodes:?}"
+    );
+}
+
+#[test]
+fn helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers() {
+    let items = parse_inline_nodes(
+        r##"pre <a href="#a">A</a> mid <br/> <span>wrapped</span> <a href="">skip</a> post"##,
+    )
+    .expect("mixed inline nodes should parse");
+
+    assert!(matches!(&items[0], InlineNode::Text(t) if t == "pre"));
+    assert!(matches!(
+        &items[1],
+        InlineNode::Link { text, href } if text == "A" && href == "#a"
+    ));
+    assert!(matches!(&items[2], InlineNode::Text(t) if t == "mid"));
+    assert!(matches!(&items[3], InlineNode::Text(t) if t == " "));
+    assert!(matches!(&items[4], InlineNode::Text(t) if t == "wrapped"));
+    assert!(matches!(&items[5], InlineNode::Text(t) if t == "post"));
+}
+
+#[test]
+fn parse_wml_reports_xml_root_and_structure_errors() {
+    let text_outside_root = parse_wml("oops<wml><card id=\"x\"/></wml>")
+        .expect_err("text outside root should fail parse");
+    assert!(text_outside_root.contains("text outside root"));
+
+    let multiple_roots = parse_wml("<wml><card id=\"a\"/></wml><wml><card id=\"b\"/></wml>")
+        .expect_err("multiple roots should fail parse");
+    assert!(multiple_roots.contains("multiple root elements"));
+
+    let unexpected_close = parse_wml("</wml>").expect_err("unexpected close should fail parse");
+    assert!(
+        unexpected_close.contains("Malformed XML"),
+        "unexpected close should report malformed xml, got: {unexpected_close}"
+    );
+}
+
+#[test]
+fn parses_cdata_and_named_entity_refs() {
+    let xml = r##"
+        <wml>
+          <card id="home"><p><![CDATA[raw <keep>]]> &apos;ok&apos;</p></card>
+        </wml>
+    "##;
+
+    let deck = parse_wml(xml).expect("cdata/entity deck should parse");
+    match &deck.cards[0].nodes[0] {
+        Node::Paragraph(items) => {
+            assert!(matches!(
+                &items[0],
+                InlineNode::Text(t) if t == "raw <keep> 'ok'"
+            ));
+        }
+        _ => panic!("expected paragraph"),
+    }
+}
