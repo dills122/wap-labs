@@ -62,17 +62,16 @@ When `FetchDeckResponse.ok === false`:
 ## Next implementation slice
 
 1. Execute `M1-04`: decompose transport request validation, gateway mapping, payload decode, and error mapping into explicit internal modules.
-2. Execute `M1-06`: enforce transport/engine contract drift checks in CI.
-3. Execute compliance follow-up tickets from `docs/waves/WORK_ITEMS.md`: `T0-04`, `T0-05`, `T0-06`, and `T0-07`.
-4. Execute `M1-08`: reduce high-churn single-file pressure while preserving deterministic mapping behavior.
-5. Track `M1-03` engine API generator integration as non-priority follow-up for downstream contract consumers.
+2. Execute compliance follow-up tickets from `docs/waves/WORK_ITEMS.md`: `T0-04`, `T0-05`, `T0-06`, and `T0-07`.
+3. Execute `M1-08`: reduce high-churn single-file pressure while preserving deterministic mapping behavior.
+4. Track `M1-03` engine API generator integration as non-priority follow-up for downstream contract consumers.
 
 ## Current checklist (planning/execution)
 
 - [x] Freeze transport normalization guarantees for engine handoff (`T0-02`)
 - [x] Freeze deterministic transport error trigger matrix (`T0-03`)
 - [ ] Decompose transport internals into clearer module boundaries (`M1-04`)
-- [ ] Add CI guardrails for contract drift checks (`M1-06`)
+- [x] Add CI guardrails for contract drift checks (`M1-06`)
 - [ ] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
 - [ ] Add cache/reload request-policy conformance plumbing (`T0-04`)
 - [ ] Add UA capability header conformance path (`T0-05`)

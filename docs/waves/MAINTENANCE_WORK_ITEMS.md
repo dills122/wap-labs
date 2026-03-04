@@ -116,7 +116,7 @@ Status keys:
 
 ### M1-06 CI guardrails for contract drift and worklist drift
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `scripts/check-transport-contract-parity.mjs`
 - `scripts/` (new engine contract parity check)
@@ -125,9 +125,15 @@ Status keys:
 - Enforce transport and engine contract parity checks in CI.
 - Add a lightweight docs drift check for next-slice pointers in active readmes/worklists.
 4. `Tests`:
-- CI run with intentional drift to confirm failing behavior.
+- `node scripts/check-transport-contract-parity.mjs`
+- `node scripts/check-engine-contract-parity.mjs`
+- `node scripts/check-worklist-drift.mjs`
 5. `Accept`:
 - Contract/docs drift is blocked before merge.
+6. `Notes`:
+- Added `scripts/check-engine-contract-parity.mjs` to enforce key and `loadDeckContext` request-shape parity between engine-owned and browser-generated contracts.
+- Added `scripts/check-worklist-drift.mjs` to validate next-slice pointers across active readmes/worklists against `M1-*` status entries.
+- Wired both checks into `.github/workflows/ci.yml` `repo-hygiene` job.
 
 ### M1-07 Parser robustness hardening without feature-scope expansion
 
