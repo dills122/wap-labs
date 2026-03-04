@@ -67,6 +67,8 @@ Status keys:
 - Parity-critical behavior is covered by deterministic tests and mapped in coverage docs.
 6. `Notes`:
 - Initial public-API regression coverage landed for `loadDeckContext`, `handleKey`, `navigateBack`, `render`, and script invocation outcomes in `engine-wasm/engine/src/engine_tests.rs`.
+- Added explicit ingestion-surface parity assertions (`loadDeck` vs `loadDeckContext`) and stable invocation error-surface checks via `m1_02_*` tests.
+- Added wasm-boundary regression tests for wrapper methods in `engine-wasm/engine/src/engine_wasm_bindings_tests.rs` (`wasm-bindgen-test`), with execution intended via `wasm-pack test --node`.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 

@@ -2413,3 +2413,105 @@ fn m1_02_script_invocation_public_outcome_regression() {
         Some("none".to_string())
     );
 }
+
+#[test]
+fn m1_02_load_deck_and_load_deck_context_have_matching_runtime_behavior() {
+    let mut engine_compat = WmlEngine::new();
+    let mut engine_context = WmlEngine::new();
+
+    engine_compat
+        .load_deck(FIXTURE_MIXED_INLINE_TEXT_LINKS)
+        .expect("loadDeck path should succeed");
+    engine_context
+        .load_deck_context(
+            FIXTURE_MIXED_INLINE_TEXT_LINKS,
+            "http://example.test/fixture.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("loadDeckContext path should succeed");
+
+    assert_eq!(
+        render_snapshot_lines(&engine_compat),
+        render_snapshot_lines(&engine_context)
+    );
+    assert_eq!(
+        engine_compat.active_card_id().expect("active card"),
+        engine_context.active_card_id().expect("active card")
+    );
+    assert_eq!(
+        engine_compat.focused_link_index(),
+        engine_context.focused_link_index()
+    );
+
+    engine_compat
+        .handle_key("down".to_string())
+        .expect("down should move focus in compat path");
+    engine_context
+        .handle_key("down".to_string())
+        .expect("down should move focus in context path");
+    assert_eq!(
+        render_snapshot_lines(&engine_compat),
+        render_snapshot_lines(&engine_context)
+    );
+    assert_eq!(
+        engine_compat.focused_link_index(),
+        engine_context.focused_link_index()
+    );
+
+    engine_compat
+        .handle_key("enter".to_string())
+        .expect("enter should navigate in compat path");
+    engine_context
+        .handle_key("enter".to_string())
+        .expect("enter should navigate in context path");
+    assert_eq!(
+        engine_compat.active_card_id().expect("active card"),
+        engine_context.active_card_id().expect("active card")
+    );
+    assert_eq!(
+        render_snapshot_lines(&engine_compat),
+        render_snapshot_lines(&engine_context)
+    );
+
+    assert_eq!(
+        engine_compat.navigate_back(),
+        engine_context.navigate_back()
+    );
+    assert_eq!(
+        engine_compat.active_card_id().expect("active card"),
+        engine_context.active_card_id().expect("active card")
+    );
+    assert_eq!(
+        render_snapshot_lines(&engine_compat),
+        render_snapshot_lines(&engine_context)
+    );
+}
+
+#[test]
+fn m1_02_invoke_script_ref_missing_unit_has_stable_error_surface() {
+    let mut engine = WmlEngine::new();
+    engine.load_deck(SAMPLE).expect("sample deck should load");
+
+    let err = engine
+        .invoke_script_ref("missing.wmlsc".to_string())
+        .expect_err("missing unit should return invocation error");
+    assert!(
+        err.contains("script unit not registered"),
+        "unexpected invocation error: {err}"
+    );
+
+    assert_eq!(engine.last_script_execution_ok(), Some(false));
+    assert_eq!(
+        engine.last_script_execution_error_class(),
+        Some("fatal".to_string())
+    );
+    assert_eq!(
+        engine.last_script_execution_error_category(),
+        Some("host-binding".to_string())
+    );
+    assert!(engine
+        .last_script_execution_trap()
+        .expect("trap should be present")
+        .contains("script unit not registered"));
+}

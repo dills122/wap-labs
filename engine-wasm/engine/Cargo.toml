@@ -18,3 +18,7 @@ serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = { version = "0.6", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 url = "2"
+
+[dev-dependencies]
+js-sys = "0.3"
+wasm-bindgen-test = "0.3"

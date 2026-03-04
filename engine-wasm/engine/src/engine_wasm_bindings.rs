@@ -3,7 +3,7 @@ use crate::*;
 #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 use serde::Serialize;
 #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::{wasm_bindgen, JsValue};
 #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 #[wasm_bindgen]
 impl WmlEngine {
@@ -242,3 +242,7 @@ fn to_js_value<T: Serialize>(value: &T) -> Result<JsValue, JsValue> {
 fn as_js_err(message: String) -> JsValue {
     JsValue::from_str(&message)
 }
+
+#[cfg(all(test, feature = "wasm-bindings", target_arch = "wasm32"))]
+#[path = "engine_wasm_bindings_tests.rs"]
+mod tests;
