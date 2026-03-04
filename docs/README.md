@@ -22,6 +22,7 @@
 - `waves/WAE_SPEC_TRACEABILITY.md`: WAE/WAEMT spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/TRANSPORT_SPEC_TRACEABILITY.md`: WSP/WTP/WDP transport spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/TRANSPORT_RUST_PHASE_PLAN.md`: active phased implementation plan for `transport-rust` (FFI decode, streaming, protocol, and WTLS stages)
+- `waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`: committed dependency-ordered sprint plan for request-policy/history/process-order/bytecode verification closure
 - `waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`: canonical migration plan for EngineFrame-based host integration
 - `waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`: ticketized execution board for frame/input interface migration
 - `waves/ENGINE_HOST_FRAME_WORK_ITEMS_ARCHIVE.md`: archived/historical frame migration tickets

@@ -37,6 +37,20 @@ Source of truth for these items:
 
 - `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 
+## Committed Sprint Alignment (2026-03-04)
+
+Current committed sequence for engine-impacting compliance work:
+
+1. `A5-01` history entry fidelity.
+2. `R0-02` inter-card process-order conformance support.
+3. `R0-03` history/context fidelity closure support.
+4. `W0-06` bytecode verification gates.
+5. Stretch: `W1-02` structural verification closure.
+
+Execution plan reference:
+
+- `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`
+
 ## Demoability Requirement
 
 For any newly implemented, demoable feature:

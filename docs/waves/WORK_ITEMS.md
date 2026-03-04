@@ -63,21 +63,25 @@ Next execution block is architecture hardening across all active libraries befor
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
-## Next In Line (Bedrock Compliance Sprint Candidate - 2026-03-02)
+## Next In Line (Committed Bedrock Compliance Sprint - 2026-03-04)
 
-This sprint slice prioritizes bedrock conformance closure over feature breadth:
+Committed sprint sequence:
 
-1. `W1-02` Bytecode structural verification (header/pools/indexes/jumps).
-2. `W1-06` Fatal vs non-fatal script error taxonomy and `invalid` result semantics.
-3. `R0-03` History/context fidelity completion (request-shape history entries).
-4. `R0-06` Transport/request-policy and postfield plumbing (`cache-control`, `sendreferer`, postfield flow).
-5. `T0-15` WAP caching model baseline and invalidation semantics.
-6. `R0-09` BACK key hard-availability and `do type=prev` precedence conformance.
+1. `T0-04` Cache/reload and `go` request-policy conformance follow-up.
+2. `A5-01` History entry fidelity follow-up.
+3. `R0-02` Inter-card navigation process-order conformance.
+4. `R0-03` History/context fidelity completion.
+5. `W0-06` Bytecode verification gates follow-up.
+6. Stretch: `W1-02` Bytecode structural verification closure.
+
+Execution plan and gates:
+
+- `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`
 
 Sprint acceptance target:
 
-- All six tickets have executable acceptance fixtures mapped in `docs/waves/SPEC_TEST_COVERAGE.md`.
-- `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md` high-priority misses are reduced for history, cache, and script error semantics.
+- Each committed ticket has executable acceptance fixtures mapped in `docs/waves/SPEC_TEST_COVERAGE.md`.
+- `docs/waves/WAVENAV_PLATFORM_COMPLIANCE_ANALYSIS.md` high-priority misses are reduced for history, request-policy, and bytecode verification semantics.
 
 ## Frame Interface Migration Program (Planning-Ready)
 
