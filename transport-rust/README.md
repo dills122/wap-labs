@@ -61,9 +61,10 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Execute `M1-08`: reduce high-churn single-file pressure while preserving deterministic mapping behavior.
-2. Execute compliance follow-up tickets from `docs/waves/WORK_ITEMS.md`: `T0-04`, `T0-05`, `T0-06`, and `T0-07`.
-3. Track `M1-03` engine API generator integration as non-priority follow-up for downstream contract consumers.
+1. Execute committed sprint-critical transport ticket: `T0-04` request-policy plumbing baseline.
+2. Follow immediately with `T0-05` and `T0-06` to lock UA header and URI/charset conformance boundaries.
+3. Keep `M1-08` active in parallel for transport high-churn file boundary decomposition.
+4. Keep `M1-03` as non-priority downstream generator-consumer follow-up.
 
 ## Current checklist (planning/execution)
 

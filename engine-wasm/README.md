@@ -197,8 +197,13 @@ Type contract:
 
 ## Next implementation slice
 
-1. Execute remaining compliance follow-up queue from `docs/wml-engine/work-items.md`: `A5-01`, `A5-03`, and `B5-01` (additive tickets; no reopening of completed `A*` tickets).
-2. Track `M1-03` engine API generator as non-priority design/bootstrap work to reduce manual TypeScript API sync.
+1. Execute committed bedrock sprint engine-impacting tickets:
+- `A5-01` history entry fidelity
+- `R0-02` process-order conformance support
+- `R0-03` history/context fidelity closure
+- `W0-06` bytecode verification gates (with `W1-02` as stretch closure)
+2. Keep `A5-03` and `B5-01` queued immediately after sprint closure.
+3. Keep `M1-03` as non-priority generator design/bootstrap follow-up.
 
 ## Current checklist (planning/execution)
 

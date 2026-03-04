@@ -108,10 +108,13 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 
-1. Execute cross-layer compliance follow-up integration tickets from `docs/waves/WORK_ITEMS.md`: `T0-04` and `T0-05` (request-policy + UA capability header flow wiring).
-2. Execute `M1-08`: split high-churn browser files into boundary modules without behavior changes.
-3. Execute `M1-09`: migrate host rendering/input boundary to structured frame/input contracts (`F0-F4`).
-4. Track `M1-03` engine API generator integration as a non-priority dependency consumer once generator output is available.
+1. Execute committed bedrock sprint host-impacting tickets:
+- `T0-04` request-policy plumbing (`cache-control`, referer policy, post context)
+- `R0-02` inter-card process-order host/runtime integration checks
+- `R0-03` history/context fidelity in browser session-state flow
+2. Keep `M1-08` active in parallel: split browser high-churn files into boundary modules without behavior changes.
+3. Defer `M1-09` (`F0-F4` frame migration) until committed bedrock sprint tickets are stable.
+4. Keep `M1-03` as non-priority generator follow-up.
 
 ## Planning + Traceability
 

@@ -23,7 +23,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-00 Architecture hardening sprint (next in line)
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Scope`:
 - `browser/`
 - `engine-wasm/`
@@ -36,6 +36,9 @@ Completed maintenance tickets are archived in:
 - `browser/README.md`
 - `engine-wasm/README.md`
 - `transport-rust/README.md`
+5. `Notes`:
+- Active execution is currently anchored to `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`.
+- Keep `M1-08` parallelized while committed compliance tickets execute.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
