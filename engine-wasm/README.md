@@ -197,7 +197,7 @@ Type contract:
 
 ## Next implementation slice
 
-1. Execute compliance follow-up queue from `docs/wml-engine/work-items.md`: `A5-01`, `A5-02`, `A5-03`, and `B5-01` (additive tickets; no reopening of completed `A*` tickets).
+1. Execute remaining compliance follow-up queue from `docs/wml-engine/work-items.md`: `A5-01`, `A5-03`, and `B5-01` (additive tickets; no reopening of completed `A*` tickets).
 2. Track `M1-03` engine API generator as non-priority design/bootstrap work to reduce manual TypeScript API sync.
 
 ## Current checklist (planning/execution)
@@ -209,7 +209,7 @@ Type contract:
 - [x] Harden parser robustness for malformed/edge markup fixtures (`M1-07`)
 - [x] Decompose high-churn engine file boundaries without behavior changes (`M1-08`, engine scope)
 - [ ] Implement history fidelity follow-up (`A5-01`)
-- [ ] Implement inter-card task pipeline conformance follow-up (`A5-02`)
+- [x] Implement inter-card task pipeline conformance follow-up (`A5-02`)
 - [ ] Implement WML timer lifecycle follow-up (`A5-03`)
 - [ ] Implement input-mask/commit semantics follow-up (`B5-01`)
 

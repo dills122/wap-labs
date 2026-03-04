@@ -318,7 +318,7 @@ Use this shape for any new ticket:
 ### A5-02 Inter-card task pipeline conformance follow-up
 
 1. `Requirement IDs`: `WML-R-012`, `WML-R-015`, `WML-R-017`, `WML-R-019`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A2-01`, `A2-03`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -333,6 +333,7 @@ Use this shape for any new ticket:
 - Runtime task execution is indistinguishable from reference process ordering for covered flows.
 8. `Notes`:
 - Additive conformance hardening over Phase A navigation baseline.
+- Landed in `90a14f5` with deterministic `go/prev/refresh` process-order fixtures and rollback fidelity coverage.
 
 ### A5-03 WML timer lifecycle runtime follow-up
 

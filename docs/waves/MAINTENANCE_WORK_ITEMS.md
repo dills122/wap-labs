@@ -90,7 +90,7 @@ Status keys:
 
 ### M1-04 Transport module decomposition and mapping isolation
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/src/*` (new internal modules)
@@ -100,6 +100,8 @@ Status keys:
 - `make test-rust-transport`
 5. `Accept`:
 - Transport behavior remains unchanged while module boundaries become explicit and reviewable.
+6. `Notes`:
+- Landed in `a4f6a36` with extracted boundary modules (`gateway`, `wbxml`, `responses`, `request_meta`) while preserving existing transport behavior contracts.
 
 ### M1-05 Browser frontend navigation state-machine test automation
 
