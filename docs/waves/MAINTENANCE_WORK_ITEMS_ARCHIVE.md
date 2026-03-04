@@ -8,6 +8,11 @@ Active board:
 
 - `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 
+Historical note:
+
+- Mentions of retired parity scripts (for example `scripts/check-engine-contract-parity.mjs` and `scripts/check-transport-contract-parity.mjs`) are historical context only.
+- Current contract drift enforcement path is `pnpm --dir browser run contracts:check`.
+
 ## M1 Completed Tickets (Archived)
 
 ### M1-01 Contract-source unification in browser host/frontend

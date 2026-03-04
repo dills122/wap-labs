@@ -46,9 +46,6 @@ jobs:
               - "eslint.shared.mjs"
               - ".prettierrc.json"
               - ".prettierignore"
-              - "scripts/check-engine-contract-parity.mjs"
-              - "scripts/check-transport-contract-parity.mjs"
-              - "scripts/check-worklist-drift.mjs"
             rust_engine:
               - "engine-wasm/engine/**"
               - "engine-wasm/contracts/**"
@@ -135,14 +132,8 @@ jobs:
       - name: Workspace format check
         run: pnpm format:check:node
 
-      - name: Transport contract parity check
-        run: node scripts/check-transport-contract-parity.mjs
-
-      - name: Engine contract parity check
-        run: node scripts/check-engine-contract-parity.mjs
-
-      - name: Worklist drift check
-        run: node scripts/check-worklist-drift.mjs
+      - name: Browser contract codegen drift check
+        run: pnpm --dir browser run contracts:check
 
   rust-engine:
     name: Rust Engine
@@ -363,9 +354,7 @@ jobs:
         run: cargo fmt --check
 
       - name: Browser contract codegen drift check
-        run: |
-          cargo run --manifest-path browser/src-tauri/Cargo.toml --bin generate_contracts
-          git diff --exit-code -- browser/contracts/generated/engine-host.ts browser/contracts/generated/transport-host.ts browser/contracts/generated/tauri-host-client.ts
+        run: pnpm --dir browser run contracts:check
 
       - name: Browser Rust coverage gate
         working-directory: browser/src-tauri

@@ -94,6 +94,94 @@ Completed maintenance tickets are archived in:
 - Active host paths use `EngineFrame` + `EngineInputEvent`.
 - Contract and coverage docs are updated in the same migration PRs.
 
+### M1-10 Engine contract parity guardrail hardening
+
+1. `Status`: `in-progress`
+2. `Files`:
+- `browser/scripts/generate-contract-wrappers.mjs`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/engine.ts`
+- `browser/contracts/generated/engine-host.ts`
+- `.github/workflows/ci.yml`
+3. `Build`:
+- Keep engine contract wrappers generated from generated host-contract exports, not manual sync.
+- Enforce drift through deterministic codegen checks in CI (`contracts:check`) and keep wrapper alias surfaces explicit.
+4. `Tests`:
+- `pnpm --dir browser run contracts:check`
+- repo-hygiene CI lane remains green.
+5. `Accept`:
+- Contract-surface drift across engine canonical, generated host contract, and browser wrapper aliases is blocked for covered contract types.
+6. `Notes`:
+- Parity-script lane retired in favor of generator-owned wrappers plus codegen drift checks.
+
+### M1-11 Browser contract-wrapper codegen alignment
+
+1. `Status`: `in-progress`
+2. `Files`:
+- `browser/contracts/engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/contracts/generated/*`
+- `browser/src-tauri/src/bin/generate_contracts.rs`
+- `browser/scripts/generate-contract-wrappers.mjs`
+3. `Build`:
+- Make browser wrapper contracts thin generated aliases/adapters with no duplicate hand-authored shape definitions.
+- Ensure wrapper drift checks fail if wrapper outputs diverge from generated source contracts.
+4. `Tests`:
+- `pnpm --dir browser/frontend exec tsc --noEmit`
+- `pnpm --dir browser run contracts:check` in repo hygiene lane.
+5. `Accept`:
+- Browser contract wrappers no longer require manual shape synchronization beyond intentional adapter aliases.
+6. `Notes`:
+- Contract wrapper generation now emits `browser/contracts/engine.ts` and `browser/contracts/transport.ts` from `generate_contracts.rs`.
+- App-specific transport session/history types moved to `browser/contracts/transport-app.ts` to keep generated wrappers contract-focused.
+- Wrapper generation now runs through `browser/scripts/generate-contract-wrappers.mjs` with AST-derived export sets from generated contract files (no static wrapper blobs in Rust).
+- CI drift enforcement for wrappers/contracts uses `pnpm --dir browser run contracts:check`.
+
+### M1-12 Engine/transport error taxonomy artifact generation
+
+1. `Status`: `in-progress`
+2. `Files`:
+- `browser/contracts/generated/engine-host.ts`
+- `browser/contracts/generated/transport-host.ts`
+- `browser/contracts/engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/scripts/generate-contract-wrappers.mjs`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+3. `Build`:
+- Keep transport and engine error-taxonomy surfaces sourced from generated contracts and wrapper aliases.
+- Avoid parallel manual error-union definitions outside generated/wrapper contract modules.
+4. `Tests`:
+- `pnpm --dir browser run contracts:check`
+- Browser/frontend typecheck validates alias consumer compatibility.
+5. `Accept`:
+- Error-code/class/category surfaces are generated and parity-checked instead of manually synchronized.
+6. `Notes`:
+- Standalone taxonomy fixture/check lane retired.
+- Taxonomy drift control now relies on generated contract source + wrapper codegen drift checks.
+
+### M1-13 Contract schema fixture generation and validation lane
+
+1. `Status`: `in-progress`
+2. `Files`:
+- `scripts/` (schema generation + validation)
+- `browser/contracts/generated/*`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/scripts/generate-contract-wrappers.mjs`
+- `.github/workflows/ci.yml`
+3. `Build`:
+- Keep wrapper contract generation deterministic and derived from generated contract modules.
+- Keep CI focused on codegen drift checks and compile-time consumer validation rather than additional parallel parity scripts.
+4. `Tests`:
+- `pnpm --dir browser run contracts:check`
+- `pnpm --dir browser/frontend exec tsc --noEmit`
+5. `Accept`:
+- Contract drift checks are schema-driven and resilient to formatting/ordering changes.
+6. `Notes`:
+- AST-driven wrapper generation landed in `browser/scripts/generate-contract-wrappers.mjs`.
+- Standalone parity-schema fixtures/scripts retired in favor of codegen-first drift checks.
+
 ### M0-07 Historical backlog pruning pass
 
 1. `Status`: `todo`

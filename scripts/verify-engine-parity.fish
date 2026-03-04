@@ -74,8 +74,7 @@ end
 echo "PASS: WASM parity lane"
 cd $ROOT
 
-run_step "Transport contract parity" "cd $ROOT; node scripts/check-transport-contract-parity.mjs"
-run_step "Engine contract parity" "cd $ROOT; node scripts/check-engine-contract-parity.mjs"
+run_step "Browser contract codegen drift check" "cd $ROOT; pnpm --dir browser run contracts:check"
 run_step "Worklist drift" "cd $ROOT; node scripts/check-worklist-drift.mjs"
 
 echo ""
