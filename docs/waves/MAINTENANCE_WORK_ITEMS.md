@@ -96,7 +96,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-10 Engine contract parity guardrail hardening
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Files`:
 - `browser/scripts/generate-contract-wrappers.mjs`
 - `engine-wasm/contracts/wml-engine.ts`
@@ -113,10 +113,11 @@ Completed maintenance tickets are archived in:
 - Contract-surface drift across engine canonical, generated host contract, and browser wrapper aliases is blocked for covered contract types.
 6. `Notes`:
 - Parity-script lane retired in favor of generator-owned wrappers plus codegen drift checks.
+- Guardrail now enforced through `contracts:check` in repo hygiene and browser-shell CI lanes.
 
 ### M1-11 Browser contract-wrapper codegen alignment
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Files`:
 - `browser/contracts/engine.ts`
 - `browser/contracts/transport.ts`
@@ -132,14 +133,14 @@ Completed maintenance tickets are archived in:
 5. `Accept`:
 - Browser contract wrappers no longer require manual shape synchronization beyond intentional adapter aliases.
 6. `Notes`:
-- Contract wrapper generation now emits `browser/contracts/engine.ts` and `browser/contracts/transport.ts` from `generate_contracts.rs`.
+- Contract wrapper generation now emits `browser/contracts/engine.ts` and `browser/contracts/transport.ts` from `browser/scripts/generate-contract-wrappers.mjs`.
 - App-specific transport session/history types moved to `browser/contracts/transport-app.ts` to keep generated wrappers contract-focused.
 - Wrapper generation now runs through `browser/scripts/generate-contract-wrappers.mjs` with AST-derived export sets from generated contract files (no static wrapper blobs in Rust).
 - CI drift enforcement for wrappers/contracts uses `pnpm --dir browser run contracts:check`.
 
 ### M1-12 Engine/transport error taxonomy artifact generation
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Files`:
 - `browser/contracts/generated/engine-host.ts`
 - `browser/contracts/generated/transport-host.ts`
@@ -158,12 +159,12 @@ Completed maintenance tickets are archived in:
 6. `Notes`:
 - Standalone taxonomy fixture/check lane retired.
 - Taxonomy drift control now relies on generated contract source + wrapper codegen drift checks.
+- Transport and engine consumer surfaces use generated contract exports/aliases rather than duplicated manual unions.
 
 ### M1-13 Contract schema fixture generation and validation lane
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Files`:
-- `scripts/` (schema generation + validation)
 - `browser/contracts/generated/*`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/contracts/engine.ts`
@@ -177,7 +178,7 @@ Completed maintenance tickets are archived in:
 - `pnpm --dir browser run contracts:check`
 - `pnpm --dir browser/frontend exec tsc --noEmit`
 5. `Accept`:
-- Contract drift checks are schema-driven and resilient to formatting/ordering changes.
+- Contract drift checks are codegen-driven and resilient to formatting/ordering changes.
 6. `Notes`:
 - AST-driven wrapper generation landed in `browser/scripts/generate-contract-wrappers.mjs`.
 - Standalone parity-schema fixtures/scripts retired in favor of codegen-first drift checks.
