@@ -792,6 +792,27 @@ Reference:
 7. `Spec`:
 - Aggregated IDs from `WML-191`, `RQ-WAE-*`, `RQ-TRN-*`, and `RQ-WMLS-*` lanes linked by mapped tickets.
 
+### R0-11 Deterministic cross-layer replay runner
+
+1. `Status`: `todo`
+2. `Depends On`: `R0-10`, `T0-04`, `R0-03`
+3. `Files`:
+- `transport-rust/tests/fixtures/transport/*`
+- `engine-wasm/engine/tests/fixtures/*`
+- `browser/frontend/src/app/navigation-state.test.ts`
+- `browser/src-tauri/src/lib.rs`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+4. `Build`:
+- Add a deterministic replay runner that executes representative `transport -> engine -> browser` flows from shared fixture inputs and validates timeline/frame/state outputs.
+- Keep this runner behavior-focused (semantic drift guard), not just type/contract shape checks.
+5. `Tests`:
+- One replay lane for load->fragment nav->back.
+- One replay lane for external intent follow + request-policy metadata.
+6. `Accept`:
+- Cross-layer behavioral regressions are detectable in one reproducible replay lane with stable fixture outputs.
+7. `Spec`:
+- `WML-07`, `WML-18`, `RQ-WAE-008`, `RQ-WAE-016`, `RQ-TRN-004`
+
 ## Phase S (Archived)
 
 Completed `S0` and `S1` source-material audit tickets are archived in:

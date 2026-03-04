@@ -13,8 +13,8 @@
   "scripts": {
     "dev": "pnpm --dir frontend dev",
     "build": "pnpm --dir frontend build",
-    "contracts:codegen": "cargo run --manifest-path src-tauri/Cargo.toml --bin generate_contracts",
-    "contracts:check": "pnpm run contracts:codegen && git diff --exit-code -- contracts/generated/engine-host.ts contracts/generated/transport-host.ts contracts/generated/tauri-host-client.ts",
+    "contracts:codegen": "cargo run --manifest-path src-tauri/Cargo.toml --bin generate_contracts && node ./scripts/generate-contract-wrappers.mjs",
+    "contracts:check": "pnpm run contracts:codegen && git diff --exit-code -- contracts/generated/engine-host.ts contracts/generated/transport-host.ts contracts/generated/tauri-host-client.ts contracts/engine.ts contracts/transport.ts",
     "tauri:icons": "cd src-tauri && cargo tauri icon icons/waves.svg --output icons",
     "tauri:dev": "cd src-tauri && cargo tauri dev",
     "tauri:build": "cd src-tauri && cargo tauri build"

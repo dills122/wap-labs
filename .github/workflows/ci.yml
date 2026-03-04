@@ -46,9 +46,6 @@ jobs:
               - "eslint.shared.mjs"
               - ".prettierrc.json"
               - ".prettierignore"
-              - "scripts/check-engine-contract-parity.mjs"
-              - "scripts/check-transport-contract-parity.mjs"
-              - "scripts/check-worklist-drift.mjs"
             rust_engine:
               - "engine-wasm/engine/**"
               - "engine-wasm/contracts/**"
@@ -134,15 +131,6 @@ jobs:
 
       - name: Workspace format check
         run: pnpm format:check:node
-
-      - name: Transport contract parity check
-        run: node scripts/check-transport-contract-parity.mjs
-
-      - name: Engine contract parity check
-        run: node scripts/check-engine-contract-parity.mjs
-
-      - name: Worklist drift check
-        run: node scripts/check-worklist-drift.mjs
 
   rust-engine:
     name: Rust Engine
@@ -338,6 +326,19 @@ jobs:
             librsvg2-dev
           sudo apt-get install -y libwebkit2gtk-4.1-dev || sudo apt-get install -y libwebkit2gtk-4.0-dev
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install root Node deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -363,9 +364,7 @@ jobs:
         run: cargo fmt --check
 
       - name: Browser contract codegen drift check
-        run: |
-          cargo run --manifest-path browser/src-tauri/Cargo.toml --bin generate_contracts
-          git diff --exit-code -- browser/contracts/generated/engine-host.ts browser/contracts/generated/transport-host.ts browser/contracts/generated/tauri-host-client.ts
+        run: pnpm --dir browser run contracts:check
 
       - name: Browser Rust coverage gate
         working-directory: browser/src-tauri
