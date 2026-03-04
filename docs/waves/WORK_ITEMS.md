@@ -118,7 +118,7 @@ These were the first tickets prepared before Waves browser implementation starte
 
 ### P0-01 Repo bootstrap alignment for `browser/`
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: none
 3. `Files`:
 - `browser/README.md`
@@ -131,10 +131,12 @@ These were the first tickets prepared before Waves browser implementation starte
 - Manual doc sanity pass and script command dry-run.
 6. `Accept`:
 - `browser/` onboarding docs are coherent and match repository conventions.
+7. `Notes`:
+- Historical kickoff item completed; follow-on implementation landed under `B0`/`B1` host integration phases.
 
 ### P0-02 Tauri shell command contract freeze
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `P0-01`
 3. `Files`:
 - `browser/src-tauri/src/lib.rs`
@@ -147,10 +149,12 @@ These were the first tickets prepared before Waves browser implementation starte
 - Rust compile-only sanity for command signatures.
 6. `Accept`:
 - Host command boundary is stable enough for integration work.
+7. `Notes`:
+- Historical kickoff item completed; command/contract baseline now maintained via generated contract artifacts and parity checks.
 
 ### P0-03 Transport module lifecycle spec
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `P0-02`
 3. `Files`:
 - `browser/src-tauri/src/*`
@@ -162,10 +166,12 @@ These were the first tickets prepared before Waves browser implementation starte
 - Simulated transport unavailable scenario runbook.
 6. `Accept`:
 - Transport lifecycle behavior is documented and implementable without ambiguity.
+7. `Notes`:
+- Historical kickoff item completed; transport lifecycle behavior is now exercised in active browser/transport integration lanes.
 
 ### P0-04 First end-to-end integration fixture definition
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `P0-03`
 3. `Files`:
 - `docs/waves/*`
@@ -177,6 +183,8 @@ These were the first tickets prepared before Waves browser implementation starte
 - Checklist definitions only (no code execution yet).
 6. `Accept`:
 - Browser integration AC is written before code work starts.
+7. `Notes`:
+- Historical kickoff item completed; browser integration fixtures and regression lanes are now tracked in `B3-*` and maintenance tickets.
 
 ## Phase B0: Host Skeleton Stabilization
 
@@ -882,7 +890,7 @@ Compliance target for this lane:
 
 ### W1-06 Fatal/non-fatal script error taxonomy closure
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W1-02`, `W1-04`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/vm.rs`
@@ -893,7 +901,7 @@ Compliance target for this lane:
 4. `Build`:
 - Implement explicit fatal vs non-fatal execution error classes and map non-fatal computational failures to `invalid` semantics.
 - Keep host contract deterministic: invocation-abort vs recoverable-result outcomes must be machine-checkable.
- - Progress (`2026-03-02`): added structured execution `error_class` + `error_category` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, added fatal-abort recovery coverage, and enforced explicit `VmTrap` class/category matrix tests across all current variants.
+- Progress (`2026-03-02`): added structured execution `error_class` + `error_category` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, added fatal-abort recovery coverage, and enforced explicit `VmTrap` class/category matrix tests across all current variants.
 5. `Tests`:
 - Conformance fixtures for arithmetic/conversion/runtime-error classes with expected fatal/non-fatal outcomes.
 - Integration fixtures proving host/runtime liveness after fatal script invocation failure.
@@ -972,7 +980,7 @@ Reference:
 1. `Status`: `todo`
 2. `Depends On`: `M1-07`
 3. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/tests/fixtures/*`
 - `docs/wml-engine/work-items.md`
@@ -1066,7 +1074,7 @@ Reference:
 2. `Depends On`: `R0-02`, `R0-03`
 3. `Files`:
 - `engine-wasm/engine/src/runtime/*`
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `browser/frontend/src/*`
 - `browser/contracts/transport.ts`
 - `docs/waves/WAE_SPEC_TRACEABILITY.md`

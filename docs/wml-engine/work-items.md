@@ -83,7 +83,7 @@ Use this shape for any new ticket:
 2. `Status`: `done`
 3. `Depends On`: none
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/deck.rs`
 - `engine-wasm/engine/src/lib.rs`
 5. `Build`:
@@ -106,7 +106,7 @@ Use this shape for any new ticket:
 2. `Status`: `done`
 3. `Depends On`: `A1-01`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/deck.rs`
 - `engine-wasm/engine/src/lib.rs`
 5. `Build`:
@@ -128,7 +128,7 @@ Use this shape for any new ticket:
 2. `Status`: `done`
 3. `Depends On`: `A1-01`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/node.rs`
 5. `Build`:
 - Preserve text order around `<a href>`.
@@ -322,7 +322,7 @@ Use this shape for any new ticket:
 3. `Depends On`: `A2-01`, `A2-03`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/tests/fixtures/*`
 5. `Build`:
 - Implement spec-ordered `go/prev/refresh` pipeline semantics, including setvar substitution ordering, deterministic event/timer sequencing, and failure rollback behavior.
@@ -360,7 +360,7 @@ Use this shape for any new ticket:
 2. `Status`: `todo`
 3. `Depends On`: `A5-02`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/tests/fixtures/*`
 5. `Build`:
@@ -379,7 +379,7 @@ Use this shape for any new ticket:
 3. `Depends On`: `A3-01`, `A3-02`, `M1-07`
 4. `Files`:
 - `engine-wasm/engine/src/layout/flow_layout.rs`
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/node.rs`
 - `engine-wasm/engine/tests/fixtures/*`
 5. `Build`:
@@ -401,7 +401,7 @@ Use this shape for any new ticket:
 3. `Depends On`: `B5-02`
 4. `Files`:
 - `engine-wasm/engine/src/layout/flow_layout.rs`
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/card.rs`
 - `engine-wasm/engine/tests/fixtures/*`
 5. `Build`:
@@ -422,7 +422,7 @@ Use this shape for any new ticket:
 2. `Status`: `todo`
 3. `Depends On`: `M1-07`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/node.rs`
 - `engine-wasm/engine/src/layout/flow_layout.rs`
 - `engine-wasm/engine/tests/fixtures/*`
@@ -443,7 +443,7 @@ Use this shape for any new ticket:
 2. `Status`: `todo`
 3. `Depends On`: `B5-03`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/node.rs`
 - `engine-wasm/engine/src/layout/flow_layout.rs`
 - `engine-wasm/engine/tests/fixtures/*`
@@ -463,7 +463,7 @@ Use this shape for any new ticket:
 2. `Status`: `todo`
 3. `Depends On`: `M1-07`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/deck.rs`
 - `engine-wasm/engine/src/runtime/card.rs`
 - `engine-wasm/contracts/wml-engine.ts`
@@ -487,7 +487,7 @@ Use this shape for any new ticket:
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/runtime/*`
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/tests/fixtures/*`
 5. `Build`:
 - Implement deterministic task/event pipeline semantics for `go|prev|noop|refresh` with onevent/do integration.
@@ -507,7 +507,7 @@ Use this shape for any new ticket:
 2. `Status`: `todo`
 3. `Depends On`: `B5-01`, `C5-04`
 4. `Files`:
-- `engine-wasm/engine/src/parser/wml_parser.rs`
+- `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/src/layout/*`
 - `engine-wasm/engine/tests/fixtures/*`

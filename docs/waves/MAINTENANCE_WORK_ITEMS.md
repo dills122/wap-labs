@@ -256,7 +256,7 @@ Status keys:
 
 ### M0-05 Browser regression automation for keyboard/back
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `browser/frontend/src/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
@@ -266,10 +266,12 @@ Status keys:
 - Deterministic scripted assertions for focused-link movement, fragment back, and host-history back restore.
 5. `Accept`:
 - CI catches regressions in browser keyboard/back interaction semantics.
+6. `Notes`:
+- Covered by completed `M1-05` regression automation (`keyboard.test.ts`, `navigation-state.test.ts`, presenter/controller tests).
 
 ### M0-06 Documentation drift guardrails
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Files`:
 - `browser/README.md`
 - `docs/waves/WORK_ITEMS.md`
@@ -280,3 +282,5 @@ Status keys:
 - Manual docs consistency pass as part of maintenance PR template.
 5. `Accept`:
 - No stale “next slice” or checklist entries after implementation merges.
+6. `Notes`:
+- Implemented through `M1-06` CI guardrails (`check-worklist-drift.mjs`) plus contract parity checks in repo hygiene workflow.
