@@ -8,9 +8,9 @@ Status: Active
 ### Corpus ledger
 
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
-- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (96 files)
-- Status: all 96 canonical PDFs are `deep-extracted`
-- Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves)
+- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (98 files)
+- Status: all 98 canonical PDFs are `deep-extracted`
+- Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves) plus `2` supplemental context-source parses (`WAP.pdf`, Wiley tech brief)
 
 ### Completed traceability domains
 
@@ -89,6 +89,14 @@ Status: Active
 - Docs:
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
   - `docs/waves/SPEC_TEST_COVERAGE.md`
+
+12. Supplemental context-source governance
+- Doc: `docs/waves/ARCHITECTURE_CONTEXT_SPEC_REVIEW.md`
+- Sources:
+  - `WAP.pdf`
+  - `vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`
+- Scope:
+  - context reinforcement only; no new normative requirement authority without canonical WAP/OMA source anchoring
 
 ## Open coverage gaps
 
@@ -179,3 +187,5 @@ Status: Active
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 4. Test coverage matrix:
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+5. Supplemental context audit:
+- `docs/waves/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`

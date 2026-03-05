@@ -1,7 +1,7 @@
 # Waves Architecture Context Spec Review
 
 Version: v0.1  
-Status: S0-09 complete (initial extraction + docling rerun validation pass)
+Status: S0-09 complete (initial extraction + docling rerun validation pass) + supplemental context pass (`2026-03-05`)
 
 ## Purpose
 
@@ -12,6 +12,8 @@ Capture architectural-context specs that constrain naming, identity, and layerin
 - `spec-processing/source-material/WAP-210-WAPArch-20010712-a.pdf`
 - `spec-processing/source-material/WAP-196-ClientID-20010409-a.pdf`
 - `spec-processing/source-material/WAP-188-WAPGenFormats-20010710-a.pdf`
+- `spec-processing/source-material/WAP.pdf` (supplemental context source)
+- `spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf` (supplemental context source)
 
 ## Findings
 
@@ -43,6 +45,27 @@ Capture architectural-context specs that constrain naming, identity, and layerin
   - `WAP-188`
 - AC:
   - [ ] Features derived only from `WAP-188` remain explicitly non-binding until linked to implementation-layer requirements.
+
+### RQ-ARC-004 Supplemental-source precedence and requirement authority
+
+- Requirement:
+  - Supplemental/context sources may reinforce implementation priorities but cannot create or redefine normative requirements without canonical WAP/OMA anchors.
+- Spec:
+  - Governance rule derived from local corpus policy and architecture-context review process.
+- AC:
+  - [ ] Supplemental-source claims map to existing `RQ-*` IDs before they influence scope/tickets.
+  - [ ] No ticket or contract change cites supplemental sources as sole normative authority.
+
+### Supplemental context mapping pass (`2026-03-05`)
+
+- `WAP.pdf` and the Wiley brief reinforce, but do not expand, existing requirement sets:
+  - deck/card and constrained-device navigation/input themes -> `RQ-RMK-001`, `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017`
+  - caching/low-bandwidth/limited-resource behavior -> `RQ-WAE-008`, `T0-04`, `R0-03`
+  - WSP session lifecycle (`suspend/resume`) and capability negotiation -> `RQ-TRN-011`, `RQ-TRN-013`, `RQ-TRN-019` (`T0-11`)
+  - WSP header token/registry behavior -> `RQ-TRN-014`, `RQ-TRN-018` (`T0-20`)
+  - WTP reliability/retransmission framing -> `RQ-TRN-007`, `RQ-TRN-016` (`T0-18`)
+  - WDP/UDP abstraction framing -> `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003` (`T0-19`)
+- Additional note: Wiley source includes embedded WML normative text excerpts; canonical authority remains `WAP-191*` + `spec-wml-19990616` in runtime traceability.
 
 ## Notes
 

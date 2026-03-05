@@ -673,11 +673,15 @@ Completed `B0` through `B3` tickets are archived in:
 - `docs/waves/networking-gap-to-source-map.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `spec-processing/new-source-material/`
+- `spec-processing/source-material/WAP.pdf`
+- `spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`
+- `spec-processing/external-parsed/wap_emulator_spec_notes.md`
 - `spec-processing/README.md`
 5. `Build`:
 - Ingest and catalog implementation-reference materials for:
   - Kannel networking sources (`wtp`, `wsp`, `wdp` lanes)
   - Wireshark dissectors (`packet-wtp`, `packet-wsp`, `packet-wdp`, `packet-wtls`)
+- Classify local supplemental context sources (slides/tech-brief/LLM-parsed notes) as `heuristic` unless they are backed by canonical WAP/OMA section anchors.
 - Produce a normalized source index with per-source trust class (`normative`, `interop-reference`, `heuristic`).
 - Map extracted behaviors to existing `RQ-TRN-*` IDs without creating new transport requirements.
 6. `Tests`:
