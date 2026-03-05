@@ -1,4 +1,5 @@
 import type {
+  FetchRequestPolicy,
   FetchRequest,
   FetchResponse,
   HostNavigationSource,
@@ -51,6 +52,7 @@ export interface LoadTransportOptions {
   source: HostNavigationSource;
   followExternalIntent: boolean;
   pushHistory?: boolean;
+  requestPolicy?: FetchRequestPolicy;
 }
 
 export interface NavigationStateMachine {
@@ -118,11 +120,16 @@ export const createNavigationStateMachine = (
     }
     const pushHistory = options.pushHistory ?? true;
 
+    const requestPolicy =
+      options.requestPolicy ??
+      defaultRequestPolicyForSource(options.source, hostSessionState.finalUrl);
+
     hooks.onStateEvent?.('load-transport-url', {
       source: options.source,
       requestedUrl,
       followExternalIntent: options.followExternalIntent,
-      pushHistory
+      pushHistory,
+      requestPolicy
     });
 
     mergeSessionState({
@@ -136,7 +143,8 @@ export const createNavigationStateMachine = (
       url: requestedUrl,
       method: 'GET',
       timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
-      retries: WAVES_CONFIG.transportFetchRetries
+      retries: WAVES_CONFIG.transportFetchRetries,
+      requestPolicy
     });
     hooks.onTransportResponse?.(transport);
     hooks.onStateEvent?.('fetch-deck-response', {
@@ -211,18 +219,21 @@ export const createNavigationStateMachine = (
 
     if (options.followExternalIntent && snapshot.externalNavigationIntent) {
       let nextUrl = snapshot.externalNavigationIntent;
+      let nextRequestPolicy = snapshot.externalNavigationRequestPolicy;
       for (let hop = 1; hop <= maxExternalIntentHops; hop += 1) {
         await hostClient.engineClearExternalNavigationIntent();
         const nextSnapshot = await loadTransportUrl({
           url: nextUrl,
           source: 'external-intent',
           followExternalIntent: false,
-          pushHistory: true
+          pushHistory: true,
+          requestPolicy: nextRequestPolicy
         });
         if (!nextSnapshot || !nextSnapshot.externalNavigationIntent) {
           break;
         }
         nextUrl = nextSnapshot.externalNavigationIntent;
+        nextRequestPolicy = nextSnapshot.externalNavigationRequestPolicy;
         if (hop === maxExternalIntentHops) {
           const message = `External intent hop limit reached (${maxExternalIntentHops}).`;
           mergeSessionState({ navigationStatus: 'error', lastError: message });
@@ -304,4 +315,17 @@ export const createNavigationStateMachine = (
     getSessionState: () => hostSessionState,
     getHistoryState: () => hostHistory
   };
+};
+
+const defaultRequestPolicyForSource = (
+  source: HostNavigationSource,
+  refererUrl?: string
+): FetchRequestPolicy | undefined => {
+  if (source === 'reload') {
+    return { cacheControl: 'no-cache' };
+  }
+  if (source === 'external-intent' && refererUrl) {
+    return { refererUrl };
+  }
+  return undefined;
 };

@@ -135,7 +135,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-04 Cache/reload and `go` request-policy conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-02`, `A5-02`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -146,13 +146,16 @@ Completed `B0` through `B3` tickets are archived in:
 - Add request-policy plumbing for WML task metadata (`cache-control`, method/post context, referer policy).
 - Ensure `cache-control=no-cache` reload intent reaches transport deterministically.
 5. `Tests`:
-- Fixture tests for no-cache reload, same-deck suppression behavior, and deterministic request metadata mapping.
+- `cargo test --lib` (`transport-rust`) covers no-cache header mapping, same-deck POST suppression, and deterministic request-policy mapping.
+- Browser navigation-state regression tests cover reload/external-intent request-policy propagation.
+- `cargo test` (`browser/src-tauri`) covers snapshot exposure/clear semantics for external navigation request-policy metadata.
 6. `Accept`:
 - Transport behavior reflects runtime task metadata without host-side semantic drift.
 7. `Spec`:
 - `RQ-RMK-008`, `RQ-WAE-008`, `RQ-WAE-016`
 8. `Notes`:
-- Additive follow-up linked to completed normalization baseline (`T0-02`).
+- Completed as additive follow-up linked to normalization baseline (`T0-02`).
+- Landed transport request-policy contract (`cacheControl`, `refererUrl`, `postContext`) and runtime->host->transport external-intent metadata plumbing.
 
 ### T0-05 UA capability header conformance follow-up
 

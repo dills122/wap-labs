@@ -58,6 +58,8 @@ impl WmlEngine {
                     self.navigate_to_card_internal(card_id)?;
                 } else if !href.is_empty() {
                     self.external_nav_intent = Some(self.resolve_external_href(&href));
+                    self.external_nav_request_policy =
+                        Some(self.default_external_navigation_request_policy());
                 }
             }
         }

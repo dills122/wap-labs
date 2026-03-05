@@ -296,6 +296,29 @@ pub enum ScriptNavigationIntentLiteral {
     Prev,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ScriptNavigationCacheControlPolicyLiteral {
+    Default,
+    NoCache,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ScriptNavigationPostContextLiteral {
+    pub same_deck: Option<bool>,
+    pub content_type: Option<String>,
+    pub payload: Option<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ScriptNavigationRequestPolicyLiteral {
+    pub cache_control: Option<ScriptNavigationCacheControlPolicyLiteral>,
+    pub referer_url: Option<String>,
+    pub post_context: Option<ScriptNavigationPostContextLiteral>,
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ScriptValueLiteral {

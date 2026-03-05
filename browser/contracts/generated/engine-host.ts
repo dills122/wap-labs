@@ -19,7 +19,13 @@ export type ScriptDialogRequestSnapshot = { "type": "alert", message: string, } 
 
 export type ScriptTimerRequestSnapshot = { "type": "schedule", delayMs: number, token?: string, } | { "type": "cancel", token: string, };
 
-export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, baseUrl: string, contentType: string, externalNavigationIntent?: string, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
+export type ExternalNavigationCacheControlPolicySnapshot = "default" | "no-cache";
+
+export type ExternalNavigationPostContextSnapshot = { sameDeck?: boolean, contentType?: string, payload?: string, };
+
+export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalNavigationCacheControlPolicySnapshot, refererUrl?: string, postContext?: ExternalNavigationPostContextSnapshot, };
+
+export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, baseUrl: string, contentType: string, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
 export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | { "type": "link", x: number, y: number, text: string, focused: boolean, href: string, };
 

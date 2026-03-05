@@ -130,6 +130,7 @@ impl WmlEngine {
 
         self.push_trace("ACTION_EXTERNAL", href.to_string());
         self.external_nav_intent = Some(self.resolve_external_href(href));
+        self.external_nav_request_policy = Some(self.default_external_navigation_request_policy());
         Ok(())
     }
 
@@ -145,6 +146,21 @@ impl WmlEngine {
         match base.join(href) {
             Ok(resolved) => resolved.to_string(),
             Err(_) => href.to_string(),
+        }
+    }
+
+    pub(crate) fn default_external_navigation_request_policy(
+        &self,
+    ) -> ScriptNavigationRequestPolicyLiteral {
+        let referer_url = if self.base_url.trim().is_empty() {
+            None
+        } else {
+            Some(self.base_url.clone())
+        };
+        ScriptNavigationRequestPolicyLiteral {
+            cache_control: None,
+            referer_url,
+            post_context: None,
         }
     }
 }

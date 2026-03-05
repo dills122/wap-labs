@@ -38,8 +38,22 @@ export type ScriptValueLiteral = boolean | number | string | { invalid: true };
 
 export type ScriptNavigationIntent =
   | { type: 'none' }
-  | { type: 'go'; href: string }
+  | { type: 'go'; href: string; requestPolicy?: WmlGoRequestPolicy }
   | { type: 'prev' };
+
+export type WmlGoCacheControlPolicy = 'default' | 'no-cache';
+
+export interface WmlGoPostContext {
+  sameDeck?: boolean;
+  contentType?: string;
+  payload?: string;
+}
+
+export interface WmlGoRequestPolicy {
+  cacheControl?: WmlGoCacheControlPolicy;
+  refererUrl?: string;
+  postContext?: WmlGoPostContext;
+}
 
 // Runtime applies script side effects at deterministic post-invocation boundaries.
 export interface ScriptPostInvocationEffects {
@@ -143,6 +157,7 @@ export interface WmlEngineWasm {
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
   externalNavigationIntent(): string | undefined;
+  externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;
@@ -196,6 +211,7 @@ export interface WmlEngineNative {
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
   externalNavigationIntent(): string | undefined;
+  externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;
