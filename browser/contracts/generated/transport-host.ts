@@ -12,5 +12,5 @@ export type EngineDeckInputPayload = { wmlXml: string, baseUrl: string, contentT
 export type FetchDeckResponse = { ok: boolean, status: number, finalUrl: string, contentType: string, wml?: string, error?: FetchErrorInfo, timingMs: FetchTiming, engineDeckInput?: EngineDeckInputPayload, };
 
 export interface TransportClient {
-  fetchDeck(request: FetchDeckRequest): Promise<FetchDeckResponse>;
+    fetchDeck(request: FetchDeckRequest): Promise<FetchDeckResponse>;
 }
