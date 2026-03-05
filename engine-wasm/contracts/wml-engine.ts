@@ -38,8 +38,22 @@ export type ScriptValueLiteral = boolean | number | string | { invalid: true };
 
 export type ScriptNavigationIntent =
   | { type: 'none' }
-  | { type: 'go'; href: string }
+  | { type: 'go'; href: string; requestPolicy?: WmlGoRequestPolicy }
   | { type: 'prev' };
+
+export type WmlGoCacheControlPolicy = 'default' | 'no-cache';
+
+export interface WmlGoPostContext {
+  sameDeck?: boolean;
+  contentType?: string;
+  payload?: string;
+}
+
+export interface WmlGoRequestPolicy {
+  cacheControl?: WmlGoCacheControlPolicy;
+  refererUrl?: string;
+  postContext?: WmlGoPostContext;
+}
 
 // Runtime applies script side effects at deterministic post-invocation boundaries.
 export interface ScriptPostInvocationEffects {

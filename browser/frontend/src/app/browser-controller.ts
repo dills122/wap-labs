@@ -169,7 +169,7 @@ export class BrowserController {
           const state = this.presenter.getSessionState();
           const reloadUrl = state.finalUrl ?? state.requestedUrl ?? this.refs.fetchUrlInput.value;
           this.refs.fetchUrlInput.value = reloadUrl;
-          await this.loadTransportUrl(reloadUrl, 'user', true, false);
+          await this.loadTransportUrl(reloadUrl, 'reload', true, false);
         })
       );
     }

@@ -989,6 +989,7 @@ mod tests {
             timeout_ms: None,
             retries: None,
             request_id: None,
+            request_policy: None,
         };
         ensure_request_id(&mut missing);
         let generated = missing.request_id.clone().unwrap_or_default();
@@ -1004,6 +1005,7 @@ mod tests {
             timeout_ms: None,
             retries: None,
             request_id: Some("   ".to_string()),
+            request_policy: None,
         };
         ensure_request_id(&mut blank);
         let generated_blank = blank.request_id.unwrap_or_default();
@@ -1022,6 +1024,7 @@ mod tests {
             timeout_ms: None,
             retries: None,
             request_id: Some("req-123".to_string()),
+            request_policy: None,
         };
         ensure_request_id(&mut request);
         assert_eq!(request.request_id.as_deref(), Some("req-123"));
@@ -1057,6 +1060,7 @@ mod tests {
             timeout_ms: None,
             retries: None,
             request_id: Some("caller-id-7".to_string()),
+            request_policy: None,
         });
         assert!(!response.ok);
         assert_eq!(
@@ -1074,6 +1078,7 @@ mod tests {
             timeout_ms: None,
             retries: None,
             request_id: None,
+            request_policy: None,
         });
         assert!(!response.ok);
         let generated = detail_string(&response, "requestId").unwrap_or_default();

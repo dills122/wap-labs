@@ -212,6 +212,57 @@ describe('navigation-state', () => {
     expect(machine.getHistoryState().entries[0]?.source).toBe('user');
   });
 
+  it('maps reload source to no-cache request policy', async () => {
+    const requestPolicies: unknown[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          requestPolicies.push(request.requestPolicy);
+          return fetchOk({ finalUrl: request.url });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'reload',
+      followExternalIntent: false,
+      pushHistory: false
+    });
+
+    expect(requestPolicies).toHaveLength(1);
+    expect(requestPolicies[0]).toEqual({ cacheControl: 'no-cache' });
+  });
+
+  it('maps external-intent source to referer request policy', async () => {
+    const requestPolicies: unknown[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          requestPolicies.push(request.requestPolicy);
+          return fetchOk({ finalUrl: request.url });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/next.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(requestPolicies).toHaveLength(2);
+    expect(requestPolicies[0]).toBeUndefined();
+    expect(requestPolicies[1]).toEqual({ refererUrl: 'http://example.test/start.wml' });
+  });
+
   it('applies timer tick via host advanceTimeMs and renders snapshot', async () => {
     const machine = createNavigationStateMachine(
       createHostClientMock({
