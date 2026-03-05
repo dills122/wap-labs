@@ -137,4 +137,4 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [x] Add browser-side automated regression checks for navigation state machine (`M1-05`)
 - [ ] Decompose browser high-churn files into boundary modules (`M1-08`)
 - [x] Wire cache/reload and request-policy metadata from runtime to transport flow (`T0-04`)
-- [ ] Wire profile-gated UA capability header controls in host flow (`T0-05`)
+- [x] Wire profile-gated UA capability header controls in host flow (`T0-05`)

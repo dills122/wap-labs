@@ -63,6 +63,15 @@ pub struct FetchRequestPolicy {
     pub referer_url: Option<String>,
     #[ts(optional)]
     pub post_context: Option<FetchPostContext>,
+    #[ts(optional)]
+    pub ua_capability_profile: Option<FetchUaCapabilityProfile>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum FetchUaCapabilityProfile {
+    Disabled,
+    WapBaseline,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]
@@ -126,8 +135,12 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
     let method = method
         .unwrap_or_else(|| "GET".to_string())
         .to_ascii_uppercase();
-    let (method, mut outbound_headers, suppressed_same_deck_post_context) =
-        apply_request_policy(method, headers.unwrap_or_default(), request_policy.as_ref());
+    let (
+        method,
+        mut outbound_headers,
+        suppressed_same_deck_post_context,
+        applied_ua_capability_profile,
+    ) = apply_request_policy(method, headers.unwrap_or_default(), request_policy.as_ref());
     if method != "GET" {
         return invalid_request_response(
             url,
@@ -154,7 +167,8 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
         serde_json::json!({
             "method": method,
             "requestPolicy": request_policy,
-            "suppressedSameDeckPostContext": suppressed_same_deck_post_context
+            "suppressedSameDeckPostContext": suppressed_same_deck_post_context,
+            "uaCapabilityProfileApplied": applied_ua_capability_profile
         }),
     );
 
@@ -333,11 +347,24 @@ fn apply_request_policy(
     method: String,
     mut outbound_headers: HashMap<String, String>,
     request_policy: Option<&FetchRequestPolicy>,
-) -> (String, HashMap<String, String>, bool) {
+) -> (
+    String,
+    HashMap<String, String>,
+    bool,
+    FetchUaCapabilityProfile,
+) {
     let mut normalized_method = method;
     let mut suppressed_same_deck_post_context = false;
+    let mut applied_ua_capability_profile = FetchUaCapabilityProfile::Disabled;
 
     if let Some(policy) = request_policy {
+        let ua_profile = policy
+            .ua_capability_profile
+            .clone()
+            .unwrap_or(FetchUaCapabilityProfile::Disabled);
+        applied_ua_capability_profile = ua_profile.clone();
+        apply_ua_capability_headers(&mut outbound_headers, &ua_profile);
+
         if matches!(policy.cache_control, Some(FetchCacheControlPolicy::NoCache)) {
             outbound_headers.insert("Cache-Control".to_string(), "no-cache".to_string());
             outbound_headers.insert("Pragma".to_string(), "no-cache".to_string());
@@ -370,7 +397,34 @@ fn apply_request_policy(
         normalized_method,
         outbound_headers,
         suppressed_same_deck_post_context,
+        applied_ua_capability_profile,
     )
+}
+
+fn apply_ua_capability_headers(
+    outbound_headers: &mut HashMap<String, String>,
+    profile: &FetchUaCapabilityProfile,
+) {
+    match profile {
+        FetchUaCapabilityProfile::Disabled => {}
+        FetchUaCapabilityProfile::WapBaseline => {
+            outbound_headers
+                .entry("Accept".to_string())
+                .or_insert_with(|| {
+                    "text/vnd.wap.wml, application/vnd.wap.wmlc, image/vnd.wap.wbmp; level=0"
+                        .to_string()
+                });
+            outbound_headers
+                .entry("Accept-Charset".to_string())
+                .or_insert_with(|| "utf-8, us-ascii;q=0.8".to_string());
+            outbound_headers
+                .entry("Accept-Encoding".to_string())
+                .or_insert_with(|| "identity".to_string());
+            outbound_headers
+                .entry("Accept-Language".to_string())
+                .or_insert_with(|| "en".to_string());
+        }
+    }
 }
 
 #[cfg(test)]
@@ -378,6 +432,7 @@ mod tests {
     use super::{
         apply_request_policy, fetch_deck_in_process, preflight_wbxml_decoder,
         FetchCacheControlPolicy, FetchDeckRequest, FetchPostContext, FetchRequestPolicy,
+        FetchUaCapabilityProfile,
     };
     use crate::gateway::build_gateway_request;
     use crate::request_meta::{
@@ -712,12 +767,14 @@ mod tests {
             cache_control: Some(FetchCacheControlPolicy::NoCache),
             referer_url: Some("http://example.test/home.wml".to_string()),
             post_context: None,
+            ua_capability_profile: None,
         };
 
-        let (method, mapped_headers, suppressed) =
+        let (method, mapped_headers, suppressed, ua_profile) =
             apply_request_policy("GET".to_string(), headers, Some(&policy));
         assert_eq!(method, "GET");
         assert!(!suppressed);
+        assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
         assert_eq!(
             mapped_headers.get("Cache-Control").map(String::as_str),
             Some("no-cache")
@@ -746,11 +803,13 @@ mod tests {
                 content_type: Some("application/x-www-form-urlencoded".to_string()),
                 payload: Some("a=1".to_string()),
             }),
+            ua_capability_profile: None,
         };
-        let (method, _mapped_headers, suppressed) =
+        let (method, _mapped_headers, suppressed, ua_profile) =
             apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
         assert_eq!(method, "GET");
         assert!(suppressed);
+        assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
     }
 
     #[test]
@@ -763,15 +822,83 @@ mod tests {
                 content_type: Some("application/x-www-form-urlencoded".to_string()),
                 payload: Some("a=1".to_string()),
             }),
+            ua_capability_profile: None,
         };
-        let (method, mapped_headers, suppressed) =
+        let (method, mapped_headers, suppressed, ua_profile) =
             apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
         assert_eq!(method, "POST");
         assert!(!suppressed);
+        assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
         assert_eq!(
             mapped_headers.get("Cache-Control").map(String::as_str),
             Some("no-cache")
         );
+    }
+
+    #[test]
+    fn apply_request_policy_wap_baseline_profile_adds_capability_headers() {
+        let policy = FetchRequestPolicy {
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: Some(FetchUaCapabilityProfile::WapBaseline),
+        };
+        let (method, mapped_headers, suppressed, ua_profile) =
+            apply_request_policy("GET".to_string(), HashMap::new(), Some(&policy));
+        assert_eq!(method, "GET");
+        assert!(!suppressed);
+        assert_eq!(ua_profile, FetchUaCapabilityProfile::WapBaseline);
+        assert_eq!(
+            mapped_headers.get("Accept").map(String::as_str),
+            Some("text/vnd.wap.wml, application/vnd.wap.wmlc, image/vnd.wap.wbmp; level=0")
+        );
+        assert_eq!(
+            mapped_headers.get("Accept-Charset").map(String::as_str),
+            Some("utf-8, us-ascii;q=0.8")
+        );
+        assert_eq!(
+            mapped_headers.get("Accept-Encoding").map(String::as_str),
+            Some("identity")
+        );
+        assert_eq!(
+            mapped_headers.get("Accept-Language").map(String::as_str),
+            Some("en")
+        );
+    }
+
+    #[test]
+    fn apply_request_policy_wap_baseline_profile_keeps_existing_capability_headers() {
+        let mut headers = HashMap::new();
+        headers.insert("Accept-Language".to_string(), "fr-ca".to_string());
+        let policy = FetchRequestPolicy {
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: Some(FetchUaCapabilityProfile::WapBaseline),
+        };
+        let (_method, mapped_headers, _suppressed, _ua_profile) =
+            apply_request_policy("GET".to_string(), headers, Some(&policy));
+        assert_eq!(
+            mapped_headers.get("Accept-Language").map(String::as_str),
+            Some("fr-ca")
+        );
+    }
+
+    #[test]
+    fn apply_request_policy_disabled_profile_does_not_add_capability_headers() {
+        let policy = FetchRequestPolicy {
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: Some(FetchUaCapabilityProfile::Disabled),
+        };
+        let (_method, mapped_headers, _suppressed, ua_profile) =
+            apply_request_policy("GET".to_string(), HashMap::new(), Some(&policy));
+        assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
+        assert!(!mapped_headers.contains_key("Accept"));
+        assert!(!mapped_headers.contains_key("Accept-Charset"));
+        assert!(!mapped_headers.contains_key("Accept-Encoding"));
+        assert!(!mapped_headers.contains_key("Accept-Language"));
     }
 
     #[test]

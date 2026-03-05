@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use lowband_transport_rust::{
     EngineDeckInputPayload, FetchCacheControlPolicy, FetchDeckRequest, FetchDeckResponse,
-    FetchErrorInfo, FetchPostContext, FetchRequestPolicy, FetchTiming,
+    FetchErrorInfo, FetchPostContext, FetchRequestPolicy, FetchTiming, FetchUaCapabilityProfile,
 };
 use ts_rs::TS;
 use wavenav_host_lib::contract_types::{
@@ -63,6 +63,7 @@ fn write_transport_contracts() -> Result<(), Box<dyn std::error::Error>> {
 
     push_decl::<FetchCacheControlPolicy>(&mut output);
     push_decl::<FetchPostContext>(&mut output);
+    push_decl::<FetchUaCapabilityProfile>(&mut output);
     push_decl::<FetchRequestPolicy>(&mut output);
     push_decl::<FetchDeckRequest>(&mut output);
     push_decl::<FetchTiming>(&mut output);

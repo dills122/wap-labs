@@ -12,6 +12,7 @@ export const WAVES_CONFIG = {
   maxExternalIntentHops: 3,
   transportFetchTimeoutMs: 5000,
   transportFetchRetries: 1,
+  transportUaCapabilityProfile: 'wap-baseline',
   networkProbeMaxAttempts: 3,
   networkProbeDelayMs: 1200,
   networkProbeTimeoutMs: 1800,

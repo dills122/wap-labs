@@ -159,7 +159,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-05 UA capability header conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -169,11 +169,18 @@ Completed `B0` through `B3` tickets are archived in:
 - Add profile-gated emission path for `Accept`, `Accept-Charset`, `Accept-Encoding`, and `Accept-Language`.
 - Keep defaults deterministic and explicit when capability advertising is disabled.
 5. `Tests`:
-- Integration tests asserting emitted headers and deterministic fallback behavior.
+- `cargo test --lib` (`transport-rust`) covers:
+  - `wap-baseline` profile capability header emission (`Accept`, `Accept-Charset`, `Accept-Encoding`, `Accept-Language`)
+  - deterministic disabled profile behavior
+  - deterministic caller-header override behavior for capability headers
+- Browser transport request-policy wiring is typechecked via frontend contract consumers.
 6. `Accept`:
 - Capability advertisement behavior is explicit, test-backed, and contract-documented.
 7. `Spec`:
 - `RQ-WAE-013`, `RQ-WAE-001`
+8. `Notes`:
+- Added profile-gated UA capability contract field (`uaCapabilityProfile`) under transport request policy.
+- Browser host now sends `wap-baseline` capability profile by default for network transport fetches.
 
 ### T0-06 URI length and charset boundary conformance follow-up
 

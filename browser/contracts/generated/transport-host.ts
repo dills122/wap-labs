@@ -5,7 +5,9 @@ export type FetchCacheControlPolicy = "default" | "no-cache";
 
 export type FetchPostContext = { sameDeck?: boolean, contentType?: string, payload?: string, };
 
-export type FetchRequestPolicy = { cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, };
+export type FetchUaCapabilityProfile = "disabled" | "wap-baseline";
+
+export type FetchRequestPolicy = { cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, uaCapabilityProfile?: FetchUaCapabilityProfile, };
 
 export type FetchDeckRequest = { url: string, method?: string, headers?: { [key in string]?: string }, timeoutMs?: number, retries?: number, requestId?: string, requestPolicy?: FetchRequestPolicy, };
 

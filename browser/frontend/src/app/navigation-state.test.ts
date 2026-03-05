@@ -225,9 +225,10 @@ describe('navigation-state', () => {
     });
 
     expect(capturedPolicies).toHaveLength(2);
-    expect(capturedPolicies[0]).toBeUndefined();
+    expect(capturedPolicies[0]).toEqual({ uaCapabilityProfile: 'wap-baseline' });
     expect(capturedPolicies[1]).toEqual({
-      refererUrl: 'http://example.test/start.wml'
+      refererUrl: 'http://example.test/start.wml',
+      uaCapabilityProfile: 'wap-baseline'
     });
   });
 
@@ -271,7 +272,10 @@ describe('navigation-state', () => {
     });
 
     expect(requestPolicies).toHaveLength(1);
-    expect(requestPolicies[0]).toEqual({ cacheControl: 'no-cache' });
+    expect(requestPolicies[0]).toEqual({
+      cacheControl: 'no-cache',
+      uaCapabilityProfile: 'wap-baseline'
+    });
   });
 
   it('maps external-intent source to referer request policy', async () => {
@@ -298,8 +302,11 @@ describe('navigation-state', () => {
     });
 
     expect(requestPolicies).toHaveLength(2);
-    expect(requestPolicies[0]).toBeUndefined();
-    expect(requestPolicies[1]).toEqual({ refererUrl: 'http://example.test/start.wml' });
+    expect(requestPolicies[0]).toEqual({ uaCapabilityProfile: 'wap-baseline' });
+    expect(requestPolicies[1]).toEqual({
+      refererUrl: 'http://example.test/start.wml',
+      uaCapabilityProfile: 'wap-baseline'
+    });
   });
 
   it('applies timer tick via host advanceTimeMs and renders snapshot', async () => {
