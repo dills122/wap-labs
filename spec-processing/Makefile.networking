@@ -1,0 +1,29 @@
+SHELL := /bin/bash
+
+.PHONY: help networking-ingest networking-verify networking-dryrun networking-parse-only networking-promote-only
+
+help:
+	@echo "Networking spec-processing targets:"
+	@echo "  make -f Makefile.networking networking-ingest         # parse new-source-material and finalize canonical move"
+	@echo "  make -f Makefile.networking networking-parse-only      # parse new-source-material into tmp staging"
+	@echo "  make -f Makefile.networking networking-verify         # verify staging/artifacts only (dry-run)"
+	@echo "  make -f Makefile.networking networking-dryrun         # full dry-run (skip copy/move)"
+	@echo "  make -f Makefile.networking networking-promote-only   # promote cleaned markdown only"
+
+networking-parse-only:
+	./parse-new-source-material.fish
+
+networking-verify:
+	./parse-new-source-material.fish
+	./finalize-new-source-material.fish --skip-promote --dry-run
+
+networking-promote-only:
+	./scripts/promote-docling-cleaned.fish
+
+networking-ingest:
+	./parse-new-source-material.fish
+	./finalize-new-source-material.fish
+
+networking-dryrun:
+	./parse-new-source-material.fish
+	./finalize-new-source-material.fish --dry-run --skip-promote

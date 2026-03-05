@@ -18,10 +18,17 @@ Archive:
 
 These assumptions are active for this board and should not be re-litigated in each ticket:
 
-1. `transport-rust/` networking behavior is already functionally validated via CLI probes.
-2. `engine-wasm/` runtime/rendering has reached a substantial milestone and is ready for full browser integration.
+1. `transport-rust/` gateway-bridged behavior is functionally validated via CLI probes.
+2. protocol-native networking (`WDP -> WTP -> WSP`) remains the current high-risk implementation lane.
+3. `engine-wasm/` runtime/rendering has reached a substantial milestone and remains integration-ready while networking core is completed.
 
-This board therefore prioritizes host/browser integration, UX shell behavior, and runtime/transport orchestration over low-level parser/transport re-validation.
+Project-level priority remains multi-lane:
+
+1. close committed runtime/compliance tickets already in-flight (`R0-*`, `W0-*`, `W1-*` scoped work)
+2. execute protocol-native networking closure (`T0-19`, `T0-18`, `T0-20`, `T0-22`, `T0-21`)
+3. defer broad feature expansion in any lane until these bedrock closures are stable
+
+Networking is a top-tier lane, not a replacement for all other committed bedrock work.
 
 ## Architecture standards gate
 
@@ -62,6 +69,22 @@ Next execution block is architecture hardening across all active libraries befor
 3. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
+
+## Next In Line (Networking Regroup Sprint - 2026-03-05)
+
+Priority execution order for networking MVP closure:
+
+1. `T0-19` WDP datagram trait + UDP mapping baseline.
+2. `T0-18` WTP retransmission, duplicate handling, and NACK hold-off policy.
+3. `T0-20` WSP registry/token completion and unknown-token behavior.
+4. `T0-22` interop replay harness (`CONNECT`/`GET`/`REPLY` + retransmit/duplicate lanes).
+5. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
+
+Sprint policy:
+
+1. Do not promote profile from `gateway-bridged` to `wap-net-core` before `T0-18..T0-22` gates are green.
+2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
+3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
 
 ## Next In Line (Committed Bedrock Compliance Sprint - 2026-03-04)
 
@@ -210,7 +233,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-07 WBXML token/literal compatibility conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-02`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -229,155 +252,508 @@ Completed `B0` through `B3` tickets are archived in:
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-03`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-4. `Build`:
+5. `Build`:
 - Add explicit responder-side TID decision policy and fixtures for cache/no-cache and duplicate-guarantee modes.
 - Enforce initiator-side TID progression/rate guardrails relative to MPL assumptions for replay-window safety.
-5. `Tests`:
+6. `Tests`:
 - Fixture matrix for Table-6/7/8-like TID decisions and out-of-order invoke handling.
 - Deterministic TID wrap/restart-window tests with trace assertions.
-6. `Accept`:
+7. `Accept`:
 - TID replay-window behavior is deterministic and explicitly profile-gated.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: responder/initiator TID replay policies are deterministic for table-driven fixture cases.
+- Done-2: out-of-order and retransmission state transitions have deterministic terminal outcomes.
+- Done-3: trace output includes transaction/timer state for replay decisions.
+9. `Spec`:
 - `RQ-TRN-007`, `RQ-TRN-016`
 
 ### T0-09 WSP connectionless primitive-profile conformance
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-4. `Build`:
+5. `Build`:
 - Make WSP mode selection explicit (`connection-oriented`, `connectionless`, or both) with deterministic primitive-usage gating.
 - Implement/validate connectionless primitive occurrence matrix behavior and deterministic invalid-primitive handling.
-5. `Tests`:
+6. `Tests`:
 - Primitive occurrence fixtures for `S-Unit-MethodInvoke`, `S-Unit-MethodResult`, `S-Unit-Push`.
-6. `Accept`:
+7. `Accept`:
 - Connectionless mode policy is explicit and test-backed; invalid primitive paths are deterministic.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: mode switch behavior is driven by profile and emitted in request/response trace metadata.
+- Done-2: req/ind-only matrix is enforced and fixture-asserted.
+- Done-3: invalid primitive transitions are deterministically rejected before session side effects.
+9. `Spec`:
 - `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-017`
 
 ### T0-10 WSP assigned-number registry conformance fixtures
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-05`, `T0-07`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Add table-driven token-map fixtures for WSP PDU types, abort-reason codes, well-known parameters, and header-field names.
 - Define deterministic handling policy for unassigned/unknown registry values.
-5. `Tests`:
+6. `Tests`:
 - Decode/encode round-trip fixtures anchored to assigned-number tables.
-6. `Accept`:
+7. `Accept`:
 - Assigned-number behavior is deterministic, profile-documented, and regression-guarded.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: registry decode/encode test suite exists and is fixture-backed.
+- Done-2: unknown/unassigned value handling behavior is deterministic by profile.
+- Done-3: no parser side-effect state is introduced by registry table lookup paths.
+9. `Spec`:
 - `RQ-TRN-014`, `RQ-TRN-018`
 
 ### T0-11 WSP capability-bound and negotiation-limit enforcement
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-09`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-4. `Build`:
+5. `Build`:
 - Enforce min/intersection semantics for negotiated capabilities.
 - Enforce negotiated SDU/message-size and outstanding-request bounds with deterministic abort/error surfacing.
-5. `Tests`:
+6. `Tests`:
 - Capability negotiation fixtures across client/server proposal mismatches and boundary exceed cases.
-6. `Accept`:
+7. `Accept`:
 - Capability negotiation and bounds behavior is deterministic and spec-linked.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: capability merge strategy is stable and documented in code-level comments or tests.
+- Done-2: bound exceed/invalid capability fixtures are deterministic and mapped to clear error codes.
+- Done-3: cap-limit behavior is tested under both connection-mode and connectionless profiles.
+9. `Spec`:
 - `RQ-TRN-013`, `RQ-TRN-019`
 
 ### T0-12 Wireless Profiled TCP compatibility profile declaration
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
-3. `Files`:
+3. `Owner`: `transport-rust`, `spec`
+4. `Files`:
 - `transport-rust/README.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Declare explicit Waves TCP compatibility posture for profiled requirements (SACK/split/end-to-end/window-scale threshold behavior).
 - Mark each requirement as implemented, delegated, or deferred for MVP with rationale.
-5. `Tests`:
+6. `Tests`:
 - Add compatibility-policy fixtures/checks that prevent silent drift in declared TCP posture.
-6. `Accept`:
+7. `Accept`:
 - TCP optimization baseline posture is explicit and traceable.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: `RQ-TRX-009` decision is explicitly categorized per behavior.
+- Done-2: no code path depends on undeclared TCP behavior assumptions.
+- Done-3: docs + ticket mapping for TCP posture is versioned and linked from `TECHNICAL_ARCHITECTURE`.
+9. `Spec`:
 - `RQ-TRX-009`
 
 ### T0-13 SMPP adaptation scope gate and fixture baseline
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
-3. `Files`:
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `transport-rust/README.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Make a hard scope decision for `WAP-159` path (`in scope now` vs `deferred`).
 - If in scope, define `data_sm` mapping fixtures and WCMP payload type handling checks.
 - If deferred, document non-blocking rationale and explicit exclusion guardrails.
-5. `Tests`:
+6. `Tests`:
 - Add either adapter fixtures (in-scope) or explicit policy assertions (deferred).
-6. `Accept`:
+7. `Accept`:
 - SMPP adaptation status is unambiguous and regression-guarded.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: scope decision is documented as `in-scope` or `deferred` before implementation actions.
+- Done-2: deferred paths are explicitly guarded against accidental dependency in `transport-rust`.
+- Done-3: in-scope branch has end-to-end payload-type fixture path before any parser/code activation.
+9. `Spec`:
 - `RQ-TRX-010`
 
 ### T0-14 WAP networking profile decision record and migration gates
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-09`, `T0-11`, `T0-12`, `T0-13`
-3. `Files`:
+3. `Owner`: `transport-rust`, `browser`, `engine`
+4. `Files`:
 - `docs/waves/TECHNICAL_ARCHITECTURE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `transport-rust/README.md`
-4. `Build`:
+5. `Build`:
 - Publish an explicit profile decision for near-term and target-state transport:
   - current profile: gateway-bridged HTTP/WBXML normalization path
   - target profile: in-process WDP/WTP/WSP behavior lane and activation criteria
 - Define non-negotiable boundary rules so engine/browser contracts stay stable across both profiles.
 - Define migration gates that block profile promotion until required protocol fixtures pass.
-5. `Tests`:
+6. `Tests`:
 - Add profile-gate checks that assert declared mode/profile against fixture coverage state.
 - Add one end-to-end fixture lane per declared profile to prevent drift in behavior expectations.
-6. `Accept`:
+7. `Accept`:
 - Networking architecture direction is explicit, versioned, and test-gated.
 - Team can state exactly what is spec-compliant now versus planned for protocol-complete mode.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: a single canonical profile decision is written and linked to all transport docs.
+- Done-2: profile-gate checks reference `T0-08..T0-13` completion criteria and required fixture coverage.
+- Done-3: profile migration path has explicit rollback criteria tied to contract stability.
+9. `Spec`:
 - `RQ-TRN-001..019`, `RQ-TRX-001..010`
 
 ### T0-15 WAP caching model baseline and invalidation semantics
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-04`, `R0-06`
-3. `Files`:
+3. `Owner`: `transport-rust`, `browser`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `browser/src-tauri/src/lib.rs`
 - `docs/waves/WAE_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Implement a deterministic cache-policy baseline for deck/script/media retrieval and invalidation triggers.
 - Ensure `cache-control=no-cache` and task-driven reload semantics route through one shared policy model.
-5. `Tests`:
+6. `Tests`:
 - Fixture matrix for cache hit, forced reload, stale invalidation, and request-policy override cases.
-6. `Accept`:
+7. `Accept`:
 - Cache behavior is explicit, deterministic, and verifiably aligned with the declared WAP profile.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: policy model is single-source and contract-exported across transport/browser layers.
+- Done-2: cache hit/reload/invalidation fixture path is deterministic and repeatable.
+- Done-3: profile switch does not alter cache semantics without explicit migration note.
+9. `Spec`:
 - `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
+
+### T0-16 Spec queue canonicalization and conflict resolution follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-14`
+3. `Owner`: `spec-processing`
+4. `Files`:
+- `spec-processing/new-source-material/`
+- `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
+- `spec-processing/finalize-new-source-material.fish`
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
+- `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
+5. `Build`:
+- Resolve `WAP-259-WDP-20010614-a.pdf` conflict variant left in queue and enforce deterministic case/variant policy.
+- Document whether conflict variant is a replacement, supersedence candidate, or legacy duplicate.
+6. `Tests`:
+- `./spec-processing/finalize-new-source-material.fish --dry-run` reports zero unresolved conflicts for active transport spec IDs.
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md` contains one row per canonical transport/security spec ID.
+7. `Accept`:
+- Canonical corpus has one active source material path for each spec ID and the queue only contains unresolved non-canonical items.
+8. `Migration gates`:
+- Done-1: no transport spec ID has multiple active canonical variants in source-material.
+- Done-2: conflict-resolution log is current and versioned with timestamped decision rationale.
+- Done-3: ticket-dependent parser/automation paths resolve to canonical IDs.
+9. `Spec`:
+- `RQ-TRN-001`, `RQ-TRN-003`
+10. `Notes`:
+- Completed: new-source `WAP-259` variant was promoted after byte-comparison and manual archival of prior legacy source.
+- Archive captured at:
+  - `spec-processing/source-material/archive/WAP-259-WDP-20010614-a.legacy-v1.pdf`
+
+### T0-17 Protocol-adjacent transport context sweep (deferred specs)
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-14`, `T0-16`
+3. `Owner`: `docs`, `transport`
+4. `Files`:
+- `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
+- `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `docs/waves/networking-implementation-checklist.md`
+5. `Build`:
+- Record explicit in-scope/out-of-scope policy for non-core transport-adjacent specs that can affect transport boundaries.
+- Add one-line rationale for each deferred family in transport-adjacent docs (`WAP-204*`, `WAP-120*`, `WAP-213*`, related messaging-cache deltas).
+- Keep this decision synchronized with `T0-14` profile gates.
+6. `Tests`:
+- checklist validation fixtures:
+  - `WAP-204` and `WAP-120` remain deferred under documented rationale
+  - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
+7. `Accept`:
+- future transport scope changes are policy-driven, explicit, and reversible.
+8. `Migration gates`:
+- Done-1: adjacent scope deferrals are explicit with pass/fail rationale.
+- Done-2: profile gates block adjacent-path promotion when deferral state is uncleared.
+- Done-3: checklist asset exists and references this ticket as gate source.
+9. `Spec`:
+- `RQ-TRX-001..010` where applicable
+- `RQ-TRN-001..019`
+10. `Notes`:
+- This ticket prevents accidental scope creep from remaining parsed networking adjacent specs.
+
+### T0-18 WTP retransmission/NACK hold-off policy extraction and implementation
+
+1. `Status`: `blocked`
+2. `Depends On`: `T0-08`, `T0-14`
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
+- `transport-rust/src/network/wtp/state_machine.rs`
+- `transport-rust/src/network/wtp/retransmission.rs`
+- `transport-rust/src/network/wtp/duplicate_cache.rs`
+- `docs/waves/wtp-state-machine.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+5. `Build`:
+- Implement explicit WTP retransmission timer/counter behavior and bounded abort conditions.
+- Implement deterministic NACK delay and retransmission hold-off policy for SAR-enabled profiles.
+- Add a documented policy object for timer defaults and backoff strategy (profile-overridable).
+6. `Tests`:
+- Fixture set for timer expiry -> retransmit -> max-retry abort.
+- Fixture set for duplicate invoke/result handling with cached terminal response behavior.
+- Fixture set for NACK delay/hold-off suppressing redundant retransmissions.
+7. `Accept`:
+- WTP reliability policy is explicit, deterministic, and test-covered for core flows.
+- `RQ-TRN-007`, `RQ-TRN-008`, and `RQ-TRN-016` map to concrete test artifacts.
+8. `Migration gates`:
+- Done-1: retransmission policy table is committed and linked from WTP docs.
+- Done-2: duplicate handling fixtures pass for initiator and responder roles.
+- Done-3: SAR-off and SAR-on profile behavior is explicitly gated and non-ambiguous.
+9. `Spec`:
+- `RQ-TRN-007`, `RQ-TRN-008`, `RQ-TRN-016`
+10. `Notes`:
+- Queue-ready; unblock when `T0-08` and `T0-14` are `done`.
+
+### T0-19 WDP datagram trait + UDP port mapping baseline
+
+1. `Status`: `blocked`
+2. `Depends On`: `T0-14`, `T0-16`
+3. `Owner`: `transport-rust`
+4. `Files`:
+- `transport-rust/src/network/wdp/transport_trait.rs`
+- `transport-rust/src/network/wdp/datagram.rs`
+- `transport-rust/src/network/wdp/udp_adapter.rs`
+- `transport-rust/src/network/wdp/sar.rs`
+- `docs/waves/networking-layer-definition.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+5. `Build`:
+- Create protocol-native WDP datagram trait with strict `(src_port, dst_port, payload)` contract.
+- Implement UDP adapter with deterministic behavior for active WAP service ports and error mapping.
+- Define SAR handling contract boundary for deferred/non-UDP bearers without enabling them by default.
+6. `Tests`:
+- Port routing fixtures for `9200..9203` service behavior.
+- Datagram malformed/truncation fixtures with deterministic errors.
+- SAR reassembly fixtures in profile-enabled mode.
+7. `Accept`:
+- WDP trait and UDP baseline are live and do not leak gateway-only assumptions.
+- Port mapping and error paths are fixture-backed and traceable.
+8. `Migration gates`:
+- Done-1: datagram trait is the only WTP/WSP ingress path in protocol-native mode.
+- Done-2: port-mapping fixtures pass for declared profile modes.
+- Done-3: SAR behavior is explicit (`off` by default) and guarded by profile flags.
+9. `Spec`:
+- `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRN-004`
+10. `Notes`:
+- Queue-ready; unblock when `T0-14` and `T0-16` are `done`.
+
+### T0-20 WSP header registry completion and unknown-token policy
+
+1. `Status`: `blocked`
+2. `Depends On`: `T0-10`, `T0-11`
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
+- `transport-rust/src/network/wsp/header_registry.rs`
+- `transport-rust/src/network/wsp/encoder.rs`
+- `transport-rust/src/network/wsp/decoder.rs`
+- `docs/waves/wsp-pdu-reference.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+5. `Build`:
+- Complete assigned-number header/token registry coverage used by active profile lanes.
+- Implement deterministic unknown-token and unsupported-code-page behavior.
+- Implement explicit fallback behavior for extension headers when page negotiation is unavailable.
+6. `Tests`:
+- Token roundtrip fixtures for core header set.
+- Unknown token/page fixtures for strict and permissive policy modes.
+- Code-page shift fixtures for multi-page header blocks.
+7. `Accept`:
+- WSP encoding/decoding behavior is table-driven and reproducible.
+- Unknown token handling is documented, deterministic, and profile-aware.
+8. `Migration gates`:
+- Done-1: registry source of truth is versioned and linked to WSP docs.
+- Done-2: unsupported encoding/page behavior has deterministic status output.
+- Done-3: profile promotion is blocked when token fixture coverage is stale.
+9. `Spec`:
+- `RQ-TRN-014`, `RQ-TRN-018`
+10. `Notes`:
+- Queue-ready; unblock when `T0-10` and `T0-11` are `done`.
+
+### T0-21 WTLS phase boundary and minimal handshake reliability lane
+
+1. `Status`: `blocked`
+2. `Depends On`: `T0-14`
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
+- `transport-rust/src/network/wtls/record.rs`
+- `transport-rust/src/network/wtls/handshake.rs`
+- `transport-rust/src/network/wtls/alerts.rs`
+- `docs/waves/wtls-record-structure.md`
+- `docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+5. `Build`:
+- Publish explicit phase boundary: no-op mode vs minimal active mode.
+- Implement minimal record parsing and handshake retransmission/duplicate handling policy for active mode.
+- Keep WTLS disabled by default until profile gate explicitly enables it.
+6. `Tests`:
+- Record parse/serialize fixture lane for active mode.
+- Handshake retransmission and duplicate-message fixtures.
+- No-op mode parity fixtures proving transport behavior stability when disabled.
+7. `Accept`:
+- WTLS scope is explicit, testable, and aligned with profile gates.
+- Security-path behavior cannot activate implicitly.
+8. `Migration gates`:
+- Done-1: WTLS mode defaults and activation criteria are documented.
+- Done-2: active-mode fixtures pass and map to security requirement IDs.
+- Done-3: no-op mode remains deterministic and contract-compatible.
+9. `Spec`:
+- `RQ-SEC-004`, `RQ-SEC-005`
+10. `Notes`:
+- Queue-ready; unblock when `T0-14` is `done` and `T0-22` replay gates are stable.
+
+### T0-22 Networking interop replay harness and golden event corpus
+
+1. `Status`: `blocked`
+2. `Depends On`: `T0-18`, `T0-19`, `T0-20`
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
+- `transport-rust/tests/network/interop/`
+- `transport-rust/tests/interop_replay.rs`
+- `docs/waves/networking-implementation-checklist.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `docs/waves/networking-migration-readiness-checklist.md`
+5. `Build`:
+- Add replay harness for `CONNECT`/`GET`/`REPLY` plus retransmit/duplicate transaction flows.
+- Normalize replay output into deterministic protocol events for assertion.
+- Gate profile promotion on replay-corpus pass status.
+6. `Tests`:
+- `connect_session_replay`
+- `get_reply_replay`
+- `retransmit_flow`
+- `duplicate_tid_flow`
+7. `Accept`:
+- Interop behavior is fixture-backed beyond unit-only coverage.
+- Migration gates can cite replay results as promotion evidence.
+8. `Migration gates`:
+- Done-1: replay corpus exists for all active profile paths.
+- Done-2: retransmit/duplicate lanes are included in mandatory gating checks.
+- Done-3: fixture updates require corresponding traceability/status updates.
+9. `Spec`:
+- `RQ-TRN-005..019`
+10. `Notes`:
+- Queue-ready; unblock when `T0-18`, `T0-19`, and `T0-20` are `done`.
+
+### T0-23 External corpus ingestion spike (Kannel + Wireshark)
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-16`
+3. `Owner`: `docs`, `spec-processing`, `transport-rust`
+4. `Files`:
+- `docs/waves/networking-external-response-triage.md`
+- `docs/waves/networking-gap-to-source-map.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `spec-processing/new-source-material/`
+- `spec-processing/README.md`
+5. `Build`:
+- Ingest and catalog implementation-reference materials for:
+  - Kannel networking sources (`wtp`, `wsp`, `wdp` lanes)
+  - Wireshark dissectors (`packet-wtp`, `packet-wsp`, `packet-wdp`, `packet-wtls`)
+- Produce a normalized source index with per-source trust class (`normative`, `interop-reference`, `heuristic`).
+- Map extracted behaviors to existing `RQ-TRN-*` IDs without creating new transport requirements.
+6. `Tests`:
+- Deterministic source-index lint/check (file present + source class + mapped requirement IDs).
+- Spot-check fixture that one behavior from each external source family maps to an existing local requirement.
+7. `Accept`:
+- External reference corpus is indexed and traceable without changing normative precedence.
+- Each imported behavior note cites a local requirement and implementation target lane.
+8. `Migration gates`:
+- Done-1: source index exists and is versioned.
+- Done-2: all imported notes are tagged `interop-reference` or `heuristic` unless backed by canonical WAP spec.
+- Done-3: no `RQ-TRN-*` requirement is redefined by external source text.
+9. `Spec`:
+- `RQ-TRN-001..019`
+10. `Notes`:
+- Research spike only; non-blocking for protocol implementation unless it uncovers a contradiction with local normative anchors.
+
+### T0-24 Networking PCAP corpus spike and replay fixture seed pack
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-23`
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
+- `transport-rust/tests/network/interop/`
+- `transport-rust/tests/interop_replay.rs`
+- `docs/waves/networking-migration-readiness-checklist.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+5. `Build`:
+- Build a curated PCAP seed corpus for:
+  - `CONNECT` handshake path
+  - `GET`/`REPLY` request-response
+  - retransmit and duplicate transaction scenarios
+- Define deterministic replay-fixture schema (`capture`, `expected events`, `expected transaction outcomes`).
+- Document capture provenance and legal/reuse constraints.
+6. `Tests`:
+- Replay parser can consume seed fixtures and emit deterministic event traces.
+- At least one fixture each for connect, get/reply, retransmit, duplicate flow classes.
+7. `Accept`:
+- PCAP seed corpus exists and is runnable via replay harness scaffolding.
+- Fixture schema is stable and linked from transport/networking docs.
+8. `Migration gates`:
+- Done-1: seed corpus is committed with metadata and expected outputs.
+- Done-2: replay harness stub validates schema and event ordering.
+- Done-3: ticket `T0-22` references these fixtures as required baseline inputs.
+9. `Spec`:
+- `RQ-TRN-005..019`
+10. `Notes`:
+- Spike output is an enabling artifact for `T0-22`; it does not itself satisfy protocol-core implementation gates.
+
+### T0-25 External conformance/vector source sweep spike
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-23`
+3. `Owner`: `docs`, `spec-processing`
+4. `Files`:
+- `docs/waves/networking-gap-analysis.md`
+- `docs/waves/networking-strict-gap-audit.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+5. `Build`:
+- Identify publicly available WAP interoperability/conformance vectors that can be safely reused.
+- Classify candidate vectors by usefulness for current lanes (`WDP`, `WTP`, `WSP`, `WTLS`) and profile compatibility (`gateway-bridged`, `wap-net-core`).
+- Produce a recommended adoption list with effort/benefit estimates.
+6. `Tests`:
+- Checklist validation proving each recommended vector maps to at least one active ticket and one fixture target path.
+7. `Accept`:
+- Conformance/vector candidates are ranked and tied to current execution lanes.
+- No adoption recommendation conflicts with current spec precedence or scope-defer rules.
+8. `Migration gates`:
+- Done-1: ranked vector adoption list exists.
+- Done-2: each item maps to `T0-*` and `RQ-*` references.
+- Done-3: explicit `adopt now` vs `defer` decisions are documented.
+9. `Spec`:
+- `RQ-TRN-001..019`, `RQ-SEC-004..005`
+10. `Notes`:
+- Research spike only; adoption decisions must remain profile-gated and additive.
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

@@ -7,13 +7,14 @@ PROFILE_TAG="docling:dlparse_v4,no-ocr,image-placeholder"
 
 BASE_REPORT="$ROOT/tmp/docling-rerun/cleanup-report.txt"
 REM_REPORT="$ROOT/tmp/docling-rerun-remaining/cleanup-report.txt"
+NEW_REPORT="$ROOT/tmp/docling-new-source-material/cleanup-report.txt"
 DEST_DIR="$ROOT/spec-processing/source-material/parsed-markdown/docling-cleaned"
 CSV_OUT="$ROOT/docs/waves/provenance/docling-provenance-${DATE_TAG}.csv"
 MANIFEST="$ROOT/docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md"
 TMP_TSV="$(mktemp)"
 
-if [[ ! -f "$BASE_REPORT" || ! -f "$REM_REPORT" ]]; then
-  echo "Missing cleanup reports under tmp/docling-rerun*"
+if [[ ! -f "$BASE_REPORT" && ! -f "$REM_REPORT" && ! -f "$NEW_REPORT" ]]; then
+  echo "Missing cleanup reports under tmp/docling-rerun* and tmp/docling-new-source-material"
   exit 1
 fi
 
@@ -74,8 +75,15 @@ parse_report() {
 }
 
 {
-  parse_report "base" "$BASE_REPORT"
-  parse_report "remaining" "$REM_REPORT"
+  if [[ -f "$BASE_REPORT" ]]; then
+    parse_report "base" "$BASE_REPORT"
+  fi
+  if [[ -f "$REM_REPORT" ]]; then
+    parse_report "remaining" "$REM_REPORT"
+  fi
+  if [[ -f "$NEW_REPORT" ]]; then
+    parse_report "new-source" "$NEW_REPORT"
+  fi
 } > "$TMP_TSV"
 
 {
@@ -121,6 +129,7 @@ cat >> "$MANIFEST" <<EOF
 - Source cleanup reports:
   - \`tmp/docling-rerun/cleanup-report.txt\`
   - \`tmp/docling-rerun-remaining/cleanup-report.txt\`
+  - \`tmp/docling-new-source-material/cleanup-report.txt\` (if present)
 - Generated per-file provenance CSV:
   - \`docs/waves/provenance/$(basename "$CSV_OUT")\`
 - Snapshot totals:

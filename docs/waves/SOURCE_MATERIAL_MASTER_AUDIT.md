@@ -11,7 +11,7 @@ Run a repeatable, deep audit over all local source specs and ensure Waves requir
 
 Current repository corpus under `spec-processing/source-material`:
 
-- `94` PDF files total (canonical root-level corpus)
+- `96` PDF files total (canonical root-level corpus)
 - `0` duplicate mirror folders in active use (`sub-set/`, `WMLScript/` removed from canonical tree)
 
 Canonical per-file ledger:
@@ -43,7 +43,7 @@ Do not reintroduce foldered mirror duplicates (`sub-set/`, `WMLScript/`) unless 
 
 ### D2 Security parity/simulation boundary (capture for policy decisions)
 
-- WTLS/TLS and related SIN (`WAP-261*`, `WAP-219*`)
+- WTLS/TLS and related SIN (`WAP-199`, `WAP-261*`, `WAP-219*`)
 - cert/PKI/WIM references (`WAP-211*`, `WAP-217*`, `WAP-260*`, OMA SINs)
 - end-to-end transport security context (`WAP-187*`)
 

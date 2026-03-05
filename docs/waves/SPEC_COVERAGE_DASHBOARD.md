@@ -8,8 +8,8 @@ Status: Active
 ### Corpus ledger
 
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
-- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (94 files)
-- Status: all 94 canonical PDFs are `deep-extracted`
+- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (96 files)
+- Status: all 96 canonical PDFs are `deep-extracted`
 - Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves)
 
 ### Completed traceability domains
@@ -38,6 +38,7 @@ Status: Active
 - Doc: `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - Sources:
   - `WAP-230-WSP-20010705-a`
+  - `OMA-WAP-TS-WSP-V1_0-20020920-C`
   - `WAP-224-WTP-20010710-a`
   - `OMA-WAP-224_002-WTP-SIN-20020827-a`
   - `WAP-259-WDP-20010614-a`
@@ -55,6 +56,7 @@ Status: Active
 - Doc: `docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md`
 - Sources:
   - `WAP-261*` (WTLS + SIN)
+  - `WAP-199-WTLS-20000218-a.pdf` (legacy WTLS lineage)
   - `WAP-219*` (TLS profile + SIN)
   - `WAP-187*` (Transport E2E security + SIN)
 

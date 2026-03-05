@@ -10,6 +10,8 @@ fi
 CLEANED_DIR="$ROOT/spec-processing/source-material/parsed-markdown/docling-cleaned"
 BASE_REPORT="$ROOT/tmp/docling-rerun/cleanup-report.txt"
 REM_REPORT="$ROOT/tmp/docling-rerun-remaining/cleanup-report.txt"
+NEW_OUTPUT="$ROOT/tmp/docling-new-source-material"
+NEW_REPORT="$ROOT/tmp/docling-new-source-material/cleanup-report.txt"
 
 warn=0
 
@@ -42,10 +44,29 @@ if [[ "$hash_count" -gt 0 ]]; then
   warn=$((warn + 1))
 fi
 
-if [[ -f "$BASE_REPORT" && -f "$REM_REPORT" ]]; then
-  raw_unresolved=$( (cat "$BASE_REPORT" "$REM_REPORT" | rg -n 'TABLE: .*normalized=no' || true) | wc -l | tr -d ' ' )
+if [[ -f "$BASE_REPORT" || -f "$REM_REPORT" || -f "$NEW_REPORT" ]]; then
+  report_files=()
+  if [[ -f "$BASE_REPORT" ]]; then
+    report_files+=("$BASE_REPORT")
+  fi
+  if [[ -f "$REM_REPORT" ]]; then
+    report_files+=("$REM_REPORT")
+  fi
+  if [[ -f "$NEW_REPORT" ]]; then
+    report_files+=("$NEW_REPORT")
+  fi
+
+  raw_unresolved=0
+  for r in "${report_files[@]}"; do
+    report_unresolved=$( (rg -n 'TABLE: .*normalized=no' "$r" || true) | wc -l | tr -d ' ' )
+    raw_unresolved=$((raw_unresolved + report_unresolved))
+  done
   # Known detector false-positive, resolved by manual review.
-  allowlist=$( (cat "$BASE_REPORT" "$REM_REPORT" | rg -n 'WAP-191_104-WML-20010718-a|TABLE: Table 1\. normalized=no' || true) | wc -l | tr -d ' ' )
+  allowlist=0
+  for r in "${report_files[@]}"; do
+    report_allow=$( (cat "$r" | rg -n 'WAP-191_104-WML-20010718-a|TABLE: Table 1\. normalized=no' || true) | wc -l | tr -d ' ' )
+    allowlist=$((allowlist + report_allow))
+  done
   unresolved=$raw_unresolved
   if [[ "$raw_unresolved" -gt 0 && "$allowlist" -gt 0 ]]; then
     unresolved=$((raw_unresolved - 1))
@@ -59,8 +80,12 @@ if [[ -f "$BASE_REPORT" && -f "$REM_REPORT" ]]; then
     warn=$((warn + 1))
   fi
 else
-  echo "WARN: cleanup reports missing under tmp/docling-rerun*"
-  warn=$((warn + 1))
+  echo "INFO: no cleanup reports found under tmp/docling-rerun*/tmp/docling-new-source-material (no rerun/new-source parse occurred)"
+fi
+
+if [[ -d "$NEW_OUTPUT" ]]; then
+  new_cleaned_count=$(find "$NEW_OUTPUT" -type f -name '*.cleaned.md' | wc -l | tr -d ' ')
+  echo "New-source-material cleaned outputs: $new_cleaned_count"
 fi
 
 echo "Warnings: $warn"
