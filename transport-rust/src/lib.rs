@@ -132,7 +132,7 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
         request_policy,
     } = request;
     let request_id = normalized_request_id(request_id.as_deref()).map(str::to_string);
-    let url_octets = url.as_bytes().len();
+    let url_octets = url.len();
     if url_octets > MAX_URI_OCTETS {
         return invalid_request_response(
             url,
@@ -1332,7 +1332,7 @@ mod tests {
         let prefix = "http://example.test/";
         let fill = "a".repeat(MAX_URI_OCTETS - prefix.len());
         let url = format!("{prefix}{fill}");
-        assert_eq!(url.as_bytes().len(), MAX_URI_OCTETS);
+        assert_eq!(url.len(), MAX_URI_OCTETS);
         let response = fetch_deck_in_process(FetchDeckRequest {
             request_id: Some("req-uri-limit".to_string()),
             ..basic_request(url)

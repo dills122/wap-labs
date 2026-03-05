@@ -248,7 +248,7 @@ fn decode_textual_wml_payload(body: &[u8]) -> Result<String, String> {
 }
 
 fn decode_utf16_payload(bytes: &[u8], little_endian: bool) -> Result<String, String> {
-    if bytes.len() % 2 != 0 {
+    if !bytes.len().is_multiple_of(2) {
         return Err("Invalid UTF-16 payload: odd byte length".to_string());
     }
     let units = bytes.chunks_exact(2).map(|chunk| {
