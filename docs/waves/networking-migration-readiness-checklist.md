@@ -1,4 +1,4 @@
-# Networking Migration Readiness Checklist (T0-08..T0-17)
+# Networking Migration Readiness Checklist (T0-08..T0-22)
 
 Status: draft
 Owner: transport docs + protocol stack alignment
@@ -7,7 +7,7 @@ This checklist translates protocol rewrite gates into a deterministic promotion 
 
 Execution mapping:
 
-- Ticket-level gate states are recorded in `docs/waves/WORK_ITEMS.md` (`T0-08` through `T0-17`) in the `Migration gates` fields.
+- Ticket-level gate states are recorded in `docs/waves/WORK_ITEMS.md` (`T0-08` through `T0-22`) in the `Migration gates` fields.
 
 ## Gate policy
 
@@ -80,6 +80,36 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 - `Done-2`: `TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md` and `OUT_OF_SCOPE...` are aligned on transport-adjacent deferrals.
 - `Done-3`: migration profile promotion criteria references `T0-17` as scope-lock check.
 
+### T0-18 (`Owner`: transport-rust, docs)
+
+- `Done-1`: retransmission timer/counter behavior is explicit and fixture-backed.
+- `Done-2`: duplicate invoke/result handling includes deterministic cache-retention policy.
+- `Done-3`: NACK delay and retransmission hold-off policy is explicitly profile-gated for SAR lanes.
+
+### T0-19 (`Owner`: transport-rust)
+
+- `Done-1`: WDP datagram trait is the protocol-native ingress to WTP/WSP in `wap-net-core`.
+- `Done-2`: UDP mapping for `9200..9203` is deterministic and fixture-covered.
+- `Done-3`: SAR behavior is documented and profile-gated (`off` default unless explicitly enabled).
+
+### T0-20 (`Owner`: transport-rust, docs)
+
+- `Done-1`: WSP assigned-number/header registry coverage is table-driven and versioned.
+- `Done-2`: unknown token/code-page behavior is explicit and tested for active profiles.
+- `Done-3`: code-page shift and unsupported encoding paths have deterministic outcomes.
+
+### T0-21 (`Owner`: transport-rust, docs)
+
+- `Done-1`: WTLS phase boundary is explicit (`no-op` vs `active minimal`) and default-safe.
+- `Done-2`: active-mode record parsing and handshake retransmission/duplicate behavior is fixture-covered.
+- `Done-3`: security path cannot activate without profile-gate enablement artifacts.
+
+### T0-22 (`Owner`: transport-rust, docs)
+
+- `Done-1`: replay harness exists for `CONNECT`/`GET`/`REPLY` protocol paths.
+- `Done-2`: retransmit/duplicate flows are included in required promotion fixtures.
+- `Done-3`: migration profile gates reference replay results as mandatory promotion evidence.
+
 ## Cross-tile closure rule
 
-`T0-17` must stay true before any adjacent-adjacent transport path is promoted in `T0-14`.
+`T0-17` must stay true before any adjacent-adjacent transport path is promoted in `T0-14`, and `T0-18..T0-22` must be green before moving from `gateway-bridged` to `wap-net-core`.

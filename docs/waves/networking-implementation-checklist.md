@@ -102,7 +102,7 @@ Traceability requirement:
 2. run a cross-layer contract smoke map with `browser` + `engine-wasm` + `transport-rust`.
 3. publish explicit profile transition decision: current -> target.
 4. acceptance:
-   - all `T0-08..T0-14` gates with explicit owner and artifact.
+   - all `T0-08..T0-22` gates with explicit owner and artifact.
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
 
 ## 4) Known adjacent-but-deferred transport context
@@ -113,7 +113,7 @@ Traceability requirement:
 
 ## 5) Execution alignment with project docs
 
-1. `docs/waves/WORK_ITEMS.md` is the execution source of truth for sequencing (`T0-08..T0-17`).
+1. `docs/waves/WORK_ITEMS.md` is the execution source of truth for sequencing (`T0-08..T0-22`).
 2. `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` and `..._ADJACENT_...` are the requirement sources.
 3. `docs/waves/SPEC_TEST_COVERAGE.md` hosts acceptance status and must remain synchronized on every migration gate.
 4. `docs/waves/TECHNICAL_ARCHITECTURE.md` should describe transport profile states before each milestone gate.

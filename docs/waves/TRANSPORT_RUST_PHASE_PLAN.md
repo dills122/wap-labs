@@ -101,10 +101,15 @@ Objective:
 7. `T0-14`: transport profile decision and promotion gates
 8. `T0-16`: source queue/variant canonicalization lock
 9. `T0-17`: transport-adjacent scope sweep
+10. `T0-18`: WTP retransmission/NACK hold-off policy implementation
+11. `T0-19`: WDP datagram trait + UDP mapping baseline
+12. `T0-20`: WSP registry/unknown-token policy completion
+13. `T0-21`: WTLS phase boundary and minimal reliability lane
+14. `T0-22`: interop replay harness and golden event corpus
 
 ## Notes
 
-- `Phase D` does not run forward until profile gates close and explicit security-profile scope is settled in `T0-14`.
+- `Phase D` does not run forward until profile gates close and explicit security-profile scope is settled in `T0-14` and `T0-21`.
 
 ## Dependency Guidance
 
