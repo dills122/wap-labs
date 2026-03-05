@@ -26,14 +26,14 @@ export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | 
 export type RenderList = { draw: Array<DrawCmd>, };
 
 export interface EngineHostClient {
-  loadDeck(request: LoadDeckRequest): Promise<EngineRuntimeSnapshot>;
-  loadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;
-  render(): Promise<RenderList>;
-  handleKey(request: HandleKeyRequest): Promise<EngineRuntimeSnapshot>;
-  navigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
-  navigateBack(): Promise<EngineRuntimeSnapshot>;
-  setViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
-  advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
-  snapshot(): Promise<EngineRuntimeSnapshot>;
-  clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
+    loadDeck(request: LoadDeckRequest): Promise<EngineRuntimeSnapshot>;
+    loadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;
+    render(): Promise<RenderList>;
+    handleKey(request: HandleKeyRequest): Promise<EngineRuntimeSnapshot>;
+    navigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
+    navigateBack(): Promise<EngineRuntimeSnapshot>;
+    setViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
+    advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
+    snapshot(): Promise<EngineRuntimeSnapshot>;
+    clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
 }

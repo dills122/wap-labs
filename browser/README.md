@@ -15,8 +15,8 @@ Implemented now:
 - Rust-sourced transport host contract generation:
   - generator: `src-tauri/src/bin/generate_contracts.rs`
   - output: `contracts/generated/transport-host.ts`
-- Rust-sourced typed Tauri invoke client generation:
-  - generator: `src-tauri/src/bin/generate_contracts.rs`
+- AST-sourced typed Tauri invoke client generation:
+  - generator: `scripts/generate-contract-wrappers.mjs`
   - output: `contracts/generated/tauri-host-client.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
@@ -70,9 +70,9 @@ The desktop host will be a WAP-only browser shell:
 
 - Desktop/transport contract: `browser/contracts/transport.ts`
 - Engine contract: `engine-wasm/contracts/wml-engine.ts`
-- Rust-generated host engine contract: `browser/contracts/generated/engine-host.ts`
-- Rust-generated host transport contract: `browser/contracts/generated/transport-host.ts`
-- Rust-generated typed Tauri client: `browser/contracts/generated/tauri-host-client.ts`
+- Rust (`ts-rs`) + AST-generated host engine contract: `browser/contracts/generated/engine-host.ts`
+- Rust (`ts-rs`) + AST-generated host transport contract: `browser/contracts/generated/transport-host.ts`
+- AST-generated typed Tauri client: `browser/contracts/generated/tauri-host-client.ts`
 
 Regenerate host contract types from Rust:
 
