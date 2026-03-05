@@ -18,10 +18,17 @@ Archive:
 
 These assumptions are active for this board and should not be re-litigated in each ticket:
 
-1. `transport-rust/` networking behavior is already functionally validated via CLI probes.
-2. `engine-wasm/` runtime/rendering has reached a substantial milestone and is ready for full browser integration.
+1. `transport-rust/` gateway-bridged behavior is functionally validated via CLI probes.
+2. protocol-native networking (`WDP -> WTP -> WSP`) remains the current high-risk implementation lane.
+3. `engine-wasm/` runtime/rendering has reached a substantial milestone and remains integration-ready while networking core is completed.
 
-This board therefore prioritizes host/browser integration, UX shell behavior, and runtime/transport orchestration over low-level parser/transport re-validation.
+Project-level priority remains multi-lane:
+
+1. close committed runtime/compliance tickets already in-flight (`R0-*`, `W0-*`, `W1-*` scoped work)
+2. execute protocol-native networking closure (`T0-19`, `T0-18`, `T0-20`, `T0-22`, `T0-21`)
+3. defer broad feature expansion in any lane until these bedrock closures are stable
+
+Networking is a top-tier lane, not a replacement for all other committed bedrock work.
 
 ## Architecture standards gate
 
@@ -62,6 +69,22 @@ Next execution block is architecture hardening across all active libraries befor
 3. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
+
+## Next In Line (Networking Regroup Sprint - 2026-03-05)
+
+Priority execution order for networking MVP closure:
+
+1. `T0-19` WDP datagram trait + UDP mapping baseline.
+2. `T0-18` WTP retransmission, duplicate handling, and NACK hold-off policy.
+3. `T0-20` WSP registry/token completion and unknown-token behavior.
+4. `T0-22` interop replay harness (`CONNECT`/`GET`/`REPLY` + retransmit/duplicate lanes).
+5. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
+
+Sprint policy:
+
+1. Do not promote profile from `gateway-bridged` to `wap-net-core` before `T0-18..T0-22` gates are green.
+2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
+3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
 
 ## Next In Line (Committed Bedrock Compliance Sprint - 2026-03-04)
 
@@ -482,7 +505,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-18 WTP retransmission/NACK hold-off policy extraction and implementation
 
-1. `Status`: `todo`
+1. `Status`: `blocked`
 2. `Depends On`: `T0-08`, `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -509,10 +532,12 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: SAR-off and SAR-on profile behavior is explicitly gated and non-ambiguous.
 9. `Spec`:
 - `RQ-TRN-007`, `RQ-TRN-008`, `RQ-TRN-016`
+10. `Notes`:
+- Queue-ready; unblock when `T0-08` and `T0-14` are `done`.
 
 ### T0-19 WDP datagram trait + UDP port mapping baseline
 
-1. `Status`: `todo`
+1. `Status`: `blocked`
 2. `Depends On`: `T0-14`, `T0-16`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -539,10 +564,12 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: SAR behavior is explicit (`off` by default) and guarded by profile flags.
 9. `Spec`:
 - `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRN-004`
+10. `Notes`:
+- Queue-ready; unblock when `T0-14` and `T0-16` are `done`.
 
 ### T0-20 WSP header registry completion and unknown-token policy
 
-1. `Status`: `todo`
+1. `Status`: `blocked`
 2. `Depends On`: `T0-10`, `T0-11`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -569,10 +596,12 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: profile promotion is blocked when token fixture coverage is stale.
 9. `Spec`:
 - `RQ-TRN-014`, `RQ-TRN-018`
+10. `Notes`:
+- Queue-ready; unblock when `T0-10` and `T0-11` are `done`.
 
 ### T0-21 WTLS phase boundary and minimal handshake reliability lane
 
-1. `Status`: `todo`
+1. `Status`: `blocked`
 2. `Depends On`: `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -599,10 +628,12 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: no-op mode remains deterministic and contract-compatible.
 9. `Spec`:
 - `RQ-SEC-004`, `RQ-SEC-005`
+10. `Notes`:
+- Queue-ready; unblock when `T0-14` is `done` and `T0-22` replay gates are stable.
 
 ### T0-22 Networking interop replay harness and golden event corpus
 
-1. `Status`: `todo`
+1. `Status`: `blocked`
 2. `Depends On`: `T0-18`, `T0-19`, `T0-20`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -629,6 +660,8 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: fixture updates require corresponding traceability/status updates.
 9. `Spec`:
 - `RQ-TRN-005..019`
+10. `Notes`:
+- Queue-ready; unblock when `T0-18`, `T0-19`, and `T0-20` are `done`.
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

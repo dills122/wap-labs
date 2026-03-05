@@ -107,6 +107,14 @@ Objective:
 13. `T0-21`: WTLS phase boundary and minimal reliability lane
 14. `T0-22`: interop replay harness and golden event corpus
 
+## Regrouped networking priority order (`2026-03-05`)
+
+1. `T0-19` WDP datagram trait + UDP mapping baseline
+2. `T0-18` WTP retransmission/duplicate/NACK hold-off behavior
+3. `T0-20` WSP registry/token and unknown-codepage handling
+4. `T0-22` interop replay harness and golden event corpus
+5. `T0-21` WTLS phase boundary/minimal lane (default disabled)
+
 ## Notes
 
 - `Phase D` does not run forward until profile gates close and explicit security-profile scope is settled in `T0-14` and `T0-21`.

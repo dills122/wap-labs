@@ -128,6 +128,7 @@ Transport profile decision rules:
 2. all profile promotions are gated by completed protocol fixtures and ticket chain
 3. request/response contract to browser and engine must remain stable across profile changes
 4. profile moves require `docs/waves/networking-migration-readiness-checklist.md` gate completion for the relevant `T0-08..T0-17` items
+5. protocol-native promotion requires `T0-18..T0-22` closure for WDP/WTP/WSP core and interop replay evidence
 
 Request example:
 
@@ -153,7 +154,7 @@ Response example:
 - Keep transport-rust as the single transport implementation.
 - Expand protocol coverage incrementally behind tests and fixture-based checks.
 - Preserve strict boundary ownership: transport handles network/protocol/decode, engine handles runtime/rendering.
-- Current execution order is defined by transport tickets `T0-08` through `T0-14`.
+- Current networking-lane regroup priority order is `T0-19 -> T0-18 -> T0-20 -> T0-22 -> T0-21`, with migration dependencies tracked in `T0-08..T0-17`.
 - Future transport profiles should update both this plan and `docs/waves/networking-implementation-checklist.md` before feature introduction.
 
 ## Source handling path for transport specs
