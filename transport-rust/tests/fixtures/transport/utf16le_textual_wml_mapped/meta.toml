@@ -1,0 +1,9 @@
+name = "UTF-16LE textual WML mapping"
+description = "Decodes UTF-16LE textual WML payloads with BOM deterministically."
+mode = "mapped"
+work_items = ["T0-06"]
+spec_items = ["RQ-WAE-012"]
+testing_ac = [
+  "Given UTF-16LE WML bytes with BOM, mapping returns ok=true with decoded WML text.",
+  "Response keeps status/finalUrl/contentType deterministic on decode success."
+]

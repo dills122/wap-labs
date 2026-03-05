@@ -184,20 +184,29 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-06 URI length and charset boundary conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-02`
 3. `Files`:
 - `transport-rust/src/lib.rs`
+- `transport-rust/src/responses.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 4. `Build`:
 - Add deterministic handling/tests for 1024-octet URI boundaries and UTF-8/UTF-16 encoding paths.
 5. `Tests`:
-- Boundary fixtures for URI length, UTF-16 decode success, and deterministic encoding failure mapping.
+- URI boundary coverage:
+  - fixture `transport-rust/tests/fixtures/transport/uri_too_long_1025/`
+  - unit tests for `1024`-octet accept and `>1024` reject path in `transport-rust/src/lib.rs`
+- Charset boundary coverage:
+  - mapped fixture `transport-rust/tests/fixtures/transport/utf16le_textual_wml_mapped/` for UTF-16LE decode success
+  - mapped fixture `transport-rust/tests/fixtures/transport/utf16_odd_length_protocol_error_mapped/` for deterministic malformed UTF-16 `PROTOCOL_ERROR` mapping
+  - unit tests in `transport-rust/src/responses.rs` cover UTF-16 decode success/error code path behavior directly
 6. `Accept`:
 - URI/encoding behavior meets WAE baseline and remains regression-protected.
 7. `Spec`:
 - `RQ-WAE-010`, `RQ-WAE-012`
+8. `Notes`:
+- Completed transport-scope URI/charset boundary conformance follow-up with deterministic URI length guardrails and fixture-backed UTF-16 decode success/error paths.
 
 ### T0-07 WBXML token/literal compatibility conformance follow-up
 

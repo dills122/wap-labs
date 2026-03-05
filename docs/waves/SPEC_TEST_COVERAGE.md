@@ -55,11 +55,13 @@ Legend:
 | `RQ-TRN-017` WSP connectionless primitive profile | `planned` | primitive occurrence matrix fixtures tracked in `T0-09` |
 | `RQ-TRN-018` WSP assigned-number registry fidelity | `planned` | table-driven token map fixtures tracked in `T0-10` |
 | `RQ-TRN-019` WSP capability-bounds enforcement | `planned` | capability negotiation and bound-exceed fixtures tracked in `T0-11` |
+| `RQ-WAE-010` URI handling baseline | `partial` | `transport-rust` request-validation tests in `src/lib.rs` plus fixture `tests/fixtures/transport/uri_too_long_1025` (1024-octet boundary coverage landed; transport-profile routing assertions pending) |
+| `RQ-WAE-012` i18n baseline (UTF-8/UTF-16 + deterministic decode errors) | `partial` | textual payload decode tests in `transport-rust/src/responses.rs` plus mapped fixtures `utf16le_textual_wml_mapped` and `utf16_odd_length_protocol_error_mapped`; script-path parity remains pending |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
 | `RQ-TRX-009` Wireless Profiled TCP optimization baseline | `planned` | profile declaration + compatibility fixture lane tracked in `T0-12` |
 | `RQ-TRX-010` WDP/WCMP over SMPP adaptation profile | `planned` | explicit scope decision + adapter fixture lane tracked in `T0-13` |
 | WAP networking profile decision and migration gates | `planned` | architecture decision + profile-gate fixture lane tracked in `T0-14` |
-| WAP-191 request-policy + post metadata plumbing (`go/postfield/cache-control`) | `planned` | `T0-04`, `R0-06` |
+| WAP-191 request-policy + post metadata plumbing (`go/postfield/cache-control`) | `covered` | request-policy mapping tests in `transport-rust/src/lib.rs` + browser host external-intent request-policy propagation tests (`T0-04`, `R0-06`) |
 | WAP-191 encoder/validation fixture lane (`14.x`, `15.2-15.4`) | `planned` | `T0-07`, `R0-08` |
 
 ## Browser host (`browser`)

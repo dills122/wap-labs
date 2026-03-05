@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "isWapScheme": false,
+  "requestUrl": "http://request.example/utf16-invalid.wml",
+  "upstreamUrl": "http://upstream.example/utf16-invalid.wml",
+  "finalUrl": "http://request.example/utf16-invalid.wml",
+  "contentType": "text/vnd.wap.wml",
+  "bodyBase64": "//48AHc=",
+  "attempt": 1,
+  "elapsedMs": 1.7
+}

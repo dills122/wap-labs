@@ -17,6 +17,7 @@ use responses::{
     normalize_content_type, transport_unavailable_response,
 };
 pub use wbxml::preflight_wbxml_decoder;
+const MAX_URI_OCTETS: usize = 1024;
 
 #[derive(Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
@@ -131,6 +132,17 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
         request_policy,
     } = request;
     let request_id = normalized_request_id(request_id.as_deref()).map(str::to_string);
+    let url_octets = url.len();
+    if url_octets > MAX_URI_OCTETS {
+        return invalid_request_response(
+            url,
+            format!(
+                "URL exceeds {}-octet limit (got {} octets)",
+                MAX_URI_OCTETS, url_octets
+            ),
+            request_id.as_deref(),
+        );
+    }
 
     let method = method
         .unwrap_or_else(|| "GET".to_string())
@@ -432,7 +444,7 @@ mod tests {
     use super::{
         apply_request_policy, fetch_deck_in_process, preflight_wbxml_decoder,
         FetchCacheControlPolicy, FetchDeckRequest, FetchPostContext, FetchRequestPolicy,
-        FetchUaCapabilityProfile,
+        FetchUaCapabilityProfile, MAX_URI_OCTETS,
     };
     use crate::gateway::build_gateway_request;
     use crate::request_meta::{
@@ -604,9 +616,27 @@ mod tests {
         upstream_url: String,
         final_url: String,
         content_type: String,
-        body: String,
+        body: Option<String>,
+        body_base64: Option<String>,
         attempt: u8,
         elapsed_ms: f64,
+    }
+
+    impl FixtureMapInput {
+        fn body_bytes(&self) -> Vec<u8> {
+            if let Some(encoded) = self.body_base64.as_deref() {
+                return BASE64.decode(encoded).unwrap_or_else(|_| {
+                    panic!("fixture bodyBase64 should decode for {}", self.final_url)
+                });
+            }
+            if let Some(body) = self.body.as_deref() {
+                return body.as_bytes().to_vec();
+            }
+            panic!(
+                "fixture must provide either body or bodyBase64 for {}",
+                self.final_url
+            );
+        }
     }
 
     #[derive(Debug, Deserialize)]
@@ -616,6 +646,7 @@ mod tests {
         status: u16,
         final_url: String,
         content_type: String,
+        wml: Option<String>,
         error_code: Option<String>,
     }
 
@@ -1275,6 +1306,45 @@ mod tests {
     }
 
     #[test]
+    fn transport_fetch_rejects_url_longer_than_1024_octets() {
+        let long_path = "a".repeat(MAX_URI_OCTETS + 1);
+        let long_url = format!("http://example.test/{long_path}");
+        let response = fetch_deck_in_process(FetchDeckRequest {
+            request_id: Some("req-uri-too-long".to_string()),
+            ..basic_request(long_url.clone())
+        });
+        assert!(!response.ok);
+        assert_eq!(response.status, 0);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("INVALID_REQUEST")
+        );
+        assert_eq!(response.final_url, long_url);
+        assert!(response
+            .error
+            .as_ref()
+            .map(|err| err.message.contains("1024-octet limit"))
+            .unwrap_or(false));
+    }
+
+    #[test]
+    fn transport_fetch_accepts_url_at_1024_octet_boundary() {
+        let prefix = "http://example.test/";
+        let fill = "a".repeat(MAX_URI_OCTETS - prefix.len());
+        let url = format!("{prefix}{fill}");
+        assert_eq!(url.len(), MAX_URI_OCTETS);
+        let response = fetch_deck_in_process(FetchDeckRequest {
+            request_id: Some("req-uri-limit".to_string()),
+            ..basic_request(url)
+        });
+        assert_ne!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("INVALID_REQUEST"),
+            "1024-octet URL should not fail local URI-length validation"
+        );
+    }
+
+    #[test]
     fn transport_map_success_payload_http_success_builds_engine_deck_input() {
         let base = "http://example.test/index.wml".to_string();
         let body = b"<wml><card id=\"home\"><p>ok</p></card></wml>";
@@ -1309,6 +1379,56 @@ mod tests {
             deck.raw_bytes_base64.as_deref(),
             Some(BASE64.encode(body).as_str()),
             "raw bytes should preserve original payload bytes as base64"
+        );
+    }
+
+    #[test]
+    fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
+        let base = "http://example.test/index.wml".to_string();
+        let utf16le_body: Vec<u8> = vec![
+            0xFF, 0xFE, b'<', 0x00, b'w', 0x00, b'm', 0x00, b'l', 0x00, b'>', 0x00, b'<', 0x00,
+            b'/', 0x00, b'w', 0x00, b'm', 0x00, b'l', 0x00, b'>', 0x00,
+        ];
+        let response = map_success_payload_response(
+            200,
+            false,
+            &base,
+            &base,
+            base.clone(),
+            "text/vnd.wap.wml".to_string(),
+            &utf16le_body,
+            1,
+            3.5,
+            None,
+        );
+        assert!(response.ok);
+        assert_eq!(response.wml.as_deref(), Some("<wml></wml>"));
+    }
+
+    #[test]
+    fn transport_map_success_payload_utf16_odd_length_maps_protocol_error() {
+        let base = "http://example.test/index.wml".to_string();
+        let invalid_utf16_body: Vec<u8> = vec![0xFF, 0xFE, b'<', 0x00, b'w'];
+        let response = map_success_payload_response(
+            200,
+            false,
+            &base,
+            &base,
+            base.clone(),
+            "text/vnd.wap.wml".to_string(),
+            &invalid_utf16_body,
+            1,
+            3.5,
+            Some("req-utf16-invalid"),
+        );
+        assert!(!response.ok);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("PROTOCOL_ERROR")
+        );
+        assert_eq!(
+            response.error.as_ref().map(|err| err.message.as_str()),
+            Some("Invalid UTF-16 payload: odd byte length")
         );
     }
 
@@ -1369,6 +1489,7 @@ mod tests {
             read_json_fixture("unsupported_content_type_mapped", "map_input.json");
         let expected: FixtureExpected =
             read_json_fixture("unsupported_content_type_mapped", "expected.json");
+        let body = input.body_bytes();
         let response = map_success_payload_response(
             input.status,
             input.is_wap_scheme,
@@ -1376,7 +1497,7 @@ mod tests {
             &input.upstream_url,
             input.final_url,
             input.content_type,
-            input.body.as_bytes(),
+            &body,
             input.attempt,
             input.elapsed_ms,
             None,
@@ -1389,6 +1510,9 @@ mod tests {
             response.error.as_ref().map(|err| err.code.as_str()),
             expected.error_code.as_deref()
         );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
     }
 
     #[test]
@@ -1487,6 +1611,7 @@ mod tests {
             read_json_fixture("protocol_error_5xx_mapped", "map_input.json");
         let expected: FixtureExpected =
             read_json_fixture("protocol_error_5xx_mapped", "expected.json");
+        let body = input.body_bytes();
         let response = map_success_payload_response(
             input.status,
             input.is_wap_scheme,
@@ -1494,7 +1619,7 @@ mod tests {
             &input.upstream_url,
             input.final_url,
             input.content_type,
-            input.body.as_bytes(),
+            &body,
             input.attempt,
             input.elapsed_ms,
             None,
@@ -1507,6 +1632,73 @@ mod tests {
             response.error.as_ref().map(|err| err.code.as_str()),
             expected.error_code.as_deref()
         );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
+    }
+
+    #[test]
+    fn transport_fixture_mapped_utf16le_textual_wml_ok() {
+        let input: FixtureMapInput =
+            read_json_fixture("utf16le_textual_wml_mapped", "map_input.json");
+        let expected: FixtureExpected =
+            read_json_fixture("utf16le_textual_wml_mapped", "expected.json");
+        let body = input.body_bytes();
+        let response = map_success_payload_response(
+            input.status,
+            input.is_wap_scheme,
+            &input.request_url,
+            &input.upstream_url,
+            input.final_url,
+            input.content_type,
+            &body,
+            input.attempt,
+            input.elapsed_ms,
+            None,
+        );
+        assert_eq!(response.ok, expected.ok);
+        assert_eq!(response.status, expected.status);
+        assert_eq!(response.final_url, expected.final_url);
+        assert_eq!(response.content_type, expected.content_type);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            expected.error_code.as_deref()
+        );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
+    }
+
+    #[test]
+    fn transport_fixture_mapped_utf16_odd_length_protocol_error() {
+        let input: FixtureMapInput =
+            read_json_fixture("utf16_odd_length_protocol_error_mapped", "map_input.json");
+        let expected: FixtureExpected =
+            read_json_fixture("utf16_odd_length_protocol_error_mapped", "expected.json");
+        let body = input.body_bytes();
+        let response = map_success_payload_response(
+            input.status,
+            input.is_wap_scheme,
+            &input.request_url,
+            &input.upstream_url,
+            input.final_url,
+            input.content_type,
+            &body,
+            input.attempt,
+            input.elapsed_ms,
+            None,
+        );
+        assert_eq!(response.ok, expected.ok);
+        assert_eq!(response.status, expected.status);
+        assert_eq!(response.final_url, expected.final_url);
+        assert_eq!(response.content_type, expected.content_type);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            expected.error_code.as_deref()
+        );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
     }
 
     #[test]

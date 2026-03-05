@@ -75,5 +75,5 @@ When `FetchDeckResponse.ok === false`:
 - [ ] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
 - [x] Add cache/reload request-policy conformance plumbing (`T0-04`)
 - [x] Add UA capability header conformance path (`T0-05`)
-- [ ] Add URI-length and charset boundary conformance fixtures (`T0-06`)
+- [x] Add URI-length and charset boundary conformance fixtures (`T0-06`)
 - [ ] Add WBXML token/literal compatibility conformance fixtures (`T0-07`)

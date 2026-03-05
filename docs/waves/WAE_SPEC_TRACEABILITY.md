@@ -135,8 +135,9 @@ Legend:
   - `WAP-236` 7.2, 7.2.1
   - SCRs: `WAESpec-URI-C-001 (M)`, `WAESpec-URI-S-001 (M)`, `WAESpec-URI-C-002 (M)`, `WAESpec-URI-S-002 (M)`
 - AC:
-  - [ ] Long-URI parsing/forwarding tests pass at 1024-octet boundary.
+  - [x] Long-URI parsing/forwarding tests pass at 1024-octet boundary.
   - [ ] HTTP scheme routing aligns with supported transport profiles.
+  - Progress note: `transport-rust` now enforces deterministic reject behavior beyond 1024 octets and includes fixture coverage (`uri_too_long_1025`) plus boundary unit tests.
 
 ### RQ-WAE-011 HTTPS secure-session/error semantics
 
@@ -161,7 +162,8 @@ Legend:
   - SCRs: `WAESpec-I18N-C-001 (M)`, `WAESpec-I18N-C-002 (M)`, `WAESpec-I18N-C-003 (M)`, `WAESpec-I18N-S-001 (O)`, `WAESpec-I18N-S-002 (M)`, `WAESpec-I18N-S-003 (M)`, `WAESpec-I18N-S-004 (M)`
 - AC:
   - [ ] UTF-8/UTF-16 deck/script decoding verified.
-  - [ ] Encoding error paths return deterministic errors.
+  - [x] Encoding error paths return deterministic errors.
+  - Progress note: `transport-rust` textual WML decode path now handles UTF-16 BOM decode and maps malformed UTF-16 payloads to deterministic `PROTOCOL_ERROR`, with mapped fixtures covering UTF-16 success/error boundaries.
 
 ### RQ-WAE-013 User-agent capability advertising
 

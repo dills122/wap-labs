@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "status": 200,
+  "finalUrl": "http://request.example/utf16.wml",
+  "contentType": "text/vnd.wap.wml",
+  "wml": "<wml></wml>"
+}
