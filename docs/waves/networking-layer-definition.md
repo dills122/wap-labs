@@ -14,6 +14,8 @@ Build in explicit layers with profile-gated behavior:
 - `WSP`: session and connectionless methods, headers, capability negotiation, push.
 - `WTLS`: security façade with explicit phase plan (phase A shim, phase B full implementation).
 
+Transport profile scope for this document is core protocol rewrite (`WDP`/`WTP`/`WSP`) plus explicit profile gates.
+
 ## 2) What must not be built here
 
 - WML parsing and rendering.
@@ -38,6 +40,7 @@ Those remain in `engine-wasm` and `browser` as per contract boundaries.
 
 ## 5) Build order with acceptance gates
 
+- `new-source-material` parse reviews (`tmp/docling-new-source-material`) must be validated before any parser contract shifts.
 - `WDP` transport abstractions and UDP implementation with validated port mapping.
 - `WTP` class-1/class-2 state machines with bounded timers and deterministic duplicates.
 - `WSP` connection-mode and connectionless codec/state baseline plus capability store.

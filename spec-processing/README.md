@@ -37,6 +37,12 @@ All spec-processing tasks are available through:
 make -C spec-processing -f Makefile.spec <target>
 ```
 
+Networking-focused tasks can also be invoked via:
+
+```fish
+make -C spec-processing -f Makefile.networking <networking-target>
+```
+
 Or via `spec-processing/Makefile` compatibility wrapper:
 
 ```fish
@@ -59,10 +65,22 @@ Common targets:
   run base + new + remaining parses
 - `promote`  
   copy cleaned outputs into canonical corpus
+- `networking-ingest`  
+  parse new-source queue and finalize canonical move (`parse-new` + `finalize-new`)
 - `provenance`  
   generate provenance CSV + manifest
 - `quality` / `quality-strict`  
   run docling cleaned checks
+
+Networking helper targets (via `Makefile.networking`):
+
+```fish
+make -C spec-processing -f Makefile.networking networking-parse-only
+make -C spec-processing -f Makefile.networking networking-verify
+make -C spec-processing -f Makefile.networking networking-promote-only
+make -C spec-processing -f Makefile.networking networking-ingest
+make -C spec-processing -f Makefile.networking networking-dryrun
+```
 
 ## Deterministic profile
 

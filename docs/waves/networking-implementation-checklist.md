@@ -38,8 +38,9 @@ Traceability requirement:
 ### F0: Foundation and policy
 
 1. confirm `spec-processing/source-material` has canonical transport corpus:
-   - `WAP-259`, `WAP-224`, `OMA-WAP-224_002`, `WSP-230`, `OMA-WAP-TS-WSP`
+   - `WAP-259`, `WAP-224`, `OMA-WAP-224_002`, `WAP-230`, `OMA-WAP-TS-WSP`
    - `WAP-202`, `WAP-225`, `WAP-229*`, `WAP-223*`, `WAP-159`
+   - parsed markdown artifacts for this lane are available in `tmp/docling-new-source-material/` before canonical replacement
 2. add/verify parser modules for deterministic PDU roundtrip:
    - `wdp`, `wtp`, `wsp` codecs + validation stubs
 3. lock transport profile constants:
@@ -47,6 +48,7 @@ Traceability requirement:
 4. acceptance gates:
    - `T0-16` source-queue canonicalization remains clean
    - `T0-14` profile decision gates authored and reviewed
+5. keep explicit source-pipeline mapping from queued raw input -> parsed markdown -> `source-material` promotion in README and ticket artifacts.
 
 ### F1: WDP bedrock
 

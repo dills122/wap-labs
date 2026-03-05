@@ -229,178 +229,223 @@ Completed `B0` through `B3` tickets are archived in:
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-03`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-4. `Build`:
+5. `Build`:
 - Add explicit responder-side TID decision policy and fixtures for cache/no-cache and duplicate-guarantee modes.
 - Enforce initiator-side TID progression/rate guardrails relative to MPL assumptions for replay-window safety.
-5. `Tests`:
+6. `Tests`:
 - Fixture matrix for Table-6/7/8-like TID decisions and out-of-order invoke handling.
 - Deterministic TID wrap/restart-window tests with trace assertions.
-6. `Accept`:
+7. `Accept`:
 - TID replay-window behavior is deterministic and explicitly profile-gated.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: responder/initiator TID replay policies are deterministic for table-driven fixture cases.
+- Done-2: out-of-order and retransmission state transitions have deterministic terminal outcomes.
+- Done-3: trace output includes transaction/timer state for replay decisions.
+9. `Spec`:
 - `RQ-TRN-007`, `RQ-TRN-016`
 
 ### T0-09 WSP connectionless primitive-profile conformance
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-4. `Build`:
+5. `Build`:
 - Make WSP mode selection explicit (`connection-oriented`, `connectionless`, or both) with deterministic primitive-usage gating.
 - Implement/validate connectionless primitive occurrence matrix behavior and deterministic invalid-primitive handling.
-5. `Tests`:
+6. `Tests`:
 - Primitive occurrence fixtures for `S-Unit-MethodInvoke`, `S-Unit-MethodResult`, `S-Unit-Push`.
-6. `Accept`:
+7. `Accept`:
 - Connectionless mode policy is explicit and test-backed; invalid primitive paths are deterministic.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: mode switch behavior is driven by profile and emitted in request/response trace metadata.
+- Done-2: req/ind-only matrix is enforced and fixture-asserted.
+- Done-3: invalid primitive transitions are deterministically rejected before session side effects.
+9. `Spec`:
 - `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-017`
 
 ### T0-10 WSP assigned-number registry conformance fixtures
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-05`, `T0-07`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Add table-driven token-map fixtures for WSP PDU types, abort-reason codes, well-known parameters, and header-field names.
 - Define deterministic handling policy for unassigned/unknown registry values.
-5. `Tests`:
+6. `Tests`:
 - Decode/encode round-trip fixtures anchored to assigned-number tables.
-6. `Accept`:
+7. `Accept`:
 - Assigned-number behavior is deterministic, profile-documented, and regression-guarded.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: registry decode/encode test suite exists and is fixture-backed.
+- Done-2: unknown/unassigned value handling behavior is deterministic by profile.
+- Done-3: no parser side-effect state is introduced by registry table lookup paths.
+9. `Spec`:
 - `RQ-TRN-014`, `RQ-TRN-018`
 
 ### T0-11 WSP capability-bound and negotiation-limit enforcement
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-09`
-3. `Files`:
+3. `Owner`: `transport-rust`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-4. `Build`:
+5. `Build`:
 - Enforce min/intersection semantics for negotiated capabilities.
 - Enforce negotiated SDU/message-size and outstanding-request bounds with deterministic abort/error surfacing.
-5. `Tests`:
+6. `Tests`:
 - Capability negotiation fixtures across client/server proposal mismatches and boundary exceed cases.
-6. `Accept`:
+7. `Accept`:
 - Capability negotiation and bounds behavior is deterministic and spec-linked.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: capability merge strategy is stable and documented in code-level comments or tests.
+- Done-2: bound exceed/invalid capability fixtures are deterministic and mapped to clear error codes.
+- Done-3: cap-limit behavior is tested under both connection-mode and connectionless profiles.
+9. `Spec`:
 - `RQ-TRN-013`, `RQ-TRN-019`
 
 ### T0-12 Wireless Profiled TCP compatibility profile declaration
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
-3. `Files`:
+3. `Owner`: `transport-rust`, `spec`
+4. `Files`:
 - `transport-rust/README.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Declare explicit Waves TCP compatibility posture for profiled requirements (SACK/split/end-to-end/window-scale threshold behavior).
 - Mark each requirement as implemented, delegated, or deferred for MVP with rationale.
-5. `Tests`:
+6. `Tests`:
 - Add compatibility-policy fixtures/checks that prevent silent drift in declared TCP posture.
-6. `Accept`:
+7. `Accept`:
 - TCP optimization baseline posture is explicit and traceable.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: `RQ-TRX-009` decision is explicitly categorized per behavior.
+- Done-2: no code path depends on undeclared TCP behavior assumptions.
+- Done-3: docs + ticket mapping for TCP posture is versioned and linked from `TECHNICAL_ARCHITECTURE`.
+9. `Spec`:
 - `RQ-TRX-009`
 
 ### T0-13 SMPP adaptation scope gate and fixture baseline
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-01`
-3. `Files`:
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `transport-rust/README.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Make a hard scope decision for `WAP-159` path (`in scope now` vs `deferred`).
 - If in scope, define `data_sm` mapping fixtures and WCMP payload type handling checks.
 - If deferred, document non-blocking rationale and explicit exclusion guardrails.
-5. `Tests`:
+6. `Tests`:
 - Add either adapter fixtures (in-scope) or explicit policy assertions (deferred).
-6. `Accept`:
+7. `Accept`:
 - SMPP adaptation status is unambiguous and regression-guarded.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: scope decision is documented as `in-scope` or `deferred` before implementation actions.
+- Done-2: deferred paths are explicitly guarded against accidental dependency in `transport-rust`.
+- Done-3: in-scope branch has end-to-end payload-type fixture path before any parser/code activation.
+9. `Spec`:
 - `RQ-TRX-010`
 
 ### T0-14 WAP networking profile decision record and migration gates
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-09`, `T0-11`, `T0-12`, `T0-13`
-3. `Files`:
+3. `Owner`: `transport-rust`, `browser`, `engine`
+4. `Files`:
 - `docs/waves/TECHNICAL_ARCHITECTURE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `transport-rust/README.md`
-4. `Build`:
+5. `Build`:
 - Publish an explicit profile decision for near-term and target-state transport:
   - current profile: gateway-bridged HTTP/WBXML normalization path
   - target profile: in-process WDP/WTP/WSP behavior lane and activation criteria
 - Define non-negotiable boundary rules so engine/browser contracts stay stable across both profiles.
 - Define migration gates that block profile promotion until required protocol fixtures pass.
-5. `Tests`:
+6. `Tests`:
 - Add profile-gate checks that assert declared mode/profile against fixture coverage state.
 - Add one end-to-end fixture lane per declared profile to prevent drift in behavior expectations.
-6. `Accept`:
+7. `Accept`:
 - Networking architecture direction is explicit, versioned, and test-gated.
 - Team can state exactly what is spec-compliant now versus planned for protocol-complete mode.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: a single canonical profile decision is written and linked to all transport docs.
+- Done-2: profile-gate checks reference `T0-08..T0-13` completion criteria and required fixture coverage.
+- Done-3: profile migration path has explicit rollback criteria tied to contract stability.
+9. `Spec`:
 - `RQ-TRN-001..019`, `RQ-TRX-001..010`
 
 ### T0-15 WAP caching model baseline and invalidation semantics
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-04`, `R0-06`
-3. `Files`:
+3. `Owner`: `transport-rust`, `browser`
+4. `Files`:
 - `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `browser/src-tauri/src/lib.rs`
 - `docs/waves/WAE_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-4. `Build`:
+5. `Build`:
 - Implement a deterministic cache-policy baseline for deck/script/media retrieval and invalidation triggers.
 - Ensure `cache-control=no-cache` and task-driven reload semantics route through one shared policy model.
-5. `Tests`:
+6. `Tests`:
 - Fixture matrix for cache hit, forced reload, stale invalidation, and request-policy override cases.
-6. `Accept`:
+7. `Accept`:
 - Cache behavior is explicit, deterministic, and verifiably aligned with the declared WAP profile.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: policy model is single-source and contract-exported across transport/browser layers.
+- Done-2: cache hit/reload/invalidation fixture path is deterministic and repeatable.
+- Done-3: profile switch does not alter cache semantics without explicit migration note.
+9. `Spec`:
 - `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
 
 ### T0-16 Spec queue canonicalization and conflict resolution follow-up
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-14`
-3. `Files`:
+3. `Owner`: `spec-processing`
+4. `Files`:
 - `spec-processing/new-source-material/`
 - `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
 - `spec-processing/finalize-new-source-material.fish`
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 - `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
-4. `Build`:
+5. `Build`:
 - Resolve `WAP-259-WDP-20010614-a.pdf` conflict variant left in queue and enforce deterministic case/variant policy.
 - Document whether conflict variant is a replacement, supersedence candidate, or legacy duplicate.
-5. `Tests`:
+6. `Tests`:
 - `./spec-processing/finalize-new-source-material.fish --dry-run` reports zero unresolved conflicts for active transport spec IDs.
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md` contains one row per canonical transport/security spec ID.
-6. `Accept`:
+7. `Accept`:
 - Canonical corpus has one active source material path for each spec ID and the queue only contains unresolved non-canonical items.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: no transport spec ID has multiple active canonical variants in source-material.
+- Done-2: conflict-resolution log is current and versioned with timestamped decision rationale.
+- Done-3: ticket-dependent parser/automation paths resolve to canonical IDs.
+9. `Spec`:
 - `RQ-TRN-001`, `RQ-TRN-003`
-8. `Notes`:
+10. `Notes`:
 - Completed: new-source `WAP-259` variant was promoted after byte-comparison and manual archival of prior legacy source.
 - Archive captured at:
   - `spec-processing/source-material/archive/WAP-259-WDP-20010614-a.legacy-v1.pdf`
@@ -409,25 +454,30 @@ Completed `B0` through `B3` tickets are archived in:
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-14`, `T0-16`
-3. `Files`:
+3. `Owner`: `docs`, `transport`
+4. `Files`:
 - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/networking-implementation-checklist.md`
-4. `Build`:
+5. `Build`:
 - Record explicit in-scope/out-of-scope policy for non-core transport-adjacent specs that can affect transport boundaries.
 - Add one-line rationale for each deferred family in transport-adjacent docs (`WAP-204*`, `WAP-120*`, `WAP-213*`, related messaging-cache deltas).
 - Keep this decision synchronized with `T0-14` profile gates.
-5. `Tests`:
+6. `Tests`:
 - checklist validation fixtures:
   - `WAP-204` and `WAP-120` remain deferred under documented rationale
   - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
-6. `Accept`:
+7. `Accept`:
 - future transport scope changes are policy-driven, explicit, and reversible.
-7. `Spec`:
+8. `Migration gates`:
+- Done-1: adjacent scope deferrals are explicit with pass/fail rationale.
+- Done-2: profile gates block adjacent-path promotion when deferral state is uncleared.
+- Done-3: checklist asset exists and references this ticket as gate source.
+9. `Spec`:
 - `RQ-TRX-001..010` where applicable
 - `RQ-TRN-001..019`
-8. `Notes`:
+10. `Notes`:
 - This ticket prevents accidental scope creep from remaining parsed networking adjacent specs.
 
 ## Phase W: WMLScript Runtime and VM (Active)

@@ -29,6 +29,12 @@ Deliver a deterministic, spec-driven transport stack that can provide:
 
 Scope note: transport stack must not parse/render WBXML or WML; those stay in `transport-rust` for WBXML conversion and `engine-wasm` for WML runtime.
 
+Profile posture:
+
+1. `gateway-bridged`: current behavior path via configured gateway.
+2. `wap-net-core`: native protocol path used for `T0-14` target profile.
+3. `wap-net-ext`: future optional CL/push-advanced extension profile.
+
 ## 3) Layer contract and boundaries
 
 - `transport-rust/src/wap/wdp/`: datagram transport abstraction and address/port semantics.

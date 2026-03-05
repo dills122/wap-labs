@@ -62,7 +62,7 @@ Legend:
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
 | `RQ-TRX-009` Wireless Profiled TCP optimization baseline | `planned` | profile declaration + compatibility fixture lane tracked in `T0-12` |
 | `RQ-TRX-010` WDP/WCMP over SMPP adaptation profile | `planned` | explicit scope decision + adapter fixture lane tracked in `T0-13` |
-| WAP networking profile decision and migration gates | `planned` | architecture decision + profile-gate fixture lane tracked in `T0-14` |
+| WAP networking profile decision and migration gates | `planned` | architecture decision + profile-gate fixture lane tracked in `T0-14` (`networking-migration-readiness-checklist.md`) |
 | WAP-191 request-policy + post metadata plumbing (`go/postfield/cache-control`) | `covered` | request-policy mapping tests in `transport-rust/src/lib.rs` + browser host external-intent request-policy propagation tests (`T0-04`, `R0-06`) |
 | WAP-191 encoder/validation fixture lane (`14.x`, `15.2-15.4`) | `planned` | `T0-07`, `R0-08` |
 

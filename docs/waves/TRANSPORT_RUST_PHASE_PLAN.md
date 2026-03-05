@@ -15,6 +15,12 @@ Transport boundary ends at normalized deck payload and optional XML event stream
 - WBXML decode currently uses external `wbxml2xml` executable invocation.
 - Retry/timeout/error mapping and coverage gate are active in Rust CI.
 
+Profile modes in use:
+
+1. `gateway-bridged` (current): terminal path enters through configured gateway.
+2. `wap-net-core` (target): in-process `WDP -> WTP -> WSP` stack with deterministic profile gating.
+3. `wap-net-ext` (future): CL/push/advanced profile features after explicit migration approval.
+
 Current profile decision point:
 
 1. protocol migration stays behind explicit profile gates and feature flags.
@@ -90,9 +96,11 @@ Objective:
 2. `T0-09`: WSP connectionless primitive enforcement
 3. `T0-10`: WSP assigned-number fidelity
 4. `T0-11`: WSP capability negotiation and bounds
-5. `T0-14`: transport profile decision and promotion gates
-6. `T0-16`: source queue/variant canonicalization lock
-7. `T0-17`: transport-adjacent scope sweep
+5. `T0-12`: TCP capability profile declaration
+6. `T0-13`: SMPP adaptation scope decision
+7. `T0-14`: transport profile decision and promotion gates
+8. `T0-16`: source queue/variant canonicalization lock
+9. `T0-17`: transport-adjacent scope sweep
 
 ## Notes
 

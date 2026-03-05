@@ -1,6 +1,6 @@
 # Waves Transport Spec Traceability
 
-Version: v0.1  
+Version: v0.2  
 Status: S0-02 complete (initial extraction + cleaned-source validation pass)
 
 ## Purpose
@@ -14,6 +14,8 @@ Capture normative transport-layer requirements for the Waves protocol rewrite tr
 - `spec-processing/source-material/WAP-224-WTP-20010710-a.pdf`
 - `spec-processing/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
 - `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
+
+Parsed artifacts for this lane are additionally validated from `tmp/docling-new-source-material` during promotion checks before canonical replacement (`T0-16`/`T0-17`).
 
 ## Normative precedence
 
@@ -250,10 +252,11 @@ Legend:
 
 ## Migration phase mapping
 
-- Phase 2 (WSP parsing in Rust): `RQ-TRN-010`..`RQ-TRN-015`, `RQ-TRN-017`, `RQ-TRN-018`, `RQ-TRN-019`
-- Phase 3 (WSP session in Rust): `RQ-TRN-011`, `RQ-TRN-013`
-- Phase 4 (WTP retransmission in Rust): `RQ-TRN-005`..`RQ-TRN-009`, `RQ-TRN-016`
-- Phase 5 (UDP/WDP in Rust): `RQ-TRN-001`..`RQ-TRN-004`
+- Phase 1 (Transport profile baseline + ports/wrap): `RQ-TRN-001`..`RQ-TRN-004`, `RQ-TRN-010`, `RQ-TRN-017`
+- Phase 2 (WTP retransmission and replay discipline): `RQ-TRN-005`..`RQ-TRN-009`, `RQ-TRN-016`
+- Phase 3 (WSP session and method semantics): `RQ-TRN-010`..`RQ-TRN-015`, `RQ-TRN-018`, `RQ-TRN-019`
+- Phase 4: post-phase integration alignment is blocked on profile gates (`T0-11`, `T0-14`) for any capability/security boundary that impacts runtime behavior.
+- Migration dependency lock: `T0-08`..`T0-14` must be closed before production profile move in `TECHNICAL_ARCHITECTURE.md`.
 
 ## Adjacent transport-context watchlist
 

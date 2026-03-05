@@ -1,6 +1,6 @@
 # Waves Technical Architecture
 
-Version: v0.1
+Version: v0.2
 Status: Canonical direction document
 
 ## Project Overview
@@ -105,7 +105,7 @@ Transport is handled by Rust (`transport-rust/`) as an in-process library invoke
 Current transport responsibilities:
 
 - HTTP and WAP fetch orchestration
-- WSP/session framing
+- WSP/session framing and transport-protocol state
 - WBXML decode/normalization
 - gateway adaptation and error taxonomy mapping
 - deterministic request correlation/logging metadata
@@ -113,14 +113,21 @@ Current transport responsibilities:
 Current protocol stack posture:
 
 1. default profile: `gateway-bridged` (HTTP/WAP stack entry via configured gateway)
-2. protocol profile: `WDP/WTP/WSP` implementation remains in explicit phase lanes with deterministic feature gates
+2. protocol profile: `wap-net-core` is the near-term target and is feature-gated behind completion of transport milestones
 3. security profile: `wtls=noop|bridge` in current codepath, with transition decision tracked by `T0-14`
+
+Supported profile classes:
+
+1. `gateway-bridged`: terminal path enters via configured HTTP gateway and bypasses native WSP/WTP execution.
+2. `wap-net-core`: native `WDP -> WTP -> WSP` path with mandatory CO-method support (`Get`/`Post`/`Reply`) and deterministic transaction state.
+3. `wap-net-ext`: future extension mode enabling CL and optional advanced session/push features after explicit gate decisions.
 
 Transport profile decision rules:
 
 1. all transport behavior must be deterministic under a named profile
 2. all profile promotions are gated by completed protocol fixtures and ticket chain
 3. request/response contract to browser and engine must remain stable across profile changes
+4. profile moves require `docs/waves/networking-migration-readiness-checklist.md` gate completion for the relevant `T0-08..T0-17` items
 
 Request example:
 
@@ -148,6 +155,15 @@ Response example:
 - Preserve strict boundary ownership: transport handles network/protocol/decode, engine handles runtime/rendering.
 - Current execution order is defined by transport tickets `T0-08` through `T0-14`.
 - Future transport profiles should update both this plan and `docs/waves/networking-implementation-checklist.md` before feature introduction.
+
+## Source handling path for transport specs
+
+Spec-processing flow used by networking work:
+
+1. New files are staged in `spec-processing/new-source-material/`.
+2. Parsed markdown output for review appears in `tmp/docling-new-source-material/`.
+3. `T0-16`/`T0-17` enforce canonicalization, conflict resolution, and deferment policy.
+4. Canonical PDFs for implementation are then sourced from `spec-processing/source-material/`.
 
 ## Renderer Correctness Gate
 
