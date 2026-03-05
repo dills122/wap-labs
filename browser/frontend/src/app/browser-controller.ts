@@ -762,7 +762,8 @@ export class BrowserController {
           url: targetUrl,
           method: 'GET',
           timeoutMs: WAVES_CONFIG.networkProbeTimeoutMs,
-          retries: 0
+          retries: 0,
+          requestPolicy: { uaCapabilityProfile: WAVES_CONFIG.transportUaCapabilityProfile }
         });
         if (isProbeReachable(probe)) {
           this.presenter.setStatus(WAVES_COPY.status.readyNetwork);

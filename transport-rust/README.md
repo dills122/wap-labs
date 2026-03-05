@@ -74,6 +74,6 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add CI guardrails for contract drift checks (`M1-06`)
 - [ ] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
 - [x] Add cache/reload request-policy conformance plumbing (`T0-04`)
-- [ ] Add UA capability header conformance path (`T0-05`)
+- [x] Add UA capability header conformance path (`T0-05`)
 - [ ] Add URI-length and charset boundary conformance fixtures (`T0-06`)
 - [ ] Add WBXML token/literal compatibility conformance fixtures (`T0-07`)

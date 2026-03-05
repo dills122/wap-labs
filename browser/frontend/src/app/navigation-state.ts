@@ -120,9 +120,16 @@ export const createNavigationStateMachine = (
     }
     const pushHistory = options.pushHistory ?? true;
 
-    const requestPolicy =
-      options.requestPolicy ??
-      defaultRequestPolicyForSource(options.source, hostSessionState.finalUrl);
+    const defaultRequestPolicy = defaultRequestPolicyForSource(
+      options.source,
+      hostSessionState.finalUrl
+    );
+    const requestPolicy = options.requestPolicy
+      ? {
+          ...defaultRequestPolicy,
+          ...options.requestPolicy
+        }
+      : defaultRequestPolicy;
 
     hooks.onStateEvent?.('load-transport-url', {
       source: options.source,
@@ -321,11 +328,12 @@ const defaultRequestPolicyForSource = (
   source: HostNavigationSource,
   refererUrl?: string
 ): FetchRequestPolicy | undefined => {
+  const uaCapabilityProfile = WAVES_CONFIG.transportUaCapabilityProfile;
   if (source === 'reload') {
-    return { cacheControl: 'no-cache' };
+    return { cacheControl: 'no-cache', uaCapabilityProfile };
   }
   if (source === 'external-intent' && refererUrl) {
-    return { refererUrl };
+    return { refererUrl, uaCapabilityProfile };
   }
-  return undefined;
+  return { uaCapabilityProfile };
 };
