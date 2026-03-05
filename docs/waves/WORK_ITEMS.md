@@ -379,6 +379,30 @@ Completed `B0` through `B3` tickets are archived in:
 7. `Spec`:
 - `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
 
+### T0-16 Spec queue canonicalization and conflict resolution follow-up
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-14`
+3. `Files`:
+- `spec-processing/new-source-material/`
+- `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
+- `spec-processing/finalize-new-source-material.fish`
+- `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
+- `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
+4. `Build`:
+- Resolve `WAP-259-WDP-20010614-a.pdf` conflict variant left in queue and enforce deterministic case/variant policy.
+- Document whether conflict variant is a replacement, supersedence candidate, or legacy duplicate.
+5. `Tests`:
+- `./spec-processing/finalize-new-source-material.fish --dry-run` reports zero unresolved conflicts for active transport spec IDs.
+- `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md` contains one row per canonical transport/security spec ID.
+6. `Accept`:
+- Canonical corpus has one active source material path for each spec ID and the queue only contains unresolved non-canonical items.
+7. `Spec`:
+- `RQ-TRN-001`, `RQ-TRN-003`
+8. `Notes`:
+- This follow-up was triggered by re-ingest where queued `WAP-259` variant is byte-wise different from canonical `WAP-259`.
+
 ## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:

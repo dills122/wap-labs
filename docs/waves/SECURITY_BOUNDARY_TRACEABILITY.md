@@ -13,6 +13,7 @@ Capture security-related requirements from WAP transport security specs and map 
 
 ## Source set reviewed (S0-04)
 
+- `spec-processing/source-material/WAP-199-WTLS-20000218-a.pdf`
 - `spec-processing/source-material/WAP-261-WTLS-20010406-a.pdf`
 - `spec-processing/source-material/WAP-261_100-WTLS-20010926-a.pdf`
 - `spec-processing/source-material/WAP-261_101-WTLS-20011027-a.pdf`
@@ -24,9 +25,10 @@ Capture security-related requirements from WAP transport security specs and map 
 
 ## Normative precedence
 
-1. `WAP-261` as WTLS baseline, overlaid by `WAP-261_100/_101/_102` SIN updates.
-2. `WAP-219` as TLS profile baseline, overlaid by `WAP-219_100` (SCR-table format update).
-3. `WAP-187` as transport end-to-end security operational model, overlaid by `WAP-187_101` typo correction in SCR linkage.
+1. `WAP-199` as legacy WTLS baseline reference for the pre-`WAP-261` profile lineage.
+2. `WAP-261` as WTLS baseline, overlaid by `WAP-261_100/_101/_102` SIN updates.
+3. `WAP-219` as TLS profile baseline, overlaid by `WAP-219_100` (SCR-table format update).
+4. `WAP-187` as transport end-to-end security operational model, overlaid by `WAP-187_101` typo correction in SCR linkage.
 
 ## Requirements matrix
 
@@ -70,6 +72,7 @@ Legend:
 - Requirement:
   - WTLS handshake/record/alert/cipher/MAC/key-exchange feature families are tracked and mapped to supported profile.
 - Spec:
+  - `WAP-199` (legacy WTLS baseline context)
   - `WAP-261` core + Appendix A static conformance groups (`WTLS-C-*`, `WTLS-S-*`)
 - AC:
   - [ ] Security implementation matrix states which WTLS feature families are:

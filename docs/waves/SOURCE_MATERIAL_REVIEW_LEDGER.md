@@ -3,7 +3,7 @@
 Version: v0.1
 Status: complete (docling rerun validation pass complete for in-scope high-value domains)
 
-This ledger tracks review state for all canonical root-level source PDFs in `spec-processing/source-material` (94 files).
+This ledger tracks review state for all canonical root-level source PDFs in `spec-processing/source-material` (96 files).
 
 Legend:
 - `deep-extracted`: normative sections reviewed and mapped into traceability docs
@@ -36,6 +36,7 @@ Legend:
 | `WAP-186-PROVSC-20010710-a.pdf` | `provisioning` | `deep-extracted` | covered by OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW |
 | `WAP-187-TransportE2ESec-20010628-a.pdf` | `security` | `deep-extracted` | covered by SECURITY_BOUNDARY_TRACEABILITY |
 | `WAP-187_101-TransportE2ESec-20011009-a.pdf` | `security` | `deep-extracted` | covered by SECURITY_BOUNDARY_TRACEABILITY |
+| `WAP-199-WTLS-20000218-a.pdf` | `security` | `deep-extracted` | covered by SECURITY_BOUNDARY_TRACEABILITY |
 | `WAP-188-WAPGenFormats-20010710-a.pdf` | `architecture-context` | `deep-extracted` | covered by ARCHITECTURE_CONTEXT_SPEC_REVIEW |
 | `WAP-191-WML-20000219-a.pdf` | `runtime-markup` | `deep-extracted` | covered by RUNTIME_MARKUP_SPEC_TRACEABILITY |
 | `WAP-191_102-WML-20001213-a.pdf` | `runtime-markup` | `deep-extracted` | covered by RUNTIME_MARKUP_SPEC_TRACEABILITY |
