@@ -7,7 +7,7 @@ Purpose: fixture-driven transport regression scenarios with explicit acceptance 
 Each scenario folder contains:
 
 - `meta.toml`
-- `request.json`
+- `request.json` (for `mode=fetch`) or `map_input.json` (for `mode=mapped`)
 - `expected.json`
 
 Example:
@@ -16,6 +16,15 @@ Example:
 tests/fixtures/transport/invalid_method/
   meta.toml
   request.json
+  expected.json
+```
+
+Mapped example:
+
+```text
+tests/fixtures/transport/utf16le_textual_wml_mapped/
+  meta.toml
+  map_input.json
   expected.json
 ```
 

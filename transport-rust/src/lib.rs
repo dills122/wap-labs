@@ -616,9 +616,27 @@ mod tests {
         upstream_url: String,
         final_url: String,
         content_type: String,
-        body: String,
+        body: Option<String>,
+        body_base64: Option<String>,
         attempt: u8,
         elapsed_ms: f64,
+    }
+
+    impl FixtureMapInput {
+        fn body_bytes(&self) -> Vec<u8> {
+            if let Some(encoded) = self.body_base64.as_deref() {
+                return BASE64.decode(encoded).unwrap_or_else(|_| {
+                    panic!("fixture bodyBase64 should decode for {}", self.final_url)
+                });
+            }
+            if let Some(body) = self.body.as_deref() {
+                return body.as_bytes().to_vec();
+            }
+            panic!(
+                "fixture must provide either body or bodyBase64 for {}",
+                self.final_url
+            );
+        }
     }
 
     #[derive(Debug, Deserialize)]
@@ -628,6 +646,7 @@ mod tests {
         status: u16,
         final_url: String,
         content_type: String,
+        wml: Option<String>,
         error_code: Option<String>,
     }
 
@@ -1470,6 +1489,7 @@ mod tests {
             read_json_fixture("unsupported_content_type_mapped", "map_input.json");
         let expected: FixtureExpected =
             read_json_fixture("unsupported_content_type_mapped", "expected.json");
+        let body = input.body_bytes();
         let response = map_success_payload_response(
             input.status,
             input.is_wap_scheme,
@@ -1477,7 +1497,7 @@ mod tests {
             &input.upstream_url,
             input.final_url,
             input.content_type,
-            input.body.as_bytes(),
+            &body,
             input.attempt,
             input.elapsed_ms,
             None,
@@ -1490,6 +1510,9 @@ mod tests {
             response.error.as_ref().map(|err| err.code.as_str()),
             expected.error_code.as_deref()
         );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
     }
 
     #[test]
@@ -1588,6 +1611,7 @@ mod tests {
             read_json_fixture("protocol_error_5xx_mapped", "map_input.json");
         let expected: FixtureExpected =
             read_json_fixture("protocol_error_5xx_mapped", "expected.json");
+        let body = input.body_bytes();
         let response = map_success_payload_response(
             input.status,
             input.is_wap_scheme,
@@ -1595,7 +1619,7 @@ mod tests {
             &input.upstream_url,
             input.final_url,
             input.content_type,
-            input.body.as_bytes(),
+            &body,
             input.attempt,
             input.elapsed_ms,
             None,
@@ -1608,6 +1632,73 @@ mod tests {
             response.error.as_ref().map(|err| err.code.as_str()),
             expected.error_code.as_deref()
         );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
+    }
+
+    #[test]
+    fn transport_fixture_mapped_utf16le_textual_wml_ok() {
+        let input: FixtureMapInput =
+            read_json_fixture("utf16le_textual_wml_mapped", "map_input.json");
+        let expected: FixtureExpected =
+            read_json_fixture("utf16le_textual_wml_mapped", "expected.json");
+        let body = input.body_bytes();
+        let response = map_success_payload_response(
+            input.status,
+            input.is_wap_scheme,
+            &input.request_url,
+            &input.upstream_url,
+            input.final_url,
+            input.content_type,
+            &body,
+            input.attempt,
+            input.elapsed_ms,
+            None,
+        );
+        assert_eq!(response.ok, expected.ok);
+        assert_eq!(response.status, expected.status);
+        assert_eq!(response.final_url, expected.final_url);
+        assert_eq!(response.content_type, expected.content_type);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            expected.error_code.as_deref()
+        );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
+    }
+
+    #[test]
+    fn transport_fixture_mapped_utf16_odd_length_protocol_error() {
+        let input: FixtureMapInput =
+            read_json_fixture("utf16_odd_length_protocol_error_mapped", "map_input.json");
+        let expected: FixtureExpected =
+            read_json_fixture("utf16_odd_length_protocol_error_mapped", "expected.json");
+        let body = input.body_bytes();
+        let response = map_success_payload_response(
+            input.status,
+            input.is_wap_scheme,
+            &input.request_url,
+            &input.upstream_url,
+            input.final_url,
+            input.content_type,
+            &body,
+            input.attempt,
+            input.elapsed_ms,
+            None,
+        );
+        assert_eq!(response.ok, expected.ok);
+        assert_eq!(response.status, expected.status);
+        assert_eq!(response.final_url, expected.final_url);
+        assert_eq!(response.content_type, expected.content_type);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            expected.error_code.as_deref()
+        );
+        if let Some(expected_wml) = expected.wml.as_deref() {
+            assert_eq!(response.wml.as_deref(), Some(expected_wml));
+        }
     }
 
     #[test]

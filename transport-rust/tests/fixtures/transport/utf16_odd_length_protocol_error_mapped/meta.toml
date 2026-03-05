@@ -1,0 +1,9 @@
+name = "UTF-16 odd-length payload mapping"
+description = "Maps malformed UTF-16 textual WML payloads to deterministic PROTOCOL_ERROR."
+mode = "mapped"
+work_items = ["T0-06"]
+spec_items = ["RQ-WAE-012"]
+testing_ac = [
+  "Given UTF-16 BOM payload with odd byte length, mapping returns ok=false with PROTOCOL_ERROR.",
+  "Response preserves upstream status/contentType while surfacing deterministic decode failure classification."
+]

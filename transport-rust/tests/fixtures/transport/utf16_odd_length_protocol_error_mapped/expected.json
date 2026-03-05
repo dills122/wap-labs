@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "status": 200,
+  "finalUrl": "http://request.example/utf16-invalid.wml",
+  "contentType": "text/vnd.wap.wml",
+  "errorCode": "PROTOCOL_ERROR"
+}

@@ -56,7 +56,7 @@ Legend:
 | `RQ-TRN-018` WSP assigned-number registry fidelity | `planned` | table-driven token map fixtures tracked in `T0-10` |
 | `RQ-TRN-019` WSP capability-bounds enforcement | `planned` | capability negotiation and bound-exceed fixtures tracked in `T0-11` |
 | `RQ-WAE-010` URI handling baseline | `partial` | `transport-rust` request-validation tests in `src/lib.rs` plus fixture `tests/fixtures/transport/uri_too_long_1025` (1024-octet boundary coverage landed; transport-profile routing assertions pending) |
-| `RQ-WAE-012` i18n baseline (UTF-8/UTF-16 + deterministic decode errors) | `partial` | textual payload decode tests in `transport-rust/src/responses.rs` (UTF-16 BOM success + malformed UTF-16 deterministic `PROTOCOL_ERROR`); broader fixture corpus and script-path parity pending |
+| `RQ-WAE-012` i18n baseline (UTF-8/UTF-16 + deterministic decode errors) | `partial` | textual payload decode tests in `transport-rust/src/responses.rs` plus mapped fixtures `utf16le_textual_wml_mapped` and `utf16_odd_length_protocol_error_mapped`; script-path parity remains pending |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |
 | `RQ-TRX-009` Wireless Profiled TCP optimization baseline | `planned` | profile declaration + compatibility fixture lane tracked in `T0-12` |
 | `RQ-TRX-010` WDP/WCMP over SMPP adaptation profile | `planned` | explicit scope decision + adapter fixture lane tracked in `T0-13` |

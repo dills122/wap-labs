@@ -163,7 +163,7 @@ Legend:
 - AC:
   - [ ] UTF-8/UTF-16 deck/script decoding verified.
   - [x] Encoding error paths return deterministic errors.
-  - Progress note: `transport-rust` textual WML decode path now handles UTF-16 BOM decode and maps malformed UTF-16 payloads to deterministic `PROTOCOL_ERROR`.
+  - Progress note: `transport-rust` textual WML decode path now handles UTF-16 BOM decode and maps malformed UTF-16 payloads to deterministic `PROTOCOL_ERROR`, with mapped fixtures covering UTF-16 success/error boundaries.
 
 ### RQ-WAE-013 User-agent capability advertising
 
