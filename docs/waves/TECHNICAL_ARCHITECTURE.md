@@ -110,6 +110,18 @@ Current transport responsibilities:
 - gateway adaptation and error taxonomy mapping
 - deterministic request correlation/logging metadata
 
+Current protocol stack posture:
+
+1. default profile: `gateway-bridged` (HTTP/WAP stack entry via configured gateway)
+2. protocol profile: `WDP/WTP/WSP` implementation remains in explicit phase lanes with deterministic feature gates
+3. security profile: `wtls=noop|bridge` in current codepath, with transition decision tracked by `T0-14`
+
+Transport profile decision rules:
+
+1. all transport behavior must be deterministic under a named profile
+2. all profile promotions are gated by completed protocol fixtures and ticket chain
+3. request/response contract to browser and engine must remain stable across profile changes
+
 Request example:
 
 ```json
@@ -134,6 +146,8 @@ Response example:
 - Keep transport-rust as the single transport implementation.
 - Expand protocol coverage incrementally behind tests and fixture-based checks.
 - Preserve strict boundary ownership: transport handles network/protocol/decode, engine handles runtime/rendering.
+- Current execution order is defined by transport tickets `T0-08` through `T0-14`.
+- Future transport profiles should update both this plan and `docs/waves/networking-implementation-checklist.md` before feature introduction.
 
 ## Renderer Correctness Gate
 

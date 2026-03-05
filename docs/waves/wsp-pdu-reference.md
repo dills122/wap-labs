@@ -1,94 +1,115 @@
-# WSP PDU Reference (Draft)
+# WSP PDU Reference
 
-Status: `DRAFT` (source-grounding in progress)
+Status: `ACTIVE`
 Date: `2026-03-04`
 
-This is a working reference index for WSP PDU support in the rewrite.
-Field formats below are placeholders where definitive encoding details are still being confirmed from primary specs.
+Protocol reference for transport implementation and deterministic encoding/decoding.
 
 Source grounding:
 - `spec-processing/source-material/WAP-230-WSP-20010705-a.pdf`
 - `spec-processing/source-material/OMA-WAP-TS-WSP-V1_0-20020920-C.pdf`
 
-## 1) Message classes
+## 1) Service modes and directionality
 
-| PDU | Transport role | Transport expectation | Draft status |
-| --- | -------------- | -------------------- | ------------ |
-| CONNECT | Session setup | Start/refresh session state | In progress |
-| DISCONNECT | Session teardown | Release state and resources | In progress |
-| GET | Request (safe/idempotent) | Usually maps to deck fetch/GET resource | In progress |
-| POST | Request (entity upload) | Browser-originated data / form submit | In progress |
-| REPLY | Response | Server response to prior request | In progress |
-| PUSH | Asynchronous server-to-client request-like event | Browser notification path | In progress |
+- Connection-mode WSP is session oriented and relies on WTP.
+- Connectionless WSP is request/reply over datagrams and relies on WDP.
+- A configured profile must define active mode(s) and gate illegal operations.
 
-## 2) WSP packet envelope shape
+## 2) Core PDU identifiers
+
+- `Connect` (`0x01`)
+- `ConnectReply` (`0x02`)
+- `Disconnect` (`0x05`)
+- `Push` (`0x06`)
+- `ConfirmedPush` (`0x07`)
+- `Get` method PDU region (`0x40` – `0x4f`)
+- `Post` method PDU region (`0x60` – `0x7f`)
+- `DataFragment` (`0x80`)
+
+## 3) Abort and status code subset
+
+- `PROTOERR` `0xE0` — protocol/state error
+- `DISCONNECT` `0xE1` — session disconnected
+- `SUSPEND` `0xE2` / `RESUME` `0xE3`
+- `USERRFS` / `USERPND` / `USERDCR` / `USERDCU` — push-specific outcomes
+
+## 4) PDU shape
 
 ```text
-WspPdu
-  - pdu_type: enum
-  - tid/session_id: optional
-  - headers: TokenizedHeader[]
-  - content-type / headers payload
-  - application-data: bytes
+WspPdu {
+  pdu_type,
+  transaction_id,
+  session_id,
+  headers,
+  content_type,
+  body,
+  protocol_options,
+  capability_state,
+}
 ```
 
-## 3) Header model
+Important: parsers are pure and should return structured types with all offset/remaining length available for layered validation.
 
-WSP uses compact header tokens instead of raw header strings for common fields.
+## 5) Header and token model
 
-### Core example set (draft)
+- WSP uses tokenized headers/parameters with assigned-number tables (Tables 34/35/38/39 in OMA WSP 1.0).
+- Header and content-type encoding should follow the specified `uintvar` and assignment strategies.
 
-- Content-Type
-- Content-Length
-- User-Agent
-- Host
-- X-WAP-Session
-- Content-Encoding
-- Accept
-- Location
-- Cache-Control
-
-### Header codec contract (target)
-
-- `encode_header(field, value) -> bytes`
-- `decode_header(bytes) -> field/value`
-- `validate_header(field, value) -> Result<(), Error>`
-
-## 4) Parsing contract
-
-Each parser function must be:
-
-- Stateless
-- Side-effect free
-- Deterministic
-- Explicit on consumed bytes vs remaining bytes
-
-Recommended API shape:
+Required codec contract:
 
 - `decode_wsp_pdu(input: &[u8]) -> DecodeResult<WspPdu>`
 - `encode_wsp_pdu(pdu: &WspPdu) -> Vec<u8>`
 - `validate_wsp_pdu(pdu: &WspPdu) -> Result<(), ValidationError>`
+- `encode_header(field, value) -> bytes`
+- `decode_header(bytes) -> field/value`
+- `validate_header(field, value) -> Result<(), Error>`
 
-## 5) WSP event sequence (MVP)
+## 6) Connection-mode behavior (typical)
 
-### Request path
+1. `S-Connect.request`
+2. `S-Connect.indication/reply`
+3. `Method Get/Post request`
+4. `Method reply`
+5. `S-Disconnect` on shutdown
 
-1. Build WSP request PDU (GET/POST)
-2. Hand to WTP as invoke class 2 where reliability needed
-3. Await reply event and parse REPLY
+On disconnect:
+- abort pending transactions,
+- invalidate pending confirmations,
+- prevent further stateful operations until reconnect or profile reset.
 
-### Push path
+## 7) Connectionless behavior (typical)
 
-1. WDP receives packet
-2. WTP decodes invoke/notification variant
-3. WSP decodes PUSH
-4. Browser event sink receives push payload
+1. method GET/POST request
+2. optional server request body (`Reply`)
+3. no stateful transaction service primitives at WSP service interface
+4. no connect/disconnect service states
 
-## 6) Known implementation placeholders
+## 8) Session/service primitives from spec matrix
 
-- Exact binary wire opcodes/tokens
-- Segmentation and continuation rules
-- Session header variants and extended fields
-- Capability negotiation flags and error response mapping
+- Capability negotiation is performed during session setup.
+- Session headers and protocol headers carry through to service users.
+- Push is unsolicited from peer and can be non-confirmed or confirmed based on feature bits.
 
-These are intentionally left as TODO until primary specs are fully reconciled against Wireshark/Kannel behavior.
+## 9) Immediate parser/output contract for this codebase
+
+Use this shape for transport-facing decode/encode tests:
+
+```rust
+pub enum WspPdu {
+    Connect(WspConnectPdu),
+    ConnectReply(WspConnectReplyPdu),
+    Disconnect(WspDisconnectPdu),
+    MethodGet(WspMethodGetPdu),
+    MethodPost(WspMethodPostPdu),
+    Reply(WspReplyPdu),
+    Push(WspPushPdu),
+    ConfirmedPush(WspPushPdu),
+    DataFragment(WspDataFragmentPdu),
+}
+```
+
+## 10) Deferred (spec-accurate completion)
+
+- final confirmation of custom header-code-page behavior,
+- complete confirmed-push timing and delayed-ack policy,
+- full appendix-C race-condition handling for incomplete state transitions.

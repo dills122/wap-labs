@@ -51,10 +51,12 @@ Legend:
 | `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `partial` | transport-rust unit tests + fixture harness scenarios under `transport-rust/tests/fixtures/transport/` |
 | `RQ-TRN-005..009` WTP semantics and SIN overlays | `planned` | protocol-level retransmission/abort/SAR fixtures; follow-ups tracked in `T0-08` and existing WTP lanes |
 | `RQ-TRN-010..015` WSP/session/method/capability behavior | `partial` | transport-rust request validation/gateway mapping tests + fixture harness |
+| `RQ-TRN-018..019` WSP assigned-number + capability-bound behavior (new alignment pass) | `planned` | transport-rust protocol fixtures tracked in `T0-10`, `T0-11` |
 | `RQ-TRN-016` WTP TID window/MPL discipline | `planned` | deterministic replay-window and TID-rate fixtures tracked in `T0-08` |
 | `RQ-TRN-017` WSP connectionless primitive profile | `planned` | primitive occurrence matrix fixtures tracked in `T0-09` |
 | `RQ-TRN-018` WSP assigned-number registry fidelity | `planned` | table-driven token map fixtures tracked in `T0-10` |
 | `RQ-TRN-019` WSP capability-bounds enforcement | `planned` | capability negotiation and bound-exceed fixtures tracked in `T0-11` |
+| `RQ-SEC-004`, `RQ-SEC-005` WTLS posture and security delegation behavior | `planned` | `docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md` + WTLS shim gating follow-ups |
 | `RQ-WAE-010` URI handling baseline | `partial` | `transport-rust` request-validation tests in `src/lib.rs` plus fixture `tests/fixtures/transport/uri_too_long_1025` (1024-octet boundary coverage landed; transport-profile routing assertions pending) |
 | `RQ-WAE-012` i18n baseline (UTF-8/UTF-16 + deterministic decode errors) | `partial` | textual payload decode tests in `transport-rust/src/responses.rs` plus mapped fixtures `utf16le_textual_wml_mapped` and `utf16_odd_length_protocol_error_mapped`; script-path parity remains pending |
 | `RQ-TRX-006..008` WCMP handling | `planned` | adapter/protocol tests (planned) |

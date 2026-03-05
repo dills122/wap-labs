@@ -210,7 +210,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-07 WBXML token/literal compatibility conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-02`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -401,7 +401,34 @@ Completed `B0` through `B3` tickets are archived in:
 7. `Spec`:
 - `RQ-TRN-001`, `RQ-TRN-003`
 8. `Notes`:
-- This follow-up was triggered by re-ingest where queued `WAP-259` variant is byte-wise different from canonical `WAP-259`.
+- Completed: new-source `WAP-259` variant was promoted after byte-comparison and manual archival of prior legacy source.
+- Archive captured at:
+  - `spec-processing/source-material/archive/WAP-259-WDP-20010614-a.legacy-v1.pdf`
+
+### T0-17 Protocol-adjacent transport context sweep (deferred specs)
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-14`, `T0-16`
+3. `Files`:
+- `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
+- `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `docs/waves/networking-implementation-checklist.md`
+4. `Build`:
+- Record explicit in-scope/out-of-scope policy for non-core transport-adjacent specs that can affect transport boundaries.
+- Add one-line rationale for each deferred family in transport-adjacent docs (`WAP-204*`, `WAP-120*`, `WAP-213*`, related messaging-cache deltas).
+- Keep this decision synchronized with `T0-14` profile gates.
+5. `Tests`:
+- checklist validation fixtures:
+  - `WAP-204` and `WAP-120` remain deferred under documented rationale
+  - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
+6. `Accept`:
+- future transport scope changes are policy-driven, explicit, and reversible.
+7. `Spec`:
+- `RQ-TRX-001..010` where applicable
+- `RQ-TRN-001..019`
+8. `Notes`:
+- This ticket prevents accidental scope creep from remaining parsed networking adjacent specs.
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

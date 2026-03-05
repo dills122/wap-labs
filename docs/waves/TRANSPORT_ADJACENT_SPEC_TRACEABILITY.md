@@ -155,3 +155,9 @@ Legend:
 - These requirements primarily impact `transport-rust/` gateway compatibility and policy decisions, not the core deterministic WML runtime loop.
 - `WAP-223` cookie-proxy behavior is relevant when HTTP-state delegation to network proxies is supported; otherwise mark as explicit non-goal.
 - `WAP-159` is gateway adaptation-specific (SMPP tunnel path) and may remain deferred unless this transport path is adopted.
+
+## Scope policy alignment
+
+1. GSM/USSD and cache-adjacent transport siblings (`WAP-204*`, `WAP-120*`) are reviewed as adjacent context but not part of the core transport rewrite milestone.
+2. Any ticket introducing these paths must add a scope decision to transport profile gating and `T0-17`.
+3. Current implementation posture remains valid if these areas stay explicit deferments in `OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`.

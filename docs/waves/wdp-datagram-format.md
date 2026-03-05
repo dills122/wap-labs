@@ -1,17 +1,37 @@
-# WDP Datagram Format (Draft)
+# WDP Datagram Format and Transport Contract
 
-Status: `DRAFT` (source-grounding in progress)
+Status: `ACTIVE`
 Date: `2026-03-04`
 
-This file captures the WDP-facing transport abstraction and current MVP datagram contract.
-Source grounding:
-- `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
+## 1) What WDP provides
 
-## 1) Contract purpose
+In this project WDP is a constrained, testable datagram abstraction for upper protocol layers.
+It maps to one transport datagram in memory and to one UDP datagram in the MVP transport.
 
-WDP provides a datagram-style service under WAP transport layers, equivalent in spirit to UDP but with adapter-specific constraints and optional segmentation behavior.
+From `WAP-259`:
 
-## 2) Rust interface
+- WDP is the standard datagram interface between bearer services and upper layers.
+- over IP, WDP mapping is UDP.
+- WSP/WTP/WTLS session identity is by address/port quadruplet (client/server address + ports).
+
+## 2) MVP datagram model
+
+```rust
+pub struct WdpDatagram {
+    pub src_addr: WdpAddress,
+    pub dst_addr: WdpAddress,
+    pub src_port: u16,
+    pub dst_port: u16,
+    pub payload: Vec<u8>,
+}
+
+pub struct WdpAddress {
+    pub addr_type: AddressType, // IPv4, IPv6, or future GSM/USSD forms
+    pub value: Vec<u8>,
+}
+```
+
+Minimal interface required by current transport:
 
 ```rust
 pub trait DatagramTransport {
@@ -20,51 +40,61 @@ pub trait DatagramTransport {
 }
 ```
 
-Transport implementations:
+## 3) WAP service ports in profile
 
-- In-memory transport (tests)
-- UDP transport (MVP)
-- SMS/GPRS adapters (future)
+WAP registered datagram ports are part of service selection and must be preserved:
 
-## 3) Wire-like model (abstraction layer)
+- WSP Connectionless Session Service (non-secure): `9200`.
+- WSP Session Service (non-secure): `9201`.
+- WSP Connectionless Session Service (secure): `9202`.
+- WSP Session Service (secure): `9203`.
+- Push services have additional legacy ports in WAP-259 Appendix B; only those required by enabled transport profile are part of MVP.
 
-```text
-WdpDatagram
-  - src_port: u16
-  - dst_port: u16
-  - payload: Vec<u8>
-```
+Transport policy:
+- server entities MUST bind well-known service ports.
+- client entities may use ephemeral source ports.
+- the profile must log/validate source/destination quadruplets for each session.
 
-Notes:
+## 4) Bearer implementation contracts
 
-- Payload length is the segment boundary for WDP in this abstraction.
-- Segmentation strategy (if needed) is resolved by bearers/upper layers.
+### 4.1 UDP (`wdp over IP`) — MVP
 
-## 4) UDP implementation notes
+- map WDP datagram `payload` 1:1 to UDP payload.
+- use 16-bit port fields.
+- map receive errors into typed `WdpError` values.
 
-- Bind to local socket and map `src_port/dst_port` into datagram fields
-- `receive()` returns one full datagram or times out by policy
-- Unknown/invalid source mapping is surfaced as transport error
+### 4.2 SMS/USSD/other GSM bearers — deferred
 
-## 5) Segmentation and reassembly (out-of-scope for MVP)
+Implementation is deferred but reserved in model:
 
-For MVP the focus is payload passthrough with caller-managed message boundaries.
-If/when required:
+- optional UDH-style fragmentation and reassembly,
+- bearer-specific maximum payload sizes,
+- optional sequence numbers/retry semantics.
 
-- fragment_id / more_fragments flags
-- ordering + reassembly buffer
-- max segment size policy by bearer
+## 5) Segmentation policy
 
-## 6) Error model (starter)
+- no automatic segmentation in core MVP service layer.
+- higher layer may enforce MTU via capability/SDU checks.
+- if bearer segmenting is enabled, use WTP SAR/ESAR policy where the WTP layer explicitly requests grouping and recovery.
 
-- transport unavailable
-- invalid address/port
-- decode mismatch
-- oversized payload for backend
-- timeout/no data available
+## 6) Error taxonomy
 
-## 7) TODO from source review
+Minimum errors expected by upper layers:
 
-- canonical bearer header fields in WDP true framing
-- checksum/length behavior (if any in the selected mode)
-- bearer-specific retransmission obligations
+- `WdpError::TransportUnavailable`
+- `WdpError::AddressTypeUnsupported`
+- `WdpError::AddressUnresolvable`
+- `WdpError::PayloadOversize`
+- `WdpError::Timeout`
+- `WdpError::CorruptOrMalformed`
+
+## 7) Implementation notes for this repo
+
+- Keep WDP free of HTTP/WSP semantics.
+- expose only transport-visible fields and typed errors.
+- ensure all parse/codec methods stay stateless to keep replayability in tests.
+
+## 8) Pending precision
+
+- WAP-259 bearer-specific checksum requirements are profile-dependent.
+- keep a deferred issue for explicit bearer obligations per profile until bearer adapter is in-scope.

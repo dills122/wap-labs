@@ -255,6 +255,15 @@ Legend:
 - Phase 4 (WTP retransmission in Rust): `RQ-TRN-005`..`RQ-TRN-009`, `RQ-TRN-016`
 - Phase 5 (UDP/WDP in Rust): `RQ-TRN-001`..`RQ-TRN-004`
 
+## Adjacent transport-context watchlist
+
+The transport stack will remain stable while adjacent networking specs are explicitly deferred:
+
+1. `WAP-204` family (WAP over GSM/USSD) is fully parsed and review-led in `OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`.
+2. `WAP-120-WAPCachingMod` and `WAP-175*` cache-operation families are not mapped into WDP/WTP/WSP rewrite milestones.
+3. `WAP-213*` (pictogram/display adjuncts) is not required for protocol-layer correctness.
+4. Any future revival must open a dedicated scope ticket and update this traceability mapping.
+
 ## Notes
 
 - The WSP/WTP/WDP conformance appendices are extensive. This document focuses on requirements that materially impact Waves' planned protocol rewrite and host/runtime integration.

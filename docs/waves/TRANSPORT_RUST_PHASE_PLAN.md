@@ -15,6 +15,11 @@ Transport boundary ends at normalized deck payload and optional XML event stream
 - WBXML decode currently uses external `wbxml2xml` executable invocation.
 - Retry/timeout/error mapping and coverage gate are active in Rust CI.
 
+Current profile decision point:
+
+1. protocol migration stays behind explicit profile gates and feature flags.
+2. transport contracts (`browser/contracts/transport.ts` and engine handoff paths) remain the compatibility boundary during all migration stages.
+
 ## Phase A (Ready Now): In-process WBXML decode via `libwbxml` FFI
 
 Objective:
@@ -43,6 +48,8 @@ Definition of done:
 
 ## Phase B: Streaming XML event boundary after decode
 
+Status: optional + low priority while protocol-stack lanes are incomplete.
+
 Objective:
 
 - Support low-memory, deck-scoped processing from decoded XML stream.
@@ -54,6 +61,8 @@ Scope:
 - Keep engine-facing contract stable unless explicitly versioned.
 
 ## Phase C: Native WSP/WTP protocol parsing path (feature-gated)
+
+Status: active protocol lane.
 
 Objective:
 
@@ -67,14 +76,27 @@ Scope:
 
 ## Phase D: WTLS and security profile expansion (deferred)
 
+Status: deferred until transport protocol gates close.
+
 Objective:
 
-- Add encrypted-session protocol support only after protocol parity gates.
-
-Scope:
-
+- Add encrypted-session protocol support only after protocol parity gates close.
 - ASN.1/WTLS certificate handling (candidate: `rasn`, subject to design review).
 - Cipher/profile handling behind explicit feature flags.
+
+## Migration lane for this repo: protocol-aligned execution stack
+
+1. `T0-08`: WTP retransmission and replay behavior
+2. `T0-09`: WSP connectionless primitive enforcement
+3. `T0-10`: WSP assigned-number fidelity
+4. `T0-11`: WSP capability negotiation and bounds
+5. `T0-14`: transport profile decision and promotion gates
+6. `T0-16`: source queue/variant canonicalization lock
+7. `T0-17`: transport-adjacent scope sweep
+
+## Notes
+
+- `Phase D` does not run forward until profile gates close and explicit security-profile scope is settled in `T0-14`.
 
 ## Dependency Guidance
 

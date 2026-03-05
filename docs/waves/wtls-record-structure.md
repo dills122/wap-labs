@@ -1,10 +1,12 @@
-# WTLS Record Structure (Draft)
+# WTLS Record Structure and Security Roadmap
 
-Status: `DRAFT` (source-grounding in progress)
+Status: `ACTIVE`
 Date: `2026-03-04`
 
-This is the staging document for WTLS in the WAP rewrite.
-WTLS is optional and not required for initial WSP/WTP/WDP viability.
+This document defines the security layer contract for the networking rewrite.
+
+WTLS is optional in MVP; a deterministic no-op transport path must remain fully usable.
+
 Source grounding:
 - `spec-processing/source-material/WAP-199-WTLS-20000218-a.pdf`
 - `spec-processing/source-material/WAP-261-WTLS-20010406-a.pdf`
@@ -12,15 +14,13 @@ Source grounding:
 - `spec-processing/source-material/WAP-261_101-WTLS-20011027-a.pdf`
 - `spec-processing/source-material/WAP-261_102-WTLS-20011027-a.pdf`
 
-## 1) Positioning
-
-WTLS sits as a transport security layer between WTP and WDP when enabled:
+## 1) Placement in stack
 
 `WSP -> WTP -> WTLS -> WDP`
 
-This document defines a minimal contract-first shape to avoid coupling transport and security prematurely.
+If enabled, WTLS wraps WTP payloads before WDP framing.
 
-## 2) Target API shape
+## 2) API contract
 
 ```rust
 pub trait TlsLikeRecordLayer {
@@ -29,40 +29,47 @@ pub trait TlsLikeRecordLayer {
 }
 ```
 
-Current implementation can be a no-op shim that preserves bytes and records protocol mode.
-
-## 3) Record model (abstract)
+## 3) Record frame
 
 ```text
-WtlsRecord
-  - content_type: enum
-  - protocol_version: semver-like tuple
-  - sequence_id: u32
-  - length: u16
-  - encrypted_payload: Vec<u8>
+WtlsRecord {
+  content_type,
+  protocol_version,
+  seq_number,
+  length,
+  payload,
+}
 ```
+
+Phase A contract:
+- no packet transformation in `wrap/unwrap`,
+- protocol metadata is preserved and logged,
+- parse/serialize boundaries remain stable.
 
 ## 4) MVP implementation posture
 
-- Provide compile-time/staging gate for WTLS use
-- Keep plaintext-compatible fallback path
-- Record wrapper and metadata logging are required even if cipher is not yet enabled
+- compile-time/config flag controls WTLS activation,
+- no-op implementation is valid and deterministic,
+- transport logs `wtls.mode`, `wtls.version`, and sequence metrics for all packets.
 
-## 5) Deferred work for real WTLS
+## 5) Staged implementation plan
 
-To unlock real security:
+### Phase A (current)
+- Transparent wrapper implementation.
+- Alert/error surface mapping into transport errors.
+- Session state stub for open/close semantics.
 
-- handshake state machine
-- key exchange and master secret derivation
-- cipher suite negotiation
-- record MAC/integrity and ciphering
-- certificate parsing and trust policy
-- renegotiation/session reuse behavior
+### Phase B (security-complete)
+- handshake state machine,
+- key exchange + session establishment,
+- key-block derivation and key refresh,
+- record-level authentication/encryption,
+- certificate/profile trust decisions,
+- renegotiation and resumptions.
 
-## 6) Source-lookup checklist
+## 6) Deferred precision items
 
-- Exact WTLS record header fields and sizes
-- Cipher suite identifiers and defaults
-- Handshake message structure
-- Alert/error handling semantics
-- Session resume and closure behavior
+- exact WTLS field bit layout,
+- exact cipher/cipher-suite matrix,
+- explicit alert code mapping,
+- sequence number and anti-replay policy per role.

@@ -80,8 +80,7 @@ if [[ -f "$BASE_REPORT" || -f "$REM_REPORT" || -f "$NEW_REPORT" ]]; then
     warn=$((warn + 1))
   fi
 else
-  echo "WARN: cleanup reports missing under tmp/docling-rerun*/tmp/docling-new-source-material"
-  warn=$((warn + 1))
+  echo "INFO: no cleanup reports found under tmp/docling-rerun*/tmp/docling-new-source-material (no rerun/new-source parse occurred)"
 fi
 
 if [[ -d "$NEW_OUTPUT" ]]; then
