@@ -663,6 +663,98 @@ Completed `B0` through `B3` tickets are archived in:
 10. `Notes`:
 - Queue-ready; unblock when `T0-18`, `T0-19`, and `T0-20` are `done`.
 
+### T0-23 External corpus ingestion spike (Kannel + Wireshark)
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-16`
+3. `Owner`: `docs`, `spec-processing`, `transport-rust`
+4. `Files`:
+- `docs/waves/networking-external-response-triage.md`
+- `docs/waves/networking-gap-to-source-map.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `spec-processing/new-source-material/`
+- `spec-processing/README.md`
+5. `Build`:
+- Ingest and catalog implementation-reference materials for:
+  - Kannel networking sources (`wtp`, `wsp`, `wdp` lanes)
+  - Wireshark dissectors (`packet-wtp`, `packet-wsp`, `packet-wdp`, `packet-wtls`)
+- Produce a normalized source index with per-source trust class (`normative`, `interop-reference`, `heuristic`).
+- Map extracted behaviors to existing `RQ-TRN-*` IDs without creating new transport requirements.
+6. `Tests`:
+- Deterministic source-index lint/check (file present + source class + mapped requirement IDs).
+- Spot-check fixture that one behavior from each external source family maps to an existing local requirement.
+7. `Accept`:
+- External reference corpus is indexed and traceable without changing normative precedence.
+- Each imported behavior note cites a local requirement and implementation target lane.
+8. `Migration gates`:
+- Done-1: source index exists and is versioned.
+- Done-2: all imported notes are tagged `interop-reference` or `heuristic` unless backed by canonical WAP spec.
+- Done-3: no `RQ-TRN-*` requirement is redefined by external source text.
+9. `Spec`:
+- `RQ-TRN-001..019`
+10. `Notes`:
+- Research spike only; non-blocking for protocol implementation unless it uncovers a contradiction with local normative anchors.
+
+### T0-24 Networking PCAP corpus spike and replay fixture seed pack
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-23`
+3. `Owner`: `transport-rust`, `docs`
+4. `Files`:
+- `transport-rust/tests/network/interop/`
+- `transport-rust/tests/interop_replay.rs`
+- `docs/waves/networking-migration-readiness-checklist.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+5. `Build`:
+- Build a curated PCAP seed corpus for:
+  - `CONNECT` handshake path
+  - `GET`/`REPLY` request-response
+  - retransmit and duplicate transaction scenarios
+- Define deterministic replay-fixture schema (`capture`, `expected events`, `expected transaction outcomes`).
+- Document capture provenance and legal/reuse constraints.
+6. `Tests`:
+- Replay parser can consume seed fixtures and emit deterministic event traces.
+- At least one fixture each for connect, get/reply, retransmit, duplicate flow classes.
+7. `Accept`:
+- PCAP seed corpus exists and is runnable via replay harness scaffolding.
+- Fixture schema is stable and linked from transport/networking docs.
+8. `Migration gates`:
+- Done-1: seed corpus is committed with metadata and expected outputs.
+- Done-2: replay harness stub validates schema and event ordering.
+- Done-3: ticket `T0-22` references these fixtures as required baseline inputs.
+9. `Spec`:
+- `RQ-TRN-005..019`
+10. `Notes`:
+- Spike output is an enabling artifact for `T0-22`; it does not itself satisfy protocol-core implementation gates.
+
+### T0-25 External conformance/vector source sweep spike
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-23`
+3. `Owner`: `docs`, `spec-processing`
+4. `Files`:
+- `docs/waves/networking-gap-analysis.md`
+- `docs/waves/networking-strict-gap-audit.md`
+- `docs/waves/SPEC_TEST_COVERAGE.md`
+- `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+5. `Build`:
+- Identify publicly available WAP interoperability/conformance vectors that can be safely reused.
+- Classify candidate vectors by usefulness for current lanes (`WDP`, `WTP`, `WSP`, `WTLS`) and profile compatibility (`gateway-bridged`, `wap-net-core`).
+- Produce a recommended adoption list with effort/benefit estimates.
+6. `Tests`:
+- Checklist validation proving each recommended vector maps to at least one active ticket and one fixture target path.
+7. `Accept`:
+- Conformance/vector candidates are ranked and tied to current execution lanes.
+- No adoption recommendation conflicts with current spec precedence or scope-defer rules.
+8. `Migration gates`:
+- Done-1: ranked vector adoption list exists.
+- Done-2: each item maps to `T0-*` and `RQ-*` references.
+- Done-3: explicit `adopt now` vs `defer` decisions are documented.
+9. `Spec`:
+- `RQ-TRN-001..019`, `RQ-SEC-004..005`
+10. `Notes`:
+- Research spike only; adoption decisions must remain profile-gated and additive.
+
 ## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:
