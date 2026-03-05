@@ -1,0 +1,8 @@
+name = "URI exceeds 1024-octet limit"
+description = "Reject URL values above the 1024-octet WAE baseline with deterministic INVALID_REQUEST mapping."
+work_items = ["T0-06"]
+spec_items = ["RQ-WAE-010"]
+testing_ac = [
+  "Given a URL longer than 1024 octets, fetch_deck_in_process returns ok=false with INVALID_REQUEST.",
+  "The response remains deterministic with status=0 and text/plain diagnostics content type."
+]

@@ -1,4 +1,5 @@
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
+use std::char::decode_utf16;
 use std::time::Instant;
 
 use crate::request_meta::details_with_request_id;
@@ -189,7 +190,32 @@ pub(crate) fn map_success_payload_response(
         };
     }
 
-    let wml = String::from_utf8_lossy(body).to_string();
+    let wml = match decode_textual_wml_payload(body) {
+        Ok(wml) => wml,
+        Err(message) => {
+            return FetchDeckResponse {
+                ok: false,
+                status,
+                final_url,
+                content_type,
+                wml: None,
+                error: Some(FetchErrorInfo {
+                    code: "PROTOCOL_ERROR".to_string(),
+                    message,
+                    details: details_with_request_id(
+                        request_id,
+                        Some(serde_json::json!({ "attempt": attempt })),
+                    ),
+                }),
+                timing_ms: FetchTiming {
+                    encode: 0.0,
+                    udp_rtt: elapsed_ms,
+                    decode: 0.0,
+                },
+                engine_deck_input: None,
+            };
+        }
+    };
     FetchDeckResponse {
         ok: true,
         status,
@@ -209,6 +235,37 @@ pub(crate) fn map_success_payload_response(
             raw_bytes_base64: Some(raw_b64),
         }),
     }
+}
+
+fn decode_textual_wml_payload(body: &[u8]) -> Result<String, String> {
+    if body.starts_with(&[0xFF, 0xFE]) {
+        return decode_utf16_payload(&body[2..], true);
+    }
+    if body.starts_with(&[0xFE, 0xFF]) {
+        return decode_utf16_payload(&body[2..], false);
+    }
+    Ok(String::from_utf8_lossy(body).to_string())
+}
+
+fn decode_utf16_payload(bytes: &[u8], little_endian: bool) -> Result<String, String> {
+    if bytes.len() % 2 != 0 {
+        return Err("Invalid UTF-16 payload: odd byte length".to_string());
+    }
+    let units = bytes.chunks_exact(2).map(|chunk| {
+        if little_endian {
+            u16::from_le_bytes([chunk[0], chunk[1]])
+        } else {
+            u16::from_be_bytes([chunk[0], chunk[1]])
+        }
+    });
+    let mut out = String::new();
+    for decoded in decode_utf16(units) {
+        match decoded {
+            Ok(ch) => out.push(ch),
+            Err(_) => return Err("Invalid UTF-16 payload: unpaired surrogate".to_string()),
+        }
+    }
+    Ok(out)
 }
 
 pub(crate) fn map_terminal_send_error(
