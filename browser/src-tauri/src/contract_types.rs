@@ -92,6 +92,35 @@ pub enum ScriptTimerRequestSnapshot {
     },
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "kebab-case")]
+pub enum ExternalNavigationCacheControlPolicySnapshot {
+    Default,
+    NoCache,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct ExternalNavigationPostContextSnapshot {
+    #[ts(optional)]
+    pub same_deck: Option<bool>,
+    #[ts(optional)]
+    pub content_type: Option<String>,
+    #[ts(optional)]
+    pub payload: Option<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct ExternalNavigationRequestPolicySnapshot {
+    #[ts(optional)]
+    pub cache_control: Option<ExternalNavigationCacheControlPolicySnapshot>,
+    #[ts(optional)]
+    pub referer_url: Option<String>,
+    #[ts(optional)]
+    pub post_context: Option<ExternalNavigationPostContextSnapshot>,
+}
+
 #[derive(Clone, Debug, Serialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct EngineRuntimeSnapshot {
@@ -102,6 +131,8 @@ pub struct EngineRuntimeSnapshot {
     pub content_type: String,
     #[ts(optional)]
     pub external_navigation_intent: Option<String>,
+    #[ts(optional)]
+    pub external_navigation_request_policy: Option<ExternalNavigationRequestPolicySnapshot>,
     #[ts(optional)]
     pub last_script_execution_ok: Option<bool>,
     #[ts(optional)]
@@ -114,6 +145,43 @@ pub struct EngineRuntimeSnapshot {
     pub last_script_requires_refresh: Option<bool>,
     pub last_script_dialog_requests: Vec<ScriptDialogRequestSnapshot>,
     pub last_script_timer_requests: Vec<ScriptTimerRequestSnapshot>,
+}
+
+impl From<engine::ScriptNavigationRequestPolicyLiteral>
+    for ExternalNavigationRequestPolicySnapshot
+{
+    fn from(value: engine::ScriptNavigationRequestPolicyLiteral) -> Self {
+        Self {
+            cache_control: value
+                .cache_control
+                .map(ExternalNavigationCacheControlPolicySnapshot::from),
+            referer_url: value.referer_url,
+            post_context: value
+                .post_context
+                .map(ExternalNavigationPostContextSnapshot::from),
+        }
+    }
+}
+
+impl From<engine::ScriptNavigationCacheControlPolicyLiteral>
+    for ExternalNavigationCacheControlPolicySnapshot
+{
+    fn from(value: engine::ScriptNavigationCacheControlPolicyLiteral) -> Self {
+        match value {
+            engine::ScriptNavigationCacheControlPolicyLiteral::Default => Self::Default,
+            engine::ScriptNavigationCacheControlPolicyLiteral::NoCache => Self::NoCache,
+        }
+    }
+}
+
+impl From<engine::ScriptNavigationPostContextLiteral> for ExternalNavigationPostContextSnapshot {
+    fn from(value: engine::ScriptNavigationPostContextLiteral) -> Self {
+        Self {
+            same_deck: value.same_deck,
+            content_type: value.content_type,
+            payload: value.payload,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, TS)]

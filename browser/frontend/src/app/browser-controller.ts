@@ -1,4 +1,4 @@
-import type { HostNavigationSource } from '../../../contracts/transport';
+import type { FetchRequestPolicy, HostNavigationSource } from '../../../contracts/transport';
 import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { resolveKeyboardIntent } from './keyboard';
@@ -567,7 +567,8 @@ export class BrowserController {
           snapshot.externalNavigationIntent,
           'external-intent',
           true,
-          true
+          true,
+          snapshot.externalNavigationRequestPolicy
         );
       }
     }
@@ -599,7 +600,8 @@ export class BrowserController {
     url: string,
     source: HostNavigationSource,
     followExternalIntent: boolean,
-    pushHistory = true
+    pushHistory = true,
+    requestPolicy?: FetchRequestPolicy
   ): Promise<EngineRuntimeSnapshot | null> {
     if (this.runMode === 'local') {
       await this.loadSelectedLocalDeck();
@@ -624,7 +626,8 @@ export class BrowserController {
         url: requestedUrl,
         source,
         followExternalIntent,
-        pushHistory
+        pushHistory,
+        requestPolicy
       });
       if (snapshot) {
         this.scriptTimerRegistry.reset();
@@ -724,7 +727,8 @@ export class BrowserController {
             snapshot.externalNavigationIntent,
             'external-intent',
             true,
-            true
+            true,
+            snapshot.externalNavigationRequestPolicy
           );
         }
       }

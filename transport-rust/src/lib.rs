@@ -126,11 +126,8 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
     let method = method
         .unwrap_or_else(|| "GET".to_string())
         .to_ascii_uppercase();
-    let (method, mut outbound_headers, suppressed_same_deck_post_context) = apply_request_policy(
-        method,
-        headers.unwrap_or_default(),
-        request_policy.as_ref(),
-    );
+    let (method, mut outbound_headers, suppressed_same_deck_post_context) =
+        apply_request_policy(method, headers.unwrap_or_default(), request_policy.as_ref());
     if method != "GET" {
         return invalid_request_response(
             url,
@@ -733,7 +730,10 @@ mod tests {
             mapped_headers.get("Referer").map(String::as_str),
             Some("http://example.test/home.wml")
         );
-        assert_eq!(mapped_headers.get("X-Test").map(String::as_str), Some("yes"));
+        assert_eq!(
+            mapped_headers.get("X-Test").map(String::as_str),
+            Some("yes")
+        );
     }
 
     #[test]

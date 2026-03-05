@@ -2,6 +2,7 @@ import init, { WmlEngine } from '../pkg/wavenav_engine.js';
 import type {
   DrawCmd,
   EngineTraceEntry,
+  WmlGoRequestPolicy,
   ScriptExecutionOutcome,
   ScriptInvocationOutcome
 } from '../contracts/wml-engine';
@@ -26,6 +27,7 @@ export interface EngineSnapshot {
   contentType: string;
   nextCardVar?: string;
   externalNavigationIntent?: string;
+  externalNavigationRequestPolicy?: WmlGoRequestPolicy;
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptExecutionErrorClass?: ScriptErrorClass;
@@ -144,6 +146,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         contentType: engine.contentType(),
         nextCardVar: engine.getVar('nextCard'),
         externalNavigationIntent: engine.externalNavigationIntent(),
+        externalNavigationRequestPolicy: engine.externalNavigationRequestPolicy() ?? undefined,
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),
         lastScriptExecutionErrorClass: diagnostics.lastScriptExecutionErrorClass?.() ?? undefined,

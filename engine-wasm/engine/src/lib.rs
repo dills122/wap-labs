@@ -40,7 +40,9 @@ use wavescript::vm::{Vm, VmTrap};
 pub use engine_script_types::{
     EngineTraceEntry, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptExecutionOutcome, ScriptInvocationOutcome,
-    ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral, ScriptValueLiteral,
+    ScriptNavigationCacheControlPolicyLiteral, ScriptNavigationIntentLiteral,
+    ScriptNavigationPostContextLiteral, ScriptNavigationRequestPolicyLiteral,
+    ScriptTimerRequestLiteral, ScriptValueLiteral,
 };
 pub use render::render_list::{DrawCmd, RenderList};
 
@@ -72,6 +74,7 @@ pub struct WmlEngine {
     nav_stack: Vec<usize>,
     focused_link_idx: usize,
     external_nav_intent: Option<String>,
+    external_nav_request_policy: Option<ScriptNavigationRequestPolicyLiteral>,
     viewport_cols: usize,
     base_url: String,
     content_type: String,

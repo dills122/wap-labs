@@ -94,6 +94,11 @@ impl WmlEngine {
         self.external_navigation_intent()
     }
 
+    #[wasm_bindgen(js_name = externalNavigationRequestPolicy)]
+    pub fn external_navigation_request_policy_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.external_navigation_request_policy())
+    }
+
     #[wasm_bindgen(js_name = clearExternalNavigationIntent)]
     pub fn clear_external_navigation_intent_wasm(&mut self) {
         self.clear_external_navigation_intent();

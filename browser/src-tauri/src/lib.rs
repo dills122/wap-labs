@@ -37,6 +37,9 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         base_url: engine.base_url(),
         content_type: engine.content_type(),
         external_navigation_intent: engine.external_navigation_intent(),
+        external_navigation_request_policy: engine
+            .external_navigation_request_policy()
+            .map(contract_types::ExternalNavigationRequestPolicySnapshot::from),
         last_script_execution_ok: engine.last_script_execution_ok(),
         last_script_execution_trap: engine.last_script_execution_trap(),
         last_script_execution_error_class: engine.last_script_execution_error_class(),
@@ -722,9 +725,17 @@ mod tests {
             after_enter.external_navigation_intent.as_deref(),
             Some("http://local.test/dir/next.wml?foo=1")
         );
+        assert_eq!(
+            after_enter
+                .external_navigation_request_policy
+                .as_ref()
+                .and_then(|policy| policy.referer_url.as_deref()),
+            Some("http://local.test/dir/start.wml")
+        );
 
         let after_clear = apply_clear_external_navigation_intent(&mut engine);
         assert_eq!(after_clear.external_navigation_intent, None);
+        assert_eq!(after_clear.external_navigation_request_policy, None);
     }
 
     #[test]
@@ -970,14 +981,23 @@ mod tests {
             after_external.external_navigation_intent.as_deref(),
             Some("http://example.test/fixtures/news.wml?src=fixture")
         );
+        assert_eq!(
+            after_external
+                .external_navigation_request_policy
+                .as_ref()
+                .and_then(|policy| policy.referer_url.as_deref()),
+            Some("http://example.test/fixtures/load-nav-external.wml")
+        );
 
         let after_clear = apply_clear_external_navigation_intent(&mut engine);
         assert_eq!(after_clear.external_navigation_intent, None);
+        assert_eq!(after_clear.external_navigation_request_policy, None);
 
         let repeat_snapshot = apply_engine_snapshot(&engine);
         assert_eq!(repeat_snapshot.active_card_id.as_deref(), Some("home"));
         assert_eq!(repeat_snapshot.focused_link_index, 1);
         assert_eq!(repeat_snapshot.external_navigation_intent, None);
+        assert_eq!(repeat_snapshot.external_navigation_request_policy, None);
     }
 
     #[test]

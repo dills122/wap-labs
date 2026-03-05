@@ -8,6 +8,7 @@ impl WmlEngine {
             nav_stack: Vec::new(),
             focused_link_idx: 0,
             external_nav_intent: None,
+            external_nav_request_policy: None,
             viewport_cols: DEFAULT_VIEWPORT_COLS,
             base_url: String::new(),
             content_type: String::new(),
@@ -45,6 +46,7 @@ impl WmlEngine {
         self.nav_stack.clear();
         self.focused_link_idx = 0;
         self.external_nav_intent = None;
+        self.external_nav_request_policy = None;
         self.base_url = base_url.to_string();
         self.content_type = content_type.to_string();
         self.raw_bytes_base64 = raw_bytes_base64;
@@ -134,9 +136,17 @@ impl WmlEngine {
         self.external_nav_intent.clone()
     }
 
+    /// Get request-policy metadata for the pending external navigation intent.
+    pub fn external_navigation_request_policy(
+        &self,
+    ) -> Option<ScriptNavigationRequestPolicyLiteral> {
+        self.external_nav_request_policy.clone()
+    }
+
     /// Clear pending external navigation intent.
     pub fn clear_external_navigation_intent(&mut self) {
         self.external_nav_intent = None;
+        self.external_nav_request_policy = None;
     }
 
     /// Execute a raw bytecode unit with no runtime host bindings.

@@ -157,6 +157,7 @@ export interface WmlEngineWasm {
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
   externalNavigationIntent(): string | undefined;
+  externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;
@@ -210,6 +211,7 @@ export interface WmlEngineNative {
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
   externalNavigationIntent(): string | undefined;
+  externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
   executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
   registerScriptUnit(src: string, bytes: Uint8Array): void;

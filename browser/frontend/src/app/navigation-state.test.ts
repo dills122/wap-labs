@@ -192,6 +192,45 @@ describe('navigation-state', () => {
     expect(machine.getSessionState().lastError).toContain('hop limit');
   });
 
+  it('uses runtime-provided external intent request policy when following intents', async () => {
+    const capturedPolicies: unknown[] = [];
+    let loadCount = 0;
+    const host = createHostClientMock({
+      fetchDeck: async (request) => {
+        capturedPolicies.push(request.requestPolicy);
+        return fetchOk({ finalUrl: request.url });
+      },
+      engineLoadDeckContext: async () => {
+        loadCount += 1;
+        if (loadCount === 1) {
+          return snapshot({
+            activeCardId: 'home',
+            externalNavigationIntent: 'http://example.test/step-1.wml',
+            externalNavigationRequestPolicy: {
+              refererUrl: 'http://example.test/start.wml'
+            }
+          });
+        }
+        return snapshot({
+          activeCardId: 'step-1'
+        });
+      }
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test');
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(capturedPolicies).toHaveLength(2);
+    expect(capturedPolicies[0]).toBeUndefined();
+    expect(capturedPolicies[1]).toEqual({
+      refererUrl: 'http://example.test/start.wml'
+    });
+  });
+
   it('does not push duplicate history entry when reload uses pushHistory=false', async () => {
     const machine = createNavigationStateMachine(createHostClientMock(), 'http://seed.test');
 
