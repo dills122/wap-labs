@@ -1,0 +1,18 @@
+[package]
+name = "wavenav-engine-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+wavenav_engine = { path = ".." }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "engine_wml_fuzzer"
+path = "fuzz_targets/engine_wml_fuzzer.rs"
+test = false
+doc = false

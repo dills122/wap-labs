@@ -153,3 +153,5 @@ files
 tmp
 
 _site
+
+**/fuzz/corpus/**
