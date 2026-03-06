@@ -34,6 +34,7 @@ This frontend now includes a browser-style shell with a hidden developer harness
 - first-render viewport skeleton placeholder to avoid blank deck area while initial load is in flight
 - runtime mode switch (`Local`/`Network`) with local mode loading bundled offline WML examples directly into the engine
 - local example source of truth is `engine-wasm/examples/generated/examples.ts` (mapped into frontend local mode)
+- local-only example notes panel (collapsed by default) shows metadata + testing AC for the selected local deck
 - automatic external intent follow loop (`externalNavigationIntent` fetch/load cycle)
 - debug-only raw WML textarea path (`Load Raw WML (Debug)`)
 - key driving (`up`, `down`, `enter`)

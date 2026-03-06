@@ -68,6 +68,16 @@ const browserShellTemplate = (defaultUrl: string) => `
         <wv-surface-panel heading="${WAVES_COPY.shell.status}">
           <wv-status-panel id="status"></wv-status-panel>
         </wv-surface-panel>
+        <details id="local-example-notes" class="local-example-notes" aria-live="polite">
+          <summary>${WAVES_COPY.shell.localExampleNotes}</summary>
+          <div class="local-example-notes-body">
+            <p id="local-example-coverage" class="local-example-notes-coverage"></p>
+            <p id="local-example-description"></p>
+            <p id="local-example-goal"></p>
+            <h3>${WAVES_COPY.shell.localExampleTestingAc}</h3>
+            <ul id="local-example-testing-ac"></ul>
+          </div>
+        </details>
         <div id="toast" class="toast toast-hidden" role="alert" aria-live="polite"></div>
 
         <details id="dev-drawer" class="dev-drawer">
@@ -127,6 +137,11 @@ export interface BrowserShellRefs {
   localExampleSelectEl: HTMLSelectElement;
   loadLocalBtnEl: HTMLButtonElement;
   localExampleWrapEl: HTMLLabelElement;
+  localExampleNotesEl: HTMLDetailsElement;
+  localExampleCoverageEl: HTMLParagraphElement;
+  localExampleDescriptionEl: HTMLParagraphElement;
+  localExampleGoalEl: HTMLParagraphElement;
+  localExampleTestingAcEl: HTMLUListElement;
 }
 
 export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
@@ -153,6 +168,16 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
   const localExampleSelectEl = document.querySelector<HTMLSelectElement>('#local-example');
   const loadLocalBtnEl = document.querySelector<HTMLButtonElement>('#btn-load-local');
   const localExampleWrapEl = document.querySelector<HTMLLabelElement>('#local-example-wrap');
+  const localExampleNotesEl = document.querySelector<HTMLDetailsElement>('#local-example-notes');
+  const localExampleCoverageEl =
+    document.querySelector<HTMLParagraphElement>('#local-example-coverage');
+  const localExampleDescriptionEl = document.querySelector<HTMLParagraphElement>(
+    '#local-example-description'
+  );
+  const localExampleGoalEl = document.querySelector<HTMLParagraphElement>('#local-example-goal');
+  const localExampleTestingAcEl = document.querySelector<HTMLUListElement>(
+    '#local-example-testing-ac'
+  );
 
   if (
     !wmlInput ||
@@ -171,7 +196,12 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
     !runModeSelectEl ||
     !localExampleSelectEl ||
     !loadLocalBtnEl ||
-    !localExampleWrapEl
+    !localExampleWrapEl ||
+    !localExampleNotesEl ||
+    !localExampleCoverageEl ||
+    !localExampleDescriptionEl ||
+    !localExampleGoalEl ||
+    !localExampleTestingAcEl
   ) {
     throw new Error('missing expected UI element');
   }
@@ -193,6 +223,11 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,
-    localExampleWrapEl
+    localExampleWrapEl,
+    localExampleNotesEl,
+    localExampleCoverageEl,
+    localExampleDescriptionEl,
+    localExampleGoalEl,
+    localExampleTestingAcEl
   };
 };

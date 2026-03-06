@@ -36,7 +36,12 @@ const locale = {
     localMode: 'Local',
     networkMode: 'Network',
     localExample: 'Local Example',
-    loadLocal: 'Load Local'
+    loadLocal: 'Load Local',
+    localExampleNotes: 'Local Example Notes',
+    localExampleCoverage: 'Coverage:',
+    localExampleDescription: 'Description:',
+    localExampleGoal: 'Goal:',
+    localExampleTestingAc: 'Testing AC'
   },
   sampleDeck: {
     intro: WAVES_CONFIG.appTagline,

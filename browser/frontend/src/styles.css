@@ -100,7 +100,8 @@ body[data-boot-phase='deck-ready'] .wv-shell-window {
   margin-top: 0;
 }
 
-.browser-chrome .btn {
+button,
+.btn {
   padding: 2px 10px 4px;
   min-height: 23px;
 }
@@ -263,6 +264,52 @@ textarea.form-95 {
 
 .softkey-row .btn {
   font-weight: 700;
+}
+
+.local-example-notes {
+  border: 2px solid;
+  border-bottom-color: #424242;
+  border-right-color: #424242;
+  border-left-color: #fff;
+  border-top-color: #fff;
+  background: silver;
+  color: #212529;
+}
+
+.local-example-notes > summary {
+  cursor: pointer;
+  padding: 4px 6px;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(90deg, #08216b, #a5cef7);
+}
+
+.local-example-notes-body {
+  border-top: 1px solid #7f7f7f;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.local-example-notes-body p {
+  margin: 0 0 6px;
+}
+
+.local-example-notes-body h3 {
+  margin: 8px 0 4px;
+  font-size: 12px;
+}
+
+.local-example-notes-coverage {
+  color: #1f2f45;
+}
+
+.local-example-notes-body ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.local-example-notes-body li {
+  margin-bottom: 4px;
 }
 
 .dev-drawer {
