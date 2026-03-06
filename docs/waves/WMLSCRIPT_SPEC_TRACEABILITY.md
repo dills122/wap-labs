@@ -149,10 +149,10 @@ Legend:
   - `WAP-193_101` 9.2..9.6, 10
   - SCRs: `WMLS-C-088..094 (M)`, `WMLS-C-095..106 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Known-good `.wmlsc` fixtures decode to stable internal representation.
-  - [ ] Unsupported/reserved types fail verification before execution.
-  - [ ] Function boundaries and instruction boundaries are validated.
+  - Evidence: [x] Decoder structural tests in `engine-wasm/engine/src/wavescript/decoder.rs` (`decode_preserves_valid_bytes`, `decode_rejects_unknown_opcode`, `decode_rejects_truncated_immediate`, `decode_rejects_call_target_not_on_instruction_boundary`, `decode_rejects_local_index_above_limit`, `decode_rejects_call_arity_above_limits`, `decode_rejects_host_call_arg_count_above_limit`); command: `cd engine-wasm/engine && cargo test decode_rejects_call_target_not_on_instruction_boundary && cargo test decode_rejects_local_index_above_limit && cargo test decode_rejects_call_arity_above_limits && cargo test decode_rejects_host_call_arg_count_above_limit`
+  - [x] Known-good `.wmlsc` fixtures decode to stable internal representation.
+  - [x] Unsupported/reserved types fail verification before execution.
+  - [x] Function boundaries and instruction boundaries are validated.
 
 ### RQ-WMLS-009: Bytecode verification gates
 
@@ -162,10 +162,10 @@ Legend:
   - `WAP-193_101` 11.1, 11.2
   - SCRs: `WMLS-C-107 (M)`, `WMLS-C-108 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] Decoder/VM verification tests in `engine-wasm/engine/src/wavescript/decoder.rs` + `engine-wasm/engine/src/wavescript/vm_tests.rs` (`decode_respects_custom_bounds`, `decode_rejects_call_target_not_on_instruction_boundary`, `decode_rejects_local_index_above_limit`, `execute_from_pc_rejects_non_boundary_entry_point`); command: `cd engine-wasm/engine && cargo test decode_respects_custom_bounds && cargo test execute_from_pc_rejects_non_boundary_entry_point`
   - [ ] Version/size/pool-count checks enforced.
-  - [ ] Jump targets verified to instruction boundaries within function bounds.
-  - [ ] Invalid local/constant/library/function indexes trap deterministically.
+  - [x] Jump targets verified to instruction boundaries within function bounds.
+  - [x] Invalid local/constant/library/function indexes trap deterministically.
 
 ### RQ-WMLS-010: Error detection and handling model
 

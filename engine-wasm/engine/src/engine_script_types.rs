@@ -12,6 +12,27 @@ pub(crate) fn format_decode_error(err: DecodeError) -> String {
         DecodeError::TruncatedImmediate { pc, opcode } => {
             format!("decode: truncated immediate for opcode 0x{opcode:02x} at pc={pc}")
         }
+        DecodeError::InvalidLocalIndex { pc, index, limit } => {
+            format!("decode: invalid local index {index} at pc={pc} (limit={limit})")
+        }
+        DecodeError::InvalidCallArity {
+            pc,
+            arg_count,
+            local_count,
+            frame_locals,
+            limit,
+        } => {
+            format!(
+                "decode: invalid call arity at pc={pc} (args={arg_count}, locals={local_count}, frame={frame_locals}, limit={limit})"
+            )
+        }
+        DecodeError::InvalidHostArgCount {
+            pc,
+            arg_count,
+            limit,
+        } => {
+            format!("decode: invalid host arg count at pc={pc} (args={arg_count}, limit={limit})")
+        }
         DecodeError::InvalidCallTarget { pc, target } => {
             format!("decode: invalid call target {target} from pc={pc}")
         }

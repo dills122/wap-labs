@@ -838,7 +838,7 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W0-06 Bytecode verification gates follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `W0-02`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/decoder.rs`
@@ -854,6 +854,8 @@ Completed `W0-01` through `W0-04` are archived in:
 - `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
 8. `Notes`:
 - Additive compliance follow-up to completed decoder skeleton (`W0-02`).
+- Completed with pre-execution structural gates in decoder and boundary entry validation in VM (`invalid local index references`, `call arity/frame bounds`, `host arg-count bounds`, and instruction-boundary entry checks).
+- Strict header/pool/function-table verification closure remains tracked in `W1-02`.
 
 ### W0-07 `newContext` + `getCurrentCard` semantics follow-up
 

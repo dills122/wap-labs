@@ -133,7 +133,7 @@ impl Vm {
         if unit.bytes().is_empty() {
             return Err(VmTrap::EmptyUnit);
         }
-        if entry_pc >= unit.bytes().len() {
+        if entry_pc >= unit.bytes().len() || !unit.is_instruction_boundary(entry_pc) {
             return Err(VmTrap::InvalidEntryPoint { entry_pc });
         }
 
