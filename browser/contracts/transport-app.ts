@@ -1,5 +1,6 @@
 import type {
   EngineDeckInputPayload,
+  FetchRequestPolicy,
   FetchDeckResponse,
   FetchErrorInfo,
   FetchTiming
