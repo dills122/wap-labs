@@ -679,7 +679,9 @@ mod tests {
         }
     }
 
-    fn request_policy_with_destination(destination_policy: FetchDestinationPolicy) -> FetchRequestPolicy {
+    fn request_policy_with_destination(
+        destination_policy: FetchDestinationPolicy,
+    ) -> FetchRequestPolicy {
         FetchRequestPolicy {
             destination_policy: Some(destination_policy),
             cache_control: None,
