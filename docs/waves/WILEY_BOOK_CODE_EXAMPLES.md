@@ -13,7 +13,24 @@ Notes:
 
 ## High-value examples
 
+## Fixture Candidate Index
+
+| Fixture ID | Source Example | Primary Ticket Mapping | Requirement Mapping |
+|---|---|---|---|
+| `WBK-FX-001` | Minimal deck/card | `R0-01` | `RQ-RMK-001` |
+| `WBK-FX-002` | `do` + `go` task wiring | `R0-02` | `RQ-RMK-002`, `RQ-RMK-003` |
+| `WBK-FX-003` | Template shadowing | `R0-02` | `RQ-RMK-002` |
+| `WBK-FX-004` | Intrinsic event shorthand vs expanded | `R0-02` | `RQ-RMK-004` |
+| `WBK-FX-005` | `setvar` side-effect | `R0-03` | `RQ-RMK-005`, `RQ-RMK-008` |
+| `WBK-FX-006` | Prologue + DTD validation | `R0-07` | `RQ-RMK-001` |
+| `WBK-FX-007` | Timer-driven navigation | `R0-02` | `RQ-RMK-004` |
+| `WBK-FX-008` | Table edge-case rendering | `B5-03` | `RQ-RMK-009` |
+| `WBK-FX-009` | WBXML tokenized source deck | `T0-20` | `RQ-TRN-014`, `RQ-TRN-018` |
+| `WBK-FX-010` | WBXML token stream table | `T0-20` | `RQ-TRN-018` |
+
 ### 1) Minimal WML deck/card structure (PDF page 57)
+
+Fixture ID: `WBK-FX-001`
 
 ```xml
 <wml>
@@ -30,6 +47,8 @@ Use for:
 
 ### 2) `do` + `go` task wiring (PDF page 68)
 
+Fixture ID: `WBK-FX-002`
+
 ```xml
 <card id="LoadURL" title="URL Demo">
   <do type="accept" label="Load URL">
@@ -44,6 +63,8 @@ Use for:
 - internal deck navigation intent handling
 
 ### 3) Template shadowing across cards (PDF page 147)
+
+Fixture ID: `WBK-FX-003`
 
 ```xml
 <wml>
@@ -64,6 +85,8 @@ Use for:
 
 ### 4) Intrinsic event shorthand vs expanded form (PDF page 153)
 
+Fixture ID: `WBK-FX-004`
+
 ```xml
 <card onenterforward="/url"><p>Hello</p></card>
 ```
@@ -83,6 +106,8 @@ Use for:
 
 ### 5) `setvar` navigation side-effect (PDF page 157)
 
+Fixture ID: `WBK-FX-005`
+
 ```xml
 <setvar name="location" value="$(X)"/>
 ```
@@ -91,6 +116,8 @@ Use for:
 - variable substitution and context mutation checks during task execution
 
 ### 6) Required prologue and DTD (PDF page 159)
+
+Fixture ID: `WBK-FX-006`
 
 ```xml
 <?xml version="1.0"?>
@@ -103,6 +130,8 @@ Use for:
 - strict-vs-lenient parsing mode documentation
 
 ### 7) Timer-driven navigation (PDF pages 176-177)
+
+Fixture ID: `WBK-FX-007`
 
 ```xml
 <wml>
@@ -119,6 +148,8 @@ Use for:
 
 ### 8) Table rendering edge case (PDF page 183)
 
+Fixture ID: `WBK-FX-008`
+
 ```xml
 <table columns="2" align="LL">
   <tr><td>One</td><td>Two</td></tr>
@@ -132,6 +163,8 @@ Use for:
 - mismatched cell-count behavior
 
 ### 9) WBXML tokenized source-deck example (PDF page 200)
+
+Fixture ID: `WBK-FX-009`
 
 ```xml
 <wml>
@@ -151,6 +184,8 @@ Use for:
 - variable-token and string-table interaction tests
 
 ### 10) WBXML token stream annotation table (PDF pages 200-201)
+
+Fixture ID: `WBK-FX-010`
 
 ```text
 02 -> WBXML Version 1.2

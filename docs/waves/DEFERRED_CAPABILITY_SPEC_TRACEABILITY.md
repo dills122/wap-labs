@@ -7,6 +7,10 @@ Status: S0-10 complete (initial extraction + docling rerun validation pass)
 
 Record deferred-but-reviewed capability specs so scope decisions remain explicit and reversible.
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (S0-10)
 
 - `spec-processing/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf`
@@ -24,6 +28,7 @@ Record deferred-but-reviewed capability specs so scope decisions remain explicit
   - `WAP-161` crypto library description sections
   - `WAP-161_101` SCR-format correction
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Current status marked `deferred` for Waves MVP.
   - [ ] Future implementation ticket must include user-consent and key-usage behavior from this spec.
 
@@ -34,6 +39,7 @@ Record deferred-but-reviewed capability specs so scope decisions remain explicit
 - Spec:
   - `WAP-161` formatting/profile sections
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] If signature features are added, test fixtures include date/time and ASN.1 encoding checks.
 
 ### RQ-DEF-003 UAProf RDF/profile processing model
@@ -44,6 +50,7 @@ Record deferred-but-reviewed capability specs so scope decisions remain explicit
 - Spec:
   - `WAP-248` schema/profile sections (RDF/CCPP model clauses)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Current status marked `deferred` for Waves MVP.
   - [ ] Any future UAProf support must declare parser/merge behavior before implementation starts.
 

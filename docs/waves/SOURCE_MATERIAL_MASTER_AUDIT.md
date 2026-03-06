@@ -160,3 +160,4 @@ Supplemental-source precedence:
 - No ticket without a `Spec` field referencing traceability entries.
 - No “M” status spec requirement left without AC checklist.
 - Optional (`O`) items must be flagged as feature-gated, deferred, or explicitly out-of-scope.
+- Corpus counts in ledger/dashboard/master audit remain aligned with canonical source-material via `scripts/check-source-corpus-drift.mjs`.

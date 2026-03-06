@@ -7,6 +7,10 @@ Status: S0-06 complete (initial extraction + docling rerun validation pass)
 
 Capture transport-adjacent requirements that affect Waves interoperability boundaries, but are not part of the core WSP/WTP/WDP rewrite loop.
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (S0-06)
 
 - `spec-processing/source-material/WAP-229-HTTP-20010329-a.pdf`
@@ -44,6 +48,7 @@ Legend:
   - `WAP-229` section 5.1.1, 5.2.2, 5.4.1
   - `WAP-229_001` section 3.2/3.3 (TLS mandatory clerical correction in SCR interpretation)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Method support matrix is explicit in transport profile docs and code contracts.
   - [ ] TLS-disabled profile does not require `CONNECT` from terminal client path.
 
@@ -55,6 +60,7 @@ Legend:
 - Spec:
   - `WAP-229` section 5.3.1
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Profile toggles explicitly define whether proxy encoding is active.
   - [ ] Compression policy includes a skip path for pre-encoded bodies/content types.
 
@@ -67,6 +73,7 @@ Legend:
   - `WAP-223` section 9.1, 9.2
   - `WAP-223_101` section 2.5 (editorial-only SIN note)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Pass-through behavior is available and treated as default-safe mode.
   - [ ] Managed mode processing of `X-Wap-Proxy-Cookie` choices is deterministic and test-listed.
 
@@ -78,6 +85,7 @@ Legend:
 - Spec:
   - `WAP-223` section 7.2, 9.2, 9.3
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Response signaling rules for `state` and `error` are documented with fixtures.
   - [ ] Storage keying model is bound to authenticated client identity.
 
@@ -89,6 +97,7 @@ Legend:
 - Spec:
   - `WAP-223` section 10.1
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] UA/cookie-capability policy is declared (implemented, delegated, or deferred).
   - [ ] If delegated to host/proxy, the fallback behavior remains spec-consistent.
 
@@ -101,6 +110,7 @@ Legend:
 - Spec:
   - `WAP-202` section 5.1, 5.5.3.1
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Error-generation guardrails are enforced in WCMP handling logic.
   - [ ] Destination-unreachable code mapping includes code `4` for missing listener.
 
@@ -112,6 +122,7 @@ Legend:
 - Spec:
   - `WAP-202` section 5.5.3.2, 5.5.3.3
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Parameter-problem emission includes correct index behavior (`0` when unknown).
   - [ ] Message-too-big path is covered in segmentation/reassembly tests.
 
@@ -123,6 +134,7 @@ Legend:
 - Spec:
   - `WAP-202` section 5.5.3.5
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Echo request/reply interop fixture exists with payload round-trip assertions.
   - [ ] Path-MTU truncation behavior is explicitly handled.
 
@@ -136,6 +148,7 @@ Legend:
 - Spec:
   - `WAP-225` section 5, 5.3, 5.8, 6, 7
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Transport profile declares which TCP optimizations are enabled.
   - [ ] SACK + mode behavior are represented in compatibility tests or explicit dependency declarations.
 
@@ -147,6 +160,7 @@ Legend:
 - Spec:
   - `WAP-159` section 5.1.4, 5.1.5, 5.1.6, 5.2.1
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] If SMPP adaptation is in scope for gateway integration, `data_sm` parameter mapping is fixed in adapter tests.
   - [ ] If SMPP adaptation is out-of-scope, docs explicitly mark it deferred and non-blocking for Waves MVP.
 

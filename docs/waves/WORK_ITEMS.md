@@ -136,6 +136,23 @@ This board was prepared before implementation kickoff. Keep ticket statuses curr
 7. `Accept`
 8. `Spec`: requirement IDs + section refs/SCR IDs from relevant `docs/waves/*TRACEABILITY*.md` docs
 
+## Spec Change Protocol
+
+When a PR changes spec interpretation, requirement mapping, or contract behavior, update all linked artifacts in the same PR:
+
+1. traceability source:
+- relevant `docs/waves/*TRACEABILITY*.md` requirement entries (`Spec`, `AC`, `Evidence`)
+2. tests/fixtures:
+- `docs/waves/SPEC_TEST_COVERAGE.md` row(s) with concrete file targets and command(s)
+3. contract mapping:
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` for impacted contract surfaces
+4. requirement index:
+- `docs/waves/REQUIREMENT_INDEX.md` owner/lane/status row(s)
+5. coverage/meta dashboards:
+- `docs/waves/SPEC_COVERAGE_DASHBOARD.md` if scope/status changes
+6. source governance:
+- `docs/waves/SOURCE_AUTHORITY_POLICY.md` and `docs/waves/OPEN_SPEC_QUESTIONS.md` when precedence or unresolved policy shifts
+
 ## Ticket Lifecycle Guardrail
 
 - Completed (`done`) tickets remain immutable historical records.
@@ -587,6 +604,7 @@ Completed `B0` through `B3` tickets are archived in:
 - Token roundtrip fixtures for core header set.
 - Unknown token/page fixtures for strict and permissive policy modes.
 - Code-page shift fixtures for multi-page header blocks.
+- WBXML/token-stream fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-009`, `WBK-FX-010`.
 7. `Accept`:
 - WSP encoding/decoding behavior is table-driven and reproducible.
 - Unknown token handling is documented, deterministic, and profile-aware.
@@ -1037,6 +1055,7 @@ Reference:
 - Ensure request metadata handoff (method/postfield/headers) stays aligned between runtime and transport.
 5. `Tests`:
 - Cross-layer fixtures for forward/back/refresh/error paths with trace assertions.
+- Seed fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-002`, `WBK-FX-003`, `WBK-FX-004`, `WBK-FX-005`, `WBK-FX-007`.
 6. `Accept`:
 - Runtime and host behavior match documented WML process ordering for covered flows.
 7. `Spec`:

@@ -176,6 +176,7 @@ Status: Active
 - feature-gated
 - deferred
 - intentionally out-of-scope
+4. Every `RQ-*` entry must include an `Evidence` line pointing to tests/fixtures/commands.
 
 ## Navigation
 
@@ -189,3 +190,9 @@ Status: Active
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 5. Supplemental context audit:
 - `docs/waves/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
+6. Source authority policy:
+- `docs/waves/SOURCE_AUTHORITY_POLICY.md`
+7. Requirement index:
+- `docs/waves/REQUIREMENT_INDEX.md`
+8. Open policy questions:
+- `docs/waves/OPEN_SPEC_QUESTIONS.md`
