@@ -1048,11 +1048,12 @@ Reference:
 
 ### R0-02 Inter-card navigation process-order conformance
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `A5-02`, `T0-04`
 3. `Files`:
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/parser/wml_parser/actions.rs`
 - `transport-rust/src/lib.rs`
 - `browser/frontend/src/session-history.ts`
 - `docs/waves/SPEC_TEST_COVERAGE.md`

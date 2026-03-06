@@ -101,6 +101,7 @@ fn parse_first_task_action_xml(nodes: &[XmlNode]) -> Option<CardTaskAction> {
             }
             "prev" => return Some(CardTaskAction::Prev),
             "refresh" => return Some(CardTaskAction::Refresh),
+            "noop" => return Some(CardTaskAction::Noop),
             _ => {
                 if let Some(action) = parse_first_task_action_xml(&element.children) {
                     return Some(action);
@@ -198,7 +199,9 @@ pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskActio
         let next_go = find_tag_from(body, "go", cursor);
         let next_prev = find_tag_from(body, "prev", cursor);
         let next_refresh = find_tag_from(body, "refresh", cursor);
-        let Some((tag, start)) = choose_next_task_tag(next_go, next_prev, next_refresh) else {
+        let next_noop = find_tag_from(body, "noop", cursor);
+        let Some((tag, start)) = choose_next_task_tag(next_go, next_prev, next_refresh, next_noop)
+        else {
             break;
         };
 
@@ -217,6 +220,7 @@ pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskActio
             }
             "prev" => return Ok(Some(CardTaskAction::Prev)),
             "refresh" => return Ok(Some(CardTaskAction::Refresh)),
+            "noop" => return Ok(Some(CardTaskAction::Noop)),
             _ => {}
         }
         cursor = open_end + 1;
@@ -229,12 +233,14 @@ fn choose_next_task_tag(
     next_go: Option<usize>,
     next_prev: Option<usize>,
     next_refresh: Option<usize>,
+    next_noop: Option<usize>,
 ) -> Option<(&'static str, usize)> {
     let mut candidate: Option<(&'static str, usize)> = None;
     for (tag, pos) in [
         ("go", next_go),
         ("prev", next_prev),
         ("refresh", next_refresh),
+        ("noop", next_noop),
     ] {
         if let Some(pos) = pos {
             match candidate {
