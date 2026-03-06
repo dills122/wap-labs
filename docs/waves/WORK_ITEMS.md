@@ -1056,6 +1056,8 @@ Reference:
 - `engine-wasm/engine/src/parser/wml_parser/actions.rs`
 - `transport-rust/src/lib.rs`
 - `browser/frontend/src/session-history.ts`
+- `browser/frontend/src/app/navigation-state.ts`
+- `browser/frontend/src/app/navigation-state.test.ts`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 4. `Build`:
 - Implement and verify section `12.5` step-order behavior for `go`, `prev`, `noop`, `refresh`, including deterministic task-failure handling.
