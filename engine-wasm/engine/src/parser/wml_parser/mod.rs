@@ -9,6 +9,35 @@ use actions::parse_card_actions;
 use nodes::parse_card_nodes_xml;
 use xml::{parse_xml_root, XmlNode};
 
+const MAX_PARSE_TREE_DEPTH: usize = 128;
+const MAX_PARSE_VISITED_NODES: usize = 50_000;
+
+#[derive(Default)]
+pub(super) struct ParseBudget {
+    visited_nodes: usize,
+}
+
+impl ParseBudget {
+    pub(super) fn enter_scope(&self, depth: usize, context: &str) -> Result<(), String> {
+        if depth > MAX_PARSE_TREE_DEPTH {
+            return Err(format!(
+                "Parse limit exceeded: nesting depth in {context} (max {MAX_PARSE_TREE_DEPTH})"
+            ));
+        }
+        Ok(())
+    }
+
+    pub(super) fn visit_node(&mut self, context: &str) -> Result<(), String> {
+        self.visited_nodes = self.visited_nodes.saturating_add(1);
+        if self.visited_nodes > MAX_PARSE_VISITED_NODES {
+            return Err(format!(
+                "Parse limit exceeded: node budget in {context} (max {MAX_PARSE_VISITED_NODES})"
+            ));
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 use actions::{
     parse_do_accept_action, parse_first_task_action, parse_onevent_action, parse_timer_value_ds,
@@ -25,6 +54,7 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     }
 
     let mut cards = Vec::new();
+    let mut budget = ParseBudget::default();
     for node in &root.children {
         let XmlNode::Element(card) = node else {
             continue;
@@ -43,8 +73,8 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             onenterbackward_action,
             ontimer_action,
             timer_value_ds,
-        ) = parse_card_actions(card)?;
-        let nodes = parse_card_nodes_xml(card)?;
+        ) = parse_card_actions(card, &mut budget)?;
+        let nodes = parse_card_nodes_xml(card, &mut budget)?;
         cards.push(Card {
             id,
             nodes,

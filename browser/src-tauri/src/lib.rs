@@ -8,6 +8,7 @@ use contract_types::{
 };
 use lowband_transport_rust::{
     fetch_deck_in_process, preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse,
+    FetchDestinationPolicy, FetchRequestPolicy,
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
@@ -210,6 +211,7 @@ fn preflight_wbxml_decoder_available() -> Result<(), String> {
 #[tauri::command]
 fn fetch_deck(mut request: FetchDeckRequest) -> FetchDeckResponse {
     ensure_request_id(&mut request);
+    apply_default_destination_policy(&mut request);
     fetch_deck_in_process(request)
 }
 
@@ -227,6 +229,37 @@ fn ensure_request_id(request: &mut FetchDeckRequest) {
         .unwrap_or(false);
     if !keep_existing {
         request.request_id = Some(next_request_id());
+    }
+}
+
+fn default_fetch_destination_policy() -> FetchDestinationPolicy {
+    let configured = std::env::var(waves_config::FETCH_DESTINATION_POLICY_ENV)
+        .unwrap_or_else(|_| waves_config::FETCH_DESTINATION_POLICY_DEFAULT.to_string());
+    match configured.trim().to_ascii_lowercase().as_str() {
+        waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE => {
+            FetchDestinationPolicy::AllowPrivate
+        }
+        _ => FetchDestinationPolicy::PublicOnly,
+    }
+}
+
+fn apply_default_destination_policy(request: &mut FetchDeckRequest) {
+    let default_policy = default_fetch_destination_policy();
+    match request.request_policy.as_mut() {
+        Some(policy) => {
+            if policy.destination_policy.is_none() {
+                policy.destination_policy = Some(default_policy);
+            }
+        }
+        None => {
+            request.request_policy = Some(FetchRequestPolicy {
+                destination_policy: Some(default_policy),
+                cache_control: None,
+                referer_url: None,
+                post_context: None,
+                ua_capability_profile: None,
+            });
+        }
     }
 }
 
@@ -505,15 +538,17 @@ mod tests {
         command_engine_clear_external_navigation_intent, command_engine_handle_key,
         command_engine_load_deck, command_engine_load_deck_context, command_engine_navigate_back,
         command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
-        command_engine_snapshot, contract_types, ensure_request_id, fetch_deck, health,
-        AdvanceTimeRequest, AppState, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
-        NavigateToCardRequest, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
-        SetViewportColsRequest,
+        command_engine_snapshot, contract_types, default_fetch_destination_policy,
+        ensure_request_id, fetch_deck, health, AdvanceTimeRequest, AppState, HandleKeyRequest,
+        LoadDeckContextRequest, LoadDeckRequest, NavigateToCardRequest,
+        ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetViewportColsRequest,
     };
     use contract_types::{DrawCmd, EngineKey};
     use lowband_transport_rust::{
-        EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchTiming,
+        EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy,
+        FetchRequestPolicy, FetchTiming,
     };
+    use std::sync::{Mutex, OnceLock};
     use wavenav_engine::WmlEngine;
 
     const BASIC_NAV_WML: &str = r##"
@@ -593,6 +628,35 @@ mod tests {
                 raw_bytes_base64: None,
             }),
         }
+    }
+
+    fn env_lock() -> &'static Mutex<()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(()))
+    }
+
+    fn with_env_var_locked<T>(name: &str, value: &str, f: impl FnOnce() -> T) -> T {
+        let _guard = env_lock().lock().expect("env lock should succeed");
+        let previous = std::env::var(name).ok();
+        std::env::set_var(name, value);
+        let out = f();
+        if let Some(old) = previous {
+            std::env::set_var(name, old);
+        } else {
+            std::env::remove_var(name);
+        }
+        out
+    }
+
+    fn with_env_removed_locked<T>(name: &str, f: impl FnOnce() -> T) -> T {
+        let _guard = env_lock().lock().expect("env lock should succeed");
+        let previous = std::env::var(name).ok();
+        std::env::remove_var(name);
+        let out = f();
+        if let Some(old) = previous {
+            std::env::set_var(name, old);
+        }
+        out
     }
 
     fn load_transport_response_into_engine(
@@ -1110,6 +1174,25 @@ mod tests {
     }
 
     #[test]
+    fn default_fetch_destination_policy_defaults_to_public_only() {
+        let policy =
+            with_env_removed_locked(super::waves_config::FETCH_DESTINATION_POLICY_ENV, || {
+                default_fetch_destination_policy()
+            });
+        assert_eq!(policy, FetchDestinationPolicy::PublicOnly);
+    }
+
+    #[test]
+    fn default_fetch_destination_policy_allows_private_when_env_configured() {
+        let policy = with_env_var_locked(
+            super::waves_config::FETCH_DESTINATION_POLICY_ENV,
+            super::waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+            default_fetch_destination_policy,
+        );
+        assert_eq!(policy, FetchDestinationPolicy::AllowPrivate);
+    }
+
+    #[test]
     fn next_request_id_sequence_has_expected_prefix() {
         let first = super::next_request_id();
         let second = super::next_request_id();
@@ -1164,6 +1247,54 @@ mod tests {
         assert!(
             generated.starts_with(super::waves_config::FETCH_REQUEST_ID_PREFIX),
             "expected generated request id in transport error details"
+        );
+    }
+
+    #[test]
+    fn fetch_deck_command_applies_default_destination_policy_when_missing() {
+        let response =
+            with_env_removed_locked(super::waves_config::FETCH_DESTINATION_POLICY_ENV, || {
+                fetch_deck(FetchDeckRequest {
+                    url: "http://127.0.0.1:9/deck.wml".to_string(),
+                    method: None,
+                    headers: None,
+                    timeout_ms: Some(100),
+                    retries: Some(0),
+                    request_id: Some("req-default-policy".to_string()),
+                    request_policy: None,
+                })
+            });
+        assert!(!response.ok);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("INVALID_REQUEST")
+        );
+    }
+
+    #[test]
+    fn fetch_deck_command_preserves_explicit_destination_policy_override() {
+        let response =
+            with_env_removed_locked(super::waves_config::FETCH_DESTINATION_POLICY_ENV, || {
+                fetch_deck(FetchDeckRequest {
+                    url: "http://127.0.0.1:9/deck.wml".to_string(),
+                    method: None,
+                    headers: None,
+                    timeout_ms: Some(100),
+                    retries: Some(0),
+                    request_id: Some("req-explicit-policy".to_string()),
+                    request_policy: Some(FetchRequestPolicy {
+                        destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+                        cache_control: None,
+                        referer_url: None,
+                        post_context: None,
+                        ua_capability_profile: None,
+                    }),
+                })
+            });
+        assert!(!response.ok);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("TRANSPORT_UNAVAILABLE")
         );
     }
 

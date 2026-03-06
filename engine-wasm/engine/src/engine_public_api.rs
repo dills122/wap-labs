@@ -40,6 +40,24 @@ impl WmlEngine {
         content_type: &str,
         raw_bytes_base64: Option<String>,
     ) -> Result<(), String> {
+        if wml_xml.len() > MAX_DECK_WML_XML_BYTES {
+            return Err(format!(
+                "Deck payload exceeds {}-byte limit (got {} bytes)",
+                MAX_DECK_WML_XML_BYTES,
+                wml_xml.len()
+            ));
+        }
+        if raw_bytes_base64
+            .as_ref()
+            .is_some_and(|payload| payload.len() > MAX_DECK_RAW_BYTES_BASE64_BYTES)
+        {
+            return Err(format!(
+                "Raw deck payload exceeds {}-byte limit (got {} bytes)",
+                MAX_DECK_RAW_BYTES_BASE64_BYTES,
+                raw_bytes_base64.as_ref().map_or(0, |payload| payload.len())
+            ));
+        }
+
         let deck = parse_wml(wml_xml)?;
         self.deck = Some(deck);
         self.active_card_idx = 0;
