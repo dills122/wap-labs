@@ -56,6 +56,10 @@ UI component baseline:
 - Component registration entrypoint: `src/components/index.ts`.
 - First component: `wv-status-panel` (`src/components/status-panel.ts`), used for runtime status/tone rendering.
 - Shared primitive: `wv-surface-panel` (`src/components/primitives/surface-panel.ts`) for reusable boxed sections.
+- WML viewport primitive mapping: `src/components/primitives/wml-render-primitives.ts` groups `RenderList.draw`
+  commands by line and renders typed text/link segments with deterministic focus styling.
+- Theme direction is now Win95-era and based on `win95.css` design language (beveled controls, title bars,
+  sunken panels), adapted in `src/styles.css` for Waves shell semantics.
 
 App logic modules:
 

@@ -10,7 +10,7 @@
       body {
         margin: 0;
         min-height: 100%;
-        background: #eef3fb;
+        background: #008080;
       }
 
       body[data-boot-phase='booting'] #app {
@@ -21,24 +21,31 @@
 
       .boot-splash {
         width: min(540px, calc(100vw - 40px));
-        border-radius: 14px;
-        border: 1px solid #cad5e6;
-        background: #ffffff;
-        box-shadow: 0 16px 35px rgba(15, 26, 42, 0.14);
-        padding: 18px 20px;
-        color: #1f2937;
-        font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+        border: 2px solid #808080;
+        border-right-color: #000000;
+        border-bottom-color: #000000;
+        background: #c0c0c0;
+        padding: 6px;
+        color: #222222;
+        font-family: 'MS Sans Serif', Tahoma, Verdana, sans-serif;
       }
 
       .boot-splash-title {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 700;
+        color: #ffffff;
+        background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+        padding: 4px 6px;
       }
 
       .boot-splash-status {
-        margin-top: 8px;
-        font-size: 13px;
-        color: #5f6f86;
+        margin-top: 6px;
+        font-size: 12px;
+        border: 2px solid #808080;
+        border-top-color: #000000;
+        border-left-color: #000000;
+        background: #ffffff;
+        padding: 8px;
       }
     </style>
     <title>Waves Browser</title>

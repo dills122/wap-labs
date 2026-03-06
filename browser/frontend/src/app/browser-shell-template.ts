@@ -68,23 +68,23 @@ const browserShellTemplate = (defaultUrl: string) => `
           <summary>${WAVES_COPY.shell.developerTools}</summary>
           <div class="panel-body">
             <div class="actions">
-              <button id="btn-health">${WAVES_COPY.shell.health}</button>
-              <button id="btn-render">${WAVES_COPY.shell.render}</button>
-              <button id="btn-snapshot">${WAVES_COPY.shell.snapshot}</button>
-              <button id="btn-clear-intent">${WAVES_COPY.shell.clearExternalIntent}</button>
-              <button id="btn-export-timeline">${WAVES_COPY.shell.exportTimeline}</button>
-              <button id="btn-clear-timeline">${WAVES_COPY.shell.clearTimeline}</button>
+              <button id="btn-health" class="wv95-btn">${WAVES_COPY.shell.health}</button>
+              <button id="btn-render" class="wv95-btn">${WAVES_COPY.shell.render}</button>
+              <button id="btn-snapshot" class="wv95-btn">${WAVES_COPY.shell.snapshot}</button>
+              <button id="btn-clear-intent" class="wv95-btn">${WAVES_COPY.shell.clearExternalIntent}</button>
+              <button id="btn-export-timeline" class="wv95-btn">${WAVES_COPY.shell.exportTimeline}</button>
+              <button id="btn-clear-timeline" class="wv95-btn">${WAVES_COPY.shell.clearTimeline}</button>
             </div>
-            <details id="debug-raw-mode" style="margin-top: 10px;">
+            <details id="debug-raw-mode" class="debug-raw-mode">
               <summary>${WAVES_COPY.shell.rawWmlPaste}</summary>
-              <div style="margin-top: 8px;">
-                <label>
+              <div class="debug-raw-mode-content">
+                <label class="compact-field">
                   ${WAVES_COPY.shell.baseUrl}
                   <input id="base-url" type="text" value="${WAVES_CONFIG.defaultDebugBaseUrl}" />
                 </label>
                 <textarea id="wml-input"></textarea>
                 <div class="actions">
-                  <button id="btn-load-context">${WAVES_COPY.shell.loadRawWml}</button>
+                  <button id="btn-load-context" class="wv95-btn">${WAVES_COPY.shell.loadRawWml}</button>
                 </div>
               </div>
             </details>
