@@ -635,10 +635,11 @@ fn apply_ua_capability_headers(
 #[cfg(test)]
 mod tests {
     use super::{
-        apply_request_policy, fetch_deck_in_process, preflight_wbxml_decoder,
-        resolve_fetch_destination_policy, validate_fetch_destination, FetchCacheControlPolicy,
-        FetchDeckRequest, FetchDestinationPolicy, FetchPostContext, FetchRequestPolicy,
-        FetchUaCapabilityProfile, MAX_RESPONSE_BODY_BYTES, MAX_URI_OCTETS,
+        apply_request_policy, classify_destination_host, classify_ip, fetch_deck_in_process,
+        preflight_wbxml_decoder, resolve_fetch_destination_policy, validate_fetch_destination,
+        DestinationHostClass, FetchCacheControlPolicy, FetchDeckRequest, FetchDestinationPolicy,
+        FetchPostContext, FetchRequestPolicy, FetchUaCapabilityProfile, MAX_RESPONSE_BODY_BYTES,
+        MAX_URI_OCTETS,
     };
     use crate::gateway::build_gateway_request;
     use crate::request_meta::{
@@ -646,7 +647,7 @@ mod tests {
     };
     use crate::responses::{
         invalid_request_response, is_supported_wml_content_type, map_success_payload_response,
-        map_terminal_send_error, normalize_content_type,
+        map_terminal_send_error, normalize_content_type, payload_too_large_response,
     };
     use crate::wbxml::{
         decode_wmlc, decode_wmlc_with_libwbxml, decode_wmlc_with_tool, libwbxml_available,
@@ -657,6 +658,7 @@ mod tests {
     use serde::Deserialize;
     use std::collections::HashMap;
     use std::fs;
+    use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
     use std::path::PathBuf;
     use std::sync::{Mutex, OnceLock};
     use toml::Value;
@@ -2087,6 +2089,71 @@ mod tests {
     }
 
     #[test]
+    fn transport_destination_policy_rejects_unsupported_scheme() {
+        let parsed = Url::parse("ftp://example.test/deck.wml").expect("url should parse");
+        let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
+            .expect_err("unsupported scheme should be rejected");
+        assert!(err.contains("Unsupported URL scheme"));
+    }
+
+    #[test]
+    fn transport_destination_policy_rejects_localhost_domains_without_override() {
+        let parsed = Url::parse("http://api.localhost/deck.wml").expect("url should parse");
+        let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
+            .expect_err("localhost domain should be blocked");
+        assert!(err.contains("loopback"));
+    }
+
+    #[test]
+    fn transport_classify_destination_host_returns_none_when_host_missing() {
+        let parsed = Url::parse("mailto:ops@example.test").expect("url should parse");
+        assert_eq!(classify_destination_host(&parsed), None);
+    }
+
+    #[test]
+    fn transport_classify_destination_host_classifies_domain_and_ipv6() {
+        let parsed_public = Url::parse("https://example.test/deck.wml").expect("url should parse");
+        assert_eq!(
+            classify_destination_host(&parsed_public),
+            Some(DestinationHostClass::Public)
+        );
+
+        let parsed_loopback = Url::parse("https://[::1]/deck.wml").expect("ipv6 url should parse");
+        assert_eq!(
+            classify_destination_host(&parsed_loopback),
+            Some(DestinationHostClass::Loopback)
+        );
+    }
+
+    #[test]
+    fn transport_classify_ip_covers_blocked_destination_classes() {
+        assert_eq!(
+            classify_ip(IpAddr::V4(Ipv4Addr::UNSPECIFIED)),
+            DestinationHostClass::Unspecified
+        );
+        assert_eq!(
+            classify_ip(IpAddr::V4(Ipv4Addr::new(169, 254, 10, 10))),
+            DestinationHostClass::LinkLocal
+        );
+        assert_eq!(
+            classify_ip(IpAddr::V4(Ipv4Addr::new(224, 0, 0, 1))),
+            DestinationHostClass::Multicast
+        );
+        assert_eq!(
+            classify_ip(IpAddr::V6(Ipv6Addr::UNSPECIFIED)),
+            DestinationHostClass::Unspecified
+        );
+        assert_eq!(
+            classify_ip(IpAddr::V6(Ipv6Addr::new(0xfe80, 0, 0, 0, 0, 0, 0, 1))),
+            DestinationHostClass::LinkLocal
+        );
+        assert_eq!(
+            classify_ip(IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 1))),
+            DestinationHostClass::Multicast
+        );
+    }
+
+    #[test]
     fn transport_fetch_blocks_loopback_when_policy_not_overridden() {
         let response = fetch_deck_in_process(FetchDeckRequest {
             request_id: Some("req-loopback-blocked".to_string()),
@@ -2125,6 +2192,56 @@ mod tests {
             detail_string(&response, "requestId").as_deref(),
             Some("req-helper")
         );
+    }
+
+    #[test]
+    fn transport_payload_too_large_response_with_known_actual_bytes() {
+        let response = payload_too_large_response(
+            200,
+            "http://example.test/deck.wml".to_string(),
+            "text/vnd.wap.wml".to_string(),
+            512 * 1024,
+            Some(700_000),
+            1,
+            5.0,
+            Some("req-too-large"),
+        );
+        assert!(!response.ok);
+        assert_eq!(
+            response.error.as_ref().map(|error| error.code.as_str()),
+            Some("PROTOCOL_ERROR")
+        );
+        let message = response
+            .error
+            .as_ref()
+            .map(|error| error.message.as_str())
+            .unwrap_or_default();
+        assert!(message.contains("got 700000 bytes"));
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-too-large")
+        );
+    }
+
+    #[test]
+    fn transport_payload_too_large_response_without_actual_bytes() {
+        let response = payload_too_large_response(
+            200,
+            "http://example.test/deck.wml".to_string(),
+            "text/vnd.wap.wml".to_string(),
+            512 * 1024,
+            None,
+            2,
+            9.0,
+            None,
+        );
+        assert!(!response.ok);
+        let message = response
+            .error
+            .as_ref()
+            .map(|error| error.message.as_str())
+            .unwrap_or_default();
+        assert_eq!(message, "Payload exceeds 524288-byte limit");
     }
 
     #[test]
