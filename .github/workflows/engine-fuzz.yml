@@ -1,0 +1,52 @@
+name: Engine Fuzzing
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: "Number of fuzz iterations"
+        required: false
+        default: "20000"
+      max_len:
+        description: "Maximum input length"
+        required: false
+        default: "4096"
+      timeout:
+        description: "Per-test execution timeout (libFuzzer seconds)"
+        required: false
+        default: "20"
+
+permissions:
+  contents: read
+
+jobs:
+  engine_wasm_fuzz:
+    name: Engine WASM fuzz target
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Rust (nightly)
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Install cargo-fuzz
+        uses: taiki-e/install-action@cargo-fuzz
+
+      - name: Install Ubuntu build dependencies
+        run: sudo apt-get update && sudo apt-get install -y clang llvm
+
+      - name: Run engine WML fuzz target
+        working-directory: engine-wasm/engine
+        run: cargo +nightly fuzz run engine_wml_fuzzer -- -runs=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runs || '20000' }} -max_len=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_len || '4096' }} -timeout=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.timeout || '20' }}
+
+      - name: Upload fuzz artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-wml-fuzz-artifacts
+          path: engine-wasm/engine/fuzz/artifacts/engine_wml_fuzzer
+          if-no-files-found: ignore
+          retention-days: 14
