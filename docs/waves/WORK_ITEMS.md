@@ -857,7 +857,7 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W0-07 `newContext` + `getCurrentCard` semantics follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `W0-04`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
@@ -874,6 +874,7 @@ Completed `W0-01` through `W0-04` are archived in:
 - `RQ-WMLS-019`, `RQ-WMLS-020`
 8. `Notes`:
 - Additive compliance follow-up to completed var/nav subset (`W0-04`).
+- Completed in `R0-03` closure pass with deterministic runtime + stdlib tests and host-visible fixture (`wmlbrowser-context-fidelity.wml`).
 
 ### W0-08 External function access-control conformance follow-up
 
@@ -1078,7 +1079,7 @@ Reference:
 
 ### R0-03 History/context fidelity completion
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `A5-01`, `B2-02`
 3. `Files`:
 - `engine-wasm/engine/src/runtime/*`
@@ -1094,6 +1095,9 @@ Reference:
 - History and context behavior is deterministic and conforms to section `9.2` + `10.2`.
 7. `Spec`:
 - `WML-07`, `WML-10`, `WML-11`, `WML-13`
+8. `Notes`:
+- Context reset semantics closed via `WMLBrowser.newContext` runtime effect handling and `WMLBrowser.getCurrentCard` API coverage.
+- Acceptance evidence includes deterministic engine tests and shared local example coverage (`engine-wasm/examples/source/wmlbrowser-context-fidelity.wml`).
 
 ### R0-04 Parser semantic completeness for structure/task/form elements
 

@@ -294,9 +294,9 @@ Legend:
   - `WAP-194` 11.5
   - SCRs: `WMLSSL-089 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Post-`newContext`, previous vars/history are cleared per spec.
-  - [ ] Interaction with pending go/prev follows section 11.5 semantics.
+  - Evidence: [x] `engine-wasm/engine/src/engine_tests.rs` (`wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect`), `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs` (`new_context_requests_context_reset_when_context_is_valid`, `new_context_returns_invalid_without_active_card_context`), and host/browser fixture `engine-wasm/examples/source/wmlbrowser-context-fidelity.wml`; command: `cd engine-wasm/engine && cargo test wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect && cargo test new_context_requests_context_reset_when_context_is_valid && cargo test new_context_returns_invalid_without_active_card_context`
+  - [x] Post-`newContext`, previous vars/history are cleared per spec.
+  - [x] Interaction with pending go/prev follows section 11.5 semantics.
 
 ### RQ-WMLS-020: `getCurrentCard` semantics
 
@@ -307,9 +307,9 @@ Legend:
   - `WAP-194` 11.6
   - SCRs: `WMLSSL-090 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] `engine-wasm/engine/src/engine_tests.rs` (`wmlbrowser_get_current_card_returns_fragment_when_context_exists`, `wmlbrowser_get_current_card_returns_invalid_without_context`) plus `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs` (`get_current_card_returns_fragment_for_current_context`, `get_current_card_returns_invalid_without_context`) and fixture `engine-wasm/examples/source/wmlbrowser-context-fidelity.wml`; command: `cd engine-wasm/engine && cargo test wmlbrowser_get_current_card_returns_fragment_when_context_exists && cargo test wmlbrowser_get_current_card_returns_invalid_without_context && cargo test get_current_card_returns_fragment_for_current_context && cargo test get_current_card_returns_invalid_without_context`
   - [ ] Relative/absolute return mode covered by fixtures.
-  - [ ] No-current-card case returns `invalid`.
+  - [x] No-current-card case returns `invalid`.
 
 ### RQ-WMLS-021: `refresh` semantics and immediate-refresh optionality
 

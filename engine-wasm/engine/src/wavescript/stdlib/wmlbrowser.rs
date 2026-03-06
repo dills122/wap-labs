@@ -19,18 +19,32 @@ pub const WMLBROWSER_CONFIRM: u8 = 0x06;
 pub const WMLBROWSER_PROMPT: u8 = 0x07;
 pub const WMLBROWSER_SET_TIMER: u8 = 0x08;
 pub const WMLBROWSER_CLEAR_TIMER: u8 = 0x09;
+pub const WMLBROWSER_NEW_CONTEXT: u8 = 0x0A;
+pub const WMLBROWSER_GET_CURRENT_CARD: u8 = 0x0B;
+
+#[derive(Clone, Debug, Default)]
+pub struct WmlBrowserContext {
+    pub base_url: Option<String>,
+    pub active_card_id: Option<String>,
+}
 
 pub struct WmlBrowserHost<'a> {
     vars: &'a mut HashMap<String, String>,
     effects: &'a mut ScriptRuntimeEffects,
+    context: WmlBrowserContext,
 }
 
 impl<'a> WmlBrowserHost<'a> {
     pub fn new(
         vars: &'a mut HashMap<String, String>,
         effects: &'a mut ScriptRuntimeEffects,
+        context: WmlBrowserContext,
     ) -> Self {
-        Self { vars, effects }
+        Self {
+            vars,
+            effects,
+            context,
+        }
     }
 
     fn get_var(&self, args: &[ScriptValue]) -> ScriptValue {
@@ -153,6 +167,23 @@ impl<'a> WmlBrowserHost<'a> {
         self.effects.request_timer_cancel(token);
         ScriptValue::Bool(true)
     }
+
+    fn new_context(&mut self) -> ScriptValue {
+        if self.context.active_card_id.is_none() {
+            return ScriptValue::Invalid;
+        }
+        self.effects.request_new_context();
+        ScriptValue::Bool(true)
+    }
+
+    fn get_current_card(&self) -> ScriptValue {
+        let Some(active_card_id) = self.context.active_card_id.as_ref() else {
+            return ScriptValue::Invalid;
+        };
+
+        // Current-card URLs in the same document use fragment-only form as smallest relative URL.
+        ScriptValue::String(format!("#{active_card_id}"))
+    }
 }
 
 impl VmHost for WmlBrowserHost<'_> {
@@ -167,6 +198,8 @@ impl VmHost for WmlBrowserHost<'_> {
             WMLBROWSER_PROMPT => self.prompt(args),
             WMLBROWSER_SET_TIMER => self.set_timer(args),
             WMLBROWSER_CLEAR_TIMER => self.clear_timer(args),
+            WMLBROWSER_NEW_CONTEXT => self.new_context(),
+            WMLBROWSER_GET_CURRENT_CARD => self.get_current_card(),
             _ => {
                 return Err(VmTrap::HostCallError {
                     function_id,

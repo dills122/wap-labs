@@ -37,6 +37,7 @@ pub enum ScriptTimerRequest {
 pub struct ScriptRuntimeEffects {
     navigation_intent: ScriptNavigationIntent,
     requires_refresh: bool,
+    context_reset_requested: bool,
     dialog_requests: Vec<ScriptDialogRequest>,
     timer_requests: Vec<ScriptTimerRequest>,
 }
@@ -52,6 +53,10 @@ impl ScriptRuntimeEffects {
 
     pub fn dialog_requests(&self) -> &[ScriptDialogRequest] {
         &self.dialog_requests
+    }
+
+    pub fn context_reset_requested(&self) -> bool {
+        self.context_reset_requested
     }
 
     pub fn timer_requests(&self) -> &[ScriptTimerRequest] {
@@ -72,6 +77,10 @@ impl ScriptRuntimeEffects {
 
     pub fn mark_refresh_required(&mut self) {
         self.requires_refresh = true;
+    }
+
+    pub fn request_new_context(&mut self) {
+        self.context_reset_requested = true;
     }
 
     pub fn request_alert(&mut self, message: String) {
@@ -146,6 +155,15 @@ mod tests {
 
         effects.mark_refresh_required();
         assert!(effects.requires_refresh());
+    }
+
+    #[test]
+    fn context_reset_can_be_requested() {
+        let mut effects = ScriptRuntimeEffects::default();
+        assert!(!effects.context_reset_requested());
+
+        effects.request_new_context();
+        assert!(effects.context_reset_requested());
     }
 
     #[test]

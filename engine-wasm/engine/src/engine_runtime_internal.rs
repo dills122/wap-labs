@@ -81,7 +81,15 @@ impl WmlEngine {
         };
 
         self.pending_script_effects = ScriptRuntimeEffects::default();
-        let mut host = WmlBrowserHost::new(&mut self.vars, &mut self.pending_script_effects);
+        let active_card_id = self.active_card_id().ok();
+        let mut host = WmlBrowserHost::new(
+            &mut self.vars,
+            &mut self.pending_script_effects,
+            crate::wavescript::stdlib::wmlbrowser::WmlBrowserContext {
+                base_url: Some(self.base_url.clone()),
+                active_card_id,
+            },
+        );
         let vm = Vm::default();
         match vm.execute_from_pc_with_locals_and_host(
             &decoded_unit,

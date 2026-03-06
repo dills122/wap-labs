@@ -422,6 +422,26 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh policy demo (no navigation).</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wmlbrowserContextFidelity",
+    "label": "WMLBrowser Context Fidelity",
+    "description": "Exercises getCurrentCard and newContext semantics, including context reset side effects and prev suppression.",
+    "goal": "Validate that current-card lookup and newContext resets align with WMLScript context semantics in host-visible flows.",
+    "workItems": [
+      "R0-03",
+      "W0-07"
+    ],
+    "specItems": [
+      "RQ-WMLS-019",
+      "RQ-WMLS-020"
+    ],
+    "testingAc": [
+      "On home card, press Enter on \"Read current card into nextCard\" and confirm runtime-state nextCardVar becomes #home.",
+      "Follow \"Go to next card\" then activate \"Run newContext + prev\"; activeCardId should remain next and nextCardVar should clear.",
+      "Press browser Back after newContext and verify history is cleared for prior card context (no return to home via engine history)."
+    ],
+    "wml": "<wml>\n  <card id=\"home\">\n    <p>WMLBrowser context semantics demo.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n    <a href=\"#next\">Go to next card</a>\n  </card>\n  <card id=\"next\">\n    <p>newContext should clear vars/history and ignore prev in same script.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#newContextPrev\">Run newContext + prev</a>\n    <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wmlbrowserVarNav",
     "label": "WMLBrowser Var + Nav",
     "description": "Exercises script-host bindings for setVar/getVar and deferred go/prev navigation effects.",
