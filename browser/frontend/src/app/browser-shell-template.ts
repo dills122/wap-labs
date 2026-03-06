@@ -96,7 +96,6 @@ const browserShellTemplate = () => `
               <div class="debug-raw-mode-content">
                 <label class="compact-field">
                   ${WAVES_COPY.shell.baseUrl}
-                  <input id="base-url" class="form-95" type="text" value="${WAVES_CONFIG.defaultDebugBaseUrl}" />
                   <input id="base-url" class="form-95" type="text" value="" />
                 </label>
                 <textarea id="wml-input" class="form-95"></textarea>

@@ -42,7 +42,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-14 Browser host boundary hardening (CSP + DOM injection sinks)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P0`
 3. `Files`:
 - `browser/src-tauri/tauri.conf.json`
@@ -63,6 +63,8 @@ Completed maintenance tickets are archived in:
 - Existing browser shell behavior remains intact in local and network modes.
 7. `Notes`:
 - Security audit follow-up for high-severity host boundary risk.
+- Landed explicit production and development CSP policies in Tauri config (`csp` + `devCsp`) instead of permissive/null posture.
+- Boot URL assignment path is contained to post-mount input property assignment (no runtime URL interpolation into shell HTML template strings).
 
 ### M1-15 Engine parser recursion guardrails (untrusted deck DoS hardening)
 
