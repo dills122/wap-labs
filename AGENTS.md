@@ -69,6 +69,12 @@ Prefer work that improves:
 - If scope creep is needed, document it clearly as follow-up work.
 - Keep changes localized; avoid “while here” rewrites.
 
+## Documentation review scope
+
+- Default documentation audits/reviews to active docs only.
+- Ignore `archive/` folders and date-stamped historical snapshots unless the user explicitly asks to include archived material.
+- When archive content is used by explicit request, treat it as historical context, not normative requirements.
+
 ## Feature branch + PR metadata
 
 - Cut a feature branch when work is not a trivial one-file typo/docs fix, or when behavior/tests/contracts/docs change in any runtime layer.
