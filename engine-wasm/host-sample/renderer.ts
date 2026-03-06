@@ -16,6 +16,7 @@ type ScriptErrorClass = 'none' | 'non-fatal' | 'fatal';
 type ScriptErrorCategory = 'none' | 'computational' | 'integrity' | 'resource' | 'host-binding';
 
 interface EngineWithOptionalScriptErrorDiagnostics {
+  externalNavigationRequestPolicy?: () => WmlGoRequestPolicy | null | undefined;
   lastScriptExecutionErrorClass?: () => ScriptErrorClass | undefined;
   lastScriptExecutionErrorCategory?: () => ScriptErrorCategory | undefined;
 }
@@ -146,7 +147,8 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         contentType: engine.contentType(),
         nextCardVar: engine.getVar('nextCard'),
         externalNavigationIntent: engine.externalNavigationIntent(),
-        externalNavigationRequestPolicy: engine.externalNavigationRequestPolicy() ?? undefined,
+        externalNavigationRequestPolicy:
+          diagnostics.externalNavigationRequestPolicy?.() ?? undefined,
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),
         lastScriptExecutionErrorClass: diagnostics.lastScriptExecutionErrorClass?.() ?? undefined,
@@ -299,12 +301,64 @@ function registerBuiltInScriptUnits(engine: WmlEngine): void {
       0x20,
       0x01,
       0x01, // getVar(name)
+      0x00, // halt
+      0x03,
+      0x08,
+      0x6e,
+      0x65,
+      0x78,
+      0x74,
+      0x43,
+      0x61,
+      0x72,
+      0x64, // "nextCard"
+      0x20,
+      0x0b,
+      0x00, // getCurrentCard()
+      0x20,
+      0x02,
+      0x02, // setVar(name, value)
+      0x00, // halt
+      0x03,
+      0x08,
+      0x6e,
+      0x65,
+      0x78,
+      0x74,
+      0x43,
+      0x61,
+      0x72,
+      0x64, // "nextCard"
+      0x03,
+      0x0b,
+      0x62,
+      0x65,
+      0x66,
+      0x6f,
+      0x72,
+      0x65,
+      0x52,
+      0x65,
+      0x73,
+      0x65,
+      0x74, // "beforeReset"
+      0x20,
+      0x02,
+      0x02, // setVar(name, value)
+      0x20,
+      0x0a,
+      0x00, // newContext()
+      0x20,
+      0x04,
+      0x00, // prev()
       0x00 // halt
     ])
   );
   engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'main', 0);
   engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'back', 31);
   engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'readNext', 35);
+  engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'readCurrentCard', 49);
+  engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'newContextPrev', 66);
   engine.registerScriptUnit(
     'wavescript-fixtures.wmlsc',
     new Uint8Array([

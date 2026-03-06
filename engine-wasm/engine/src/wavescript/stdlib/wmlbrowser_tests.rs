@@ -1,6 +1,7 @@
 use super::{
-    coerce_to_string, WmlBrowserHost, WMLBROWSER_ALERT, WMLBROWSER_CLEAR_TIMER, WMLBROWSER_CONFIRM,
-    WMLBROWSER_GET_VAR, WMLBROWSER_GO, WMLBROWSER_PREV, WMLBROWSER_PROMPT, WMLBROWSER_SET_TIMER,
+    coerce_to_string, WmlBrowserContext, WmlBrowserHost, WMLBROWSER_ALERT, WMLBROWSER_CLEAR_TIMER,
+    WMLBROWSER_CONFIRM, WMLBROWSER_GET_CURRENT_CARD, WMLBROWSER_GET_VAR, WMLBROWSER_GO,
+    WMLBROWSER_NEW_CONTEXT, WMLBROWSER_PREV, WMLBROWSER_PROMPT, WMLBROWSER_SET_TIMER,
     WMLBROWSER_SET_VAR,
 };
 use crate::runtime::events::{
@@ -14,7 +15,7 @@ use std::collections::HashMap;
 fn set_and_get_var_roundtrip() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
-    let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
 
     let set = host
         .call(
@@ -41,7 +42,7 @@ fn invalid_var_name_does_not_mutate_store() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
     {
-        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
         let result = host
             .call(
                 WMLBROWSER_SET_VAR,
@@ -70,7 +71,7 @@ fn go_and_prev_update_deferred_navigation_intent() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
     {
-        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
         host.call(WMLBROWSER_GO, &[ScriptValue::String("#next".to_string())])
             .expect("go should not trap");
     }
@@ -80,14 +81,14 @@ fn go_and_prev_update_deferred_navigation_intent() {
     );
 
     {
-        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
         host.call(WMLBROWSER_PREV, &[])
             .expect("prev should not trap");
     }
     assert_eq!(effects.navigation_intent(), &ScriptNavigationIntent::Prev);
 
     {
-        let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+        let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
         host.call(WMLBROWSER_GO, &[ScriptValue::String(String::new())])
             .expect("go empty should not trap");
     }
@@ -98,7 +99,7 @@ fn go_and_prev_update_deferred_navigation_intent() {
 fn set_var_marks_refresh_required() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
-    let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
 
     host.call(
         WMLBROWSER_SET_VAR,
@@ -125,7 +126,7 @@ fn string_coercion_is_deterministic_for_scalars() {
 fn oversized_setvar_value_is_rejected_without_mutation() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
-    let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
     let oversized = "x".repeat(super::MAX_VAR_VALUE_BYTES + 1);
 
     let result = host
@@ -154,7 +155,7 @@ fn oversized_setvar_value_is_rejected_without_mutation() {
 fn dialog_calls_record_requests_with_deterministic_return_values() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
-    let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
 
     let alert = host
         .call(
@@ -202,7 +203,7 @@ fn dialog_calls_record_requests_with_deterministic_return_values() {
 fn timer_calls_record_schedule_and_cancel_requests() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
-    let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
 
     let scheduled = host
         .call(
@@ -240,7 +241,7 @@ fn timer_calls_record_schedule_and_cancel_requests() {
 fn timer_schedule_rejects_negative_or_invalid_delay() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();
-    let mut host = WmlBrowserHost::new(&mut vars, &mut effects);
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
 
     let negative = host
         .call(WMLBROWSER_SET_TIMER, &[ScriptValue::Int32(-1)])
@@ -255,4 +256,75 @@ fn timer_schedule_rejects_negative_or_invalid_delay() {
     assert_eq!(negative, ScriptValue::Invalid);
     assert_eq!(invalid_type, ScriptValue::Invalid);
     assert!(effects.timer_requests().is_empty());
+}
+
+#[test]
+fn new_context_requests_context_reset_when_context_is_valid() {
+    let mut vars = HashMap::new();
+    let mut effects = ScriptRuntimeEffects::default();
+    let mut host = WmlBrowserHost::new(
+        &mut vars,
+        &mut effects,
+        WmlBrowserContext {
+            base_url: Some("http://example.test/deck.wml".to_string()),
+            active_card_id: Some("home".to_string()),
+        },
+    );
+
+    let result = host
+        .call(WMLBROWSER_NEW_CONTEXT, &[])
+        .expect("newContext should not trap");
+    assert_eq!(result, ScriptValue::Bool(true));
+    assert!(effects.context_reset_requested());
+}
+
+#[test]
+fn new_context_returns_invalid_without_active_card_context() {
+    let mut vars = HashMap::new();
+    let mut effects = ScriptRuntimeEffects::default();
+    let mut host = WmlBrowserHost::new(
+        &mut vars,
+        &mut effects,
+        WmlBrowserContext {
+            base_url: Some("http://example.test/deck.wml".to_string()),
+            active_card_id: None,
+        },
+    );
+
+    let result = host
+        .call(WMLBROWSER_NEW_CONTEXT, &[])
+        .expect("newContext should not trap");
+    assert_eq!(result, ScriptValue::Invalid);
+    assert!(!effects.context_reset_requested());
+}
+
+#[test]
+fn get_current_card_returns_fragment_for_current_context() {
+    let mut vars = HashMap::new();
+    let mut effects = ScriptRuntimeEffects::default();
+    let mut host = WmlBrowserHost::new(
+        &mut vars,
+        &mut effects,
+        WmlBrowserContext {
+            base_url: Some("http://example.test/deck.wml".to_string()),
+            active_card_id: Some("home".to_string()),
+        },
+    );
+
+    let result = host
+        .call(WMLBROWSER_GET_CURRENT_CARD, &[])
+        .expect("getCurrentCard should not trap");
+    assert_eq!(result, ScriptValue::String("#home".to_string()));
+}
+
+#[test]
+fn get_current_card_returns_invalid_without_context() {
+    let mut vars = HashMap::new();
+    let mut effects = ScriptRuntimeEffects::default();
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
+
+    let result = host
+        .call(WMLBROWSER_GET_CURRENT_CARD, &[])
+        .expect("getCurrentCard should not trap");
+    assert_eq!(result, ScriptValue::Invalid);
 }

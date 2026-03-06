@@ -1,0 +1,23 @@
+<!--
+label: WMLBrowser Context Fidelity
+work-items: R0-03, W0-07
+spec-items: RQ-WMLS-019, RQ-WMLS-020
+description: Exercises getCurrentCard and newContext semantics, including context reset side effects and prev suppression.
+goal: Validate that current-card lookup and newContext resets align with WMLScript context semantics in host-visible flows.
+testing-ac:
+- On home card, press Enter on "Read current card into nextCard" and confirm runtime-state nextCardVar becomes #home.
+- Follow "Go to next card" then activate "Run newContext + prev"; activeCardId should remain next and nextCardVar should clear.
+- Press browser Back after newContext and verify history is cleared for prior card context (no return to home via engine history).
+-->
+<wml>
+  <card id="home">
+    <p>WMLBrowser context semantics demo.</p>
+    <a href="script:wmlbrowser-demo.wmlsc#readCurrentCard">Read current card into nextCard</a>
+    <a href="#next">Go to next card</a>
+  </card>
+  <card id="next">
+    <p>newContext should clear vars/history and ignore prev in same script.</p>
+    <a href="script:wmlbrowser-demo.wmlsc#newContextPrev">Run newContext + prev</a>
+    <a href="script:wmlbrowser-demo.wmlsc#readCurrentCard">Read current card into nextCard</a>
+  </card>
+</wml>

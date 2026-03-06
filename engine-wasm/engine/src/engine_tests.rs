@@ -851,6 +851,129 @@ fn wmlbrowser_setvar_getvar_lifecycle_and_coercion() {
 }
 
 #[test]
+fn wmlbrowser_get_current_card_returns_fragment_when_context_exists() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(
+            xml,
+            "http://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("deck should load");
+
+    let unit = vec![
+        0x20, 0x0B, // getCurrentCard()
+        0x00, 0x00,
+    ];
+    engine.register_script_unit("current-card.wmlsc".to_string(), unit);
+
+    let outcome = engine.execute_script_ref_internal("current-card.wmlsc", "main");
+    assert!(outcome.ok);
+    assert_eq!(
+        outcome.result,
+        ScriptValueLiteral::String("#home".to_string())
+    );
+}
+
+#[test]
+fn wmlbrowser_get_current_card_returns_invalid_without_context() {
+    let mut engine = WmlEngine::new();
+    let unit = vec![
+        0x20, 0x0B, // getCurrentCard()
+        0x00, 0x00,
+    ];
+    engine.register_script_unit("current-card-noctx.wmlsc".to_string(), unit);
+
+    let outcome = engine.execute_script_ref_internal("current-card-noctx.wmlsc", "main");
+    assert!(outcome.ok);
+    assert_eq!(
+        outcome.result,
+        ScriptValueLiteral::Invalid { invalid: true }
+    );
+}
+
+#[test]
+fn wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <a href="#next">To next</a>
+          </card>
+          <card id="next">
+            <a href="script:ctx.wmlsc#main">Run context reset</a>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(
+            xml,
+            "http://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("home enter should navigate to mid");
+    engine
+        .handle_key("enter".to_string())
+        .expect("mid enter should navigate to next");
+    assert_eq!(engine.active_card_id().expect("active card"), "next");
+    assert_eq!(engine.nav_stack.len(), 2);
+
+    let mut unit = Vec::new();
+    push_string(&mut unit, "session");
+    push_string(&mut unit, "abc");
+    unit.push(0x20);
+    unit.push(0x02); // setVar(name, value)
+    unit.push(0x02);
+    unit.push(0x20);
+    unit.push(0x04); // prev()
+    unit.push(0x00);
+    unit.push(0x20);
+    unit.push(0x0A); // newContext()
+    unit.push(0x00);
+    unit.push(0x00);
+    engine.register_script_unit("ctx.wmlsc".to_string(), unit);
+
+    engine.clear_trace_entries();
+    engine
+        .handle_key("enter".to_string())
+        .expect("script context reset should succeed");
+    assert_eq!(engine.active_card_id().expect("active card"), "next");
+    assert!(
+        engine.nav_stack.is_empty(),
+        "newContext should clear history stack"
+    );
+    assert_eq!(
+        engine.get_var("session".to_string()),
+        None,
+        "newContext should clear vars"
+    );
+    assert!(
+        !engine.navigate_back(),
+        "back should be empty after newContext"
+    );
+    let traces = engine.trace_entries();
+    assert!(traces.iter().any(|entry| entry.kind == "ACTION_NEWCONTEXT"));
+    assert!(
+        traces.iter().all(|entry| entry.kind != "ACTION_BACK"),
+        "prev request should have no effect after newContext"
+    );
+}
+
+#[test]
 fn execute_script_ref_is_raw_and_does_not_apply_navigation_effects() {
     let mut engine = WmlEngine::new();
     let xml = r##"

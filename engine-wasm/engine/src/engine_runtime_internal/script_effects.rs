@@ -47,8 +47,22 @@ impl WmlEngine {
         }
 
         let nav_intent = effects.navigation_intent().clone();
+        let context_reset_requested = effects.context_reset_requested();
 
-        match nav_intent {
+        if context_reset_requested {
+            self.vars.clear();
+            self.nav_stack.clear();
+            self.push_trace("ACTION_NEWCONTEXT", String::new());
+        }
+
+        let effective_nav_intent =
+            if context_reset_requested && matches!(nav_intent, ScriptNavigationIntent::Prev) {
+                ScriptNavigationIntent::None
+            } else {
+                nav_intent
+            };
+
+        match effective_nav_intent {
             ScriptNavigationIntent::None => {}
             ScriptNavigationIntent::Prev => {
                 self.navigate_back_internal();
