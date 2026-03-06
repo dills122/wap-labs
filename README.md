@@ -14,7 +14,10 @@ The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`,
 - Browser integration work board: `docs/waves/WORK_ITEMS.md`
 - Maintenance and tech debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - Engine implementation board: `docs/wml-engine/work-items.md`
+- Engine phase roadmap (`A-D`): `docs/wml-engine/ticket-plan.md`
+- Transport phase roadmap (`A-D`): `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md`
 - Frame-interface migration plan: `docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`
+- Frame-interface phase board (`F0-F4`): `docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`
 - Development prerequisites + bootstrap: `docs/development-prerequisites.md`
 - Documentation index: `docs/README.md`
 
@@ -26,7 +29,7 @@ Secondary docs:
 
 ## Progress Snapshot
 
-Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md` (updated 2026-03-04).
+Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md`, `.github/workflows/engine-fuzz.yml` (updated 2026-03-06).
 
 | Track | Implemented | Roadmap / In Progress |
 |---|---|---|
@@ -34,6 +37,7 @@ Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md
 | WaveNav runtime (`engine-wasm/`) | MVP runtime is in place: parse WML, navigate cards, manage focus, and render stable output | Broader parity coverage, parser hardening, and follow-up behavior work for deeper spec correctness |
 | Lowband transport (`transport-rust/`) | Stable fetch + normalization baseline with clear error categories | More modular internals, stronger CI checks, and additional conformance scenarios |
 | Frame-based render/input migration | Migration plan and phased work tickets are defined | Move hosts to a shared frame/input boundary and retire legacy render/input paths |
+| Fuzz hardening (`engine-wasm/engine/fuzz`) | Cargo-fuzz scaffold with `engine_wml_fuzzer`, starter corpus seeds, and scheduled weekly CI run | Add target coverage for transport/protocol surfaces, grow dictionaries/corpus, and tune campaign budgets |
 | Legacy/demo stack (`gateway-kannel/`, `wml-server/`) | Still available for compatibility smoke checks | Maintenance only; not the main build track |
 
 ## Repo Map (Product-First)
@@ -86,6 +90,7 @@ Quality checks:
 make ci-local
 make lint-rust-transport
 make test-rust-transport
+cd engine-wasm/engine && cargo +nightly fuzz run engine_wml_fuzzer -- -runs=200
 ```
 
 ## Quick Commands (Legacy/Compatibility)
