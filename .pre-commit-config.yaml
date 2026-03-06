@@ -70,6 +70,22 @@ repos:
         stages: [pre-push]
         entry: bash -lc 'cd browser/src-tauri && cargo clippy --all-targets --all-features -- -D warnings'
 
+      - id: rust-fmt-check-transport
+        name: rust fmt check (transport-rust)
+        language: system
+        pass_filenames: false
+        files: ^transport-rust/
+        stages: [pre-push]
+        entry: bash -lc 'cd transport-rust && cargo fmt --check'
+
+      - id: rust-clippy-transport
+        name: rust clippy (transport-rust)
+        language: system
+        pass_filenames: false
+        files: ^transport-rust/
+        stages: [pre-push]
+        entry: bash -lc 'cd transport-rust && cargo clippy --all-targets --all-features -- -D warnings'
+
       - id: host-sample-build
         name: WaveNav host-sample build sanity
         language: system

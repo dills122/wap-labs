@@ -35,7 +35,7 @@
     "engine-wasm/host-sample/**/*.{ts,css,html}": [
       "prettier --ignore-path .prettierignore --write"
     ],
-    "{engine-wasm/engine,browser/src-tauri}/**/*.rs": [
+    "{engine-wasm/engine,browser/src-tauri,transport-rust}/**/*.rs": [
       "rustfmt --edition 2021"
     ]
   }
