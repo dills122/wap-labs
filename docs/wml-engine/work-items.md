@@ -109,12 +109,14 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-01 History entry fidelity follow-up
 
 1. `Requirement IDs`: `WML-R-008`
-2. `Status`: `todo`
+2. `Status`: `in-progress`
 3. `Depends On`: `A2-03`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/runtime/*`
+- `browser/contracts/transport-app.ts`
 - `browser/frontend/src/session-history.ts`
+- `browser/frontend/src/app/navigation-state.ts`
 - `engine-wasm/contracts/wml-engine.ts`
 5. `Build`:
 - Expand history entries from card-index-only behavior to spec-shaped request identity entries (absolute URL, method, post data, request metadata).

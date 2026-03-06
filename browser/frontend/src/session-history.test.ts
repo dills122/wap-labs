@@ -20,13 +20,37 @@ describe('session-history', () => {
 
   it('pushes normalized entries and updates index', () => {
     const state = createHostHistoryState();
-    pushHostHistoryEntry(state, '  http://local.test/a  ', 'home', 'user');
-    pushHostHistoryEntry(state, 'http://local.test/b', 'next', 'external-intent');
+    pushHostHistoryEntry(state, '  http://local.test/a  ', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'get'
+    });
+    pushHostHistoryEntry(state, 'http://local.test/b', 'next', 'external-intent', {
+      requestedUrl: 'http://local.test/b',
+      method: 'GET',
+      requestPolicy: {
+        refererUrl: 'http://local.test/a'
+      }
+    });
 
     expect(state.index).toBe(1);
     expect(state.entries).toEqual([
-      { url: 'http://local.test/a', activeCardId: 'home', source: 'user' },
-      { url: 'http://local.test/b', activeCardId: 'next', source: 'external-intent' }
+      {
+        url: 'http://local.test/a',
+        requestedUrl: 'http://local.test/a',
+        method: 'GET',
+        activeCardId: 'home',
+        source: 'user'
+      },
+      {
+        url: 'http://local.test/b',
+        requestedUrl: 'http://local.test/b',
+        method: 'GET',
+        requestPolicy: {
+          refererUrl: 'http://local.test/a'
+        },
+        activeCardId: 'next',
+        source: 'external-intent'
+      }
     ]);
   });
 
@@ -39,13 +63,54 @@ describe('session-history', () => {
 
   it('deduplicates current URL and merges latest card/source', () => {
     const state = createHostHistoryState();
-    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user');
-    pushHostHistoryEntry(state, 'http://local.test/a', 'home2', 'reload');
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET'
+    });
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home2', 'reload', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET',
+      requestPolicy: {
+        cacheControl: 'no-cache'
+      }
+    });
 
     expect(state.index).toBe(0);
     expect(state.entries).toEqual([
-      { url: 'http://local.test/a', activeCardId: 'home2', source: 'reload' }
+      {
+        url: 'http://local.test/a',
+        requestedUrl: 'http://local.test/a',
+        method: 'GET',
+        requestPolicy: {
+          cacheControl: 'no-cache'
+        },
+        activeCardId: 'home2',
+        source: 'reload'
+      }
     ]);
+  });
+
+  it('keeps separate entries when method or post payload differs', () => {
+    const state = createHostHistoryState();
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET'
+    });
+    pushHostHistoryEntry(state, 'http://local.test/a', 'posted', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'POST',
+      requestPolicy: {
+        postContext: {
+          payload: 'foo=1'
+        }
+      }
+    });
+
+    expect(state.index).toBe(1);
+    expect(state.entries).toHaveLength(2);
+    expect(state.entries[0]?.method).toBe('GET');
+    expect(state.entries[1]?.method).toBe('POST');
+    expect(state.entries[1]?.requestPolicy?.postContext?.payload).toBe('foo=1');
   });
 
   it('drops forward history when pushing after a back step', () => {

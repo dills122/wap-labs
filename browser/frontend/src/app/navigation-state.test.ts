@@ -68,6 +68,12 @@ describe('navigation-state', () => {
     expect(machine.getSessionState().navigationStatus).toBe('loaded');
     expect(machine.getSessionState().finalUrl).toBe('http://example.test/start.wml');
     expect(machine.getHistoryState().index).toBe(0);
+    expect(machine.getHistoryState().entries[0]).toMatchObject({
+      url: 'http://example.test/start.wml',
+      requestedUrl: 'http://example.test/start.wml',
+      method: 'GET',
+      source: 'user'
+    });
   });
 
   it('transitions to error on transport failure and emits network unavailable hook', async () => {
@@ -306,6 +312,54 @@ describe('navigation-state', () => {
     expect(requestPolicies[1]).toEqual({
       refererUrl: 'http://example.test/start.wml',
       uaCapabilityProfile: 'wap-baseline'
+    });
+  });
+
+  it('replays host back using stored request method and request policy', async () => {
+    const fetchRequests: Array<{
+      url: string;
+      method: string | undefined;
+      requestPolicy: unknown;
+    }> = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          fetchRequests.push({
+            url: request.url,
+            method: request.method,
+            requestPolicy: request.requestPolicy
+          });
+          return fetchOk({ finalUrl: request.url });
+        },
+        engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
+        engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/post-target.wml',
+      method: 'POST',
+      source: 'user',
+      followExternalIntent: false,
+      requestPolicy: {
+        postContext: {
+          payload: 'x=1'
+        }
+      }
+    });
+
+    const mode = await machine.navigateBackWithFallback();
+    expect(mode).toBe('host');
+    expect(fetchRequests.at(-1)).toEqual({
+      url: 'http://example.test/start.wml',
+      method: 'GET',
+      requestPolicy: { uaCapabilityProfile: 'wap-baseline' }
     });
   });
 
