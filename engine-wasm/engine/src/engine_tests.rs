@@ -2,7 +2,7 @@ use super::{
     classify_vm_trap, classify_vm_trap_category, convert_script_call_args, parse_script_href,
     ParsedScriptRef, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral,
-    ScriptValueLiteral, WmlEngine,
+    ScriptValueLiteral, WmlEngine, MAX_DECK_RAW_BYTES_BASE64_BYTES, MAX_DECK_WML_XML_BYTES,
 };
 use crate::layout::flow_layout::layout_card;
 use crate::render::render_list::DrawCmd;
@@ -385,6 +385,45 @@ fn load_deck_context_overrides_metadata_values() {
 
     assert_eq!(engine.base_url(), "http://local.test/path/start.wml");
     assert_eq!(engine.content_type(), "application/vnd.wap.wmlc");
+}
+
+#[test]
+fn load_deck_context_rejects_oversized_wml_payload() {
+    let mut engine = WmlEngine::new();
+    let inner = "a".repeat(MAX_DECK_WML_XML_BYTES + 1);
+    let xml = format!("<wml><card id=\"home\"><p>{inner}</p></card></wml>");
+
+    let err = engine
+        .load_deck_context(
+            &xml,
+            "http://local.test/start.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect_err("oversized deck should be rejected");
+    assert!(
+        err.contains("Deck payload exceeds"),
+        "unexpected error message: {err}"
+    );
+}
+
+#[test]
+fn load_deck_context_rejects_oversized_raw_payload() {
+    let mut engine = WmlEngine::new();
+    let raw = "A".repeat(MAX_DECK_RAW_BYTES_BASE64_BYTES + 1);
+
+    let err = engine
+        .load_deck_context(
+            "<wml><card id=\"home\"><p>ok</p></card></wml>",
+            "http://local.test/start.wml",
+            "application/vnd.wap.wmlc",
+            Some(raw),
+        )
+        .expect_err("oversized raw payload should be rejected");
+    assert!(
+        err.contains("Raw deck payload exceeds"),
+        "unexpected error message: {err}"
+    );
 }
 
 #[test]

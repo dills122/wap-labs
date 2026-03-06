@@ -110,7 +110,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-17 Network fetch destination policy guardrails (SSRF/probing reduction)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P1`
 3. `Files`:
 - `transport-rust/src/lib.rs`

@@ -16,5 +16,8 @@ pub const LOG_UPDATER_CHECK_REQUESTED: &str =
 pub const LOG_UPDATER_EVENT_EMIT_FAILED: &str = "failed to emit updater check event";
 
 pub const FETCH_REQUEST_ID_PREFIX: &str = "waves-fetch-";
+pub const FETCH_DESTINATION_POLICY_ENV: &str = "WAVES_FETCH_DESTINATION_POLICY";
+pub const FETCH_DESTINATION_POLICY_DEFAULT: &str = "public-only";
+pub const FETCH_DESTINATION_POLICY_ALLOW_PRIVATE: &str = "allow-private";
 pub const HEALTH_RESPONSE: &str = "wavenav-host-tauri-native-engine";
 pub const RUN_ERROR_CONTEXT: &str = "error while running Waves Tauri host";

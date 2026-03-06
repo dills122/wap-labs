@@ -6,6 +6,8 @@ use crate::request_meta::details_with_request_id;
 use crate::wbxml::decode_wmlc;
 use crate::{EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming};
 
+const MAX_MAPPED_PAYLOAD_BYTES: usize = 512 * 1024;
+
 pub(crate) fn transport_unavailable_response(
     url: String,
     message: String,
@@ -56,6 +58,49 @@ pub(crate) fn invalid_request_response(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn payload_too_large_response(
+    status: u16,
+    final_url: String,
+    content_type: String,
+    limit_bytes: usize,
+    actual_bytes: Option<u64>,
+    attempt: u8,
+    elapsed_ms: f64,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
+    FetchDeckResponse {
+        ok: false,
+        status,
+        final_url,
+        content_type,
+        wml: None,
+        error: Some(FetchErrorInfo {
+            code: "PROTOCOL_ERROR".to_string(),
+            message: match actual_bytes {
+                Some(actual) => {
+                    format!("Payload exceeds {limit_bytes}-byte limit (got {actual} bytes)")
+                }
+                None => format!("Payload exceeds {limit_bytes}-byte limit"),
+            },
+            details: details_with_request_id(
+                request_id,
+                Some(serde_json::json!({
+                    "attempt": attempt,
+                    "limitBytes": limit_bytes,
+                    "actualBytes": actual_bytes
+                })),
+            ),
+        }),
+        timing_ms: FetchTiming {
+            encode: 0.0,
+            udp_rtt: elapsed_ms,
+            decode: 0.0,
+        },
+        engine_deck_input: None,
+    }
+}
+
 pub(crate) fn normalize_content_type(content_type: Option<&str>) -> String {
     content_type
         .and_then(|value| value.split(';').next())
@@ -88,6 +133,38 @@ pub(crate) fn map_success_payload_response(
     elapsed_ms: f64,
     request_id: Option<&str>,
 ) -> FetchDeckResponse {
+    if body.len() > MAX_MAPPED_PAYLOAD_BYTES {
+        return FetchDeckResponse {
+            ok: false,
+            status,
+            final_url,
+            content_type,
+            wml: None,
+            error: Some(FetchErrorInfo {
+                code: "PROTOCOL_ERROR".to_string(),
+                message: format!(
+                    "Payload exceeds {}-byte limit (got {} bytes)",
+                    MAX_MAPPED_PAYLOAD_BYTES,
+                    body.len()
+                ),
+                details: details_with_request_id(
+                    request_id,
+                    Some(serde_json::json!({
+                        "attempt": attempt,
+                        "limitBytes": MAX_MAPPED_PAYLOAD_BYTES,
+                        "actualBytes": body.len()
+                    })),
+                ),
+            }),
+            timing_ms: FetchTiming {
+                encode: 0.0,
+                udp_rtt: elapsed_ms,
+                decode: 0.0,
+            },
+            engine_deck_input: None,
+        };
+    }
+
     if status >= 400 {
         return FetchDeckResponse {
             ok: false,

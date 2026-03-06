@@ -1,9 +1,11 @@
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::io::Read;
+use std::net::IpAddr;
 use std::time::{Duration, Instant};
 use ts_rs::TS;
-use url::Url;
+use url::{Host, Url};
 
 mod gateway;
 mod request_meta;
@@ -14,10 +16,11 @@ use gateway::build_gateway_request;
 use request_meta::{log_transport_event, normalized_request_id};
 use responses::{
     invalid_request_response, map_success_payload_response, map_terminal_send_error,
-    normalize_content_type, transport_unavailable_response,
+    normalize_content_type, payload_too_large_response, transport_unavailable_response,
 };
 pub use wbxml::preflight_wbxml_decoder;
 const MAX_URI_OCTETS: usize = 1024;
+const MAX_RESPONSE_BODY_BYTES: usize = 512 * 1024;
 
 #[derive(Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
@@ -59,6 +62,8 @@ pub struct FetchPostContext {
 #[serde(rename_all = "camelCase")]
 pub struct FetchRequestPolicy {
     #[ts(optional)]
+    pub destination_policy: Option<FetchDestinationPolicy>,
+    #[ts(optional)]
     pub cache_control: Option<FetchCacheControlPolicy>,
     #[ts(optional)]
     pub referer_url: Option<String>,
@@ -73,6 +78,13 @@ pub struct FetchRequestPolicy {
 pub enum FetchUaCapabilityProfile {
     Disabled,
     WapBaseline,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum FetchDestinationPolicy {
+    PublicOnly,
+    AllowPrivate,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]
@@ -171,6 +183,10 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
             );
         }
     };
+    let destination_policy = resolve_fetch_destination_policy(request_policy.as_ref());
+    if let Err(message) = validate_fetch_destination(&parsed, &destination_policy) {
+        return invalid_request_response(url, message, request_id.as_deref());
+    }
 
     log_transport_event(
         "transport.fetch.start",
@@ -179,6 +195,7 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
         serde_json::json!({
             "method": method,
             "requestPolicy": request_policy,
+            "destinationPolicy": destination_policy,
             "suppressedSameDeckPostContext": suppressed_same_deck_post_context,
             "uaCapabilityProfileApplied": applied_ua_capability_profile
         }),
@@ -247,7 +264,7 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
         }
 
         match req.send() {
-            Ok(resp) => {
+            Ok(mut resp) => {
                 let elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
                 let status = resp.status().as_u16();
                 let final_url = if is_wap_scheme {
@@ -260,10 +277,39 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
                         .get("content-type")
                         .and_then(|v| v.to_str().ok()),
                 );
-                let body = match resp.bytes() {
+                if let Some(content_len) = resp.content_length() {
+                    if content_len > MAX_RESPONSE_BODY_BYTES as u64 {
+                        let message = format!(
+                            "payload exceeds {}-byte limit (content-length={content_len})",
+                            MAX_RESPONSE_BODY_BYTES
+                        );
+                        log_transport_event(
+                            "transport.fetch.failure",
+                            request_id.as_deref(),
+                            &url,
+                            serde_json::json!({
+                                "attempt": attempt,
+                                "attempts": attempts,
+                                "phase": "response-size-check",
+                                "error": message
+                            }),
+                        );
+                        return payload_too_large_response(
+                            status,
+                            final_url,
+                            content_type,
+                            MAX_RESPONSE_BODY_BYTES,
+                            Some(content_len),
+                            attempt,
+                            elapsed_ms,
+                            request_id.as_deref(),
+                        );
+                    }
+                }
+
+                let body = match read_response_body_limited(&mut resp, MAX_RESPONSE_BODY_BYTES) {
                     Ok(body) => body,
-                    Err(err) => {
-                        let message = format!("transport read failed: {err}");
+                    Err(ReadBodyError::ReadFailed(message)) => {
                         log_transport_event(
                             "transport.fetch.failure",
                             request_id.as_deref(),
@@ -278,6 +324,30 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
                         return transport_unavailable_response(
                             request_url.clone(),
                             message,
+                            request_id.as_deref(),
+                        );
+                    }
+                    Err(ReadBodyError::TooLarge { limit_bytes }) => {
+                        let message = format!("payload exceeds {}-byte limit", limit_bytes);
+                        log_transport_event(
+                            "transport.fetch.failure",
+                            request_id.as_deref(),
+                            &url,
+                            serde_json::json!({
+                                "attempt": attempt,
+                                "attempts": attempts,
+                                "phase": "response-read",
+                                "error": message
+                            }),
+                        );
+                        return payload_too_large_response(
+                            status,
+                            final_url,
+                            content_type,
+                            limit_bytes,
+                            None,
+                            attempt,
+                            elapsed_ms,
                             request_id.as_deref(),
                         );
                     }
@@ -302,7 +372,7 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
                     &upstream_url,
                     final_url,
                     content_type,
-                    body.as_ref(),
+                    body.as_slice(),
                     attempt,
                     elapsed_ms,
                     request_id.as_deref(),
@@ -353,6 +423,129 @@ pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
         last_elapsed_ms,
         request_id.as_deref(),
     )
+}
+
+fn resolve_fetch_destination_policy(
+    request_policy: Option<&FetchRequestPolicy>,
+) -> FetchDestinationPolicy {
+    request_policy
+        .and_then(|policy| policy.destination_policy.clone())
+        .unwrap_or(FetchDestinationPolicy::PublicOnly)
+}
+
+fn validate_fetch_destination(
+    parsed_url: &Url,
+    destination_policy: &FetchDestinationPolicy,
+) -> Result<(), String> {
+    if !matches!(parsed_url.scheme(), "http" | "https" | "wap" | "waps") {
+        return Err(format!("Unsupported URL scheme: {}", parsed_url.scheme()));
+    }
+    if matches!(destination_policy, FetchDestinationPolicy::AllowPrivate) {
+        return Ok(());
+    }
+
+    match classify_destination_host(parsed_url) {
+        None | Some(DestinationHostClass::Public) => Ok(()),
+        Some(class) => Err(format!(
+            "Destination blocked by fetch policy (public-only): {} host",
+            class.label()
+        )),
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum DestinationHostClass {
+    Public,
+    Loopback,
+    Private,
+    LinkLocal,
+    Unspecified,
+    Multicast,
+}
+
+impl DestinationHostClass {
+    fn label(self) -> &'static str {
+        match self {
+            DestinationHostClass::Public => "public",
+            DestinationHostClass::Loopback => "loopback",
+            DestinationHostClass::Private => "private",
+            DestinationHostClass::LinkLocal => "link-local",
+            DestinationHostClass::Unspecified => "unspecified",
+            DestinationHostClass::Multicast => "multicast",
+        }
+    }
+}
+
+fn classify_destination_host(parsed_url: &Url) -> Option<DestinationHostClass> {
+    match parsed_url.host()? {
+        Host::Domain(domain) => {
+            let normalized = domain.trim().trim_end_matches('.').to_ascii_lowercase();
+            if normalized == "localhost" || normalized.ends_with(".localhost") {
+                Some(DestinationHostClass::Loopback)
+            } else {
+                Some(DestinationHostClass::Public)
+            }
+        }
+        Host::Ipv4(ip) => Some(classify_ip(IpAddr::V4(ip))),
+        Host::Ipv6(ip) => Some(classify_ip(IpAddr::V6(ip))),
+    }
+}
+
+fn classify_ip(ip: IpAddr) -> DestinationHostClass {
+    match ip {
+        IpAddr::V4(v4) => {
+            if v4.is_loopback() {
+                DestinationHostClass::Loopback
+            } else if v4.is_private() {
+                DestinationHostClass::Private
+            } else if v4.is_link_local() {
+                DestinationHostClass::LinkLocal
+            } else if v4.is_unspecified() {
+                DestinationHostClass::Unspecified
+            } else if v4.is_multicast() {
+                DestinationHostClass::Multicast
+            } else {
+                DestinationHostClass::Public
+            }
+        }
+        IpAddr::V6(v6) => {
+            if v6.is_loopback() {
+                DestinationHostClass::Loopback
+            } else if v6.is_unique_local() {
+                DestinationHostClass::Private
+            } else if v6.is_unicast_link_local() {
+                DestinationHostClass::LinkLocal
+            } else if v6.is_unspecified() {
+                DestinationHostClass::Unspecified
+            } else if v6.is_multicast() {
+                DestinationHostClass::Multicast
+            } else {
+                DestinationHostClass::Public
+            }
+        }
+    }
+}
+
+enum ReadBodyError {
+    ReadFailed(String),
+    TooLarge { limit_bytes: usize },
+}
+
+fn read_response_body_limited(
+    response: &mut reqwest::blocking::Response,
+    max_bytes: usize,
+) -> Result<Vec<u8>, ReadBodyError> {
+    let mut body = Vec::new();
+    let mut reader = response.take((max_bytes as u64).saturating_add(1));
+    reader
+        .read_to_end(&mut body)
+        .map_err(|err| ReadBodyError::ReadFailed(format!("transport read failed: {err}")))?;
+    if body.len() > max_bytes {
+        return Err(ReadBodyError::TooLarge {
+            limit_bytes: max_bytes,
+        });
+    }
+    Ok(body)
 }
 
 fn apply_request_policy(
@@ -443,8 +636,9 @@ fn apply_ua_capability_headers(
 mod tests {
     use super::{
         apply_request_policy, fetch_deck_in_process, preflight_wbxml_decoder,
-        FetchCacheControlPolicy, FetchDeckRequest, FetchPostContext, FetchRequestPolicy,
-        FetchUaCapabilityProfile, MAX_URI_OCTETS,
+        resolve_fetch_destination_policy, validate_fetch_destination, FetchCacheControlPolicy,
+        FetchDeckRequest, FetchDestinationPolicy, FetchPostContext, FetchRequestPolicy,
+        FetchUaCapabilityProfile, MAX_RESPONSE_BODY_BYTES, MAX_URI_OCTETS,
     };
     use crate::gateway::build_gateway_request;
     use crate::request_meta::{
@@ -466,6 +660,7 @@ mod tests {
     use std::path::PathBuf;
     use std::sync::{Mutex, OnceLock};
     use toml::Value;
+    use url::Url;
 
     fn env_lock() -> &'static Mutex<()> {
         static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
@@ -481,6 +676,16 @@ mod tests {
             retries: Some(0),
             request_id: None,
             request_policy: None,
+        }
+    }
+
+    fn request_policy_with_destination(destination_policy: FetchDestinationPolicy) -> FetchRequestPolicy {
+        FetchRequestPolicy {
+            destination_policy: Some(destination_policy),
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: None,
         }
     }
 
@@ -795,6 +1000,7 @@ mod tests {
         let mut headers = HashMap::new();
         headers.insert("X-Test".to_string(), "yes".to_string());
         let policy = FetchRequestPolicy {
+            destination_policy: None,
             cache_control: Some(FetchCacheControlPolicy::NoCache),
             referer_url: Some("http://example.test/home.wml".to_string()),
             post_context: None,
@@ -827,6 +1033,7 @@ mod tests {
     #[test]
     fn apply_request_policy_suppresses_same_deck_post_without_no_cache() {
         let policy = FetchRequestPolicy {
+            destination_policy: None,
             cache_control: Some(FetchCacheControlPolicy::Default),
             referer_url: None,
             post_context: Some(FetchPostContext {
@@ -846,6 +1053,7 @@ mod tests {
     #[test]
     fn apply_request_policy_keeps_post_when_no_cache_is_set() {
         let policy = FetchRequestPolicy {
+            destination_policy: None,
             cache_control: Some(FetchCacheControlPolicy::NoCache),
             referer_url: None,
             post_context: Some(FetchPostContext {
@@ -869,6 +1077,7 @@ mod tests {
     #[test]
     fn apply_request_policy_wap_baseline_profile_adds_capability_headers() {
         let policy = FetchRequestPolicy {
+            destination_policy: None,
             cache_control: None,
             referer_url: None,
             post_context: None,
@@ -902,6 +1111,7 @@ mod tests {
         let mut headers = HashMap::new();
         headers.insert("Accept-Language".to_string(), "fr-ca".to_string());
         let policy = FetchRequestPolicy {
+            destination_policy: None,
             cache_control: None,
             referer_url: None,
             post_context: None,
@@ -918,6 +1128,7 @@ mod tests {
     #[test]
     fn apply_request_policy_disabled_profile_does_not_add_capability_headers() {
         let policy = FetchRequestPolicy {
+            destination_policy: None,
             cache_control: None,
             referer_url: None,
             post_context: None,
@@ -1383,6 +1594,37 @@ mod tests {
     }
 
     #[test]
+    fn transport_map_success_payload_rejects_oversized_body() {
+        let base = "http://example.test/index.wml".to_string();
+        let body = vec![b'a'; MAX_RESPONSE_BODY_BYTES + 1];
+        let response = map_success_payload_response(
+            200,
+            false,
+            &base,
+            &base,
+            base.clone(),
+            "text/vnd.wap.wml".to_string(),
+            body.as_slice(),
+            1,
+            3.5,
+            Some("req-oversized-body"),
+        );
+
+        assert!(!response.ok);
+        assert_eq!(response.status, 200);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("PROTOCOL_ERROR")
+        );
+        assert!(response
+            .error
+            .as_ref()
+            .map(|err| err.message.contains("Payload exceeds"))
+            .unwrap_or(false));
+        assert!(response.engine_deck_input.is_none());
+    }
+
+    #[test]
     fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
         let base = "http://example.test/index.wml".to_string();
         let utf16le_body: Vec<u8> = vec![
@@ -1764,6 +2006,9 @@ mod tests {
             retries: Some(2),
             timeout_ms: Some(100),
             request_id: Some("req-retry-http".to_string()),
+            request_policy: Some(request_policy_with_destination(
+                FetchDestinationPolicy::AllowPrivate,
+            )),
             ..basic_request("http://127.0.0.1:9/unreachable.wml".to_string())
         });
         assert!(!response.ok);
@@ -1791,6 +2036,9 @@ mod tests {
                 retries: Some(0),
                 timeout_ms: Some(100),
                 request_id: Some("req-retry-wap".to_string()),
+                request_policy: Some(request_policy_with_destination(
+                    FetchDestinationPolicy::AllowPrivate,
+                )),
                 ..basic_request("wap://example.test/path.wml?x=1".to_string())
             })
         });
@@ -1803,6 +2051,59 @@ mod tests {
         assert_eq!(
             detail_string(&response, "requestId").as_deref(),
             Some("req-retry-wap")
+        );
+    }
+
+    #[test]
+    fn transport_destination_policy_defaults_to_public_only() {
+        let resolved = resolve_fetch_destination_policy(None);
+        assert_eq!(resolved, FetchDestinationPolicy::PublicOnly);
+    }
+
+    #[test]
+    fn transport_destination_policy_rejects_loopback_without_override() {
+        let parsed = Url::parse("http://127.0.0.1:8080/deck.wml").expect("url should parse");
+        let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
+            .expect_err("loopback destination should be blocked");
+        assert!(err.contains("public-only"));
+        assert!(err.contains("loopback"));
+    }
+
+    #[test]
+    fn transport_destination_policy_rejects_private_without_override() {
+        let parsed = Url::parse("http://10.0.0.8/deck.wml").expect("url should parse");
+        let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
+            .expect_err("private destination should be blocked");
+        assert!(err.contains("private"));
+    }
+
+    #[test]
+    fn transport_destination_policy_allows_private_with_override() {
+        let parsed = Url::parse("http://10.0.0.8/deck.wml").expect("url should parse");
+        validate_fetch_destination(&parsed, &FetchDestinationPolicy::AllowPrivate)
+            .expect("allow-private should permit private targets");
+    }
+
+    #[test]
+    fn transport_fetch_blocks_loopback_when_policy_not_overridden() {
+        let response = fetch_deck_in_process(FetchDeckRequest {
+            request_id: Some("req-loopback-blocked".to_string()),
+            ..basic_request("http://127.0.0.1:9/unreachable.wml".to_string())
+        });
+        assert!(!response.ok);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("INVALID_REQUEST")
+        );
+        let message = response
+            .error
+            .as_ref()
+            .map(|error| error.message.clone())
+            .unwrap_or_default();
+        assert!(message.contains("public-only"));
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-loopback-blocked")
         );
     }
 
