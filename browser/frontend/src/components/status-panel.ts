@@ -13,33 +13,35 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status {
-      border: 1px solid #cad5e6;
-      border-radius: 10px;
-      padding: 10px;
+      border: 2px solid #808080;
+      border-top-color: #000000;
+      border-left-color: #000000;
+      padding: 8px;
       font-size: 13px;
       min-height: 44px;
-      background: #f7fbff;
-      color: #5f6f86;
+      background: #ffffff;
+      color: #222222;
+      line-height: 1.35;
     }
 
     .status-idle {
-      background: #f7fbff;
-      color: #5f6f86;
+      background: #ffffff;
+      color: #222222;
     }
 
     .status-loading {
-      background: #eff6ff;
-      color: #1d4ed8;
+      background: #ffffcc;
+      color: #222222;
     }
 
     .status-ok {
-      background: #ecfdf5;
-      color: #047857;
+      background: #ccffcc;
+      color: #222222;
     }
 
     .status-error {
-      background: #fef2f2;
-      color: #b91c1c;
+      background: #ffcccc;
+      color: #222222;
     }
   `;
 

@@ -20,6 +20,11 @@ const createRefs = (): BrowserShellRefs => {
   const localExampleSelectEl = document.createElement('select');
   const loadLocalBtnEl = document.createElement('button');
   const localExampleWrapEl = document.createElement('label');
+  const localExampleNotesEl = document.createElement('details');
+  const localExampleCoverageEl = document.createElement('p');
+  const localExampleDescriptionEl = document.createElement('p');
+  const localExampleGoalEl = document.createElement('p');
+  const localExampleTestingAcEl = document.createElement('ul');
   const statusEl = {
     setStatus: () => {
       // no-op
@@ -43,7 +48,12 @@ const createRefs = (): BrowserShellRefs => {
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,
-    localExampleWrapEl
+    localExampleWrapEl,
+    localExampleNotesEl,
+    localExampleCoverageEl,
+    localExampleDescriptionEl,
+    localExampleGoalEl,
+    localExampleTestingAcEl
   };
 };
 

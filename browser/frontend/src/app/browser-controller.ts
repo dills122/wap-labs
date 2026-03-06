@@ -86,6 +86,7 @@ export class BrowserController {
       this.unbindListeners();
     }
     this.populateLocalExampleOptions();
+    this.renderActiveLocalExampleNotes();
     this.bindListeners();
     this.startTimerRuntimeLoop();
     this.presenter.setBootPhase('engine-ready');
@@ -204,6 +205,7 @@ export class BrowserController {
       'change',
       this.withAction('select-local-example', async () => {
         this.activeLocalExampleKey = this.refs.localExampleSelectEl.value;
+        this.renderActiveLocalExampleNotes();
         if (this.runMode === 'local') {
           await this.loadSelectedLocalDeck();
         }
@@ -357,6 +359,10 @@ export class BrowserController {
     this.refs.loadLocalBtnEl.disabled = !localMode;
     this.refs.localExampleSelectEl.disabled = !localMode;
     this.refs.localExampleWrapEl.style.opacity = localMode ? '1' : '0.72';
+    this.refs.localExampleNotesEl.style.display = localMode ? 'block' : 'none';
+    if (!localMode) {
+      this.refs.localExampleNotesEl.open = false;
+    }
   }
 
   private async setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void> {
@@ -383,7 +389,32 @@ export class BrowserController {
       throw new Error(`Unknown local example key: ${selected}`);
     }
     this.activeLocalExampleKey = example.key;
+    this.renderLocalExampleNotes(example);
     await this.loadLocalDeck(example);
+  }
+
+  private renderActiveLocalExampleNotes(): void {
+    const fallback = defaultLocalDeckExample();
+    const active = findLocalDeckExample(this.activeLocalExampleKey) ?? fallback;
+    this.activeLocalExampleKey = active.key;
+    this.renderLocalExampleNotes(active);
+  }
+
+  private renderLocalExampleNotes(example: LocalDeckExample): void {
+    const coverage = [...example.workItems, ...example.specItems];
+    this.refs.localExampleCoverageEl.textContent =
+      coverage.length > 0
+        ? `${WAVES_COPY.shell.localExampleCoverage} ${coverage.join(', ')}`
+        : `${WAVES_COPY.shell.localExampleCoverage} (none)`;
+    this.refs.localExampleDescriptionEl.textContent = `${WAVES_COPY.shell.localExampleDescription} ${example.description}`;
+    this.refs.localExampleGoalEl.textContent = `${WAVES_COPY.shell.localExampleGoal} ${example.goal}`;
+
+    this.refs.localExampleTestingAcEl.replaceChildren();
+    for (const item of example.testingAc) {
+      const li = document.createElement('li');
+      li.textContent = item;
+      this.refs.localExampleTestingAcEl.append(li);
+    }
   }
 
   private async loadLocalDeck(example: LocalDeckExample): Promise<void> {

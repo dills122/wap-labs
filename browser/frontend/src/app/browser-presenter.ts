@@ -13,6 +13,7 @@ import type { BrowserShellRefs } from './browser-shell-template';
 import { inferStatusTone, uiEvents } from '../ui-helpers';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
+import { renderWmlViewportHtml } from '../components/primitives/wml-render-primitives';
 
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
@@ -138,26 +139,9 @@ export class BrowserPresenter {
   }
 
   drawRenderList(renderList: RenderList): void {
-    const byLine = new Map<number, string[]>();
-    for (const cmd of renderList.draw) {
-      const current = byLine.get(cmd.y) ?? [];
-      if (cmd.type === 'text') {
-        current.push(cmd.text);
-      } else {
-        current.push(cmd.focused ? `[${cmd.text}]` : cmd.text);
-      }
-      byLine.set(cmd.y, current);
-    }
-
-    const lines = Array.from(byLine.entries())
-      .sort((a, b) => a[0] - b[0])
-      .map(([, chunks]) => chunks.join(' '));
-
     this.hasRenderedContent = true;
     this.setViewportSkeleton(false);
-    this.refs.viewportEl.innerHTML = lines
-      .map((line) => `<div class="line">${escapeHtml(line)}</div>`)
-      .join('');
+    this.refs.viewportEl.innerHTML = renderWmlViewportHtml(renderList);
   }
 
   exportTimeline(): void {

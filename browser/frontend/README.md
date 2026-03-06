@@ -34,6 +34,7 @@ This frontend now includes a browser-style shell with a hidden developer harness
 - first-render viewport skeleton placeholder to avoid blank deck area while initial load is in flight
 - runtime mode switch (`Local`/`Network`) with local mode loading bundled offline WML examples directly into the engine
 - local example source of truth is `engine-wasm/examples/generated/examples.ts` (mapped into frontend local mode)
+- local-only example notes panel (collapsed by default) shows metadata + testing AC for the selected local deck
 - automatic external intent follow loop (`externalNavigationIntent` fetch/load cycle)
 - debug-only raw WML textarea path (`Load Raw WML (Debug)`)
 - key driving (`up`, `down`, `enter`)
@@ -56,6 +57,11 @@ UI component baseline:
 - Component registration entrypoint: `src/components/index.ts`.
 - First component: `wv-status-panel` (`src/components/status-panel.ts`), used for runtime status/tone rendering.
 - Shared primitive: `wv-surface-panel` (`src/components/primitives/surface-panel.ts`) for reusable boxed sections.
+- WML viewport primitive mapping: `src/components/primitives/wml-render-primitives.ts` groups `RenderList.draw`
+  commands by line and renders typed text/link segments with deterministic focus styling.
+- Theme direction is now Win95-era and based on `win95.css` design language (beveled controls, title bars,
+  sunken panels), adapted in `src/styles.css` for Waves shell semantics.
+- Upstream `win95.css` is vendored in `src/vendor/win95/` (including required image assets and MIT license).
 
 App logic modules:
 

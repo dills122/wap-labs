@@ -3,6 +3,11 @@ import { EXAMPLES, type HostExample } from '../../../../engine-wasm/examples/gen
 export interface LocalDeckExample {
   key: string;
   label: string;
+  description: string;
+  goal: string;
+  workItems: string[];
+  specItems: string[];
+  testingAc: string[];
   baseUrl: string;
   wml: string;
 }
@@ -10,6 +15,11 @@ export interface LocalDeckExample {
 const toLocalDeckExample = (example: HostExample): LocalDeckExample => ({
   key: example.key,
   label: example.label,
+  description: example.description,
+  goal: example.goal,
+  workItems: example.workItems,
+  specItems: example.specItems,
+  testingAc: example.testingAc,
   baseUrl: `http://local.test/examples/${example.key}.wml`,
   wml: example.wml
 });
