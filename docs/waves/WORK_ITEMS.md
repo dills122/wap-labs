@@ -1048,7 +1048,7 @@ Reference:
 
 ### R0-02 Inter-card navigation process-order conformance
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `A5-02`, `T0-04`
 3. `Files`:
 - `engine-wasm/engine/src/lib.rs`
