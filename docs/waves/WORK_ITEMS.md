@@ -688,7 +688,7 @@ Completed `B0` through `B3` tickets are archived in:
 3. `Owner`: `docs`, `spec-processing`, `transport-rust`
 4. `Files`:
 - `docs/waves/networking-external-response-triage.md`
-- `docs/waves/networking-gap-to-source-map.md`
+- `docs/waves/NETWORKING_GAP_MASTER.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `spec-processing/new-source-material/`
 - `spec-processing/source-material/WAP.pdf`
@@ -755,8 +755,7 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-23`
 3. `Owner`: `docs`, `spec-processing`
 4. `Files`:
-- `docs/waves/networking-gap-analysis.md`
-- `docs/waves/networking-strict-gap-audit.md`
+- `docs/waves/NETWORKING_GAP_MASTER.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 5. `Build`:

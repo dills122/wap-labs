@@ -25,9 +25,7 @@ Scope: Normalize external assistant responses into actionable, spec-safe inputs 
 5. Interop requires capture/replay fixtures for `CONNECT`/`GET`/`REPLY` and retransmit flows.
 
 These align with:
-- [networking-gap-analysis.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-gap-analysis.md)
-- [networking-gap-to-source-map.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-gap-to-source-map.md)
-- [networking-strict-gap-audit.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-strict-gap-audit.md)
+- [NETWORKING_GAP_MASTER.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORKING_GAP_MASTER.md)
 
 ## Needs Verification Before Adoption (medium confidence)
 
@@ -84,4 +82,3 @@ These align with:
 
 External responses are useful and mostly aligned at a planning level.  
 Implementation must continue to anchor on the repo’s canonical spec set and ticketed traceability path.
-

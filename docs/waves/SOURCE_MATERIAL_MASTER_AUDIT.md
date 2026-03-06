@@ -88,7 +88,7 @@ Supplemental-source precedence:
 - Architecture-context review:
   - `docs/waves/ARCHITECTURE_CONTEXT_SPEC_REVIEW.md`
 - Supplemental context-source gap audit:
-  - `docs/waves/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
+  - `docs/waves/archive/reports/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
 - Deferred capability traceability:
   - `docs/waves/DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md`
 - Coverage dashboard:

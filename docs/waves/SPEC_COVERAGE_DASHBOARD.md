@@ -154,12 +154,12 @@ Status: Active
 - Status: complete (manual governance lane implemented; no CI coupling)
 - Deliverables:
   - Phase S1 tickets in `docs/waves/WORK_ITEMS.md` (`S1-01`..`S1-06`)
-  - `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
-  - `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+  - `docs/waves/archive/reports/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
+  - `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
   - `spec-processing/README.md`
   - `docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md`
   - `docs/waves/provenance/docling-provenance-2026-03-02.csv`
-  - `docs/waves/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
+  - `docs/waves/archive/reports/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
 - Focus:
   - table-fidelity ambiguity resolution
   - cleaned-markdown stability and provenance tracking
@@ -189,7 +189,7 @@ Status: Active
 4. Test coverage matrix:
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 5. Supplemental context audit:
-- `docs/waves/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
+- `docs/waves/archive/reports/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
 6. Source authority policy:
 - `docs/waves/SOURCE_AUTHORITY_POLICY.md`
 7. Requirement index:

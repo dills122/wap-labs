@@ -35,8 +35,10 @@
 - `waves/CONTRACT_REQUIREMENTS_MAPPING.md`: contract-field to requirement-ID mapping across engine, transport, and browser interfaces
 - `waves/SPEC_TEST_COVERAGE.md`: requirement-group test coverage matrix across engine/host/transport/browser
 - `waves/SPEC_COVERAGE_DASHBOARD.md`: current cross-domain spec coverage and remaining gap register
+- `waves/NETWORKING_GAP_MASTER.md`: consolidated active networking gap register and migration-gate blockers
 - `waves/SOURCE_MATERIAL_MASTER_AUDIT.md`: full source-material audit scope, precedence, and gap-tracking plan
 - `waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`: per-file review ledger for all canonical source PDFs
+- `waves/archive/README.md`: archive policy and layout for superseded/date-stamped Waves docs
 
 ## Engineering Standards
 
