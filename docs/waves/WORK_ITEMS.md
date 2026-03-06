@@ -71,12 +71,15 @@ Canonical sprint priority rule:
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
 1. `M1-15` Engine parser recursion guardrails (untrusted deck DoS hardening) (`P0`).
-2. `M1-14` Browser host boundary hardening (CSP + DOM injection sinks) (`P0`).
-3. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-4. `M1-17` Network fetch destination policy guardrails (SSRF/probing reduction) (`P1`).
-5. `M1-08` Split high-churn files into boundary modules (engine scope complete; browser/transport follow-ups remain).
-6. `M1-09` Engine-host frame interface migration execution.
-7. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
+2. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+3. `M1-08` Split high-churn files into boundary modules (engine scope complete; browser/transport follow-ups remain).
+4. `M1-09` Engine-host frame interface migration execution.
+5. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
+
+Recently completed in this sprint:
+
+1. `M1-14` Browser host boundary hardening (CSP + DOM injection sinks) (`P0`).
+2. `M1-17` Network fetch destination policy guardrails (SSRF/probing reduction) (`P1`).
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 

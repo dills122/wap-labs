@@ -75,6 +75,11 @@ Internationalization baseline:
 - User-facing labels/status/error copy is sourced from `src/app/waves-copy.ts`.
 - Runtime tuning/constants are sourced from `src/app/waves-config.ts`.
 
+Security baseline:
+
+- Shell mount avoids interpolating runtime startup URL values into HTML strings; URL fields are assigned via
+  input element properties after mount (`mountBrowserShell`).
+
 Local checks:
 
 ```bash
