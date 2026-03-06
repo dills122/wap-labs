@@ -49,6 +49,7 @@ export interface NavigationHooks {
 
 export interface LoadTransportOptions {
   url: string;
+  method?: string;
   source: HostNavigationSource;
   followExternalIntent: boolean;
   pushHistory?: boolean;
@@ -118,6 +119,7 @@ export const createNavigationStateMachine = (
     if (!requestedUrl) {
       throw new Error(WAVES_COPY.errors.urlRequired);
     }
+    const method = normalizeMethod(options.method);
     const pushHistory = options.pushHistory ?? true;
 
     const defaultRequestPolicy = defaultRequestPolicyForSource(
@@ -134,6 +136,7 @@ export const createNavigationStateMachine = (
     hooks.onStateEvent?.('load-transport-url', {
       source: options.source,
       requestedUrl,
+      method,
       followExternalIntent: options.followExternalIntent,
       pushHistory,
       requestPolicy
@@ -148,7 +151,7 @@ export const createNavigationStateMachine = (
 
     const transport = await hostClient.fetchDeck({
       url: requestedUrl,
-      method: 'GET',
+      method,
       timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
       retries: WAVES_CONFIG.transportFetchRetries,
       requestPolicy
@@ -217,7 +220,11 @@ export const createNavigationStateMachine = (
     });
 
     if (pushHistory) {
-      pushHostHistoryEntry(hostHistory, transport.finalUrl, snapshot.activeCardId, options.source);
+      pushHostHistoryEntry(hostHistory, transport.finalUrl, snapshot.activeCardId, options.source, {
+        requestedUrl,
+        method,
+        requestPolicy
+      });
       mergeSessionState({
         historyIndex: hostHistory.index,
         history: hostHistory.entries
@@ -231,6 +238,7 @@ export const createNavigationStateMachine = (
         await hostClient.engineClearExternalNavigationIntent();
         const nextSnapshot = await loadTransportUrl({
           url: nextUrl,
+          method: 'GET',
           source: 'external-intent',
           followExternalIntent: false,
           pushHistory: true,
@@ -279,10 +287,12 @@ export const createNavigationStateMachine = (
       const previous = peekHistoryBack(hostHistory);
       if (previous?.url) {
         const prevSnapshot = await loadTransportUrl({
-          url: previous.url,
+          url: previous.requestedUrl ?? previous.url,
+          method: previous.method ?? 'GET',
           source: 'history-back',
           followExternalIntent: true,
-          pushHistory: false
+          pushHistory: false,
+          requestPolicy: previous.requestPolicy
         });
         if (prevSnapshot) {
           if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
@@ -336,4 +346,9 @@ const defaultRequestPolicyForSource = (
     return { refererUrl, uaCapabilityProfile };
   }
   return { uaCapabilityProfile };
+};
+
+const normalizeMethod = (method?: string): string => {
+  const normalized = method?.trim().toUpperCase();
+  return normalized || 'GET';
 };

@@ -12,3 +12,22 @@ fi
 echo "pre-commit: running lint-staged (staged files only)..."
 pnpm exec lint-staged --concurrent false
 echo "pre-commit: staged-file checks complete."
+
+staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
+requires_frontend_typecheck=0
+while IFS= read -r file; do
+  case "$file" in
+    browser/contracts/*|browser/frontend/*)
+      requires_frontend_typecheck=1
+      break
+      ;;
+  esac
+done <<EOF
+$staged_files
+EOF
+
+if [ "$requires_frontend_typecheck" -eq 1 ]; then
+  echo "pre-commit: browser contract/frontend change detected; running TypeScript typecheck..."
+  pnpm --dir browser/frontend exec tsc --noEmit
+  echo "pre-commit: frontend typecheck passed."
+fi

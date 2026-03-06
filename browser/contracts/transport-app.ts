@@ -1,5 +1,6 @@
 import type {
   EngineDeckInputPayload,
+  FetchRequestPolicy,
   FetchDeckResponse,
   FetchErrorInfo,
   FetchTiming
@@ -26,6 +27,9 @@ export type HostNavigationSource =
 
 export interface HostHistoryEntry {
   url: string;
+  requestedUrl?: string;
+  method?: string;
+  requestPolicy?: FetchRequestPolicy;
   activeCardId?: string;
   source?: HostNavigationSource;
 }
