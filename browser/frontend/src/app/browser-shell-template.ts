@@ -3,31 +3,31 @@ import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
 const browserShellTemplate = (defaultUrl: string) => `
-  <div class="browser-shell">
-    <header class="browser-chrome">
+  <div class="browser-shell card square wv-shell-window">
+    <header class="browser-chrome card-header icon">
       <div class="title-row">
         <div class="brand">${WAVES_COPY.app.brand}</div>
         <div class="caption">${WAVES_COPY.app.tagline}</div>
       </div>
       <div class="nav-row">
-        <button id="btn-back" class="chrome-btn">${WAVES_COPY.shell.back}</button>
-        <button id="btn-reload" class="chrome-btn">${WAVES_COPY.shell.reload}</button>
-        <input id="fetch-url" type="text" value="${defaultUrl}" aria-label="Address" />
-        <button id="btn-fetch-url" class="chrome-btn primary">${WAVES_COPY.shell.go}</button>
+        <button id="btn-back" class="btn chrome-btn">${WAVES_COPY.shell.back}</button>
+        <button id="btn-reload" class="btn chrome-btn">${WAVES_COPY.shell.reload}</button>
+        <input id="fetch-url" class="form-95" type="text" value="${defaultUrl}" aria-label="Address" />
+        <button id="btn-fetch-url" class="btn chrome-btn primary">${WAVES_COPY.shell.go}</button>
       </div>
       <div class="mode-row">
         <label class="mode-field">
           <span>${WAVES_COPY.shell.mode}</span>
-          <select id="run-mode">
+          <select id="run-mode" class="form-95">
             <option value="local">${WAVES_COPY.shell.localMode}</option>
             <option value="network">${WAVES_COPY.shell.networkMode}</option>
           </select>
         </label>
         <label id="local-example-wrap" class="mode-field">
           <span>${WAVES_COPY.shell.localExample}</span>
-          <select id="local-example"></select>
+          <select id="local-example" class="form-95"></select>
         </label>
-        <button id="btn-load-local" class="chrome-btn">${WAVES_COPY.shell.loadLocal}</button>
+        <button id="btn-load-local" class="btn chrome-btn">${WAVES_COPY.shell.loadLocal}</button>
       </div>
     </header>
 
@@ -48,16 +48,22 @@ const browserShellTemplate = (defaultUrl: string) => `
           <div class="skeleton-hint">${WAVES_COPY.shell.firstRenderPending}</div>
         </div>
         <div class="softkey-row">
-          <button id="btn-up">${WAVES_COPY.shell.up}</button>
-          <button id="btn-enter">${WAVES_COPY.shell.select}</button>
-          <button id="btn-down">${WAVES_COPY.shell.down}</button>
+          <button id="btn-up" class="btn">${WAVES_COPY.shell.up}</button>
+          <button id="btn-enter" class="btn">${WAVES_COPY.shell.select}</button>
+          <button id="btn-down" class="btn">${WAVES_COPY.shell.down}</button>
         </div>
       </section>
 
       <aside class="side-panel">
         <label class="compact-field">
           ${WAVES_COPY.shell.viewportCols}
-          <input id="viewport-cols" type="number" value="${WAVES_CONFIG.defaultViewportCols}" min="1" />
+          <input
+            id="viewport-cols"
+            class="form-95"
+            type="number"
+            value="${WAVES_CONFIG.defaultViewportCols}"
+            min="1"
+          />
         </label>
         <wv-surface-panel heading="${WAVES_COPY.shell.status}">
           <wv-status-panel id="status"></wv-status-panel>
@@ -68,23 +74,23 @@ const browserShellTemplate = (defaultUrl: string) => `
           <summary>${WAVES_COPY.shell.developerTools}</summary>
           <div class="panel-body">
             <div class="actions">
-              <button id="btn-health" class="wv95-btn">${WAVES_COPY.shell.health}</button>
-              <button id="btn-render" class="wv95-btn">${WAVES_COPY.shell.render}</button>
-              <button id="btn-snapshot" class="wv95-btn">${WAVES_COPY.shell.snapshot}</button>
-              <button id="btn-clear-intent" class="wv95-btn">${WAVES_COPY.shell.clearExternalIntent}</button>
-              <button id="btn-export-timeline" class="wv95-btn">${WAVES_COPY.shell.exportTimeline}</button>
-              <button id="btn-clear-timeline" class="wv95-btn">${WAVES_COPY.shell.clearTimeline}</button>
+              <button id="btn-health" class="btn wv95-btn">${WAVES_COPY.shell.health}</button>
+              <button id="btn-render" class="btn wv95-btn">${WAVES_COPY.shell.render}</button>
+              <button id="btn-snapshot" class="btn wv95-btn">${WAVES_COPY.shell.snapshot}</button>
+              <button id="btn-clear-intent" class="btn wv95-btn">${WAVES_COPY.shell.clearExternalIntent}</button>
+              <button id="btn-export-timeline" class="btn wv95-btn">${WAVES_COPY.shell.exportTimeline}</button>
+              <button id="btn-clear-timeline" class="btn wv95-btn">${WAVES_COPY.shell.clearTimeline}</button>
             </div>
             <details id="debug-raw-mode" class="debug-raw-mode">
               <summary>${WAVES_COPY.shell.rawWmlPaste}</summary>
               <div class="debug-raw-mode-content">
                 <label class="compact-field">
                   ${WAVES_COPY.shell.baseUrl}
-                  <input id="base-url" type="text" value="${WAVES_CONFIG.defaultDebugBaseUrl}" />
+                  <input id="base-url" class="form-95" type="text" value="${WAVES_CONFIG.defaultDebugBaseUrl}" />
                 </label>
-                <textarea id="wml-input"></textarea>
+                <textarea id="wml-input" class="form-95"></textarea>
                 <div class="actions">
-                  <button id="btn-load-context" class="wv95-btn">${WAVES_COPY.shell.loadRawWml}</button>
+                  <button id="btn-load-context" class="btn wv95-btn">${WAVES_COPY.shell.loadRawWml}</button>
                 </div>
               </div>
             </details>

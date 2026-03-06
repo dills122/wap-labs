@@ -60,6 +60,7 @@ UI component baseline:
   commands by line and renders typed text/link segments with deterministic focus styling.
 - Theme direction is now Win95-era and based on `win95.css` design language (beveled controls, title bars,
   sunken panels), adapted in `src/styles.css` for Waves shell semantics.
+- Upstream `win95.css` is vendored in `src/vendor/win95/` (including required image assets and MIT license).
 
 App logic modules:
 
