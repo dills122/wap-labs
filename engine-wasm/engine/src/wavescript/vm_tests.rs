@@ -64,6 +64,17 @@ fn execute_from_pc_rejects_invalid_entry_point() {
 }
 
 #[test]
+fn execute_from_pc_rejects_non_boundary_entry_point() {
+    let vm = Vm::default();
+    let unit = decode_compilation_unit(&[0x01, 0x01, 0x00]).expect("unit decode");
+
+    let err = vm
+        .execute_from_pc(&unit, 1)
+        .expect_err("non-boundary entry must trap");
+    assert_eq!(err, VmTrap::InvalidEntryPoint { entry_pc: 1 });
+}
+
+#[test]
 fn execute_from_pc_with_locals_uses_arguments() {
     let vm = Vm::default();
     let unit = decode_compilation_unit(&[0x11, 0, 0x11, 1, 0x02, 0x00]).expect("unit decode");

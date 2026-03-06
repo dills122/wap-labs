@@ -15,12 +15,22 @@ const CALL_HOST_OPCODE: u8 = 0x20;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DecodeLimits {
     pub max_unit_bytes: usize,
+    pub max_local_index: usize,
+    pub max_call_arg_count: usize,
+    pub max_call_local_count: usize,
+    pub max_call_frame_locals: usize,
+    pub max_host_arg_count: usize,
 }
 
 impl Default for DecodeLimits {
     fn default() -> Self {
         Self {
             max_unit_bytes: MAX_COMPILATION_UNIT_BYTES,
+            max_local_index: 255,
+            max_call_arg_count: 64,
+            max_call_local_count: 64,
+            max_call_frame_locals: 128,
+            max_host_arg_count: 64,
         }
     }
 }
@@ -28,10 +38,39 @@ impl Default for DecodeLimits {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum DecodeError {
     EmptyUnit,
-    UnitTooLarge { size: usize, limit: usize },
-    UnsupportedOpcode { pc: usize, opcode: u8 },
-    TruncatedImmediate { pc: usize, opcode: u8 },
-    InvalidCallTarget { pc: usize, target: usize },
+    UnitTooLarge {
+        size: usize,
+        limit: usize,
+    },
+    UnsupportedOpcode {
+        pc: usize,
+        opcode: u8,
+    },
+    TruncatedImmediate {
+        pc: usize,
+        opcode: u8,
+    },
+    InvalidLocalIndex {
+        pc: usize,
+        index: usize,
+        limit: usize,
+    },
+    InvalidCallArity {
+        pc: usize,
+        arg_count: usize,
+        local_count: usize,
+        frame_locals: usize,
+        limit: usize,
+    },
+    InvalidHostArgCount {
+        pc: usize,
+        arg_count: usize,
+        limit: usize,
+    },
+    InvalidCallTarget {
+        pc: usize,
+        target: usize,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -69,7 +108,7 @@ pub fn decode_compilation_unit_with_limits(
         });
     }
 
-    let instruction_starts = verify_unit_structure(bytes)?;
+    let instruction_starts = verify_unit_structure(bytes, limits)?;
 
     Ok(DecodedUnit {
         bytes: bytes.to_vec(),
@@ -77,7 +116,10 @@ pub fn decode_compilation_unit_with_limits(
     })
 }
 
-fn verify_unit_structure(bytes: &[u8]) -> Result<HashSet<usize>, DecodeError> {
+fn verify_unit_structure(
+    bytes: &[u8],
+    limits: DecodeLimits,
+) -> Result<HashSet<usize>, DecodeError> {
     let mut pc = 0usize;
     let mut starts = HashSet::new();
     let mut call_targets: Vec<(usize, usize)> = Vec::new();
@@ -90,8 +132,18 @@ fn verify_unit_structure(bytes: &[u8]) -> Result<HashSet<usize>, DecodeError> {
 
         match opcode {
             HALT_OPCODE | ADD_I32_OPCODE | RET_OPCODE => {}
-            PUSH_INT8_OPCODE | STORE_LOCAL_OPCODE | LOAD_LOCAL_OPCODE => {
+            PUSH_INT8_OPCODE => {
                 read_u8(bytes, &mut pc, op_pc, opcode)?;
+            }
+            STORE_LOCAL_OPCODE | LOAD_LOCAL_OPCODE => {
+                let index = usize::from(read_u8(bytes, &mut pc, op_pc, opcode)?);
+                if index > limits.max_local_index {
+                    return Err(DecodeError::InvalidLocalIndex {
+                        pc: op_pc,
+                        index,
+                        limit: limits.max_local_index,
+                    });
+                }
             }
             PUSH_STRING8_OPCODE => {
                 let len = usize::from(read_u8(bytes, &mut pc, op_pc, opcode)?);
@@ -99,13 +151,33 @@ fn verify_unit_structure(bytes: &[u8]) -> Result<HashSet<usize>, DecodeError> {
             }
             CALL_OPCODE => {
                 let target = usize::from(read_u8(bytes, &mut pc, op_pc, opcode)?);
-                read_u8(bytes, &mut pc, op_pc, opcode)?; // arg_count
-                read_u8(bytes, &mut pc, op_pc, opcode)?; // local_count
+                let arg_count = usize::from(read_u8(bytes, &mut pc, op_pc, opcode)?);
+                let local_count = usize::from(read_u8(bytes, &mut pc, op_pc, opcode)?);
+                let frame_locals = arg_count.saturating_add(local_count);
+                if arg_count > limits.max_call_arg_count
+                    || local_count > limits.max_call_local_count
+                    || frame_locals > limits.max_call_frame_locals
+                {
+                    return Err(DecodeError::InvalidCallArity {
+                        pc: op_pc,
+                        arg_count,
+                        local_count,
+                        frame_locals,
+                        limit: limits.max_call_frame_locals,
+                    });
+                }
                 call_targets.push((op_pc, target));
             }
             CALL_HOST_OPCODE => {
                 read_u8(bytes, &mut pc, op_pc, opcode)?; // function_id
-                read_u8(bytes, &mut pc, op_pc, opcode)?; // arg_count
+                let arg_count = usize::from(read_u8(bytes, &mut pc, op_pc, opcode)?); // arg_count
+                if arg_count > limits.max_host_arg_count {
+                    return Err(DecodeError::InvalidHostArgCount {
+                        pc: op_pc,
+                        arg_count,
+                        limit: limits.max_host_arg_count,
+                    });
+                }
             }
             _ => {
                 return Err(DecodeError::UnsupportedOpcode { pc: op_pc, opcode });
@@ -196,7 +268,10 @@ mod tests {
 
     #[test]
     fn decode_respects_custom_bounds() {
-        let limits = DecodeLimits { max_unit_bytes: 3 };
+        let limits = DecodeLimits {
+            max_unit_bytes: 3,
+            ..DecodeLimits::default()
+        };
 
         let ok = decode_compilation_unit_with_limits(&[0x00, 0x00, 0x00], limits)
             .expect("unit at custom limit should decode");
@@ -249,5 +324,58 @@ mod tests {
             .expect("valid call target should decode");
         assert!(decoded.is_instruction_boundary(0));
         assert!(decoded.is_instruction_boundary(4));
+    }
+
+    #[test]
+    fn decode_rejects_local_index_above_limit() {
+        let limits = DecodeLimits {
+            max_local_index: 0,
+            ..DecodeLimits::default()
+        };
+        let err = decode_compilation_unit_with_limits(&[0x10, 0x01, 0x00], limits)
+            .expect_err("local index above configured limit must fail");
+        assert_eq!(
+            err,
+            DecodeError::InvalidLocalIndex {
+                pc: 0,
+                index: 1,
+                limit: 0
+            }
+        );
+    }
+
+    #[test]
+    fn decode_rejects_call_arity_above_limits() {
+        // 0: CALL target=4 arg=65 locals=0, 4: HALT
+        let err = decode_compilation_unit(&[0x12, 0x04, 0x41, 0x00, 0x00])
+            .expect_err("call arity above decoder limits must fail");
+        assert_eq!(
+            err,
+            DecodeError::InvalidCallArity {
+                pc: 0,
+                arg_count: 65,
+                local_count: 0,
+                frame_locals: 65,
+                limit: 128,
+            }
+        );
+    }
+
+    #[test]
+    fn decode_rejects_host_call_arg_count_above_limit() {
+        let limits = DecodeLimits {
+            max_host_arg_count: 0,
+            ..DecodeLimits::default()
+        };
+        let err = decode_compilation_unit_with_limits(&[0x20, 0x01, 0x01, 0x00], limits)
+            .expect_err("host arg count above configured limit must fail");
+        assert_eq!(
+            err,
+            DecodeError::InvalidHostArgCount {
+                pc: 0,
+                arg_count: 1,
+                limit: 0
+            }
+        );
     }
 }
