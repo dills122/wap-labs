@@ -3,6 +3,7 @@ use crate::runtime::card::CardTaskAction;
 #[cfg(test)]
 use super::xml::{extract_attr, find_tag_from};
 use super::xml::{XmlElement, XmlNode};
+use super::ParseBudget;
 
 type CardActions = (
     Option<CardTaskAction>,
@@ -12,14 +13,17 @@ type CardActions = (
     Option<u32>,
 );
 
-pub(super) fn parse_card_actions(card: &XmlElement) -> Result<CardActions, String> {
+pub(super) fn parse_card_actions(
+    card: &XmlElement,
+    budget: &mut ParseBudget,
+) -> Result<CardActions, String> {
     let mut elements = Vec::new();
-    collect_elements_in_order(&card.children, &mut elements);
+    collect_elements_in_order(&card.children, &mut elements, budget, 0)?;
 
-    let accept_action = parse_do_accept_action_xml(&elements);
-    let onenterforward_action = parse_onevent_action_xml(&elements, "onenterforward");
-    let onenterbackward_action = parse_onevent_action_xml(&elements, "onenterbackward");
-    let ontimer_action = parse_onevent_action_xml(&elements, "ontimer");
+    let accept_action = parse_do_accept_action_xml(&elements, budget)?;
+    let onenterforward_action = parse_onevent_action_xml(&elements, "onenterforward", budget)?;
+    let onenterbackward_action = parse_onevent_action_xml(&elements, "onenterbackward", budget)?;
+    let ontimer_action = parse_onevent_action_xml(&elements, "ontimer", budget)?;
     let timer_value_ds = parse_timer_value_ds_xml(&elements);
     Ok((
         accept_action,
@@ -30,16 +34,27 @@ pub(super) fn parse_card_actions(card: &XmlElement) -> Result<CardActions, Strin
     ))
 }
 
-fn collect_elements_in_order<'a>(nodes: &'a [XmlNode], out: &mut Vec<&'a XmlElement>) {
+fn collect_elements_in_order<'a>(
+    nodes: &'a [XmlNode],
+    out: &mut Vec<&'a XmlElement>,
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<(), String> {
+    budget.enter_scope(depth, "action element traversal")?;
     for node in nodes {
         if let XmlNode::Element(element) = node {
+            budget.visit_node("action element traversal")?;
             out.push(element);
-            collect_elements_in_order(&element.children, out);
+            collect_elements_in_order(&element.children, out, budget, depth + 1)?;
         }
     }
+    Ok(())
 }
 
-fn parse_do_accept_action_xml(elements: &[&XmlElement]) -> Option<CardTaskAction> {
+fn parse_do_accept_action_xml(
+    elements: &[&XmlElement],
+    budget: &mut ParseBudget,
+) -> Result<Option<CardTaskAction>, String> {
     for element in elements {
         if element.name != "do" {
             continue;
@@ -54,22 +69,23 @@ fn parse_do_accept_action_xml(elements: &[&XmlElement]) -> Option<CardTaskAction
         }
 
         if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
-            return Some(CardTaskAction::Go {
+            return Ok(Some(CardTaskAction::Go {
                 href: href.to_string(),
-            });
+            }));
         }
 
-        if let Some(action) = parse_first_task_action_xml(&element.children) {
-            return Some(action);
+        if let Some(action) = parse_first_task_action_xml(&element.children, budget, 0)? {
+            return Ok(Some(action));
         }
     }
-    None
+    Ok(None)
 }
 
 fn parse_onevent_action_xml(
     elements: &[&XmlElement],
     target_event_type: &str,
-) -> Option<CardTaskAction> {
+    budget: &mut ParseBudget,
+) -> Result<Option<CardTaskAction>, String> {
     for element in elements {
         if element.name != "onevent" {
             continue;
@@ -80,13 +96,18 @@ fn parse_onevent_action_xml(
             .unwrap_or_default()
             .to_ascii_lowercase();
         if event_type == target_event_type {
-            return parse_first_task_action_xml(&element.children);
+            return parse_first_task_action_xml(&element.children, budget, 0);
         }
     }
-    None
+    Ok(None)
 }
 
-fn parse_first_task_action_xml(nodes: &[XmlNode]) -> Option<CardTaskAction> {
+fn parse_first_task_action_xml(
+    nodes: &[XmlNode],
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<Option<CardTaskAction>, String> {
+    budget.enter_scope(depth, "task-action traversal")?;
     for node in nodes {
         let XmlNode::Element(element) = node else {
             continue;
@@ -94,22 +115,24 @@ fn parse_first_task_action_xml(nodes: &[XmlNode]) -> Option<CardTaskAction> {
         match element.name.as_str() {
             "go" => {
                 if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
-                    return Some(CardTaskAction::Go {
+                    return Ok(Some(CardTaskAction::Go {
                         href: href.to_string(),
-                    });
+                    }));
                 }
             }
-            "prev" => return Some(CardTaskAction::Prev),
-            "refresh" => return Some(CardTaskAction::Refresh),
-            "noop" => return Some(CardTaskAction::Noop),
+            "prev" => return Ok(Some(CardTaskAction::Prev)),
+            "refresh" => return Ok(Some(CardTaskAction::Refresh)),
+            "noop" => return Ok(Some(CardTaskAction::Noop)),
             _ => {
-                if let Some(action) = parse_first_task_action_xml(&element.children) {
-                    return Some(action);
+                if let Some(action) =
+                    parse_first_task_action_xml(&element.children, budget, depth + 1)?
+                {
+                    return Ok(Some(action));
                 }
             }
         }
     }
-    None
+    Ok(None)
 }
 
 fn parse_timer_value_ds_xml(elements: &[&XmlElement]) -> Option<u32> {

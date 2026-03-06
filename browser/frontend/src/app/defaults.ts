@@ -13,7 +13,7 @@ export const defaultStartUrl = (candidate = import.meta.env.VITE_WAVES_DEFAULT_U
     if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
       return FALLBACK_START_URL;
     }
-    return trimmed;
+    return parsed.toString();
   } catch {
     return FALLBACK_START_URL;
   }
