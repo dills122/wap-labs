@@ -5,6 +5,7 @@ pub enum CardTaskAction {
     Go { href: String },
     Prev,
     Refresh,
+    Noop,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

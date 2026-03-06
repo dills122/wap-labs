@@ -1386,6 +1386,36 @@ fn enter_accept_refresh_action_keeps_current_card_and_history() {
 }
 
 #[test]
+fn enter_accept_noop_action_keeps_current_card_and_history() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <do type="accept"><noop/></do>
+            <p>Accept should noop without navigation.</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("home enter should navigate to middle");
+    assert_eq!(engine.active_card_id().expect("active card"), "mid");
+    assert_eq!(engine.nav_stack.len(), 1);
+
+    engine.clear_trace_entries();
+    engine
+        .handle_key("enter".to_string())
+        .expect("accept noop should succeed");
+    assert_eq!(engine.active_card_id().expect("active card"), "mid");
+    assert_eq!(engine.nav_stack.len(), 1);
+    assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_NOOP"]);
+}
+
+#[test]
 fn fixture_accept_go_trace_order_is_deterministic() {
     let mut engine = WmlEngine::new();
     engine
@@ -1520,6 +1550,31 @@ fn onenterforward_failure_rolls_back_navigation_state() {
     assert_eq!(engine.active_card_id().expect("active card"), "home");
     assert_eq!(engine.focused_link_index(), 0);
     assert!(engine.nav_stack.is_empty());
+}
+
+#[test]
+fn onenterforward_noop_keeps_deterministic_navigation_state() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#mid">To middle</a>
+          </card>
+          <card id="mid">
+            <onevent type="onenterforward"><noop/></onevent>
+            <p>Middle</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+    engine.clear_trace_entries();
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("onenterforward noop should succeed");
+    assert_eq!(engine.active_card_id().expect("active card"), "mid");
+    assert_eq!(engine.nav_stack.len(), 1);
+    assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_FRAGMENT", "ACTION_NOOP"]);
 }
 
 #[test]

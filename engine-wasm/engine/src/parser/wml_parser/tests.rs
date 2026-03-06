@@ -287,8 +287,8 @@ fn helper_parse_first_task_action_handles_go_prev_and_malformed() {
         Some(CardTaskAction::Refresh)
     );
     assert_eq!(
-        parse_first_task_action("<noop/>").expect("no task should parse"),
-        None
+        parse_first_task_action("<noop/>").expect("noop should parse"),
+        Some(CardTaskAction::Noop)
     );
     let malformed_go =
         parse_first_task_action("<go href=\"#broken\"").expect_err("malformed go must fail");
@@ -322,6 +322,11 @@ fn helper_parse_do_accept_action_exercises_direct_and_error_paths() {
         parse_do_accept_action("<do type=\"accept\"><refresh/></do>")
             .expect("fallback refresh should parse"),
         Some(CardTaskAction::Refresh)
+    );
+    assert_eq!(
+        parse_do_accept_action("<do type=\"accept\"><noop/></do>")
+            .expect("fallback noop should parse"),
+        Some(CardTaskAction::Noop)
     );
 
     let malformed =
@@ -381,6 +386,14 @@ fn helper_parse_onevent_action_exercises_non_matching_and_error_paths() {
         )
         .expect("refresh task onevent should parse"),
         Some(CardTaskAction::Refresh)
+    );
+    assert_eq!(
+        parse_onevent_action(
+            "<onevent type=\"onenterforward\"><noop/></onevent>",
+            "onenterforward"
+        )
+        .expect("noop task onevent should parse"),
+        Some(CardTaskAction::Noop)
     );
 
     let malformed = parse_onevent_action("<onevent type=\"onenterforward\"", "onenterforward")

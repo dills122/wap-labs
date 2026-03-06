@@ -102,6 +102,10 @@ impl WmlEngine {
                 self.start_or_resume_timer_for_active_card(true)?;
                 Ok(())
             }
+            CardTaskAction::Noop => {
+                self.push_trace("ACTION_NOOP", String::new());
+                Ok(())
+            }
         }
     }
 

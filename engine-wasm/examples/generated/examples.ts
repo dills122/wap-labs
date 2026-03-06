@@ -15,6 +15,47 @@ export interface HostExample {
 
 export const EXAMPLES: HostExample[] = [
   {
+    "key": "acceptErrorRollback",
+    "label": "Accept Error Rollback",
+    "description": "Demonstrates deterministic rollback when accept-task navigation targets are invalid.",
+    "goal": "Verify failed accept go action does not partially mutate runtime state.",
+    "workItems": [
+      "R0-02"
+    ],
+    "specItems": [
+      "WML-18",
+      "WML-R-017"
+    ],
+    "testingAc": [
+      "Enter \"To broken accept\" then Enter again.",
+      "Confirm action fails and activeCardId remains accept-broken.",
+      "Press Back and confirm activeCardId returns to home."
+    ],
+    "wml": "<wml>\n  <card id=\"home\">\n    <p>Rollback demo.</p>\n    <a href=\"#accept-broken\">To broken accept</a>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Accept action should fail and keep this card active.</p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "acceptNoopOrdering",
+    "label": "Accept Noop Ordering",
+    "description": "Exercises accept-task ordering with explicit noop behavior alongside go/prev/refresh flows.",
+    "goal": "Verify noop is deterministic and does not mutate navigation/history while other accept actions retain expected behavior.",
+    "workItems": [
+      "R0-02"
+    ],
+    "specItems": [
+      "WML-18",
+      "WML-R-012",
+      "WML-R-015",
+      "WML-R-017"
+    ],
+    "testingAc": [
+      "Enter \"Accept go\" then Enter again; activeCardId should become target.",
+      "Return home, enter \"Accept prev\" then Enter again; activeCardId should become home.",
+      "Enter \"Accept refresh\" then Enter; activeCardId should stay accept-refresh.",
+      "Enter \"Accept noop\" then Enter; activeCardId should stay accept-noop and history depth should not change."
+    ],
+    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-noop\">Accept noop</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-noop\">\n    <do type=\"accept\"><noop/></do>\n    <p>Enter should run accept noop without state mutation.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "actionsDoOnevent",
     "label": "Do + Onevent Actions",
     "description": "Demonstrates accept softkey action and onenterforward event chaining through runtime action handling.",
@@ -170,6 +211,28 @@ export const EXAMPLES: HostExample[] = [
       "Confirm runtime-state externalNavigationIntent updates when entering an external service link."
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//OPENWAVE.COM//DTD WML 1.3//EN\"\n\"http://www.openwave.com/dtd/wml13.dtd\">\n<wml>\n  <card id=\"main\" title=\"Wireless Programming\">\n    <p align=\"center\" mode=\"wrap\">\n      Welcome to our <em>Online Mobile Course</em><br/>\n      <big><strong>Wireless Programming</strong></big>\n    </p>\n    <p>To Continue Click <a href=\"#content\">Here</a></p>\n  </card>\n  <card id=\"content\" title=\"Services\">\n    <p>\n      List of our services<br/>\n      <a href=\"dictionary.wml\">WAP Dictionary</a><br/>\n      <a href=\"Lectures.wml\">WAP Lectures</a><br/>\n      <a href=\"Quizes.wml\">WAP Quizes</a><br/>\n      <a href=\"Assignments.wml\">WAP Assignments</a><br/>\n      <a href=\"FAQ.wml\">WAP FAQ</a><br/>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "historyBackProcessOrder",
+    "label": "History Back Process Order",
+    "description": "Exercises multi-step fragment navigation and deterministic back traversal order.",
+    "goal": "Verify back traversal replays prior card order without skipping or mutating unrelated state.",
+    "workItems": [
+      "R0-02",
+      "R0-03"
+    ],
+    "specItems": [
+      "WML-18",
+      "WML-07",
+      "WML-R-008"
+    ],
+    "testingAc": [
+      "Navigate home -> level-1 -> level-2 using Enter.",
+      "Press Back once and confirm activeCardId is level-1.",
+      "Press Back again and confirm activeCardId is home.",
+      "Press Back on home and confirm no-op behavior with activeCardId still home."
+    ],
+    "wml": "<wml>\n  <card id=\"home\">\n    <p>History process-order demo.</p>\n    <a href=\"#level-1\">To level 1</a>\n  </card>\n\n  <card id=\"level-1\">\n    <p>Level 1 card.</p>\n    <a href=\"#level-2\">To level 2</a>\n  </card>\n\n  <card id=\"level-2\">\n    <p>Level 2 card.</p>\n    <a href=\"#home\">Return home via link</a>\n  </card>\n</wml>\n"
   },
   {
     "key": "historyBackStack",

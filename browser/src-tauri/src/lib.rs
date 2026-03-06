@@ -538,6 +538,40 @@ mod tests {
 
     const FIXTURE_LOAD_NAV_EXTERNAL_WML: &str =
         include_str!("../tests/fixtures/integration/load-nav-external.wml");
+    const TASK_ACTION_ORDER_WML: &str = r##"
+    <wml>
+      <card id="home">
+        <a href="#accept-go">Accept go</a>
+        <a href="#accept-prev">Accept prev</a>
+        <a href="#accept-refresh">Accept refresh</a>
+        <a href="#accept-noop">Accept noop</a>
+        <a href="#accept-broken">Accept broken</a>
+      </card>
+      <card id="accept-go">
+        <do type="accept"><go href="#target"/></do>
+        <p>Accept go.</p>
+      </card>
+      <card id="accept-prev">
+        <do type="accept"><prev/></do>
+        <p>Accept prev.</p>
+      </card>
+      <card id="accept-refresh">
+        <do type="accept"><refresh/></do>
+        <p>Accept refresh.</p>
+      </card>
+      <card id="accept-noop">
+        <do type="accept"><noop/></do>
+        <p>Accept noop.</p>
+      </card>
+      <card id="accept-broken">
+        <do type="accept"><go href="#missing"/></do>
+        <p>Accept broken.</p>
+      </card>
+      <card id="target">
+        <p>Target.</p>
+      </card>
+    </wml>
+    "##;
 
     fn mock_fetch_ok(url: &str, content_type: &str, wml: &str) -> FetchDeckResponse {
         FetchDeckResponse {
@@ -602,6 +636,31 @@ mod tests {
             .and_then(|details| details.get(key))
             .and_then(|value| value.as_str())
             .map(str::to_string)
+    }
+
+    fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
+        let kinds: Vec<String> = engine
+            .trace_entries()
+            .into_iter()
+            .map(|entry| entry.kind)
+            .collect();
+        let mut cursor = 0usize;
+        for kind in kinds {
+            if cursor < expected.len() && kind == expected[cursor] {
+                cursor += 1;
+            }
+        }
+        assert_eq!(
+            cursor,
+            expected.len(),
+            "expected trace subsequence {:?} not found in {:?}",
+            expected,
+            engine
+                .trace_entries()
+                .iter()
+                .map(|entry| entry.kind.as_str())
+                .collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -1293,6 +1352,173 @@ mod tests {
         )
         .expect("load_deck wrapper should succeed");
         assert_eq!(out.active_card_id.as_deref(), Some("home"));
+    }
+
+    #[test]
+    fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
+        let mut engine = WmlEngine::new();
+        apply_load_deck_context(
+            &mut engine,
+            LoadDeckContextRequest {
+                wml_xml: TASK_ACTION_ORDER_WML.to_string(),
+                base_url: "http://local.test/task-order.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                raw_bytes_base64: None,
+            },
+        )
+        .expect("deck should load");
+
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-prev");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate to accept-prev");
+        engine.clear_trace_entries();
+        let prev_snapshot = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("accept-prev should navigate back");
+        assert_eq!(prev_snapshot.active_card_id.as_deref(), Some("home"));
+        assert_trace_kinds_subsequence(
+            &engine,
+            &["KEY", "ACTION_ACCEPT", "ACTION_PREV", "ACTION_BACK"],
+        );
+
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-prev");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-refresh");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate to accept-refresh");
+        engine.clear_trace_entries();
+        let refresh_snapshot = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("accept-refresh should keep current card");
+        assert_eq!(
+            refresh_snapshot.active_card_id.as_deref(),
+            Some("accept-refresh")
+        );
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_REFRESH"]);
+
+        apply_navigate_back(&mut engine);
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-prev");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-refresh");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-noop");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate to accept-noop");
+        engine.clear_trace_entries();
+        let noop_snapshot = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("accept-noop should keep current card");
+        assert_eq!(noop_snapshot.active_card_id.as_deref(), Some("accept-noop"));
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_NOOP"]);
+
+        apply_navigate_back(&mut engine);
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-prev");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-refresh");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-noop");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Down,
+            },
+        )
+        .expect("down should focus accept-broken");
+        apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate to accept-broken");
+        engine.clear_trace_entries();
+        let err = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect_err("accept-broken should fail deterministically");
+        assert!(err.contains("Card id not found"));
+        let snapshot = apply_engine_snapshot(&engine);
+        assert_eq!(snapshot.active_card_id.as_deref(), Some("accept-broken"));
+        assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]);
     }
 
     #[test]
