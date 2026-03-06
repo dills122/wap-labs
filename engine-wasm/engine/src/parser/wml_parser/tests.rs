@@ -562,3 +562,15 @@ fn rejects_excessive_nested_markup_depth() {
         "unexpected error: {err}"
     );
 }
+
+#[test]
+fn rejects_excessive_node_budget() {
+    let nodes = "<x/>".repeat(50_005);
+    let xml = format!("<wml><card id=\"home\">{nodes}</card></wml>");
+
+    let err = parse_wml(&xml).expect_err("excessive node budget must fail deterministically");
+    assert!(
+        err.contains("Parse limit exceeded: node budget"),
+        "unexpected error: {err}"
+    );
+}

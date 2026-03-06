@@ -66,7 +66,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-15 Engine parser recursion guardrails (untrusted deck DoS hardening)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P0`
 3. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/actions.rs`
@@ -84,6 +84,9 @@ Completed maintenance tickets are archived in:
 - No process crash or panic path from crafted deep deck structures.
 7. `Notes`:
 - Security audit follow-up for high-severity parser crash/DoS risk.
+- Parser traversal now enforces explicit nesting-depth and visited-node budgets with deterministic
+  error surfaces (`Parse limit exceeded: ...`) across action, card-node, inline-node, and text-extraction walks.
+- Added parser-level and engine-level regression tests for depth and node-budget exhaustion paths.
 
 ### M1-16 Transport/engine payload size guardrails (memory pressure hardening)
 
