@@ -1,0 +1,22 @@
+<!--
+label: Accept Error Rollback
+description: Demonstrates deterministic rollback when accept-task navigation targets are invalid.
+goal: Verify failed accept go action does not partially mutate runtime state.
+work-items: R0-02
+spec-items: WML-18,WML-R-017
+testing-ac:
+- Enter "To broken accept" then Enter again.
+- Confirm action fails and activeCardId remains accept-broken.
+- Press Back and confirm activeCardId returns to home.
+-->
+<wml>
+  <card id="home">
+    <p>Rollback demo.</p>
+    <a href="#accept-broken">To broken accept</a>
+  </card>
+
+  <card id="accept-broken">
+    <do type="accept"><go href="#missing"/></do>
+    <p>Accept action should fail and keep this card active.</p>
+  </card>
+</wml>

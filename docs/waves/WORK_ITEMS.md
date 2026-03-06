@@ -166,6 +166,12 @@ When a PR changes spec interpretation, requirement mapping, or contract behavior
 - If a later compliance audit finds a gap in a completed area, add a new follow-up ticket that references the completed ticket in `Depends On` and notes.
 - Do not rewrite ticket history by changing completed items back to active statuses.
 
+## Example Coverage Guardrail
+
+- For any host-visible engine/runtime behavior change, add or update at least one example under `engine-wasm/examples/source/*.wml` in the same PR.
+- Regenerate `engine-wasm/examples/generated/examples.ts` via `pnpm --dir engine-wasm/host-sample run examples:generate` in the same PR.
+- New/updated examples must include metadata (`work-items` or `spec-items`, `goal`, and `testing-ac`) to keep host-sample and Waves tester verification aligned.
+
 ## Initial Backlog (Prepared)
 
 Historical kickoff tickets (`P0-*`) are archived in:

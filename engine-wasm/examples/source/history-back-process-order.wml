@@ -1,0 +1,28 @@
+<!--
+label: History Back Process Order
+description: Exercises multi-step fragment navigation and deterministic back traversal order.
+goal: Verify back traversal replays prior card order without skipping or mutating unrelated state.
+work-items: R0-02,R0-03
+spec-items: WML-18,WML-07,WML-R-008
+testing-ac:
+- Navigate home -> level-1 -> level-2 using Enter.
+- Press Back once and confirm activeCardId is level-1.
+- Press Back again and confirm activeCardId is home.
+- Press Back on home and confirm no-op behavior with activeCardId still home.
+-->
+<wml>
+  <card id="home">
+    <p>History process-order demo.</p>
+    <a href="#level-1">To level 1</a>
+  </card>
+
+  <card id="level-1">
+    <p>Level 1 card.</p>
+    <a href="#level-2">To level 2</a>
+  </card>
+
+  <card id="level-2">
+    <p>Level 2 card.</p>
+    <a href="#home">Return home via link</a>
+  </card>
+</wml>
