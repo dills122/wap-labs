@@ -3,15 +3,15 @@
 Scope: WDP → WTP → WSP rewrite path plus WTLS optional phase path.
 
 Inputs:
-- [docs/waves/networking-chatgpt-full-context.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-chatgpt-full-context.md)
-- [docs/waves/networking-gap-analysis.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-gap-analysis.md)
-- [docs/waves/networking-gap-to-source-map.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-gap-to-source-map.md)
+- [docs/waves/archive/networking/networking-chatgpt-full-context.md](/Users/dsteele/repos/wap-labs/docs/waves/archive/networking/networking-chatgpt-full-context.md)
+- [docs/waves/archive/networking/networking-gap-analysis.md](/Users/dsteele/repos/wap-labs/docs/waves/archive/networking/networking-gap-analysis.md)
+- [docs/waves/archive/networking/networking-gap-to-source-map.md](/Users/dsteele/repos/wap-labs/docs/waves/archive/networking/networking-gap-to-source-map.md)
 
 ## P0 — Blockers (cannot move to protocol-native profile)
 
 ### 1) WTP reliable transaction engine not fully implemented
 
-- Internal evidence: [docs/waves/wtp-state-machine.md](docs/waves/wtp-state-machine.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/networking-implementation-checklist.md](docs/waves/networking-implementation-checklist.md), [docs/waves/networking-gap-analysis.md](docs/waves/networking-gap-analysis.md)
+- Internal evidence: [docs/waves/wtp-state-machine.md](docs/waves/wtp-state-machine.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/networking-implementation-checklist.md](docs/waves/networking-implementation-checklist.md), [docs/waves/archive/networking/networking-gap-analysis.md](docs/waves/archive/networking/networking-gap-analysis.md)
 - Missing behavior:
   - concrete retransmission timing policy (RTO/backoff/count, deterministic test profile)
   - duplicate detection/retention policy for `(peer, tid, opcode)` windows
@@ -56,7 +56,7 @@ Inputs:
 
 ### 3) WSP header token registry and unknown-token behavior is still incomplete
 
-- Internal evidence: [docs/waves/wsp-pdu-reference.md](docs/waves/wsp-pdu-reference.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md RQ-TRN-018](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/networking-gap-analysis.md](docs/waves/networking-gap-analysis.md)
+- Internal evidence: [docs/waves/wsp-pdu-reference.md](docs/waves/wsp-pdu-reference.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md RQ-TRN-018](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/archive/networking/networking-gap-analysis.md](docs/waves/archive/networking/networking-gap-analysis.md)
 - Missing behavior:
   - full Table 34/35/38/39 coverage
   - complete code-page shift + fallback logic
@@ -97,7 +97,7 @@ Inputs:
 
 ### 5) Interop fixture matrix still not grounded in real captures
 
-- Internal evidence: [docs/waves/networking-migration-readiness-checklist.md](docs/waves/networking-migration-readiness-checklist.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/networking-gap-to-source-map.md](docs/waves/networking-gap-to-source-map.md)
+- Internal evidence: [docs/waves/networking-migration-readiness-checklist.md](docs/waves/networking-migration-readiness-checklist.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/archive/networking/networking-gap-to-source-map.md](docs/waves/archive/networking/networking-gap-to-source-map.md)
 - Missing behavior:
   - CONNECT/GET/REPLY canonical decode fixtures
   - retransmit/duplicate transaction fixture corpus (PCAP or equivalent capture replay)
@@ -125,7 +125,7 @@ Inputs:
 
 ### 7) Parser pipeline policy for canonical source replacements
 
-- Internal evidence: [docs/waves/networking-gap-analysis.md](docs/waves/networking-gap-analysis.md), [spec-processing/finalize-new-source-material.fish](spec-processing/finalize-new-source-material.fish)
+- Internal evidence: [docs/waves/archive/networking/networking-gap-analysis.md](docs/waves/archive/networking/networking-gap-analysis.md), [spec-processing/finalize-new-source-material.fish](spec-processing/finalize-new-source-material.fish)
 - Missing behavior:
   - explicit diff-review gate before canonical promotion of cleaned markdown
 - Targets:

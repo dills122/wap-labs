@@ -37,7 +37,7 @@ Completed maintenance tickets are archived in:
 - `engine-wasm/README.md`
 - `transport-rust/README.md`
 5. `Notes`:
-- Active execution is currently anchored to `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`.
+- Active execution is currently anchored to `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`.
 - Keep `M1-08` parallelized while committed compliance tickets execute.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)

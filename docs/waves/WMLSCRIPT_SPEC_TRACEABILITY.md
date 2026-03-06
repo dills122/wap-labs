@@ -7,6 +7,10 @@ Status: Active implementation baseline (incremental conformance closure + doclin
 
 This document captures WMLScript requirements and acceptance criteria (AC) directly from the source specs so Waves can track implementation and test coverage against normative items.
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (full pass)
 
 - `spec-processing/source-material/WAP-193-WMLScript-20001025-a.pdf`
@@ -55,6 +59,7 @@ Legend:
   - `WAP-193_101` 6.4.1, 6.4.2.2, 8.3.2, 8.3.4, 8.5
   - SCRs: `WMLS-S-031 (M)`, `WMLS-C-079 (M)`, `WMLS-C-080 (M)`, `WMLS-C-087 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] External call to non-`extern` function is rejected.
   - [ ] URL fragment resolution selects target function deterministically.
   - [ ] External call path enforces access control before execution.
@@ -67,6 +72,7 @@ Legend:
   - `WAP-193_101` 6.7.1, 6.7.2, 6.7.3
   - SCRs: `WMLS-S-043 (M)`, `WMLS-S-044 (M)`, `WMLS-S-045 (M)`, `WMLS-C-087 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] `use url` name mapping works for external calls.
   - [ ] More than one access pragma is rejected as error.
   - [ ] Access domain/path matching follows suffix/prefix element rules.
@@ -79,6 +85,7 @@ Legend:
   - `WAP-193_101` 8.3.1, 8.3.2, 8.3.6
   - SCRs: `WMLS-C-078 (M)`, `WMLS-C-079 (M)`, `WMLS-C-082 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Relative URL unit references resolve to expected absolute URL.
   - [ ] Invalid URL references fail with deterministic non-fatal error mapping.
 
@@ -90,6 +97,7 @@ Legend:
   - `WAP-193_101` 6.4.1, 6.4.2.1, 6.4.3, 8.4.1, 8.4.3
   - SCRs: `WMLS-S-030..033 (M)`, `WMLS-C-083..086 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Wrong-arity calls fail deterministically.
   - [ ] Implicit return value is `""` with no undefined behavior.
   - [ ] Arguments appear in callee locals in declared order.
@@ -102,6 +110,7 @@ Legend:
   - `WAP-193_101` 8.4.2, 8.4.4
   - SCRs: `WMLS-S-047 (M)`, `WMLS-S-049 (M)`, `WMLS-C-084 (M)`, `WMLS-C-086 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Index assignment for args/locals matches section 8.4.2 rules.
   - [ ] Uninitialized locals read as empty string.
 
@@ -113,6 +122,7 @@ Legend:
   - `WAP-193_101` 6.8, 6.9, 6.10
   - SCRs: `WMLS-C-072 (M)`, `WMLS-C-073 (M)`, `WMLS-C-075 (M)`, `WMLS-C-076 (M)`, `WMLS-C-077 (M)`, `WMLS-C-071 (O)`, `WMLS-C-074 (O)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Conversion behavior matches per-type legal conversions.
   - [ ] Invalid-conversion cases return `invalid` consistently.
   - [ ] Floating-point optionality is configurable and testable.
@@ -126,6 +136,7 @@ Legend:
   - `WAP-194` 6.4
   - SCRs: `WMLS-C-112 (O)`, `WMLSSL-017 (O)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Float-related conversions/operations follow integer-only rules.
   - [ ] Float library calls return `invalid` in integer-only mode.
   - [ ] `Lang.float()` and `Lang.parseFloat()` behavior matches spec for integer-only mode.
@@ -138,6 +149,7 @@ Legend:
   - `WAP-193_101` 9.2..9.6, 10
   - SCRs: `WMLS-C-088..094 (M)`, `WMLS-C-095..106 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Known-good `.wmlsc` fixtures decode to stable internal representation.
   - [ ] Unsupported/reserved types fail verification before execution.
   - [ ] Function boundaries and instruction boundaries are validated.
@@ -150,6 +162,7 @@ Legend:
   - `WAP-193_101` 11.1, 11.2
   - SCRs: `WMLS-C-107 (M)`, `WMLS-C-108 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Version/size/pool-count checks enforced.
   - [ ] Jump targets verified to instruction boundaries within function bounds.
   - [ ] Invalid local/constant/library/function indexes trap deterministically.
@@ -162,6 +175,7 @@ Legend:
   - `WAP-193_101` 12
   - SCRs: `WMLS-C-109 (M)`, `WMLS-C-110 (M)`, `WMLS-C-111 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
   - [x] Fatal errors terminate current script invocation safely.
   - [x] Host remains alive and recoverable after script failure.
@@ -182,6 +196,7 @@ Legend:
 - Spec references:
   - `WAP-193_101` 14
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] `text/vnd.wap.wmlscript` and `application/vnd.wap.wmlscriptc` are routed to correct path.
 
 ### RQ-WMLS-012: Standard library compliance baseline
@@ -192,6 +207,7 @@ Legend:
   - `WAP-194` 6.1, 6.2, 6.3
   - SCRs: `WMLSSL-014 (M)`, `WMLSSL-015 (M)`, `WMLSSL-016 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Invalid args return `invalid` with no side effects unless explicitly documented otherwise.
   - [ ] Argument coercions follow WMLScript conversion rules.
 
@@ -203,6 +219,7 @@ Legend:
   - `WAP-194` section 7, Appendix A/B
   - SCRs: `WMLSSL-018 (M)`, `WMLSSL-031..045 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Unit tests cover each Lang function behavior and edge cases.
 
 ### RQ-WMLS-014: Float library coverage
@@ -213,6 +230,7 @@ Legend:
   - `WAP-194` section 8, Appendix A/B
   - SCRs: `WMLSSL-019 (M)`, `WMLSSL-046..054 (M)`, `WMLSSL-017 (O)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Unit tests cover each Float function in float-capable mode.
   - [ ] Integer-only mode returns `invalid` per section 6.4.
 
@@ -224,6 +242,7 @@ Legend:
   - `WAP-194` section 9, Appendix A/B
   - SCRs: `WMLSSL-020 (M)`, `WMLSSL-055..070 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Unit tests cover each String function including bounds and invalid inputs.
 
 ### RQ-WMLS-016: URL library coverage
@@ -234,6 +253,7 @@ Legend:
   - `WAP-194` section 10, Appendix A/B
   - SCRs: `WMLSSL-021 (M)`, `WMLSSL-071..084 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Unit tests cover parse, resolve, escape/unescape, and load-string behavior.
 
 ### RQ-WMLS-017: WMLBrowser context contract
@@ -245,6 +265,7 @@ Legend:
   - `WAP-194` chapter 11 preface and 11.1..11.7
   - SCRs: `WMLSSL-022 (M)`, `WMLSSL-085..091 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Hostless/no-context invocation returns `invalid`.
   - [ ] `getVar`/`setVar` validation follows WML naming/value constraints.
 
@@ -259,6 +280,7 @@ Legend:
   - `WAP-194` 11.3, 11.4
   - SCRs: `WMLSSL-087 (M)`, `WMLSSL-088 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] In single invocation, `go/go`, `go/prev`, `prev/go`, `prev/prev` produce last-call behavior.
   - [ ] `go("")` yields no navigation.
   - [ ] `Lang.abort()` clears pending navigation intent.
@@ -272,6 +294,7 @@ Legend:
   - `WAP-194` 11.5
   - SCRs: `WMLSSL-089 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Post-`newContext`, previous vars/history are cleared per spec.
   - [ ] Interaction with pending go/prev follows section 11.5 semantics.
 
@@ -284,6 +307,7 @@ Legend:
   - `WAP-194` 11.6
   - SCRs: `WMLSSL-090 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Relative/absolute return mode covered by fixtures.
   - [ ] No-current-card case returns `invalid`.
 
@@ -297,6 +321,7 @@ Legend:
   - `WAP-194_103` section 3.3 (`WMLBrowser.refresh` immediate refresh support SCR, status `O`)
   - SCRs: `WMLSSL-091 (M)` and `WMLSSL-C-095 (O, SIN clarification)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Immediate-refresh-supported mode returns `""` or non-empty failure string and updates current card.
   - [ ] Immediate-refresh-unsupported mode returns `invalid` and deferred card refresh still occurs on return.
   - [ ] Suspended timer is not restarted by `refresh`.
@@ -309,6 +334,7 @@ Legend:
   - `WAP-194` chapter 12
   - SCRs: `WMLSSL-023 (M)`, `WMLSSL-092..094 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Dialog calls are exposed through host boundary with deterministic return mapping.
   - [ ] UI interaction paths covered by integration tests in host harness.
 

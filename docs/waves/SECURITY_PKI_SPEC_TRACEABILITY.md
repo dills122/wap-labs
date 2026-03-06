@@ -7,6 +7,10 @@ Status: S0-08 complete (initial extraction + docling rerun validation pass)
 
 Capture certificate, trust-distribution, and WIM storage requirements that define the security-profile boundary for Waves.
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (S0-08)
 
 - `spec-processing/source-material/WAP-211-WAPCert-20010522-a.pdf`
@@ -36,6 +40,7 @@ Capture certificate, trust-distribution, and WIM storage requirements that defin
   - `WAP-211` section 6/9
   - `OMA-WAP-211_105` section 3/4 changes
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Security profile states supported certificate sizes, chain depth, and algorithm set.
   - [ ] Unsupported algorithms or oversized chains fail deterministically.
 
@@ -46,6 +51,7 @@ Capture certificate, trust-distribution, and WIM storage requirements that defin
 - Spec:
   - `WAP-211` certificate field and extension conformance clauses
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Validation path documents required-vs-optional attribute/extension handling.
   - [ ] Unknown extension behavior is non-fatal unless explicitly required.
 
@@ -58,6 +64,7 @@ Capture certificate, trust-distribution, and WIM storage requirements that defin
   - `WAP-217` section 7 and data-structure clauses
   - `WAP-217_103` and `OMA-WAP-217_105` SCR/SIN corrections
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Trust-anchor update policy is explicit (trusted channel, user-confirmed fallback, rejection path).
   - [ ] CA info parsing/validation rules are listed with deterministic reject behavior.
 
@@ -70,6 +77,7 @@ Capture certificate, trust-distribution, and WIM storage requirements that defin
   - `WAP-260` section 9 and related object-directory clauses
   - `OMA-WAP-260_101` change set on CDF/access-condition clarifications
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Data model notes required WIM object sets and mandatory fields.
   - [ ] Access-control and mutability rules for trusted CA artifacts are documented.
 
@@ -82,6 +90,7 @@ Capture certificate, trust-distribution, and WIM storage requirements that defin
   - `WAP-260` core capability clauses
   - `OMA-WAP-260_100` SCR/algorithm support clarifications
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] If WIM is in scope, supported algorithm/profile matrix is frozen in one place.
   - [ ] If WIM is out of scope, this is marked as explicitly deferred with no silent partial behavior.
 

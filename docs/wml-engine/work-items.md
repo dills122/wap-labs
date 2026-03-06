@@ -49,6 +49,7 @@ Current committed sequence for engine-impacting compliance work:
 
 Execution plan reference:
 
+- `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` (cross-lane canonical priority plan)
 - `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`
 
 ## Demoability Requirement

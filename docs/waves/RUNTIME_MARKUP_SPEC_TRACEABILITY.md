@@ -7,6 +7,10 @@ Status: S0-07 complete (initial extraction + docling rerun validation pass)
 
 Capture WML/WBXML runtime-markup requirements that govern deterministic deck/card execution in Waves.
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (S0-07)
 
 - `spec-processing/source-material/WAP-191-WML-20000219-a.pdf`
@@ -43,6 +47,7 @@ Legend:
 - Spec:
   - `WAP-191*` DTD lineage (`wml`, `card`, task-bearing content model)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Parser accepts valid deck/card structure and rejects invalid root/card omissions.
   - [ ] Runtime activation is deterministic for first-card selection and card ordering.
 
@@ -54,6 +59,7 @@ Legend:
 - Spec:
   - `WAP-191*` task model and `do`/`onevent` DTD usage
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Each task path has explicit runtime behavior and observable state transitions.
   - [ ] Unsupported task attributes fail deterministically without host/runtime crash.
 
@@ -65,6 +71,7 @@ Legend:
 - Spec:
   - `WAP-191*` card attributes + navigation semantics
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] `#cardId` resolution is deterministic and missing target handling is explicit.
   - [ ] History behavior is stable across forward/back transitions and refresh paths.
 
@@ -76,6 +83,7 @@ Legend:
 - Spec:
   - `WAP-191*` event and timer model
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Enter/timer events are dispatched in deterministic order.
   - [ ] Timer start/stop/expiry behavior is card-scoped and test-checklisted.
 
@@ -87,6 +95,7 @@ Legend:
 - Spec:
   - `WAP-191*` variable/substitution semantics
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Substitution timing is fixed in runtime pipeline (post-parse, pre-render/task use).
   - [ ] Undefined-variable behavior is covered by parser/runtime fixtures.
 
@@ -98,6 +107,7 @@ Legend:
 - Spec:
   - `WAP-191_104` anchor semantics
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Link activation behavior matches equivalent `go` navigation semantics.
   - [ ] Invalid nesting path is deterministic and non-crashing.
 
@@ -110,6 +120,7 @@ Legend:
   - `WAP-192*` binary tokenized representation + code-page model
   - Waves architecture boundary decisions
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Engine contracts do not require WBXML parser in WASM runtime for MVP.
   - [ ] Transport/host boundary declares WBXML normalization responsibilities explicitly.
 
@@ -120,6 +131,7 @@ Legend:
 - Spec:
   - `WAP-191_105` SIN clarifications
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Navigation/request metadata model includes method + encoding attributes.
   - [ ] Same-deck vs external execution behavior is documented and fixture-scoped.
 
@@ -132,6 +144,7 @@ Legend:
   - `WAP-238` section 5.1-5.11 and conformance sections
   - `spec-wml-19990616` reference-processing lineage
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Runtime compatibility notes identify where Waves follows WML 1.x strict behavior vs WML2-style compatibility handling.
   - [ ] Parser/runtime behavior for unknown markup and timer/task lifecycle remains deterministic under fixture tests.
 

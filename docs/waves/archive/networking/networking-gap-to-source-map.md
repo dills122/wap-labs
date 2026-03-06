@@ -33,7 +33,7 @@ Generated from local repository docs and curated spec corpus references (not raw
 | Covered | TID window and replay requirements are explicitly named as P0 requirements | [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md RQ-TRN-016](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/networking-migration-readiness-checklist.md T0-08](docs/waves/networking-migration-readiness-checklist.md) |
 | Missing | Concrete timer values/initial/backoff policy implementation constants are not in code-level docs yet | No explicit section in `transport-rust` docs currently ties to `WTP` timer constants |
 | Missing | Duplicate transaction cache retention strategy (window duration / storage policy) is not concretized in implementation docs | No persistence/retention policy appears in transport-rust docs |
-| Ambiguous | WTP NACK-delay and retransmit hold-off details are noted conceptually but unresolved into config/API | `docs/waves/networking-gap-analysis.md` and `TRANSPORT_SPEC_TRACEABILITY.md` reference behavior without concrete policy defaults |
+| Ambiguous | WTP NACK-delay and retransmit hold-off details are noted conceptually but unresolved into config/API | `docs/waves/archive/networking/networking-gap-analysis.md` and `TRANSPORT_SPEC_TRACEABILITY.md` reference behavior without concrete policy defaults |
 
 ### B) WDP: datagram contract, ports, bearer/SAR
 
@@ -42,7 +42,7 @@ Generated from local repository docs and curated spec corpus references (not raw
 | Covered | Port model, UDP-over-IP requirement, and requirement references are documented | [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md RQ-TRN-001..004](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/wap-stack-overview.md](docs/waves/wap-stack-overview.md) |
 | Covered | Parser pipeline includes new-source-material and tmp canonicalized parsing checkpoints | [spec-processing/README.md](spec-processing/README.md), [spec-processing/Makefile.networking](spec-processing/Makefile.networking), [docs/waves/networking-layer-definition.md](docs/waves/networking-layer-definition.md) |
 | Missing | No documented `WdpDatagramTransport` trait implementation and error taxonomy inside `transport-rust` | `transport-rust/README.md` currently describes gateway HTTP fetch behavior, not WDP |
-| Missing | SAR generation/consumption behavior for WDP bearer-specific framing is only declared as optional, not implemented | [docs/waves/networking-layer-definition.md](docs/waves/networking-layer-definition.md), [docs/waves/networking-gap-analysis.md](docs/waves/networking-gap-analysis.md) |
+| Missing | SAR generation/consumption behavior for WDP bearer-specific framing is only declared as optional, not implemented | [docs/waves/networking-layer-definition.md](docs/waves/networking-layer-definition.md), [docs/waves/archive/networking/networking-gap-analysis.md](docs/waves/archive/networking/networking-gap-analysis.md) |
 | Ambiguous | MTU/fragmentation thresholds are not pinned to concrete values | Referenced conceptually in [docs/waves/networking-layer-definition.md], but no numeric policy |
 
 ### C) WSP: header tokens and edge behavior
@@ -51,7 +51,7 @@ Generated from local repository docs and curated spec corpus references (not raw
 | --- | --- | --- |
 | Covered | Core PDU shapes, session modes, and header-token intent are documented | [docs/waves/wsp-pdu-reference.md](docs/waves/wsp-pdu-reference.md), [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md RQ-TRN-010..019](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md) |
 | Covered | Unknown/unassigned token handling is required behavior in traceability | [docs/waves/TRANSPORT_SPEC_TRACEABILITY.md RQ-TRN-018](docs/waves/TRANSPORT_SPEC_TRACEABILITY.md), [docs/waves/networking-implementation-checklist.md T0-10](docs/waves/networking-implementation-checklist.md) |
-| Missing | Full header-code-page token tables/fixture completion not linked to implementation tests yet | `docs/waves/networking-gap-analysis.md` marks this P1; no concrete registry file exists in `transport-rust` |
+| Missing | Full header-code-page token tables/fixture completion not linked to implementation tests yet | `docs/waves/archive/networking/networking-gap-analysis.md` marks this P1; no concrete registry file exists in `transport-rust` |
 | Missing | Code-page rejection/fallback policy is required (`unsupported encoding`) but not implemented in transport modules | Same as above; no corresponding module in source files |
 | Ambiguous | Confirmed push timing/late-ack nuances are deferred and untested | `docs/waves/wsp-pdu-reference.md` marks confirmed-push timing as deferred |
 
@@ -68,7 +68,7 @@ Generated from local repository docs and curated spec corpus references (not raw
 
 | Status | Gap | Internal evidence |
 | --- | --- | --- |
-| Covered | Acceptance requires fixture coverage before migration gate promotion | [docs/waves/networking-migration-readiness-checklist.md](docs/waves/networking-migration-readiness-checklist.md), [docs/waves/SPEC_TEST_COVERAGE.md](docs/waves/SPEC_TEST_COVERAGE.md), [docs/waves/networking-gap-analysis.md](docs/waves/networking-gap-analysis.md) |
+| Covered | Acceptance requires fixture coverage before migration gate promotion | [docs/waves/networking-migration-readiness-checklist.md](docs/waves/networking-migration-readiness-checklist.md), [docs/waves/SPEC_TEST_COVERAGE.md](docs/waves/SPEC_TEST_COVERAGE.md), [docs/waves/archive/networking/networking-gap-analysis.md](docs/waves/archive/networking/networking-gap-analysis.md) |
 | Missing | No local PCAP-driven fixture suite yet for WSP/WTP retransmit behavior | No file path under `docs/waves` currently lists capture fixtures |
 | Missing | No golden decode/encode corpus for WSP CONNECT/GET/REPLY end-to-end against captures | No explicit file references to Wireshark-diff fixtures in repo |
 

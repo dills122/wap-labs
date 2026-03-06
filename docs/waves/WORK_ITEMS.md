@@ -54,11 +54,17 @@ Integrated dependencies:
 
 Project planning links:
 
+- Master prioritized sprint plan: `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
 - Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
+
+Canonical sprint priority rule:
+
+1. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` is the single ordering authority when section-level "Next In Line" lists differ.
+2. Section-level lists below are lane-local guidance and must not override master P0/P1 gating.
 
 ## Next In Line (Architecture Maintenance Sprint)
 
@@ -99,6 +105,7 @@ Committed sprint sequence:
 
 Execution plan and gates:
 
+- `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` (cross-lane canonical sprint priority plan)
 - `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`
 
 Sprint acceptance target:
@@ -135,6 +142,23 @@ This board was prepared before implementation kickoff. Keep ticket statuses curr
 6. `Tests`
 7. `Accept`
 8. `Spec`: requirement IDs + section refs/SCR IDs from relevant `docs/waves/*TRACEABILITY*.md` docs
+
+## Spec Change Protocol
+
+When a PR changes spec interpretation, requirement mapping, or contract behavior, update all linked artifacts in the same PR:
+
+1. traceability source:
+- relevant `docs/waves/*TRACEABILITY*.md` requirement entries (`Spec`, `AC`, `Evidence`)
+2. tests/fixtures:
+- `docs/waves/SPEC_TEST_COVERAGE.md` row(s) with concrete file targets and command(s)
+3. contract mapping:
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` for impacted contract surfaces
+4. requirement index:
+- `docs/waves/REQUIREMENT_INDEX.md` owner/lane/status row(s)
+5. coverage/meta dashboards:
+- `docs/waves/SPEC_COVERAGE_DASHBOARD.md` if scope/status changes
+6. source governance:
+- `docs/waves/SOURCE_AUTHORITY_POLICY.md` and `docs/waves/OPEN_SPEC_QUESTIONS.md` when precedence or unresolved policy shifts
 
 ## Ticket Lifecycle Guardrail
 
@@ -587,6 +611,7 @@ Completed `B0` through `B3` tickets are archived in:
 - Token roundtrip fixtures for core header set.
 - Unknown token/page fixtures for strict and permissive policy modes.
 - Code-page shift fixtures for multi-page header blocks.
+- WBXML/token-stream fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-009`, `WBK-FX-010`.
 7. `Accept`:
 - WSP encoding/decoding behavior is table-driven and reproducible.
 - Unknown token handling is documented, deterministic, and profile-aware.
@@ -670,14 +695,18 @@ Completed `B0` through `B3` tickets are archived in:
 3. `Owner`: `docs`, `spec-processing`, `transport-rust`
 4. `Files`:
 - `docs/waves/networking-external-response-triage.md`
-- `docs/waves/networking-gap-to-source-map.md`
+- `docs/waves/NETWORKING_GAP_MASTER.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `spec-processing/new-source-material/`
+- `spec-processing/source-material/WAP.pdf`
+- `spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`
+- `spec-processing/external-parsed/wap_emulator_spec_notes.md`
 - `spec-processing/README.md`
 5. `Build`:
 - Ingest and catalog implementation-reference materials for:
   - Kannel networking sources (`wtp`, `wsp`, `wdp` lanes)
   - Wireshark dissectors (`packet-wtp`, `packet-wsp`, `packet-wdp`, `packet-wtls`)
+- Classify local supplemental context sources (slides/tech-brief/LLM-parsed notes) as `heuristic` unless they are backed by canonical WAP/OMA section anchors.
 - Produce a normalized source index with per-source trust class (`normative`, `interop-reference`, `heuristic`).
 - Map extracted behaviors to existing `RQ-TRN-*` IDs without creating new transport requirements.
 6. `Tests`:
@@ -733,8 +762,7 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-23`
 3. `Owner`: `docs`, `spec-processing`
 4. `Files`:
-- `docs/waves/networking-gap-analysis.md`
-- `docs/waves/networking-strict-gap-audit.md`
+- `docs/waves/NETWORKING_GAP_MASTER.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 5. `Build`:
@@ -1033,6 +1061,7 @@ Reference:
 - Ensure request metadata handoff (method/postfield/headers) stays aligned between runtime and transport.
 5. `Tests`:
 - Cross-layer fixtures for forward/back/refresh/error paths with trace assertions.
+- Seed fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-002`, `WBK-FX-003`, `WBK-FX-004`, `WBK-FX-005`, `WBK-FX-007`.
 6. `Accept`:
 - Runtime and host behavior match documented WML process ordering for covered flows.
 7. `Spec`:

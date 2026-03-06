@@ -8,9 +8,9 @@ Status: Active
 ### Corpus ledger
 
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
-- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (96 files)
-- Status: all 96 canonical PDFs are `deep-extracted`
-- Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves)
+- Scope: all canonical root-level source PDFs under `spec-processing/source-material` (98 files)
+- Status: all 98 canonical PDFs are `deep-extracted`
+- Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves) plus `2` supplemental context-source parses (`WAP.pdf`, Wiley tech brief)
 
 ### Completed traceability domains
 
@@ -90,6 +90,14 @@ Status: Active
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
   - `docs/waves/SPEC_TEST_COVERAGE.md`
 
+12. Supplemental context-source governance
+- Doc: `docs/waves/ARCHITECTURE_CONTEXT_SPEC_REVIEW.md`
+- Sources:
+  - `WAP.pdf`
+  - `vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`
+- Scope:
+  - context reinforcement only; no new normative requirement authority without canonical WAP/OMA source anchoring
+
 ## Open coverage gaps
 
 0. WAP-191 full-stack conformance closure (`WML-01..75`)
@@ -146,12 +154,12 @@ Status: Active
 - Status: complete (manual governance lane implemented; no CI coupling)
 - Deliverables:
   - Phase S1 tickets in `docs/waves/WORK_ITEMS.md` (`S1-01`..`S1-06`)
-  - `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
-  - `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+  - `docs/waves/archive/reports/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
+  - `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
   - `spec-processing/README.md`
   - `docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md`
   - `docs/waves/provenance/docling-provenance-2026-03-02.csv`
-  - `docs/waves/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
+  - `docs/waves/archive/reports/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
 - Focus:
   - table-fidelity ambiguity resolution
   - cleaned-markdown stability and provenance tracking
@@ -168,6 +176,7 @@ Status: Active
 - feature-gated
 - deferred
 - intentionally out-of-scope
+4. Every `RQ-*` entry must include an `Evidence` line pointing to tests/fixtures/commands.
 
 ## Navigation
 
@@ -179,3 +188,11 @@ Status: Active
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 4. Test coverage matrix:
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+5. Supplemental context audit:
+- `docs/waves/archive/reports/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
+6. Source authority policy:
+- `docs/waves/SOURCE_AUTHORITY_POLICY.md`
+7. Requirement index:
+- `docs/waves/REQUIREMENT_INDEX.md`
+8. Open policy questions:
+- `docs/waves/OPEN_SPEC_QUESTIONS.md`

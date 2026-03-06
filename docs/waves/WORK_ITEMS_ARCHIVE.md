@@ -631,7 +631,7 @@ Reference:
 - `tmp/docling-rerun-remaining/cleanup-report.txt`
 - `tmp/docling-rerun-remaining/core/WAP-191_104-WML-20010718-a.md`
 - `tmp/docling-rerun-remaining/core/WAP-191_104-WML-20010718-a.cleaned.md`
-- `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+- `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
 4. `Build`:
 - Perform manual PDF-grounded review for captions flagged as non-normalized by automated cleanup detection.
 - Confirm whether each flagged caption is true table loss vs mixed prose region and document final disposition.
@@ -673,7 +673,7 @@ Reference:
 3. `Files`:
 - `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
 - `spec-processing/scripts/check-docling-cleaned-quality.sh`
-- `docs/waves/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
+- `docs/waves/archive/reports/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
 4. `Build`:
 - Add lightweight quality gate checks for cleaned-spec artifacts (e.g., extreme TOC noise density, unresolved table-caption ambiguity count, malformed markdown table ratios).
 - Keep thresholds advisory-first as a manual script lane (no CI integration).
@@ -718,8 +718,8 @@ Reference:
 - `tmp/docling-rerun-remaining/ext/*.cleaned.md`
 - `spec-processing/source-material/parsed-markdown/docling-cleaned/`
 - `spec-processing/scripts/promote-docling-cleaned.fish`
-- `docs/waves/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
-- `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
+- `docs/waves/archive/reports/DOCLING_RERUN_BASE_DELTA_REPORT_2026-03-02.md`
+- `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
 4. `Build`:
 - Promote validated cleaned outputs from both temporary rerun waves into canonical parsed-markdown storage used by long-term analysis workflows.
 - Preserve source-file naming lineage to avoid ambiguity across multiple extraction passes.

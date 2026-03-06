@@ -7,6 +7,10 @@ Status: S0-02 complete (initial extraction + cleaned-source validation pass)
 
 Capture normative transport-layer requirements for the Waves protocol rewrite track and map them to implementation-ready acceptance criteria.
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (S0-02)
 
 - `spec-processing/source-material/WAP-230-WSP-20010705-a.pdf`
@@ -41,6 +45,7 @@ Legend:
   - `WAP-259` 5.3, Appendix A
   - SCRs: `WDP-C-001 (M)`, `WDP-S-001 (M)`, `WDP-CORE-C-001 (M)`, `WDP-CORE-S-001 (M)`, `WDP-PF-C-001 (M)`, `WDP-PF-C-002 (M)`, `WDP-PF-S-001 (M)`, `WDP-PF-S-002 (M)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] `T-DUnitdata` path works for send/receive between transport and upper layers.
   - [ ] Error indication path is defined for transport failures (`T-DError` behavior where applicable).
 
@@ -51,6 +56,7 @@ Legend:
 - Spec:
   - `WAP-259` section 6 (WDP datagram protocol over bearers)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] IP-backed bearer profile uses UDP socket/datagram semantics.
   - [ ] No alternate custom datagram framing used on IP bearers.
 
@@ -62,6 +68,7 @@ Legend:
 - Spec:
   - `WAP-259` 4.x, Appendix B (IANA/WAP ports)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Port mapping table includes WSP/WTP secure/non-secure service ports (`9200`-`9203`) and related service ports as needed.
   - [ ] Session binding uses address/port tuple consistently.
 
@@ -74,6 +81,7 @@ Legend:
   - `WAP-259` 4.2/4.3
   - SCRs: `WDP-C-002 (O)`, `WDP-S-002 (O)`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Corruption-handling policy is explicit per bearer profile.
   - [ ] WCMP support state is declared (implemented, deferred, or bridged externally).
 
@@ -84,6 +92,7 @@ Legend:
 - Spec:
   - `WAP-224` 5.2
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] WTP adapter contract requires source/destination addressing + SDU length metadata.
 
 ### RQ-TRN-006 WTP transaction classes baseline
@@ -97,6 +106,7 @@ Legend:
   - `WAP-224` 4.2.1, 4.2.2, 4.2.3; 6.1/6.2/6.3
   - SCRs: `WTP-C-001..006`, `WTP-S-001..006` (profile-dependent mandatory set)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Class behavior fixtures validate expected ACK/result/termination rules.
   - [ ] Unsupported class behavior is deterministic and standards-aligned.
 
@@ -108,6 +118,7 @@ Legend:
   - `WAP-224` 7.1..7.12, 10
   - SCR anchors: `WTP-C-010`, `WTP-C-011`, `WTP-C-015`, `WTP-C-016`, `WTP-C-022` (+ server counterparts)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Retransmission and abort conditions are bounded and observable in traces.
   - [ ] Duplicate invoke and TID verification behavior is test-covered.
 
@@ -120,6 +131,7 @@ Legend:
   - `WAP-224` 4.6, 7.14, 7.15, 10.6
   - SCR anchors: `WTP-C-020`, `WTP-C-023..026` (+ server counterparts)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] SAR capability negotiation/behavior is explicit per peer role.
   - [ ] Packet-group/NACK flows pass conformance fixtures for missing-segment recovery.
 
@@ -132,6 +144,7 @@ Legend:
 - Spec:
   - `OMA-WAP-224_002` section 3 and section 4
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] SAR-capable vs non-SAR-capable interoperability cases are fixture-tested (both directions).
   - [ ] Class field encoding uses corrected SIN value (verify against source PDF table during implementation).
 
@@ -143,6 +156,7 @@ Legend:
   - `WAP-230` Appendix D.1
   - SCRs: `WSP-C-001`, `WSP-CL-*`, `WSP-CO-*` root mode requirements
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Waves transport profile explicitly states active WSP mode(s).
   - [ ] Mode selection is consistent with available WDP/WTP capabilities.
 
@@ -155,6 +169,7 @@ Legend:
   - `WAP-230` 6.3, 7.1.2, 8.2.2/8.2.5
   - SCR anchors: `WSP-CO-C-002..010`, `WSP-CO-S-002..010`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Session lifecycle state machine has deterministic connect/disconnect/suspend/resume transitions.
   - [ ] Outstanding transactions are aborted and surfaced consistently on session teardown/suspend.
 
@@ -167,6 +182,7 @@ Legend:
   - `WAP-230` 6.3.3, 6.4.2, 7.1.3/7.2, 8.2.3
   - SCR anchors: `WSP-CO-C-017..022`, `WSP-CL-C-004..020` (+ server-side counterparts)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Invoke/result/abort primitive sequencing is covered by integration tests.
   - [ ] Multi-transaction overlap does not corrupt transaction identity mapping.
 
@@ -179,6 +195,7 @@ Legend:
   - `WAP-230` 6.3.2, 8.3
   - SCR anchors: `WSP-CO-C-005`, `WSP-CO-C-006` (+ server equivalents)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Capability negotiation results are stored in session state and applied to subsequent operations.
   - [ ] Unknown capability identifiers do not crash or desynchronize sessions.
 
@@ -191,6 +208,7 @@ Legend:
   - `WAP-230` 8.4.2.70 and related header encoding sections
   - SCR anchors: `WSP-CO-C-014`, `WSP-CO-C-020`, `WSP-CL-C-020` (+ server equivalents)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Encoding-version negotiation and fallback behavior is deterministic.
   - [ ] Unsupported encoding path yields error/status behavior defined by spec.
 
@@ -202,6 +220,7 @@ Legend:
   - `WAP-230` 6.3 Push facility, 8.2.4, Appendix D
   - SCR anchors: `WSP-CO-C-010`, `WSP-CO-C-011`, `WSP-CL-C-002` (+ server counterparts)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Push paths are explicitly enabled/disabled by profile.
   - [ ] Confirmed push round-trip behavior is test-covered when enabled.
 
@@ -214,6 +233,7 @@ Legend:
   - `WAP-224` 7.8.2, 7.8.3.1
   - tables: `Table 6`, `Table 7`, `Table 8`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Responder behavior is explicit for: no-cache, TID cache present, and transport duplicate-guarantee assumptions.
   - [ ] Initiator TID increment policy includes the `2**14 steps in 2*MPL` bound and deterministic behavior on restart/wrap windows.
 
@@ -225,6 +245,7 @@ Legend:
   - `WAP-230` 6.4.3
   - table: `Table 9` (connectionless service primitives)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Primitive occurrence matrix (`req`/`ind` only; no `res`/`cnf`) is encoded in transport profile tests.
   - [ ] Invalid primitive usage paths fail deterministically and do not desynchronize session/transaction state.
 
@@ -236,6 +257,7 @@ Legend:
   - `WAP-230` section 8.4
   - tables: `Table 34`, `Table 35`, `Table 38`, `Table 39`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Registry token maps are fixture-backed for decode and encode paths.
   - [ ] Unknown/unassigned values map to deterministic error or ignore behavior per profile policy.
 
@@ -247,6 +269,7 @@ Legend:
   - `WAP-230` 6.3.2, 8.3
   - tables: `Table 17`, `Table 18`, `Table 19`, `Table 20`, `Table 21`, `Table 22`, `Table 23`, `Table 24`, `Table 37`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Final negotiated values use deterministic min/intersection behavior for numeric/set capabilities.
   - [ ] Exceeded capability limits are handled with deterministic abort/error behavior and trace output.
 

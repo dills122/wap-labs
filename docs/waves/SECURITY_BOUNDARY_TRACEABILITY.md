@@ -11,6 +11,10 @@ Capture security-related requirements from WAP transport security specs and map 
 - where we rely on modern secure transport in host/network layers
 - what remains for full protocol-parity implementation
 
+## Source Authority Policy
+
+- See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+
 ## Source set reviewed (S0-04)
 
 - `spec-processing/source-material/WAP-199-WTLS-20000218-a.pdf`
@@ -45,6 +49,7 @@ Legend:
   - `WAP-219` section 6, Appendix A
   - SCR anchors: `TLS-001`, `TLS-C-*`, `TLS-S-*`
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Host/proxy secure transport profile explicitly lists supported TLS features and negotiated constraints.
   - [ ] Session resume behavior and server-authentication behavior are defined in implementation policy.
 
@@ -55,6 +60,7 @@ Legend:
 - Spec:
   - `WAP-219` 6.3 and Appendix A SCR groups (`TLS-C-03x`, `TLS-C-10x`, `TLS-S-03x`, `TLS-S-10x`)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Certificate validation policy is explicit (trusted anchors, hostname/authority checks, failure handling).
   - [ ] Client-cert behavior is feature-gated/documented if not implemented in current milestone.
 
@@ -65,6 +71,7 @@ Legend:
 - Spec:
   - `WAP-219_100` section 3
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Traceability uses updated SCR naming format from SIN.
 
 ### RQ-SEC-004 WTLS protocol feature baseline
@@ -75,6 +82,7 @@ Legend:
   - `WAP-199` (legacy WTLS baseline context)
   - `WAP-261` core + Appendix A static conformance groups (`WTLS-C-*`, `WTLS-S-*`)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Security implementation matrix states which WTLS feature families are:
     - simulated
     - delegated to modern TLS
@@ -87,6 +95,7 @@ Legend:
 - Spec:
   - `WAP-261_100` section 3.3 updates to 10.5.1.2 and 10.5.2
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Certificate-selection logic (or simulation logic) follows SIN rule and exception handling.
   - [ ] Mismatch path yields deterministic handshake failure behavior.
 
@@ -98,6 +107,7 @@ Legend:
   - `WAP-187` sections 7/8 and Appendix A SCRs (`E2E-*`, plus referenced `WTLS-*`)
   - `WAP-187_101` SCR typo correction (reference to `WTLS-C-191`)
 - AC:
+  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Security session establishment and certificate validation steps are represented in host/transport flow.
   - [ ] User-visible secure-session indication policy is defined.
   - [ ] SCR reference uses corrected item naming from SIN (`WTLS-C-191`).

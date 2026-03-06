@@ -11,7 +11,7 @@ Run a repeatable, deep audit over all local source specs and ensure Waves requir
 
 Current repository corpus under `spec-processing/source-material`:
 
-- `96` PDF files total (canonical root-level corpus)
+- `98` PDF files total (canonical root-level corpus)
 - `0` duplicate mirror folders in active use (`sub-set/`, `WMLScript/` removed from canonical tree)
 
 Canonical per-file ledger:
@@ -24,6 +24,11 @@ Historical duplicate mirrors were removed during repository cleanup; canonical r
 
 For audit and traceability, use root-level files in `spec-processing/source-material/` as canonical.  
 Do not reintroduce foldered mirror duplicates (`sub-set/`, `WMLScript/`) unless explicitly required and documented.
+
+Supplemental-source precedence:
+
+- Non-forum contextual sources (for example `WAP.pdf` and `vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`) are allowed for interop/context reinforcement.
+- They must not create or redefine normative requirement IDs without an anchor in canonical WAP/OMA specs already tracked in traceability docs.
 
 ## Waves-focused domain map
 
@@ -54,6 +59,11 @@ Do not reintroduce foldered mirror duplicates (`sub-set/`, `WMLScript/`) unless 
 - WTAI/telephony (`WAP-266`, `WAP-268`, `WAP-228`, `WAP-255`, `WAP-269`, `WAP-270`)
 - XHTML MP (`WAP-277`) unless project scope expands to WAP 2 rendering modes
 
+### D4 Supplemental context sources (non-normative precedence)
+
+- `WAP.pdf` (slide-deck summary; transport/session/context terminology reinforcement)
+- `vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf` (historical context; includes embedded WML text that must be treated as contextual duplicate, not source-of-truth override)
+
 ## Existing capture status
 
 ### Already captured well
@@ -77,6 +87,8 @@ Do not reintroduce foldered mirror duplicates (`sub-set/`, `WMLScript/`) unless 
   - `docs/waves/SECURITY_PKI_SPEC_TRACEABILITY.md`
 - Architecture-context review:
   - `docs/waves/ARCHITECTURE_CONTEXT_SPEC_REVIEW.md`
+- Supplemental context-source gap audit:
+  - `docs/waves/archive/reports/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
 - Deferred capability traceability:
   - `docs/waves/DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md`
 - Coverage dashboard:
@@ -148,3 +160,4 @@ Do not reintroduce foldered mirror duplicates (`sub-set/`, `WMLScript/`) unless 
 - No ticket without a `Spec` field referencing traceability entries.
 - No “M” status spec requirement left without AC checklist.
 - Optional (`O`) items must be flagged as feature-gated, deferred, or explicitly out-of-scope.
+- Corpus counts in ledger/dashboard/master audit remain aligned with canonical source-material via `scripts/check-source-corpus-drift.mjs`.

@@ -21,7 +21,7 @@ cleaned artifact paths, line deltas, table-caption outcomes, and parse profile.
   - Normalized tables (automated detector): `69`
   - Canonical cleaned corpus file count: `48`
 - Notes:
-  - Automated detector false-positive for `WAP-191_104` `Table 1` is manually resolved in `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`.
+  - Automated detector false-positive for `WAP-191_104` `Table 1` is manually resolved in `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`.
 
 ## Run Snapshot 2026-03-02
 
@@ -40,4 +40,4 @@ cleaned artifact paths, line deltas, table-caption outcomes, and parse profile.
   - Normalized tables (automated detector): `69`
   - Canonical cleaned corpus file count: `48`
 - Notes:
-  - Automated detector false-positive for `WAP-191_104` `Table 1` is manually resolved in `docs/waves/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`.
+  - Automated detector false-positive for `WAP-191_104` `Table 1` is manually resolved in `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`.

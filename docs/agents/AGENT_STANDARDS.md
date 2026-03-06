@@ -101,3 +101,9 @@ Agents MUST NOT:
   - scopes only the corrective delta
   - carries explicit spec references and acceptance checks
 - Preserve historical ticket intent and implementation traceability; corrections happen through additive follow-up work items.
+
+## Documentation Source Scope Policy
+
+- For documentation audits and source extraction, default to active documentation paths.
+- Exclude `archive/` paths and date-stamped historical snapshots unless explicitly requested by the user.
+- If archived docs are requested, treat them as historical evidence only and do not let them override active spec/traceability docs.

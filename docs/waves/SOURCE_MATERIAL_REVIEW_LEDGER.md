@@ -3,7 +3,7 @@
 Version: v0.1
 Status: complete (docling rerun validation pass complete for in-scope high-value domains)
 
-This ledger tracks review state for all canonical root-level source PDFs in `spec-processing/source-material` (96 files).
+This ledger tracks review state for all canonical root-level source PDFs in `spec-processing/source-material` (98 files).
 
 Legend:
 - `deep-extracted`: normative sections reviewed and mapped into traceability docs
@@ -104,4 +104,6 @@ Legend:
 | `WAP-269-WTAIIS136-20010908-a.pdf` | `wtai-telephony` | `deep-extracted` | covered by OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW |
 | `WAP-270-WTAIPDC-20010908-a.pdf` | `wtai-telephony` | `deep-extracted` | covered by OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW |
 | `WAP-277-XHTMLMP-20011029-a.pdf` | `xhtmlmp` | `deep-extracted` | covered by OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW |
+| `WAP.pdf` | `architecture-context` | `deep-extracted` | supplemental slide-deck context; mapped to existing `RQ-TRN-*`/`RQ-WAE-*` IDs via ARCHITECTURE_CONTEXT_SPEC_REVIEW |
 | `spec-wml-19990616.pdf` | `runtime-markup` | `deep-extracted` | covered by RUNTIME_MARKUP_SPEC_TRACEABILITY |
+| `vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf` | `architecture-context` | `deep-extracted` | supplemental tech-brief context; includes embedded WML text but does not override canonical WML/WSP/WTP/WDP/WTLS sources |

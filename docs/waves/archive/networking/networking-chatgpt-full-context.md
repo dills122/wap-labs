@@ -28,7 +28,7 @@ Use this file as the single-file context you upload to ChatGPT for targeted, fil
   - `docs/waves/wtp-state-machine.md`
   - `docs/waves/wsp-pdu-reference.md`
   - `docs/waves/wtls-record-structure.md` (if WTLS work is pursued)
-- Current gap register: `docs/waves/networking-gap-analysis.md`
+- Current gap register: `docs/waves/archive/networking/networking-gap-analysis.md`
 - Parsing + promote workflow:
   - Scripts: `spec-processing/parse-new-source-material.fish`, `spec-processing/finalize-new-source-material.fish`
   - Networking Makefile: `spec-processing/Makefile.networking`
@@ -79,4 +79,3 @@ Use this file as the single-file context you upload to ChatGPT for targeted, fil
 Prioritize correctness for CONNECT/GET/REPLY/WTP transaction behavior under packet loss.”
 
 If needed, do a first-pass “minimum viable protocol core” and a second-pass “interop hardening” pass.
-
