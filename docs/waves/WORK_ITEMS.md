@@ -54,11 +54,17 @@ Integrated dependencies:
 
 Project planning links:
 
+- Master prioritized sprint plan: `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
 - Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
+
+Canonical sprint priority rule:
+
+1. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` is the single ordering authority when section-level "Next In Line" lists differ.
+2. Section-level lists below are lane-local guidance and must not override master P0/P1 gating.
 
 ## Next In Line (Architecture Maintenance Sprint)
 
@@ -99,6 +105,7 @@ Committed sprint sequence:
 
 Execution plan and gates:
 
+- `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` (cross-lane canonical sprint priority plan)
 - `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`
 
 Sprint acceptance target:
