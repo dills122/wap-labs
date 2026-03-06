@@ -3,11 +3,13 @@
 
 export type FetchCacheControlPolicy = "default" | "no-cache";
 
+export type FetchDestinationPolicy = "public-only" | "allow-private";
+
 export type FetchPostContext = { sameDeck?: boolean, contentType?: string, payload?: string, };
 
 export type FetchUaCapabilityProfile = "disabled" | "wap-baseline";
 
-export type FetchRequestPolicy = { cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, uaCapabilityProfile?: FetchUaCapabilityProfile, };
+export type FetchRequestPolicy = { destinationPolicy?: FetchDestinationPolicy, cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, uaCapabilityProfile?: FetchUaCapabilityProfile, };
 
 export type FetchDeckRequest = { url: string, method?: string, headers?: { [key in string]?: string }, timeoutMs?: number, retries?: number, requestId?: string, requestPolicy?: FetchRequestPolicy, };
 

@@ -40,6 +40,96 @@ Completed maintenance tickets are archived in:
 - Active execution is currently anchored to `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`.
 - Keep `M1-08` parallelized while committed compliance tickets execute.
 
+### M1-14 Browser host boundary hardening (CSP + DOM injection sinks)
+
+1. `Status`: `todo`
+2. `Priority`: `P0`
+3. `Files`:
+- `browser/src-tauri/tauri.conf.json`
+- `browser/frontend/src/app/browser-shell-template.ts`
+- `browser/frontend/src/app/defaults.ts`
+- `browser/frontend/src/main.ts`
+4. `Build`:
+- Replace permissive renderer hardening posture (`csp: null`) with explicit CSP suitable for the Tauri-hosted app shell.
+- Remove/contain HTML string interpolation paths for boot URL rendering (`innerHTML` bootstrap template path).
+- Keep startup URL normalization deterministic and safe for attribute/DOM insertion.
+5. `Tests`:
+- `pnpm --dir browser/frontend test`
+- `pnpm --dir browser/frontend build`
+- `cd browser/src-tauri && cargo test`
+6. `Accept`:
+- Renderer does not rely on disabled CSP.
+- Boot URL flow does not allow unescaped HTML insertion surfaces in shell bootstrap.
+- Existing browser shell behavior remains intact in local and network modes.
+7. `Notes`:
+- Security audit follow-up for high-severity host boundary risk.
+
+### M1-15 Engine parser recursion guardrails (untrusted deck DoS hardening)
+
+1. `Status`: `todo`
+2. `Priority`: `P0`
+3. `Files`:
+- `engine-wasm/engine/src/parser/wml_parser/actions.rs`
+- `engine-wasm/engine/src/parser/wml_parser/nodes.rs`
+- `engine-wasm/engine/src/parser/wml_parser/mod.rs`
+- `engine-wasm/engine/src/engine_tests.rs`
+4. `Build`:
+- Add bounded recursion/depth and node-count guardrails in parser tree walks for card/action/node traversal.
+- Ensure maliciously deep nested markup fails deterministically with recoverable parse errors (no runtime crash/stack overflow).
+5. `Tests`:
+- `cd engine-wasm/engine && cargo test`
+- Add regression fixtures/tests for deeply nested WML payload rejection behavior.
+6. `Accept`:
+- Engine rejects pathological nesting with deterministic error surface.
+- No process crash or panic path from crafted deep deck structures.
+7. `Notes`:
+- Security audit follow-up for high-severity parser crash/DoS risk.
+
+### M1-16 Transport/engine payload size guardrails (memory pressure hardening)
+
+1. `Status`: `todo`
+2. `Priority`: `P1`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `transport-rust/src/responses.rs`
+- `engine-wasm/engine/src/engine_public_api.rs`
+- `browser/contracts/transport.ts`
+4. `Build`:
+- Enforce explicit response-body/deck-size limits before decode/parse.
+- Keep error mapping deterministic when payload limits are exceeded.
+- Avoid unnecessary memory amplification for oversized payload paths.
+5. `Tests`:
+- `make test-rust-transport`
+- `cd engine-wasm/engine && cargo test`
+- Add fixture coverage for over-limit payload rejection.
+6. `Accept`:
+- Oversized responses/decks are rejected with stable transport/engine error surfaces.
+- Normal-size WML/WBXML paths remain unchanged.
+7. `Notes`:
+- Security audit follow-up for medium-severity resource exhaustion risk.
+
+### M1-17 Network fetch destination policy guardrails (SSRF/probing reduction)
+
+1. `Status`: `done`
+2. `Priority`: `P1`
+3. `Files`:
+- `transport-rust/src/lib.rs`
+- `browser/src-tauri/src/lib.rs`
+- `browser/contracts/transport.ts`
+- `docs/waves/TECHNICAL_ARCHITECTURE.md`
+4. `Build`:
+- Define explicit destination policy for `fetch_deck` host command (default-safe behavior + documented override for developer workflows).
+- Keep policy consistent with WAP/WML navigation expectations and existing transport contract boundaries.
+5. `Tests`:
+- `make test-rust-transport`
+- `cd browser/src-tauri && cargo test`
+- Add policy-path tests for blocked/allowed destination classes.
+6. `Accept`:
+- Host fetch path has documented/tested destination constraints appropriate for desktop host threat model.
+- External-intent navigation remains deterministic under policy decisions.
+7. `Notes`:
+- Security audit follow-up for medium-severity SSRF/internal probing exposure if renderer compromise occurs.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`

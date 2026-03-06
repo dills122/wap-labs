@@ -59,6 +59,8 @@ pub(crate) use engine_script_types::{
 const DEFAULT_VIEWPORT_COLS: usize = 20;
 const MAX_TRACE_ENTRIES: usize = 256;
 const MAX_TIMER_DISPATCH_DEPTH: u8 = 8;
+const MAX_DECK_WML_XML_BYTES: usize = 512 * 1024;
+const MAX_DECK_RAW_BYTES_BASE64_BYTES: usize = 1024 * 1024;
 
 #[derive(Clone, Debug)]
 struct CardTimerState {

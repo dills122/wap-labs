@@ -47,7 +47,7 @@ Hook behavior:
 
 - `pre-commit` hook runs `lint-staged` on staged files only:
   - Prettier for `browser/frontend` and `engine-wasm/host-sample`
-  - `rustfmt` for staged Rust files in `engine-wasm/engine` and `browser/src-tauri`
+  - `rustfmt` for staged Rust files in `engine-wasm/engine`, `browser/src-tauri`, and `transport-rust`
   - Frontend typecheck (`pnpm --dir browser/frontend exec tsc --noEmit`) when staged changes touch `browser/contracts/*` or `browser/frontend/*`
 - `pre-push` hook runs strict checks via `pre-commit` (`rust fmt --check`, `cargo clippy -D warnings`, `cargo test` where configured, and configured non-mutating checks).
 

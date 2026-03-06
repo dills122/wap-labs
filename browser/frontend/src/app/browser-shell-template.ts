@@ -2,7 +2,7 @@ import type { WvStatusPanel } from '../components/status-panel';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
-const browserShellTemplate = (defaultUrl: string) => `
+const browserShellTemplate = () => `
   <div class="browser-shell card square wv-shell-window">
     <header class="browser-chrome card-header icon">
       <div class="title-row">
@@ -12,7 +12,7 @@ const browserShellTemplate = (defaultUrl: string) => `
       <div class="nav-row">
         <button id="btn-back" class="btn chrome-btn">${WAVES_COPY.shell.back}</button>
         <button id="btn-reload" class="btn chrome-btn">${WAVES_COPY.shell.reload}</button>
-        <input id="fetch-url" class="form-95" type="text" value="${defaultUrl}" aria-label="Address" />
+        <input id="fetch-url" class="form-95" type="text" value="" aria-label="Address" />
         <button id="btn-fetch-url" class="btn chrome-btn primary">${WAVES_COPY.shell.go}</button>
       </div>
       <div class="mode-row">
@@ -97,6 +97,7 @@ const browserShellTemplate = (defaultUrl: string) => `
                 <label class="compact-field">
                   ${WAVES_COPY.shell.baseUrl}
                   <input id="base-url" class="form-95" type="text" value="${WAVES_CONFIG.defaultDebugBaseUrl}" />
+                  <input id="base-url" class="form-95" type="text" value="" />
                 </label>
                 <textarea id="wml-input" class="form-95"></textarea>
                 <div class="actions">
@@ -149,7 +150,7 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
   if (!app) {
     throw new Error('missing #app root');
   }
-  app.innerHTML = browserShellTemplate(defaultUrl);
+  app.innerHTML = browserShellTemplate();
 
   const wmlInput = document.querySelector<HTMLTextAreaElement>('#wml-input');
   const baseUrlInput = document.querySelector<HTMLInputElement>('#base-url');
@@ -205,6 +206,10 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
   ) {
     throw new Error('missing expected UI element');
   }
+
+  // Assign URL values as properties to avoid template interpolation of runtime-provided strings.
+  fetchUrlInput.value = defaultUrl;
+  baseUrlInput.value = WAVES_CONFIG.defaultDebugBaseUrl;
 
   return {
     wmlInput,

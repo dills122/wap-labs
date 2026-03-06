@@ -3,6 +3,6 @@ description = "Retries against an unreachable local endpoint and returns determi
 work_items = ["T0-03"]
 spec_items = ["RQ-TRN-007", "RQ-TRN-011", "RQ-TRN-012"]
 testing_ac = [
-  "Given retries=2 and timeoutMs=100 to http://127.0.0.1:9, fetch returns ok=false.",
+  "Given retries=2 and timeoutMs=100 to http://127.0.0.1:9 with requestPolicy.destinationPolicy=allow-private, fetch returns ok=false.",
   "Response error code is TRANSPORT_UNAVAILABLE and status is 0.",
 ]

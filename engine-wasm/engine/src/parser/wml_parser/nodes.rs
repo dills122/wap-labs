@@ -3,15 +3,26 @@ use crate::runtime::node::{InlineNode, Node};
 #[cfg(test)]
 use super::xml::{extract_attr, starts_with_tag_at};
 use super::xml::{normalize_text, XmlElement, XmlNode};
+use super::ParseBudget;
 
-pub(super) fn parse_card_nodes_xml(card: &XmlElement) -> Result<Vec<Node>, String> {
+pub(super) fn parse_card_nodes_xml(
+    card: &XmlElement,
+    budget: &mut ParseBudget,
+) -> Result<Vec<Node>, String> {
     let mut out = Vec::new();
-    map_card_level_nodes(&card.children, &mut out);
+    map_card_level_nodes(&card.children, &mut out, budget, 0)?;
     Ok(out)
 }
 
-fn map_card_level_nodes(nodes: &[XmlNode], out: &mut Vec<Node>) {
+fn map_card_level_nodes(
+    nodes: &[XmlNode],
+    out: &mut Vec<Node>,
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<(), String> {
+    budget.enter_scope(depth, "card-node traversal")?;
     for node in nodes {
+        budget.visit_node("card-node traversal")?;
         match node {
             XmlNode::Text(text) => {
                 let text = normalize_text(text);
@@ -22,7 +33,7 @@ fn map_card_level_nodes(nodes: &[XmlNode], out: &mut Vec<Node>) {
             XmlNode::Element(element) => match element.name.as_str() {
                 "br" => out.push(Node::Break),
                 "p" => {
-                    let inline = map_inline_nodes(&element.children);
+                    let inline = map_inline_nodes(&element.children, budget, depth + 1)?;
                     if !inline.is_empty() {
                         out.push(Node::Paragraph(inline));
                     }
@@ -30,31 +41,44 @@ fn map_card_level_nodes(nodes: &[XmlNode], out: &mut Vec<Node>) {
                 "a" => {
                     let href = element.attr("href").unwrap_or_default().to_string();
                     if !href.is_empty() {
-                        let text = normalize_text(&inline_text_content(&element.children));
+                        let text = normalize_text(&inline_text_content(
+                            &element.children,
+                            budget,
+                            depth + 1,
+                        )?);
                         let text = if text.is_empty() { href.clone() } else { text };
                         out.push(Node::Paragraph(vec![InlineNode::Link { text, href }]));
                     }
                 }
-                _ => map_card_level_nodes(&element.children, out),
+                _ => map_card_level_nodes(&element.children, out, budget, depth + 1)?,
             },
         }
     }
+    Ok(())
 }
 
-fn map_inline_nodes(nodes: &[XmlNode]) -> Vec<InlineNode> {
+fn map_inline_nodes(
+    nodes: &[XmlNode],
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<Vec<InlineNode>, String> {
     let mut out = Vec::new();
     let mut pending_text = String::new();
-    map_inline_nodes_recursive(nodes, &mut pending_text, &mut out);
+    map_inline_nodes_recursive(nodes, &mut pending_text, &mut out, budget, depth)?;
     flush_pending_inline_text(&mut pending_text, &mut out);
-    out
+    Ok(out)
 }
 
 fn map_inline_nodes_recursive(
     nodes: &[XmlNode],
     pending_text: &mut String,
     out: &mut Vec<InlineNode>,
-) {
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<(), String> {
+    budget.enter_scope(depth, "inline-node traversal")?;
     for node in nodes {
+        budget.visit_node("inline-node traversal")?;
         match node {
             XmlNode::Text(text) => pending_text.push_str(text),
             XmlNode::Element(element) => match element.name.as_str() {
@@ -62,7 +86,11 @@ fn map_inline_nodes_recursive(
                     flush_pending_inline_text(pending_text, out);
                     let href = element.attr("href").unwrap_or_default().to_string();
                     if !href.is_empty() {
-                        let text = normalize_text(&inline_text_content(&element.children));
+                        let text = normalize_text(&inline_text_content(
+                            &element.children,
+                            budget,
+                            depth + 1,
+                        )?);
                         out.push(InlineNode::Link {
                             text: if text.is_empty() { href.clone() } else { text },
                             href,
@@ -73,10 +101,17 @@ fn map_inline_nodes_recursive(
                     flush_pending_inline_text(pending_text, out);
                     out.push(InlineNode::Text(" ".to_string()));
                 }
-                _ => map_inline_nodes_recursive(&element.children, pending_text, out),
+                _ => map_inline_nodes_recursive(
+                    &element.children,
+                    pending_text,
+                    out,
+                    budget,
+                    depth + 1,
+                )?,
             },
         }
     }
+    Ok(())
 }
 
 fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode>) {
@@ -90,15 +125,23 @@ fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode
     }
 }
 
-fn inline_text_content(nodes: &[XmlNode]) -> String {
+fn inline_text_content(
+    nodes: &[XmlNode],
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<String, String> {
+    budget.enter_scope(depth, "inline text extraction")?;
     let mut out = String::new();
     for node in nodes {
+        budget.visit_node("inline text extraction")?;
         match node {
             XmlNode::Text(text) => out.push_str(text),
-            XmlNode::Element(element) => out.push_str(&inline_text_content(&element.children)),
+            XmlNode::Element(element) => {
+                out.push_str(&inline_text_content(&element.children, budget, depth + 1)?)
+            }
         }
     }
-    out
+    Ok(out)
 }
 
 #[cfg(test)]

@@ -548,3 +548,17 @@ fn parses_cdata_and_named_entity_refs() {
         _ => panic!("expected paragraph"),
     }
 }
+
+#[test]
+fn rejects_excessive_nested_markup_depth() {
+    let depth = 200usize;
+    let wrappers = "<x>".repeat(depth);
+    let closes = "</x>".repeat(depth);
+    let xml = format!("<wml><card id=\"home\">{wrappers}<p>deep</p>{closes}</card></wml>");
+
+    let err = parse_wml(&xml).expect_err("excessive nesting must fail deterministically");
+    assert!(
+        err.contains("Parse limit exceeded: nesting depth"),
+        "unexpected error: {err}"
+    );
+}
