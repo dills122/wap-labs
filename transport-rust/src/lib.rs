@@ -8,6 +8,7 @@ use ts_rs::TS;
 use url::{Host, Url};
 
 mod gateway;
+mod network;
 mod request_meta;
 mod responses;
 pub mod smpp_profile;
