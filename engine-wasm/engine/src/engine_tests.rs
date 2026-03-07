@@ -181,6 +181,35 @@ fn down_enter_fragment_navigation_resets_focus() {
 }
 
 #[test]
+fn enter_normalizes_out_of_range_focus_for_external_link_cards() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="http://example.test/one.wml">One</a>
+            <a href="http://example.test/two.wml">Two</a>
+          </card>
+        </wml>
+        "##;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine.focused_link_idx = 99;
+
+    engine
+        .handle_key_internal("enter")
+        .expect("enter should resolve focused external link");
+
+    assert_eq!(engine.focused_link_idx, 1);
+    assert_eq!(
+        engine.external_navigation_intent(),
+        Some("http://example.test/two.wml".to_string())
+    );
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("focused=true:href=http://example.test/two.wml:text=Two")));
+}
+
+#[test]
 fn missing_fragment_returns_error_and_preserves_state() {
     let mut engine = WmlEngine::new();
     let xml = r##"

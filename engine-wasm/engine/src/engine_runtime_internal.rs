@@ -142,6 +142,7 @@ impl WmlEngine {
             )
         };
         let link_total = layout.links.len();
+        self.focused_link_idx = clamp_focus(self.focused_link_idx, link_total);
 
         match key {
             "up" => {
@@ -158,8 +159,7 @@ impl WmlEngine {
                     }
                     return Ok(());
                 }
-                let idx = clamp_focus(self.focused_link_idx, link_total);
-                let href = &layout.links[idx];
+                let href = &layout.links[self.focused_link_idx];
                 self.execute_action_href(href)?;
             }
             _ => {}
