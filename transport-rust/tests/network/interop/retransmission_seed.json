@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "corpus": {
+    "id": "wtp-retransmission-seed",
+    "title": "WTP retransmission seed corpus",
+    "sourceClass": "interop-reference",
+    "provenance": "Synthetic seed trace derived from local WTP retransmission policy baseline for replay promotion.",
+    "legalReuse": "synthetic-derivative",
+    "derivedFrom": "transport-rust/src/network/wtp/retransmission.rs + local fixture corpus"
+  },
+  "cases": [
+    {
+      "name": "retransmit_flow_timer_expiry_and_ack",
+      "capture": {
+        "captureId": "seed-retransmission-001",
+        "sourceFamily": "synthetic-seed",
+        "captureKind": "seed-trace",
+        "provenanceNote": "Synthetic replay seed representing timer expiry followed by ACK completion.",
+        "legalReuse": "synthetic-derivative"
+      },
+      "retransmissionSteps": [
+        {
+          "event": { "kind": "timer-expired" },
+          "policy": {
+            "maxRetries": 2,
+            "initialDelayMs": 100,
+            "maxDelayMs": 200,
+            "backoffKind": "constant",
+            "backoffStepMs": 0,
+            "sarEnabled": false,
+            "nackHoldoffMs": 0
+          },
+          "state": {
+            "attempts": 0,
+            "lastNackElapsedMs": null,
+            "completed": false
+          }
+        },
+        {
+          "event": { "kind": "ack-observed" },
+          "policy": {
+            "maxRetries": 2,
+            "initialDelayMs": 100,
+            "maxDelayMs": 200,
+            "backoffKind": "constant",
+            "backoffStepMs": 0,
+            "sarEnabled": false,
+            "nackHoldoffMs": 0
+          },
+          "state": {
+            "attempts": 1,
+            "lastNackElapsedMs": null,
+            "completed": false
+          }
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "retransmission",
+          "decision": "send",
+          "attempt": 1,
+          "delay_ms": 100,
+          "attempts": 1,
+          "completed": false
+        },
+        {
+          "kind": "retransmission",
+          "decision": "completed",
+          "attempt": null,
+          "delay_ms": 0,
+          "attempts": 1,
+          "completed": true
+        }
+      ],
+      "expectedTransactionOutcomes": [
+        {
+          "kind": "retransmissionFinalState",
+          "final_decision": "completed",
+          "attempts": 1,
+          "completed": true
+        }
+      ]
+    }
+  ]
+}

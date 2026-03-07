@@ -38,6 +38,7 @@
 - `waves/SPEC_TEST_COVERAGE.md`: requirement-group test coverage matrix across engine/host/transport/browser
 - `waves/SPEC_COVERAGE_DASHBOARD.md`: current cross-domain spec coverage and remaining gap register
 - `waves/NETWORKING_GAP_MASTER.md`: consolidated active networking gap register and migration-gate blockers
+- `waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`: ranked external vector adoption guidance for WAP networking interop and conformance sources
 - `waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md`: indexed external and supplemental networking source families with source-class and `RQ-*` mappings
 - `waves/SOURCE_MATERIAL_MASTER_AUDIT.md`: full source-material audit scope, precedence, and gap-tracking plan
 - `waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`: per-file review ledger for all canonical source PDFs

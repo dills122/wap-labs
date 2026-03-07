@@ -725,7 +725,8 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-TRN-005..019`
 10. `Notes`:
-- Baseline replay harness now exists in `transport-rust/tests/interop_replay.rs` with `transport-rust/tests/network/interop/get_reply_replay.json` covering deterministic `GET`/`REPLY` event ordering over WDP/WSP.
+- Baseline replay harness now exists in `transport-rust/tests/interop_replay.rs` with schema-versioned seed corpus files under `transport-rust/tests/network/interop/` covering deterministic `GET`/`REPLY` event ordering over WDP/WSP.
+- `T0-24` now formalizes these replay inputs as schema-versioned seed corpus files under `transport-rust/tests/network/interop/`.
 - The same harness now covers a first WTP retransmission flow (timer expiry -> send, ack -> completed).
 - The same harness now covers duplicate-TID replay outcomes for terminal replay and nonterminal duplicate drop.
 - The same harness now covers minimal `Connect` / `ConnectReply` replay over connection-oriented service ports.
@@ -774,12 +775,13 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-24 Networking PCAP corpus spike and replay fixture seed pack
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-23`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
 - `transport-rust/tests/network/interop/`
 - `transport-rust/tests/interop_replay.rs`
+- `transport-rust/tests/network/interop/README.md`
 - `docs/waves/networking-migration-readiness-checklist.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 5. `Build`:
@@ -803,14 +805,17 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-005..019`
 10. `Notes`:
 - Spike output is an enabling artifact for `T0-22`; it does not itself satisfy protocol-core implementation gates.
+- Closure landed with schema-versioned replay seed files for `Connect`, `Get/Reply`, retransmission, and duplicate-TID flows, plus provenance/legal-reuse metadata and transaction-outcome assertions in the replay harness.
 
 ### T0-25 External conformance/vector source sweep spike
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-23`
 3. `Owner`: `docs`, `spec-processing`
 4. `Files`:
 - `docs/waves/NETWORKING_GAP_MASTER.md`
+- `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
+- `docs/waves/networking-vector-adoption.json`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 5. `Build`:
@@ -830,6 +835,7 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..019`, `RQ-SEC-004..005`
 10. `Notes`:
 - Research spike only; adoption decisions must remain profile-gated and additive.
+- Closure landed with a ranked adoption register plus validator; Wireshark dissector source and Kannel source/release artifacts are `adopt-now`, while Wireshark sample captures stay `defer` pending explicit provenance/reuse intake.
 
 ### T0-26 Local Kannel E2E readiness gate
 

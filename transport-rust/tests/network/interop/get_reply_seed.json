@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "corpus": {
+    "id": "wsp-get-reply-seed",
+    "title": "WSP GET/REPLY seed corpus",
+    "sourceClass": "interop-reference",
+    "provenance": "Synthetic seed trace derived from local connectionless GET/REPLY baseline for replay-harness promotion work.",
+    "legalReuse": "synthetic-derivative",
+    "derivedFrom": "transport-rust/src/network/wsp/pdu.rs + local replay baseline"
+  },
+  "cases": [
+    {
+      "name": "connectionless_get_reply_roundtrip",
+      "capture": {
+        "captureId": "seed-get-reply-001",
+        "sourceFamily": "synthetic-seed",
+        "captureKind": "seed-trace",
+        "provenanceNote": "Synthetic connectionless seed trace representing minimal GET/REPLY request-response over port 9200.",
+        "legalReuse": "synthetic-derivative"
+      },
+      "datagrams": [
+        {
+          "direction": "uplink",
+          "srcAddr": "10.0.0.10",
+          "dstAddr": "10.0.0.20",
+          "srcPort": 49152,
+          "dstPort": 9200,
+          "payload": [64, 47, 100, 101, 99, 107, 46, 119, 109, 108, 0, 17, 116, 101, 120, 116, 47, 118, 110, 100, 46, 119, 97, 112, 46, 119, 109, 108, 0]
+        },
+        {
+          "direction": "downlink",
+          "srcAddr": "10.0.0.20",
+          "dstAddr": "10.0.0.10",
+          "srcPort": 9200,
+          "dstPort": 49152,
+          "payload": [4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62]
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "datagram",
+          "direction": "uplink",
+          "mode": "connectionless",
+          "service_port": 9200,
+          "payload_len": 29
+        },
+        {
+          "kind": "methodRequest",
+          "direction": "uplink",
+          "mode": "connectionless",
+          "method": "get",
+          "uri": "/deck.wml",
+          "body_len": 0
+        },
+        {
+          "kind": "datagram",
+          "direction": "downlink",
+          "mode": "connectionless",
+          "service_port": 9200,
+          "payload_len": 15
+        },
+        {
+          "kind": "methodResult",
+          "direction": "downlink",
+          "mode": "connectionless",
+          "status_code": 200,
+          "body_len": 6
+        }
+      ],
+      "expectedTransactionOutcomes": [
+        {
+          "kind": "methodRoundTrip",
+          "mode": "connectionless",
+          "method": "get",
+          "uri": "/deck.wml",
+          "status_code": 200,
+          "response_body_len": 6
+        }
+      ]
+    }
+  ]
+}
