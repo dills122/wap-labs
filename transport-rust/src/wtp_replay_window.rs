@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 
 pub const WTP_TID_MODULUS: u16 = 1 << 14;

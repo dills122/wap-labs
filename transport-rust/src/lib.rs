@@ -15,6 +15,7 @@ pub mod tcp_profile;
 mod wbxml;
 pub mod wsp_capability;
 pub mod wsp_registry;
+#[cfg(test)]
 mod wtp_replay_window;
 
 use gateway::build_gateway_request;
@@ -929,6 +930,7 @@ mod tests {
     #[derive(Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
     struct WtpReplayPolicyFixture {
+        #[allow(dead_code)]
         responder_policy: WtpReplayPolicyInput,
         responder_cases: Vec<WtpResponderFixtureCase>,
         initiator_policy: WtpInitiatorPolicy,
@@ -2485,6 +2487,7 @@ mod tests {
         let fixture: WtpReplayPolicyFixture =
             read_json_fixture("wtp_tid_replay_window_mapped", "replay_policy_fixture.json");
 
+        let _ = &fixture.responder_policy;
         for case in fixture.responder_cases {
             let (decision, _trace) = decide_responder_tid(
                 &case.policy.into_policy(),
@@ -2493,7 +2496,9 @@ mod tests {
             );
             assert_eq!(
                 decision,
-                expect_responder_tid_decision(case.expected.as_str())
+                expect_responder_tid_decision(case.expected.as_str()),
+                "responder case '{}' failed",
+                case.name
             );
         }
 
