@@ -195,6 +195,58 @@ describe('navigation-state', () => {
     expect(machine.getHistoryState().index).toBe(0);
   });
 
+  it('restores latest in-deck card snapshot on host-history back', async () => {
+    const navigateToCardCalls: string[] = [];
+    let loadCount = 0;
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url
+          }),
+        engineLoadDeckContext: async (request) => {
+          loadCount += 1;
+          if (request.baseUrl.includes('/a.wml')) {
+            return snapshot({ activeCardId: 'home-a', baseUrl: request.baseUrl });
+          }
+          return snapshot({ activeCardId: 'home-b', baseUrl: request.baseUrl });
+        },
+        engineHandleKey: async () =>
+          snapshot({ activeCardId: 'details-a', baseUrl: 'http://example.test/a.wml' }),
+        engineSnapshot: async () =>
+          snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
+        engineNavigateBack: async () =>
+          snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
+        engineNavigateToCard: async ({ cardId }) => {
+          navigateToCardCalls.push(cardId);
+          return snapshot({ activeCardId: cardId, baseUrl: 'http://example.test/a.wml' });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.applyEngineKey('enter');
+    await machine.loadTransportUrl({
+      url: 'http://example.test/b.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    expect(machine.getHistoryState().entries[0]?.activeCardId).toBe('details-a');
+
+    const mode = await machine.navigateBackWithFallback();
+    expect(mode).toBe('host');
+    expect(navigateToCardCalls).toEqual(['details-a']);
+    expect(machine.getSessionState().activeCardId).toBe('details-a');
+    expect(machine.getHistoryState().index).toBe(0);
+    expect(loadCount).toBe(3);
+  });
+
   it('emits deterministic state-event order for host-history back fallback', async () => {
     const events: string[] = [];
     const machine = createNavigationStateMachine(
