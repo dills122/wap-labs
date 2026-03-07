@@ -1,0 +1,72 @@
+{
+  "successCases": [
+    {
+      "name": "get-content-type-binary-header",
+      "decodePolicy": "strict-v14",
+      "encodePolicy": "strict-v14",
+      "encoded": [64, 47, 100, 101, 99, 107, 46, 119, 109, 108, 0, 17, 116, 101, 120, 116, 47, 118, 110, 100, 46, 119, 97, 112, 46, 119, 109, 108, 0],
+      "expected": {
+        "kind": "methodGet",
+        "uri": "/deck.wml",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "text/vnd.wap.wml",
+            "encoding": { "kind": "binary", "page": 1 }
+          }
+        ]
+      }
+    },
+    {
+      "name": "post-text-fallback-header-with-body",
+      "decodePolicy": "strict",
+      "encodePolicy": "text-fallback",
+      "encoded": [96, 47, 115, 117, 98, 109, 105, 116, 0, 21, 126, 88, 45, 65, 112, 112, 45, 84, 114, 97, 99, 101, 0, 116, 114, 97, 99, 101, 45, 49, 0, 1, 2, 3],
+      "expected": {
+        "kind": "methodPost",
+        "uri": "/submit",
+        "body": [1, 2, 3],
+        "headers": [
+          {
+            "name": "X-App-Trace",
+            "value": "trace-1",
+            "encoding": { "kind": "text" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "reply-encoding-version-header-and-body",
+      "decodePolicy": "strict-v14",
+      "encodePolicy": "strict-v14",
+      "encoded": [4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62],
+      "expected": {
+        "kind": "reply",
+        "status_code": 200,
+        "body": [60, 119, 109, 108, 47, 62],
+        "headers": [
+          {
+            "name": "Encoding-Version",
+            "value": "1.4",
+            "encoding": { "kind": "binary", "page": 1 }
+          }
+        ]
+      }
+    }
+  ],
+  "errorCases": [
+    {
+      "name": "unsupported-connect-pdu-type",
+      "decodePolicy": "strict",
+      "encoded": [1],
+      "expectedError": "unsupported-pdu-type",
+      "unsupportedPduType": 1
+    },
+    {
+      "name": "truncated-post-header-block",
+      "decodePolicy": "strict",
+      "encoded": [96, 47, 0, 10, 17, 116, 101, 120, 116, 0],
+      "expectedError": "truncated"
+    }
+  ]
+}

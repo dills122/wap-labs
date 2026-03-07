@@ -225,6 +225,15 @@ pub fn encode_header_block(
     let mut out = Vec::new();
 
     for header in &block.headers {
+        if matches!(header.name_encoding, WspHeaderNameEncoding::Text) {
+            out.push(TEXT_HEADER_NAME_PREFIX);
+            out.extend_from_slice(header.name.as_bytes());
+            out.push(0x00);
+            out.extend_from_slice(header.value.as_bytes());
+            out.push(0x00);
+            continue;
+        }
+
         let page = match header.name_encoding {
             WspHeaderNameEncoding::Binary { page } => page,
             WspHeaderNameEncoding::Text => DEFAULT_HEADER_CODE_PAGE,
@@ -417,6 +426,23 @@ mod tests {
         .expect("encode");
 
         assert_eq!(encoded, b"~Content-Disposition\0attachment\0".to_vec());
+    }
+
+    #[test]
+    fn encode_preserves_explicit_text_header_name_marker() {
+        let block = WspHeaderBlock {
+            headers: vec![WspHeaderField {
+                name: "X-App-Trace".to_string(),
+                value: "trace-1".to_string(),
+                name_encoding: WspHeaderNameEncoding::Text,
+            }],
+            encoding_version_headers: Vec::new(),
+        };
+
+        let encoded =
+            encode_header_block(&block, WspHeaderBlockEncodePolicy::STRICT).expect("encode");
+
+        assert_eq!(encoded, b"~X-App-Trace\0trace-1\0".to_vec());
     }
 
     #[test]

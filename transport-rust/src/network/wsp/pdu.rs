@@ -190,11 +190,170 @@ fn split_length_prefixed_block(input: &[u8]) -> Result<(&[u8], &[u8]), WspPduDec
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::network::wsp::decoder::UnsupportedCodePageBehavior;
+    use crate::network::wsp::encoder::HeaderEncodePolicy;
     use crate::network::wsp::encoding_version::WspEncodingVersion;
     use crate::network::wsp::header_block::{
         WspHeaderBlock, WspHeaderBlockDecodePolicy, WspHeaderBlockEncodePolicy, WspHeaderField,
         WspHeaderNameEncoding,
     };
+    use serde::Deserialize;
+    use std::fs;
+    use std::path::PathBuf;
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct PduFixture {
+        success_cases: Vec<PduSuccessCase>,
+        error_cases: Vec<PduErrorCase>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct PduSuccessCase {
+        name: String,
+        encoded: Vec<u8>,
+        decode_policy: String,
+        encode_policy: String,
+        expected: PduFixtureValue,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct PduErrorCase {
+        name: String,
+        encoded: Vec<u8>,
+        decode_policy: String,
+        expected_error: String,
+        unsupported_pdu_type: Option<u8>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(tag = "kind", rename_all = "camelCase")]
+    enum PduFixtureValue {
+        MethodGet {
+            uri: String,
+            headers: Vec<HeaderFixtureValue>,
+        },
+        MethodPost {
+            uri: String,
+            headers: Vec<HeaderFixtureValue>,
+            body: Vec<u8>,
+        },
+        Reply {
+            status_code: u16,
+            headers: Vec<HeaderFixtureValue>,
+            body: Vec<u8>,
+        },
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct HeaderFixtureValue {
+        name: String,
+        value: String,
+        encoding: HeaderEncodingFixtureValue,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(tag = "kind", rename_all = "camelCase")]
+    enum HeaderEncodingFixtureValue {
+        Binary { page: u8 },
+        Text,
+    }
+
+    fn load_fixture() -> PduFixture {
+        let fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("tests")
+            .join("fixtures")
+            .join("transport")
+            .join("wsp_pdu_baseline_mapped")
+            .join("pdu_fixture.json");
+        let raw = fs::read_to_string(&fixture_path)
+            .unwrap_or_else(|_| panic!("failed reading {}", fixture_path.display()));
+        serde_json::from_str(&raw)
+            .unwrap_or_else(|error| panic!("failed parsing {}: {error}", fixture_path.display()))
+    }
+
+    fn decode_policy(name: &str) -> WspHeaderBlockDecodePolicy {
+        match name {
+            "strict" => WspHeaderBlockDecodePolicy::STRICT,
+            "strict-v14" => WspHeaderBlockDecodePolicy {
+                negotiated_version: Some(WspEncodingVersion::V1_4),
+                ..WspHeaderBlockDecodePolicy::STRICT
+            },
+            other => panic!("unsupported decode policy: {other}"),
+        }
+    }
+
+    fn encode_policy(name: &str) -> WspHeaderBlockEncodePolicy {
+        match name {
+            "strict" => WspHeaderBlockEncodePolicy::STRICT,
+            "strict-v14" => WspHeaderBlockEncodePolicy {
+                recipient_version: Some(WspEncodingVersion::V1_4),
+                ..WspHeaderBlockEncodePolicy::STRICT
+            },
+            "text-fallback" => WspHeaderBlockEncodePolicy {
+                header_name_policy: HeaderEncodePolicy {
+                    binary_encoding: true,
+                    unsupported_code_page: UnsupportedCodePageBehavior::IgnoreExtensionHeaders,
+                },
+                ..WspHeaderBlockEncodePolicy::STRICT
+            },
+            other => panic!("unsupported encode policy: {other}"),
+        }
+    }
+
+    fn fixture_headers(headers: Vec<HeaderFixtureValue>) -> WspHeaderBlock {
+        let mut out = WspHeaderBlock::default();
+        for header in headers {
+            let name_encoding = match header.encoding {
+                HeaderEncodingFixtureValue::Binary { page } => {
+                    WspHeaderNameEncoding::Binary { page }
+                }
+                HeaderEncodingFixtureValue::Text => WspHeaderNameEncoding::Text,
+            };
+            let field = WspHeaderField {
+                name: header.name,
+                value: header.value,
+                name_encoding,
+            };
+            if field.name.eq_ignore_ascii_case("Encoding-Version") {
+                out.encoding_version_headers.extend(
+                    crate::network::wsp::header_block::parse_encoding_version_header_value(
+                        &field.value,
+                    ),
+                );
+            }
+            out.headers.push(field);
+        }
+        out
+    }
+
+    fn fixture_pdu(value: PduFixtureValue) -> WspPdu {
+        match value {
+            PduFixtureValue::MethodGet { uri, headers } => WspPdu::MethodGet(WspMethodGetPdu {
+                uri,
+                headers: fixture_headers(headers),
+            }),
+            PduFixtureValue::MethodPost { uri, headers, body } => {
+                WspPdu::MethodPost(WspMethodPostPdu {
+                    uri,
+                    headers: fixture_headers(headers),
+                    body,
+                })
+            }
+            PduFixtureValue::Reply {
+                status_code,
+                headers,
+                body,
+            } => WspPdu::Reply(WspReplyPdu {
+                status_code,
+                headers: fixture_headers(headers),
+                body,
+            }),
+        }
+    }
 
     fn content_type_header_block() -> WspHeaderBlock {
         WspHeaderBlock {
@@ -204,6 +363,54 @@ mod tests {
                 name_encoding: WspHeaderNameEncoding::Binary { page: 0x01 },
             }],
             encoding_version_headers: Vec::new(),
+        }
+    }
+
+    #[test]
+    fn pdu_fixture_roundtrips_success_cases() {
+        let fixture = load_fixture();
+        for case in fixture.success_cases {
+            let expected = fixture_pdu(case.expected);
+            let decoded = decode_wsp_pdu(&case.encoded, decode_policy(&case.decode_policy))
+                .unwrap_or_else(|error| panic!("case '{}' decode failed: {error}", case.name));
+            assert_eq!(decoded, expected, "case '{}' decode mismatch", case.name);
+
+            let encoded = encode_wsp_pdu(&expected, encode_policy(&case.encode_policy))
+                .unwrap_or_else(|error| panic!("case '{}' encode failed: {error}", case.name));
+            assert_eq!(
+                encoded, case.encoded,
+                "case '{}' encode mismatch",
+                case.name
+            );
+        }
+    }
+
+    #[test]
+    fn pdu_fixture_reports_declared_decode_failures() {
+        let fixture = load_fixture();
+        for case in fixture.error_cases {
+            let error = decode_wsp_pdu(&case.encoded, decode_policy(&case.decode_policy))
+                .expect_err(&format!("case '{}' should fail", case.name));
+            match case.expected_error.as_str() {
+                "unsupported-pdu-type" => assert_eq!(
+                    error,
+                    WspPduDecodeError::UnsupportedPduType(
+                        case.unsupported_pdu_type
+                            .expect("unsupported-pdu-type cases require a code")
+                    ),
+                    "case '{}' mismatch",
+                    case.name
+                ),
+                "truncated" => {
+                    assert_eq!(
+                        error,
+                        WspPduDecodeError::Truncated,
+                        "case '{}' mismatch",
+                        case.name
+                    )
+                }
+                other => panic!("unsupported expected error: {other}"),
+            }
         }
     }
 
@@ -248,20 +455,5 @@ mod tests {
         .expect("decode should succeed");
 
         assert_eq!(decoded, pdu);
-    }
-
-    #[test]
-    fn decode_rejects_unsupported_pdu_type() {
-        let error = decode_wsp_pdu(&[0x01], WspHeaderBlockDecodePolicy::STRICT)
-            .expect_err("connect is not yet implemented");
-        assert_eq!(error, WspPduDecodeError::UnsupportedPduType(0x01));
-    }
-
-    #[test]
-    fn post_decode_rejects_truncated_header_block_length() {
-        let encoded = vec![0x60, b'/', 0x00, 10, 0x11, b't', b'e', b'x', b't', 0x00];
-        let error = decode_wsp_pdu(&encoded, WspHeaderBlockDecodePolicy::STRICT)
-            .expect_err("truncated post should fail");
-        assert_eq!(error, WspPduDecodeError::Truncated);
     }
 }

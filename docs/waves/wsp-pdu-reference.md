@@ -75,6 +75,7 @@ Current transport-rust baseline for this lane:
 
 - `transport-rust/src/network/wsp/header_block.rs` provides the immediate pure header-block decode/encode surface used to apply header token, code-page, and `Encoding-version` policy before full PDU framing is implemented.
 - `transport-rust/src/network/wsp/pdu.rs` now provides a minimal pure PDU surface for `Get`, `Post`, and `Reply` over that header-block layer.
+- `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json` carries the replayable baseline corpus for successful `Get`/`Post`/`Reply` framing and deterministic decode failures.
 
 ## 6) Connection-mode behavior (typical)
 

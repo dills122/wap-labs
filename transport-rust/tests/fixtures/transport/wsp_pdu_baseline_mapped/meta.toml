@@ -1,0 +1,10 @@
+name = "WSP minimal PDU baseline fixtures"
+description = "Fixture-backed Get/Post/Reply baseline coverage for the pure WSP PDU surface, including deterministic decode failures."
+mode = "mapped"
+work_items = ["T0-20"]
+spec_items = ["RQ-TRN-010", "RQ-TRN-014", "RQ-TRN-018"]
+testing_ac = [
+  "Given minimal Get, Post, and Reply PDUs, pure encode/decode round-trips are deterministic for URI, header block, and body fields.",
+  "Given outbound text-fallback policy, unregistered or extension-style headers remain representable through the minimal PDU surface without changing payload semantics.",
+  "Given unsupported or truncated PDU inputs, decode failure is deterministic and explicit."
+]
