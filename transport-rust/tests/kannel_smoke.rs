@@ -1,4 +1,7 @@
-use lowband_transport_rust::{fetch_deck_in_process, FetchDeckRequest, FetchDeckResponse};
+use lowband_transport_rust::{
+    fetch_deck_in_process, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy,
+    FetchRequestPolicy,
+};
 
 fn smoke_timeout_ms() -> u64 {
     std::env::var("TRANSPORT_WAP_TIMEOUT_MS")
@@ -22,7 +25,13 @@ fn request(url: &str) -> FetchDeckRequest {
         timeout_ms: Some(smoke_timeout_ms()),
         retries: Some(smoke_retries()),
         request_id: None,
-        request_policy: None,
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: None,
+        }),
     }
 }
 

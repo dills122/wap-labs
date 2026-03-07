@@ -68,7 +68,8 @@ wait_for_http "${WML_HEALTH_URL}"
 echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
-  GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE}" \
+  WAVES_FETCH_DESTINATION_POLICY="allow-private" \
+    GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE}" \
     WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
     WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL}" \
     TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
@@ -80,7 +81,8 @@ echo "==> Running transport-rust WAP smoke integration test"
 echo "==> Running browser host Kannel smoke integration test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
-  GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE}" \
+  WAVES_FETCH_DESTINATION_POLICY="allow-private" \
+    GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE}" \
     WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
     RUST_TEST_THREADS=1 \
     cargo test kannel_fetch_deck_smoke_loads_into_engine -- --ignored --test-threads=1
