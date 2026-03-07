@@ -67,7 +67,7 @@ Score: `7.0 / 8.0` (`88%`)
 
 ### What this score does not mean
 
-1. it does not mean `wap-net-core` is ready to replace `gateway-bridged`
+1. it does not prove `wap-net-core` is ready for full browser/UI parity or future `wap-net-ext` promotion
 2. it does not prove full WSP/WTP/WDP conformance
 3. it does not guarantee emulator/browser UX correctness
 
@@ -75,7 +75,7 @@ Score: `7.0 / 8.0` (`88%`)
 
 ### Existing strengths
 
-1. active profile is explicitly still `gateway-bridged` in [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
+1. active profile is explicitly `wap-net-core`, with `gateway-bridged` retained as rollback posture, in [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
 2. local Kannel + WML stack is documented and runnable in [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md)
 3. transport-specific smoke path exists:
    - [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs)

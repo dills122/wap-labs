@@ -79,8 +79,10 @@ Execution sources:
 
 ## Promotion gate rule
 
-Do not promote from `gateway-bridged` to `wap-net-core` until:
+Promotion from `gateway-bridged` to `wap-net-core` required:
 
 1. `T0-18`, `T0-19`, `T0-20`, `T0-22` are green.
 2. `T0-21` posture is explicit and default-safe.
 3. profile gates in `docs/waves/networking-migration-readiness-checklist.md` are satisfied.
+
+This promotion gate is now satisfied; future networking gap work targets `wap-net-ext` depth and any regression-triggered rollback conditions.

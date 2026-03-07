@@ -17,8 +17,8 @@ Transport boundary ends at normalized deck payload and optional XML event stream
 
 Profile modes in use:
 
-1. `gateway-bridged` (current): terminal path enters through configured gateway.
-2. `wap-net-core` (target): in-process `WDP -> WTP -> WSP` stack with deterministic profile gating.
+1. `gateway-bridged` (legacy): terminal path enters through configured gateway and remains available as rollback posture.
+2. `wap-net-core` (current): in-process `WDP -> WTP -> WSP` stack with deterministic profile gating.
 3. `wap-net-ext` (future): CL/push/advanced profile features after explicit migration approval.
 
 Current profile decision point:

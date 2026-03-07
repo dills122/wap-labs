@@ -92,7 +92,7 @@ Priority execution order for networking MVP closure:
 
 Sprint policy:
 
-1. Do not promote profile from `gateway-bridged` to `wap-net-core` before `T0-18..T0-26` gates are green.
+1. The `gateway-bridged` to `wap-net-core` promotion gate is satisfied; future profile moves require new explicit extension or rollback gates.
 2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
 3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
 

@@ -120,14 +120,14 @@ Fetch destination policy posture (`M1-17`):
 
 Current protocol stack posture:
 
-1. default profile: `gateway-bridged` (HTTP/WAP stack entry via configured gateway)
-2. protocol profile: `wap-net-core` is the near-term target and is feature-gated behind completion of transport milestones
-3. security profile: `wtls=noop|bridge` in current codepath, with transition decision tracked by `T0-14`
+1. default profile: `wap-net-core` (native `WDP -> WTP -> WSP` transport ingress)
+2. extension profile: `wap-net-ext` remains future-gated for CL/push/advanced session features
+3. security profile: `wtls=disabled|active-minimal` in current codepath, with transition decision tracked by `T0-14` and `T0-21`
 
 Supported profile classes:
 
-1. `gateway-bridged`: terminal path enters via configured HTTP gateway and bypasses native WSP/WTP execution.
-2. `wap-net-core`: native `WDP -> WTP -> WSP` path with mandatory CO-method support (`Get`/`Post`/`Reply`) and deterministic transaction state.
+1. `gateway-bridged`: legacy gateway path retained as rollback posture and local smoke comparison lane.
+2. `wap-net-core`: active native `WDP -> WTP -> WSP` path with mandatory CO-method support (`Get`/`Post`/`Reply`) and deterministic transaction state.
 3. `wap-net-ext`: future extension mode enabling CL and optional advanced session/push features after explicit gate decisions.
 
 Transport profile decision rules:
