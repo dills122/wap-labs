@@ -1,4 +1,4 @@
-# Networking Migration Readiness Checklist (T0-08..T0-22)
+# Networking Migration Readiness Checklist (T0-08..T0-24)
 
 Status: draft
 Owner: transport docs + protocol stack alignment
@@ -7,7 +7,7 @@ This checklist translates protocol rewrite gates into a deterministic promotion 
 
 Execution mapping:
 
-- Ticket-level gate states are recorded in `docs/waves/WORK_ITEMS.md` (`T0-08` through `T0-22`) in the `Migration gates` fields.
+- Ticket-level gate states are recorded in `docs/waves/WORK_ITEMS.md` (`T0-08` through `T0-24`) in the `Migration gates` fields.
 
 ## Gate policy
 
@@ -110,6 +110,12 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 - `Done-2`: retransmission and duplicate-TID replay paths are runnable in the same corpus.
 - `Done-3`: migration profile gates can now reference replay results as mandatory promotion evidence.
 
+### T0-24 (`Owner`: transport-rust, docs)
+
+- `Done-1`: schema-versioned seed corpus exists with committed metadata, provenance, and legal-reuse posture for `Connect`, `Get/Reply`, retransmission, and duplicate-TID flows.
+- `Done-2`: replay harness validates both deterministic event order and transaction-level outcomes from those seed fixtures.
+- `Done-3`: `T0-22` references the seed corpus as required replay baseline input rather than ad hoc replay JSON.
+
 ## Cross-tile closure rule
 
-`T0-17` must stay true before any adjacent-adjacent transport path is promoted in `T0-14`, and `T0-18..T0-22` must be green before moving from `gateway-bridged` to `wap-net-core`.
+`T0-17` must stay true before any adjacent-adjacent transport path is promoted in `T0-14`, and `T0-18..T0-24` must be green before moving from `gateway-bridged` to `wap-net-core`.

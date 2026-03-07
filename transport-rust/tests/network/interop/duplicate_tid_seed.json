@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "corpus": {
+    "id": "wtp-duplicate-tid-seed",
+    "title": "WTP duplicate-TID seed corpus",
+    "sourceClass": "interop-reference",
+    "provenance": "Synthetic seed trace derived from local WTP duplicate-cache baseline for replay promotion.",
+    "legalReuse": "synthetic-derivative",
+    "derivedFrom": "transport-rust/src/network/wtp/duplicate_cache.rs + local fixture corpus"
+  },
+  "cases": [
+    {
+      "name": "duplicate_tid_flow_replays_terminal_and_drops_nonterminal",
+      "capture": {
+        "captureId": "seed-duplicate-tid-001",
+        "sourceFamily": "synthetic-seed",
+        "captureKind": "seed-trace",
+        "provenanceNote": "Synthetic replay seed representing terminal replay and nonterminal duplicate drop behavior.",
+        "legalReuse": "synthetic-derivative"
+      },
+      "duplicateSteps": [
+        {
+          "tid": 11,
+          "isTerminalResult": true,
+          "policy": {
+            "cacheTerminalResponses": true,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 11,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": true,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 12,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": false,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 12,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": false,
+            "maxCachedTransactions": 2
+          }
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "duplicate",
+          "decision": "accept",
+          "tid": 11,
+          "cache_size": 1
+        },
+        {
+          "kind": "duplicate",
+          "decision": "replay-cached-terminal",
+          "tid": 11,
+          "cache_size": 1
+        },
+        {
+          "kind": "duplicate",
+          "decision": "accept",
+          "tid": 12,
+          "cache_size": 2
+        },
+        {
+          "kind": "duplicate",
+          "decision": "drop-as-duplicate",
+          "tid": 12,
+          "cache_size": 2
+        }
+      ],
+      "expectedTransactionOutcomes": [
+        {
+          "kind": "duplicateCacheSummary",
+          "accepted": 2,
+          "replayed_terminal": 1,
+          "dropped_duplicates": 1,
+          "final_cache_size": 2
+        }
+      ]
+    }
+  ]
+}

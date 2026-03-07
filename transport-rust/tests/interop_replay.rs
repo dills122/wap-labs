@@ -18,17 +18,42 @@ use std::path::{Path, PathBuf};
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct ReplayFixture {
+    schema_version: u32,
+    corpus: ReplayCorpus,
     cases: Vec<ReplayCase>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayCorpus {
+    id: String,
+    title: String,
+    source_class: String,
+    provenance: String,
+    legal_reuse: String,
+    derived_from: String,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct ReplayCase {
     name: String,
+    capture: ReplayCapture,
     datagrams: Option<Vec<ReplayDatagram>>,
     retransmission_steps: Option<Vec<ReplayRetransmissionStep>>,
     duplicate_steps: Option<Vec<ReplayDuplicateStep>>,
     expected_events: Vec<ExpectedReplayEvent>,
+    expected_transaction_outcomes: Vec<ExpectedTransactionOutcome>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayCapture {
+    capture_id: String,
+    source_family: String,
+    capture_kind: String,
+    provenance_note: String,
+    legal_reuse: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -159,6 +184,36 @@ enum ExpectedReplayEvent {
     },
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(tag = "kind", rename_all = "camelCase")]
+enum ExpectedTransactionOutcome {
+    SessionConnect {
+        mode: String,
+        session_id: u16,
+        version_major: u8,
+        version_minor: u8,
+        max_outstanding_requests: Option<u16>,
+    },
+    MethodRoundTrip {
+        mode: String,
+        method: String,
+        uri: String,
+        status_code: u16,
+        response_body_len: usize,
+    },
+    RetransmissionFinalState {
+        final_decision: String,
+        attempts: u8,
+        completed: bool,
+    },
+    DuplicateCacheSummary {
+        accepted: usize,
+        replayed_terminal: usize,
+        dropped_duplicates: usize,
+        final_cache_size: usize,
+    },
+}
+
 #[derive(Debug, PartialEq, Eq)]
 enum ReplayEvent {
     Datagram {
@@ -209,6 +264,35 @@ enum ReplayEvent {
     },
 }
 
+#[derive(Debug, PartialEq, Eq)]
+enum ReplayTransactionOutcome {
+    SessionConnect {
+        mode: WspSessionMode,
+        session_id: u16,
+        version_major: u8,
+        version_minor: u8,
+        max_outstanding_requests: Option<u16>,
+    },
+    MethodRoundTrip {
+        mode: WspSessionMode,
+        method: WspMethod,
+        uri: String,
+        status_code: u16,
+        response_body_len: usize,
+    },
+    RetransmissionFinalState {
+        final_decision: String,
+        attempts: u8,
+        completed: bool,
+    },
+    DuplicateCacheSummary {
+        accepted: usize,
+        replayed_terminal: usize,
+        dropped_duplicates: usize,
+        final_cache_size: usize,
+    },
+}
+
 fn interop_fixture_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("tests")
@@ -232,6 +316,88 @@ fn load_fixture(path: &Path) -> ReplayFixture {
         fs::read_to_string(path).unwrap_or_else(|_| panic!("failed reading {}", path.display()));
     serde_json::from_str(&raw)
         .unwrap_or_else(|error| panic!("failed parsing {}: {error}", path.display()))
+}
+
+fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
+    assert_eq!(
+        fixture.schema_version,
+        1,
+        "fixture '{}' uses unsupported schema version {}",
+        path.display(),
+        fixture.schema_version
+    );
+    assert!(
+        !fixture.corpus.id.is_empty()
+            && !fixture.corpus.title.is_empty()
+            && !fixture.corpus.provenance.is_empty()
+            && !fixture.corpus.derived_from.is_empty(),
+        "fixture '{}' must include non-empty corpus metadata",
+        path.display()
+    );
+    assert!(
+        matches!(
+            fixture.corpus.source_class.as_str(),
+            "interop-reference" | "heuristic"
+        ),
+        "fixture '{}' uses invalid source class '{}'",
+        path.display(),
+        fixture.corpus.source_class
+    );
+    assert!(
+        matches!(
+            fixture.corpus.legal_reuse.as_str(),
+            "local-test-only" | "synthetic-derivative"
+        ),
+        "fixture '{}' uses invalid corpus legal reuse '{}'",
+        path.display(),
+        fixture.corpus.legal_reuse
+    );
+    for case in &fixture.cases {
+        assert!(
+            !case.capture.capture_id.is_empty()
+                && !case.capture.provenance_note.is_empty()
+                && !case.capture.source_family.is_empty(),
+            "fixture '{}' case '{}' must include capture metadata",
+            path.display(),
+            case.name
+        );
+        assert!(
+            matches!(
+                case.capture.source_family.as_str(),
+                "synthetic-seed" | "kannel" | "wireshark"
+            ),
+            "fixture '{}' case '{}' uses unsupported source family '{}'",
+            path.display(),
+            case.name,
+            case.capture.source_family
+        );
+        assert!(
+            matches!(
+                case.capture.capture_kind.as_str(),
+                "seed-trace" | "pcap-derivative"
+            ),
+            "fixture '{}' case '{}' uses unsupported capture kind '{}'",
+            path.display(),
+            case.name,
+            case.capture.capture_kind
+        );
+        assert!(
+            matches!(
+                case.capture.legal_reuse.as_str(),
+                "local-test-only" | "synthetic-derivative"
+            ),
+            "fixture '{}' case '{}' uses invalid capture legal reuse '{}'",
+            path.display(),
+            case.name,
+            case.capture.legal_reuse
+        );
+        assert!(
+            !case.expected_transaction_outcomes.is_empty(),
+            "fixture '{}' case '{}' must define transaction outcomes",
+            path.display(),
+            case.name
+        );
+    }
 }
 
 fn parse_addr(raw: &str) -> WdpAddress {
@@ -537,6 +703,181 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
         .collect()
 }
 
+fn derive_transaction_outcomes(events: &[ReplayEvent]) -> Vec<ReplayTransactionOutcome> {
+    let mut out = Vec::new();
+
+    let connect_request = events.iter().find_map(|event| match event {
+        ReplayEvent::ConnectRequest {
+            mode,
+            version_major,
+            version_minor,
+            max_outstanding_requests,
+            ..
+        } => Some((
+            *mode,
+            *version_major,
+            *version_minor,
+            *max_outstanding_requests,
+        )),
+        _ => None,
+    });
+    if let Some(ReplayEvent::ConnectReply {
+        mode,
+        version_major,
+        version_minor,
+        session_id,
+        max_outstanding_requests,
+        ..
+    }) = events
+        .iter()
+        .find(|event| matches!(event, ReplayEvent::ConnectReply { .. }))
+    {
+        let negotiated_requests = match connect_request {
+            Some((_, _, _, request_max)) => max_outstanding_requests.or(request_max),
+            None => *max_outstanding_requests,
+        };
+        out.push(ReplayTransactionOutcome::SessionConnect {
+            mode: *mode,
+            session_id: *session_id,
+            version_major: *version_major,
+            version_minor: *version_minor,
+            max_outstanding_requests: negotiated_requests,
+        });
+    }
+
+    let method_request = events.iter().find_map(|event| match event {
+        ReplayEvent::MethodRequest {
+            mode, method, uri, ..
+        } => Some((*mode, *method, uri.clone())),
+        _ => None,
+    });
+    let method_result = events.iter().find_map(|event| match event {
+        ReplayEvent::MethodResult {
+            status_code,
+            body_len,
+            ..
+        } => Some((*status_code, *body_len)),
+        _ => None,
+    });
+    if let (Some((mode, method, uri)), Some((status_code, response_body_len))) =
+        (method_request, method_result)
+    {
+        out.push(ReplayTransactionOutcome::MethodRoundTrip {
+            mode,
+            method,
+            uri,
+            status_code,
+            response_body_len,
+        });
+    }
+
+    if let Some(ReplayEvent::Retransmission {
+        decision,
+        attempts,
+        completed,
+        ..
+    }) = events
+        .iter()
+        .rev()
+        .find(|event| matches!(event, ReplayEvent::Retransmission { .. }))
+    {
+        out.push(ReplayTransactionOutcome::RetransmissionFinalState {
+            final_decision: decision.clone(),
+            attempts: *attempts,
+            completed: *completed,
+        });
+    }
+
+    let accepted = events
+        .iter()
+        .filter(|event| matches!(event, ReplayEvent::Duplicate { decision, .. } if decision == "accept"))
+        .count();
+    let replayed_terminal = events
+        .iter()
+        .filter(|event| {
+            matches!(event, ReplayEvent::Duplicate { decision, .. } if decision == "replay-cached-terminal")
+        })
+        .count();
+    let dropped_duplicates = events
+        .iter()
+        .filter(|event| {
+            matches!(event, ReplayEvent::Duplicate { decision, .. } if decision == "drop-as-duplicate")
+        })
+        .count();
+    if accepted + replayed_terminal + dropped_duplicates > 0 {
+        let final_cache_size = events
+            .iter()
+            .rev()
+            .find_map(|event| match event {
+                ReplayEvent::Duplicate { cache_size, .. } => Some(*cache_size),
+                _ => None,
+            })
+            .expect("duplicate events imply final cache size");
+        out.push(ReplayTransactionOutcome::DuplicateCacheSummary {
+            accepted,
+            replayed_terminal,
+            dropped_duplicates,
+            final_cache_size,
+        });
+    }
+
+    out
+}
+
+fn expected_transaction_outcomes(case: &ReplayCase) -> Vec<ReplayTransactionOutcome> {
+    case.expected_transaction_outcomes
+        .iter()
+        .map(|outcome| match outcome {
+            ExpectedTransactionOutcome::SessionConnect {
+                mode,
+                session_id,
+                version_major,
+                version_minor,
+                max_outstanding_requests,
+            } => ReplayTransactionOutcome::SessionConnect {
+                mode: expected_mode(mode),
+                session_id: *session_id,
+                version_major: *version_major,
+                version_minor: *version_minor,
+                max_outstanding_requests: *max_outstanding_requests,
+            },
+            ExpectedTransactionOutcome::MethodRoundTrip {
+                mode,
+                method,
+                uri,
+                status_code,
+                response_body_len,
+            } => ReplayTransactionOutcome::MethodRoundTrip {
+                mode: expected_mode(mode),
+                method: expected_method(method),
+                uri: uri.clone(),
+                status_code: *status_code,
+                response_body_len: *response_body_len,
+            },
+            ExpectedTransactionOutcome::RetransmissionFinalState {
+                final_decision,
+                attempts,
+                completed,
+            } => ReplayTransactionOutcome::RetransmissionFinalState {
+                final_decision: final_decision.clone(),
+                attempts: *attempts,
+                completed: *completed,
+            },
+            ExpectedTransactionOutcome::DuplicateCacheSummary {
+                accepted,
+                replayed_terminal,
+                dropped_duplicates,
+                final_cache_size,
+            } => ReplayTransactionOutcome::DuplicateCacheSummary {
+                accepted: *accepted,
+                replayed_terminal: *replayed_terminal,
+                dropped_duplicates: *dropped_duplicates,
+                final_cache_size: *final_cache_size,
+            },
+        })
+        .collect()
+}
+
 #[test]
 fn interop_replay_fixture_get_reply_paths_are_deterministic() {
     let root = interop_fixture_root();
@@ -555,11 +896,20 @@ fn interop_replay_fixture_get_reply_paths_are_deterministic() {
 
     for path in fixture_paths {
         let fixture = load_fixture(&path);
+        validate_fixture_metadata(&path, &fixture);
         for case in fixture.cases {
+            let replayed = replay_case(&case);
             assert_eq!(
-                replay_case(&case),
+                replayed,
                 expected_events(&case),
                 "fixture '{}' case '{}' mismatch",
+                path.display(),
+                case.name
+            );
+            assert_eq!(
+                derive_transaction_outcomes(&replayed),
+                expected_transaction_outcomes(&case),
+                "fixture '{}' case '{}' transaction outcomes mismatch",
                 path.display(),
                 case.name
             );

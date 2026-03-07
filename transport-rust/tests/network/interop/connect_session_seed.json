@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "corpus": {
+    "id": "wsp-connect-session-seed",
+    "title": "WSP Connect/ConnectReply seed corpus",
+    "sourceClass": "interop-reference",
+    "provenance": "Synthetic seed trace derived from local WSP session baseline for replay-harness promotion work.",
+    "legalReuse": "synthetic-derivative",
+    "derivedFrom": "transport-rust/src/network/wsp/session.rs + local fixture corpus"
+  },
+  "cases": [
+    {
+      "name": "connect_session_replay_roundtrip",
+      "capture": {
+        "captureId": "seed-connect-session-001",
+        "sourceFamily": "synthetic-seed",
+        "captureKind": "seed-trace",
+        "provenanceNote": "Synthetic connection-oriented seed trace representing minimal Connect/ConnectReply session setup over port 9201.",
+        "legalReuse": "synthetic-derivative"
+      },
+      "datagrams": [
+        {
+          "direction": "uplink",
+          "srcAddr": "10.0.0.10",
+          "dstAddr": "10.0.0.20",
+          "srcPort": 49153,
+          "dstPort": 9201,
+          "payload": [1, 1, 4, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0]
+        },
+        {
+          "direction": "downlink",
+          "srcAddr": "10.0.0.20",
+          "dstAddr": "10.0.0.10",
+          "srcPort": 9201,
+          "dstPort": 49153,
+          "payload": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0]
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "datagram",
+          "direction": "uplink",
+          "mode": "connection-oriented",
+          "service_port": 9201,
+          "payload_len": 14
+        },
+        {
+          "kind": "connectRequest",
+          "direction": "uplink",
+          "mode": "connection-oriented",
+          "version_major": 1,
+          "version_minor": 4,
+          "max_outstanding_requests": 2
+        },
+        {
+          "kind": "datagram",
+          "direction": "downlink",
+          "mode": "connection-oriented",
+          "service_port": 9201,
+          "payload_len": 16
+        },
+        {
+          "kind": "connectReply",
+          "direction": "downlink",
+          "mode": "connection-oriented",
+          "version_major": 1,
+          "version_minor": 4,
+          "session_id": 7,
+          "max_outstanding_requests": 2
+        }
+      ],
+      "expectedTransactionOutcomes": [
+        {
+          "kind": "sessionConnect",
+          "mode": "connection-oriented",
+          "session_id": 7,
+          "version_major": 1,
+          "version_minor": 4,
+          "max_outstanding_requests": 2
+        }
+      ]
+    }
+  ]
+}
