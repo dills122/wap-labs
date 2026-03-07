@@ -3,6 +3,7 @@ use super::{
     ParsedScriptRef, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral,
     ScriptValueLiteral, WmlEngine, MAX_DECK_RAW_BYTES_BASE64_BYTES, MAX_DECK_WML_XML_BYTES,
+    MAX_TRACE_ENTRIES,
 };
 use crate::layout::flow_layout::layout_card;
 use crate::render::render_list::DrawCmd;
@@ -2379,6 +2380,36 @@ fn trace_entries_record_key_and_actions() {
             .any(|entry| entry.kind == "ACTION_FRAGMENT"),
         "expected ACTION_FRAGMENT trace entry"
     );
+}
+
+#[test]
+fn trace_entries_evict_oldest_when_capacity_exceeded() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#,
+        )
+        .expect("deck should load");
+    engine.clear_trace_entries();
+
+    for _ in 0..(MAX_TRACE_ENTRIES + 10) {
+        engine
+            .handle_key_internal("noop-key")
+            .expect("unknown key should not fail");
+    }
+
+    let traces = engine.trace_entries();
+    assert_eq!(traces.len(), MAX_TRACE_ENTRIES);
+    assert_eq!(traces.first().expect("first trace").seq, 11);
+    assert_eq!(
+        traces.last().expect("last trace").seq,
+        (MAX_TRACE_ENTRIES + 10) as u64
+    );
+    assert!(traces.iter().all(|entry| entry.kind == "KEY"));
 }
 
 #[test]
