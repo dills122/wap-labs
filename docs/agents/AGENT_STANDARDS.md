@@ -86,12 +86,15 @@ Agents MUST:
 - prefer localized, contract-first changes
 - keep behavior deterministic and test-backed
 - keep completed backlog artifacts immutable; add linked follow-up tickets instead of rewriting `done` tickets when new compliance gaps are found
+- commit only from a feature branch; never commit on `main` or `gh-pages`
+- create a new branch name when the preferred feature-branch name already exists but is stale, unrelated, or otherwise unsuitable
 
 Agents MUST NOT:
 
 - move network behavior into `engine-wasm`
 - move WBXML parsing into TypeScript/Tauri frontend code
 - introduce broad cross-layer refactors without explicit request
+- use branch-name collisions as justification for committing directly on `main`/`gh-pages`
 
 ## Backlog Lifecycle Policy
 

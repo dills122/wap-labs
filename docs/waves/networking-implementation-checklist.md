@@ -35,14 +35,11 @@ Traceability requirement:
 
 ## 3) Immediate implementation checklist
 
-Execution priority override (`2026-03-05` regroup):
+Execution priority override (`2026-03-07` refresh):
 
-1. `T0-19` (`WDP` UDP/datagram contract)
-2. `T0-18` (`WTP` retransmission/duplicate/NACK hold-off)
-3. `T0-20` (`WSP` token registry + unknown handling)
-4. `T0-22` (interop replay corpus and promotion gate, baseline now runnable for `CONNECT` / `GET` / `REPLY` plus retransmit/duplicate lanes)
-5. `T0-24` (schema-versioned replay seed corpus with provenance and transaction-outcome assertions)
-6. `T0-21` (`WTLS` phase boundary/minimal lane, default disabled)
+1. `T0-21` (`WTLS` phase boundary/minimal lane, default disabled)
+2. transport lane is otherwise in maintenance/promote posture: `T0-18`, `T0-19`, `T0-20`, `T0-22`, `T0-24`, `T0-25`, and `T0-26` are complete
+3. after `T0-21`, prioritize cross-lane runtime/compliance and hardening work over new transport breadth
 
 ### F0: Foundation and policy
 
@@ -117,7 +114,7 @@ Execution priority override (`2026-03-05` regroup):
    - `browser -> host transport -> Kannel -> WML server`
    - canonical record: `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 5. acceptance:
-   - all `T0-08..T0-24` gates with explicit owner and artifact.
+   - all `T0-08..T0-26` gates with explicit owner and artifact.
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
 
 ## 4) Known adjacent-but-deferred transport context
@@ -130,7 +127,7 @@ Execution priority override (`2026-03-05` regroup):
 
 ## 5) Execution alignment with project docs
 
-1. `docs/waves/WORK_ITEMS.md` is the execution source of truth for sequencing (`T0-08..T0-24`).
+1. `docs/waves/WORK_ITEMS.md` is the execution source of truth for sequencing (`T0-08..T0-26`).
 2. `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` and `..._ADJACENT_...` are the requirement sources.
 3. `docs/waves/SPEC_TEST_COVERAGE.md` hosts acceptance status and must remain synchronized on every migration gate.
 4. `docs/waves/TECHNICAL_ARCHITECTURE.md` should describe transport profile states before each milestone gate.

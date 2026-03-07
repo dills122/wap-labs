@@ -79,6 +79,9 @@ Prefer work that improves:
 
 - Cut a feature branch when work is not a trivial one-file typo/docs fix, or when behavior/tests/contracts/docs change in any runtime layer.
 - For MVP engine/runtime feature work, assume a feature branch by default.
+- Any commit must be made on a feature branch. Do not commit on `main` or `gh-pages`.
+- If the preferred branch name already exists and is stale, unrelated, or otherwise unusable, create a new feature branch with a distinct name instead of reusing the existing branch or falling back to `main`.
+- When branch naming needs a suffix for uniqueness, keep the intended ticket/topic visible in the new branch name.
 - When proposing or completing a feature change, provide at least:
   - suggested branch name
   - suggested PR title/message
