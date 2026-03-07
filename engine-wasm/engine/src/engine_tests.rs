@@ -3,6 +3,7 @@ use super::{
     ParsedScriptRef, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral,
     ScriptValueLiteral, WmlEngine, MAX_DECK_RAW_BYTES_BASE64_BYTES, MAX_DECK_WML_XML_BYTES,
+    MAX_TRACE_ENTRIES,
 };
 use crate::layout::flow_layout::layout_card;
 use crate::render::render_list::DrawCmd;
@@ -178,6 +179,35 @@ fn down_enter_fragment_navigation_resets_focus() {
 
     assert_eq!(engine.active_card_id().expect("active card"), "third");
     assert_eq!(engine.focused_link_index(), 0);
+}
+
+#[test]
+fn enter_normalizes_out_of_range_focus_for_external_link_cards() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="http://example.test/one.wml">One</a>
+            <a href="http://example.test/two.wml">Two</a>
+          </card>
+        </wml>
+        "##;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine.focused_link_idx = 99;
+
+    engine
+        .handle_key_internal("enter")
+        .expect("enter should resolve focused external link");
+
+    assert_eq!(engine.focused_link_idx, 1);
+    assert_eq!(
+        engine.external_navigation_intent(),
+        Some("http://example.test/two.wml".to_string())
+    );
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("focused=true:href=http://example.test/two.wml:text=Two")));
 }
 
 #[test]
@@ -2349,6 +2379,70 @@ fn trace_entries_record_key_and_actions() {
             .iter()
             .any(|entry| entry.kind == "ACTION_FRAGMENT"),
         "expected ACTION_FRAGMENT trace entry"
+    );
+}
+
+#[test]
+fn trace_entries_evict_oldest_when_capacity_exceeded() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#,
+        )
+        .expect("deck should load");
+    engine.clear_trace_entries();
+
+    for _ in 0..(MAX_TRACE_ENTRIES + 10) {
+        engine
+            .handle_key_internal("noop-key")
+            .expect("unknown key should not fail");
+    }
+
+    let traces = engine.trace_entries();
+    assert_eq!(traces.len(), MAX_TRACE_ENTRIES);
+    assert_eq!(traces.first().expect("first trace").seq, 11);
+    assert_eq!(
+        traces.last().expect("last trace").seq,
+        (MAX_TRACE_ENTRIES + 10) as u64
+    );
+    assert!(traces.iter().all(|entry| entry.kind == "KEY"));
+}
+
+#[test]
+fn unknown_key_normalizes_focus_without_triggering_actions() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#one">One</a>
+            <a href="#two">Two</a>
+          </card>
+          <card id="one"><p>One</p></card>
+          <card id="two"><p>Two</p></card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+    engine.focused_link_idx = 99;
+
+    engine
+        .handle_key_internal("noop-key")
+        .expect("unknown key should be ignored without error");
+
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert_eq!(engine.focused_link_idx, 1);
+    assert!(engine.external_navigation_intent().is_none());
+    assert_trace_kinds_subsequence(&engine, &["KEY"]);
+    assert!(
+        engine.trace_entries().iter().all(|entry| {
+            entry.kind != "ACTION_FRAGMENT"
+                && entry.kind != "ACTION_SCRIPT"
+                && entry.kind != "ACTION_EXTERNAL"
+        }),
+        "unknown key should not dispatch navigation actions"
     );
 }
 
