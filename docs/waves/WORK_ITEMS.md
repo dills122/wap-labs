@@ -697,7 +697,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-22 Networking interop replay harness and golden event corpus
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `T0-18`, `T0-19`, `T0-20`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -728,7 +728,8 @@ Completed `B0` through `B3` tickets are archived in:
 - Baseline replay harness now exists in `transport-rust/tests/interop_replay.rs` with `transport-rust/tests/network/interop/get_reply_replay.json` covering deterministic `GET`/`REPLY` event ordering over WDP/WSP.
 - The same harness now covers a first WTP retransmission flow (timer expiry -> send, ack -> completed).
 - The same harness now covers duplicate-TID replay outcomes for terminal replay and nonterminal duplicate drop.
-- Remaining work on this ticket is `CONNECT` replay.
+- The same harness now covers minimal `Connect` / `ConnectReply` replay over connection-oriented service ports.
+- Follow-up work can deepen corpus realism, but the baseline promotion gate for `CONNECT`/`GET`/`REPLY` + retransmit/duplicate lanes is now present and runnable.
 
 ### T0-23 External corpus ingestion spike (Kannel + Wireshark)
 

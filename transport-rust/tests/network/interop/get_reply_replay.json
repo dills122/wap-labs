@@ -53,6 +53,60 @@
       ]
     },
     {
+      "name": "connect_session_replay_roundtrip",
+      "datagrams": [
+        {
+          "direction": "uplink",
+          "srcAddr": "10.0.0.10",
+          "dstAddr": "10.0.0.20",
+          "srcPort": 49153,
+          "dstPort": 9201,
+          "payload": [1, 1, 4, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0]
+        },
+        {
+          "direction": "downlink",
+          "srcAddr": "10.0.0.20",
+          "dstAddr": "10.0.0.10",
+          "srcPort": 9201,
+          "dstPort": 49153,
+          "payload": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0]
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "datagram",
+          "direction": "uplink",
+          "mode": "connection-oriented",
+          "service_port": 9201,
+          "payload_len": 14
+        },
+        {
+          "kind": "connectRequest",
+          "direction": "uplink",
+          "mode": "connection-oriented",
+          "version_major": 1,
+          "version_minor": 4,
+          "max_outstanding_requests": 2
+        },
+        {
+          "kind": "datagram",
+          "direction": "downlink",
+          "mode": "connection-oriented",
+          "service_port": 9201,
+          "payload_len": 16
+        },
+        {
+          "kind": "connectReply",
+          "direction": "downlink",
+          "mode": "connection-oriented",
+          "version_major": 1,
+          "version_minor": 4,
+          "session_id": 7,
+          "max_outstanding_requests": 2
+        }
+      ]
+    },
+    {
       "name": "retransmit_flow_timer_expiry_and_ack",
       "retransmissionSteps": [
         {

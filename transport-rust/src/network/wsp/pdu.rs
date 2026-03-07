@@ -7,6 +7,24 @@ use crate::network::wsp::header_block::{
 use crate::network::wsp::header_registry::{
     decode_pdu_type, encode_pdu_type, WspAssignedNumberPolicy,
 };
+use crate::wsp_capability::{NegotiatedWspCapabilities, WspCapabilityProposal, WspMode};
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WspConnectPdu {
+    pub version_major: u8,
+    pub version_minor: u8,
+    pub capabilities: WspCapabilityProposal,
+    pub headers: WspHeaderBlock,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WspConnectReplyPdu {
+    pub version_major: u8,
+    pub version_minor: u8,
+    pub session_id: u16,
+    pub negotiated_capabilities: NegotiatedWspCapabilities,
+    pub headers: WspHeaderBlock,
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct WspMethodGetPdu {
@@ -30,6 +48,8 @@ pub struct WspReplyPdu {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspPdu {
+    Connect(WspConnectPdu),
+    ConnectReply(WspConnectReplyPdu),
     MethodGet(WspMethodGetPdu),
     MethodPost(WspMethodPostPdu),
     Reply(WspReplyPdu),
@@ -86,6 +106,43 @@ pub fn decode_wsp_pdu(
         .ok_or(WspPduDecodeError::UnsupportedPduType(pdu_type))?;
 
     match decoded_type {
+        "Connect" => {
+            if rest.len() < 13 {
+                return Err(WspPduDecodeError::Truncated);
+            }
+            let version_major = rest[0];
+            let version_minor = rest[1];
+            let capabilities = decode_capability_proposal(&rest[2..12]);
+            let (header_bytes, _remaining) = split_length_prefixed_block(&rest[12..])?;
+            let headers = decode_header_block(header_bytes, header_policy)
+                .map_err(WspPduDecodeError::HeaderBlock)?;
+            Ok(WspPdu::Connect(WspConnectPdu {
+                version_major,
+                version_minor,
+                capabilities,
+                headers,
+            }))
+        }
+        "ConnectReply" => {
+            if rest.len() < 15 {
+                return Err(WspPduDecodeError::Truncated);
+            }
+            let version_major = rest[0];
+            let version_minor = rest[1];
+            let session_id = u16::from_be_bytes([rest[2], rest[3]]);
+            let negotiated_capabilities =
+                decode_negotiated_capabilities(WspMode::ConnectionOriented, &rest[4..14]);
+            let (header_bytes, _remaining) = split_length_prefixed_block(&rest[14..])?;
+            let headers = decode_header_block(header_bytes, header_policy)
+                .map_err(WspPduDecodeError::HeaderBlock)?;
+            Ok(WspPdu::ConnectReply(WspConnectReplyPdu {
+                version_major,
+                version_minor,
+                session_id,
+                negotiated_capabilities,
+                headers,
+            }))
+        }
         "Get" => {
             let (uri, header_bytes) = split_c_string(rest)?;
             let headers = decode_header_block(header_bytes, header_policy)
@@ -126,6 +183,38 @@ pub fn encode_wsp_pdu(
     header_policy: WspHeaderBlockEncodePolicy,
 ) -> Result<Vec<u8>, WspPduEncodeError> {
     match pdu {
+        WspPdu::Connect(connect) => {
+            let headers = encode_header_block(&connect.headers, header_policy)
+                .map_err(WspPduEncodeError::HeaderBlock)?;
+            let mut out =
+                vec![encode_pdu_type("Connect").ok_or(WspPduEncodeError::UnsupportedPduShape)?];
+            out.push(connect.version_major);
+            out.push(connect.version_minor);
+            out.extend_from_slice(&encode_capability_proposal(connect.capabilities));
+            out.push(
+                u8::try_from(headers.len()).map_err(|_| WspPduEncodeError::UnsupportedPduShape)?,
+            );
+            out.extend_from_slice(&headers);
+            Ok(out)
+        }
+        WspPdu::ConnectReply(reply) => {
+            let headers = encode_header_block(&reply.headers, header_policy)
+                .map_err(WspPduEncodeError::HeaderBlock)?;
+            let mut out =
+                vec![encode_pdu_type("ConnectReply")
+                    .ok_or(WspPduEncodeError::UnsupportedPduShape)?];
+            out.push(reply.version_major);
+            out.push(reply.version_minor);
+            out.extend_from_slice(&reply.session_id.to_be_bytes());
+            out.extend_from_slice(&encode_negotiated_capabilities(
+                reply.negotiated_capabilities,
+            ));
+            out.push(
+                u8::try_from(headers.len()).map_err(|_| WspPduEncodeError::UnsupportedPduShape)?,
+            );
+            out.extend_from_slice(&headers);
+            Ok(out)
+        }
         WspPdu::MethodGet(get) => {
             let mut out =
                 vec![encode_pdu_type("Get").ok_or(WspPduEncodeError::UnsupportedPduShape)?];
@@ -185,6 +274,57 @@ fn split_length_prefixed_block(input: &[u8]) -> Result<(&[u8], &[u8]), WspPduDec
         return Err(WspPduDecodeError::Truncated);
     }
     Ok(rest.split_at(length))
+}
+
+fn encode_option_u32(value: Option<u32>) -> [u8; 4] {
+    value.unwrap_or(0).to_be_bytes()
+}
+
+fn decode_option_u32(bytes: &[u8]) -> Option<u32> {
+    let value = u32::from_be_bytes(bytes.try_into().expect("u32 field length"));
+    (value != 0).then_some(value)
+}
+
+fn encode_option_u16(value: Option<u16>) -> [u8; 2] {
+    value.unwrap_or(0).to_be_bytes()
+}
+
+fn decode_option_u16(bytes: &[u8]) -> Option<u16> {
+    let value = u16::from_be_bytes(bytes.try_into().expect("u16 field length"));
+    (value != 0).then_some(value)
+}
+
+fn encode_capability_proposal(proposal: WspCapabilityProposal) -> [u8; 10] {
+    let mut out = [0u8; 10];
+    out[0..4].copy_from_slice(&encode_option_u32(proposal.client_message_size));
+    out[4..8].copy_from_slice(&encode_option_u32(proposal.server_message_size));
+    out[8..10].copy_from_slice(&encode_option_u16(proposal.max_outstanding_requests));
+    out
+}
+
+fn decode_capability_proposal(bytes: &[u8]) -> WspCapabilityProposal {
+    WspCapabilityProposal {
+        client_message_size: decode_option_u32(&bytes[0..4]),
+        server_message_size: decode_option_u32(&bytes[4..8]),
+        max_outstanding_requests: decode_option_u16(&bytes[8..10]),
+    }
+}
+
+fn encode_negotiated_capabilities(negotiated: NegotiatedWspCapabilities) -> [u8; 10] {
+    let mut out = [0u8; 10];
+    out[0..4].copy_from_slice(&encode_option_u32(negotiated.client_message_size));
+    out[4..8].copy_from_slice(&encode_option_u32(negotiated.server_message_size));
+    out[8..10].copy_from_slice(&encode_option_u16(negotiated.max_outstanding_requests));
+    out
+}
+
+fn decode_negotiated_capabilities(mode: WspMode, bytes: &[u8]) -> NegotiatedWspCapabilities {
+    NegotiatedWspCapabilities {
+        mode,
+        client_message_size: decode_option_u32(&bytes[0..4]),
+        server_message_size: decode_option_u32(&bytes[4..8]),
+        max_outstanding_requests: decode_option_u16(&bytes[8..10]),
+    }
 }
 
 #[cfg(test)]

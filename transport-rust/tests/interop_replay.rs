@@ -130,6 +130,21 @@ enum ExpectedReplayEvent {
         status_code: u16,
         body_len: usize,
     },
+    ConnectRequest {
+        direction: ReplayDirection,
+        mode: String,
+        version_major: u8,
+        version_minor: u8,
+        max_outstanding_requests: Option<u16>,
+    },
+    ConnectReply {
+        direction: ReplayDirection,
+        mode: String,
+        version_major: u8,
+        version_minor: u8,
+        session_id: u16,
+        max_outstanding_requests: Option<u16>,
+    },
     Retransmission {
         decision: String,
         attempt: Option<u8>,
@@ -164,6 +179,21 @@ enum ReplayEvent {
         mode: WspSessionMode,
         status_code: u16,
         body_len: usize,
+    },
+    ConnectRequest {
+        direction: ReplayDirection,
+        mode: WspSessionMode,
+        version_major: u8,
+        version_minor: u8,
+        max_outstanding_requests: Option<u16>,
+    },
+    ConnectReply {
+        direction: ReplayDirection,
+        mode: WspSessionMode,
+        version_major: u8,
+        version_minor: u8,
+        session_id: u16,
+        max_outstanding_requests: Option<u16>,
     },
     Retransmission {
         decision: String,
@@ -330,6 +360,23 @@ fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
                     });
 
             match session_event {
+                WspSessionEvent::ConnectRequest(connect) => out.push(ReplayEvent::ConnectRequest {
+                    direction: input.direction,
+                    mode: connect.mode,
+                    version_major: connect.version_major,
+                    version_minor: connect.version_minor,
+                    max_outstanding_requests: connect.capabilities.max_outstanding_requests,
+                }),
+                WspSessionEvent::ConnectReply(reply) => out.push(ReplayEvent::ConnectReply {
+                    direction: input.direction,
+                    mode: reply.mode,
+                    version_major: reply.version_major,
+                    version_minor: reply.version_minor,
+                    session_id: reply.session_id,
+                    max_outstanding_requests: reply
+                        .negotiated_capabilities
+                        .max_outstanding_requests,
+                }),
                 WspSessionEvent::MethodRequest(request) => out.push(ReplayEvent::MethodRequest {
                     direction: input.direction,
                     mode: request.mode,
@@ -435,6 +482,34 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
                 mode: expected_mode(mode),
                 status_code: *status_code,
                 body_len: *body_len,
+            },
+            ExpectedReplayEvent::ConnectRequest {
+                direction,
+                mode,
+                version_major,
+                version_minor,
+                max_outstanding_requests,
+            } => ReplayEvent::ConnectRequest {
+                direction: *direction,
+                mode: expected_mode(mode),
+                version_major: *version_major,
+                version_minor: *version_minor,
+                max_outstanding_requests: *max_outstanding_requests,
+            },
+            ExpectedReplayEvent::ConnectReply {
+                direction,
+                mode,
+                version_major,
+                version_minor,
+                session_id,
+                max_outstanding_requests,
+            } => ReplayEvent::ConnectReply {
+                direction: *direction,
+                mode: expected_mode(mode),
+                version_major: *version_major,
+                version_minor: *version_minor,
+                session_id: *session_id,
+                max_outstanding_requests: *max_outstanding_requests,
             },
             ExpectedReplayEvent::Retransmission {
                 decision,

@@ -2,9 +2,11 @@
 
 use crate::network::wsp::header_block::{WspHeaderBlockDecodePolicy, WspHeaderBlockEncodePolicy};
 use crate::network::wsp::pdu::{
-    decode_wsp_pdu, encode_wsp_pdu, WspPdu, WspPduDecodeError, WspPduEncodeError,
+    decode_wsp_pdu, encode_wsp_pdu, WspConnectPdu, WspConnectReplyPdu, WspPdu, WspPduDecodeError,
+    WspPduEncodeError,
 };
 use crate::network::wsp::WspHeaderBlock;
+use crate::wsp_capability::{NegotiatedWspCapabilities, WspCapabilityProposal};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WspSessionMode {
@@ -36,7 +38,28 @@ pub struct WspMethodResult {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WspConnectRequest {
+    pub mode: WspSessionMode,
+    pub version_major: u8,
+    pub version_minor: u8,
+    pub capabilities: WspCapabilityProposal,
+    pub headers: WspHeaderBlock,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WspConnectReply {
+    pub mode: WspSessionMode,
+    pub version_major: u8,
+    pub version_minor: u8,
+    pub session_id: u16,
+    pub negotiated_capabilities: NegotiatedWspCapabilities,
+    pub headers: WspHeaderBlock,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspSessionEvent {
+    ConnectRequest(WspConnectRequest),
+    ConnectReply(WspConnectReply),
     MethodRequest(WspMethodRequest),
     MethodResult(WspMethodResult),
 }
@@ -87,6 +110,19 @@ pub fn encode_wsp_session_event(
     header_policy: WspHeaderBlockEncodePolicy,
 ) -> Result<Vec<u8>, WspSessionEventEncodeError> {
     let pdu = match event {
+        WspSessionEvent::ConnectRequest(connect) => WspPdu::Connect(WspConnectPdu {
+            version_major: connect.version_major,
+            version_minor: connect.version_minor,
+            capabilities: connect.capabilities,
+            headers: connect.headers.clone(),
+        }),
+        WspSessionEvent::ConnectReply(reply) => WspPdu::ConnectReply(WspConnectReplyPdu {
+            version_major: reply.version_major,
+            version_minor: reply.version_minor,
+            session_id: reply.session_id,
+            negotiated_capabilities: reply.negotiated_capabilities,
+            headers: reply.headers.clone(),
+        }),
         WspSessionEvent::MethodRequest(request) => match request.method {
             WspMethod::Get if request.body.is_empty() => {
                 WspPdu::MethodGet(crate::network::wsp::WspMethodGetPdu {
@@ -113,6 +149,21 @@ pub fn encode_wsp_session_event(
 
 pub fn classify_wsp_pdu(mode: WspSessionMode, pdu: WspPdu) -> WspSessionEvent {
     match pdu {
+        WspPdu::Connect(connect) => WspSessionEvent::ConnectRequest(WspConnectRequest {
+            mode,
+            version_major: connect.version_major,
+            version_minor: connect.version_minor,
+            capabilities: connect.capabilities,
+            headers: connect.headers,
+        }),
+        WspPdu::ConnectReply(reply) => WspSessionEvent::ConnectReply(WspConnectReply {
+            mode,
+            version_major: reply.version_major,
+            version_minor: reply.version_minor,
+            session_id: reply.session_id,
+            negotiated_capabilities: reply.negotiated_capabilities,
+            headers: reply.headers,
+        }),
         WspPdu::MethodGet(get) => WspSessionEvent::MethodRequest(WspMethodRequest {
             mode,
             method: WspMethod::Get,

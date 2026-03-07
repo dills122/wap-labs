@@ -62,10 +62,10 @@
   ],
   "errorCases": [
     {
-      "name": "unsupported-connect-pdu-type",
+      "name": "unsupported-disconnect-pdu-type",
       "mode": "connection-oriented",
       "decodePolicy": "strict",
-      "encoded": [1],
+      "encoded": [5],
       "expectedError": "unsupported-pdu-type"
     },
     {

@@ -56,11 +56,11 @@
   ],
   "errorCases": [
     {
-      "name": "unsupported-connect-pdu-type",
+      "name": "unsupported-disconnect-pdu-type",
       "decodePolicy": "strict",
-      "encoded": [1],
+      "encoded": [5],
       "expectedError": "unsupported-pdu-type",
-      "unsupportedPduType": 1
+      "unsupportedPduType": 5
     },
     {
       "name": "truncated-post-header-block",
