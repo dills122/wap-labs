@@ -1,0 +1,10 @@
+name = "WTP retransmission holdoff fixtures"
+description = "Fixture matrix for retransmission timing, retry exhaustion, and NACK holdoff behavior."
+mode = "mapped"
+work_items = ["T0-18"]
+spec_items = ["RQ-TRN-007", "RQ-TRN-008", "RQ-TRN-016"]
+testing_ac = [
+  "Given timer-expired retries exceed max_retries, policy reports deterministic retry exhaustion.",
+  "Given linear policy parameters, backoff delay increments and is capped by max delay.",
+  "Given SAR enabled, repeated NACKs suppress retransmits during holdoff and resume after elapsed window."
+]

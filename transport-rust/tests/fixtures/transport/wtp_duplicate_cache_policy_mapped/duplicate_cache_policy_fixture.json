@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "name": "terminal-replay-on-duplicate-and-eviction",
+      "policy": {
+        "cacheTerminalResponses": true,
+        "maxCachedTransactions": 2
+      },
+      "events": [
+        { "tid": 1, "isTerminalResult": true },
+        { "tid": 2, "isTerminalResult": true },
+        { "tid": 3, "isTerminalResult": true },
+        { "tid": 1, "isTerminalResult": false },
+        { "tid": 3, "isTerminalResult": false }
+      ],
+      "expectedDecisions": [
+        "accept",
+        "accept",
+        "accept",
+        "accept",
+        "replay-cached-terminal"
+      ]
+    },
+    {
+      "name": "nonterminal-drop-when-terminal-cache-disabled",
+      "policy": {
+        "cacheTerminalResponses": false,
+        "maxCachedTransactions": 2
+      },
+      "events": [
+        { "tid": 5, "isTerminalResult": false },
+        { "tid": 5, "isTerminalResult": true }
+      ],
+      "expectedDecisions": ["accept", "drop-as-duplicate"]
+    },
+    {
+      "name": "terminal-now-allows-replay-on-duplicate",
+      "policy": {
+        "cacheTerminalResponses": true,
+        "maxCachedTransactions": 1
+      },
+      "events": [
+        { "tid": 7, "isTerminalResult": false },
+        { "tid": 7, "isTerminalResult": true }
+      ],
+      "expectedDecisions": ["accept", "replay-cached-terminal"]
+    }
+  ]
+}

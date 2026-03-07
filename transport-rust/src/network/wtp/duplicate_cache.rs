@@ -1,8 +1,10 @@
 #![allow(dead_code)]
 
+use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct WtpDuplicatePolicy {
     pub cache_terminal_responses: bool,
     pub max_cached_transactions: usize,
