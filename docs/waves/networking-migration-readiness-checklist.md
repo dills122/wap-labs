@@ -107,7 +107,7 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 ### T0-22 (`Owner`: transport-rust, docs)
 
 - `Done-1`: replay harness baseline exists and `GET`/`REPLY` protocol paths are runnable from `transport-rust/tests/interop_replay.rs`.
-- `Done-2`: first retransmission replay path is runnable; duplicate-TID and `CONNECT` replay remain required before promotion.
+- `Done-2`: retransmission and duplicate-TID replay paths are runnable; `CONNECT` replay remains required before promotion.
 - `Done-3`: migration profile gates will reference replay results as mandatory promotion evidence once the remaining corpus lands.
 
 ## Cross-tile closure rule

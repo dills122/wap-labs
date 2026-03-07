@@ -727,7 +727,8 @@ Completed `B0` through `B3` tickets are archived in:
 10. `Notes`:
 - Baseline replay harness now exists in `transport-rust/tests/interop_replay.rs` with `transport-rust/tests/network/interop/get_reply_replay.json` covering deterministic `GET`/`REPLY` event ordering over WDP/WSP.
 - The same harness now covers a first WTP retransmission flow (timer expiry -> send, ack -> completed).
-- Remaining work on this ticket is `CONNECT` replay plus duplicate-TID fixture lanes.
+- The same harness now covers duplicate-TID replay outcomes for terminal replay and nonterminal duplicate drop.
+- Remaining work on this ticket is `CONNECT` replay.
 
 ### T0-23 External corpus ingestion spike (Kannel + Wireshark)
 

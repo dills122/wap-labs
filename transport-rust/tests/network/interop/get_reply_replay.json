@@ -108,6 +108,69 @@
           "completed": true
         }
       ]
+    },
+    {
+      "name": "duplicate_tid_flow_replays_terminal_and_drops_nonterminal",
+      "duplicateSteps": [
+        {
+          "tid": 11,
+          "isTerminalResult": true,
+          "policy": {
+            "cacheTerminalResponses": true,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 11,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": true,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 12,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": false,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 12,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": false,
+            "maxCachedTransactions": 2
+          }
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "duplicate",
+          "decision": "accept",
+          "tid": 11,
+          "cache_size": 1
+        },
+        {
+          "kind": "duplicate",
+          "decision": "replay-cached-terminal",
+          "tid": 11,
+          "cache_size": 1
+        },
+        {
+          "kind": "duplicate",
+          "decision": "accept",
+          "tid": 12,
+          "cache_size": 2
+        },
+        {
+          "kind": "duplicate",
+          "decision": "drop-as-duplicate",
+          "tid": 12,
+          "cache_size": 2
+        }
+      ]
     }
   ]
 }

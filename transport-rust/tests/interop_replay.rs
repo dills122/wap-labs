@@ -3,6 +3,9 @@ use lowband_transport_rust::network::wsp::{
     decode_wsp_session_event, WspEncodingVersion, WspHeaderBlockDecodePolicy, WspMethod,
     WspSessionEvent, WspSessionMode,
 };
+use lowband_transport_rust::network::wtp::duplicate_cache::{
+    WtpDuplicateCacheState, WtpDuplicateDecision, WtpDuplicatePolicy,
+};
 use lowband_transport_rust::network::wtp::retransmission::{
     decide_retransmission, WtpBackoffKind, WtpRetransmissionDecision, WtpRetransmissionEvent,
     WtpRetransmissionPolicy, WtpRetransmissionState,
@@ -24,6 +27,7 @@ struct ReplayCase {
     name: String,
     datagrams: Option<Vec<ReplayDatagram>>,
     retransmission_steps: Option<Vec<ReplayRetransmissionStep>>,
+    duplicate_steps: Option<Vec<ReplayDuplicateStep>>,
     expected_events: Vec<ExpectedReplayEvent>,
 }
 
@@ -44,6 +48,14 @@ struct ReplayRetransmissionStep {
     event: ReplayRetransmissionEvent,
     policy: ReplayRetransmissionPolicy,
     state: ReplayRetransmissionState,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayDuplicateStep {
+    tid: u16,
+    is_terminal_result: bool,
+    policy: ReplayDuplicatePolicy,
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -89,6 +101,13 @@ struct ReplayRetransmissionState {
     completed: bool,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+struct ReplayDuplicatePolicy {
+    cache_terminal_responses: bool,
+    max_cached_transactions: usize,
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(tag = "kind", rename_all = "camelCase")]
 enum ExpectedReplayEvent {
@@ -117,6 +136,11 @@ enum ExpectedReplayEvent {
         delay_ms: u64,
         attempts: u8,
         completed: bool,
+    },
+    Duplicate {
+        decision: String,
+        tid: u16,
+        cache_size: usize,
     },
 }
 
@@ -147,6 +171,11 @@ enum ReplayEvent {
         delay_ms: u64,
         attempts: u8,
         completed: bool,
+    },
+    Duplicate {
+        decision: String,
+        tid: u16,
+        cache_size: usize,
     },
 }
 
@@ -254,12 +283,27 @@ fn to_retransmission_event(input: ReplayRetransmissionEvent) -> WtpRetransmissio
     }
 }
 
+fn to_duplicate_policy(input: ReplayDuplicatePolicy) -> WtpDuplicatePolicy {
+    WtpDuplicatePolicy {
+        cache_terminal_responses: input.cache_terminal_responses,
+        max_cached_transactions: input.max_cached_transactions,
+    }
+}
+
 fn retransmission_decision_name(decision: WtpRetransmissionDecision) -> (&'static str, Option<u8>) {
     match decision {
         WtpRetransmissionDecision::Send(attempt) => ("send", Some(attempt)),
         WtpRetransmissionDecision::HoldOff(_) => ("holdoff", None),
         WtpRetransmissionDecision::RetryExhausted => ("retry-exhausted", None),
         WtpRetransmissionDecision::Completed => ("completed", None),
+    }
+}
+
+fn duplicate_decision_name(decision: WtpDuplicateDecision) -> &'static str {
+    match decision {
+        WtpDuplicateDecision::Accept => "accept",
+        WtpDuplicateDecision::ReplayCachedTerminal => "replay-cached-terminal",
+        WtpDuplicateDecision::DropAsDuplicate => "drop-as-duplicate",
     }
 }
 
@@ -317,6 +361,19 @@ fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
                 delay_ms: trace.delay_ms,
                 attempts: next_state.attempts,
                 completed: next_state.completed,
+            });
+        }
+    }
+
+    if let Some(steps) = &case.duplicate_steps {
+        let mut cache = WtpDuplicateCacheState::new();
+        for step in steps {
+            let policy = to_duplicate_policy(step.policy);
+            let (decision, trace) = cache.decide(&policy, step.tid, step.is_terminal_result);
+            out.push(ReplayEvent::Duplicate {
+                decision: duplicate_decision_name(decision).to_string(),
+                tid: trace.tid,
+                cache_size: trace.cache_size,
             });
         }
     }
@@ -391,6 +448,15 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
                 delay_ms: *delay_ms,
                 attempts: *attempts,
                 completed: *completed,
+            },
+            ExpectedReplayEvent::Duplicate {
+                decision,
+                tid,
+                cache_size,
+            } => ReplayEvent::Duplicate {
+                decision: decision.clone(),
+                tid: *tid,
+                cache_size: *cache_size,
             },
         })
         .collect()
