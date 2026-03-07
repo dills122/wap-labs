@@ -8,6 +8,7 @@ use ts_rs::TS;
 use url::{Host, Url};
 
 mod gateway;
+mod network;
 mod request_meta;
 mod responses;
 pub mod smpp_profile;
@@ -644,6 +645,13 @@ fn apply_ua_capability_headers(
 mod tests {
     use super::{
         apply_request_policy, classify_destination_host, classify_ip, fetch_deck_in_process,
+        network::wtp::{
+            duplicate_cache::{WtpDuplicateCacheState, WtpDuplicateDecision, WtpDuplicatePolicy},
+            retransmission::{
+                decide_retransmission, WtpRetransmissionDecision, WtpRetransmissionEvent,
+                WtpRetransmissionPolicy, WtpRetransmissionState,
+            },
+        },
         preflight_wbxml_decoder, resolve_fetch_destination_policy, validate_fetch_destination,
         wsp_connectionless_primitive_profile::{
             decide_wsp_primitive_transition, WspPrimitiveDecision, WspPrimitiveDirection,
@@ -889,7 +897,7 @@ mod tests {
         let path = transport_fixture_path(name, file);
         let raw = fs::read(&path).unwrap_or_else(|_| panic!("failed reading {}", path.display()));
         serde_json::from_slice(&raw)
-            .unwrap_or_else(|_| panic!("failed parsing fixture {}", path.display()))
+            .unwrap_or_else(|error| panic!("failed parsing fixture {}: {error}", path.display()))
     }
 
     #[derive(Debug, Deserialize)]
@@ -996,6 +1004,173 @@ mod tests {
                 |decision| matches!(decision, WtpInitiatorTidDecision::OutOfReplayWindow)
             }
             other => panic!("unknown initiator expectation {other}"),
+        }
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpStateCacheCaseEvent {
+        tid: u16,
+        is_terminal_result: bool,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpDuplicateCacheFixture {
+        cases: Vec<WtpDuplicateCacheCase>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpDuplicateCacheCase {
+        name: String,
+        policy: WtpDuplicatePolicy,
+        events: Vec<WtpStateCacheCaseEvent>,
+        expected_decisions: Vec<String>,
+    }
+
+    fn parse_dup_decision(expected: &str) -> WtpDuplicateDecision {
+        match expected {
+            "accept" => WtpDuplicateDecision::Accept,
+            "replay-cached-terminal" => WtpDuplicateDecision::ReplayCachedTerminal,
+            "drop-as-duplicate" => WtpDuplicateDecision::DropAsDuplicate,
+            other => panic!("unknown duplicate decision {other}"),
+        }
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(untagged)]
+    #[serde(rename_all = "camelCase")]
+    enum WtpRetransmissionPolicyEvent {
+        Named(String),
+        Observed {
+            event: String,
+            elapsed_ms: Option<u64>,
+        },
+        NackObserved {
+            #[serde(rename = "nackObserved")]
+            nack_observed: u64,
+        },
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpRetransmissionFixtureCase {
+        name: String,
+        policy: WtpRetransmissionPolicy,
+        initial_state: WtpRetransmissionState,
+        events: Vec<WtpRetransmissionPolicyEvent>,
+        expected_decisions: Vec<String>,
+        expected_delays_ms: Vec<u64>,
+        expected_state: Option<WtpRetransmissionState>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpRetransmissionFixture {
+        #[serde(rename = "maxRetriesTestCases")]
+        max_retries_test_cases: Vec<WtpRetransmissionFixtureCase>,
+        #[serde(rename = "linearBackoffTestCases")]
+        linear_backoff_test_cases: Vec<WtpRetransmissionFixtureCase>,
+        #[serde(rename = "nackHoldoffTestCases")]
+        nack_holdoff_test_cases: Vec<WtpRetransmissionFixtureCase>,
+    }
+
+    fn parse_retransmission_event(raw: &WtpRetransmissionPolicyEvent) -> WtpRetransmissionEvent {
+        match raw {
+            WtpRetransmissionPolicyEvent::Named(event) => match event.as_str() {
+                "timer-expired" => WtpRetransmissionEvent::TimerExpired,
+                "ack-observed" => WtpRetransmissionEvent::AckObserved,
+                "reset" => WtpRetransmissionEvent::Reset,
+                other => panic!("unknown retransmission event {other}"),
+            },
+            WtpRetransmissionPolicyEvent::Observed { event, elapsed_ms } => match event.as_str() {
+                "nack-observed" => {
+                    let elapsed_ms = elapsed_ms.expect("nack-observed events require elapsed_ms");
+                    WtpRetransmissionEvent::NackObserved { elapsed_ms }
+                }
+                other => panic!("unknown retransmission event {other}"),
+            },
+            WtpRetransmissionPolicyEvent::NackObserved { nack_observed } => {
+                WtpRetransmissionEvent::NackObserved {
+                    elapsed_ms: *nack_observed,
+                }
+            }
+        }
+    }
+
+    fn parse_retransmission_decision(raw: &str) -> WtpRetransmissionDecision {
+        if let Some(suffix) = raw.strip_prefix("send-") {
+            let attempt = suffix
+                .parse::<u8>()
+                .unwrap_or_else(|_| panic!("invalid send decision value {raw}"));
+            return WtpRetransmissionDecision::Send(attempt);
+        }
+        if let Some(suffix) = raw.strip_prefix("holdoff-") {
+            let delay_ms = suffix
+                .parse::<u64>()
+                .unwrap_or_else(|_| panic!("invalid holdoff decision value {raw}"));
+            return WtpRetransmissionDecision::HoldOff(delay_ms);
+        }
+        match raw {
+            "retry-exhausted" => WtpRetransmissionDecision::RetryExhausted,
+            "completed" => WtpRetransmissionDecision::Completed,
+            other => panic!("unknown retransmission decision {other}"),
+        }
+    }
+
+    fn run_retransmission_fixture_case(case: &WtpRetransmissionFixtureCase) {
+        let mut state = case.initial_state;
+        for (index, raw_event) in case.events.iter().enumerate() {
+            let event = parse_retransmission_event(raw_event);
+            let expected_decision = parse_retransmission_decision(&case.expected_decisions[index]);
+            let expected_delay = case.expected_delays_ms[index];
+            let (decision, next_state, trace) = decide_retransmission(&case.policy, &state, event);
+            assert_eq!(
+                decision, expected_decision,
+                "case '{}' failed at event index {}",
+                case.name, index
+            );
+            assert_eq!(
+                trace.delay_ms, expected_delay,
+                "case '{}' delay mismatch at event index {}",
+                case.name, index
+            );
+            state = next_state;
+            assert_eq!(
+                trace.event, event,
+                "case '{}' event mismatch at index {}",
+                case.name, index
+            );
+        }
+        if let Some(expected_state) = case.expected_state {
+            assert_eq!(
+                state, expected_state,
+                "case '{}' final state mismatch",
+                case.name
+            );
+        }
+    }
+
+    fn run_duplicate_cache_fixture_case(case: &WtpDuplicateCacheCase) {
+        let mut state = WtpDuplicateCacheState::new();
+        assert_eq!(
+            case.events.len(),
+            case.expected_decisions.len(),
+            "case '{}' event and expected decision count must match",
+            case.name
+        );
+
+        for (index, event) in case.events.iter().enumerate() {
+            let raw_decision = &case.expected_decisions[index];
+            let expected_decision = parse_dup_decision(raw_decision);
+            let (decision, _trace) =
+                state.decide(&case.policy, event.tid, event.is_terminal_result);
+            assert_eq!(
+                decision, expected_decision,
+                "case '{}' failed at event index {}",
+                case.name, index
+            );
         }
     }
 
@@ -2594,6 +2769,35 @@ mod tests {
                 case.incoming_tid,
             );
             assert!(matcher(decision), "initiator case '{}' failed", case.name);
+        }
+    }
+
+    #[test]
+    fn transport_wtp_retransmission_policy_fixture_matrix() {
+        let fixture: WtpRetransmissionFixture = read_json_fixture(
+            "wtp_retransmission_policy_mapped",
+            "retransmission_policy_fixture.json",
+        );
+
+        for case in fixture.max_retries_test_cases {
+            run_retransmission_fixture_case(&case);
+        }
+        for case in fixture.linear_backoff_test_cases {
+            run_retransmission_fixture_case(&case);
+        }
+        for case in fixture.nack_holdoff_test_cases {
+            run_retransmission_fixture_case(&case);
+        }
+    }
+
+    #[test]
+    fn transport_wtp_duplicate_cache_policy_fixture_matrix() {
+        let fixture: WtpDuplicateCacheFixture = read_json_fixture(
+            "wtp_duplicate_cache_policy_mapped",
+            "duplicate_cache_policy_fixture.json",
+        );
+        for case in fixture.cases {
+            run_duplicate_cache_fixture_case(&case);
         }
     }
 

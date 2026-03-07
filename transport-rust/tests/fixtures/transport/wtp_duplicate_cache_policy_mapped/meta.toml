@@ -1,0 +1,10 @@
+name = "WTP duplicate cache fixtures"
+description = "Fixture matrix for duplicate TID caching and terminal replay assumptions."
+mode = "mapped"
+work_items = ["T0-18"]
+spec_items = ["RQ-TRN-008", "RQ-TRN-016"]
+testing_ac = [
+  "Given terminal-cached duplicates and cache size limits, duplicate replay behavior is deterministic.",
+  "Given nonterminal duplicates when terminal caching is disabled, duplicates are dropped.",
+  "Given cache eviction, old TIDs are replaced when capacity is exceeded."
+]

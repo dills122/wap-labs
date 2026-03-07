@@ -1,0 +1,82 @@
+{
+  "maxRetriesTestCases": [
+    {
+      "name": "timer-retry-exhaustion",
+      "policy": {
+        "maxRetries": 1,
+        "initialDelayMs": 100,
+        "maxDelayMs": 200,
+        "backoffKind": "constant",
+        "backoffStepMs": 0,
+        "sarEnabled": false,
+        "nackHoldoffMs": 0
+      },
+      "initialState": {
+        "attempts": 0,
+        "lastNackElapsedMs": null,
+        "completed": false
+      },
+      "events": ["timer-expired", "timer-expired"],
+      "expectedDecisions": ["send-1", "retry-exhausted"],
+      "expectedState": {
+        "attempts": 1,
+        "lastNackElapsedMs": null,
+        "completed": false
+      },
+      "expectedDelaysMs": [100, 0]
+    }
+  ],
+  "linearBackoffTestCases": [
+    {
+      "name": "linear-backoff-growth-and-cap",
+      "policy": {
+        "maxRetries": 4,
+        "initialDelayMs": 100,
+        "maxDelayMs": 170,
+        "backoffKind": "linear",
+        "backoffStepMs": 30,
+        "sarEnabled": false,
+        "nackHoldoffMs": 0
+      },
+      "initialState": {
+        "attempts": 0,
+        "lastNackElapsedMs": null,
+        "completed": false
+      },
+      "events": ["timer-expired", "timer-expired", "timer-expired", "timer-expired", "timer-expired"],
+      "expectedDecisions": ["send-1", "send-2", "send-3", "send-4", "retry-exhausted"],
+      "expectedDelaysMs": [100, 130, 160, 170, 0]
+    }
+  ],
+  "nackHoldoffTestCases": [
+    {
+      "name": "sar-nack-holdoff",
+      "policy": {
+        "maxRetries": 2,
+        "initialDelayMs": 100,
+        "maxDelayMs": 400,
+        "backoffKind": "linear",
+        "backoffStepMs": 50,
+        "sarEnabled": true,
+        "nackHoldoffMs": 50
+      },
+      "initialState": {
+        "attempts": 0,
+        "lastNackElapsedMs": null,
+        "completed": false
+      },
+      "events": [
+        { "nackObserved": 10 },
+        { "nackObserved": 40 },
+        { "nackObserved": 80 }
+      ],
+      "expectedDecisions": ["holdoff-50", "holdoff-20", "send-1"],
+      "expectedState": {
+        "attempts": 1,
+        "lastNackElapsedMs": 80,
+        "completed": false
+      },
+      "expectedDelaysMs": [0, 0, 100]
+    }
+  ]
+}
