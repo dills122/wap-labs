@@ -18,6 +18,8 @@ import { WAVES_COPY } from './waves-copy';
 
 type RunMode = 'local' | 'network';
 
+const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
+
 export class BrowserController {
   private readonly hostClient: TauriHostClient;
 
@@ -152,7 +154,14 @@ export class BrowserController {
             await this.loadSelectedLocalDeck();
             return;
           }
-          await this.loadTransportUrl(this.refs.fetchUrlInput.value, 'user', true, true);
+          await this.loadTransportUrl(
+            this.refs.fetchUrlInput.value,
+            'user',
+            true,
+            true,
+            undefined,
+            this.defaultNavigationHeaders()
+          );
         })
       );
     }
@@ -170,7 +179,14 @@ export class BrowserController {
           const state = this.presenter.getSessionState();
           const reloadUrl = state.finalUrl ?? state.requestedUrl ?? this.refs.fetchUrlInput.value;
           this.refs.fetchUrlInput.value = reloadUrl;
-          await this.loadTransportUrl(reloadUrl, 'reload', true, false);
+          await this.loadTransportUrl(
+            reloadUrl,
+            'reload',
+            true,
+            false,
+            undefined,
+            this.defaultNavigationHeaders()
+          );
         })
       );
     }
@@ -185,7 +201,14 @@ export class BrowserController {
             await this.loadSelectedLocalDeck();
             return;
           }
-          await this.loadTransportUrl(this.refs.fetchUrlInput.value, 'user', true, true);
+          await this.loadTransportUrl(
+            this.refs.fetchUrlInput.value,
+            'user',
+            true,
+            true,
+            undefined,
+            this.defaultNavigationHeaders()
+          );
         }
       })
     );
@@ -599,7 +622,8 @@ export class BrowserController {
           'external-intent',
           true,
           true,
-          snapshot.externalNavigationRequestPolicy
+          snapshot.externalNavigationRequestPolicy,
+          this.defaultNavigationHeaders()
         );
       }
     }
@@ -632,7 +656,8 @@ export class BrowserController {
     source: HostNavigationSource,
     followExternalIntent: boolean,
     pushHistory = true,
-    requestPolicy?: FetchRequestPolicy
+    requestPolicy?: FetchRequestPolicy,
+    headers?: Record<string, string>
   ): Promise<EngineRuntimeSnapshot | null> {
     if (this.runMode === 'local') {
       await this.loadSelectedLocalDeck();
@@ -658,7 +683,8 @@ export class BrowserController {
         source,
         followExternalIntent,
         pushHistory,
-        requestPolicy
+        requestPolicy,
+        headers
       });
       if (snapshot) {
         this.scriptTimerRegistry.reset();
@@ -759,7 +785,8 @@ export class BrowserController {
             'external-intent',
             true,
             true,
-            snapshot.externalNavigationRequestPolicy
+            snapshot.externalNavigationRequestPolicy,
+            this.defaultNavigationHeaders()
           );
         }
       }
@@ -792,6 +819,7 @@ export class BrowserController {
         const probe = await this.hostClient.fetchDeck({
           url: targetUrl,
           method: 'GET',
+          headers: this.defaultNavigationHeaders(),
           timeoutMs: WAVES_CONFIG.networkProbeTimeoutMs,
           retries: 0,
           requestPolicy: { uaCapabilityProfile: WAVES_CONFIG.transportUaCapabilityProfile }
@@ -830,6 +858,12 @@ export class BrowserController {
         this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
       })
     );
+  }
+
+  private defaultNavigationHeaders(): Record<string, string> {
+    return {
+      Accept: WAP_ACCEPT_HEADER
+    };
   }
 }
 
