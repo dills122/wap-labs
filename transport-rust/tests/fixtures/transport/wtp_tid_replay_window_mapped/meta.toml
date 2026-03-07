@@ -1,0 +1,10 @@
+name = "WTP replay-window and TID progression fixtures"
+description = "Deterministic responder/initiator replay-window and TID policy checks for cache/no-cache and restart/wrap scenarios."
+mode = "mapped"
+work_items = ["T0-08"]
+spec_items = ["RQ-TRN-007", "RQ-TRN-016"]
+testing_ac = [
+  "Given responder replay-window policy, duplicates and stale/in-window TIDs follow deterministic outcomes.",
+  "Given no-cache and cache-guaranteed modes, decision outcomes remain profile-specific and reproducible.",
+  "Given initiator MPL-bound policy, TID advancement and restart-window transitions are bounded and deterministic."
+]

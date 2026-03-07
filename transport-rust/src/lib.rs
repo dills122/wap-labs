@@ -15,6 +15,7 @@ pub mod tcp_profile;
 mod wbxml;
 pub mod wsp_capability;
 pub mod wsp_registry;
+mod wtp_replay_window;
 
 use gateway::build_gateway_request;
 use request_meta::{log_transport_event, normalized_request_id};
@@ -641,6 +642,11 @@ mod tests {
     use super::{
         apply_request_policy, classify_destination_host, classify_ip, fetch_deck_in_process,
         preflight_wbxml_decoder, resolve_fetch_destination_policy, validate_fetch_destination,
+        wtp_replay_window::{
+            decide_initiator_tid, decide_responder_tid, WtpDuplicateAssumption, WtpInitiatorPolicy,
+            WtpInitiatorState, WtpInitiatorTidDecision, WtpReplayCacheMode, WtpResponderPolicy,
+            WtpResponderState, WtpResponderTidDecision,
+        },
         DestinationHostClass, FetchCacheControlPolicy, FetchDeckRequest, FetchDestinationPolicy,
         FetchPostContext, FetchRequestPolicy, FetchUaCapabilityProfile, MAX_RESPONSE_BODY_BYTES,
         MAX_URI_OCTETS,
@@ -877,6 +883,112 @@ mod tests {
         let raw = fs::read(&path).unwrap_or_else(|_| panic!("failed reading {}", path.display()));
         serde_json::from_slice(&raw)
             .unwrap_or_else(|_| panic!("failed parsing fixture {}", path.display()))
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpResponderFixtureCase {
+        name: String,
+        incoming_tid: u16,
+        expected: String,
+        policy: WtpReplayPolicyInput,
+        state: WtpResponderStateInput,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpResponderStateInput {
+        last_tid: u16,
+        seen_tids: Vec<u16>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpInitiatorFixtureCase {
+        name: String,
+        incoming_tid: u16,
+        expected: String,
+        state: WtpInitiatorStateInput,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpInitiatorStateInput {
+        last_tid: Option<u16>,
+        steps_in_window: u16,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpReplayPolicyInput {
+        replay_window: u16,
+        cache_mode: WtpReplayCacheMode,
+        duplicate_assumption: WtpDuplicateAssumption,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WtpReplayPolicyFixture {
+        responder_policy: WtpReplayPolicyInput,
+        responder_cases: Vec<WtpResponderFixtureCase>,
+        initiator_policy: WtpInitiatorPolicy,
+        initiator_cases: Vec<WtpInitiatorFixtureCase>,
+    }
+
+    impl WtpReplayPolicyInput {
+        fn into_policy(self) -> WtpResponderPolicy {
+            WtpResponderPolicy {
+                replay_window: self.replay_window,
+                cache_mode: self.cache_mode,
+                duplicate_assumption: self.duplicate_assumption,
+            }
+        }
+    }
+
+    impl WtpResponderStateInput {
+        fn into_state(self) -> WtpResponderState {
+            WtpResponderState::new(self.last_tid, self.seen_tids)
+        }
+    }
+
+    impl WtpInitiatorStateInput {
+        fn into_state(self) -> WtpInitiatorState {
+            WtpInitiatorState {
+                last_tid: self.last_tid,
+                steps_in_window: self.steps_in_window,
+            }
+        }
+    }
+
+    fn expect_responder_tid_decision(expected: &str) -> WtpResponderTidDecision {
+        match expected {
+            "accept" => WtpResponderTidDecision::Accept,
+            "replay-cached-terminal" => WtpResponderTidDecision::ReplayCachedTerminal,
+            "drop-duplicate" => WtpResponderTidDecision::DropAsDuplicate,
+            "drop-stale" => WtpResponderTidDecision::DropAsStale,
+            other => panic!("unknown responder expectation {other}"),
+        }
+    }
+
+    fn expect_initiator_tid_decision(expected: &str) -> fn(WtpInitiatorTidDecision) -> bool {
+        match expected {
+            "accept" => |decision| {
+                matches!(
+                    decision,
+                    WtpInitiatorTidDecision::Accept { accepted: true, .. }
+                )
+            },
+            "duplicate-retransmission" => {
+                |decision| matches!(decision, WtpInitiatorTidDecision::DuplicateRetransmission)
+            }
+            "require-restart" => {
+                |decision| matches!(decision, WtpInitiatorTidDecision::RequireRestart)
+            }
+            "out-of-replay-window" => {
+                |decision| matches!(decision, WtpInitiatorTidDecision::OutOfReplayWindow)
+            }
+            other => panic!("unknown initiator expectation {other}"),
+        }
     }
 
     #[test]
@@ -2365,6 +2477,35 @@ mod tests {
                 .map(|err| err.code.as_str())
                 .unwrap_or("<missing>");
             assert_eq!(code, case.expected_code, "case '{}' failed", case.name);
+        }
+    }
+
+    #[test]
+    fn transport_wtp_tid_replay_window_fixture_matrix() {
+        let fixture: WtpReplayPolicyFixture =
+            read_json_fixture("wtp_tid_replay_window_mapped", "replay_policy_fixture.json");
+
+        for case in fixture.responder_cases {
+            let (decision, _trace) = decide_responder_tid(
+                &case.policy.into_policy(),
+                &case.state.into_state(),
+                case.incoming_tid,
+            );
+            assert_eq!(
+                decision,
+                expect_responder_tid_decision(case.expected.as_str())
+            );
+        }
+
+        let initiator_policy = fixture.initiator_policy;
+        for case in fixture.initiator_cases {
+            let matcher = expect_initiator_tid_decision(case.expected.as_str());
+            let (decision, _trace) = decide_initiator_tid(
+                &initiator_policy,
+                &case.state.into_state(),
+                case.incoming_tid,
+            );
+            assert!(matcher(decision), "initiator case '{}' failed", case.name);
         }
     }
 }

@@ -286,7 +286,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-08 WTP TID/MPL replay-window conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-03`
 3. `Owner`: `transport-rust`
 4. `Files`:

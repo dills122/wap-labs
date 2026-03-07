@@ -37,7 +37,7 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 | `T0-12` | transport + spec | `done` | Wireless Profiled TCP posture declaration and drift checks are in place |
 | `T0-13` | transport + docs | `done` | SMPP adaptation scope is explicitly deferred with fixture-backed guardrails |
 | `T0-14` | cross-layer decision gate | `done` | canonical profile decision record + machine-checkable promotion gate are in place |
-| `T0-08` | transport | `todo` | sequence after `T0-14` for replay-window policy alignment |
+| `T0-08` | transport | `done` | replay-window policy alignment and table-driven fixture closure |
 | `T0-16` | spec-processing | `todo` | execute immediately after `T0-14` |
 
 ## Sprint 1 (2026-03-09 to 2026-03-20): Bedrock + Networking Unblockers
