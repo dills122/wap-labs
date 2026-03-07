@@ -10,6 +10,9 @@ Capture normative transport-layer requirements for the Waves protocol rewrite tr
 ## Source Authority Policy
 
 - See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
+- External vector adoption guidance is tracked separately in:
+  - `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
+  - `docs/waves/networking-vector-adoption.json`
 
 ## Source set reviewed (S0-02)
 

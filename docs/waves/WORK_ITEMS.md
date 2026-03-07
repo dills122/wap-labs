@@ -809,11 +809,13 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-25 External conformance/vector source sweep spike
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-23`
 3. `Owner`: `docs`, `spec-processing`
 4. `Files`:
 - `docs/waves/NETWORKING_GAP_MASTER.md`
+- `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
+- `docs/waves/networking-vector-adoption.json`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 5. `Build`:
@@ -833,6 +835,7 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..019`, `RQ-SEC-004..005`
 10. `Notes`:
 - Research spike only; adoption decisions must remain profile-gated and additive.
+- Closure landed with a ranked adoption register plus validator; Wireshark dissector source and Kannel source/release artifacts are `adopt-now`, while Wireshark sample captures stay `defer` pending explicit provenance/reuse intake.
 
 ### T0-26 Local Kannel E2E readiness gate
 

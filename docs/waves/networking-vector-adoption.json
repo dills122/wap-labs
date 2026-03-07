@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "updated": "2026-03-06",
+  "items": [
+    {
+      "id": "wireshark-wap-dissector-source",
+      "title": "Wireshark WAP dissector source tree",
+      "sourceClass": "interop-reference",
+      "status": "adopt-now",
+      "profileCompatibility": ["wap-net-core"],
+      "lanes": ["wdp", "wtp", "wsp", "wtls", "interop-replay"],
+      "effort": "medium",
+      "benefit": "high",
+      "reusePosture": "behavior-reference-only",
+      "licenseNote": "Wireshark is GPL-2.0; use as interop-reference and packet-shape oracle, not copy-paste implementation input.",
+      "sourceUrls": [
+        "https://github.com/wireshark/wireshark",
+        "https://www.wireshark.org/docs/wsar_html/dir_a79f6520f848d6d23d84c7db8b7aa400.html"
+      ],
+      "mappedTickets": ["T0-21", "T0-22", "T0-24"],
+      "mappedRequirementIds": ["RQ-TRN-001", "RQ-TRN-007", "RQ-TRN-012", "RQ-TRN-014", "RQ-SEC-004"],
+      "fixtureTargets": [
+        "transport-rust/tests/network/interop/",
+        "transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/",
+        "transport-rust/tests/fixtures/transport/wtp_retransmission_policy_mapped/"
+      ],
+      "rationale": "Best immediate external interop reference for packet field interpretation and decode expectations across active protocol layers."
+    },
+    {
+      "id": "kannel-stable-source-release",
+      "title": "Kannel stable source release and wapbox implementation",
+      "sourceClass": "interop-reference",
+      "status": "adopt-now",
+      "profileCompatibility": ["gateway-bridged", "wap-net-core"],
+      "lanes": ["wdp", "wtp", "wsp", "interop-replay"],
+      "effort": "medium",
+      "benefit": "high",
+      "reusePosture": "behavior-reference-and-local-fixture-derivation",
+      "licenseNote": "Kannel FAQ states a FreeBSD-style license; source snapshots are acceptable for local interop-reference review and fixture derivation.",
+      "sourceUrls": [
+        "https://www.kannel.org/download.shtml",
+        "https://www.kannel.org/faq.shtml",
+        "https://www.kannel.org/status.shtml"
+      ],
+      "mappedTickets": ["T0-22", "T0-24", "T0-26"],
+      "mappedRequirementIds": ["RQ-TRN-002", "RQ-TRN-003", "RQ-TRN-007", "RQ-TRN-010", "RQ-TRN-012"],
+      "fixtureTargets": [
+        "transport-rust/tests/network/interop/",
+        "transport-rust/tests/kannel_smoke.rs",
+        "browser/src-tauri/src/lib.rs"
+      ],
+      "rationale": "Most relevant real-gateway implementation reference for matching Waves behavior to de facto WAP gateway behavior in the active local stack."
+    },
+    {
+      "id": "wireshark-wap-sample-captures",
+      "title": "Wireshark wiki WAP sample captures",
+      "sourceClass": "interop-reference",
+      "status": "defer",
+      "profileCompatibility": ["wap-net-core"],
+      "lanes": ["wsp", "wtp", "wtls", "interop-replay"],
+      "effort": "low",
+      "benefit": "medium",
+      "reusePosture": "pcap-derivative-after-provenance-check",
+      "licenseNote": "Sample capture provenance exists, but direct file licensing and reuse terms are not explicit enough yet for automatic ingestion.",
+      "sourceUrls": [
+        "https://wiki.wireshark.org/Wireless_Session_Protocol",
+        "https://wiki.wireshark.org/Wireless_Transaction_Protocol",
+        "https://wiki.wireshark.org/Wireless_Transport_Layer_Security",
+        "https://wiki.wireshark.org/WAP_Binary_XML"
+      ],
+      "mappedTickets": ["T0-24", "T0-25"],
+      "mappedRequirementIds": ["RQ-TRN-012", "RQ-TRN-014", "RQ-SEC-004"],
+      "fixtureTargets": [
+        "transport-rust/tests/network/interop/",
+        "spec-processing/new-source-material/external-networking/"
+      ],
+      "rationale": "Good future PCAP seed input, but should stay deferred until provenance and permitted reuse are recorded through the T0-23 intake path."
+    },
+    {
+      "id": "wireshark-wdp-wtp-wsp-wtls-wiki-pages",
+      "title": "Wireshark protocol wiki pages for WDP/WTP/WSP/WTLS",
+      "sourceClass": "heuristic",
+      "status": "adopt-now",
+      "profileCompatibility": ["gateway-bridged", "wap-net-core"],
+      "lanes": ["wdp", "wtp", "wsp", "wtls"],
+      "effort": "low",
+      "benefit": "medium",
+      "reusePosture": "triage-and-cross-check-only",
+      "licenseNote": "Use only as descriptive support; these pages are not normative and often describe dissector limitations rather than protocol truth.",
+      "sourceUrls": [
+        "https://wiki.wireshark.org/Wireless_Datagram_Protocol",
+        "https://wiki.wireshark.org/Wireless_Transaction_Protocol",
+        "https://wiki.wireshark.org/Wireless_Session_Protocol",
+        "https://wiki.wireshark.org/Wireless_Transport_Layer_Security"
+      ],
+      "mappedTickets": ["T0-20", "T0-21", "T0-22"],
+      "mappedRequirementIds": ["RQ-TRN-003", "RQ-TRN-010", "RQ-TRN-014", "RQ-SEC-004"],
+      "fixtureTargets": [
+        "transport-rust/tests/network/interop/",
+        "transport-rust/tests/fixtures/transport/wsp_assigned_number_registry_mapped/"
+      ],
+      "rationale": "Useful for quickly spotting protocol-port assumptions and known dissector gaps, but should never override spec or implementation evidence."
+    }
+  ]
+}

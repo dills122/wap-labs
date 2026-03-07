@@ -68,6 +68,14 @@ Legend:
 | WAP-191 request-policy + post metadata plumbing (`go/postfield/cache-control`) | `covered` | request-policy mapping tests in `transport-rust/src/lib.rs` + browser host external-intent request-policy propagation tests (`T0-04`, `R0-06`) |
 | WAP-191 encoder/validation fixture lane (`14.x`, `15.2-15.4`) | `planned` | `T0-07`, `R0-08` |
 
+External vector adoption register:
+
+- Ranked `adopt-now` vs `defer` guidance now lives in:
+  - `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
+  - `docs/waves/networking-vector-adoption.json`
+- Validation command:
+  - `node scripts/check-networking-vector-adoption.mjs`
+
 ## Browser host (`browser`)
 
 | Requirement Group | Status | Current/Planned Test Location |

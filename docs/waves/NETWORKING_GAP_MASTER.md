@@ -56,6 +56,12 @@ WAP protocol-native transport closure for:
 2. Canonical source-pipeline quality controls
 - Keep parse/promote governance aligned with spec-processing flow and drift checks.
 
+3. External vector adoption ranking (`RQ-TRN-*`, `RQ-SEC-*`)
+- Ticket lane: `T0-25`
+- Current adoption register:
+  - `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
+  - `docs/waves/networking-vector-adoption.json`
+
 ## Source anchors
 
 Primary requirement sources:
