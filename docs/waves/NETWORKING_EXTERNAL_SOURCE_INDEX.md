@@ -26,11 +26,34 @@ Source authority policy:
 | `interop-kannel-networking-sources` | `kannel` | `planned` | `interop-reference` | not yet ingested | `RQ-TRN-005`, `RQ-TRN-007`, `RQ-TRN-010`, `RQ-TRN-012` | Target family for future external ingestion. |
 | `interop-wireshark-dissectors` | `wireshark` | `planned` | `interop-reference` | not yet ingested | `RQ-TRN-001`, `RQ-TRN-007`, `RQ-TRN-012`, `RQ-TRN-014`, `RQ-SEC-004` | Target family for future external ingestion. |
 
+## Provenance contract
+
+Each indexed entry now records:
+
+1. `origin`
+2. `licenseStatus`
+3. `ingestedAt`
+4. `behaviorNotes`
+
+Each `behaviorNote` must:
+
+1. map to existing local `RQ-*` only
+2. name at least one implementation lane
+3. stay descriptive rather than normative
+
+This keeps the index useful for replay and fixture planning without letting external material redefine transport requirements.
+
+## Intake landing zone
+
+Future Kannel and Wireshark drops should land under:
+
+- [spec-processing/new-source-material/external-networking/README.md](/Users/dsteele/repos/wap-labs/spec-processing/new-source-material/external-networking/README.md)
+
 ## Current conclusion
 
 1. Supplemental context sources are present and now explicitly classified as `heuristic`.
 2. Desired interop-reference families for Kannel and Wireshark are not yet locally ingested.
-3. `T0-23` therefore closes the indexing/classification gap, but not the future acquisition of those external artifacts.
+3. `T0-23` therefore closes the indexing/classification and intake-contract gap, but not the future acquisition of those external artifacts.
 
 ## Practical use
 
@@ -52,5 +75,6 @@ The check verifies:
 
 1. required source families are present in the index
 2. `present` entries point at real files
-3. all entries carry a valid source class
-4. every entry maps to at least one existing `RQ-*` ID
+3. all entries carry valid provenance fields and a valid source class
+4. every entry and behavior note maps to at least one existing `RQ-*` ID
+5. every required family has at least one indexed behavior note

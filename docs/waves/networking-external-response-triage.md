@@ -89,6 +89,7 @@ Current external/supplemental source indexing lives in:
 
 - [docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md)
 - [spec-processing/external-source-index.json](/Users/dsteele/repos/wap-labs/spec-processing/external-source-index.json)
+- [spec-processing/new-source-material/external-networking/README.md](/Users/dsteele/repos/wap-labs/spec-processing/new-source-material/external-networking/README.md)
 
 Validation command:
 
