@@ -61,8 +61,8 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Execute committed sprint-critical transport ticket: `T0-04` request-policy plumbing baseline.
-2. Follow immediately with `T0-05` and `T0-06` to lock UA header and URI/charset conformance boundaries.
+1. Execute committed sprint-critical transport ticket: `T0-13` SMPP adaptation scope gate and fixture baseline.
+2. Complete `T0-14` networking profile decision record and migration gates.
 3. Keep `M1-08` active in parallel for transport high-churn file boundary decomposition.
 4. Keep `M1-03` as non-priority downstream generator-consumer follow-up.
 
@@ -77,3 +77,6 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add UA capability header conformance path (`T0-05`)
 - [x] Add URI-length and charset boundary conformance fixtures (`T0-06`)
 - [ ] Add WBXML token/literal compatibility conformance fixtures (`T0-07`)
+- [x] Add WSP assigned-number registry fixture lane (`T0-10`)
+- [x] Add WSP capability negotiation/bounds fixture lane (`T0-11`)
+- [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)

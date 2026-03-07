@@ -10,6 +10,7 @@ use url::{Host, Url};
 mod gateway;
 mod request_meta;
 mod responses;
+pub mod tcp_profile;
 mod wbxml;
 pub mod wsp_capability;
 pub mod wsp_registry;

@@ -148,9 +148,9 @@ Legend:
 - Spec:
   - `WAP-225` section 5, 5.3, 5.8, 6, 7
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Transport profile declares which TCP optimizations are enabled.
-  - [ ] SACK + mode behavior are represented in compatibility tests or explicit dependency declarations.
+  - Evidence: [x] `transport-rust/src/tcp_profile.rs`, `transport-rust/tests/fixtures/transport/wireless_profiled_tcp_policy_mapped/policy_fixture.json`; command: `cd transport-rust && cargo test --lib tcp_profile::tests::wireless_profiled_tcp_posture_matches_declared_policy_fixture`
+  - [x] Transport profile declares which TCP optimizations are enabled, delegated, or deferred.
+  - [x] SACK + mode behavior are represented in explicit dependency declarations with fixture-backed drift checks.
 
 ### RQ-TRX-010 WDP/WCMP over SMPP adaptation profile (gateway-side)
 
@@ -178,6 +178,6 @@ Legend:
 
 ## Migration coupling
 
-- `RQ-TRX-009` remains profile declaration-only until `T0-12` records TCP posture explicitly.
+- `RQ-TRX-009` posture declaration is recorded via `T0-12`; protocol-level implementation beyond delegated/deferred posture remains gated by `T0-14` profile decisions.
 - `RQ-TRX-010` requires explicit `T0-13` scope selection before any implementation-path behavior is introduced.
 - `T0-17` remains the final scope lock so adjacent behavior cannot enter profile migration without explicit ticketing.

@@ -1,0 +1,7 @@
+{
+  "rfcBaseline": { "status": "delegated" },
+  "sack": { "status": "delegated" },
+  "splitMode": { "status": "deferred" },
+  "endToEndMode": { "status": "delegated" },
+  "windowScale64kbOrMore": { "status": "delegated" }
+}

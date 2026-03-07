@@ -34,7 +34,7 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 | `W0-06` | engine/wavescript | `done` | baseline structural verification gates landed; strict closure continues in `W1-02` |
 | `T0-10` | transport | `done` | assigned-number fixture and unknown-policy lane is now regression-backed |
 | `T0-11` | transport | `done` | capability merge and bounds fixtures landed with deterministic abort-mapping behavior |
-| `T0-12` | transport + spec | `todo` | ready after `T0-01` (closed) |
+| `T0-12` | transport + spec | `done` | Wireless Profiled TCP posture declaration and drift checks are in place |
 | `T0-13` | transport + docs | `todo` | ready after `T0-01` (closed) |
 | `T0-14` | cross-layer decision gate | `todo` | complete after `T0-11`, `T0-12`, `T0-13` |
 | `T0-08` | transport | `todo` | sequence after `T0-14` for replay-window policy alignment |

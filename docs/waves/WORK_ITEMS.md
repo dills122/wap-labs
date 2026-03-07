@@ -384,7 +384,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-12 Wireless Profiled TCP compatibility profile declaration
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`, `spec`
 4. `Files`:
@@ -404,6 +404,9 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: docs + ticket mapping for TCP posture is versioned and linked from `TECHNICAL_ARCHITECTURE`.
 9. `Spec`:
 - `RQ-TRX-009`
+10. `Notes`:
+- Landed as policy declaration + drift guard in `transport-rust/src/tcp_profile.rs` with fixture `transport-rust/tests/fixtures/transport/wireless_profiled_tcp_policy_mapped/policy_fixture.json`.
+- Current posture explicitly marks TCP baseline/SACK/window-scale/end-to-end as delegated to host TCP stack and split-mode as deferred pending profile gate decisions.
 
 ### T0-13 SMPP adaptation scope gate and fixture baseline
 
