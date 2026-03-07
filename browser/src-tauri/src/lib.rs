@@ -702,6 +702,81 @@ mod tests {
             .map(str::to_string)
     }
 
+    #[test]
+    #[ignore = "runs against external Kannel dev stack (make up)"]
+    fn kannel_fetch_deck_smoke_loads_into_engine() {
+        let target =
+            std::env::var("WAP_SMOKE_URL").unwrap_or_else(|_| "wap://localhost/".to_string());
+        let transport = fetch_deck(FetchDeckRequest {
+            url: target.clone(),
+            method: Some("GET".to_string()),
+            headers: None,
+            timeout_ms: Some(15000),
+            retries: Some(1),
+            request_id: None,
+            request_policy: None,
+        });
+        assert!(
+            transport.ok,
+            "expected transport smoke fetch to succeed: {:?}",
+            transport.error
+        );
+
+        let mut engine = WmlEngine::new();
+        let snapshot = load_transport_response_into_engine(&mut engine, transport)
+            .expect("transport response should load into engine");
+        assert!(
+            matches!(
+                snapshot.active_card_id.as_deref(),
+                Some("home") | Some("welcome") | Some("login")
+            ),
+            "unexpected active card from Kannel-backed deck: {:?}",
+            snapshot.active_card_id
+        );
+
+        assert_render_contains(&engine, "Local WAP training environment.");
+        assert_render_contains(&engine, "Open Menu");
+    }
+
+    #[test]
+    #[ignore = "runs against external Kannel dev stack (make up)"]
+    fn kannel_fetch_deck_smoke_navigates_into_menu_card() {
+        let target =
+            std::env::var("WAP_SMOKE_URL").unwrap_or_else(|_| "wap://localhost/".to_string());
+        let transport = fetch_deck(FetchDeckRequest {
+            url: target,
+            method: Some("GET".to_string()),
+            headers: None,
+            timeout_ms: Some(15000),
+            retries: Some(1),
+            request_id: None,
+            request_policy: None,
+        });
+        assert!(
+            transport.ok,
+            "expected transport smoke fetch to succeed: {:?}",
+            transport.error
+        );
+
+        let mut engine = WmlEngine::new();
+        let loaded = load_transport_response_into_engine(&mut engine, transport)
+            .expect("transport response should load into engine");
+        assert_eq!(loaded.active_card_id.as_deref(), Some("home"));
+        assert_render_contains(&engine, "Open Menu");
+
+        let entered = apply_handle_key(
+            &mut engine,
+            HandleKeyRequest {
+                key: EngineKey::Enter,
+            },
+        )
+        .expect("enter should navigate into menu card");
+        assert_eq!(entered.active_card_id.as_deref(), Some("menu"));
+        assert_render_contains(&engine, "Main Menu");
+        assert_render_contains(&engine, "1. Login");
+        assert_render_contains(&engine, "2. Register");
+    }
+
     fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
         let kinds: Vec<String> = engine
             .trace_entries()
