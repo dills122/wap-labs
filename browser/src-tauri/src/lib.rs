@@ -1,162 +1,37 @@
 pub mod contract_types;
 pub mod waves_config;
 
+mod engine_bridge;
+mod fetch_host;
+
 use contract_types::{
     AdvanceTimeRequest, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetViewportColsRequest,
+    LoadDeckRequest, NavigateToCardRequest, RenderList, SetViewportColsRequest,
 };
-use lowband_transport_rust::{
-    fetch_deck_in_process, preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse,
-    FetchDestinationPolicy, FetchRequestPolicy,
+use engine_bridge::{
+    command_engine_advance_time_ms, command_engine_clear_external_navigation_intent,
+    command_engine_handle_key, command_engine_load_deck, command_engine_load_deck_context,
+    command_engine_navigate_back, command_engine_navigate_to_card, command_engine_render,
+    command_engine_set_viewport_cols, command_engine_snapshot, AppState,
 };
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::Mutex;
+use fetch_host::fetch_deck as host_fetch_deck;
+use lowband_transport_rust::{preflight_wbxml_decoder, FetchDeckRequest, FetchDeckResponse};
 use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
 use tauri::path::BaseDirectory;
 use tauri::Emitter;
 use tauri::Manager;
 use tauri::State;
-use wavenav_engine::WmlEngine;
 
-struct AppState {
-    engine: Mutex<WmlEngine>,
-}
-
-impl Default for AppState {
-    fn default() -> Self {
-        Self {
-            engine: Mutex::new(WmlEngine::new()),
-        }
-    }
-}
-
-fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
-    EngineRuntimeSnapshot {
-        active_card_id: engine.active_card_id().ok(),
-        focused_link_index: engine.focused_link_index(),
-        base_url: engine.base_url(),
-        content_type: engine.content_type(),
-        external_navigation_intent: engine.external_navigation_intent(),
-        external_navigation_request_policy: engine
-            .external_navigation_request_policy()
-            .map(contract_types::ExternalNavigationRequestPolicySnapshot::from),
-        last_script_execution_ok: engine.last_script_execution_ok(),
-        last_script_execution_trap: engine.last_script_execution_trap(),
-        last_script_execution_error_class: engine.last_script_execution_error_class(),
-        last_script_execution_error_category: engine.last_script_execution_error_category(),
-        last_script_requires_refresh: engine.last_script_requires_refresh(),
-        last_script_dialog_requests: engine
-            .last_script_dialog_requests()
-            .into_iter()
-            .map(|request| match request {
-                wavenav_engine::ScriptDialogRequestLiteral::Alert { message } => {
-                    ScriptDialogRequestSnapshot::Alert { message }
-                }
-                wavenav_engine::ScriptDialogRequestLiteral::Confirm { message } => {
-                    ScriptDialogRequestSnapshot::Confirm { message }
-                }
-                wavenav_engine::ScriptDialogRequestLiteral::Prompt {
-                    message,
-                    default_value,
-                } => ScriptDialogRequestSnapshot::Prompt {
-                    message,
-                    default_value,
-                },
-            })
-            .collect(),
-        last_script_timer_requests: engine
-            .last_script_timer_requests()
-            .into_iter()
-            .map(|request| match request {
-                wavenav_engine::ScriptTimerRequestLiteral::Schedule { delay_ms, token } => {
-                    ScriptTimerRequestSnapshot::Schedule { delay_ms, token }
-                }
-                wavenav_engine::ScriptTimerRequestLiteral::Cancel { token } => {
-                    ScriptTimerRequestSnapshot::Cancel { token }
-                }
-            })
-            .collect(),
-    }
-}
-
-fn apply_load_deck(
-    engine: &mut WmlEngine,
-    request: LoadDeckRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    engine.load_deck(&request.wml_xml)?;
-    Ok(snapshot(engine))
-}
-
-fn apply_load_deck_context(
-    engine: &mut WmlEngine,
-    request: LoadDeckContextRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    engine.load_deck_context(
-        &request.wml_xml,
-        &request.base_url,
-        &request.content_type,
-        request.raw_bytes_base64,
-    )?;
-    Ok(snapshot(engine))
-}
-
-fn apply_render(engine: &WmlEngine) -> Result<RenderList, String> {
-    Ok(engine.render()?.into())
-}
-
-fn apply_handle_key(
-    engine: &mut WmlEngine,
-    request: HandleKeyRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    engine.handle_key(request.key.as_str().to_string())?;
-    Ok(snapshot(engine))
-}
-
-fn apply_navigate_to_card(
-    engine: &mut WmlEngine,
-    request: NavigateToCardRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    engine.navigate_to_card(request.card_id)?;
-    Ok(snapshot(engine))
-}
-
-fn apply_navigate_back(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
-    engine.navigate_back();
-    snapshot(engine)
-}
-
-fn apply_set_viewport_cols(
-    engine: &mut WmlEngine,
-    request: SetViewportColsRequest,
-) -> EngineRuntimeSnapshot {
-    engine.set_viewport_cols(request.cols);
-    snapshot(engine)
-}
-
-fn apply_advance_time_ms(
-    engine: &mut WmlEngine,
-    request: AdvanceTimeRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    engine.advance_time_ms(request.delta_ms)?;
-    Ok(snapshot(engine))
-}
-
-fn apply_engine_snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
-    snapshot(engine)
-}
-
-fn apply_clear_external_navigation_intent(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
-    engine.clear_external_navigation_intent();
-    snapshot(engine)
-}
-
-fn lock_engine<'a>(state: &'a AppState) -> Result<std::sync::MutexGuard<'a, WmlEngine>, String> {
-    state
-        .engine
-        .lock()
-        .map_err(|_| "engine state lock poisoned".to_string())
-}
+#[cfg(test)]
+use contract_types::{ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot};
+#[cfg(test)]
+use engine_bridge::{
+    apply_advance_time_ms, apply_clear_external_navigation_intent, apply_engine_snapshot,
+    apply_handle_key, apply_load_deck, apply_load_deck_context, apply_navigate_back,
+    apply_navigate_to_card, apply_render, apply_set_viewport_cols,
+};
+#[cfg(test)]
+use fetch_host::{default_fetch_destination_policy, ensure_request_id, next_request_id};
 
 #[tauri::command]
 fn health() -> String {
@@ -209,58 +84,8 @@ fn preflight_wbxml_decoder_available() -> Result<(), String> {
 }
 
 #[tauri::command]
-fn fetch_deck(mut request: FetchDeckRequest) -> FetchDeckResponse {
-    ensure_request_id(&mut request);
-    apply_default_destination_policy(&mut request);
-    fetch_deck_in_process(request)
-}
-
-fn next_request_id() -> String {
-    static REQUEST_SEQUENCE: AtomicU64 = AtomicU64::new(1);
-    let seq = REQUEST_SEQUENCE.fetch_add(1, Ordering::Relaxed);
-    format!("{}{seq}", waves_config::FETCH_REQUEST_ID_PREFIX)
-}
-
-fn ensure_request_id(request: &mut FetchDeckRequest) {
-    let keep_existing = request
-        .request_id
-        .as_ref()
-        .map(|value| !value.trim().is_empty())
-        .unwrap_or(false);
-    if !keep_existing {
-        request.request_id = Some(next_request_id());
-    }
-}
-
-fn default_fetch_destination_policy() -> FetchDestinationPolicy {
-    let configured = std::env::var(waves_config::FETCH_DESTINATION_POLICY_ENV)
-        .unwrap_or_else(|_| waves_config::FETCH_DESTINATION_POLICY_DEFAULT.to_string());
-    match configured.trim().to_ascii_lowercase().as_str() {
-        waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE => {
-            FetchDestinationPolicy::AllowPrivate
-        }
-        _ => FetchDestinationPolicy::PublicOnly,
-    }
-}
-
-fn apply_default_destination_policy(request: &mut FetchDeckRequest) {
-    let default_policy = default_fetch_destination_policy();
-    match request.request_policy.as_mut() {
-        Some(policy) => {
-            if policy.destination_policy.is_none() {
-                policy.destination_policy = Some(default_policy);
-            }
-        }
-        None => {
-            request.request_policy = Some(FetchRequestPolicy {
-                destination_policy: Some(default_policy),
-                cache_control: None,
-                referer_url: None,
-                post_context: None,
-                ua_capability_profile: None,
-            });
-        }
-    }
+fn fetch_deck(request: FetchDeckRequest) -> FetchDeckResponse {
+    host_fetch_deck(request)
 }
 
 fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
@@ -424,76 +249,6 @@ fn engine_clear_external_navigation_intent(
     state: State<AppState>,
 ) -> Result<EngineRuntimeSnapshot, String> {
     command_engine_clear_external_navigation_intent(state.inner())
-}
-
-fn command_engine_load_deck(
-    state: &AppState,
-    request: LoadDeckRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    apply_load_deck(&mut engine, request)
-}
-
-fn command_engine_load_deck_context(
-    state: &AppState,
-    request: LoadDeckContextRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    apply_load_deck_context(&mut engine, request)
-}
-
-fn command_engine_render(state: &AppState) -> Result<RenderList, String> {
-    let engine = lock_engine(state)?;
-    apply_render(&engine)
-}
-
-fn command_engine_handle_key(
-    state: &AppState,
-    request: HandleKeyRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    apply_handle_key(&mut engine, request)
-}
-
-fn command_engine_navigate_to_card(
-    state: &AppState,
-    request: NavigateToCardRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    apply_navigate_to_card(&mut engine, request)
-}
-
-fn command_engine_navigate_back(state: &AppState) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    Ok(apply_navigate_back(&mut engine))
-}
-
-fn command_engine_set_viewport_cols(
-    state: &AppState,
-    request: SetViewportColsRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    Ok(apply_set_viewport_cols(&mut engine, request))
-}
-
-fn command_engine_advance_time_ms(
-    state: &AppState,
-    request: AdvanceTimeRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    apply_advance_time_ms(&mut engine, request)
-}
-
-fn command_engine_snapshot(state: &AppState) -> Result<EngineRuntimeSnapshot, String> {
-    let engine = lock_engine(state)?;
-    Ok(apply_engine_snapshot(&engine))
-}
-
-fn command_engine_clear_external_navigation_intent(
-    state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    Ok(apply_clear_external_navigation_intent(&mut engine))
 }
 
 pub fn run() {
