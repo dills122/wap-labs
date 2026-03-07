@@ -1629,6 +1629,37 @@ mod tests {
     }
 
     #[test]
+    fn transport_map_success_payload_accepts_body_at_limit() {
+        let base = "http://example.test/index.wml".to_string();
+        let body = vec![b'a'; MAX_RESPONSE_BODY_BYTES];
+        let response = map_success_payload_response(
+            200,
+            false,
+            &base,
+            &base,
+            base.clone(),
+            "text/vnd.wap.wml".to_string(),
+            body.as_slice(),
+            1,
+            3.5,
+            Some("req-body-at-limit"),
+        );
+
+        assert!(response.ok, "body at hard limit should map successfully");
+        assert_eq!(response.status, 200);
+        assert!(response.error.is_none());
+        assert!(response.engine_deck_input.is_some());
+        let deck = response
+            .engine_deck_input
+            .expect("engine deck input should be present at boundary");
+        assert_eq!(deck.wml_xml.len(), MAX_RESPONSE_BODY_BYTES);
+        assert_eq!(
+            deck.raw_bytes_base64.as_deref(),
+            Some(BASE64.encode(body).as_str())
+        );
+    }
+
+    #[test]
     fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
         let base = "http://example.test/index.wml".to_string();
         let utf16le_body: Vec<u8> = vec![

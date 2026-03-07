@@ -2382,6 +2382,40 @@ fn trace_entries_record_key_and_actions() {
 }
 
 #[test]
+fn unknown_key_normalizes_focus_without_triggering_actions() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#one">One</a>
+            <a href="#two">Two</a>
+          </card>
+          <card id="one"><p>One</p></card>
+          <card id="two"><p>Two</p></card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+    engine.focused_link_idx = 99;
+
+    engine
+        .handle_key_internal("noop-key")
+        .expect("unknown key should be ignored without error");
+
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert_eq!(engine.focused_link_idx, 1);
+    assert!(engine.external_navigation_intent().is_none());
+    assert_trace_kinds_subsequence(&engine, &["KEY"]);
+    assert!(
+        engine.trace_entries().iter().all(|entry| {
+            entry.kind != "ACTION_FRAGMENT"
+                && entry.kind != "ACTION_SCRIPT"
+                && entry.kind != "ACTION_EXTERNAL"
+        }),
+        "unknown key should not dispatch navigation actions"
+    );
+}
+
+#[test]
 fn trace_entries_include_script_error_taxonomy_for_non_fatal() {
     let mut engine = WmlEngine::new();
     let xml = r##"
