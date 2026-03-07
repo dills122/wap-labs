@@ -318,7 +318,7 @@ export const createNavigationStateMachine = (
           hooks.onStateEvent?.('host-history-back', {
             historyIndex: hostHistory.index,
             url: previous.url,
-            restoredCardId: previous.activeCardId
+            restoredCardId: restoredSnapshot.activeCardId
           });
           return 'host';
         }

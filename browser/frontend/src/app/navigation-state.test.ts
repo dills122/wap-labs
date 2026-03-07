@@ -152,14 +152,26 @@ describe('navigation-state', () => {
   it('prefers engine back when runtime state changes', async () => {
     const machine = createNavigationStateMachine(
       createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url
+          }),
         engineSnapshot: async () => snapshot({ activeCardId: 'next', focusedLinkIndex: 0 }),
         engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
       }),
       'http://seed.test'
     );
 
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
     const mode = await machine.navigateBackWithFallback();
     expect(mode).toBe('engine');
+    expect(machine.getHistoryState().index).toBe(0);
+    expect(machine.getHistoryState().entries[0]?.activeCardId).toBe('home');
   });
 
   it('falls back to host history when engine back is a no-op', async () => {
