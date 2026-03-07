@@ -494,7 +494,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-16 Spec queue canonicalization and conflict resolution follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-14`
 3. `Owner`: `spec-processing`
 4. `Files`:
@@ -522,6 +522,7 @@ Completed `B0` through `B3` tickets are archived in:
 - Completed: new-source `WAP-259` variant was promoted after byte-comparison and manual archival of prior legacy source.
 - Archive captured at:
   - `spec-processing/source-material/archive/WAP-259-WDP-20010614-a.legacy-v1.pdf`
+- Conflict rationale recorded: `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf` is canonical as of `2026-03-05`, and the prior variant remains archived with explicit legacy status.
 
 ### T0-17 Protocol-adjacent transport context sweep (deferred specs)
 

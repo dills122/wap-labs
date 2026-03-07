@@ -39,7 +39,7 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 | `T0-14` | cross-layer decision gate | `done` | canonical profile decision record + machine-checkable promotion gate are in place |
 | `T0-08` | transport | `done` | replay-window policy alignment and table-driven fixture closure |
 | `T0-09` | transport | `done` | WSP connectionless primitive-profile matrix and validation is fixture-backed |
-| `T0-16` | spec-processing | `todo` | execute immediately after `T0-14` |
+| `T0-16` | spec-processing | `done` | execute immediately after `T0-14` |
 
 ## Sprint 1 (2026-03-09 to 2026-03-20): Bedrock + Networking Unblockers
 
