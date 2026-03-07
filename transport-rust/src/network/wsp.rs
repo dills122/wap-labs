@@ -3,6 +3,7 @@
 pub mod decoder;
 pub mod encoder;
 pub mod encoding_version;
+pub mod header_block;
 pub mod header_registry;
 
 pub use decoder::{
@@ -15,6 +16,12 @@ pub use encoding_version::{
     incoming_binary_header_status, unsupported_binary_error_response, BinaryHeaderEncodingDecision,
     IncomingBinaryHeaderStatus, WspEncodingVersion, WspEncodingVersionErrorResponse,
     WspEncodingVersionHeader, WspEncodingVersionPolicy,
+};
+pub use header_block::{
+    decode_header_block, encode_header_block, format_encoding_version_header_value,
+    parse_encoding_version_header_value, WspHeaderBlock, WspHeaderBlockDecodeError,
+    WspHeaderBlockDecodePolicy, WspHeaderBlockEncodeError, WspHeaderBlockEncodePolicy,
+    WspHeaderField, WspHeaderNameEncoding,
 };
 pub use header_registry::{
     decode_abort_reason, decode_header_field_name_on_page, decode_pdu_type,

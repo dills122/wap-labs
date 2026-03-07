@@ -71,6 +71,10 @@ Required codec contract:
 - `decode_header(bytes) -> field/value`
 - `validate_header(field, value) -> Result<(), Error>`
 
+Current transport-rust baseline for this lane:
+
+- `transport-rust/src/network/wsp/header_block.rs` provides the immediate pure header-block decode/encode surface used to apply header token, code-page, and `Encoding-version` policy before full PDU framing is implemented.
+
 ## 6) Connection-mode behavior (typical)
 
 1. `S-Connect.request`
