@@ -526,7 +526,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-17 Protocol-adjacent transport context sweep (deferred specs)
 
-1. `Status`: `in_progress`
+1. `Status`: `done`
 2. `Depends On`: `T0-14`, `T0-16`
 3. `Owner`: `docs`, `transport`
 4. `Files`:
@@ -542,6 +542,7 @@ Completed `B0` through `B3` tickets are archived in:
 - checklist validation fixtures:
   - `WAP-204` and `WAP-120` remain deferred under documented rationale
   - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
+   - command: `node scripts/check-adjacent-scope-lock.mjs`
 7. `Accept`:
 - future transport scope changes are policy-driven, explicit, and reversible.
 8. `Migration gates`:
