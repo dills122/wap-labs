@@ -299,16 +299,18 @@ export const createNavigationStateMachine = (
           requestPolicy: previous.requestPolicy
         });
         if (prevSnapshot) {
+          let restoredSnapshot = prevSnapshot;
           if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
-            const restored = await hostClient.engineNavigateToCard({
+            restoredSnapshot = await hostClient.engineNavigateToCard({
               cardId: previous.activeCardId
             });
-            await renderSnapshot(restored);
+            await renderSnapshot(restoredSnapshot);
           }
           const committed = commitHistoryBack(hostHistory);
           if (!committed) {
             return 'none';
           }
+          updateCurrentHistoryCard(hostHistory, restoredSnapshot.activeCardId);
           mergeSessionState({
             historyIndex: hostHistory.index,
             history: hostHistory.entries

@@ -202,7 +202,12 @@ describe('navigation-state', () => {
       createHostClientMock({
         fetchDeck: async (request) =>
           fetchOk({
-            finalUrl: request.url
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml: '<wml><card id="home"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
           }),
         engineLoadDeckContext: async (request) => {
           loadCount += 1;
@@ -245,6 +250,56 @@ describe('navigation-state', () => {
     expect(machine.getSessionState().activeCardId).toBe('details-a');
     expect(machine.getHistoryState().index).toBe(0);
     expect(loadCount).toBe(3);
+  });
+
+  it('commits restored card id into history entry during host-history back', async () => {
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml: '<wml><card id="home"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          }),
+        engineLoadDeckContext: async (request) => {
+          if (request.baseUrl.includes('/a.wml')) {
+            return snapshot({ activeCardId: 'home-a', baseUrl: request.baseUrl });
+          }
+          return snapshot({ activeCardId: 'home-b', baseUrl: request.baseUrl });
+        },
+        engineSnapshot: async () =>
+          snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
+        engineNavigateBack: async () =>
+          snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/b.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    const previousEntry = machine.getHistoryState().entries[0];
+    if (!previousEntry) {
+      throw new Error('expected first history entry');
+    }
+    previousEntry.activeCardId = undefined;
+
+    const mode = await machine.navigateBackWithFallback();
+    expect(mode).toBe('host');
+    expect(machine.getHistoryState().index).toBe(0);
+    expect(machine.getHistoryState().entries[0]?.activeCardId).toBe('home-a');
+    expect(machine.getSessionState().activeCardId).toBe('home-a');
   });
 
   it('emits deterministic state-event order for host-history back fallback', async () => {
