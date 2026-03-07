@@ -1,7 +1,7 @@
 # Master Prioritized Sprint Plan (March 2026)
 
 Status: active  
-Effective date: 2026-03-06  
+Effective date: 2026-03-07  
 Planning horizon: 3 consecutive sprints
 
 This plan is the cross-lane source of truth for "what is next" and resolves priority collisions between runtime compliance, networking closure, and maintenance.
@@ -10,8 +10,8 @@ This plan is the cross-lane source of truth for "what is next" and resolves prio
 
 1. P0: unblock and close committed bedrock compliance tickets already in the active sprint lane.
 2. P0: close networking dependency chain required before protocol-native implementation blockers can move.
-3. P1: execute networking protocol-core blockers (`T0-19`, `T0-18`, `T0-20`) and replay promotion gate (`T0-22`).
-4. P2: run WTLS minimum lane (`T0-21`) only after P0/P1 gates are stable.
+3. P1: close the remaining transport/security implementation blocker (`T0-21`) now that protocol-core and replay gates are green.
+4. P1: close already-active runtime/compliance work before starting fresh feature breadth.
 5. P2: run maintenance in parallel only when it does not starve P0/P1.
 
 ## Canonical Sources
@@ -22,26 +22,29 @@ This plan is the cross-lane source of truth for "what is next" and resolves prio
 - `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - `docs/wml-engine/work-items.md`
 
-## Sprint 1 Activation Snapshot (as of 2026-03-06)
+## Current Snapshot (as of 2026-03-07)
 
-This snapshot is the operational kickoff view for Sprint 1 planning and standups.
+This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
 | Ticket | Lane | Current status | Immediate dependency action |
 | --- | --- | --- | --- |
-| `A5-01` | engine/runtime | `done` | keep regression coverage current in `SPEC_TEST_COVERAGE` |
+| `A5-01` | engine/runtime | `in-progress` | finish request-shaped history entry fidelity and restore semantics |
 | `R0-02` | engine + browser + transport | `done` | closed with deterministic host/runtime request-fidelity coverage |
 | `R0-03` | engine + browser | `done` | closed with history/context fidelity integration evidence |
-| `W0-06` | engine/wavescript | `done` | baseline structural verification gates landed; strict closure continues in `W1-02` |
-| `T0-10` | transport | `done` | assigned-number fixture and unknown-policy lane is now regression-backed |
-| `T0-11` | transport | `done` | capability merge and bounds fixtures landed with deterministic abort-mapping behavior |
-| `T0-12` | transport + spec | `done` | Wireless Profiled TCP posture declaration and drift checks are in place |
-| `T0-13` | transport + docs | `done` | SMPP adaptation scope is explicitly deferred with fixture-backed guardrails |
-| `T0-14` | cross-layer decision gate | `done` | canonical profile decision record + machine-checkable promotion gate are in place |
-| `T0-08` | transport | `done` | replay-window policy alignment and table-driven fixture closure |
-| `T0-09` | transport | `done` | WSP connectionless primitive-profile matrix and validation is fixture-backed |
-| `T0-16` | spec-processing | `done` | execute immediately after `T0-14` |
+| `W0-05` | wavescript/runtime | `in-progress` | finish host capability plumbing and deterministic timer/dialog traces |
+| `W0-06` | engine/wavescript | `done` | strict structural closure continues in `W1-02` |
+| `W1-06` | wavescript/runtime | `in-progress` | finalize remaining fatal/non-fatal fixture classes and close checklist split |
+| `T0-18` | transport | `done` | retransmission/duplicate/NACK hold-off baseline is closed |
+| `T0-19` | transport | `done` | WDP ingress and UDP mapping baseline is closed |
+| `T0-20` | transport | `done` | WSP registry/header/session baseline is closed |
+| `T0-21` | transport/security | `todo` | next real transport implementation item |
+| `T0-22` | transport | `done` | replay promotion gate is closed and seed-backed |
+| `T0-24` | transport/docs | `done` | seed corpus is formalized and promotion-gated |
+| `T0-25` | docs/spec-processing | `done` | external vector adoption sweep is closed |
+| `T0-26` | transport/browser/docs | `done` | local Kannel readiness gate is explicit and runnable |
+| `M1-16` | maintenance/security | `todo` | next hardening item after active P0/P1 closure |
 
-## Sprint 1 (2026-03-09 to 2026-03-20): Bedrock + Networking Unblockers
+## Sprint 1 Review: Bedrock + Networking Unblockers
 
 ### Goal
 
@@ -73,7 +76,13 @@ Close committed bedrock compliance work while unblocking networking P0 blockers 
 2. Networking unblockers `T0-10`, `T0-11`, `T0-12`, `T0-13`, `T0-14`, `T0-08`, `T0-09`, `T0-16` are `done`.
 3. No P0 ticket is left in `blocked` due to unresolved dependency chain.
 
-## Sprint 2 (2026-03-23 to 2026-04-03): Networking Protocol-Core Blockers
+Current result:
+
+1. Transport/spec unblockers are complete.
+2. `A5-01` is not actually `done`; it remains active on the engine board and should stay in the next sprint.
+3. The original Sprint 1 snapshot overstated closure on at least one engine/runtime item and should not be used as the current source of truth.
+
+## Sprint 2 Review: Networking Protocol-Core Blockers
 
 ### Goal
 
@@ -92,10 +101,15 @@ Close protocol-native transport P0 blockers and make replay harness work executa
 ### Exit Gates
 
 1. `T0-19`, `T0-18`, `T0-20` are `done` with deterministic fixture coverage.
-2. `T0-22` is at least `in-progress` with runnable replay scaffold; target `done` if capacity permits.
+2. `T0-22` is `done`.
 3. Promotion-gate preconditions in `docs/waves/networking-migration-readiness-checklist.md` are updated with current evidence.
 
-## Sprint 3 (2026-04-06 to 2026-04-17): Promotion Hardening + WTLS Boundary
+Current result:
+
+1. Sprint 2 transport goals are complete.
+2. `T0-24`, `T0-25`, and `T0-26` also landed ahead of the original plan.
+
+## Sprint 3 Review: Promotion Hardening + WTLS Boundary
 
 ### Goal
 
@@ -116,6 +130,47 @@ Finalize replay-driven promotion evidence and close explicit WTLS boundary postu
 
 1. Networking promotion gate rule from `docs/waves/NETWORKING_GAP_MASTER.md` is fully satisfiable by committed evidence.
 2. WTLS posture is explicit, default-safe, and test-backed (`no-op` vs minimal active mode).
+
+Current result:
+
+1. `T0-24` and `T0-25` are already complete.
+2. `T0-21` remains the only meaningful open transport/security implementation ticket.
+
+## Next Sprint Recommendation (2026-03-09 onward)
+
+### Goal
+
+Finish the remaining transport/security blocker and close the highest-value active runtime/compliance items before widening scope again.
+
+### Must Complete (P0/P1)
+
+1. `T0-21` WTLS phase boundary and minimal handshake reliability lane.
+2. `A5-01` history entry fidelity follow-up.
+3. `W0-05` timer/dialog integration baseline.
+4. `W1-06` fatal/non-fatal script error taxonomy closure.
+5. `M1-16` transport/engine payload size guardrails.
+
+### Follow-on (only if capacity remains)
+
+1. `W1-02` bytecode structural verification closure.
+2. `M1-08` browser/transport decomposition follow-up.
+3. `W0-08` external function access-control conformance.
+4. `M1-09` frame migration kickoff (`F0` only).
+
+### Concrete commit-order recommendation
+
+1. `feat(wtls): add explicit no-op and minimal active boundary policy`
+2. `test(wtls): add record and handshake replay fixtures`
+3. `feat(engine): preserve request-shaped history entry fidelity`
+4. `feat(wavescript): land timer and dialog host capability baseline`
+5. `fix(engine): close remaining script error taxonomy fixture gaps`
+6. `fix(transport): enforce payload size guardrails before decode/parse`
+
+### Exit Gates
+
+1. `T0-21` moves from `todo` to `done` with mapped fixtures in `SPEC_TEST_COVERAGE`.
+2. `A5-01`, `W0-05`, and `W1-06` are either `done` or split into smaller explicit closure follow-ups.
+3. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
 
 ## Capacity and WIP Rules
 

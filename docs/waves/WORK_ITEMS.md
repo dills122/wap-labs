@@ -71,9 +71,9 @@ Canonical sprint priority rule:
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
 1. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-2. `M1-08` Split high-churn files into boundary modules (engine scope complete; browser/transport follow-ups remain).
-3. `M1-09` Engine-host frame interface migration execution.
-4. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
+2. `M1-08` Split high-churn files into boundary modules (browser/transport follow-up slices only).
+3. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
+4. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -86,14 +86,13 @@ Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
 Priority execution order for networking MVP closure:
 
-1. `T0-19` WDP datagram trait + UDP mapping baseline.
-2. `T0-18` WTP retransmission, duplicate handling, and NACK hold-off policy.
-3. `T0-22` interop replay harness (`CONNECT`/`GET`/`REPLY` + retransmit/duplicate lanes).
-4. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
+1. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
+2. No further protocol-core transport foundation tickets should preempt `T0-21`; `T0-18`, `T0-19`, `T0-20`, `T0-22`, `T0-24`, `T0-25`, and `T0-26` are already closed.
+3. After `T0-21`, networking work should yield to active runtime/compliance and hardening lanes unless a new transport blocker appears.
 
 Sprint policy:
 
-1. Do not promote profile from `gateway-bridged` to `wap-net-core` before `T0-18..T0-22` gates are green.
+1. Do not promote profile from `gateway-bridged` to `wap-net-core` before `T0-18..T0-26` gates are green.
 2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
 3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
 
@@ -665,7 +664,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-21 WTLS phase boundary and minimal handshake reliability lane
 
-1. `Status`: `blocked`
+1. `Status`: `todo`
 2. `Depends On`: `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -693,7 +692,7 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-SEC-004`, `RQ-SEC-005`
 10. `Notes`:
-- Queue-ready; unblock when `T0-14` is `done` and `T0-22` replay gates are stable.
+- Prior `blocked` status is retired: `T0-14` is `done` and `T0-22` replay gates are stable, so this ticket is now the remaining active transport/security implementation item.
 
 ### T0-22 Networking interop replay harness and golden event corpus
 
