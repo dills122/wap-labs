@@ -526,7 +526,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-17 Protocol-adjacent transport context sweep (deferred specs)
 
-1. `Status`: `todo`
+1. `Status`: `in_progress`
 2. `Depends On`: `T0-14`, `T0-16`
 3. `Owner`: `docs`, `transport`
 4. `Files`:
@@ -552,7 +552,11 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRX-001..010` where applicable
 - `RQ-TRN-001..019`
 10. `Notes`:
-- This ticket prevents accidental scope creep from remaining parsed networking adjacent specs.
+- Completed the explicit deferred-family rationale and checklist alignment for `WAP-204*`, `WAP-120*`, `WAP-213*`, and related cache/adjacent messaging families in:
+  - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
+  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+  - `docs/waves/networking-implementation-checklist.md`
+- Remaining acceptance is a scope-lock and verification sweep before moving to `blocked`-to-done criteria (`T0-17`).
 
 ### T0-18 WTP retransmission/NACK hold-off policy extraction and implementation
 

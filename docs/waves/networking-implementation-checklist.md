@@ -117,9 +117,11 @@ Execution priority override (`2026-03-05` regroup):
 
 ## 4) Known adjacent-but-deferred transport context
 
-1. `WAP-204-WAPOverGSMUSSD` and `WAP-204_103` are not in current transport rewrite lane.
-2. `WAP-120-WAPCachingMod` remains out of transport-rewrite scope, tracked in out-of-scope family review.
-3. Bearer adaptation beyond UDP (SMS/packet tunnel) is deferred and should remain in adapter-only modules with explicit not-implemented stubs.
+1. `WAP-204-WAPOverGSMUSSD` and `WAP-204_103` are deferred: transport-rewrite scope is currently protocol-layer only and these docs are bearer-adaptation specific (`docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md` + `T0-14`).
+2. `WAP-120-WAPCachingMod` is deferred: caching-control semantics are out of protocol rewrite scope until a dedicated transport-cache ticket lands (`WAP-227/WAP-231` context reviewed in `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`, locked by `T0-17`).
+3. `WAP-213*` pictogram/display adjuncts are deferred: adjacent rendering/content behavior is UX-adjacent and intentionally excluded from core WSP/WTP/WDP path (`T0-16` canonicalization + `T0-17`).
+4. `WAP-175`, `WAP-227`, `WAP-231`, and `WAP-204` messaging/cache-adjacent families stay out of scope for now because they add profile-adapter behavior not yet required by transport milestones (`T0-14` profile gates + `T0-17` scope lock).
+5. Bearer adaptation beyond UDP (`SMS`/`packet tunnel` variants) is deferred to gateway/adapter modules with explicit `deferred/out-of-scope` flags and not-implemented stubs.
 
 ## 5) Execution alignment with project docs
 
