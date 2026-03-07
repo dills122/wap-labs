@@ -61,8 +61,8 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Complete `T0-14` networking profile decision record and migration gates.
-2. Advance `T0-08` WTP replay-window conformance follow-up after profile-gate record is locked.
+1. Advance `T0-08` WTP replay-window conformance follow-up.
+2. Execute `T0-16` spec queue canonicalization follow-up in parallel with transport fixtures.
 3. Keep `M1-08` active in parallel for transport high-churn file boundary decomposition.
 4. Keep `M1-03` as non-priority downstream generator-consumer follow-up.
 
@@ -81,3 +81,4 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add WSP capability negotiation/bounds fixture lane (`T0-11`)
 - [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)
 - [x] Add SMPP adaptation scope decision guardrail (`T0-13`, deferred posture)
+- [x] Add networking profile decision record + machine-checkable promotion gates (`T0-14`)

@@ -109,6 +109,8 @@ Execution priority override (`2026-03-05` regroup):
    - required tickets and minimum layer status checks before profile promotion.
 2. run a cross-layer contract smoke map with `browser` + `engine-wasm` + `transport-rust`.
 3. publish explicit profile transition decision: current -> target.
+   - canonical record: `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
+   - gate check command: `node scripts/check-networking-profile-gates.mjs`
 4. acceptance:
    - all `T0-08..T0-22` gates with explicit owner and artifact.
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
@@ -125,3 +127,4 @@ Execution priority override (`2026-03-05` regroup):
 2. `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` and `..._ADJACENT_...` are the requirement sources.
 3. `docs/waves/SPEC_TEST_COVERAGE.md` hosts acceptance status and must remain synchronized on every migration gate.
 4. `docs/waves/TECHNICAL_ARCHITECTURE.md` should describe transport profile states before each milestone gate.
+5. `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` is the single canonical profile decision record and rollback source.

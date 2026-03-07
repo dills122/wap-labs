@@ -437,7 +437,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-14 WAP networking profile decision record and migration gates
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-09`, `T0-11`, `T0-12`, `T0-13`
 3. `Owner`: `transport-rust`, `browser`, `engine`
 4. `Files`:
@@ -463,6 +463,9 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: profile migration path has explicit rollback criteria tied to contract stability.
 9. `Spec`:
 - `RQ-TRN-001..019`, `RQ-TRX-001..010`
+10. `Notes`:
+- Canonical decision record added at `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` with explicit current/target profiles, promotion gates, and rollback criteria.
+- Machine-checkable gate validation added via `node scripts/check-networking-profile-gates.mjs` and data file `docs/waves/network-profile-gates.json`.
 
 ### T0-15 WAP caching model baseline and invalidation semantics
 

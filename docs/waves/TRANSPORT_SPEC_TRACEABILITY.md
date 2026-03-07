@@ -280,6 +280,7 @@ Legend:
 - Phase 3 (WSP session and method semantics): `RQ-TRN-010`..`RQ-TRN-015`, `RQ-TRN-018`, `RQ-TRN-019`
 - Phase 4: post-phase integration alignment is blocked on profile gates (`T0-11`, `T0-14`) for any capability/security boundary that impacts runtime behavior.
 - Migration dependency lock: `T0-08`..`T0-14` must be closed before production profile move in `TECHNICAL_ARCHITECTURE.md`.
+- Profile-gate evidence reference (`T0-14`): `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` + `node scripts/check-networking-profile-gates.mjs`.
 
 ## Adjacent transport-context watchlist
 

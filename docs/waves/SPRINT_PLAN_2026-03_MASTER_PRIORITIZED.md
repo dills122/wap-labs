@@ -36,7 +36,7 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 | `T0-11` | transport | `done` | capability merge and bounds fixtures landed with deterministic abort-mapping behavior |
 | `T0-12` | transport + spec | `done` | Wireless Profiled TCP posture declaration and drift checks are in place |
 | `T0-13` | transport + docs | `done` | SMPP adaptation scope is explicitly deferred with fixture-backed guardrails |
-| `T0-14` | cross-layer decision gate | `todo` | complete after `T0-11`, `T0-12`, `T0-13` |
+| `T0-14` | cross-layer decision gate | `done` | canonical profile decision record + machine-checkable promotion gate are in place |
 | `T0-08` | transport | `todo` | sequence after `T0-14` for replay-window policy alignment |
 | `T0-16` | spec-processing | `todo` | execute immediately after `T0-14` |
 
