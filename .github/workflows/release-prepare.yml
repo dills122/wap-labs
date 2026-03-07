@@ -1,0 +1,66 @@
+name: Release Prepare
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Semver release version to freeze"
+        required: true
+        type: string
+      source_ref:
+        description: "Source ref to branch from"
+        required: false
+        default: "main"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    name: Create Release Branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source ref
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Validate target version
+        run: node -e 'const v = process.argv[1]; if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(v)) { process.exit(1); }' "${{ inputs.version }}"
+
+      - name: Ensure release branch does not already exist
+        run: |
+          git fetch origin --prune
+          branch="release/v${{ inputs.version }}"
+          if git ls-remote --exit-code --heads origin "${branch}" >/dev/null 2>&1; then
+            echo "Release branch ${branch} already exists"
+            exit 1
+          fi
+
+      - name: Sync managed versions
+        run: node scripts/set-release-version.mjs "${{ inputs.version }}"
+
+      - name: Verify managed versions
+        run: node scripts/check-release-version.mjs
+
+      - name: Commit release version bump when needed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add VERSION package.json browser/package.json browser/frontend/package.json browser/src-tauri/Cargo.toml browser/src-tauri/tauri.conf.json engine-wasm/engine/Cargo.toml engine-wasm/host-sample/package.json marketing-site/package.json transport-rust/Cargo.toml wml-server/package.json wml-server/package-lock.json
+            git commit -m "chore(release): cut v${{ inputs.version }}"
+          fi
+
+      - name: Push immutable release branch
+        run: |
+          branch="release/v${{ inputs.version }}"
+          git push origin "HEAD:refs/heads/${branch}"

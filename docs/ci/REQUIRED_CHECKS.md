@@ -3,6 +3,7 @@
 This document defines the intended required GitHub branch-protection checks for `main`.
 
 For a full workflow reference (triggers, jobs, caches, deployment, and troubleshooting), see `docs/ci/CI_SETUP.md`.
+For immutable release-branch governance, see `docs/ci/RELEASE_BRANCH_RULESET.md`.
 
 ## Required workflow checks
 
