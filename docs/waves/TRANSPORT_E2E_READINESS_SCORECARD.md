@@ -29,38 +29,41 @@ Two roll-up scores are tracked:
 1. `transport-to-kannel`: `transport-rust` -> local Kannel -> local WML server
 2. `browser-to-kannel`: browser/host -> transport -> local Kannel -> local WML server
 
-Maximum score per lane: `8.0`
+Applicable gates:
+
+1. `transport-to-kannel`: `G1..G6` (`6.0` max)
+2. `browser-to-kannel`: `G1..G8` (`8.0` max)
 
 ## Current score
 
 ### Transport-to-Kannel
 
-Score: `5.5 / 8.0` (`69%`)
+Score: `5.5 / 6.0` (`92%`)
 
 ### Browser-to-Kannel
 
-Score: `3.5 / 8.0` (`44%`)
+Score: `6.0 / 8.0` (`75%`)
 
 ## Gate table
 
 | Gate | Description | Transport-to-Kannel | Browser-to-Kannel | Evidence |
 | --- | --- | --- | --- | --- |
 | `G1` | Local Kannel + WML stack boots reliably with one command | `1.0` | `1.0` | `make up`, `make status`, [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md) |
-| `G2` | Real transport request can fetch through local Kannel | `1.0` | `0.5` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), `make smoke-transport-wap` |
-| `G3` | Assertions validate deck identity and normalized engine input, not just HTTP success | `0.5` | `0.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs) currently checks `ok/status/content-type/base_url/<wml>` only |
-| `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `0.0` | `0.0` | local environment supports it, but no promoted deterministic test currently asserts it |
-| `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `0.5` | `make smoke-transport-wap`, manual workflow in [docs/ci/CI_SETUP.md](/Users/dsteele/repos/wap-labs/docs/ci/CI_SETUP.md) |
-| `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `0.5` | `0.5` | GitHub workflow docs mention log dump on failure, but local test artifacts are not yet normalized |
-| `G7` | Browser path runs against real Kannel via host transport rather than mocks | `0.0` | `0.5` | browser transport contract exists, but no canonical real-gateway browser E2E test is promoted |
-| `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `0.0` | `0.5` | browser smoke coverage exists internally, but not yet against local Kannel as a standard gate |
+| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/lib.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/lib.rs), `make smoke-transport-wap` |
+| `G3` | Assertions validate deck identity and normalized engine input, not just HTTP success | `1.0` | `0.5` | transport smoke now asserts deck/card markers for root + login decks; browser host smoke asserts engine load + render markers |
+| `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `0.5` | `0.0` | promoted smoke now covers multi-deck root -> login fetch through Kannel, but not full auth/session flow |
+| `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `1.0` | `make smoke-transport-wap` now runs both transport and browser-host smoke checks |
+| `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](/Users/dsteele/repos/wap-labs/scripts/transport-wap-smoke.sh) now dumps Kannel status, WML health, and docker compose logs on failure |
+| `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored real-gateway smoke in [browser/src-tauri/src/lib.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/lib.rs) |
+| `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `0.5` | browser host smoke validates engine render text from real Kannel-backed fetch, but not a full frontend UI harness |
 
 ## Interpretation
 
 ### What the score means now
 
 1. `transport-rust` is close to having a credible local Kannel smoke gate.
-2. browser-level real-gateway E2E is not close enough yet to treat as a dependable regression signal.
-3. protocol-core replay readiness (`T0-22`) is ahead of real gateway/browser E2E readiness.
+2. browser-level real-gateway E2E now exists at the host/engine layer, but still stops short of a frontend UI gate.
+3. protocol-core replay readiness (`T0-22`) remains ahead of full browser E2E realism, but the gap is smaller.
 
 ### What this score does not mean
 
@@ -82,15 +85,14 @@ Score: `3.5 / 8.0` (`44%`)
 
 ### Main gaps
 
-1. the transport smoke test is still ignored/manual rather than a default deterministic gate
-2. smoke assertions are too shallow for confidence in deck identity and end-to-end flow correctness
-3. no promoted multi-step Kannel-backed scenario is currently asserted
-4. no canonical browser -> host -> transport -> Kannel -> WML server E2E test is currently tracked as a required gate
-5. failure artifacts are not yet normalized into one standard local test output/report path
+1. the Kannel smoke lane is still ignored/manual rather than part of default local Rust test execution
+2. multi-step coverage is limited to deterministic multi-deck GET, not full register/login/session POST flow
+3. browser real-gateway coverage currently stops at Tauri host + engine render, not frontend UI automation
+4. failure diagnostics are console-first; they are not yet persisted into a structured artifact path
 
 ## Recommended next threshold targets
 
-### Threshold A: credible transport E2E smoke (`>= 7.0 / 8.0`)
+### Threshold A: credible transport E2E smoke (`>= 5.0 / 6.0`)
 
 Required moves:
 

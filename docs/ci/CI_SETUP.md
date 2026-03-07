@@ -149,6 +149,9 @@ Triggers:
 Behavior:
 - starts Docker services (`kannel`, `wml-server`)
 - runs `make smoke-transport-wap`
+- executes both:
+  - transport-rust ignored Kannel smoke tests
+  - browser host ignored Kannel smoke test
 - dumps service logs on failure
 - always tears down stack
 
