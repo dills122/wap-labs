@@ -75,11 +75,10 @@ Next execution block is architecture hardening across all active libraries befor
 3. `M1-09` Engine-host frame interface migration execution.
 4. `M1-03` Engine API generator design/bootstrap (non-priority track in this sprint).
 
-Recently completed in this sprint:
+Completed maintenance tickets are tracked on the maintenance board and archive:
 
-1. `M1-15` Engine parser recursion guardrails (untrusted deck DoS hardening) (`P0`).
-2. `M1-14` Browser host boundary hardening (CSP + DOM injection sinks) (`P0`).
-3. `M1-17` Network fetch destination policy guardrails (SSRF/probing reduction) (`P1`).
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- `docs/waves/MAINTENANCE_WORK_ITEMS_ARCHIVE.md`
 
 Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
