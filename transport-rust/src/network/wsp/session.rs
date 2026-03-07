@@ -271,11 +271,29 @@ mod tests {
         mode: String,
         decode_policy: String,
         expected_error: String,
+        invalid_pdu_type: Option<String>,
     }
 
     #[derive(Debug, Deserialize)]
     #[serde(tag = "kind", rename_all = "camelCase")]
     enum SessionFixtureValue {
+        ConnectRequest {
+            version_major: u8,
+            version_minor: u8,
+            client_message_size: Option<u32>,
+            server_message_size: Option<u32>,
+            max_outstanding_requests: Option<u16>,
+            headers: Vec<HeaderFixtureValue>,
+        },
+        ConnectReply {
+            version_major: u8,
+            version_minor: u8,
+            session_id: u16,
+            client_message_size: Option<u32>,
+            server_message_size: Option<u32>,
+            max_outstanding_requests: Option<u16>,
+            headers: Vec<HeaderFixtureValue>,
+        },
         MethodRequest {
             method: String,
             uri: String,
@@ -379,6 +397,45 @@ mod tests {
 
     fn fixture_event(mode: WspSessionMode, value: SessionFixtureValue) -> WspSessionEvent {
         match value {
+            SessionFixtureValue::ConnectRequest {
+                version_major,
+                version_minor,
+                client_message_size,
+                server_message_size,
+                max_outstanding_requests,
+                headers,
+            } => WspSessionEvent::ConnectRequest(WspConnectRequest {
+                mode,
+                version_major,
+                version_minor,
+                capabilities: WspCapabilityProposal {
+                    client_message_size,
+                    server_message_size,
+                    max_outstanding_requests,
+                },
+                headers: fixture_headers(headers),
+            }),
+            SessionFixtureValue::ConnectReply {
+                version_major,
+                version_minor,
+                session_id,
+                client_message_size,
+                server_message_size,
+                max_outstanding_requests,
+                headers,
+            } => WspSessionEvent::ConnectReply(WspConnectReply {
+                mode,
+                version_major,
+                version_minor,
+                session_id,
+                negotiated_capabilities: NegotiatedWspCapabilities {
+                    mode: crate::wsp_capability::WspMode::ConnectionOriented,
+                    client_message_size,
+                    server_message_size,
+                    max_outstanding_requests,
+                },
+                headers: fixture_headers(headers),
+            }),
             SessionFixtureValue::MethodRequest {
                 method,
                 uri,
@@ -451,6 +508,23 @@ mod tests {
                 "truncated" => assert_eq!(
                     error,
                     WspSessionEventDecodeError::Pdu(WspPduDecodeError::Truncated),
+                    "case '{}' mismatch",
+                    case.name
+                ),
+                "invalid-pdu-for-mode" => assert_eq!(
+                    error,
+                    WspSessionEventDecodeError::InvalidPduForMode {
+                        mode: mode(&case.mode),
+                        pdu_type: match case
+                            .invalid_pdu_type
+                            .as_deref()
+                            .expect("invalid-pdu-for-mode cases require invalidPduType")
+                        {
+                            "Connect" => "Connect",
+                            "ConnectReply" => "ConnectReply",
+                            other => panic!("unsupported invalid PDU type: {other}"),
+                        },
+                    },
                     "case '{}' mismatch",
                     case.name
                 ),

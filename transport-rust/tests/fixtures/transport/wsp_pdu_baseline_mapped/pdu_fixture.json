@@ -1,6 +1,49 @@
 {
   "successCases": [
     {
+      "name": "connect-text-header-and-capabilities",
+      "decodePolicy": "strict",
+      "encodePolicy": "strict",
+      "encoded": [1, 1, 4, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 16, 126, 88, 45, 83, 101, 115, 115, 105, 111, 110, 0, 105, 110, 105, 116, 0],
+      "expected": {
+        "kind": "connect",
+        "version_major": 1,
+        "version_minor": 4,
+        "client_message_size": 2048,
+        "server_message_size": 4096,
+        "max_outstanding_requests": 2,
+        "headers": [
+          {
+            "name": "X-Session",
+            "value": "init",
+            "encoding": { "kind": "text" }
+          }
+        ]
+      }
+    },
+    {
+      "name": "connect-reply-binary-header-and-capabilities",
+      "decodePolicy": "strict-v14",
+      "encodePolicy": "strict-v14",
+      "encoded": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 5, 67, 49, 46, 52, 0],
+      "expected": {
+        "kind": "connectReply",
+        "version_major": 1,
+        "version_minor": 4,
+        "session_id": 7,
+        "client_message_size": 2048,
+        "server_message_size": 4096,
+        "max_outstanding_requests": 2,
+        "headers": [
+          {
+            "name": "Encoding-Version",
+            "value": "1.4",
+            "encoding": { "kind": "binary", "page": 1 }
+          }
+        ]
+      }
+    },
+    {
       "name": "get-content-type-binary-header",
       "decodePolicy": "strict-v14",
       "encodePolicy": "strict-v14",
@@ -67,6 +110,18 @@
       "decodePolicy": "strict",
       "encoded": [96, 47, 0, 10, 17, 116, 101, 120, 116, 0],
       "expectedError": "truncated"
+    },
+    {
+      "name": "truncated-connect-header-block",
+      "decodePolicy": "strict",
+      "encoded": [1, 1, 4, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 2, 126],
+      "expectedError": "truncated"
+    },
+    {
+      "name": "connect-reply-trailing-bytes",
+      "decodePolicy": "strict-v14",
+      "encoded": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 5, 67, 49, 46, 52, 0, 170],
+      "expectedError": "trailing-bytes"
     }
   ]
 }

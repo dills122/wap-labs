@@ -383,6 +383,23 @@ mod tests {
     #[derive(Debug, Deserialize)]
     #[serde(tag = "kind", rename_all = "camelCase")]
     enum PduFixtureValue {
+        Connect {
+            version_major: u8,
+            version_minor: u8,
+            client_message_size: Option<u32>,
+            server_message_size: Option<u32>,
+            max_outstanding_requests: Option<u16>,
+            headers: Vec<HeaderFixtureValue>,
+        },
+        ConnectReply {
+            version_major: u8,
+            version_minor: u8,
+            session_id: u16,
+            client_message_size: Option<u32>,
+            server_message_size: Option<u32>,
+            max_outstanding_requests: Option<u16>,
+            headers: Vec<HeaderFixtureValue>,
+        },
         MethodGet {
             uri: String,
             headers: Vec<HeaderFixtureValue>,
@@ -484,6 +501,43 @@ mod tests {
 
     fn fixture_pdu(value: PduFixtureValue) -> WspPdu {
         match value {
+            PduFixtureValue::Connect {
+                version_major,
+                version_minor,
+                client_message_size,
+                server_message_size,
+                max_outstanding_requests,
+                headers,
+            } => WspPdu::Connect(WspConnectPdu {
+                version_major,
+                version_minor,
+                capabilities: WspCapabilityProposal {
+                    client_message_size,
+                    server_message_size,
+                    max_outstanding_requests,
+                },
+                headers: fixture_headers(headers),
+            }),
+            PduFixtureValue::ConnectReply {
+                version_major,
+                version_minor,
+                session_id,
+                client_message_size,
+                server_message_size,
+                max_outstanding_requests,
+                headers,
+            } => WspPdu::ConnectReply(WspConnectReplyPdu {
+                version_major,
+                version_minor,
+                session_id,
+                negotiated_capabilities: NegotiatedWspCapabilities {
+                    mode: WspMode::ConnectionOriented,
+                    client_message_size,
+                    server_message_size,
+                    max_outstanding_requests,
+                },
+                headers: fixture_headers(headers),
+            }),
             PduFixtureValue::MethodGet { uri, headers } => WspPdu::MethodGet(WspMethodGetPdu {
                 uri,
                 headers: fixture_headers(headers),
