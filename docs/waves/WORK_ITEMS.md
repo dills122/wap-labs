@@ -310,7 +310,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-09 WSP connectionless primitive-profile conformance
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`
 4. `Files`:

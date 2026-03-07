@@ -38,6 +38,7 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 | `T0-13` | transport + docs | `done` | SMPP adaptation scope is explicitly deferred with fixture-backed guardrails |
 | `T0-14` | cross-layer decision gate | `done` | canonical profile decision record + machine-checkable promotion gate are in place |
 | `T0-08` | transport | `done` | replay-window policy alignment and table-driven fixture closure |
+| `T0-09` | transport | `done` | WSP connectionless primitive-profile matrix and validation is fixture-backed |
 | `T0-16` | spec-processing | `todo` | execute immediately after `T0-14` |
 
 ## Sprint 1 (2026-03-09 to 2026-03-20): Bedrock + Networking Unblockers
@@ -58,7 +59,8 @@ Close committed bedrock compliance work while unblocking networking P0 blockers 
 8. `T0-13` SMPP adaptation scope gate and fixture baseline.
 9. `T0-14` networking profile decision record and migration gates.
 10. `T0-08` WTP replay-window conformance follow-up.
-11. `T0-16` spec queue canonicalization follow-up.
+11. `T0-09` WSP connectionless primitive-profile conformance.
+12. `T0-16` spec queue canonicalization follow-up.
 
 ### Stretch (only if all P0 are green)
 
@@ -68,7 +70,7 @@ Close committed bedrock compliance work while unblocking networking P0 blockers 
 ### Exit Gates
 
 1. Bedrock tickets `A5-01`, `R0-02`, `R0-03`, `W0-06` are `done` with mapped tests in `docs/waves/SPEC_TEST_COVERAGE.md`.
-2. Networking unblockers `T0-10`, `T0-11`, `T0-12`, `T0-13`, `T0-14`, `T0-08`, `T0-16` are `done`.
+2. Networking unblockers `T0-10`, `T0-11`, `T0-12`, `T0-13`, `T0-14`, `T0-08`, `T0-09`, `T0-16` are `done`.
 3. No P0 ticket is left in `blocked` due to unresolved dependency chain.
 
 ## Sprint 2 (2026-03-23 to 2026-04-03): Networking Protocol-Core Blockers
