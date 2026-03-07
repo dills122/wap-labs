@@ -32,12 +32,12 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 | `R0-02` | engine + browser + transport | `done` | closed with deterministic host/runtime request-fidelity coverage |
 | `R0-03` | engine + browser | `done` | closed with history/context fidelity integration evidence |
 | `W0-06` | engine/wavescript | `done` | baseline structural verification gates landed; strict closure continues in `W1-02` |
-| `T0-10` | transport | `todo` | ready after `T0-05` + `T0-07` (closed) |
-| `T0-11` | transport | `todo` | ready after `T0-09`; include in same dependency bundle |
-| `T0-12` | transport + spec | `todo` | ready after `T0-01` (closed) |
-| `T0-13` | transport + docs | `todo` | ready after `T0-01` (closed) |
-| `T0-14` | cross-layer decision gate | `todo` | complete after `T0-11`, `T0-12`, `T0-13` |
-| `T0-08` | transport | `todo` | sequence after `T0-14` for replay-window policy alignment |
+| `T0-10` | transport | `done` | assigned-number fixture and unknown-policy lane is now regression-backed |
+| `T0-11` | transport | `done` | capability merge and bounds fixtures landed with deterministic abort-mapping behavior |
+| `T0-12` | transport + spec | `done` | Wireless Profiled TCP posture declaration and drift checks are in place |
+| `T0-13` | transport + docs | `done` | SMPP adaptation scope is explicitly deferred with fixture-backed guardrails |
+| `T0-14` | cross-layer decision gate | `done` | canonical profile decision record + machine-checkable promotion gate are in place |
+| `T0-08` | transport | `done` | replay-window policy alignment and table-driven fixture closure |
 | `T0-16` | spec-processing | `todo` | execute immediately after `T0-14` |
 
 ## Sprint 1 (2026-03-09 to 2026-03-20): Bedrock + Networking Unblockers

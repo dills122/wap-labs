@@ -61,10 +61,9 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Execute committed sprint-critical transport ticket: `T0-04` request-policy plumbing baseline.
-2. Follow immediately with `T0-05` and `T0-06` to lock UA header and URI/charset conformance boundaries.
-3. Keep `M1-08` active in parallel for transport high-churn file boundary decomposition.
-4. Keep `M1-03` as non-priority downstream generator-consumer follow-up.
+1. Execute `T0-16` spec queue canonicalization follow-up in parallel with transport fixtures.
+2. Keep `M1-08` active in parallel for transport high-churn file boundary decomposition.
+3. Keep `M1-03` as non-priority downstream generator-consumer follow-up.
 
 ## Current checklist (planning/execution)
 
@@ -74,6 +73,12 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add CI guardrails for contract drift checks (`M1-06`)
 - [ ] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
 - [x] Add cache/reload request-policy conformance plumbing (`T0-04`)
+- [x] Add deterministic WTP replay-window fixtures (`T0-08`)
 - [x] Add UA capability header conformance path (`T0-05`)
 - [x] Add URI-length and charset boundary conformance fixtures (`T0-06`)
 - [ ] Add WBXML token/literal compatibility conformance fixtures (`T0-07`)
+- [x] Add WSP assigned-number registry fixture lane (`T0-10`)
+- [x] Add WSP capability negotiation/bounds fixture lane (`T0-11`)
+- [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)
+- [x] Add SMPP adaptation scope decision guardrail (`T0-13`, deferred posture)
+- [x] Add networking profile decision record + machine-checkable promotion gates (`T0-14`)

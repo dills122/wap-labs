@@ -1,0 +1,115 @@
+{
+  "responderPolicy": {
+    "replayWindow": 4,
+    "cacheMode": "cache",
+    "duplicateAssumption": "guaranteed"
+  },
+  "responderCases": [
+    {
+      "name": "cache-mode-replay-hit",
+      "incomingTid": 5,
+      "expected": "replay-cached-terminal",
+      "policy": {
+        "replayWindow": 4,
+        "cacheMode": "cache",
+        "duplicateAssumption": "guaranteed"
+      },
+      "state": {
+        "lastTid": 7,
+        "seenTids": [5, 4, 3]
+      }
+    },
+    {
+      "name": "cache-mode-out-of-window",
+      "incomingTid": 12,
+      "expected": "drop-stale",
+      "policy": {
+        "replayWindow": 4,
+        "cacheMode": "cache",
+        "duplicateAssumption": "guaranteed"
+      },
+      "state": {
+        "lastTid": 6,
+        "seenTids": [6, 5, 4]
+      }
+    },
+    {
+      "name": "cache-mode-in-window-forward",
+      "incomingTid": 9,
+      "expected": "accept",
+      "policy": {
+        "replayWindow": 4,
+        "cacheMode": "cache",
+        "duplicateAssumption": "guaranteed"
+      },
+      "state": {
+        "lastTid": 7,
+        "seenTids": [5, 4, 3]
+      }
+    },
+    {
+      "name": "no-cache-no-guarantee-duplicate",
+      "incomingTid": 5,
+      "expected": "drop-duplicate",
+      "policy": {
+        "replayWindow": 4,
+        "cacheMode": "no-cache",
+        "duplicateAssumption": "not-guaranteed"
+      },
+      "state": {
+        "lastTid": 7,
+        "seenTids": [5, 4, 3]
+      }
+    }
+  ],
+  "initiatorPolicy": {
+    "maximumPacketLifetime": 4
+  },
+  "initiatorCases": [
+    {
+      "name": "initiator-first-tid-is-accepted",
+      "incomingTid": 7,
+      "expected": "accept",
+      "state": {
+        "lastTid": null,
+        "stepsInWindow": 0
+      }
+    },
+    {
+      "name": "initiator-duplicate-retransmission",
+      "incomingTid": 10,
+      "expected": "duplicate-retransmission",
+      "state": {
+        "lastTid": 10,
+        "stepsInWindow": 0
+      }
+    },
+    {
+      "name": "initiator-window-hit-reject",
+      "incomingTid": 21,
+      "expected": "out-of-replay-window",
+      "state": {
+        "lastTid": 10,
+        "stepsInWindow": 0
+      }
+    },
+    {
+      "name": "initiator-wrap-safe-accept",
+      "incomingTid": 1,
+      "expected": "accept",
+      "state": {
+        "lastTid": 16380,
+        "stepsInWindow": 5
+      }
+    },
+    {
+      "name": "initiator-restart-required",
+      "incomingTid": 12,
+      "expected": "require-restart",
+      "state": {
+        "lastTid": 10,
+        "stepsInWindow": 8
+      }
+    }
+  ]
+}

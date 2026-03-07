@@ -1,0 +1,9 @@
+name = "SMPP adaptation scope decision"
+description = "Declares and regression-checks WAP-159 SMPP adaptation scope as deferred for current Waves MVP."
+mode = "mapped"
+work_items = ["T0-13"]
+spec_items = ["RQ-TRX-010"]
+testing_ac = [
+  "Scope decision is explicit (`deferred`) before any SMPP implementation work.",
+  "Deferred guardrails are fixture-backed to prevent silent scope drift."
+]

@@ -1,0 +1,9 @@
+name = "Wireless Profiled TCP posture declaration"
+description = "Declares and regression-checks Waves WAP-225 TCP optimization posture (implemented/delegated/deferred) for MVP."
+mode = "mapped"
+work_items = ["T0-12"]
+spec_items = ["RQ-TRX-009"]
+testing_ac = [
+  "Transport profile explicitly categorizes RFC baseline, SACK, split-mode, end-to-end mode, and window-scale threshold posture.",
+  "Fixture-backed policy check fails on silent status drift across declared TCP optimization decisions."
+]

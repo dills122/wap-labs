@@ -1,0 +1,20 @@
+{
+  "currentProfile": "gateway-bridged",
+  "targetProfile": "wap-net-core",
+  "requiredForPromotion": ["T0-17", "T0-18", "T0-19", "T0-20", "T0-21", "T0-22"],
+  "contractFiles": [
+    "browser/contracts/transport.ts",
+    "engine-wasm/contracts/wml-engine.ts"
+  ],
+  "fixtureLanes": {
+    "gateway-bridged": [
+      "transport-rust/tests/kannel_smoke.rs",
+      "transport-rust/tests/fixture_harness.rs"
+    ],
+    "wap-net-core": [
+      "transport-rust/src/wsp_registry.rs",
+      "transport-rust/src/wsp_capability.rs",
+      "transport-rust/tests/network/interop/README.md"
+    ]
+  }
+}

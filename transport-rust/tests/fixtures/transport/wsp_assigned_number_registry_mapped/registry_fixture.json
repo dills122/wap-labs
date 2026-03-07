@@ -1,0 +1,40 @@
+{
+  "pdu_types": [
+    { "code": 1, "name": "Connect" },
+    { "code": 2, "name": "ConnectReply" },
+    { "code": 64, "name": "Get" },
+    { "code": 96, "name": "Post" },
+    { "code": 128, "name": "DataFragment" }
+  ],
+  "abort_reasons": [
+    { "code": 224, "name": "PROTOERR" },
+    { "code": 225, "name": "DISCONNECT" },
+    { "code": 228, "name": "CONGESTION" },
+    { "code": 231, "name": "MOREXCEEDED" },
+    { "code": 234, "name": "USERREQ" }
+  ],
+  "well_known_parameters": [
+    { "code": 0, "name": "Q" },
+    { "code": 1, "name": "Charset" },
+    { "code": 9, "name": "Multipart-Related-Type" },
+    { "code": 16, "name": "Secure" },
+    { "code": 25, "name": "Start" },
+    { "code": 29, "name": "Path" }
+  ],
+  "header_field_names": [
+    { "code": 0, "name": "Accept" },
+    { "code": 17, "name": "Content-Type" },
+    { "code": 36, "name": "Referer" },
+    { "code": 41, "name": "User-Agent" },
+    { "code": 47, "name": "X-Wap-Application-Id" },
+    { "code": 67, "name": "Encoding-Version" },
+    { "code": 71, "name": "Cache-Control-1.4" }
+  ],
+  "unknown_cases": [
+    { "category": "pduType", "code": 16, "policy": "strict", "expected": "error" },
+    { "category": "abortReason", "code": 239, "policy": "strict", "expected": "error" },
+    { "category": "wellKnownParameter", "code": 4, "policy": "strict", "expected": "error" },
+    { "category": "headerFieldName", "code": 46, "policy": "strict", "expected": "error" },
+    { "category": "headerFieldName", "code": 127, "policy": "header-lenient", "expected": "ignored" }
+  ]
+}

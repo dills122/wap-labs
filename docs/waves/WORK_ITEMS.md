@@ -286,7 +286,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-08 WTP TID/MPL replay-window conformance follow-up
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-03`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -333,7 +333,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-10 WSP assigned-number registry conformance fixtures
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-05`, `T0-07`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -353,10 +353,12 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: no parser side-effect state is introduced by registry table lookup paths.
 9. `Spec`:
 - `RQ-TRN-014`, `RQ-TRN-018`
+10. `Notes`:
+- Landed as additive registry fixture slice in `transport-rust/src/wsp_registry.rs` with fixture-backed round-trip/unknown-policy tests (`transport-rust/tests/fixtures/transport/wsp_assigned_number_registry_mapped/registry_fixture.json`).
 
 ### T0-11 WSP capability-bound and negotiation-limit enforcement
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-09`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -376,10 +378,13 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: cap-limit behavior is tested under both connection-mode and connectionless profiles.
 9. `Spec`:
 - `RQ-TRN-013`, `RQ-TRN-019`
+10. `Notes`:
+- Additive capability policy/limit slice landed in `transport-rust/src/wsp_capability.rs` with fixture corpus at `transport-rust/tests/fixtures/transport/wsp_capability_bounds_mapped/capability_fixture.json`.
+- Current closure provides deterministic merge + bound enforcement (`MRUEXCEEDED`, `MOREXCEEDED`) for both connection-oriented and connectionless modes; deeper protocol session integration remains in later WSP lanes.
 
 ### T0-12 Wireless Profiled TCP compatibility profile declaration
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`, `spec`
 4. `Files`:
@@ -399,10 +404,13 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: docs + ticket mapping for TCP posture is versioned and linked from `TECHNICAL_ARCHITECTURE`.
 9. `Spec`:
 - `RQ-TRX-009`
+10. `Notes`:
+- Landed as policy declaration + drift guard in `transport-rust/src/tcp_profile.rs` with fixture `transport-rust/tests/fixtures/transport/wireless_profiled_tcp_policy_mapped/policy_fixture.json`.
+- Current posture explicitly marks TCP baseline/SACK/window-scale/end-to-end as delegated to host TCP stack and split-mode as deferred pending profile gate decisions.
 
 ### T0-13 SMPP adaptation scope gate and fixture baseline
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -423,10 +431,13 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: in-scope branch has end-to-end payload-type fixture path before any parser/code activation.
 9. `Spec`:
 - `RQ-TRX-010`
+10. `Notes`:
+- Scope decision is `deferred` for Waves MVP and is now regression-guarded in `transport-rust/src/smpp_profile.rs`.
+- Fixture-backed policy assertion lives at `transport-rust/tests/fixtures/transport/smpp_adaptation_scope_mapped/scope_fixture.json`.
 
 ### T0-14 WAP networking profile decision record and migration gates
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-09`, `T0-11`, `T0-12`, `T0-13`
 3. `Owner`: `transport-rust`, `browser`, `engine`
 4. `Files`:
@@ -452,6 +463,9 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: profile migration path has explicit rollback criteria tied to contract stability.
 9. `Spec`:
 - `RQ-TRN-001..019`, `RQ-TRX-001..010`
+10. `Notes`:
+- Canonical decision record added at `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` with explicit current/target profiles, promotion gates, and rollback criteria.
+- Machine-checkable gate validation added via `node scripts/check-networking-profile-gates.mjs` and data file `docs/waves/network-profile-gates.json`.
 
 ### T0-15 WAP caching model baseline and invalidation semantics
 

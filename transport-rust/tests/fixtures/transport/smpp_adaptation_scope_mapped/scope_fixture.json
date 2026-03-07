@@ -1,0 +1,8 @@
+{
+  "scope": "deferred",
+  "guardrails": [
+    "No data_sm transport mapping is enabled in transport-rust.",
+    "No WCMP-over-SMPP payload-type parsing is enabled in transport-rust.",
+    "Any future SMPP activation requires explicit T0-13 follow-on ticketing before code-path enablement."
+  ]
+}

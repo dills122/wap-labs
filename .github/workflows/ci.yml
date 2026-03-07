@@ -132,6 +132,9 @@ jobs:
       - name: Workspace format check
         run: pnpm format:check:node
 
+      - name: Networking profile gate check
+        run: node scripts/check-networking-profile-gates.mjs
+
   rust-engine:
     name: Rust Engine
     needs: [changes]

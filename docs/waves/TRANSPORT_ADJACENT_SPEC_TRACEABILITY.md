@@ -148,9 +148,9 @@ Legend:
 - Spec:
   - `WAP-225` section 5, 5.3, 5.8, 6, 7
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Transport profile declares which TCP optimizations are enabled.
-  - [ ] SACK + mode behavior are represented in compatibility tests or explicit dependency declarations.
+  - Evidence: [x] `transport-rust/src/tcp_profile.rs`, `transport-rust/tests/fixtures/transport/wireless_profiled_tcp_policy_mapped/policy_fixture.json`; command: `cd transport-rust && cargo test --lib tcp_profile::tests::wireless_profiled_tcp_posture_matches_declared_policy_fixture`
+  - [x] Transport profile declares which TCP optimizations are enabled, delegated, or deferred.
+  - [x] SACK + mode behavior are represented in explicit dependency declarations with fixture-backed drift checks.
 
 ### RQ-TRX-010 WDP/WCMP over SMPP adaptation profile (gateway-side)
 
@@ -160,15 +160,15 @@ Legend:
 - Spec:
   - `WAP-159` section 5.1.4, 5.1.5, 5.1.6, 5.2.1
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] `transport-rust/src/smpp_profile.rs`, `transport-rust/tests/fixtures/transport/smpp_adaptation_scope_mapped/scope_fixture.json`; command: `cd transport-rust && cargo test --lib smpp_profile::tests::smpp_adaptation_scope_matches_declared_fixture`
   - [ ] If SMPP adaptation is in scope for gateway integration, `data_sm` parameter mapping is fixed in adapter tests.
-  - [ ] If SMPP adaptation is out-of-scope, docs explicitly mark it deferred and non-blocking for Waves MVP.
+  - [x] SMPP adaptation is currently out-of-scope for Waves MVP and explicitly marked deferred with guardrails.
 
 ## Boundary notes for Waves
 
 - These requirements primarily impact `transport-rust/` gateway compatibility and policy decisions, not the core deterministic WML runtime loop.
 - `WAP-223` cookie-proxy behavior is relevant when HTTP-state delegation to network proxies is supported; otherwise mark as explicit non-goal.
-- `WAP-159` is gateway adaptation-specific (SMPP tunnel path) and is deferred until `T0-13` scope decision.
+- `WAP-159` is gateway adaptation-specific (SMPP tunnel path) and is currently deferred for Waves MVP by explicit `T0-13` scope decision.
 
 ## Scope policy alignment
 
@@ -178,6 +178,6 @@ Legend:
 
 ## Migration coupling
 
-- `RQ-TRX-009` remains profile declaration-only until `T0-12` records TCP posture explicitly.
-- `RQ-TRX-010` requires explicit `T0-13` scope selection before any implementation-path behavior is introduced.
+- `RQ-TRX-009` posture declaration is recorded via `T0-12`; protocol-level implementation beyond delegated/deferred posture remains gated by `T0-14` profile decisions.
+- `RQ-TRX-010` scope is explicitly `deferred` in `T0-13`; any future in-scope activation requires a follow-on ticket with adapter fixtures before code-path enablement.
 - `T0-17` remains the final scope lock so adjacent behavior cannot enter profile migration without explicit ticketing.
