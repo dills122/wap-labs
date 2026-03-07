@@ -3,6 +3,10 @@ use lowband_transport_rust::network::wsp::{
     decode_wsp_session_event, WspEncodingVersion, WspHeaderBlockDecodePolicy, WspMethod,
     WspSessionEvent, WspSessionMode,
 };
+use lowband_transport_rust::network::wtp::retransmission::{
+    decide_retransmission, WtpBackoffKind, WtpRetransmissionDecision, WtpRetransmissionEvent,
+    WtpRetransmissionPolicy, WtpRetransmissionState,
+};
 use serde::Deserialize;
 use std::fs;
 use std::net::IpAddr;
@@ -18,7 +22,8 @@ struct ReplayFixture {
 #[serde(rename_all = "camelCase")]
 struct ReplayCase {
     name: String,
-    datagrams: Vec<ReplayDatagram>,
+    datagrams: Option<Vec<ReplayDatagram>>,
+    retransmission_steps: Option<Vec<ReplayRetransmissionStep>>,
     expected_events: Vec<ExpectedReplayEvent>,
 }
 
@@ -33,11 +38,55 @@ struct ReplayDatagram {
     payload: Vec<u8>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayRetransmissionStep {
+    event: ReplayRetransmissionEvent,
+    policy: ReplayRetransmissionPolicy,
+    state: ReplayRetransmissionState,
+}
+
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 enum ReplayDirection {
     Uplink,
     Downlink,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+enum ReplayRetransmissionEventKind {
+    TimerExpired,
+    AckObserved,
+    Reset,
+    NackObserved,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+struct ReplayRetransmissionEvent {
+    kind: ReplayRetransmissionEventKind,
+    elapsed_ms: Option<u64>,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+struct ReplayRetransmissionPolicy {
+    max_retries: u8,
+    initial_delay_ms: u64,
+    max_delay_ms: u64,
+    backoff_kind: WtpBackoffKind,
+    backoff_step_ms: u64,
+    sar_enabled: bool,
+    nack_holdoff_ms: u64,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+struct ReplayRetransmissionState {
+    attempts: u8,
+    last_nack_elapsed_ms: Option<u64>,
+    completed: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -62,6 +111,13 @@ enum ExpectedReplayEvent {
         status_code: u16,
         body_len: usize,
     },
+    Retransmission {
+        decision: String,
+        attempt: Option<u8>,
+        delay_ms: u64,
+        attempts: u8,
+        completed: bool,
+    },
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -84,6 +140,13 @@ enum ReplayEvent {
         mode: WspSessionMode,
         status_code: u16,
         body_len: usize,
+    },
+    Retransmission {
+        decision: String,
+        attempt: Option<u8>,
+        delay_ms: u64,
+        attempts: u8,
+        completed: bool,
     },
 }
 
@@ -158,39 +221,103 @@ fn decode_policy_for_mode(mode: WspSessionMode) -> WspHeaderBlockDecodePolicy {
     }
 }
 
+fn to_retransmission_policy(input: ReplayRetransmissionPolicy) -> WtpRetransmissionPolicy {
+    WtpRetransmissionPolicy {
+        max_retries: input.max_retries,
+        initial_delay_ms: input.initial_delay_ms,
+        max_delay_ms: input.max_delay_ms,
+        backoff_kind: input.backoff_kind,
+        backoff_step_ms: input.backoff_step_ms,
+        sar_enabled: input.sar_enabled,
+        nack_holdoff_ms: input.nack_holdoff_ms,
+    }
+}
+
+fn to_retransmission_state(input: ReplayRetransmissionState) -> WtpRetransmissionState {
+    WtpRetransmissionState {
+        attempts: input.attempts,
+        last_nack_elapsed_ms: input.last_nack_elapsed_ms,
+        completed: input.completed,
+    }
+}
+
+fn to_retransmission_event(input: ReplayRetransmissionEvent) -> WtpRetransmissionEvent {
+    match input.kind {
+        ReplayRetransmissionEventKind::TimerExpired => WtpRetransmissionEvent::TimerExpired,
+        ReplayRetransmissionEventKind::AckObserved => WtpRetransmissionEvent::AckObserved,
+        ReplayRetransmissionEventKind::Reset => WtpRetransmissionEvent::Reset,
+        ReplayRetransmissionEventKind::NackObserved => WtpRetransmissionEvent::NackObserved {
+            elapsed_ms: input
+                .elapsed_ms
+                .expect("nack-observed replay events require elapsedMs"),
+        },
+    }
+}
+
+fn retransmission_decision_name(decision: WtpRetransmissionDecision) -> (&'static str, Option<u8>) {
+    match decision {
+        WtpRetransmissionDecision::Send(attempt) => ("send", Some(attempt)),
+        WtpRetransmissionDecision::HoldOff(_) => ("holdoff", None),
+        WtpRetransmissionDecision::RetryExhausted => ("retry-exhausted", None),
+        WtpRetransmissionDecision::Completed => ("completed", None),
+    }
+}
+
 fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
     let mut out = Vec::new();
 
-    for input in &case.datagrams {
-        let datagram = to_datagram(input);
-        let (mode, service_port) = mode_for_datagram(&datagram)
-            .unwrap_or_else(|| panic!("case '{}' uses no known WDP service port", case.name));
+    if let Some(datagrams) = &case.datagrams {
+        for input in datagrams {
+            let datagram = to_datagram(input);
+            let (mode, service_port) = mode_for_datagram(&datagram)
+                .unwrap_or_else(|| panic!("case '{}' uses no known WDP service port", case.name));
 
-        out.push(ReplayEvent::Datagram {
-            direction: input.direction,
-            mode,
-            service_port,
-            payload_len: datagram.payload.len(),
-        });
-
-        let session_event =
-            decode_wsp_session_event(&datagram.payload, mode, decode_policy_for_mode(mode))
-                .unwrap_or_else(|error| panic!("case '{}' WSP decode failed: {error}", case.name));
-
-        match session_event {
-            WspSessionEvent::MethodRequest(request) => out.push(ReplayEvent::MethodRequest {
+            out.push(ReplayEvent::Datagram {
                 direction: input.direction,
-                mode: request.mode,
-                method: request.method,
-                uri: request.uri,
-                body_len: request.body.len(),
-            }),
-            WspSessionEvent::MethodResult(result) => out.push(ReplayEvent::MethodResult {
-                direction: input.direction,
-                mode: result.mode,
-                status_code: result.status_code,
-                body_len: result.body.len(),
-            }),
+                mode,
+                service_port,
+                payload_len: datagram.payload.len(),
+            });
+
+            let session_event =
+                decode_wsp_session_event(&datagram.payload, mode, decode_policy_for_mode(mode))
+                    .unwrap_or_else(|error| {
+                        panic!("case '{}' WSP decode failed: {error}", case.name)
+                    });
+
+            match session_event {
+                WspSessionEvent::MethodRequest(request) => out.push(ReplayEvent::MethodRequest {
+                    direction: input.direction,
+                    mode: request.mode,
+                    method: request.method,
+                    uri: request.uri,
+                    body_len: request.body.len(),
+                }),
+                WspSessionEvent::MethodResult(result) => out.push(ReplayEvent::MethodResult {
+                    direction: input.direction,
+                    mode: result.mode,
+                    status_code: result.status_code,
+                    body_len: result.body.len(),
+                }),
+            }
+        }
+    }
+
+    if let Some(steps) = &case.retransmission_steps {
+        for step in steps {
+            let policy = to_retransmission_policy(step.policy);
+            let state = to_retransmission_state(step.state);
+            let event = to_retransmission_event(step.event);
+            let (decision, next_state, trace) = decide_retransmission(&policy, &state, event);
+            let (decision_name, attempt) = retransmission_decision_name(decision);
+
+            out.push(ReplayEvent::Retransmission {
+                decision: decision_name.to_string(),
+                attempt,
+                delay_ms: trace.delay_ms,
+                attempts: next_state.attempts,
+                completed: next_state.completed,
+            });
         }
     }
 
@@ -251,6 +378,19 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
                 mode: expected_mode(mode),
                 status_code: *status_code,
                 body_len: *body_len,
+            },
+            ExpectedReplayEvent::Retransmission {
+                decision,
+                attempt,
+                delay_ms,
+                attempts,
+                completed,
+            } => ReplayEvent::Retransmission {
+                decision: decision.clone(),
+                attempt: *attempt,
+                delay_ms: *delay_ms,
+                attempts: *attempts,
+                completed: *completed,
             },
         })
         .collect()
