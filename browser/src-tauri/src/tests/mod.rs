@@ -1,4 +1,4 @@
-pub(super) use super::{bundled_wbxml_resource_relpath, fetch_deck, health};
+pub(super) use super::{fetch_deck, health};
 pub(super) use crate::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineKey, HandleKeyRequest, LoadDeckContextRequest,
     LoadDeckRequest, NavigateToCardRequest, ScriptDialogRequestSnapshot,
@@ -203,3 +203,4 @@ fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
 mod engine_flow;
 mod engine_wrappers;
 mod fetch_commands;
+mod tauri_commands;

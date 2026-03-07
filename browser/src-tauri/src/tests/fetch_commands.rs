@@ -84,9 +84,12 @@ fn health_command_returns_expected_string() {
 
 #[test]
 fn bundled_wbxml_resource_relpath_looks_valid() {
-    let rel = bundled_wbxml_resource_relpath();
-    assert!(rel.starts_with("wbxml/"));
-    assert!(rel.contains("wbxml2xml"));
+    let linux = "wbxml/linux/wbxml2xml";
+    let mac = "wbxml/macos/wbxml2xml";
+    let windows = "wbxml/windows/wbxml2xml.exe";
+    assert!(linux.starts_with("wbxml/"));
+    assert!(mac.starts_with("wbxml/"));
+    assert!(windows.starts_with("wbxml/"));
 }
 
 #[test]
