@@ -1,0 +1,56 @@
+{
+  "cases": [
+    {
+      "name": "connectionless_get_reply_roundtrip",
+      "datagrams": [
+        {
+          "direction": "uplink",
+          "srcAddr": "10.0.0.10",
+          "dstAddr": "10.0.0.20",
+          "srcPort": 49152,
+          "dstPort": 9200,
+          "payload": [64, 47, 100, 101, 99, 107, 46, 119, 109, 108, 0, 17, 116, 101, 120, 116, 47, 118, 110, 100, 46, 119, 97, 112, 46, 119, 109, 108, 0]
+        },
+        {
+          "direction": "downlink",
+          "srcAddr": "10.0.0.20",
+          "dstAddr": "10.0.0.10",
+          "srcPort": 9200,
+          "dstPort": 49152,
+          "payload": [4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62]
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "datagram",
+          "direction": "uplink",
+          "mode": "connectionless",
+          "service_port": 9200,
+          "payload_len": 29
+        },
+        {
+          "kind": "methodRequest",
+          "direction": "uplink",
+          "mode": "connectionless",
+          "method": "get",
+          "uri": "/deck.wml",
+          "body_len": 0
+        },
+        {
+          "kind": "datagram",
+          "direction": "downlink",
+          "mode": "connectionless",
+          "service_port": 9200,
+          "payload_len": 15
+        },
+        {
+          "kind": "methodResult",
+          "direction": "downlink",
+          "mode": "connectionless",
+          "status_code": 200,
+          "body_len": 6
+        }
+      ]
+    }
+  ]
+}
