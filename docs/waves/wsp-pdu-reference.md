@@ -54,6 +54,13 @@ Important: parsers are pure and should return structured types with all offset/r
 
 - WSP uses tokenized headers/parameters with assigned-number tables (Tables 34/35/38/39 in OMA WSP 1.0).
 - Header and content-type encoding should follow the specified `uintvar` and assignment strategies.
+- Header code page `1` is the default page at the start of each header block.
+- Header code page shifts use the explicit sequence `0x7F <page>`.
+- Default transport policy in this repo is strict: unknown tokens and unsupported extension pages reject deterministically.
+- Optional header-lenient profile may ignore unsupported extension-page tokens and fall back to textual header encoding for extension headers.
+- If the peer omits `Encoding-version`, assume binary support is `1.2` or lower.
+- If a header requires a higher binary encoding version than the negotiated peer version, send it in text form.
+- If a received binary header uses an unsupported encoding version or unsupported extension page, the deterministic transport status output is `400` with an `Encoding-version` response header describing supported versions; for unsupported extension pages, the response omits the version value for that page.
 
 Required codec contract:
 
@@ -63,6 +70,14 @@ Required codec contract:
 - `encode_header(field, value) -> bytes`
 - `decode_header(bytes) -> field/value`
 - `validate_header(field, value) -> Result<(), Error>`
+
+Current transport-rust baseline for this lane:
+
+- `transport-rust/src/network/wsp/header_block.rs` provides the immediate pure header-block decode/encode surface used to apply header token, code-page, and `Encoding-version` policy before full PDU framing is implemented.
+- `transport-rust/src/network/wsp/pdu.rs` now provides a minimal pure PDU surface for `Get`, `Post`, and `Reply` over that header-block layer.
+- `transport-rust/src/network/wsp/session.rs` classifies those PDUs into narrow WSP method request/result events with explicit connectionless vs connection-oriented mode tags for replay scaffolding.
+- `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json` carries the replayable baseline corpus for successful `Get`/`Post`/`Reply` framing and deterministic decode failures.
+- `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json` carries replayable session-method classification cases that `T0-22` can promote into interop replay fixtures.
 
 ## 6) Connection-mode behavior (typical)
 
@@ -110,6 +125,5 @@ pub enum WspPdu {
 
 ## 10) Deferred (spec-accurate completion)
 
-- final confirmation of custom header-code-page behavior,
 - complete confirmed-push timing and delayed-ack policy,
 - full appendix-C race-condition handling for incomplete state transitions.

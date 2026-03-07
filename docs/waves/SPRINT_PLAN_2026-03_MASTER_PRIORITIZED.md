@@ -83,7 +83,7 @@ Close protocol-native transport P0 blockers and make replay harness work executa
 
 1. `T0-19` WDP datagram trait + UDP port mapping baseline.
 2. `T0-18` WTP retransmission/NACK hold-off policy implementation.
-3. `T0-20` WSP header registry completion and unknown-token policy.
+3. `T0-20` WSP header registry completion and unknown-token policy. `done`
 
 ### Follow-on (same sprint if capacity allows)
 

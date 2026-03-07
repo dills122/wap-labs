@@ -11,9 +11,8 @@ Track unresolved policy choices where implementation behavior must remain explic
 
 1. WSP unknown-token policy default
 - Scope: `RQ-TRN-018`
-- Options: strict reject vs permissive ignore by profile.
-- Current lane: `T0-20`
-- Needed decision: default profile behavior and error code mapping.
+- Status: resolved in `T0-20`
+- Decision: default profile behavior is strict reject for unknown tokens and unsupported extension code pages; header-lenient profile may ignore unsupported extension-page tokens and use textual fallback for extension header encoding.
 
 2. WSP suspend/resume default posture
 - Scope: `RQ-TRN-011`

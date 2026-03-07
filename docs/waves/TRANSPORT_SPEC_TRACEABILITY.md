@@ -156,7 +156,7 @@ Legend:
   - `WAP-230` Appendix D.1
   - SCRs: `WSP-C-001`, `WSP-CL-*`, `WSP-CO-*` root mode requirements
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: `transport-rust/src/network/wsp/session.rs`, `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json`; command: `cd transport-rust && cargo test --lib`
   - [ ] Waves transport profile explicitly states active WSP mode(s).
   - [ ] Mode selection is consistent with available WDP/WTP capabilities.
 
@@ -182,7 +182,7 @@ Legend:
   - `WAP-230` 6.3.3, 6.4.2, 7.1.3/7.2, 8.2.3
   - SCR anchors: `WSP-CO-C-017..022`, `WSP-CL-C-004..020` (+ server-side counterparts)
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: `transport-rust/src/network/wsp/pdu.rs`, `transport-rust/src/network/wsp/session.rs`, `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json`, `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json`; command: `cd transport-rust && cargo test --lib`
   - [ ] Invoke/result/abort primitive sequencing is covered by integration tests.
   - [ ] Multi-transaction overlap does not corrupt transaction identity mapping.
 
@@ -208,7 +208,7 @@ Legend:
   - `WAP-230` 8.4.2.70 and related header encoding sections
   - SCR anchors: `WSP-CO-C-014`, `WSP-CO-C-020`, `WSP-CL-C-020` (+ server equivalents)
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: `transport-rust/src/network/wsp/encoding_version.rs`, `transport-rust/src/network/wsp/header_block.rs`, `transport-rust/src/network/wsp/pdu.rs`, `transport-rust/src/network/wsp/session.rs`, `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json`, `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json`; command: `cd transport-rust && cargo test --lib`
   - [ ] Encoding-version negotiation and fallback behavior is deterministic.
   - [ ] Unsupported encoding path yields error/status behavior defined by spec.
 

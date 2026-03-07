@@ -88,9 +88,8 @@ Priority execution order for networking MVP closure:
 
 1. `T0-19` WDP datagram trait + UDP mapping baseline.
 2. `T0-18` WTP retransmission, duplicate handling, and NACK hold-off policy.
-3. `T0-20` WSP registry/token completion and unknown-token behavior.
-4. `T0-22` interop replay harness (`CONNECT`/`GET`/`REPLY` + retransmit/duplicate lanes).
-5. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
+3. `T0-22` interop replay harness (`CONNECT`/`GET`/`REPLY` + retransmit/duplicate lanes).
+4. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
 
 Sprint policy:
 
@@ -561,7 +560,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-18 WTP retransmission/NACK hold-off policy extraction and implementation
 
-1. `Status`: `blocked`
+1. `Status`: `done`
 2. `Depends On`: `T0-08`, `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -589,11 +588,11 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-TRN-007`, `RQ-TRN-008`, `RQ-TRN-016`
 10. `Notes`:
-- Queue-ready; unblock when `T0-08` and `T0-14` are `done`.
+- Completed with retransmission, duplicate-cache, and NACK hold-off fixture evidence; this is the mandatory WTP policy baseline consumed by `T0-22`.
 
 ### T0-19 WDP datagram trait + UDP port mapping baseline
 
-1. `Status`: `blocked`
+1. `Status`: `done`
 2. `Depends On`: `T0-14`, `T0-16`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -621,17 +620,23 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRN-004`
 10. `Notes`:
-- Queue-ready; unblock when `T0-14` and `T0-16` are `done`.
+- Completed with protocol-native datagram trait, UDP service-port mapping for `9200..9203`, and SAR baseline evidence; this is the mandatory WDP ingress surface consumed by `T0-22`.
 
 ### T0-20 WSP header registry completion and unknown-token policy
 
-1. `Status`: `blocked`
+1. `Status`: `done`
 2. `Depends On`: `T0-10`, `T0-11`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
 - `transport-rust/src/network/wsp/header_registry.rs`
 - `transport-rust/src/network/wsp/encoder.rs`
 - `transport-rust/src/network/wsp/decoder.rs`
+- `transport-rust/src/network/wsp/header_block.rs`
+- `transport-rust/src/network/wsp/pdu.rs`
+- `transport-rust/src/network/wsp/session.rs`
+- `transport-rust/tests/fixtures/transport/wsp_assigned_number_registry_mapped/`
+- `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/`
+- `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/`
 - `docs/waves/wsp-pdu-reference.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
@@ -643,10 +648,12 @@ Completed `B0` through `B3` tickets are archived in:
 - Token roundtrip fixtures for core header set.
 - Unknown token/page fixtures for strict and permissive policy modes.
 - Code-page shift fixtures for multi-page header blocks.
+- Minimal `Get`/`Post`/`Reply` PDU and session-method classification fixtures.
 - WBXML/token-stream fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-009`, `WBK-FX-010`.
 7. `Accept`:
 - WSP encoding/decoding behavior is table-driven and reproducible.
 - Unknown token handling is documented, deterministic, and profile-aware.
+- Narrow method request/result session parsing is available for replay harness promotion.
 8. `Migration gates`:
 - Done-1: registry source of truth is versioned and linked to WSP docs.
 - Done-2: unsupported encoding/page behavior has deterministic status output.
@@ -654,7 +661,7 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-TRN-014`, `RQ-TRN-018`
 10. `Notes`:
-- Queue-ready; unblock when `T0-10` and `T0-11` are `done`.
+- Closed on `codex/t0-20-wsp-header-registry` with registry, encoding-version, header-block, minimal PDU, and session-method fixture evidence; `T0-22` now consumes this surface instead of raw byte parsing.
 
 ### T0-21 WTLS phase boundary and minimal handshake reliability lane
 

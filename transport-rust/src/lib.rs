@@ -1714,37 +1714,30 @@ mod tests {
 
     #[test]
     fn transport_with_env_var_locked_restores_existing_value() {
+        const TEST_ENV: &str = "WAP_TEST_WBXML2XML_BIN_RESTORE";
         let _guard = env_lock().lock().expect("env lock should succeed");
-        std::env::set_var("WBXML2XML_BIN", "old-value");
+        std::env::set_var(TEST_ENV, "old-value");
         drop(_guard);
 
-        with_env_var_locked("WBXML2XML_BIN", "new-value", || {
-            assert_eq!(
-                std::env::var("WBXML2XML_BIN").ok().as_deref(),
-                Some("new-value")
-            );
+        with_env_var_locked(TEST_ENV, "new-value", || {
+            assert_eq!(std::env::var(TEST_ENV).ok().as_deref(), Some("new-value"));
         });
-        assert_eq!(
-            std::env::var("WBXML2XML_BIN").ok().as_deref(),
-            Some("old-value")
-        );
-        std::env::remove_var("WBXML2XML_BIN");
+        assert_eq!(std::env::var(TEST_ENV).ok().as_deref(), Some("old-value"));
+        std::env::remove_var(TEST_ENV);
     }
 
     #[test]
     fn transport_with_env_removed_locked_restores_existing_value() {
+        const TEST_ENV: &str = "WAP_TEST_DISABLE_LIBWBXML_RESTORE";
         let _guard = env_lock().lock().expect("env lock should succeed");
-        std::env::set_var("LOWBAND_DISABLE_LIBWBXML", "old-value");
+        std::env::set_var(TEST_ENV, "old-value");
         drop(_guard);
 
-        with_env_removed_locked("LOWBAND_DISABLE_LIBWBXML", || {
-            assert!(std::env::var("LOWBAND_DISABLE_LIBWBXML").is_err());
+        with_env_removed_locked(TEST_ENV, || {
+            assert!(std::env::var(TEST_ENV).is_err());
         });
-        assert_eq!(
-            std::env::var("LOWBAND_DISABLE_LIBWBXML").ok().as_deref(),
-            Some("old-value")
-        );
-        std::env::remove_var("LOWBAND_DISABLE_LIBWBXML");
+        assert_eq!(std::env::var(TEST_ENV).ok().as_deref(), Some("old-value"));
+        std::env::remove_var(TEST_ENV);
     }
 
     #[test]
