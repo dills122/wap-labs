@@ -86,9 +86,9 @@ Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
 Priority execution order for networking MVP closure:
 
-1. `T0-21` WTLS phase boundary and minimal active lane (kept disabled by default).
-2. No further protocol-core transport foundation tickets should preempt `T0-21`; `T0-18`, `T0-19`, `T0-20`, `T0-22`, `T0-24`, `T0-25`, and `T0-26` are already closed.
-3. After `T0-21`, networking work should yield to active runtime/compliance and hardening lanes unless a new transport blocker appears.
+1. Protocol-core networking closure is complete through `T0-26`, including `T0-21`.
+2. No further protocol-core transport foundation tickets should preempt active runtime/compliance and hardening lanes unless a new transport blocker appears.
+3. Future networking work should focus on deferred security depth, corpus realism, or profile-promotion blockers only.
 
 Sprint policy:
 
@@ -664,7 +664,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-21 WTLS phase boundary and minimal handshake reliability lane
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -692,7 +692,7 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-SEC-004`, `RQ-SEC-005`
 10. `Notes`:
-- Prior `blocked` status is retired: `T0-14` is `done` and `T0-22` replay gates are stable, so this ticket is now the remaining active transport/security implementation item.
+- Closed on `codex/t0-21-wtls-boundary` with explicit disabled-vs-active-minimal WTLS boundary, record/alert/handshake module split, and fixture-backed record plus handshake reliability coverage. Full certificate and crypto parity remain deferred beyond this baseline.
 
 ### T0-22 Networking interop replay harness and golden event corpus
 

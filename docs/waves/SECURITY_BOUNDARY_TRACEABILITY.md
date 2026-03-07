@@ -82,11 +82,17 @@ Legend:
   - `WAP-199` (legacy WTLS baseline context)
   - `WAP-261` core + Appendix A static conformance groups (`WTLS-C-*`, `WTLS-S-*`)
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Security implementation matrix states which WTLS feature families are:
+  - Evidence: [x] `transport-rust/src/network/wtls/record.rs`, `transport-rust/src/network/wtls/alerts.rs`, `transport-rust/src/network/wtls/handshake.rs`; fixtures `transport-rust/tests/fixtures/transport/wtls_record_boundary_mapped/record_fixture.json` and `transport-rust/tests/fixtures/transport/wtls_handshake_reliability_mapped/handshake_fixture.json`; command: `cd transport-rust && cargo test --lib`
+  - [x] Security implementation matrix states which WTLS feature families are:
     - simulated
     - delegated to modern TLS
     - deferred for parity
+
+Implementation note:
+- Current baseline is explicit:
+  - simulated: record envelope parsing/serialization, alert framing, narrow handshake message framing
+  - delegated/reused: retransmission and duplicate-message reliability policy via existing WTP logic
+  - deferred: cipher/MAC/key-exchange/session crypto and full conformance matrices
 
 ### RQ-SEC-005 WTLS server certificate constraints from SIN
 
@@ -95,9 +101,14 @@ Legend:
 - Spec:
   - `WAP-261_100` section 3.3 updates to 10.5.1.2 and 10.5.2
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] `transport-rust/src/network/wtls/handshake.rs` enforces deterministic handshake framing and failure surfaces for the current minimal-active lane; command: `cd transport-rust && cargo test --lib`
   - [ ] Certificate-selection logic (or simulation logic) follows SIN rule and exception handling.
-  - [ ] Mismatch path yields deterministic handshake failure behavior.
+  - [x] Mismatch path yields deterministic handshake failure behavior.
+
+Implementation note:
+- The current `T0-21` baseline does not implement certificate parsing or trust evaluation.
+- Instead it makes the boundary explicit and default-disabled, so certificate-selection behavior cannot activate implicitly.
+- SIN-driven certificate constraints remain deferred to the full active security lane, but the boundary and failure posture are now deterministic and test-backed.
 
 ### RQ-SEC-006 End-to-end secure proxy model behavior
 

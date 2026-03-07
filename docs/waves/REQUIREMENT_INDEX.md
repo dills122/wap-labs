@@ -26,8 +26,8 @@ Primary references:
 | `RQ-SEC-001` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
 | `RQ-SEC-002` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
 | `RQ-SEC-003` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
-| `RQ-SEC-004` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
-| `RQ-SEC-005` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
+| `RQ-SEC-004` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `partial` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
+| `RQ-SEC-005` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `partial` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
 | `RQ-SEC-006` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
 | `RQ-SPKI-001` | transport-rust + security policy/docs | deferred security lane (policy-only now) | `planned/deferred` | `SECURITY_PKI_SPEC_TRACEABILITY.md` |
 | `RQ-SPKI-002` | transport-rust + security policy/docs | deferred security lane (policy-only now) | `planned/deferred` | `SECURITY_PKI_SPEC_TRACEABILITY.md` |
