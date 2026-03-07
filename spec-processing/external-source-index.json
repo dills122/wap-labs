@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "updated": "2026-03-06",
+  "entries": [
+    {
+      "id": "supplemental-wap-slide-deck",
+      "title": "WAP.pdf",
+      "path": "spec-processing/source-material/WAP.pdf",
+      "status": "present",
+      "sourceClass": "heuristic",
+      "family": "supplemental-context",
+      "origin": "local supplemental PDF",
+      "licenseStatus": "unreviewed-local-copy",
+      "ingestedAt": "2026-03-06",
+      "mappedRequirementIds": ["RQ-TRN-010", "RQ-TRN-012", "RQ-TRN-014"],
+      "implementationLanes": ["wsp", "profile-docs"],
+      "behaviorNotes": [
+        {
+          "id": "supplemental-wap-slide-deck-connect-version-context",
+          "status": "recorded",
+          "summary": "Use only as contextual support when validating Connect/Encoding-version terminology around minimal WSP handshake fixtures.",
+          "mappedRequirementIds": ["RQ-TRN-014"],
+          "implementationLanes": ["wsp"]
+        }
+      ],
+      "notes": "Supplemental slide-deck context only; does not override canonical transport specs."
+    },
+    {
+      "id": "supplemental-wiley-tech-brief",
+      "title": "The Wireless Application Protocol (Wiley Tech Brief)",
+      "path": "spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf",
+      "status": "present",
+      "sourceClass": "heuristic",
+      "family": "supplemental-context",
+      "origin": "local supplemental PDF",
+      "licenseStatus": "unreviewed-local-copy",
+      "ingestedAt": "2026-03-06",
+      "mappedRequirementIds": ["RQ-TRN-001", "RQ-TRN-006", "RQ-TRN-010"],
+      "implementationLanes": ["wdp", "wtp", "wsp"],
+      "behaviorNotes": [
+        {
+          "id": "supplemental-wiley-tech-brief-datagram-layering-context",
+          "status": "recorded",
+          "summary": "Treat as historical context when reasoning about WDP datagram carriage and WTP transaction layering, without creating new transport requirements.",
+          "mappedRequirementIds": ["RQ-TRN-001", "RQ-TRN-006"],
+          "implementationLanes": ["wdp", "wtp"]
+        }
+      ],
+      "notes": "Historical context source; useful for terminology and interop intuition, not normative requirement creation."
+    },
+    {
+      "id": "supplemental-emulator-notes",
+      "title": "wap_emulator_spec_notes.md",
+      "path": "spec-processing/external-parsed/wap_emulator_spec_notes.md",
+      "status": "present",
+      "sourceClass": "heuristic",
+      "family": "supplemental-context",
+      "origin": "local parsed notes",
+      "licenseStatus": "generated-local-notes",
+      "ingestedAt": "2026-03-06",
+      "mappedRequirementIds": ["RQ-TRN-007", "RQ-TRN-012", "RQ-TRN-014"],
+      "implementationLanes": ["wtp", "wsp", "replay"],
+      "behaviorNotes": [
+        {
+          "id": "supplemental-emulator-notes-replay-candidate",
+          "status": "recorded",
+          "summary": "Use as a candidate replay-fixture triage aid for WTP duplicate handling and WSP request/reply paths only after confirming against local requirements.",
+          "mappedRequirementIds": ["RQ-TRN-007", "RQ-TRN-012"],
+          "implementationLanes": ["wtp", "replay"]
+        }
+      ],
+      "notes": "LLM-parsed orientation notes; only valid as a candidate-fixture and triage aid."
+    },
+    {
+      "id": "interop-kannel-networking-sources",
+      "title": "Kannel networking implementation references",
+      "path": null,
+      "status": "planned",
+      "sourceClass": "interop-reference",
+      "family": "kannel",
+      "origin": "future external ingestion",
+      "licenseStatus": "pending-review",
+      "ingestedAt": null,
+      "mappedRequirementIds": ["RQ-TRN-005", "RQ-TRN-007", "RQ-TRN-010", "RQ-TRN-012"],
+      "implementationLanes": ["wtp", "wsp", "interop-replay"],
+      "behaviorNotes": [
+        {
+          "id": "interop-kannel-duplicate-and-connect-targets",
+          "status": "planned",
+          "summary": "When local Kannel references are ingested, extract duplicate-transaction and session-connect behaviors and map them to existing replay and session requirements only.",
+          "mappedRequirementIds": ["RQ-TRN-007", "RQ-TRN-012"],
+          "implementationLanes": ["wtp", "wsp", "interop-replay"]
+        }
+      ],
+      "notes": "Target family for external ingestion. No local Kannel protocol source snapshot is checked in yet."
+    },
+    {
+      "id": "interop-wireshark-dissectors",
+      "title": "Wireshark WAP dissector references",
+      "path": null,
+      "status": "planned",
+      "sourceClass": "interop-reference",
+      "family": "wireshark",
+      "origin": "future external ingestion",
+      "licenseStatus": "pending-review",
+      "ingestedAt": null,
+      "mappedRequirementIds": ["RQ-TRN-001", "RQ-TRN-007", "RQ-TRN-012", "RQ-TRN-014", "RQ-SEC-004"],
+      "implementationLanes": ["wdp", "wtp", "wsp", "wtls", "interop-replay"],
+      "behaviorNotes": [
+        {
+          "id": "interop-wireshark-packet-shape-targets",
+          "status": "planned",
+          "summary": "When dissector snapshots are ingested, use them to validate packet-shape interpretation for WDP/WTP/WSP/WTLS without changing local requirement text.",
+          "mappedRequirementIds": ["RQ-TRN-001", "RQ-TRN-012", "RQ-SEC-004"],
+          "implementationLanes": ["wdp", "wsp", "wtls", "interop-replay"]
+        }
+      ],
+      "notes": "Target family for external ingestion. No local packet-dissector source snapshot is checked in yet."
+    }
+  ]
+}
