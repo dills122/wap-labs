@@ -1,0 +1,95 @@
+{
+  "negotiationCases": [
+    {
+      "mode": "connection-oriented",
+      "client": {
+        "clientMessageSize": 2048,
+        "serverMessageSize": 1024,
+        "maxOutstandingRequests": 8
+      },
+      "server": {
+        "clientMessageSize": 1536,
+        "serverMessageSize": 2048,
+        "maxOutstandingRequests": 4
+      },
+      "expected": {
+        "clientMessageSize": 1536,
+        "serverMessageSize": 1024,
+        "maxOutstandingRequests": 4
+      }
+    },
+    {
+      "mode": "connectionless",
+      "client": {
+        "clientMessageSize": 1200,
+        "maxOutstandingRequests": 2
+      },
+      "server": {
+        "serverMessageSize": 900,
+        "maxOutstandingRequests": 1
+      },
+      "expected": {
+        "clientMessageSize": 1200,
+        "serverMessageSize": 900,
+        "maxOutstandingRequests": 1
+      }
+    }
+  ],
+  "boundCases": [
+    {
+      "mode": "connection-oriented",
+      "negotiated": {
+        "clientMessageSize": 1536,
+        "serverMessageSize": 1024,
+        "maxOutstandingRequests": 4
+      },
+      "inboundMessageBytes": 1024,
+      "outstandingRequests": 4,
+      "expected": "ok"
+    },
+    {
+      "mode": "connection-oriented",
+      "negotiated": {
+        "clientMessageSize": 1536,
+        "serverMessageSize": 1024,
+        "maxOutstandingRequests": 4
+      },
+      "inboundMessageBytes": 1600,
+      "outstandingRequests": 2,
+      "expected": "MRUEXCEEDED"
+    },
+    {
+      "mode": "connection-oriented",
+      "negotiated": {
+        "clientMessageSize": 1536,
+        "serverMessageSize": 1024,
+        "maxOutstandingRequests": 4
+      },
+      "inboundMessageBytes": 1000,
+      "outstandingRequests": 6,
+      "expected": "MOREXCEEDED"
+    },
+    {
+      "mode": "connectionless",
+      "negotiated": {
+        "clientMessageSize": 1200,
+        "serverMessageSize": 900,
+        "maxOutstandingRequests": 1
+      },
+      "inboundMessageBytes": 1300,
+      "outstandingRequests": 1,
+      "expected": "MRUEXCEEDED"
+    },
+    {
+      "mode": "connectionless",
+      "negotiated": {
+        "clientMessageSize": 1200,
+        "serverMessageSize": 900,
+        "maxOutstandingRequests": 1
+      },
+      "inboundMessageBytes": 700,
+      "outstandingRequests": 2,
+      "expected": "MOREXCEEDED"
+    }
+  ]
+}

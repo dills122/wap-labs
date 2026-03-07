@@ -358,7 +358,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-11 WSP capability-bound and negotiation-limit enforcement
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-09`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -378,6 +378,9 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: cap-limit behavior is tested under both connection-mode and connectionless profiles.
 9. `Spec`:
 - `RQ-TRN-013`, `RQ-TRN-019`
+10. `Notes`:
+- Additive capability policy/limit slice landed in `transport-rust/src/wsp_capability.rs` with fixture corpus at `transport-rust/tests/fixtures/transport/wsp_capability_bounds_mapped/capability_fixture.json`.
+- Current closure provides deterministic merge + bound enforcement (`MRUEXCEEDED`, `MOREXCEEDED`) for both connection-oriented and connectionless modes; deeper protocol session integration remains in later WSP lanes.
 
 ### T0-12 Wireless Profiled TCP compatibility profile declaration
 

@@ -1,0 +1,10 @@
+name = "WSP capability negotiation and bounds fixtures"
+description = "Deterministic min/intersection capability negotiation and bound-enforcement fixtures for connection-oriented and connectionless profiles."
+mode = "mapped"
+work_items = ["T0-11"]
+spec_items = ["RQ-TRN-013", "RQ-TRN-019"]
+testing_ac = [
+  "Given client/server capability proposals, negotiated values use deterministic min/intersection merge for numeric limits.",
+  "Given inbound message-size and outstanding-request exceedance, deterministic MRUEXCEEDED or MOREXCEEDED bound errors are surfaced.",
+  "Connection-oriented and connectionless modes both exercise capability-bound behavior with deterministic outcomes."
+]

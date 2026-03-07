@@ -11,6 +11,7 @@ mod gateway;
 mod request_meta;
 mod responses;
 mod wbxml;
+pub mod wsp_capability;
 pub mod wsp_registry;
 
 use gateway::build_gateway_request;
