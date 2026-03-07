@@ -60,27 +60,31 @@ fn transport_log_event_accepts_blank_or_missing_request_id() {
 
 #[test]
 fn transport_build_gateway_request_maps_wap_url_and_headers() {
-    let headers = HashMap::new();
-    let result = build_gateway_request("wap://example.test/home.wml?x=1", "GET", &headers)
-        .expect("gateway mapping should succeed");
-    let (gateway_url, mapped_headers) = result;
-    assert_eq!(gateway_url, "http://localhost:13002/home.wml?x=1");
-    assert!(
-        !mapped_headers.contains_key("Host"),
-        "transport should not inject Host header for gateway mapping"
-    );
-    assert_eq!(
-        mapped_headers.get("X-Wap-Target-Url"),
-        Some(&"wap://example.test/home.wml?x=1".to_string())
-    );
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let headers = HashMap::new();
+        let result = build_gateway_request("wap://example.test/home.wml?x=1", "GET", &headers)
+            .expect("gateway mapping should succeed");
+        let (gateway_url, mapped_headers) = result;
+        assert_eq!(gateway_url, "http://localhost:13002/home.wml?x=1");
+        assert!(
+            !mapped_headers.contains_key("Host"),
+            "transport should not inject Host header for gateway mapping"
+        );
+        assert_eq!(
+            mapped_headers.get("X-Wap-Target-Url"),
+            Some(&"wap://example.test/home.wml?x=1".to_string())
+        );
+    });
 }
 
 #[test]
 fn transport_build_gateway_request_handles_root_path() {
-    let headers = HashMap::new();
-    let (gateway_url, _) = build_gateway_request("wap://example.test", "GET", &headers)
-        .expect("gateway root mapping should succeed");
-    assert_eq!(gateway_url, "http://localhost:13002/");
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let headers = HashMap::new();
+        let (gateway_url, _) = build_gateway_request("wap://example.test", "GET", &headers)
+            .expect("gateway root mapping should succeed");
+        assert_eq!(gateway_url, "http://localhost:13002/");
+    });
 }
 
 #[test]
