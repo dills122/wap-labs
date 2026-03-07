@@ -158,9 +158,9 @@ Completed maintenance tickets are archived in:
 - `engine-wasm/engine/src/lib.rs` (done)
 - `engine-wasm/engine/src/engine_runtime_internal.rs` + `engine_runtime_internal/*` (done)
 - `engine-wasm/engine/src/parser/wml_parser/*` (done)
-- `browser/frontend/src/main.ts`
-- `browser/src-tauri/src/lib.rs`
-- `transport-rust/src/lib.rs`
+- `browser/frontend/src/main.ts` (done)
+- `browser/src-tauri/src/lib.rs` + `browser/src-tauri/src/engine_bridge/*` + `browser/src-tauri/src/tests/*` (baseline split done)
+- `transport-rust/src/lib.rs` + `transport-rust/src/fetch_runtime/*` + `transport-rust/src/tests/*` (baseline split done)
 3. `Build`:
 - Move code into boundary modules (`api`, `state`, `actions`, `mapping`, `ui`) without broad behavior changes.
 4. `Tests`:
@@ -169,7 +169,8 @@ Completed maintenance tickets are archived in:
 - High-churn files are reduced and responsibilities are easier to review.
 6. `Notes`:
 - Engine-side decomposition has landed and merged.
-- Remaining M1-08 scope is browser + transport boundary decomposition.
+- Browser and transport boundary decomposition baselines have landed.
+- Remaining scope is residual opportunistic cleanup only if new hot files emerge or a boundary proves unstable under feature work.
 
 ### M1-09 Engine-host frame interface migration execution
 
