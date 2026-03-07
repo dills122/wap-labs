@@ -54,6 +54,10 @@ Important: parsers are pure and should return structured types with all offset/r
 
 - WSP uses tokenized headers/parameters with assigned-number tables (Tables 34/35/38/39 in OMA WSP 1.0).
 - Header and content-type encoding should follow the specified `uintvar` and assignment strategies.
+- Header code page `1` is the default page at the start of each header block.
+- Header code page shifts use the explicit sequence `0x7F <page>`.
+- Default transport policy in this repo is strict: unknown tokens and unsupported extension pages reject deterministically.
+- Optional header-lenient profile may ignore unsupported extension-page tokens and fall back to textual header encoding for extension headers.
 
 Required codec contract:
 
@@ -110,6 +114,5 @@ pub enum WspPdu {
 
 ## 10) Deferred (spec-accurate completion)
 
-- final confirmation of custom header-code-page behavior,
 - complete confirmed-push timing and delayed-ack policy,
 - full appendix-C race-condition handling for incomplete state transitions.

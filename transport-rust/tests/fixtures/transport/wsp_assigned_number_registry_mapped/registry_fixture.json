@@ -36,5 +36,25 @@
     { "category": "wellKnownParameter", "code": 4, "policy": "strict", "expected": "error" },
     { "category": "headerFieldName", "code": 46, "policy": "strict", "expected": "error" },
     { "category": "headerFieldName", "code": 127, "policy": "header-lenient", "expected": "ignored" }
+  ],
+  "code_page_cases": [
+    {
+      "name": "default-page-headers",
+      "input": [0, 17, 36],
+      "policy": "strict",
+      "expected": ["Accept", "Content-Type", "Referer"]
+    },
+    {
+      "name": "known-extension-page-shift",
+      "input": [127, 64, 16, 17],
+      "policy": "strict",
+      "expected": ["X-Wap-Ack", "X-Wap-Ack-Id"]
+    },
+    {
+      "name": "unsupported-extension-page-lenient-fallback",
+      "input": [127, 65, 16, 17, 127, 1, 41],
+      "policy": "header-lenient",
+      "expected": ["User-Agent"]
+    }
   ]
 }
