@@ -58,6 +58,9 @@ Important: parsers are pure and should return structured types with all offset/r
 - Header code page shifts use the explicit sequence `0x7F <page>`.
 - Default transport policy in this repo is strict: unknown tokens and unsupported extension pages reject deterministically.
 - Optional header-lenient profile may ignore unsupported extension-page tokens and fall back to textual header encoding for extension headers.
+- If the peer omits `Encoding-version`, assume binary support is `1.2` or lower.
+- If a header requires a higher binary encoding version than the negotiated peer version, send it in text form.
+- If a received binary header uses an unsupported encoding version or unsupported extension page, the deterministic transport status output is `400` with an `Encoding-version` response header describing supported versions; for unsupported extension pages, the response omits the version value for that page.
 
 Required codec contract:
 
