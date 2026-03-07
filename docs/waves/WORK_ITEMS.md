@@ -71,9 +71,9 @@ Canonical sprint priority rule:
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
 1. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-2. `M1-08` Split high-churn files into boundary modules (browser/transport follow-up slices only).
-3. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
-4. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
+2. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
+3. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
+4. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 

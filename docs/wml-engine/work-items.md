@@ -30,7 +30,7 @@ Before additional Phase B+ feature promotion, execute aligned maintenance ticket
 
 1. `M1-02` parity-critical native/wasm regression suite.
 2. `M1-07` parser robustness hardening (no scope expansion) using an existing XML parser backend plus a WML semantic mapper layer.
-3. `M1-08` high-churn file decomposition into boundary modules (engine scope complete; browser/transport follow-ups remain on the cross-project board).
+3. `M1-08` high-churn file decomposition into boundary modules (engine scope complete; browser/transport baseline decomposition is landed, with only residual cross-project follow-ups remaining).
 4. `M1-03` engine API generator design/bootstrap (non-priority track).
 
 Source of truth for these items:

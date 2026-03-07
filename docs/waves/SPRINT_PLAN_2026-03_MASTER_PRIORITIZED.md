@@ -68,7 +68,7 @@ Close committed bedrock compliance work while unblocking networking P0 blockers 
 ### Stretch (only if all P0 are green)
 
 1. `W1-02` bytecode structural verification closure.
-2. `M1-08` remaining browser/transport decomposition slices.
+2. `M1-08` residual browser/transport cleanup only if new hot files emerge.
 
 ### Exit Gates
 

@@ -87,9 +87,8 @@ mod tests {
     use super::*;
     use crate::network::wsp::decoder::UnsupportedCodePageBehavior;
     use crate::network::wsp::header_registry::HEADER_CODE_PAGE_SHIFT;
+    use crate::test_support::load_json_fixture;
     use serde::Deserialize;
-    use std::fs;
-    use std::path::PathBuf;
 
     #[derive(Debug, Deserialize)]
     struct RegistryFixture {
@@ -127,16 +126,13 @@ mod tests {
     }
 
     fn load_fixture() -> RegistryFixture {
-        let fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests")
-            .join("fixtures")
-            .join("transport")
-            .join("wsp_assigned_number_registry_mapped")
-            .join("registry_fixture.json");
-        let raw = fs::read_to_string(&fixture_path)
-            .unwrap_or_else(|_| panic!("failed reading {}", fixture_path.display()));
-        serde_json::from_str(&raw)
-            .unwrap_or_else(|_| panic!("failed parsing {}", fixture_path.display()))
+        load_json_fixture(&[
+            "tests",
+            "fixtures",
+            "transport",
+            "wsp_assigned_number_registry_mapped",
+            "registry_fixture.json",
+        ])
     }
 
     fn decode_for_category(

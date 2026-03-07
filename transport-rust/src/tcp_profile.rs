@@ -49,9 +49,8 @@ pub fn wireless_profiled_tcp_posture() -> WirelessProfiledTcpPosture {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_support::load_json_fixture;
     use serde::Deserialize;
-    use std::fs;
-    use std::path::PathBuf;
 
     #[derive(Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -70,16 +69,13 @@ mod tests {
     }
 
     fn load_fixture() -> FixturePosture {
-        let fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests")
-            .join("fixtures")
-            .join("transport")
-            .join("wireless_profiled_tcp_policy_mapped")
-            .join("policy_fixture.json");
-        let raw = fs::read_to_string(&fixture_path)
-            .unwrap_or_else(|_| panic!("failed reading {}", fixture_path.display()));
-        serde_json::from_str(&raw)
-            .unwrap_or_else(|_| panic!("failed parsing {}", fixture_path.display()))
+        load_json_fixture(&[
+            "tests",
+            "fixtures",
+            "transport",
+            "wireless_profiled_tcp_policy_mapped",
+            "policy_fixture.json",
+        ])
     }
 
     fn status_to_str(status: TcpPostureStatus) -> &'static str {

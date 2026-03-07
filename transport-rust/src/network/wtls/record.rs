@@ -1,8 +1,4 @@
-#![allow(dead_code)]
-
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -192,6 +188,7 @@ pub fn apply_inbound_record_layer(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_support::load_json_fixture;
 
     #[derive(Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -212,16 +209,13 @@ mod tests {
     }
 
     fn load_fixture() -> RecordFixture {
-        let fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests")
-            .join("fixtures")
-            .join("transport")
-            .join("wtls_record_boundary_mapped")
-            .join("record_fixture.json");
-        let raw = fs::read_to_string(&fixture_path)
-            .unwrap_or_else(|_| panic!("failed reading {}", fixture_path.display()));
-        serde_json::from_str(&raw)
-            .unwrap_or_else(|_| panic!("failed parsing {}", fixture_path.display()))
+        load_json_fixture(&[
+            "tests",
+            "fixtures",
+            "transport",
+            "wtls_record_boundary_mapped",
+            "record_fixture.json",
+        ])
     }
 
     #[test]
