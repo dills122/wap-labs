@@ -519,6 +519,7 @@ describe('navigation-state', () => {
     const fetchRequests: Array<{
       url: string;
       method: string | undefined;
+      headers: Record<string, string | undefined> | undefined;
       requestPolicy: unknown;
     }> = [];
     const machine = createNavigationStateMachine(
@@ -527,6 +528,7 @@ describe('navigation-state', () => {
           fetchRequests.push({
             url: request.url,
             method: request.method,
+            headers: request.headers,
             requestPolicy: request.requestPolicy
           });
           return fetchOk({ finalUrl: request.url });
@@ -539,6 +541,9 @@ describe('navigation-state', () => {
 
     await machine.loadTransportUrl({
       url: 'http://example.test/start.wml',
+      headers: {
+        Accept: 'text/vnd.wap.wml'
+      },
       source: 'user',
       followExternalIntent: false
     });
@@ -559,6 +564,9 @@ describe('navigation-state', () => {
     expect(fetchRequests.at(-1)).toEqual({
       url: 'http://example.test/start.wml',
       method: 'GET',
+      headers: {
+        accept: 'text/vnd.wap.wml'
+      },
       requestPolicy: { uaCapabilityProfile: 'wap-baseline' }
     });
   });
