@@ -49,7 +49,7 @@ Score: `7.0 / 8.0` (`88%`)
 | Gate | Description | Transport-to-Kannel | Browser-to-Kannel | Evidence |
 | --- | --- | --- | --- | --- |
 | `G1` | Local Kannel + WML stack boots reliably with one command | `1.0` | `1.0` | `make up`, `make status`, [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md) |
-| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/lib.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/lib.rs), `make smoke-transport-wap` |
+| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/lib.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/lib.rs), `make smoke-transport-wap`; loopback-safe local smoke now sets explicit `allow-private` policy rather than depending on ambient host env |
 | `G3` | Assertions validate deck identity and normalized engine input, not just HTTP success | `1.0` | `1.0` | transport smoke asserts deck/card markers for root + login decks; browser host smokes assert engine load, card identity, render markers, and navigation outcome |
 | `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `0.5` | `0.0` | promoted smoke now covers multi-deck root -> login fetch through Kannel, but not full auth/session flow |
 | `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `1.0` | `make smoke-transport-wap` now runs both transport and browser-host smoke checks |

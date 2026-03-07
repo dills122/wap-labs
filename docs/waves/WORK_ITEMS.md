@@ -839,7 +839,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-26 Local Kannel E2E readiness gate
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-14`, `T0-22`
 3. `Owner`: `transport-rust`, `browser`, `docs`
 4. `Files`:
@@ -868,6 +868,7 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..015`, `RQ-TRX-010`
 10. `Notes`:
 - Tracking ticket only until browser/transport real-gateway E2E gates are promoted into standard verification.
+- Closure landed with explicit scorecard tracking, transport and browser ignored Kannel smokes, one-command runner diagnostics, and direct test/request-policy hardening so loopback-safe local runs do not rely on hidden host env state.
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

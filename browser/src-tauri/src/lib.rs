@@ -714,7 +714,13 @@ mod tests {
             timeout_ms: Some(15000),
             retries: Some(1),
             request_id: None,
-            request_policy: None,
+            request_policy: Some(FetchRequestPolicy {
+                destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+                cache_control: None,
+                referer_url: None,
+                post_context: None,
+                ua_capability_profile: None,
+            }),
         });
         assert!(
             transport.ok,
@@ -750,7 +756,13 @@ mod tests {
             timeout_ms: Some(15000),
             retries: Some(1),
             request_id: None,
-            request_policy: None,
+            request_policy: Some(FetchRequestPolicy {
+                destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+                cache_control: None,
+                referer_url: None,
+                post_context: None,
+                ua_capability_profile: None,
+            }),
         });
         assert!(
             transport.ok,
