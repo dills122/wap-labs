@@ -1,0 +1,121 @@
+{
+  "scenarios": [
+    {
+      "name": "connectionless-mode-gating-and-sequence",
+      "policy": {
+        "mode": "connectionless",
+        "pushAllowed": false
+      },
+      "cases": [
+        {
+          "name": "method-invoke-req-starts-pending",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodInvoke",
+          "direction": "req",
+          "expected": "accept",
+          "expectedAwaitingResult": true
+        },
+        {
+          "name": "method-result-without-pending-is-invalid",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodResult",
+          "direction": "req",
+          "expected": "reject-sequence",
+          "expectedAwaitingResult": false
+        },
+        {
+          "name": "method-result-completes-pending",
+          "state": {
+            "awaitingResult": true
+          },
+          "primitive": "S-Unit-MethodResult",
+          "direction": "req",
+          "expected": "accept",
+          "expectedAwaitingResult": false
+        },
+        {
+          "name": "push-when-disabled-is-invalid",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-Push",
+          "direction": "req",
+          "expected": "reject-primitive",
+          "expectedAwaitingResult": false
+        },
+        {
+          "name": "res-direction-not-allowed-in-connectionless",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodInvoke",
+          "direction": "res",
+          "expected": "reject-direction",
+          "expectedAwaitingResult": false
+        }
+      ]
+    },
+    {
+      "name": "connection-oriented-mode-gating",
+      "policy": {
+        "mode": "connection-oriented",
+        "pushAllowed": true
+      },
+      "cases": [
+        {
+          "name": "method-result-res-accepted",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodResult",
+          "direction": "res",
+          "expected": "accept",
+          "expectedAwaitingResult": false
+        },
+        {
+          "name": "req-direction-not-allowed-in-connection-oriented",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodInvoke",
+          "direction": "req",
+          "expected": "reject-direction",
+          "expectedAwaitingResult": false
+        }
+      ]
+    },
+    {
+      "name": "both-mode-accepts-req-and-res",
+      "policy": {
+        "mode": "both",
+        "pushAllowed": true
+      },
+      "cases": [
+        {
+          "name": "connectionless-allowed-method-invoke-req",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodInvoke",
+          "direction": "req",
+          "expected": "accept",
+          "expectedAwaitingResult": true
+        },
+        {
+          "name": "connection-oriented-allowed-method-result-res",
+          "state": {
+            "awaitingResult": false
+          },
+          "primitive": "S-Unit-MethodResult",
+          "direction": "res",
+          "expected": "accept",
+          "expectedAwaitingResult": false
+        }
+      ]
+    }
+  ]
+}

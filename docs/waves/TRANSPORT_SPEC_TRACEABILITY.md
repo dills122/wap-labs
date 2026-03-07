@@ -286,10 +286,11 @@ Legend:
 
 The transport stack will remain stable while adjacent networking specs are explicitly deferred:
 
-1. `WAP-204` family (WAP over GSM/USSD) is fully parsed and review-led in `OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`.
-2. `WAP-120-WAPCachingMod` and `WAP-175*` cache-operation families are not mapped into WDP/WTP/WSP rewrite milestones.
-3. `WAP-213*` (pictogram/display adjuncts) is not required for protocol-layer correctness.
-4. Any future revival must open a dedicated scope ticket and update this traceability mapping.
+1. `WAP-204` family (WAP over GSM/USSD) is deferred because bearer-adapter semantics are profile- and carrier-specific; scope and requirements are maintained in `OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`.
+2. `WAP-120-WAPCachingMod` and `WAP-175*` cache-operation families are deferred because cache policy behavior belongs in higher-level messaging/app lifecycle layers, not the core protocol rewrite milestone.
+3. `WAP-213*` (pictogram/display adjuncts) is not required for protocol-layer correctness and is deferred to rendering-adjacent tracks.
+4. `WAP-227` and `WAP-231` are deferred because persistent state/EFI integrations are not needed for transport-layer milestone behavior.
+5. Any future revival must open a dedicated scope ticket, update this traceability mapping, and pass `T0-14`+`T0-17` lock checks.
 
 ## Notes
 

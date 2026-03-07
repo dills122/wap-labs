@@ -1,0 +1,10 @@
+name = "WSP connectionless primitive profile matrix"
+description = "Fixture-driven WSP mode/direction/mode-aware primitive occurrence validation for connectionless and connection-oriented compatibility lanes."
+mode = "mapped"
+work_items = ["T0-09"]
+spec_items = ["RQ-TRN-017"]
+testing_ac = [
+  "Given connectionless profile mode, req/ind primitives are deterministically accepted only when they satisfy matrix and sequence constraints.",
+  "Given connection-oriented profile mode, req/ind service-primitives are rejected as unsupported direction.",
+  "Given both-profile mode, transition sequences for Method Invoke/Method Result are validated without state desynchronization."
+]
