@@ -6,6 +6,7 @@ pub mod encoding_version;
 pub mod header_block;
 pub mod header_registry;
 pub mod pdu;
+pub mod session;
 
 pub use decoder::{
     decode_header_field_name_stream, DecodedHeaderField, HeaderStreamDecodePolicy,
@@ -32,4 +33,9 @@ pub use header_registry::{
 pub use pdu::{
     decode_wsp_pdu, encode_wsp_pdu, WspMethodGetPdu, WspMethodPostPdu, WspPdu, WspPduDecodeError,
     WspPduEncodeError, WspReplyPdu,
+};
+pub use session::{
+    classify_wsp_pdu, decode_wsp_session_event, encode_wsp_session_event, WspMethod,
+    WspMethodRequest, WspMethodResult, WspSessionEvent, WspSessionEventDecodeError,
+    WspSessionEventEncodeError, WspSessionMode,
 };

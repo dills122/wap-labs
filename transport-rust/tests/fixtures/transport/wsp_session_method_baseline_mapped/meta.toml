@@ -1,0 +1,10 @@
+name = "WSP session method baseline fixtures"
+description = "Fixture-backed classification of minimal Get/Post/Reply PDUs into WSP session method request/result events for connectionless and connection-oriented modes."
+mode = "mapped"
+work_items = ["T0-20"]
+spec_items = ["RQ-TRN-010", "RQ-TRN-012", "RQ-TRN-014"]
+testing_ac = [
+  "Given minimal Get and Post PDUs, session parsing classifies deterministic method-request events with declared WSP mode and payload shape.",
+  "Given minimal Reply PDUs, session parsing classifies deterministic method-result events without losing header or body data.",
+  "Given unsupported or truncated PDU bytes, session-event decode fails with deterministic transport-visible errors."
+]

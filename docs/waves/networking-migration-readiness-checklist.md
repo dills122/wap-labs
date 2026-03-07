@@ -96,7 +96,7 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 
 - `Done-1`: WSP assigned-number/header registry coverage is table-driven and versioned.
 - `Done-2`: unknown token/code-page behavior is explicit and tested for active profiles.
-- `Done-3`: code-page shift and unsupported encoding paths have deterministic outcomes.
+- `Done-3`: code-page shift, unsupported encoding paths, and method request/result classification over minimal `Get`/`Post`/`Reply` PDUs have deterministic outcomes.
 
 ### T0-21 (`Owner`: transport-rust, docs)
 

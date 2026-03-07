@@ -75,7 +75,9 @@ Current transport-rust baseline for this lane:
 
 - `transport-rust/src/network/wsp/header_block.rs` provides the immediate pure header-block decode/encode surface used to apply header token, code-page, and `Encoding-version` policy before full PDU framing is implemented.
 - `transport-rust/src/network/wsp/pdu.rs` now provides a minimal pure PDU surface for `Get`, `Post`, and `Reply` over that header-block layer.
+- `transport-rust/src/network/wsp/session.rs` classifies those PDUs into narrow WSP method request/result events with explicit connectionless vs connection-oriented mode tags for replay scaffolding.
 - `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json` carries the replayable baseline corpus for successful `Get`/`Post`/`Reply` framing and deterministic decode failures.
+- `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json` carries replayable session-method classification cases that `T0-22` can promote into interop replay fixtures.
 
 ## 6) Connection-mode behavior (typical)
 
