@@ -168,3 +168,41 @@ fn wasm_handle_key_missing_fragment_returns_error_and_preserves_state() {
     assert_eq!(engine.focused_link_index_wasm(), 0);
     assert!(!engine.navigate_back_wasm());
 }
+
+#[wasm_bindgen_test]
+fn wasm_handle_key_unknown_is_noop_for_navigation_state() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(SAMPLE)
+        .expect("loadDeck wasm wrapper should succeed");
+
+    engine
+        .handle_key_wasm("unsupported-key".to_string())
+        .expect("unknown key should be ignored without error");
+
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be available"),
+        "home"
+    );
+    assert_eq!(engine.focused_link_index_wasm(), 0);
+    assert_eq!(engine.external_navigation_intent_wasm(), None);
+}
+
+#[wasm_bindgen_test]
+fn wasm_load_deck_context_rejects_oversized_raw_payload() {
+    let mut engine = WmlEngine::wasm_new();
+    let oversized_raw = "A".repeat(300_000);
+
+    let err = engine
+        .load_deck_context_wasm(
+            SAMPLE,
+            "http://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            Some(oversized_raw),
+        )
+        .expect_err("oversized raw payload should fail at wasm boundary");
+    let err_msg = err.as_string().expect("error should be a string message");
+    assert!(err_msg.contains("Raw deck payload exceeds"));
+}
