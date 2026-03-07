@@ -59,6 +59,7 @@ pub enum WspPdu {
 pub enum WspPduDecodeError {
     UnsupportedPduType(u8),
     Truncated,
+    TrailingBytes,
     InvalidUtf8,
     HeaderBlock(WspHeaderBlockDecodeError),
 }
@@ -68,6 +69,7 @@ impl std::fmt::Display for WspPduDecodeError {
         match self {
             Self::UnsupportedPduType(code) => write!(f, "unsupported WSP PDU type: 0x{code:02X}"),
             Self::Truncated => write!(f, "truncated WSP PDU"),
+            Self::TrailingBytes => write!(f, "unexpected trailing bytes in WSP PDU"),
             Self::InvalidUtf8 => write!(f, "invalid UTF-8 in WSP textual field"),
             Self::HeaderBlock(error) => write!(f, "{error}"),
         }
@@ -113,7 +115,8 @@ pub fn decode_wsp_pdu(
             let version_major = rest[0];
             let version_minor = rest[1];
             let capabilities = decode_capability_proposal(&rest[2..12]);
-            let (header_bytes, _remaining) = split_length_prefixed_block(&rest[12..])?;
+            let (header_bytes, remaining) = split_length_prefixed_block(&rest[12..])?;
+            reject_trailing_bytes(remaining)?;
             let headers = decode_header_block(header_bytes, header_policy)
                 .map_err(WspPduDecodeError::HeaderBlock)?;
             Ok(WspPdu::Connect(WspConnectPdu {
@@ -132,7 +135,8 @@ pub fn decode_wsp_pdu(
             let session_id = u16::from_be_bytes([rest[2], rest[3]]);
             let negotiated_capabilities =
                 decode_negotiated_capabilities(WspMode::ConnectionOriented, &rest[4..14]);
-            let (header_bytes, _remaining) = split_length_prefixed_block(&rest[14..])?;
+            let (header_bytes, remaining) = split_length_prefixed_block(&rest[14..])?;
+            reject_trailing_bytes(remaining)?;
             let headers = decode_header_block(header_bytes, header_policy)
                 .map_err(WspPduDecodeError::HeaderBlock)?;
             Ok(WspPdu::ConnectReply(WspConnectReplyPdu {
@@ -274,6 +278,14 @@ fn split_length_prefixed_block(input: &[u8]) -> Result<(&[u8], &[u8]), WspPduDec
         return Err(WspPduDecodeError::Truncated);
     }
     Ok(rest.split_at(length))
+}
+
+fn reject_trailing_bytes(input: &[u8]) -> Result<(), WspPduDecodeError> {
+    if input.is_empty() {
+        Ok(())
+    } else {
+        Err(WspPduDecodeError::TrailingBytes)
+    }
 }
 
 fn encode_option_u32(value: Option<u32>) -> [u8; 4] {
@@ -549,9 +561,39 @@ mod tests {
                         case.name
                     )
                 }
+                "trailing-bytes" => {
+                    assert_eq!(
+                        error,
+                        WspPduDecodeError::TrailingBytes,
+                        "case '{}' mismatch",
+                        case.name
+                    )
+                }
                 other => panic!("unsupported expected error: {other}"),
             }
         }
+    }
+
+    #[test]
+    fn connect_rejects_trailing_bytes_after_header_block() {
+        let error = decode_wsp_pdu(
+            &[1, 1, 4, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0, 0xAA],
+            WspHeaderBlockDecodePolicy::STRICT,
+        )
+        .expect_err("connect should reject trailing bytes");
+
+        assert_eq!(error, WspPduDecodeError::TrailingBytes);
+    }
+
+    #[test]
+    fn connect_reply_rejects_trailing_bytes_after_header_block() {
+        let error = decode_wsp_pdu(
+            &[2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0, 0xAA],
+            WspHeaderBlockDecodePolicy::STRICT,
+        )
+        .expect_err("connect reply should reject trailing bytes");
+
+        assert_eq!(error, WspPduDecodeError::TrailingBytes);
     }
 
     #[test]
