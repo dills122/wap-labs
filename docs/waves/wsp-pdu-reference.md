@@ -74,6 +74,7 @@ Required codec contract:
 Current transport-rust baseline for this lane:
 
 - `transport-rust/src/network/wsp/header_block.rs` provides the immediate pure header-block decode/encode surface used to apply header token, code-page, and `Encoding-version` policy before full PDU framing is implemented.
+- `transport-rust/src/network/wsp/pdu.rs` now provides a minimal pure PDU surface for `Get`, `Post`, and `Reply` over that header-block layer.
 
 ## 6) Connection-mode behavior (typical)
 

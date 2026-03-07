@@ -5,6 +5,7 @@ pub mod encoder;
 pub mod encoding_version;
 pub mod header_block;
 pub mod header_registry;
+pub mod pdu;
 
 pub use decoder::{
     decode_header_field_name_stream, DecodedHeaderField, HeaderStreamDecodePolicy,
@@ -27,4 +28,8 @@ pub use header_registry::{
     decode_abort_reason, decode_header_field_name_on_page, decode_pdu_type,
     decode_well_known_parameter, encode_abort_reason, encode_header_field_name_on_page,
     encode_pdu_type, encode_well_known_parameter, DEFAULT_HEADER_CODE_PAGE,
+};
+pub use pdu::{
+    decode_wsp_pdu, encode_wsp_pdu, WspMethodGetPdu, WspMethodPostPdu, WspPdu, WspPduDecodeError,
+    WspPduEncodeError, WspReplyPdu,
 };
