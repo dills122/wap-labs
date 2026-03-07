@@ -1,0 +1,9 @@
+name = "wtls_record_boundary_mapped"
+description = "WTLS no-op vs active-minimal record boundary fixture"
+work_items = ["T0-21"]
+spec_items = ["RQ-SEC-004", "RQ-SEC-005"]
+testing_ac = [
+  "WTLS disabled mode is deterministic no-op passthrough.",
+  "WTLS active-minimal mode parses and serializes a stable record header and payload."
+]
+mode = "mapped"

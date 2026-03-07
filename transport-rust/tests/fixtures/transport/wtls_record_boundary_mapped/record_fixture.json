@@ -1,0 +1,22 @@
+{
+  "cases": [
+    {
+      "name": "disabled_mode_passthrough",
+      "mode": "disabled",
+      "contentType": "application-data",
+      "seqNumber": 7,
+      "payload": [60, 119, 109, 108, 47, 62],
+      "expectedWire": [60, 119, 109, 108, 47, 62],
+      "expectedPlaintext": [60, 119, 109, 108, 47, 62]
+    },
+    {
+      "name": "active_minimal_handshake_record",
+      "mode": "active-minimal",
+      "contentType": "handshake",
+      "seqNumber": 3,
+      "payload": [1, 0, 1, 0, 2, 170, 187],
+      "expectedWire": [22, 1, 0, 0, 3, 0, 7, 1, 0, 1, 0, 2, 170, 187],
+      "expectedPlaintext": [1, 0, 1, 0, 2, 170, 187]
+    }
+  ]
+}
