@@ -14,6 +14,8 @@ pub mod smpp_profile;
 pub mod tcp_profile;
 mod wbxml;
 pub mod wsp_capability;
+#[cfg(test)]
+mod wsp_connectionless_primitive_profile;
 pub mod wsp_registry;
 #[cfg(test)]
 mod wtp_replay_window;
@@ -643,6 +645,10 @@ mod tests {
     use super::{
         apply_request_policy, classify_destination_host, classify_ip, fetch_deck_in_process,
         preflight_wbxml_decoder, resolve_fetch_destination_policy, validate_fetch_destination,
+        wsp_connectionless_primitive_profile::{
+            decide_wsp_primitive_transition, WspPrimitiveDecision, WspPrimitiveDirection,
+            WspPrimitiveProfile, WspPrimitiveProfileMode, WspPrimitiveState, WspServicePrimitive,
+        },
         wtp_replay_window::{
             decide_initiator_tid, decide_responder_tid, WtpDuplicateAssumption, WtpInitiatorPolicy,
             WtpInitiatorState, WtpInitiatorTidDecision, WtpReplayCacheMode, WtpResponderPolicy,
@@ -990,6 +996,83 @@ mod tests {
                 |decision| matches!(decision, WtpInitiatorTidDecision::OutOfReplayWindow)
             }
             other => panic!("unknown initiator expectation {other}"),
+        }
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WspPrimitiveProfileInput {
+        mode: String,
+        push_allowed: bool,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WspPrimitiveStateInput {
+        awaiting_result: bool,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WspPrimitiveCaseInput {
+        name: String,
+        state: WspPrimitiveStateInput,
+        primitive: String,
+        direction: String,
+        expected: String,
+        expected_awaiting_result: bool,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WspPrimitiveProfileScenario {
+        name: String,
+        policy: WspPrimitiveProfileInput,
+        cases: Vec<WspPrimitiveCaseInput>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct WspPrimitiveProfileFixture {
+        scenarios: Vec<WspPrimitiveProfileScenario>,
+    }
+
+    fn parse_wsp_primitive_profile_mode(value: &str) -> WspPrimitiveProfileMode {
+        match value {
+            "connection-oriented" => WspPrimitiveProfileMode::ConnectionOriented,
+            "connectionless" => WspPrimitiveProfileMode::Connectionless,
+            "both" => WspPrimitiveProfileMode::Both,
+            other => panic!("unknown WSP profile mode {other}"),
+        }
+    }
+
+    fn parse_primitive(value: &str) -> WspServicePrimitive {
+        match value {
+            "S-Unit-MethodInvoke" => WspServicePrimitive::MethodInvoke,
+            "S-Unit-MethodResult" => WspServicePrimitive::MethodResult,
+            "S-Unit-Push" => WspServicePrimitive::Push,
+            other => panic!("unknown WSP primitive {other}"),
+        }
+    }
+
+    fn parse_direction(value: &str) -> WspPrimitiveDirection {
+        match value {
+            "req" => WspPrimitiveDirection::Req,
+            "ind" => WspPrimitiveDirection::Ind,
+            "res" => WspPrimitiveDirection::Res,
+            "cnf" => WspPrimitiveDirection::Cnf,
+            other => panic!("unknown WSP primitive direction {other}"),
+        }
+    }
+
+    fn expect_wsp_primitive_decision(expected: &str) -> WspPrimitiveDecision {
+        match expected {
+            "accept" => WspPrimitiveDecision::Accept,
+            "reject-unsupported-mode" => WspPrimitiveDecision::RejectUnsupportedMode,
+            "reject-primitive" => WspPrimitiveDecision::RejectPrimitive,
+            "reject-direction" => WspPrimitiveDecision::RejectDirection,
+            "reject-sequence" => WspPrimitiveDecision::RejectSequence,
+            other => panic!("unknown WSP primitive decision {other}"),
         }
     }
 
@@ -2511,6 +2594,47 @@ mod tests {
                 case.incoming_tid,
             );
             assert!(matcher(decision), "initiator case '{}' failed", case.name);
+        }
+    }
+
+    #[test]
+    fn transport_wsp_connectionless_primitive_profile_fixture_matrix() {
+        let fixture: WspPrimitiveProfileFixture = read_json_fixture(
+            "wsp_connectionless_primitive_profile_mapped",
+            "primitive_profile_fixture.json",
+        );
+
+        for scenario in fixture.scenarios {
+            let mode = parse_wsp_primitive_profile_mode(&scenario.policy.mode);
+            let profile = WspPrimitiveProfile {
+                mode,
+                push_allowed: scenario.policy.push_allowed,
+            };
+            for case in scenario.cases {
+                let state = WspPrimitiveState {
+                    awaiting_result: case.state.awaiting_result,
+                };
+                let expected_decision = expect_wsp_primitive_decision(case.expected.as_str());
+                let primitive = parse_primitive(&case.primitive);
+                let direction = parse_direction(&case.direction);
+                let (decision, next_state, _trace) =
+                    decide_wsp_primitive_transition(&profile, &state, primitive, direction);
+                assert_eq!(
+                    decision, expected_decision,
+                    "scenario '{}' case '{}' failed",
+                    scenario.name, case.name
+                );
+                assert_eq!(
+                    next_state,
+                    WspPrimitiveState {
+                        awaiting_result: case.expected_awaiting_result
+                    },
+                    "scenario '{}' case '{}' expected next state mismatch",
+                    scenario.name,
+                    case.name
+                );
+                let _trace_fields = _trace.decision;
+            }
         }
     }
 }
