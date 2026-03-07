@@ -10,8 +10,8 @@ This plan is the cross-lane source of truth for "what is next" and resolves prio
 
 1. P0: unblock and close committed bedrock compliance tickets already in the active sprint lane.
 2. P0: close networking dependency chain required before protocol-native implementation blockers can move.
-3. P1: close the remaining transport/security implementation blocker (`T0-21`) now that protocol-core and replay gates are green.
-4. P1: close already-active runtime/compliance work before starting fresh feature breadth.
+3. P1: close already-active runtime/compliance work before starting fresh feature breadth.
+4. P1: keep transport/security follow-up work limited to deferred depth or newly discovered blockers.
 5. P2: run maintenance in parallel only when it does not starve P0/P1.
 
 ## Canonical Sources
@@ -37,7 +37,7 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 | `T0-18` | transport | `done` | retransmission/duplicate/NACK hold-off baseline is closed |
 | `T0-19` | transport | `done` | WDP ingress and UDP mapping baseline is closed |
 | `T0-20` | transport | `done` | WSP registry/header/session baseline is closed |
-| `T0-21` | transport/security | `todo` | next real transport implementation item |
+| `T0-21` | transport/security | `done` | explicit WTLS boundary and minimal reliability lane are now closed |
 | `T0-22` | transport | `done` | replay promotion gate is closed and seed-backed |
 | `T0-24` | transport/docs | `done` | seed corpus is formalized and promotion-gated |
 | `T0-25` | docs/spec-processing | `done` | external vector adoption sweep is closed |
@@ -133,22 +133,21 @@ Finalize replay-driven promotion evidence and close explicit WTLS boundary postu
 
 Current result:
 
-1. `T0-24` and `T0-25` are already complete.
-2. `T0-21` remains the only meaningful open transport/security implementation ticket.
+1. `T0-21`, `T0-24`, and `T0-25` are complete.
+2. Networking is no longer the pacing sprint constraint.
 
 ## Next Sprint Recommendation (2026-03-09 onward)
 
 ### Goal
 
-Finish the remaining transport/security blocker and close the highest-value active runtime/compliance items before widening scope again.
+Close the highest-value active runtime/compliance items now that the transport/security baseline is in place.
 
 ### Must Complete (P0/P1)
 
-1. `T0-21` WTLS phase boundary and minimal handshake reliability lane.
-2. `A5-01` history entry fidelity follow-up.
-3. `W0-05` timer/dialog integration baseline.
-4. `W1-06` fatal/non-fatal script error taxonomy closure.
-5. `M1-16` transport/engine payload size guardrails.
+1. `A5-01` history entry fidelity follow-up.
+2. `W0-05` timer/dialog integration baseline.
+3. `W1-06` fatal/non-fatal script error taxonomy closure.
+4. `M1-16` transport/engine payload size guardrails.
 
 ### Follow-on (only if capacity remains)
 
@@ -159,18 +158,16 @@ Finish the remaining transport/security blocker and close the highest-value acti
 
 ### Concrete commit-order recommendation
 
-1. `feat(wtls): add explicit no-op and minimal active boundary policy`
-2. `test(wtls): add record and handshake replay fixtures`
-3. `feat(engine): preserve request-shaped history entry fidelity`
-4. `feat(wavescript): land timer and dialog host capability baseline`
-5. `fix(engine): close remaining script error taxonomy fixture gaps`
-6. `fix(transport): enforce payload size guardrails before decode/parse`
+1. `feat(engine): preserve request-shaped history entry fidelity`
+2. `feat(wavescript): land timer and dialog host capability baseline`
+3. `fix(engine): close remaining script error taxonomy fixture gaps`
+4. `fix(transport): enforce payload size guardrails before decode/parse`
 
 ### Exit Gates
 
-1. `T0-21` moves from `todo` to `done` with mapped fixtures in `SPEC_TEST_COVERAGE`.
-2. `A5-01`, `W0-05`, and `W1-06` are either `done` or split into smaller explicit closure follow-ups.
-3. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
+1. `A5-01`, `W0-05`, and `W1-06` are either `done` or split into smaller explicit closure follow-ups.
+2. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
+3. No new transport blocker is opened without an explicit promotion-gate reason.
 
 ## Capacity and WIP Rules
 

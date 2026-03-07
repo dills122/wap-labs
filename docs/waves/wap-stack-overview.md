@@ -31,8 +31,8 @@ Scope note: transport stack must not parse/render WBXML or WML; those stay in `t
 
 Profile posture:
 
-1. `gateway-bridged`: current behavior path via configured gateway.
-2. `wap-net-core`: native protocol path used for `T0-14` target profile.
+1. `gateway-bridged`: legacy gateway path retained as rollback and comparison lane.
+2. `wap-net-core`: active native protocol path promoted by `T0-14` gate closure.
 3. `wap-net-ext`: future optional CL/push-advanced extension profile.
 
 ## 3) Layer contract and boundaries

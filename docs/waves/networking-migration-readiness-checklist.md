@@ -118,4 +118,4 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 
 ## Cross-tile closure rule
 
-`T0-17` must stay true before any adjacent-adjacent transport path is promoted in `T0-14`, and `T0-18..T0-24` must be green before moving from `gateway-bridged` to `wap-net-core`.
+`T0-17` had to stay true before promotion in `T0-14`, and `T0-18..T0-24` had to be green before moving from `gateway-bridged` to `wap-net-core`. That promotion baseline is now satisfied; future gates apply to `wap-net-ext` or rollback decisions.

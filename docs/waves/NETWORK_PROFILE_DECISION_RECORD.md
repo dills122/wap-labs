@@ -6,13 +6,13 @@ Ticket: `T0-14`
 
 ## Canonical decision
 
-1. Active runtime profile: `gateway-bridged`.
-2. Target runtime profile: `wap-net-core`.
-3. `wap-net-core` promotion is blocked until required migration gates are complete.
+1. Active runtime profile: `wap-net-core`.
+2. Target runtime profile: `wap-net-ext`.
+3. Promotion beyond `wap-net-core` remains gated by future extension-lane decisions.
 
 ## Profile definitions
 
-### `gateway-bridged` (active)
+### `gateway-bridged` (legacy baseline)
 
 - Transport uses configured gateway HTTP/WBXML path.
 - Native `WDP/WTP/WSP` protocol stack is not the active ingress path.
@@ -24,7 +24,7 @@ Fixture lane:
 - `transport-rust/tests/fixture_harness.rs`
 - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 
-### `wap-net-core` (target, gated)
+### `wap-net-core` (active)
 
 - Transport ingress is native `WDP -> WTP -> WSP`.
 - Profile activation requires protocol-core fixture evidence and replay-gate evidence.
@@ -36,9 +36,15 @@ Fixture lane:
 - `transport-rust/src/wsp_capability.rs` (capability-bound fixtures)
 - `transport-rust/tests/network/interop/` (promotion replay lane; tracked by `T0-22` and `T0-24`)
 
+### `wap-net-ext` (target, gated)
+
+- Future extension profile for connectionless/push/advanced session features.
+- Promotion requires explicit additional gates beyond the protocol-core baseline.
+- Activation must remain contract-compatible or ship with explicit contract changes.
+
 ## Promotion gates
 
-Promotion from `gateway-bridged` to `wap-net-core` requires all of:
+Promotion from `gateway-bridged` to `wap-net-core` required all of:
 
 1. `T0-17` scope lock is `done`.
 2. `T0-18`, `T0-19`, `T0-20`, `T0-22`, and `T0-24` are `done` with fixture evidence.
@@ -49,9 +55,11 @@ Promotion from `gateway-bridged` to `wap-net-core` requires all of:
 5. Local Kannel E2E readiness remains explicit and tracked in:
    - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 
+This gate set is now satisfied and `wap-net-core` is the active profile.
+
 ## Rollback criteria
 
-If profile activation introduces deterministic regressions or contract drift, rollback to `gateway-bridged` is mandatory when any of the following occur:
+If profile activation introduces deterministic regressions or contract drift, rollback from `wap-net-core` to `gateway-bridged` is mandatory when any of the following occur:
 
 1. Replay harness (`T0-22`/`T0-24`) fails for `CONNECT`/`GET`/`REPLY` or retransmit/duplicate lanes.
 2. Contract checks fail for browser/engine boundary payloads.

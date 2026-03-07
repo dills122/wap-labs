@@ -1,0 +1,10 @@
+name = "wtls_handshake_reliability_mapped"
+description = "WTLS minimal handshake retransmission and duplicate-message fixture"
+work_items = ["T0-21"]
+spec_items = ["RQ-SEC-004", "RQ-SEC-005"]
+testing_ac = [
+  "Minimal handshake message framing is deterministic.",
+  "Handshake retransmission policy is explicit and fixture-backed.",
+  "Duplicate handshake-message handling is explicit and fixture-backed."
+]
+mode = "mapped"

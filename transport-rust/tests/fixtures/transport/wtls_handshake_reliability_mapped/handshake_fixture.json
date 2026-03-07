@@ -1,0 +1,40 @@
+{
+  "messageCase": {
+    "messageType": "client-hello",
+    "sequenceNumber": 1,
+    "payload": [170, 187],
+    "expectedWire": [1, 0, 1, 0, 2, 170, 187]
+  },
+  "retransmissionCases": [
+    {
+      "event": "timer-expired",
+      "elapsedMs": null,
+      "expectedDecision": "send",
+      "expectedAttempts": 1,
+      "expectedCompleted": false,
+      "expectedDelayMs": 100
+    },
+    {
+      "event": "ack-observed",
+      "elapsedMs": null,
+      "expectedDecision": "completed",
+      "expectedAttempts": 1,
+      "expectedCompleted": true,
+      "expectedDelayMs": 0
+    }
+  ],
+  "duplicateCases": [
+    {
+      "sequenceNumber": 1,
+      "isTerminalMessage": false,
+      "expectedDecision": "accept",
+      "expectedCacheSize": 1
+    },
+    {
+      "sequenceNumber": 1,
+      "isTerminalMessage": true,
+      "expectedDecision": "replay-cached-terminal",
+      "expectedCacheSize": 1
+    }
+  ]
+}

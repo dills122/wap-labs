@@ -1,6 +1,6 @@
 {
-  "currentProfile": "gateway-bridged",
-  "targetProfile": "wap-net-core",
+  "currentProfile": "wap-net-core",
+  "targetProfile": "wap-net-ext",
   "requiredForPromotion": ["T0-17", "T0-18", "T0-19", "T0-20", "T0-21", "T0-22", "T0-24"],
   "contractFiles": [
     "browser/contracts/transport.ts",
