@@ -8,8 +8,6 @@ use crate::network::wtp::retransmission::{
     WtpRetransmissionPolicy, WtpRetransmissionState, WtpRetransmissionTrace,
 };
 use serde::Deserialize;
-use std::fs;
-use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WtlsHandshakeMessageType {
@@ -139,6 +137,7 @@ mod tests {
     use super::*;
     use crate::network::wtp::duplicate_cache::WtpDuplicateCacheState;
     use crate::network::wtp::retransmission::{WtpBackoffKind, WtpRetransmissionEvent};
+    use crate::test_support::load_json_fixture;
 
     #[derive(Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -178,16 +177,13 @@ mod tests {
     }
 
     fn load_fixture() -> HandshakeFixture {
-        let fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests")
-            .join("fixtures")
-            .join("transport")
-            .join("wtls_handshake_reliability_mapped")
-            .join("handshake_fixture.json");
-        let raw = fs::read_to_string(&fixture_path)
-            .unwrap_or_else(|_| panic!("failed reading {}", fixture_path.display()));
-        serde_json::from_str(&raw)
-            .unwrap_or_else(|_| panic!("failed parsing {}", fixture_path.display()))
+        load_json_fixture(&[
+            "tests",
+            "fixtures",
+            "transport",
+            "wtls_handshake_reliability_mapped",
+            "handshake_fixture.json",
+        ])
     }
 
     fn fixture_policy() -> WtlsHandshakePolicy {

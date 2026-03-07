@@ -13,6 +13,8 @@ mod request_meta;
 mod responses;
 pub mod smpp_profile;
 pub mod tcp_profile;
+#[cfg(test)]
+mod test_support;
 mod wbxml;
 pub mod wsp_capability;
 #[cfg(test)]

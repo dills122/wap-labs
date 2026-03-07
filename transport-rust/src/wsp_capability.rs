@@ -151,9 +151,8 @@ fn merge_numeric_u16(local: Option<u16>, peer: Option<u16>) -> Option<u16> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_support::load_json_fixture;
     use serde::Deserialize;
-    use std::fs;
-    use std::path::PathBuf;
 
     #[derive(Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
@@ -198,16 +197,13 @@ mod tests {
     }
 
     fn load_fixture() -> CapabilityFixture {
-        let fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests")
-            .join("fixtures")
-            .join("transport")
-            .join("wsp_capability_bounds_mapped")
-            .join("capability_fixture.json");
-        let raw = fs::read_to_string(&fixture_path)
-            .unwrap_or_else(|_| panic!("failed reading {}", fixture_path.display()));
-        serde_json::from_str(&raw)
-            .unwrap_or_else(|_| panic!("failed parsing {}", fixture_path.display()))
+        load_json_fixture(&[
+            "tests",
+            "fixtures",
+            "transport",
+            "wsp_capability_bounds_mapped",
+            "capability_fixture.json",
+        ])
     }
 
     fn mode_from_str(value: &str) -> WspMode {
