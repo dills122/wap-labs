@@ -14,6 +14,8 @@ const SAMPLE: &str = r##"
 "##;
 
 const FIXTURE_BASIC_TWO_CARD: &str = include_str!("../tests/fixtures/phase-a/basic-two-card.wml");
+const FIXTURE_MISSING_FRAGMENT: &str =
+    include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
 
 fn draw_len(render_value: &JsValue) -> u32 {
     let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
@@ -142,4 +144,27 @@ fn wasm_m1_02_invoke_script_ref_boundary_outcomes() {
         .last_script_execution_trap_wasm()
         .expect("trap should be present")
         .contains("script unit not registered"));
+}
+
+#[wasm_bindgen_test]
+fn wasm_handle_key_missing_fragment_returns_error_and_preserves_state() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(FIXTURE_MISSING_FRAGMENT)
+        .expect("loadDeck wasm wrapper should succeed");
+
+    let err = engine
+        .handle_key_wasm("enter".to_string())
+        .expect_err("missing fragment should return JsValue error");
+    let err_msg = err.as_string().expect("error should be a string message");
+    assert!(err_msg.contains("Card id not found"));
+
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be available"),
+        "home"
+    );
+    assert_eq!(engine.focused_link_index_wasm(), 0);
+    assert!(!engine.navigate_back_wasm());
 }
