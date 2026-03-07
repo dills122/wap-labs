@@ -1,0 +1,230 @@
+{
+  "cases": [
+    {
+      "name": "connectionless_get_reply_roundtrip",
+      "datagrams": [
+        {
+          "direction": "uplink",
+          "srcAddr": "10.0.0.10",
+          "dstAddr": "10.0.0.20",
+          "srcPort": 49152,
+          "dstPort": 9200,
+          "payload": [64, 47, 100, 101, 99, 107, 46, 119, 109, 108, 0, 17, 116, 101, 120, 116, 47, 118, 110, 100, 46, 119, 97, 112, 46, 119, 109, 108, 0]
+        },
+        {
+          "direction": "downlink",
+          "srcAddr": "10.0.0.20",
+          "dstAddr": "10.0.0.10",
+          "srcPort": 9200,
+          "dstPort": 49152,
+          "payload": [4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62]
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "datagram",
+          "direction": "uplink",
+          "mode": "connectionless",
+          "service_port": 9200,
+          "payload_len": 29
+        },
+        {
+          "kind": "methodRequest",
+          "direction": "uplink",
+          "mode": "connectionless",
+          "method": "get",
+          "uri": "/deck.wml",
+          "body_len": 0
+        },
+        {
+          "kind": "datagram",
+          "direction": "downlink",
+          "mode": "connectionless",
+          "service_port": 9200,
+          "payload_len": 15
+        },
+        {
+          "kind": "methodResult",
+          "direction": "downlink",
+          "mode": "connectionless",
+          "status_code": 200,
+          "body_len": 6
+        }
+      ]
+    },
+    {
+      "name": "connect_session_replay_roundtrip",
+      "datagrams": [
+        {
+          "direction": "uplink",
+          "srcAddr": "10.0.0.10",
+          "dstAddr": "10.0.0.20",
+          "srcPort": 49153,
+          "dstPort": 9201,
+          "payload": [1, 1, 4, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0]
+        },
+        {
+          "direction": "downlink",
+          "srcAddr": "10.0.0.20",
+          "dstAddr": "10.0.0.10",
+          "srcPort": 9201,
+          "dstPort": 49153,
+          "payload": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0]
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "datagram",
+          "direction": "uplink",
+          "mode": "connection-oriented",
+          "service_port": 9201,
+          "payload_len": 14
+        },
+        {
+          "kind": "connectRequest",
+          "direction": "uplink",
+          "mode": "connection-oriented",
+          "version_major": 1,
+          "version_minor": 4,
+          "max_outstanding_requests": 2
+        },
+        {
+          "kind": "datagram",
+          "direction": "downlink",
+          "mode": "connection-oriented",
+          "service_port": 9201,
+          "payload_len": 16
+        },
+        {
+          "kind": "connectReply",
+          "direction": "downlink",
+          "mode": "connection-oriented",
+          "version_major": 1,
+          "version_minor": 4,
+          "session_id": 7,
+          "max_outstanding_requests": 2
+        }
+      ]
+    },
+    {
+      "name": "retransmit_flow_timer_expiry_and_ack",
+      "retransmissionSteps": [
+        {
+          "event": { "kind": "timer-expired" },
+          "policy": {
+            "maxRetries": 2,
+            "initialDelayMs": 100,
+            "maxDelayMs": 200,
+            "backoffKind": "constant",
+            "backoffStepMs": 0,
+            "sarEnabled": false,
+            "nackHoldoffMs": 0
+          },
+          "state": {
+            "attempts": 0,
+            "lastNackElapsedMs": null,
+            "completed": false
+          }
+        },
+        {
+          "event": { "kind": "ack-observed" },
+          "policy": {
+            "maxRetries": 2,
+            "initialDelayMs": 100,
+            "maxDelayMs": 200,
+            "backoffKind": "constant",
+            "backoffStepMs": 0,
+            "sarEnabled": false,
+            "nackHoldoffMs": 0
+          },
+          "state": {
+            "attempts": 1,
+            "lastNackElapsedMs": null,
+            "completed": false
+          }
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "retransmission",
+          "decision": "send",
+          "attempt": 1,
+          "delay_ms": 100,
+          "attempts": 1,
+          "completed": false
+        },
+        {
+          "kind": "retransmission",
+          "decision": "completed",
+          "attempt": null,
+          "delay_ms": 0,
+          "attempts": 1,
+          "completed": true
+        }
+      ]
+    },
+    {
+      "name": "duplicate_tid_flow_replays_terminal_and_drops_nonterminal",
+      "duplicateSteps": [
+        {
+          "tid": 11,
+          "isTerminalResult": true,
+          "policy": {
+            "cacheTerminalResponses": true,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 11,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": true,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 12,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": false,
+            "maxCachedTransactions": 2
+          }
+        },
+        {
+          "tid": 12,
+          "isTerminalResult": false,
+          "policy": {
+            "cacheTerminalResponses": false,
+            "maxCachedTransactions": 2
+          }
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "duplicate",
+          "decision": "accept",
+          "tid": 11,
+          "cache_size": 1
+        },
+        {
+          "kind": "duplicate",
+          "decision": "replay-cached-terminal",
+          "tid": 11,
+          "cache_size": 1
+        },
+        {
+          "kind": "duplicate",
+          "decision": "accept",
+          "tid": 12,
+          "cache_size": 2
+        },
+        {
+          "kind": "duplicate",
+          "decision": "drop-as-duplicate",
+          "tid": 12,
+          "cache_size": 2
+        }
+      ]
+    }
+  ]
+}

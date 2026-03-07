@@ -40,7 +40,7 @@ Execution priority override (`2026-03-05` regroup):
 1. `T0-19` (`WDP` UDP/datagram contract)
 2. `T0-18` (`WTP` retransmission/duplicate/NACK hold-off)
 3. `T0-20` (`WSP` token registry + unknown handling)
-4. `T0-22` (interop replay corpus and promotion gate)
+4. `T0-22` (interop replay corpus and promotion gate, baseline now runnable for `CONNECT` / `GET` / `REPLY` plus retransmit/duplicate lanes)
 5. `T0-21` (`WTLS` phase boundary/minimal lane, default disabled)
 
 ### F0: Foundation and policy

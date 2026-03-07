@@ -31,11 +31,11 @@ pub use header_registry::{
     encode_pdu_type, encode_well_known_parameter, DEFAULT_HEADER_CODE_PAGE,
 };
 pub use pdu::{
-    decode_wsp_pdu, encode_wsp_pdu, WspMethodGetPdu, WspMethodPostPdu, WspPdu, WspPduDecodeError,
-    WspPduEncodeError, WspReplyPdu,
+    decode_wsp_pdu, encode_wsp_pdu, WspConnectPdu, WspConnectReplyPdu, WspMethodGetPdu,
+    WspMethodPostPdu, WspPdu, WspPduDecodeError, WspPduEncodeError, WspReplyPdu,
 };
 pub use session::{
-    classify_wsp_pdu, decode_wsp_session_event, encode_wsp_session_event, WspMethod,
-    WspMethodRequest, WspMethodResult, WspSessionEvent, WspSessionEventDecodeError,
-    WspSessionEventEncodeError, WspSessionMode,
+    classify_wsp_pdu, decode_wsp_session_event, encode_wsp_session_event, WspConnectReply,
+    WspConnectRequest, WspMethod, WspMethodRequest, WspMethodResult, WspSessionEvent,
+    WspSessionEventDecodeError, WspSessionEventEncodeError, WspSessionMode,
 };

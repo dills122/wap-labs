@@ -2,9 +2,11 @@
 
 use crate::network::wsp::header_block::{WspHeaderBlockDecodePolicy, WspHeaderBlockEncodePolicy};
 use crate::network::wsp::pdu::{
-    decode_wsp_pdu, encode_wsp_pdu, WspPdu, WspPduDecodeError, WspPduEncodeError,
+    decode_wsp_pdu, encode_wsp_pdu, WspConnectPdu, WspConnectReplyPdu, WspPdu, WspPduDecodeError,
+    WspPduEncodeError,
 };
 use crate::network::wsp::WspHeaderBlock;
+use crate::wsp_capability::{NegotiatedWspCapabilities, WspCapabilityProposal};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WspSessionMode {
@@ -36,7 +38,28 @@ pub struct WspMethodResult {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WspConnectRequest {
+    pub mode: WspSessionMode,
+    pub version_major: u8,
+    pub version_minor: u8,
+    pub capabilities: WspCapabilityProposal,
+    pub headers: WspHeaderBlock,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WspConnectReply {
+    pub mode: WspSessionMode,
+    pub version_major: u8,
+    pub version_minor: u8,
+    pub session_id: u16,
+    pub negotiated_capabilities: NegotiatedWspCapabilities,
+    pub headers: WspHeaderBlock,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspSessionEvent {
+    ConnectRequest(WspConnectRequest),
+    ConnectReply(WspConnectReply),
     MethodRequest(WspMethodRequest),
     MethodResult(WspMethodResult),
 }
@@ -44,17 +67,33 @@ pub enum WspSessionEvent {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspSessionEventDecodeError {
     Pdu(WspPduDecodeError),
+    InvalidPduForMode {
+        mode: WspSessionMode,
+        pdu_type: &'static str,
+    },
 }
 
 impl std::fmt::Display for WspSessionEventDecodeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Pdu(error) => write!(f, "{error}"),
+            Self::InvalidPduForMode { mode, pdu_type } => {
+                write!(f, "{pdu_type} is not valid for {mode}")
+            }
         }
     }
 }
 
 impl std::error::Error for WspSessionEventDecodeError {}
+
+impl std::fmt::Display for WspSessionMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Connectionless => write!(f, "connectionless mode"),
+            Self::ConnectionOriented => write!(f, "connection-oriented mode"),
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspSessionEventEncodeError {
@@ -79,6 +118,7 @@ pub fn decode_wsp_session_event(
     header_policy: WspHeaderBlockDecodePolicy,
 ) -> Result<WspSessionEvent, WspSessionEventDecodeError> {
     let pdu = decode_wsp_pdu(input, header_policy).map_err(WspSessionEventDecodeError::Pdu)?;
+    validate_pdu_for_mode(mode, &pdu)?;
     Ok(classify_wsp_pdu(mode, pdu))
 }
 
@@ -87,6 +127,19 @@ pub fn encode_wsp_session_event(
     header_policy: WspHeaderBlockEncodePolicy,
 ) -> Result<Vec<u8>, WspSessionEventEncodeError> {
     let pdu = match event {
+        WspSessionEvent::ConnectRequest(connect) => WspPdu::Connect(WspConnectPdu {
+            version_major: connect.version_major,
+            version_minor: connect.version_minor,
+            capabilities: connect.capabilities,
+            headers: connect.headers.clone(),
+        }),
+        WspSessionEvent::ConnectReply(reply) => WspPdu::ConnectReply(WspConnectReplyPdu {
+            version_major: reply.version_major,
+            version_minor: reply.version_minor,
+            session_id: reply.session_id,
+            negotiated_capabilities: reply.negotiated_capabilities,
+            headers: reply.headers.clone(),
+        }),
         WspSessionEvent::MethodRequest(request) => match request.method {
             WspMethod::Get if request.body.is_empty() => {
                 WspPdu::MethodGet(crate::network::wsp::WspMethodGetPdu {
@@ -113,6 +166,21 @@ pub fn encode_wsp_session_event(
 
 pub fn classify_wsp_pdu(mode: WspSessionMode, pdu: WspPdu) -> WspSessionEvent {
     match pdu {
+        WspPdu::Connect(connect) => WspSessionEvent::ConnectRequest(WspConnectRequest {
+            mode,
+            version_major: connect.version_major,
+            version_minor: connect.version_minor,
+            capabilities: connect.capabilities,
+            headers: connect.headers,
+        }),
+        WspPdu::ConnectReply(reply) => WspSessionEvent::ConnectReply(WspConnectReply {
+            mode,
+            version_major: reply.version_major,
+            version_minor: reply.version_minor,
+            session_id: reply.session_id,
+            negotiated_capabilities: reply.negotiated_capabilities,
+            headers: reply.headers,
+        }),
         WspPdu::MethodGet(get) => WspSessionEvent::MethodRequest(WspMethodRequest {
             mode,
             method: WspMethod::Get,
@@ -133,6 +201,33 @@ pub fn classify_wsp_pdu(mode: WspSessionMode, pdu: WspPdu) -> WspSessionEvent {
             headers: reply.headers,
             body: reply.body,
         }),
+    }
+}
+
+fn validate_pdu_for_mode(
+    mode: WspSessionMode,
+    pdu: &WspPdu,
+) -> Result<(), WspSessionEventDecodeError> {
+    let pdu_type = match pdu {
+        WspPdu::Connect(_) => "Connect",
+        WspPdu::ConnectReply(_) => "ConnectReply",
+        WspPdu::MethodGet(_) => "Get",
+        WspPdu::MethodPost(_) => "Post",
+        WspPdu::Reply(_) => "Reply",
+    };
+
+    let valid = matches!(
+        (mode, pdu),
+        (
+            WspSessionMode::Connectionless,
+            WspPdu::MethodGet(_) | WspPdu::MethodPost(_) | WspPdu::Reply(_)
+        ) | (WspSessionMode::ConnectionOriented, _)
+    );
+
+    if valid {
+        Ok(())
+    } else {
+        Err(WspSessionEventDecodeError::InvalidPduForMode { mode, pdu_type })
     }
 }
 
@@ -176,11 +271,29 @@ mod tests {
         mode: String,
         decode_policy: String,
         expected_error: String,
+        invalid_pdu_type: Option<String>,
     }
 
     #[derive(Debug, Deserialize)]
     #[serde(tag = "kind", rename_all = "camelCase")]
     enum SessionFixtureValue {
+        ConnectRequest {
+            version_major: u8,
+            version_minor: u8,
+            client_message_size: Option<u32>,
+            server_message_size: Option<u32>,
+            max_outstanding_requests: Option<u16>,
+            headers: Vec<HeaderFixtureValue>,
+        },
+        ConnectReply {
+            version_major: u8,
+            version_minor: u8,
+            session_id: u16,
+            client_message_size: Option<u32>,
+            server_message_size: Option<u32>,
+            max_outstanding_requests: Option<u16>,
+            headers: Vec<HeaderFixtureValue>,
+        },
         MethodRequest {
             method: String,
             uri: String,
@@ -284,6 +397,45 @@ mod tests {
 
     fn fixture_event(mode: WspSessionMode, value: SessionFixtureValue) -> WspSessionEvent {
         match value {
+            SessionFixtureValue::ConnectRequest {
+                version_major,
+                version_minor,
+                client_message_size,
+                server_message_size,
+                max_outstanding_requests,
+                headers,
+            } => WspSessionEvent::ConnectRequest(WspConnectRequest {
+                mode,
+                version_major,
+                version_minor,
+                capabilities: WspCapabilityProposal {
+                    client_message_size,
+                    server_message_size,
+                    max_outstanding_requests,
+                },
+                headers: fixture_headers(headers),
+            }),
+            SessionFixtureValue::ConnectReply {
+                version_major,
+                version_minor,
+                session_id,
+                client_message_size,
+                server_message_size,
+                max_outstanding_requests,
+                headers,
+            } => WspSessionEvent::ConnectReply(WspConnectReply {
+                mode,
+                version_major,
+                version_minor,
+                session_id,
+                negotiated_capabilities: NegotiatedWspCapabilities {
+                    mode: crate::wsp_capability::WspMode::ConnectionOriented,
+                    client_message_size,
+                    server_message_size,
+                    max_outstanding_requests,
+                },
+                headers: fixture_headers(headers),
+            }),
             SessionFixtureValue::MethodRequest {
                 method,
                 uri,
@@ -359,9 +511,59 @@ mod tests {
                     "case '{}' mismatch",
                     case.name
                 ),
+                "invalid-pdu-for-mode" => assert_eq!(
+                    error,
+                    WspSessionEventDecodeError::InvalidPduForMode {
+                        mode: mode(&case.mode),
+                        pdu_type: match case
+                            .invalid_pdu_type
+                            .as_deref()
+                            .expect("invalid-pdu-for-mode cases require invalidPduType")
+                        {
+                            "Connect" => "Connect",
+                            "ConnectReply" => "ConnectReply",
+                            other => panic!("unsupported invalid PDU type: {other}"),
+                        },
+                    },
+                    "case '{}' mismatch",
+                    case.name
+                ),
                 other => panic!("unsupported expected error: {other}"),
             }
         }
+    }
+
+    #[test]
+    fn rejects_connect_request_for_connectionless_mode() {
+        let error = decode_wsp_session_event(
+            &[1, 1, 4, 0, 0, 8, 0, 0, 0, 8, 0, 0, 2, 0],
+            WspSessionMode::Connectionless,
+            WspHeaderBlockDecodePolicy::STRICT,
+        )
+        .expect_err("connect should be rejected for connectionless mode");
+
+        assert_eq!(
+            error,
+            WspSessionEventDecodeError::InvalidPduForMode {
+                mode: WspSessionMode::Connectionless,
+                pdu_type: "Connect",
+            }
+        );
+    }
+
+    #[test]
+    fn accepts_reply_for_connectionless_mode() {
+        let decoded = decode_wsp_session_event(
+            &[4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62],
+            WspSessionMode::Connectionless,
+            WspHeaderBlockDecodePolicy {
+                negotiated_version: Some(WspEncodingVersion::V1_4),
+                ..WspHeaderBlockDecodePolicy::STRICT
+            },
+        )
+        .expect("reply should remain valid for connectionless mode");
+
+        assert!(matches!(decoded, WspSessionEvent::MethodResult(_)));
     }
 
     #[test]

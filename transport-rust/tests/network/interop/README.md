@@ -2,4 +2,13 @@
 
 This directory is the canonical fixture lane for protocol-profile promotion checks (`T0-22`).
 
-Until `T0-22` is completed, this lane may contain scaffold fixtures only.
+Current baseline:
+
+- `get_reply_replay.json`: deterministic WSP session-setup replay for minimal `Connect` / `ConnectReply` over connection-oriented service ports.
+- `get_reply_replay.json`: deterministic WDP + WSP replay corpus for minimal `GET` / `REPLY` paths over known service ports.
+- same corpus also carries the first WTP retransmission replay path for timer-expiry and ACK completion sequencing.
+- same corpus now carries duplicate-TID replay coverage for terminal replay and nonterminal duplicate drop behavior.
+
+Planned expansion:
+
+- richer `Connect` capability/error negotiation cases
