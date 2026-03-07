@@ -51,6 +51,7 @@ export interface NavigationHooks {
 export interface LoadTransportOptions {
   url: string;
   method?: string;
+  headers?: Record<string, string>;
   source: HostNavigationSource;
   followExternalIntent: boolean;
   pushHistory?: boolean;
@@ -138,6 +139,7 @@ export const createNavigationStateMachine = (
       source: options.source,
       requestedUrl,
       method,
+      headers: options.headers,
       followExternalIntent: options.followExternalIntent,
       pushHistory,
       requestPolicy
@@ -153,6 +155,7 @@ export const createNavigationStateMachine = (
     const transport = await hostClient.fetchDeck({
       url: requestedUrl,
       method,
+      headers: options.headers,
       timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
       retries: WAVES_CONFIG.transportFetchRetries,
       requestPolicy
@@ -224,6 +227,7 @@ export const createNavigationStateMachine = (
       pushHostHistoryEntry(hostHistory, transport.finalUrl, snapshot.activeCardId, options.source, {
         requestedUrl,
         method,
+        headers: options.headers,
         requestPolicy
       });
       mergeSessionState({
@@ -293,6 +297,7 @@ export const createNavigationStateMachine = (
         const prevSnapshot = await loadTransportUrl({
           url: previous.requestedUrl ?? previous.url,
           method: previous.method ?? 'GET',
+          headers: previous.headers,
           source: 'history-back',
           followExternalIntent: true,
           pushHistory: false,

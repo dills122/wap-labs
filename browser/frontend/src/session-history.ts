@@ -12,6 +12,7 @@ export interface HostHistoryState {
 export interface HostHistoryRequestIdentity {
   requestedUrl?: string;
   method?: string;
+  headers?: Record<string, string>;
   requestPolicy?: FetchRequestPolicy;
 }
 
@@ -52,6 +53,7 @@ export const pushHostHistoryEntry = (
     url: normalized,
     requestedUrl: normalizedIdentity.requestedUrl,
     method: normalizedIdentity.method,
+    headers: cloneHeaders(normalizedIdentity.headers),
     requestPolicy: cloneRequestPolicy(normalizedIdentity.requestPolicy),
     activeCardId,
     source
@@ -94,6 +96,7 @@ const normalizeRequestIdentity = (
   return {
     requestedUrl: requestedUrl || undefined,
     method: method || undefined,
+    headers: normalizeHeaders(requestIdentity.headers),
     requestPolicy: cloneRequestPolicy(requestIdentity.requestPolicy)
   };
 };
@@ -109,6 +112,7 @@ const isSameHistoryIdentity = (
   return (
     (current.requestedUrl ?? undefined) === requestIdentity.requestedUrl &&
     (normalizeMethod(current.method) ?? undefined) === requestIdentity.method &&
+    headerSignature(current.headers) === headerSignature(requestIdentity.headers) &&
     postPayloadFromPolicy(current.requestPolicy) ===
       postPayloadFromPolicy(requestIdentity.requestPolicy)
   );
@@ -124,6 +128,9 @@ const mergeRequestIdentity = (
   if (requestIdentity.method) {
     entry.method = requestIdentity.method;
   }
+  if (requestIdentity.headers) {
+    entry.headers = cloneHeaders(requestIdentity.headers);
+  }
   if (requestIdentity.requestPolicy) {
     entry.requestPolicy = cloneRequestPolicy(requestIdentity.requestPolicy);
   }
@@ -132,8 +139,33 @@ const mergeRequestIdentity = (
 const normalizeMethod = (method?: string): string | undefined =>
   method?.trim().toUpperCase() || undefined;
 
+const normalizeHeaders = (headers?: Record<string, string>): Record<string, string> | undefined => {
+  if (!headers) {
+    return undefined;
+  }
+  const entries = Object.entries(headers)
+    .map(([name, value]) => [name.trim().toLowerCase(), value.trim()] as const)
+    .filter(([name, value]) => name.length > 0 && value.length > 0)
+    .sort(([a], [b]) => a.localeCompare(b));
+  if (entries.length === 0) {
+    return undefined;
+  }
+  return Object.fromEntries(entries);
+};
+
+const headerSignature = (headers?: Record<string, string>): string =>
+  headers
+    ? Object.entries(headers)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([name, value]) => `${name}:${value}`)
+        .join('\n')
+    : '';
+
 const postPayloadFromPolicy = (policy?: FetchRequestPolicy): string | undefined =>
   policy?.postContext?.payload ?? undefined;
+
+const cloneHeaders = (headers?: Record<string, string>): Record<string, string> | undefined =>
+  headers ? { ...headers } : undefined;
 
 const cloneRequestPolicy = (policy?: FetchRequestPolicy): FetchRequestPolicy | undefined => {
   if (!policy) {

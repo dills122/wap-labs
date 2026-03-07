@@ -29,6 +29,7 @@ export interface HostHistoryEntry {
   url: string;
   requestedUrl?: string;
   method?: string;
+  headers?: Record<string, string>;
   requestPolicy?: FetchRequestPolicy;
   activeCardId?: string;
   source?: HostNavigationSource;

@@ -113,6 +113,29 @@ describe('session-history', () => {
     expect(state.entries[1]?.requestPolicy?.postContext?.payload).toBe('foo=1');
   });
 
+  it('keeps separate entries when request headers differ', () => {
+    const state = createHostHistoryState();
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET',
+      headers: {
+        Accept: 'text/vnd.wap.wml'
+      }
+    });
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET',
+      headers: {
+        Accept: 'application/vnd.wap.wmlc'
+      }
+    });
+
+    expect(state.index).toBe(1);
+    expect(state.entries).toHaveLength(2);
+    expect(state.entries[0]?.headers).toEqual({ accept: 'text/vnd.wap.wml' });
+    expect(state.entries[1]?.headers).toEqual({ accept: 'application/vnd.wap.wmlc' });
+  });
+
   it('drops forward history when pushing after a back step', () => {
     const state = createHostHistoryState();
     pushHostHistoryEntry(state, 'http://local.test/a', 'a', 'user');
