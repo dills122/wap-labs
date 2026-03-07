@@ -22,6 +22,7 @@
 - `waves/WAE_SPEC_TRACEABILITY.md`: WAE/WAEMT spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/TRANSPORT_SPEC_TRACEABILITY.md`: WSP/WTP/WDP transport spec-derived requirements and acceptance-criteria traceability matrix
 - `waves/TRANSPORT_RUST_PHASE_PLAN.md`: active phased implementation plan for `transport-rust` (FFI decode, streaming, protocol, and WTLS stages)
+- `waves/TRANSPORT_E2E_READINESS_SCORECARD.md`: measured readiness for local Kannel/WML end-to-end transport and browser smoke coverage
 - `waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`: canonical cross-lane, priority-ordered sprint plan for immediate and next-slice execution
 - `waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`: committed dependency-ordered sprint plan for request-policy/history/process-order/bytecode verification closure
 - `waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`: canonical migration plan for EngineFrame-based host integration

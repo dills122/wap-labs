@@ -826,6 +826,38 @@ Completed `B0` through `B3` tickets are archived in:
 10. `Notes`:
 - Research spike only; adoption decisions must remain profile-gated and additive.
 
+### T0-26 Local Kannel E2E readiness gate
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-14`, `T0-22`
+3. `Owner`: `transport-rust`, `browser`, `docs`
+4. `Files`:
+- `transport-rust/tests/kannel_smoke.rs`
+- `browser/`
+- `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+- `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
+5. `Build`:
+- Convert current local Kannel smoke posture into an explicit scored readiness gate.
+- Strengthen transport smoke assertions beyond `ok/status/content-type` to expected deck/card identity.
+- Add one deterministic browser/host real-gateway smoke path.
+- Normalize failure diagnostics for Kannel + WML server runs.
+6. `Tests`:
+- transport-only Kannel smoke with deterministic deck assertions
+- browser/host real-gateway smoke with rendered outcome assertions
+- local/CI-compatible one-command runner
+7. `Accept`:
+- `transport-to-kannel` readiness is measurable and reviewable over time
+- browser real-gateway E2E posture is explicit rather than inferred
+- scorecard is updated whenever readiness meaningfully changes
+8. `Migration gates`:
+- Done-1: scorecard exists and is linked from profile docs
+- Done-2: transport-only local Kannel E2E reaches credible smoke threshold
+- Done-3: browser real-gateway lane has at least one deterministic smoke path
+9. `Spec`:
+- `RQ-TRN-001..015`, `RQ-TRX-010`
+10. `Notes`:
+- Tracking ticket only until browser/transport real-gateway E2E gates are promoted into standard verification.
+
 ## Phase W: WMLScript Runtime and VM (Active)
 
 Reference architecture:
