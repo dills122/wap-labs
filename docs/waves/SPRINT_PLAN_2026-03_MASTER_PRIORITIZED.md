@@ -28,9 +28,9 @@ This snapshot is the operational kickoff view for Sprint 1 planning and standups
 
 | Ticket | Lane | Current status | Immediate dependency action |
 | --- | --- | --- | --- |
-| `A5-01` | engine/runtime | `todo` | execute directly in sprint sequence |
-| `R0-02` | engine + browser + transport | `todo` | depends on `A5-02` + `T0-04`; both already closed |
-| `R0-03` | engine + browser | `todo` | sequence after `A5-01` to reduce history-shape churn |
+| `A5-01` | engine/runtime | `done` | keep regression coverage current in `SPEC_TEST_COVERAGE` |
+| `R0-02` | engine + browser + transport | `done` | closed with deterministic host/runtime request-fidelity coverage |
+| `R0-03` | engine + browser | `done` | closed with history/context fidelity integration evidence |
 | `W0-06` | engine/wavescript | `done` | baseline structural verification gates landed; strict closure continues in `W1-02` |
 | `T0-10` | transport | `todo` | ready after `T0-05` + `T0-07` (closed) |
 | `T0-11` | transport | `todo` | ready after `T0-09`; include in same dependency bundle |
