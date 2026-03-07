@@ -410,7 +410,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-13 SMPP adaptation scope gate and fixture baseline
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
@@ -431,6 +431,9 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: in-scope branch has end-to-end payload-type fixture path before any parser/code activation.
 9. `Spec`:
 - `RQ-TRX-010`
+10. `Notes`:
+- Scope decision is `deferred` for Waves MVP and is now regression-guarded in `transport-rust/src/smpp_profile.rs`.
+- Fixture-backed policy assertion lives at `transport-rust/tests/fixtures/transport/smpp_adaptation_scope_mapped/scope_fixture.json`.
 
 ### T0-14 WAP networking profile decision record and migration gates
 

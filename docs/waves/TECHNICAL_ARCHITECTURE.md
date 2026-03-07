@@ -138,6 +138,7 @@ Transport profile decision rules:
 4. profile moves require `docs/waves/networking-migration-readiness-checklist.md` gate completion for the relevant `T0-08..T0-17` items
 5. protocol-native promotion requires `T0-18..T0-22` closure for WDP/WTP/WSP core and interop replay evidence
 6. transport-adjacent TCP posture for `RQ-TRX-009` is declaration-gated in `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md` and tracked by `T0-12`
+7. SMPP adaptation (`RQ-TRX-010`, `WAP-159`) is currently deferred by `T0-13`; no transport-rust SMPP mapping path is active in MVP profile
 
 Request example:
 
