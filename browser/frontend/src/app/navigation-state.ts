@@ -19,6 +19,7 @@ import {
   createHostHistoryState,
   peekHistoryBack,
   pushHostHistoryEntry,
+  updateCurrentHistoryCard,
   type HostHistoryState
 } from '../session-history';
 import { WAVES_CONFIG } from './waves-config';
@@ -261,12 +262,14 @@ export const createNavigationStateMachine = (
 
   const applyEngineKey = async (key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot> => {
     const snapshot = await hostClient.engineHandleKey({ key });
+    updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
     await renderSnapshot(snapshot);
     return snapshot;
   };
 
   const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot> => {
     const snapshot = await hostClient.engineAdvanceTimeMs({ deltaMs });
+    updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
     await renderSnapshot(snapshot);
     return snapshot;
   };
@@ -280,6 +283,7 @@ export const createNavigationStateMachine = (
       before.activeCardId !== after.activeCardId ||
       before.focusedLinkIndex !== after.focusedLinkIndex;
     if (engineHandled) {
+      updateCurrentHistoryCard(hostHistory, after.activeCardId);
       return 'engine';
     }
 
@@ -295,16 +299,18 @@ export const createNavigationStateMachine = (
           requestPolicy: previous.requestPolicy
         });
         if (prevSnapshot) {
+          let restoredSnapshot = prevSnapshot;
           if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
-            const restored = await hostClient.engineNavigateToCard({
+            restoredSnapshot = await hostClient.engineNavigateToCard({
               cardId: previous.activeCardId
             });
-            await renderSnapshot(restored);
+            await renderSnapshot(restoredSnapshot);
           }
           const committed = commitHistoryBack(hostHistory);
           if (!committed) {
             return 'none';
           }
+          updateCurrentHistoryCard(hostHistory, restoredSnapshot.activeCardId);
           mergeSessionState({
             historyIndex: hostHistory.index,
             history: hostHistory.entries
@@ -312,7 +318,7 @@ export const createNavigationStateMachine = (
           hooks.onStateEvent?.('host-history-back', {
             historyIndex: hostHistory.index,
             url: previous.url,
-            restoredCardId: previous.activeCardId
+            restoredCardId: restoredSnapshot.activeCardId
           });
           return 'host';
         }
