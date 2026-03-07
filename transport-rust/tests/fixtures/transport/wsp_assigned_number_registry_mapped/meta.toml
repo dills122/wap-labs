@@ -1,0 +1,9 @@
+name = "WSP assigned-number registry fixtures"
+description = "Table-driven decode/encode fixtures for WSP assigned-number token maps and deterministic unknown-value policy."
+mode = "mapped"
+work_items = ["T0-10"]
+spec_items = ["RQ-TRN-014", "RQ-TRN-018"]
+testing_ac = [
+  "Given WSP table-assigned values for PDU type, abort reason, well-known parameter, and header field name, decode/encode round-trips are deterministic.",
+  "Given unknown or unassigned values, strict and header-lenient policies return deterministic error/ignore outcomes by category."
+]

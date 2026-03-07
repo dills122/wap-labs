@@ -333,7 +333,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-10 WSP assigned-number registry conformance fixtures
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-05`, `T0-07`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -353,6 +353,8 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: no parser side-effect state is introduced by registry table lookup paths.
 9. `Spec`:
 - `RQ-TRN-014`, `RQ-TRN-018`
+10. `Notes`:
+- Landed as additive registry fixture slice in `transport-rust/src/wsp_registry.rs` with fixture-backed round-trip/unknown-policy tests (`transport-rust/tests/fixtures/transport/wsp_assigned_number_registry_mapped/registry_fixture.json`).
 
 ### T0-11 WSP capability-bound and negotiation-limit enforcement
 
