@@ -22,6 +22,7 @@ Fixture lane:
 
 - `transport-rust/tests/kannel_smoke.rs`
 - `transport-rust/tests/fixture_harness.rs`
+- `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 
 ### `wap-net-core` (target, gated)
 
@@ -45,6 +46,8 @@ Promotion from `gateway-bridged` to `wap-net-core` requires all of:
 4. Contract stability checks stay green for:
    - `browser/contracts/transport.ts`
    - `engine-wasm/contracts/wml-engine.ts`
+5. Local Kannel E2E readiness remains explicit and tracked in:
+   - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 
 ## Rollback criteria
 
@@ -59,3 +62,10 @@ Rollback action:
 1. Revert active profile selection to `gateway-bridged`.
 2. Preserve failing fixture artifacts in the associated `T0-*` ticket notes.
 3. Re-open promotion only with new explicit remediation tickets.
+
+## Operational tracking
+
+Use [docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md](/Users/dsteele/repos/wap-labs/docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md) to track how close Waves is to:
+
+1. `transport-rust` -> local Kannel -> local WML server E2E smoke
+2. browser/host -> transport -> local Kannel -> local WML server E2E smoke

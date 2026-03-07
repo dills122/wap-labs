@@ -111,7 +111,11 @@ Execution priority override (`2026-03-05` regroup):
 3. publish explicit profile transition decision: current -> target.
    - canonical record: `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
    - gate check command: `node scripts/check-networking-profile-gates.mjs`
-4. acceptance:
+4. maintain an explicit local gateway E2E readiness score for:
+   - `transport-rust -> Kannel -> WML server`
+   - `browser -> host transport -> Kannel -> WML server`
+   - canonical record: `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+5. acceptance:
    - all `T0-08..T0-22` gates with explicit owner and artifact.
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
 

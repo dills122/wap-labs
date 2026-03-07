@@ -141,3 +141,4 @@ Recommended later by phase:
 
 - Update related execution items in `docs/waves/WORK_ITEMS.md`.
 - Keep CI gates in sync with transport scope (`fmt`, `test`, `coverage`).
+- Track local Kannel/browser E2E execution readiness in `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`.
