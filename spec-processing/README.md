@@ -184,3 +184,6 @@ Strict mode (non-zero exit on warnings):
 
 - Known detector false-positive: `WAP-191_104` `Table 1` (resolved manually, tracked in rerun delta report).
 - Canonical planning/compliance docs should reference canonical cleaned corpus and provenance artifacts, not temporary `tmp/` paths.
+- External/supplemental networking source classification is tracked separately in:
+  - `spec-processing/external-source-index.json`
+  - `docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md`

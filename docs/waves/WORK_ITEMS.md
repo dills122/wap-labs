@@ -738,8 +738,10 @@ Completed `B0` through `B3` tickets are archived in:
 3. `Owner`: `docs`, `spec-processing`, `transport-rust`
 4. `Files`:
 - `docs/waves/networking-external-response-triage.md`
+- `docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md`
 - `docs/waves/NETWORKING_GAP_MASTER.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+- `spec-processing/external-source-index.json`
 - `spec-processing/new-source-material/`
 - `spec-processing/source-material/WAP.pdf`
 - `spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`
@@ -766,6 +768,7 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..019`
 10. `Notes`:
 - Research spike only; non-blocking for protocol implementation unless it uncovers a contradiction with local normative anchors.
+- Initial closure may catalog present supplemental sources and explicitly mark Kannel/Wireshark interop families as planned if no local snapshots are yet checked in.
 
 ### T0-24 Networking PCAP corpus spike and replay fixture seed pack
 

@@ -48,6 +48,9 @@ WAP protocol-native transport closure for:
 
 1. Adjacent-profile source classification and scope lock (`RQ-TRX-*`)
 - Ticket lanes: `T0-12`, `T0-13`, `T0-23`
+- Current index/evidence source:
+  - `docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md`
+  - `spec-processing/external-source-index.json`
 
 2. Canonical source-pipeline quality controls
 - Keep parse/promote governance aligned with spec-processing flow and drift checks.

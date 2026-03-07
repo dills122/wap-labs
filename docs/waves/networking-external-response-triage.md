@@ -82,3 +82,16 @@ These align with:
 
 External responses are useful and mostly aligned at a planning level.  
 Implementation must continue to anchor on the repo’s canonical spec set and ticketed traceability path.
+
+## Indexed source follow-up
+
+Current external/supplemental source indexing lives in:
+
+- [docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md)
+- [spec-processing/external-source-index.json](/Users/dsteele/repos/wap-labs/spec-processing/external-source-index.json)
+
+Validation command:
+
+```bash
+node scripts/check-networking-source-index.mjs
+```
