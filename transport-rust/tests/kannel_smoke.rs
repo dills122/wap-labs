@@ -1,10 +1,13 @@
 mod kannel_support;
 
 use kannel_support::{assert_engine_input_contains, request};
-use lowband_transport_rust::{fetch_deck_in_process, FetchDeckResponse};
+use lowband_transport_rust::{
+    fetch_deck_in_process_with_profile, FetchDeckResponse, FetchTransportProfile,
+};
 
 fn fetch_ok_response(url: &str) -> FetchDeckResponse {
-    let response = fetch_deck_in_process(request(url));
+    let response =
+        fetch_deck_in_process_with_profile(request(url), FetchTransportProfile::WapNetCore);
     assert!(
         response.ok,
         "expected ok=true for target={url}, got error={:?} status={} contentType={}",

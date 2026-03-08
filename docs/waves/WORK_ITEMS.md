@@ -945,7 +945,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-29 Native Kannel GET smoke gate
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-27`, `T0-28`
 3. `Owner`: `transport-rust`, `browser`, `docs`
 4. `Files`:
@@ -974,6 +974,7 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..015`, `RQ-TRX-010`
 10. `Notes`:
 - This ticket is the evidence gate for promoting native desktop fetch from “experimental” to “default candidate.”
+- Completed with explicit native-only transport smoke, host-native smoke, browser render/navigation smoke, and artifact-preserving smoke runner support.
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

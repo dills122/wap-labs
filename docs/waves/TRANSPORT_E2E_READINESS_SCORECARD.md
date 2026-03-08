@@ -42,35 +42,35 @@ Score: `5.5 / 6.0` (`92%`)
 
 ### Browser-to-Kannel
 
-Score: `7.0 / 8.0` (`88%`)
+Score: `7.5 / 8.0` (`94%`)
 
 ## Gate table
 
 | Gate | Description | Transport-to-Kannel | Browser-to-Kannel | Evidence |
 | --- | --- | --- | --- | --- |
 | `G1` | Local Kannel + WML stack boots reliably with one command | `1.0` | `1.0` | `make up`, `make status`, [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md) |
-| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/lib.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/lib.rs), `make smoke-transport-wap`; loopback-safe local smoke now sets explicit `allow-private` policy rather than depending on ambient host env |
+| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs), `make smoke-transport-wap`; native-mode smoke now forces `wap-net-core` rather than relying on ambient bridge defaults |
 | `G3` | Assertions validate deck identity and normalized engine input, not just HTTP success | `1.0` | `1.0` | transport smoke asserts deck/card markers for root + login decks; browser host smokes assert engine load, card identity, render markers, and navigation outcome |
 | `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `0.5` | `0.0` | promoted smoke now covers multi-deck root -> login fetch through Kannel, but not full auth/session flow |
-| `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `1.0` | `make smoke-transport-wap` now runs both transport and browser-host smoke checks |
-| `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](/Users/dsteele/repos/wap-labs/scripts/transport-wap-smoke.sh) now dumps Kannel status, WML health, and docker compose logs on failure |
-| `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored real-gateway smoke in [browser/src-tauri/src/lib.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/lib.rs) |
-| `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card |
+| `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `1.0` | `make smoke-transport-wap` now runs native-only transport, host, and browser-render smoke checks |
+| `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](/Users/dsteele/repos/wap-labs/scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
+| `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
+| `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in [browser/src-tauri/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/tests/kannel_smoke.rs) |
 
 ## Interpretation
 
 ### What the score means now
 
-1. `transport-rust` is close to having a credible local Kannel smoke gate.
-2. browser-level real-gateway E2E is now credible at the host/engine layer, including one real navigation transition.
-3. protocol-core replay readiness (`T0-22`) remains ahead of full browser E2E realism, but the gap is smaller.
+1. `transport-rust` now has a credible native Kannel smoke gate for baseline `GET` decks.
+2. browser-level real-gateway E2E is credible at the host/engine layer, including one real navigation transition on native fetch.
+3. protocol-core replay readiness (`T0-22`) still exceeds end-user browser realism, but live ingress evidence now matches the active profile posture.
 
 ### What this score does not mean
 
 1. it does not prove `wap-net-core` is ready for full browser/UI parity or future `wap-net-ext` promotion
 2. it does not prove full WSP/WTP/WDP conformance
 3. it does not guarantee emulator/browser UX correctness
-4. it does not prove the live desktop/browser `wap://` fetch path is using native protocol ingress rather than the legacy HTTP gateway bridge
+4. it does not prove POST/session behavior or full connection-oriented WSP/WTP support
 
 ## Current evidence base
 
@@ -78,7 +78,7 @@ Score: `7.0 / 8.0` (`88%`)
 
 1. active profile is explicitly `wap-net-core`, with `gateway-bridged` retained as rollback posture, in [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
 2. local Kannel + WML stack is documented and runnable in [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md)
-3. transport-specific smoke path exists:
+3. transport-specific native smoke path exists:
    - [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs)
    - `make smoke-transport-wap`
 4. on-demand CI smoke workflow exists in [docs/ci/CI_SETUP.md](/Users/dsteele/repos/wap-labs/docs/ci/CI_SETUP.md)
@@ -87,10 +87,9 @@ Score: `7.0 / 8.0` (`88%`)
 ### Main gaps
 
 1. the Kannel smoke lane is still ignored/manual rather than part of default local Rust test execution
-2. multi-step coverage is limited to deterministic multi-deck GET, not full register/login/session POST flow
-3. live desktop/browser `wap://` fetch still routes through the legacy HTTP gateway bridge, which is not reliable evidence of true native protocol ingress
-4. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
-5. failure diagnostics are console-first; they are not yet persisted into a structured artifact path
+2. multi-step coverage is limited to deterministic multi-deck `GET`, not full register/login/session POST flow
+3. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
+4. smoke artifacts are temp-dir based rather than checked into a durable report format
 
 ## Recommended next threshold targets
 

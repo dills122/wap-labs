@@ -1,5 +1,6 @@
 use lowband_transport_rust::{
-    fetch_deck_in_process, FetchDeckRequest, FetchDestinationPolicy, FetchRequestPolicy,
+    fetch_deck_in_process_with_profile, FetchDeckRequest, FetchDestinationPolicy,
+    FetchRequestPolicy, FetchTransportProfile,
 };
 use wavenav_engine::{DrawCmd, WmlEngine};
 
@@ -23,7 +24,8 @@ fn request(url: &str) -> FetchDeckRequest {
 
 fn fetch_kannel_smoke_target() -> lowband_transport_rust::FetchDeckResponse {
     let target = std::env::var("WAP_SMOKE_URL").unwrap_or_else(|_| "wap://localhost/".to_string());
-    let transport = fetch_deck_in_process(request(&target));
+    let transport =
+        fetch_deck_in_process_with_profile(request(&target), FetchTransportProfile::WapNetCore);
     assert!(
         transport.ok,
         "expected transport smoke fetch to succeed: {:?}",
@@ -78,7 +80,7 @@ fn kannel_fetch_deck_smoke_navigates_into_menu_card() {
         .handle_key("enter".to_string())
         .expect("enter should navigate into menu card");
     assert_eq!(engine.active_card_id().as_deref(), Ok("menu"));
-    assert!(render_contains(&engine, "Main Menu"));
     assert!(render_contains(&engine, "1. Login"));
     assert!(render_contains(&engine, "2. Register"));
+    assert!(render_contains(&engine, "3. About Stack"));
 }

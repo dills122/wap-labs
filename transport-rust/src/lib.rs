@@ -28,7 +28,7 @@ pub use wbxml::preflight_wbxml_decoder;
 pub(crate) const MAX_URI_OCTETS: usize = 1024;
 pub(crate) const MAX_RESPONSE_BODY_BYTES: usize = 512 * 1024;
 
-#[derive(Debug, Deserialize, TS)]
+#[derive(Clone, Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchDeckRequest {
     pub url: String,
@@ -93,6 +93,12 @@ pub enum FetchDestinationPolicy {
     AllowPrivate,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FetchTransportProfile {
+    GatewayBridged,
+    WapNetCore,
+}
+
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchTiming {
@@ -140,7 +146,14 @@ pub struct FetchDeckResponse {
 }
 
 pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
-    fetch_deck_in_process_impl(request)
+    fetch_deck_in_process_impl(request, None)
+}
+
+pub fn fetch_deck_in_process_with_profile(
+    request: FetchDeckRequest,
+    profile: FetchTransportProfile,
+) -> FetchDeckResponse {
+    fetch_deck_in_process_impl(request, Some(profile))
 }
 
 #[cfg(test)]

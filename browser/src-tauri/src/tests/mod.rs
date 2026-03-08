@@ -14,7 +14,9 @@ pub(super) use crate::engine_bridge::{
     command_engine_snapshot, AppState,
 };
 pub(super) use crate::fetch_host::{
-    default_fetch_destination_policy, ensure_request_id, next_request_id,
+    default_fetch_destination_policy, default_fetch_transport_fallback,
+    default_fetch_transport_profile, ensure_request_id, next_request_id,
+    HostFetchTransportFallback, HostFetchTransportProfile,
 };
 pub(super) use crate::waves_config;
 pub(super) use lowband_transport_rust::{
