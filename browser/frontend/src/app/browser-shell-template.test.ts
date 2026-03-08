@@ -6,9 +6,10 @@ describe('mountBrowserShell', () => {
   it('assigns runtime URL values via element properties after mount', () => {
     document.body.innerHTML = '<div id="app"></div>';
     const injectedUrl = 'http://example.test/start.wml?x=%22%3Cscript%3E';
-    const refs = mountBrowserShell(injectedUrl);
+    const refs = mountBrowserShell(injectedUrl, 'network');
 
     expect(refs.fetchUrlInput.value).toBe(injectedUrl);
+    expect(refs.runModeSelectEl.value).toBe('network');
     expect(refs.baseUrlInput.value).toBe(WAVES_CONFIG.defaultDebugBaseUrl);
     expect(document.querySelectorAll('#fetch-url')).toHaveLength(1);
     expect(document.querySelectorAll('#base-url')).toHaveLength(1);

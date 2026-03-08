@@ -144,7 +144,10 @@ export interface BrowserShellRefs {
   localExampleTestingAcEl: HTMLUListElement;
 }
 
-export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
+export const mountBrowserShell = (
+  defaultUrl: string,
+  defaultRunMode: 'local' | 'network'
+): BrowserShellRefs => {
   const app = document.querySelector<HTMLDivElement>('#app');
   if (!app) {
     throw new Error('missing #app root');
@@ -208,6 +211,7 @@ export const mountBrowserShell = (defaultUrl: string): BrowserShellRefs => {
 
   // Assign URL values as properties to avoid template interpolation of runtime-provided strings.
   fetchUrlInput.value = defaultUrl;
+  runModeSelectEl.value = defaultRunMode;
   baseUrlInput.value = WAVES_CONFIG.defaultDebugBaseUrl;
 
   return {

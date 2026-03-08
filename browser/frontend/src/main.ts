@@ -5,7 +5,7 @@ import './styles.css';
 import { BrowserController } from './app/browser-controller';
 import { BrowserPresenter } from './app/browser-presenter';
 import { mountBrowserShell } from './app/browser-shell-template';
-import { defaultStartUrl } from './app/defaults';
+import { defaultRunMode, defaultStartUrl } from './app/defaults';
 import { WAVES_CONFIG } from './app/waves-config';
 import { WAVES_COPY } from './app/waves-copy';
 import { registerBrowserComponents } from './components';
@@ -37,11 +37,13 @@ const bootstrap = async (): Promise<void> => {
 
   registerBrowserComponents();
 
-  const refs = mountBrowserShell(defaultStartUrl());
+  const startUrl = defaultStartUrl();
+  const runMode = defaultRunMode(undefined, startUrl);
+  const refs = mountBrowserShell(startUrl, runMode);
   const hostClient = createTauriHostClient(invoke);
 
   const initialSession: HostSessionState = {
-    runMode: 'local',
+    runMode,
     navigationStatus: 'idle',
     requestedUrl: refs.fetchUrlInput.value
   };
