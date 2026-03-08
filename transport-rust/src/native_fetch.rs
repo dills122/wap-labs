@@ -26,7 +26,10 @@ pub(crate) enum TransportProfile {
 
 pub(crate) struct NativeFetchPlan {
     pub(crate) request_url: String,
+    pub(crate) method: String,
     pub(crate) outbound_headers: HashMap<String, String>,
+    pub(crate) post_body: Option<Vec<u8>>,
+    pub(crate) post_content_type: Option<String>,
     pub(crate) timeout_ms: u64,
     pub(crate) attempts: u8,
     pub(crate) request_id: Option<String>,
@@ -51,13 +54,13 @@ pub(crate) fn active_transport_profile() -> TransportProfile {
     }
 }
 
-pub(crate) fn should_use_native_wap_get(parsed: &Url, method: &str) -> bool {
+pub(crate) fn should_use_native_wap_request(parsed: &Url, method: &str) -> bool {
     matches!(active_transport_profile(), TransportProfile::WapNetCore)
         && matches!(parsed.scheme(), "wap" | "waps")
-        && method == "GET"
+        && matches!(method, "GET" | "POST")
 }
 
-pub(crate) fn execute_native_wap_get(plan: NativeFetchPlan) -> FetchDeckResponse {
+pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResponse {
     let parsed = match Url::parse(&plan.request_url) {
         Ok(parsed) => parsed,
         Err(error) => {
@@ -107,10 +110,10 @@ pub(crate) fn execute_native_wap_get(plan: NativeFetchPlan) -> FetchDeckResponse
         }
     };
 
-    execute_native_wap_get_with_transport(&mut transport, peer, plan)
+    execute_native_wap_request_with_transport(&mut transport, peer, plan)
 }
 
-pub(crate) fn execute_native_wap_get_with_transport(
+pub(crate) fn execute_native_wap_request_with_transport(
     transport: &mut impl DatagramTransport,
     peer: SocketAddr,
     plan: NativeFetchPlan,
@@ -131,21 +134,27 @@ pub(crate) fn execute_native_wap_get_with_transport(
     };
 
     let transaction_id = CONNECTIONLESS_INITIAL_TRANSACTION_ID;
-    let encoded_request =
-        match encode_connectionless_get_request(transaction_id, &parsed, &plan.outbound_headers) {
-            Ok(encoded) => encoded,
-            Err(error) => {
-                return map_terminal_send_error(
-                    plan.request_url,
-                    format!("failed to encode native WSP GET: {error}"),
-                    plan.attempts,
-                    1,
-                    false,
-                    0.0,
-                    plan.request_id.as_deref(),
-                );
-            }
-        };
+    let encoded_request = match encode_connectionless_request(
+        transaction_id,
+        &plan.method,
+        &parsed,
+        &plan.outbound_headers,
+        plan.post_content_type.as_deref(),
+        plan.post_body.as_deref(),
+    ) {
+        Ok(encoded) => encoded,
+        Err(error) => {
+            return map_terminal_send_error(
+                plan.request_url,
+                format!("failed to encode native WSP {}: {error}", plan.method),
+                plan.attempts,
+                1,
+                false,
+                0.0,
+                plan.request_id.as_deref(),
+            );
+        }
+    };
 
     let mut last_error = "Retries exhausted".to_string();
     let mut last_is_timeout = false;
@@ -309,20 +318,41 @@ fn default_http_port_for_host(host: &str) -> u16 {
     }
 }
 
-fn encode_connectionless_get_request(
+fn encode_connectionless_request(
     transaction_id: u8,
+    method: &str,
     parsed: &Url,
     headers: &HashMap<String, String>,
+    post_content_type: Option<&str>,
+    post_body: Option<&[u8]>,
 ) -> Result<Vec<u8>, String> {
     let uri = build_kannel_request_uri(parsed)?;
     let uri_bytes = uri.as_bytes();
     let encoded_headers = encode_connectionless_request_headers(headers);
-    let mut wire = Vec::with_capacity(uri_bytes.len() + encoded_headers.len() + 8);
+    let encoded_content_type = encode_connectionless_content_type(post_content_type)?;
+    let post_body = post_body.unwrap_or(&[]);
+    let mut wire = Vec::with_capacity(
+        uri_bytes.len() + encoded_content_type.len() + encoded_headers.len() + post_body.len() + 12,
+    );
     wire.push(transaction_id);
-    wire.push(0x40);
-    wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
-    wire.extend_from_slice(uri_bytes);
-    wire.extend_from_slice(&encoded_headers);
+    wire.push(match method {
+        "GET" => 0x40,
+        "POST" => 0x60,
+        other => return Err(format!("unsupported native WSP method: {other}")),
+    });
+    if method == "GET" {
+        wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
+        wire.extend_from_slice(uri_bytes);
+        wire.extend_from_slice(&encoded_headers);
+    } else {
+        let headers_len = encoded_content_type.len() + encoded_headers.len();
+        wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
+        wire.extend_from_slice(&encode_uintvar(headers_len)?);
+        wire.extend_from_slice(uri_bytes);
+        wire.extend_from_slice(&encoded_content_type);
+        wire.extend_from_slice(&encoded_headers);
+        wire.extend_from_slice(post_body);
+    }
     Ok(wire)
 }
 
@@ -338,6 +368,23 @@ fn encode_connectionless_request_headers(headers: &HashMap<String, String>) -> V
         out.extend_from_slice(&[0x80, 0x88]);
     }
     out
+}
+
+fn encode_connectionless_content_type(content_type: Option<&str>) -> Result<Vec<u8>, String> {
+    let Some(content_type) = content_type
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+    else {
+        return Ok(Vec::new());
+    };
+
+    if content_type.as_bytes().contains(&0x00) {
+        return Err("native WSP POST content type must not contain NUL bytes".to_string());
+    }
+    let mut out = Vec::with_capacity(content_type.len() + 1);
+    out.extend_from_slice(content_type.as_bytes());
+    out.push(0x00);
+    Ok(out)
 }
 
 fn decode_connectionless_wsp_reply(
@@ -581,21 +628,21 @@ mod tests {
     }
 
     #[test]
-    fn native_mode_gate_only_applies_to_wap_get_requests() {
+    fn native_mode_gate_only_applies_to_wap_get_and_post_requests() {
         let parsed = Url::parse("wap://localhost/").expect("url should parse");
         let native = with_env_var_locked(
             TRANSPORT_PROFILE_ENV,
             TRANSPORT_PROFILE_WAP_NET_CORE,
-            || should_use_native_wap_get(&parsed, "GET"),
+            || should_use_native_wap_request(&parsed, "GET"),
         );
         assert!(native);
 
         let post = with_env_var_locked(
             TRANSPORT_PROFILE_ENV,
             TRANSPORT_PROFILE_WAP_NET_CORE,
-            || should_use_native_wap_get(&parsed, "POST"),
+            || should_use_native_wap_request(&parsed, "POST"),
         );
-        assert!(!post);
+        assert!(post);
     }
 
     #[test]
@@ -620,15 +667,18 @@ mod tests {
             next_receive: Ok(reply_datagram),
         };
 
-        let response = execute_native_wap_get_with_transport(
+        let response = execute_native_wap_request_with_transport(
             &mut transport,
             peer,
             NativeFetchPlan {
                 request_url: request_url.clone(),
+                method: "GET".to_string(),
                 outbound_headers: HashMap::from([(
                     "Accept".to_string(),
                     "text/vnd.wap.wml".to_string(),
                 )]),
+                post_body: None,
+                post_content_type: None,
                 timeout_ms: 200,
                 attempts: 1,
                 request_id: Some("req-native-get".to_string()),
@@ -664,12 +714,15 @@ mod tests {
             sent: Vec::new(),
             next_receive: Err(WdpError::Timeout),
         };
-        let response = execute_native_wap_get_with_transport(
+        let response = execute_native_wap_request_with_transport(
             &mut transport,
             "127.0.0.1:9200".parse().expect("literal should parse"),
             NativeFetchPlan {
                 request_url: "wap://127.0.0.1/".to_string(),
+                method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
+                post_body: None,
+                post_content_type: None,
                 timeout_ms: 100,
                 attempts: 1,
                 request_id: Some("req-native-timeout".to_string()),
@@ -690,10 +743,13 @@ mod tests {
     #[test]
     fn native_connectionless_wire_format_prefixes_transaction_id() {
         let parsed = Url::parse("wap://localhost/").expect("url should parse");
-        let encoded = encode_connectionless_get_request(
+        let encoded = encode_connectionless_request(
             CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            "GET",
             &parsed,
             &HashMap::new(),
+            None,
+            None,
         )
         .expect("request should encode");
 
@@ -706,6 +762,92 @@ mod tests {
         let uri = std::str::from_utf8(&rest[..uri_len]).expect("uri should decode");
         assert_eq!(uri, "http://localhost:13002/");
         assert_eq!(&rest[uri_len..], &[0x80, 0x94]);
+    }
+
+    #[test]
+    fn default_service_ports_match_wap_and_waps_defaults() {
+        assert_eq!(default_service_port("wap"), 9200);
+        assert_eq!(default_service_port("waps"), 9202);
+    }
+
+    #[test]
+    fn request_uri_preserves_path_and_query() {
+        let parsed = Url::parse("wap://example.test/login?step=1").expect("url should parse");
+        assert_eq!(request_uri(&parsed), "/login?step=1");
+    }
+
+    #[test]
+    fn build_kannel_request_uri_maps_loopback_and_secure_hosts() {
+        let local = Url::parse("wap://localhost/register").expect("url should parse");
+        let secure = Url::parse("waps://example.test/portal?sid=1").expect("url should parse");
+
+        assert_eq!(
+            build_kannel_request_uri(&local).expect("local uri should build"),
+            "http://localhost:13002/register"
+        );
+        assert_eq!(
+            build_kannel_request_uri(&secure).expect("secure uri should build"),
+            "https://example.test:80/portal?sid=1"
+        );
+    }
+
+    #[test]
+    fn encode_connectionless_content_type_rejects_nul_bytes() {
+        let error = encode_connectionless_content_type(Some("text/plain\0oops"))
+            .expect_err("content type with NUL should fail");
+
+        assert!(error.contains("must not contain NUL bytes"));
+    }
+
+    #[test]
+    fn resolve_destination_socket_addr_uses_default_ports() {
+        let wap = Url::parse("wap://127.0.0.1/").expect("url should parse");
+        let waps = Url::parse("waps://127.0.0.1/").expect("url should parse");
+
+        assert_eq!(
+            resolve_destination_socket_addr(&wap).expect("wap addr should resolve"),
+            "127.0.0.1:9200".parse().expect("literal should parse")
+        );
+        assert_eq!(
+            resolve_destination_socket_addr(&waps).expect("waps addr should resolve"),
+            "127.0.0.1:9202".parse().expect("literal should parse")
+        );
+    }
+
+    #[test]
+    fn native_connectionless_post_wire_format_encodes_header_block_and_body() {
+        let parsed = Url::parse("wap://localhost/login").expect("url should parse");
+        let encoded = encode_connectionless_request(
+            CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            "POST",
+            &parsed,
+            &HashMap::from([("Accept".to_string(), "text/vnd.wap.wml".to_string())]),
+            Some("application/x-www-form-urlencoded"),
+            Some(b"username=alice&pin=0000"),
+        )
+        .expect("post request should encode");
+
+        assert_eq!(
+            encoded.first().copied(),
+            Some(CONNECTIONLESS_INITIAL_TRANSACTION_ID)
+        );
+        assert_eq!(encoded.get(1).copied(), Some(0x60));
+        let (uri_len, remainder) = decode_uintvar(&encoded[2..]).expect("uri len should decode");
+        let (headers_len, remainder) =
+            decode_uintvar(remainder).expect("headers len should decode");
+        let uri = std::str::from_utf8(&remainder[..uri_len]).expect("uri should decode");
+        assert_eq!(uri, "http://localhost:13002/login");
+        let remainder = &remainder[uri_len..];
+        assert_eq!(headers_len, 36);
+        assert_eq!(
+            &remainder[..headers_len],
+            &[
+                b'a', b'p', b'p', b'l', b'i', b'c', b'a', b't', b'i', b'o', b'n', b'/', b'x', b'-',
+                b'w', b'w', b'w', b'-', b'f', b'o', b'r', b'm', b'-', b'u', b'r', b'l', b'e', b'n',
+                b'c', b'o', b'd', b'e', b'd', 0x00, 0x80, 0x88,
+            ]
+        );
+        assert_eq!(&remainder[headers_len..], b"username=alice&pin=0000");
     }
 
     #[test]

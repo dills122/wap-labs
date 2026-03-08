@@ -160,7 +160,7 @@ impl WmlEngine {
                     return Ok(());
                 }
                 let href = &layout.links[self.focused_link_idx];
-                self.execute_action_href(href)?;
+                self.execute_action_href(href, None, &[])?;
             }
             _ => {}
         }

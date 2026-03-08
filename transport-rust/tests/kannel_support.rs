@@ -1,5 +1,6 @@
 use lowband_transport_rust::{
-    FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy,
+    FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchPostContext,
+    FetchRequestPolicy,
 };
 
 fn smoke_timeout_ms() -> u64 {
@@ -29,6 +30,28 @@ pub fn request(url: &str) -> FetchDeckRequest {
             cache_control: None,
             referer_url: None,
             post_context: None,
+            ua_capability_profile: None,
+        }),
+    }
+}
+
+pub fn post_request(url: &str, payload: &str) -> FetchDeckRequest {
+    FetchDeckRequest {
+        url: url.to_string(),
+        method: Some("POST".to_string()),
+        headers: None,
+        timeout_ms: Some(smoke_timeout_ms()),
+        retries: Some(smoke_retries()),
+        request_id: None,
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: Some(lowband_transport_rust::FetchCacheControlPolicy::NoCache),
+            referer_url: Some(url.to_string()),
+            post_context: Some(FetchPostContext {
+                same_deck: Some(false),
+                content_type: Some("application/x-www-form-urlencoded".to_string()),
+                payload: Some(payload.to_string()),
+            }),
             ua_capability_profile: None,
         }),
     }

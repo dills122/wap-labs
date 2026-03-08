@@ -144,10 +144,10 @@ Extend the native desktop transport lane from baseline `GET` fetches into real W
 
 ### Must Complete (P0/P1)
 
-1. `T0-30` native WSP form `POST` baseline.
-2. `M1-16` transport/engine payload size guardrails.
-3. `A5-01` history entry fidelity follow-up.
-4. `W0-05` timer/dialog integration baseline.
+1. `M1-16` transport/engine payload size guardrails.
+2. `A5-01` history entry fidelity follow-up.
+3. `W0-05` timer/dialog integration baseline.
+4. `W1-06` fatal/non-fatal script error taxonomy closure.
 
 ### Follow-on (only if capacity remains)
 
@@ -161,9 +161,13 @@ Extend the native desktop transport lane from baseline `GET` fetches into real W
 3. `fix(transport): enforce payload size guardrails before decode/parse`
 4. `feat(engine): tighten history/session follow-up only if post flow requires it`
 
+Implementation reference:
+
+- [NATIVE_WSP_POST_RESEARCH_NOTES.md](/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
+
 ### Exit Gates
 
-1. `T0-30` is either `done` or split into explicit follow-up tickets without widening scope.
+1. `T0-30` is `done` with native transport, host, and browser-render smoke evidence against live Kannel.
 2. Desktop/browser can submit login or register forms through the native lane in controlled mode.
 3. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
 4. Runtime/compliance follow-on work is not blocked by undocumented transport posture.
@@ -175,6 +179,12 @@ If the native POST slice stabilizes quickly, resume the runtime/compliance lane 
 1. `A5-01` history entry fidelity follow-up.
 2. `W0-05` timer/dialog integration baseline.
 3. `W1-06` fatal/non-fatal script error taxonomy closure.
+
+Completed this sprint:
+
+1. native connectionless WSP `POST` interop for login/register through Kannel
+2. host-native `POST` smoke through the Tauri fetch command
+3. browser-engine native `POST` smoke proving login-success deck load/render after gateway roundtrip
 
 ## Capacity and WIP Rules
 

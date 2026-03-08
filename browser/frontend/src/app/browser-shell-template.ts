@@ -37,7 +37,12 @@ const browserShellTemplate = () => `
           <span>${WAVES_COPY.shell.deckView}</span>
           <span id="active-url-label" class="muted-url">${WAVES_COPY.shell.idle}</span>
         </div>
-        <div id="viewport" class="viewport viewport-skeleton" aria-busy="true">
+        <div
+          id="viewport"
+          class="viewport viewport-skeleton"
+          aria-busy="true"
+          tabindex="0"
+        >
           <div class="skeleton-line"></div>
           <div class="skeleton-line skeleton-line-wide"></div>
           <div class="skeleton-line"></div>

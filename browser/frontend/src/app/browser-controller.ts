@@ -5,6 +5,7 @@ import { resolveKeyboardIntent } from './keyboard';
 import { isProbeReachable } from './network';
 import { createNavigationStateMachine, defaultRequestPolicyForSource } from './navigation-state';
 import { ScriptTimerRegistry } from './script-timer-registry';
+import { defaultStartUrl } from './defaults';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
 import {
@@ -38,11 +39,13 @@ export class BrowserController {
   private bootDeckReadyEmitted = false;
   private runMode: RunMode = 'local';
   private activeLocalExampleKey = defaultLocalDeckExample().key;
+  private lastNetworkUrl: string;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
     this.presenter = presenter;
     this.refs = refs;
+    this.lastNetworkUrl = refs.fetchUrlInput.value.trim() || defaultStartUrl();
     this.navigation = createNavigationStateMachine(
       this.hostClient,
       this.refs.fetchUrlInput.value,
@@ -402,6 +405,7 @@ export class BrowserController {
     }
 
     this.presenter.setStatus(WAVES_COPY.status.networkModeEnabled);
+    this.refs.fetchUrlInput.value = this.lastNetworkUrl || defaultStartUrl();
     await this.runStartupNetworkProbe();
   }
 
@@ -693,7 +697,10 @@ export class BrowserController {
 
       const state = this.navigation.getSessionState();
       if (state.finalUrl) {
+        this.lastNetworkUrl = state.finalUrl;
         this.refs.fetchUrlInput.value = state.finalUrl;
+      } else if (requestedUrl) {
+        this.lastNetworkUrl = requestedUrl;
       }
       if (state.navigationStatus === 'error') {
         this.presenter.setStatus(
@@ -703,6 +710,9 @@ export class BrowserController {
         );
       } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
         this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));
+        if (source === 'user' || source === 'reload') {
+          this.refs.viewportEl.focus();
+        }
       }
 
       return snapshot;
@@ -809,6 +819,7 @@ export class BrowserController {
     if (!targetUrl) {
       return;
     }
+    this.lastNetworkUrl = targetUrl;
 
     for (let attempt = 1; attempt <= WAVES_CONFIG.networkProbeMaxAttempts; attempt += 1) {
       this.presenter.recordTimeline('startup-network-probe', 'state', {

@@ -44,6 +44,7 @@ export type ScriptNavigationIntent =
 export type WmlGoCacheControlPolicy = 'default' | 'no-cache';
 
 export interface WmlGoPostContext {
+  // Transport-facing metadata for form submission initiated by WML <go method="post">.
   sameDeck?: boolean;
   contentType?: string;
   payload?: string;

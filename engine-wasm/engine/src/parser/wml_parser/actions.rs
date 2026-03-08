@@ -1,4 +1,4 @@
-use crate::runtime::card::CardTaskAction;
+use crate::runtime::card::{CardPostField, CardTaskAction};
 
 #[cfg(test)]
 use super::xml::{extract_attr, find_tag_from};
@@ -71,6 +71,8 @@ fn parse_do_accept_action_xml(
         if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
             return Ok(Some(CardTaskAction::Go {
                 href: href.to_string(),
+                method: parse_go_method_xml(element),
+                post_fields: parse_post_fields_xml(&element.children),
             }));
         }
 
@@ -117,6 +119,8 @@ fn parse_first_task_action_xml(
                 if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
                     return Ok(Some(CardTaskAction::Go {
                         href: href.to_string(),
+                        method: parse_go_method_xml(element),
+                        post_fields: parse_post_fields_xml(&element.children),
                     }));
                 }
             }
@@ -170,7 +174,11 @@ pub(super) fn parse_do_accept_action(body: &str) -> Result<Option<CardTaskAction
         if do_type == "accept" {
             if let Some(href) = extract_attr(open_tag, "href") {
                 if !href.is_empty() {
-                    return Ok(Some(CardTaskAction::Go { href }));
+                    return Ok(Some(CardTaskAction::Go {
+                        href,
+                        method: parse_go_method(open_tag),
+                        post_fields: parse_post_fields(do_body),
+                    }));
                 }
             }
             if let Some(action) = parse_first_task_action(do_body)? {
@@ -237,7 +245,20 @@ pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskActio
             "go" => {
                 if let Some(href) = extract_attr(open_tag, "href") {
                     if !href.is_empty() {
-                        return Ok(Some(CardTaskAction::Go { href }));
+                        let post_fields = if open_tag.trim_end().ends_with("/>") {
+                            Vec::new()
+                        } else {
+                            let close_start = body[open_end + 1..]
+                                .find("</go>")
+                                .map(|idx| open_end + 1 + idx)
+                                .unwrap_or(open_end + 1);
+                            parse_post_fields(&body[open_end + 1..close_start])
+                        };
+                        return Ok(Some(CardTaskAction::Go {
+                            href,
+                            method: parse_go_method(open_tag),
+                            post_fields,
+                        }));
                     }
                 }
             }
@@ -249,6 +270,66 @@ pub(super) fn parse_first_task_action(body: &str) -> Result<Option<CardTaskActio
         cursor = open_end + 1;
     }
     Ok(None)
+}
+
+fn parse_go_method_xml(element: &XmlElement) -> Option<String> {
+    normalize_go_method(element.attr("method"))
+}
+
+fn parse_post_fields_xml(nodes: &[XmlNode]) -> Vec<CardPostField> {
+    let mut out = Vec::new();
+    collect_post_fields_xml(nodes, &mut out);
+    out
+}
+
+fn collect_post_fields_xml(nodes: &[XmlNode], out: &mut Vec<CardPostField>) {
+    for node in nodes {
+        let XmlNode::Element(element) = node else {
+            continue;
+        };
+        if element.name == "postfield" {
+            if let Some(name) = element.attr("name").filter(|value| !value.is_empty()) {
+                out.push(CardPostField {
+                    name: name.to_string(),
+                    value: element.attr("value").unwrap_or_default().to_string(),
+                });
+            }
+        }
+        collect_post_fields_xml(&element.children, out);
+    }
+}
+
+#[cfg(test)]
+fn parse_go_method(open_tag: &str) -> Option<String> {
+    normalize_go_method(extract_attr(open_tag, "method").as_deref())
+}
+
+fn normalize_go_method(method: Option<&str>) -> Option<String> {
+    let method = method?.trim();
+    if method.is_empty() {
+        return None;
+    }
+    Some(method.to_ascii_uppercase())
+}
+
+#[cfg(test)]
+fn parse_post_fields(body: &str) -> Vec<CardPostField> {
+    let mut out = Vec::new();
+    let mut cursor = 0usize;
+    while let Some(start) = find_tag_from(body, "postfield", cursor) {
+        let Some(open_end) = body[start..].find('>').map(|idx| start + idx) else {
+            break;
+        };
+        let open_tag = &body[start..=open_end];
+        if let Some(name) = extract_attr(open_tag, "name").filter(|value| !value.is_empty()) {
+            out.push(CardPostField {
+                name,
+                value: extract_attr(open_tag, "value").unwrap_or_default(),
+            });
+        }
+        cursor = open_end + 1;
+    }
+    out
 }
 
 #[cfg(test)]

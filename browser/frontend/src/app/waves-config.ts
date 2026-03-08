@@ -2,7 +2,7 @@ export const WAVES_CONFIG = {
   appName: 'Waves Browser',
   appTagline: 'WAP/WML based browser 1.x',
   appDescription: 'Waves is a WAP/WML based browser 1.x.',
-  defaultStartUrl: 'http://127.0.0.1:3000/',
+  defaultStartUrl: 'wap://localhost/',
   defaultDebugBaseUrl: 'http://local.test/start.wml',
   defaultViewportCols: 20,
   maxTimelineEvents: 200,

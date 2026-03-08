@@ -1,3 +1,4 @@
+use crate::runtime::card::CardPostField;
 use crate::*;
 use url::Url;
 
@@ -91,7 +92,11 @@ impl WmlEngine {
         action: &CardTaskAction,
     ) -> Result<(), String> {
         match action {
-            CardTaskAction::Go { href } => self.execute_action_href(href),
+            CardTaskAction::Go {
+                href,
+                method,
+                post_fields,
+            } => self.execute_action_href(href, method.as_deref(), post_fields),
             CardTaskAction::Prev => {
                 self.push_trace("ACTION_PREV", String::new());
                 self.navigate_back_internal();
@@ -109,7 +114,12 @@ impl WmlEngine {
         }
     }
 
-    pub(crate) fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
+    pub(crate) fn execute_action_href(
+        &mut self,
+        href: &str,
+        method: Option<&str>,
+        post_fields: &[CardPostField],
+    ) -> Result<(), String> {
         if let Some(script_ref) = parse_script_href(href) {
             let function_name = script_ref.function_name.unwrap_or("main");
             self.push_trace(
@@ -133,8 +143,14 @@ impl WmlEngine {
         }
 
         self.push_trace("ACTION_EXTERNAL", href.to_string());
-        self.external_nav_intent = Some(self.resolve_external_href(href));
-        self.external_nav_request_policy = Some(self.default_external_navigation_request_policy());
+        let resolved_href = self.resolve_external_href(href);
+        self.external_nav_intent = Some(resolved_href.clone());
+        self.external_nav_request_policy =
+            Some(self.default_external_navigation_request_policy_with_post(
+                &resolved_href,
+                method,
+                post_fields,
+            ));
         Ok(())
     }
 
@@ -156,16 +172,62 @@ impl WmlEngine {
     pub(crate) fn default_external_navigation_request_policy(
         &self,
     ) -> ScriptNavigationRequestPolicyLiteral {
+        self.default_external_navigation_request_policy_with_post("", None, &[])
+    }
+
+    pub(crate) fn default_external_navigation_request_policy_with_post(
+        &self,
+        resolved_href: &str,
+        method: Option<&str>,
+        post_fields: &[CardPostField],
+    ) -> ScriptNavigationRequestPolicyLiteral {
         let referer_url = if self.base_url.trim().is_empty() {
             None
         } else {
             Some(self.base_url.clone())
         };
+        let post_context = if matches!(method, Some(value) if value.eq_ignore_ascii_case("POST")) {
+            Some(ScriptNavigationPostContextLiteral {
+                same_deck: Some(self.is_same_document_navigation(resolved_href)),
+                content_type: Some("application/x-www-form-urlencoded".to_string()),
+                payload: Some(self.encode_post_fields(post_fields)),
+            })
+        } else {
+            None
+        };
         ScriptNavigationRequestPolicyLiteral {
             cache_control: None,
             referer_url,
-            post_context: None,
+            post_context,
         }
+    }
+
+    fn encode_post_fields(&self, post_fields: &[CardPostField]) -> String {
+        let mut serializer = url::form_urlencoded::Serializer::new(String::new());
+        for field in post_fields {
+            serializer.append_pair(&field.name, &self.resolve_post_field_value(&field.value));
+        }
+        serializer.finish()
+    }
+
+    fn resolve_post_field_value(&self, raw: &str) -> String {
+        if let Some(name) = raw
+            .strip_prefix("$(")
+            .and_then(|value| value.strip_suffix(')'))
+        {
+            return self.vars.get(name).cloned().unwrap_or_default();
+        }
+        raw.to_string()
+    }
+
+    fn is_same_document_navigation(&self, resolved_href: &str) -> bool {
+        let base = self
+            .base_url
+            .split('#')
+            .next()
+            .unwrap_or(self.base_url.as_str());
+        let target = resolved_href.split('#').next().unwrap_or(resolved_href);
+        !base.is_empty() && base == target
     }
 }
 
