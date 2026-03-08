@@ -38,11 +38,11 @@ Applicable gates:
 
 ### Transport-to-Kannel
 
-Score: `5.5 / 6.0` (`92%`)
+Score: `6.0 / 6.0` (`100%`)
 
 ### Browser-to-Kannel
 
-Score: `7.5 / 8.0` (`94%`)
+Score: `8.0 / 8.0` (`100%`)
 
 ## Gate table
 
@@ -51,7 +51,7 @@ Score: `7.5 / 8.0` (`94%`)
 | `G1` | Local Kannel + WML stack boots reliably with one command | `1.0` | `1.0` | `make up`, `make status`, [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md) |
 | `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs), `make smoke-transport-wap`; native-mode smoke now forces `wap-net-core` rather than relying on ambient bridge defaults |
 | `G3` | Assertions validate deck identity and normalized engine input, not just HTTP success | `1.0` | `1.0` | transport smoke asserts deck/card markers for root + login decks; browser host smokes assert engine load, card identity, render markers, and navigation outcome |
-| `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `0.5` | `0.0` | promoted smoke now covers multi-deck root -> login fetch through Kannel, but not full auth/session flow |
+| `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `1.0` | `1.0` | native Kannel smoke now covers register -> login success flow at transport, host, and browser-engine levels |
 | `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `1.0` | `make smoke-transport-wap` now runs native-only transport, host, and browser-render smoke checks |
 | `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](/Users/dsteele/repos/wap-labs/scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
 | `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
@@ -61,16 +61,16 @@ Score: `7.5 / 8.0` (`94%`)
 
 ### What the score means now
 
-1. `transport-rust` now has a credible native Kannel smoke gate for baseline `GET` decks.
-2. browser-level real-gateway E2E is credible at the host/engine layer, including one real navigation transition on native fetch.
-3. protocol-core replay readiness (`T0-22`) still exceeds end-user browser realism, but live ingress evidence now matches the active profile posture.
+1. `transport-rust` now has a credible native Kannel smoke gate for both baseline `GET` decks and constrained WML form `POST`.
+2. browser-level real-gateway E2E is credible at the host/engine layer for root/menu navigation and register/login form submission.
+3. protocol-core replay readiness (`T0-22`) still exceeds end-user browser realism, but live ingress evidence now matches the active profile posture for the constrained MVP lane.
 
 ### What this score does not mean
 
 1. it does not prove `wap-net-core` is ready for full browser/UI parity or future `wap-net-ext` promotion
 2. it does not prove full WSP/WTP/WDP conformance
 3. it does not guarantee emulator/browser UX correctness
-4. it does not prove POST/session behavior or full connection-oriented WSP/WTP support
+4. it proves constrained connectionless form `POST`, but it does not prove full connection-oriented WSP/WTP session support
 
 ## Current evidence base
 
@@ -87,9 +87,9 @@ Score: `7.5 / 8.0` (`94%`)
 ### Main gaps
 
 1. the Kannel smoke lane is still ignored/manual rather than part of default local Rust test execution
-2. multi-step coverage is limited to deterministic multi-deck `GET`, not full register/login/session POST flow
-3. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
-4. smoke artifacts are temp-dir based rather than checked into a durable report format
+2. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
+3. smoke artifacts are temp-dir based rather than checked into a durable report format
+4. non-ASCII charset-sensitive form submission is still not a proven smoke path
 
 ## Recommended next threshold targets
 
@@ -97,9 +97,7 @@ Score: `7.5 / 8.0` (`94%`)
 
 Required moves:
 
-1. strengthen [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs) to assert expected deck/card markers
-2. add one multi-step Kannel-backed scenario from the local WML app
-3. normalize local failure logging so Kannel and WML server evidence is preserved automatically
+1. met
 
 ### Threshold B: credible browser E2E smoke (`>= 6.5 / 8.0`)
 
@@ -107,22 +105,20 @@ Current status: `met`
 
 Required moves:
 
-1. add a browser/host E2E path that uses real `fetchDeck` against local Kannel
-2. assert rendered card content and at least one navigation transition
-3. keep the browser E2E lane independent from protocol-core replay fixtures
+1. met
 
 ## Suggested follow-up ticket
 
 Suggested ticket:
 
-- `T0-29` Native Kannel GET smoke gate
+- `M1-16` transport/engine payload size guardrails
 
 Suggested scope:
 
-1. add native-mode transport smoke from desktop/browser fetch path
-2. distinguish native evidence from legacy gateway-bridge evidence
-3. update this scorecard as part of the acceptance criteria
-4. use the result to guide follow-on POST/session scope
+1. enforce deterministic oversized-payload rejection before decode/parse
+2. keep transport and engine boundary behavior aligned for large deck bodies
+3. preserve current native Kannel smoke coverage while hardening failure paths
+4. update this scorecard only if hardening changes execution posture or signal quality
 
 ## Update policy
 

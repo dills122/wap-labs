@@ -874,7 +874,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-27 Native connectionless WSP GET fetch path
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-19`, `T0-20`, `T0-22`, `T0-26`
 3. `Owner`: `transport-rust`
 4. `Files`:
@@ -1010,6 +1010,10 @@ Completed `B0` through `B3` tickets are archived in:
 10. `Notes`:
 - Keep scope constrained to WML form submission first; do not widen into full connection-oriented WSP session work unless required to land baseline login/register flows.
 - Research note: [NATIVE_WSP_POST_RESEARCH_NOTES.md](/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
+- Landed evidence:
+  - transport native `POST` login/register smoke in [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs)
+  - Tauri host native `POST` smoke in [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs)
+  - browser-engine native `POST` smoke in [browser/src-tauri/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/tests/kannel_smoke.rs)
 
 ## Phase W: WMLScript Runtime and VM (Active)
 
