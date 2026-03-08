@@ -50,6 +50,8 @@
 - `agents/RUST_STEERING.md`: Rust-specific steering for WaveNav engine development
 - `agents/SHELL_STEERING.md`: POSIX-first shell steering and Alpine portability rules
 - `agents/SCRIPTING_STEERING.md`: reusable scripting policy and tool-reuse-first guidance
+- `releases/VERSIONING.md`: pre-alpha semver policy, coordinated release-train guidance, and release workflow expectations
+- `ci/RELEASE_BRANCH_RULESET.md`: GitHub ruleset guidance for immutable `release/v*` historical branches
 
 ## WaveNav Engine Documentation Set
 

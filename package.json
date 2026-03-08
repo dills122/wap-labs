@@ -16,6 +16,8 @@
     "format:node": "pnpm -r --if-present run format",
     "format:check:node": "pnpm -r --if-present run format:check",
     "format:staged": "lint-staged --concurrent false",
+    "version:check": "node scripts/check-release-version.mjs",
+    "version:set": "node scripts/set-release-version.mjs",
     "test:node": "pnpm -r --if-present run test",
     "build:node": "pnpm -r --if-present run build",
     "typecheck:node": "pnpm -r --if-present run typecheck"

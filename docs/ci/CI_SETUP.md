@@ -5,6 +5,8 @@ This document describes all active GitHub Actions automation for this repository
 ## Quick Reference
 
 - Main validation workflow: `.github/workflows/ci.yml`
+- Release branch preparation workflow: `.github/workflows/release-prepare.yml`
+- Milestone GitHub release workflow: `.github/workflows/milestone-release.yml`
 - Security workflow: `.github/workflows/security.yml`
 - Dependabot auto-merge workflow: `.github/workflows/dependabot-auto-merge.yml`
 - Code scanning workflow: `.github/workflows/codeql.yml`
@@ -90,7 +92,37 @@ Caching:
 - pnpm cache for workspace audit
 - npm cache for `wml-server` audit
 
-### 3) CodeQL (`.github/workflows/codeql.yml`)
+### 3) Release Prepare (`.github/workflows/release-prepare.yml`)
+
+Purpose:
+- Manually create a frozen `release/vX.Y.Z` branch without publishing a GitHub release.
+
+Triggers:
+- `workflow_dispatch`
+
+Behavior:
+- checks out a chosen source ref (default `main`)
+- syncs all managed manifest versions from the requested semver
+- verifies version consistency
+- commits the release version bump only if needed
+- pushes a new `release/vX.Y.Z` branch and fails if it already exists
+
+### 4) Milestone Release (`.github/workflows/milestone-release.yml`)
+
+Purpose:
+- Manually publish a milestone-tagged GitHub release from an existing release branch.
+
+Triggers:
+- `workflow_dispatch`
+
+Behavior:
+- checks out `release/vX.Y.Z` by default
+- verifies managed versions still match `VERSION`
+- builds the static site and simulator bundle
+- creates an annotated `vX.Y.Z` tag
+- publishes a GitHub release with downloadable source and site-bundle assets
+
+### 5) CodeQL (`.github/workflows/codeql.yml`)
 
 Purpose:
 - GitHub code scanning (SAST) for Rust and JavaScript/TypeScript.
@@ -121,7 +153,7 @@ Config:
 Caching:
 - Rust build artifact cache for the Rust matrix leg
 
-### 4) Deploy Pages (`.github/workflows/pages.yml`)
+### 6) Deploy Pages (`.github/workflows/pages.yml`)
 
 Purpose:
 - Build and publish static artifacts to `gh-pages`.
@@ -138,7 +170,7 @@ Behavior:
 - assembles combined `_site` artifact
 - deploys to `gh-pages` branch with `peaceiris/actions-gh-pages`
 
-### 5) Transport WAP Smoke (`.github/workflows/transport-wap-smoke.yml`)
+### 7) Transport WAP Smoke (`.github/workflows/transport-wap-smoke.yml`)
 
 Purpose:
 - On-demand end-to-end smoke for Kannel + WML stack integration.
@@ -185,6 +217,8 @@ Auto-merge behavior:
 
 Use `docs/ci/REQUIRED_CHECKS.md` as the source of truth for required checks on `main`.
 
+For immutable release branches, use `docs/ci/RELEASE_BRANCH_RULESET.md` as the source of truth for GitHub ruleset configuration.
+
 At minimum, require:
 - Main CI check jobs from `ci.yml`
 - Security jobs from `security.yml`
@@ -204,11 +238,17 @@ Do not require:
   - Confirm the correct lockfile path is used for `actions/setup-node` cache keys.
 - Branch protection check name mismatch
   - If a workflow job name changes, update `docs/ci/REQUIRED_CHECKS.md` and branch protection settings immediately.
+- Release branch remains mutable
+  - Confirm the `release/v*` ruleset blocks updates and deletions after branch creation.
+- Version drift failure in CI
+  - Run `node scripts/set-release-version.mjs <semver>` and then `node scripts/check-release-version.mjs`.
 
 ## Maintenance Checklist
 
 When changing CI:
 1. Update workflow YAML.
 2. Update `docs/ci/REQUIRED_CHECKS.md` if check names change or required policy changes.
-3. Update this document when behavior/triggers/caches change.
-4. Validate with at least one PR run after merge.
+3. Update `docs/ci/RELEASE_BRANCH_RULESET.md` when release branch governance changes.
+4. Update `docs/releases/VERSIONING.md` when versioning semantics or release cadence changes.
+5. Update this document when behavior/triggers/caches change.
+6. Validate with at least one PR run after merge.

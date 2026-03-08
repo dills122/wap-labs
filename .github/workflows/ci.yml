@@ -40,8 +40,12 @@ jobs:
           filters: |
             ci:
               - ".github/workflows/**"
+              - "VERSION"
               - "package.json"
               - "pnpm-lock.yaml"
+              - "scripts/check-release-version.mjs"
+              - "scripts/release-version-lib.mjs"
+              - "scripts/set-release-version.mjs"
               - "tsconfig.base.json"
               - "eslint.shared.mjs"
               - ".prettierrc.json"
@@ -119,6 +123,9 @@ jobs:
 
       - name: Git whitespace check
         run: git diff --check
+
+      - name: Release version consistency check
+        run: pnpm run version:check
 
       - name: Browser frontend typecheck (contract drift guard)
         run: pnpm --dir browser/frontend exec tsc --noEmit

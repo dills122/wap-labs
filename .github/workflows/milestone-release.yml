@@ -1,0 +1,143 @@
+name: Milestone Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Semver release version to publish"
+        required: true
+        type: string
+      milestone:
+        description: "Milestone name for the GitHub release"
+        required: true
+        type: string
+      source_branch:
+        description: "Release branch to publish from (defaults to release/v<version>)"
+        required: false
+        default: ""
+        type: string
+      prerelease:
+        description: "Mark the GitHub release as a prerelease"
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: "Create the GitHub release as a draft"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish Milestone Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Resolve source branch
+        id: branch
+        run: |
+          branch="${{ inputs.source_branch }}"
+          if [ -z "${branch}" ]; then
+            branch="release/v${{ inputs.version }}"
+          fi
+          echo "name=${branch}" >> "${GITHUB_OUTPUT}"
+
+      - name: Checkout release branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.branch.outputs.name }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: wavenav-rust
+          workspaces: |
+            engine-wasm/engine -> target
+
+      - name: Cache wasm-pack binary
+        id: cache-wasm-pack
+        uses: actions/cache@v5
+        with:
+          path: ~/.cargo/bin/wasm-pack
+          key: ${{ runner.os }}-wasm-pack-0.13.1
+          restore-keys: |
+            ${{ runner.os }}-wasm-pack-
+
+      - name: Install wasm-pack (if cache miss)
+        if: steps.cache-wasm-pack.outputs.cache-hit != 'true'
+        run: cargo install wasm-pack --version 0.13.1 --locked
+
+      - name: Verify managed versions
+        run: |
+          node scripts/check-release-version.mjs
+          test "$(cat VERSION)" = "${{ inputs.version }}"
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Install marketing site dependencies
+        run: pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile
+
+      - name: Build marketing site
+        run: pnpm --dir marketing-site --ignore-workspace run build
+
+      - name: Build WaveNav WASM package
+        working-directory: engine-wasm/engine
+        run: wasm-pack build --target web --out-dir ../pkg
+
+      - name: Build host sample
+        run: pnpm --dir engine-wasm/host-sample run build
+
+      - name: Assemble release assets
+        run: |
+          mkdir -p release-assets/site
+          cp -R marketing-site/dist/. release-assets/site/
+          mkdir -p release-assets/site/simulator
+          cp -R engine-wasm/host-sample/dist/. release-assets/site/simulator/
+          git archive --format=tar.gz --output "release-assets/wap-labs-v${{ inputs.version }}-source.tar.gz" HEAD
+          tar -czf "release-assets/wap-labs-v${{ inputs.version }}-site-bundle.tar.gz" -C release-assets/site .
+          (cd release-assets && sha256sum "wap-labs-v${{ inputs.version }}-source.tar.gz" "wap-labs-v${{ inputs.version }}-site-bundle.tar.gz" > "SHA256SUMS.txt")
+
+      - name: Create annotated tag
+        run: |
+          if git rev-parse "v${{ inputs.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ inputs.version }} already exists"
+            exit 1
+          fi
+          git tag -a "v${{ inputs.version }}" -m "Milestone ${{ inputs.milestone }}"
+          git push origin "v${{ inputs.version }}"
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          target_commitish: ${{ steps.branch.outputs.name }}
+          name: v${{ inputs.version }} - ${{ inputs.milestone }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true
+          body: |
+            Milestone release for `${{ inputs.milestone }}`.
+
+            This repository remains pre-alpha. The release branch is preserved as an immutable historical snapshot.
+          files: |
+            release-assets/wap-labs-v${{ inputs.version }}-source.tar.gz
+            release-assets/wap-labs-v${{ inputs.version }}-site-bundle.tar.gz
+            release-assets/SHA256SUMS.txt
