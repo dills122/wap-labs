@@ -6,6 +6,7 @@ mod fetch_body;
 mod fetch_policy;
 mod fetch_runtime;
 mod gateway;
+mod native_fetch;
 pub mod network;
 mod request_meta;
 mod responses;

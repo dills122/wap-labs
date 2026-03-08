@@ -4,6 +4,7 @@ use crate::fetch_policy::{
     apply_request_policy, resolve_fetch_destination_policy, validate_fetch_destination,
 };
 use crate::gateway::build_gateway_request;
+use crate::native_fetch::{execute_native_wap_get, should_use_native_wap_get, NativeFetchPlan};
 use crate::request_meta::{log_transport_event, normalized_request_id};
 use crate::responses::{invalid_request_response, transport_unavailable_response};
 use crate::{FetchDeckRequest, FetchDeckResponse, MAX_URI_OCTETS};
@@ -66,6 +67,8 @@ pub(crate) fn fetch_deck_in_process_impl(request: FetchDeckRequest) -> FetchDeck
         return invalid_request_response(url, message, request_id.as_deref());
     }
 
+    let attempts = retries.unwrap_or(1).clamp(0, 2) + 1;
+
     log_transport_event(
         "transport.fetch.start",
         request_id.as_deref(),
@@ -78,6 +81,16 @@ pub(crate) fn fetch_deck_in_process_impl(request: FetchDeckRequest) -> FetchDeck
             "uaCapabilityProfileApplied": applied_ua_capability_profile
         }),
     );
+
+    if should_use_native_wap_get(&parsed, &method) {
+        return execute_native_wap_get(NativeFetchPlan {
+            request_url: url,
+            outbound_headers,
+            timeout_ms: timeout_ms.unwrap_or(5000).clamp(100, 30000),
+            attempts,
+            request_id,
+        });
+    }
 
     let is_wap_scheme = matches!(parsed.scheme(), "wap" | "waps");
     let mut upstream_url = url.clone();
@@ -110,7 +123,7 @@ pub(crate) fn fetch_deck_in_process_impl(request: FetchDeckRequest) -> FetchDeck
         upstream_url,
         outbound_headers,
         timeout_ms: timeout_ms.unwrap_or(5000).clamp(100, 30000),
-        attempts: retries.unwrap_or(1).clamp(0, 2) + 1,
+        attempts,
         is_wap_scheme,
         request_id,
     })
