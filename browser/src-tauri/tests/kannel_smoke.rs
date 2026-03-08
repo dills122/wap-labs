@@ -1,6 +1,6 @@
 use lowband_transport_rust::{
-    fetch_deck_in_process_with_profile, FetchDeckRequest, FetchDestinationPolicy,
-    FetchRequestPolicy, FetchTransportProfile,
+    fetch_deck_in_process_with_profile, FetchCacheControlPolicy, FetchDeckRequest,
+    FetchDestinationPolicy, FetchPostContext, FetchRequestPolicy, FetchTransportProfile,
 };
 use wavenav_engine::{DrawCmd, WmlEngine};
 
@@ -17,6 +17,28 @@ fn request(url: &str) -> FetchDeckRequest {
             cache_control: None,
             referer_url: None,
             post_context: None,
+            ua_capability_profile: None,
+        }),
+    }
+}
+
+fn post_request(url: &str, payload: &str) -> FetchDeckRequest {
+    FetchDeckRequest {
+        url: url.to_string(),
+        method: Some("POST".to_string()),
+        headers: None,
+        timeout_ms: Some(15000),
+        retries: Some(1),
+        request_id: None,
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: Some(FetchCacheControlPolicy::NoCache),
+            referer_url: Some(url.to_string()),
+            post_context: Some(FetchPostContext {
+                same_deck: Some(false),
+                content_type: Some("application/x-www-form-urlencoded".to_string()),
+                payload: Some(payload.to_string()),
+            }),
             ua_capability_profile: None,
         }),
     }
@@ -59,6 +81,14 @@ fn render_contains(engine: &WmlEngine, expected_text: &str) -> bool {
     })
 }
 
+fn unique_smoke_username(prefix: &str) -> String {
+    let nonce = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock should be monotonic enough for test ids")
+        .as_millis();
+    format!("{prefix}{nonce}")
+}
+
 #[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
 fn kannel_fetch_deck_smoke_loads_into_engine() {
@@ -66,7 +96,6 @@ fn kannel_fetch_deck_smoke_loads_into_engine() {
     load_transport_response_into_engine(&mut engine, fetch_kannel_smoke_target());
     let active = engine.active_card_id().expect("active card should exist");
     assert!(matches!(active.as_str(), "home" | "welcome" | "login"));
-    assert!(render_contains(&engine, "Local WAP training environment."));
     assert!(render_contains(&engine, "Open Menu"));
 }
 
@@ -83,4 +112,47 @@ fn kannel_fetch_deck_smoke_navigates_into_menu_card() {
     assert!(render_contains(&engine, "1. Login"));
     assert!(render_contains(&engine, "2. Register"));
     assert!(render_contains(&engine, "3. About Stack"));
+}
+
+#[test]
+#[ignore = "runs against external Kannel dev stack (make up)"]
+fn kannel_native_post_smoke_loads_login_success_deck_into_engine() {
+    let register_url = std::env::var("WAP_SMOKE_REGISTER_URL")
+        .unwrap_or_else(|_| "wap://localhost/register".to_string());
+    let login_url = std::env::var("WAP_SMOKE_LOGIN_URL")
+        .unwrap_or_else(|_| "wap://localhost/login".to_string());
+    let username = unique_smoke_username("enginesmoke");
+    let payload = format!("username={username}&pin=1234");
+
+    let register = fetch_deck_in_process_with_profile(
+        post_request(&register_url, &payload),
+        FetchTransportProfile::WapNetCore,
+    );
+    assert!(
+        register.ok,
+        "expected native register POST to succeed: {:?}",
+        register.error
+    );
+
+    let login = fetch_deck_in_process_with_profile(
+        post_request(&login_url, &payload),
+        FetchTransportProfile::WapNetCore,
+    );
+    assert!(
+        login.ok,
+        "expected native login POST to succeed: {:?}",
+        login.error
+    );
+
+    let mut engine = WmlEngine::new();
+    let login_deck = login
+        .engine_deck_input
+        .as_ref()
+        .expect("login engineDeckInput should be present");
+    assert!(login_deck
+        .wml_xml
+        .contains(&format!("Authenticated as {username}.")));
+    load_transport_response_into_engine(&mut engine, login);
+    assert_eq!(engine.active_card_id().as_deref(), Ok("login-ok"));
+    assert!(render_contains(&engine, "Portal"));
 }

@@ -1,4 +1,13 @@
 use super::*;
+use lowband_transport_rust::{FetchCacheControlPolicy, FetchPostContext};
+
+fn unique_smoke_username(prefix: &str) -> String {
+    let nonce = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("clock should be monotonic enough for test ids")
+        .as_millis();
+    format!("{prefix}{nonce}")
+}
 
 #[test]
 fn fetch_deck_assigns_request_id_when_missing_or_blank() {
@@ -355,4 +364,104 @@ fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
         .expect("engineDeckInput should be present");
     assert!(deck.wml_xml.contains("card id=\"home\""));
     assert!(deck.wml_xml.contains("Local WAP training environment."));
+}
+
+#[test]
+#[ignore = "runs against external Kannel dev stack (make up)"]
+fn host_fetch_deck_command_native_wap_post_smoke_registers_and_logs_in() {
+    let _guard = env_lock().lock().expect("env lock should succeed");
+    let previous_profile = std::env::var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV).ok();
+    let previous_fallback = std::env::var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV).ok();
+    std::env::set_var(
+        super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
+        super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE,
+    );
+    std::env::set_var(
+        super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV,
+        super::waves_config::FETCH_TRANSPORT_FALLBACK_DISABLED,
+    );
+
+    let register_url = std::env::var("WAP_SMOKE_REGISTER_URL")
+        .unwrap_or_else(|_| "wap://localhost/register".to_string());
+    let login_url = std::env::var("WAP_SMOKE_LOGIN_URL")
+        .unwrap_or_else(|_| "wap://localhost/login".to_string());
+    let username = unique_smoke_username("hostsmoke");
+    let payload = format!("username={username}&pin=1234");
+
+    let register = fetch_deck(FetchDeckRequest {
+        url: register_url.clone(),
+        method: Some("POST".to_string()),
+        headers: None,
+        timeout_ms: Some(15000),
+        retries: Some(1),
+        request_id: Some("host-native-post-register".to_string()),
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: Some(FetchCacheControlPolicy::NoCache),
+            referer_url: Some(register_url.clone()),
+            post_context: Some(FetchPostContext {
+                same_deck: Some(false),
+                content_type: Some("application/x-www-form-urlencoded".to_string()),
+                payload: Some(payload.clone()),
+            }),
+            ua_capability_profile: None,
+        }),
+    });
+
+    assert!(
+        register.ok,
+        "expected host native register POST to succeed: {:?}",
+        register.error
+    );
+    let register_deck = register
+        .engine_deck_input
+        .expect("register engineDeckInput should be present");
+    assert!(register_deck.wml_xml.contains("card id=\"register-ok\""));
+    assert!(register_deck
+        .wml_xml
+        .contains(&format!("User {username} created.")));
+
+    let login = fetch_deck(FetchDeckRequest {
+        url: login_url.clone(),
+        method: Some("POST".to_string()),
+        headers: None,
+        timeout_ms: Some(15000),
+        retries: Some(1),
+        request_id: Some("host-native-post-login".to_string()),
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: Some(FetchCacheControlPolicy::NoCache),
+            referer_url: Some(login_url.clone()),
+            post_context: Some(FetchPostContext {
+                same_deck: Some(false),
+                content_type: Some("application/x-www-form-urlencoded".to_string()),
+                payload: Some(payload),
+            }),
+            ua_capability_profile: None,
+        }),
+    });
+
+    if let Some(old) = previous_profile {
+        std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV);
+    }
+    if let Some(old) = previous_fallback {
+        std::env::set_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV);
+    }
+
+    assert!(
+        login.ok,
+        "expected host native login POST to succeed: {:?}",
+        login.error
+    );
+    let login_deck = login
+        .engine_deck_input
+        .expect("login engineDeckInput should be present");
+    assert!(login_deck.wml_xml.contains("card id=\"login-ok\""));
+    assert!(login_deck
+        .wml_xml
+        .contains(&format!("Authenticated as {username}.")));
 }
