@@ -136,30 +136,32 @@ Current result:
 1. `T0-21`, `T0-24`, and `T0-25` are complete.
 2. Networking protocol-policy closure is no longer the pacing constraint, but live desktop/browser ingress still needs a native fetch lane instead of the legacy HTTP gateway bridge.
 
-## Targeted Sprint Recommendation: Native Desktop Fetch (2026-03-09 onward)
+## Targeted Sprint Recommendation: Interactive WML Forms (2026-03-10 onward)
 
 ### Goal
 
-Extend the native desktop transport lane from baseline `GET` fetches into real WML form submission so the browser can complete Kannel-backed login/register flows without falling back to the legacy bridge.
+Extend the now-working native submit lane into real viewport-editable WML forms so the browser can complete Kannel-backed login/register flows through engine-owned field state instead of smoke-only request metadata.
 
 ### Must Complete (P0/P1)
 
-1. `M1-16` transport/engine payload size guardrails.
-2. `A5-01` history entry fidelity follow-up.
-3. `W0-05` timer/dialog integration baseline.
-4. `W1-06` fatal/non-fatal script error taxonomy closure.
+1. `A5-04` minimal WML text-input interaction baseline.
+2. `A5-05` WML select/option interaction baseline.
+3. `A5-06` form-state submit integration hardening.
+4. `M1-16` transport/engine payload size guardrails.
 
 ### Follow-on (only if capacity remains)
 
-1. `W1-06` fatal/non-fatal script error taxonomy closure.
-2. `M1-08` browser/transport decomposition follow-up.
+1. `A5-01` history entry fidelity follow-up.
+2. `W0-05` timer/dialog integration baseline.
+3. `W1-06` fatal/non-fatal script error taxonomy closure.
 
 ### Concrete commit-order recommendation
 
-1. `feat(transport): add native connectionless wsp post executor`
-2. `test(transport): add native kannel post smoke coverage`
-3. `fix(transport): enforce payload size guardrails before decode/parse`
-4. `feat(engine): tighten history/session follow-up only if post flow requires it`
+1. `feat(engine): add viewport text-input field state and edit semantics`
+2. `feat(browser): wire viewport edit mode to engine-owned form controls`
+3. `feat(engine): add select-option interaction baseline`
+4. `test(browser): prove edited field values change native post payload`
+5. `fix(transport): enforce payload size guardrails before decode/parse`
 
 Implementation reference:
 
@@ -167,14 +169,14 @@ Implementation reference:
 
 ### Exit Gates
 
-1. `T0-30` is `done` with native transport, host, and browser-render smoke evidence against live Kannel.
-2. Desktop/browser can submit login or register forms through the native lane in controlled mode.
-3. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
-4. Runtime/compliance follow-on work is not blocked by undocumented transport posture.
+1. Waves can focus, edit, and submit the training-environment login/register forms from inside the viewport.
+2. Edited field values are preserved in engine-owned state and visible in render output.
+3. Native Kannel browser evidence proves interactive edits change the submitted payload.
+4. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
 
 ## Parallel Follow-on Sprint Recommendation
 
-If the native POST slice stabilizes quickly, resume the runtime/compliance lane next:
+If the interactive form slice stabilizes quickly, resume the runtime/compliance lane next:
 
 1. `A5-01` history entry fidelity follow-up.
 2. `W0-05` timer/dialog integration baseline.

@@ -70,13 +70,15 @@ Canonical sprint priority rule:
 
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
-1. `T0-30` Native WSP form POST baseline (`P0`).
-2. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-3. `A5-01` History entry fidelity follow-up (`P1` once native POST behavior is clear).
-4. `W0-05` Timer/dialog integration baseline (`P1` if native transport work is stable).
-5. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
-6. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
-7. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
+1. `A5-04` Minimal WML text-input interaction baseline (`P0`).
+2. `A5-05` WML select/option interaction baseline (`P0` after `A5-04`).
+3. `A5-06` Form-state submit integration hardening (`P1` after `A5-04` and `A5-05`).
+4. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+5. `A5-01` History entry fidelity follow-up (`P1` once form interaction behavior is clear).
+6. `W0-05` Timer/dialog integration baseline (`P1` if active form work stays green).
+7. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
+8. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
+9. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -911,7 +913,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-28 Browser host native-transport mode selection + fallback
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-27`
 3. `Owner`: `browser`, `transport-rust`
 4. `Files`:
@@ -1014,6 +1016,83 @@ Completed `B0` through `B3` tickets are archived in:
   - transport native `POST` login/register smoke in [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs)
   - Tauri host native `POST` smoke in [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs)
   - browser-engine native `POST` smoke in [browser/src-tauri/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/tests/kannel_smoke.rs)
+
+### A5-04 Minimal WML text-input interaction baseline
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-30`, `A5-02`
+3. `Owner`: `engine-wasm`, `browser`
+4. `Files`:
+- `engine-wasm/engine/src/parser/wml_parser/*`
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/layout/*`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/frontend/src/app/*`
+- `browser/src-tauri/tests/*`
+5. `Build`:
+- promote form support from submit metadata only into real viewport-editable text inputs for the training-environment login/register decks
+- preserve deterministic focus traversal between links, inputs, and softkey actions in the constrained viewport
+- add explicit edit/commit/cancel semantics so text entry mutates runtime field state without browser-owned shadow state
+- render active field state back through the existing engine/frame contract
+6. `Tests`:
+- engine fixtures for focus traversal, edit commit, edit cancel, and variable update behavior
+- browser integration coverage proving typed values appear in the viewport and are used by native submit
+- manual demo coverage via a host-sample or Waves fixture deck with verification notes
+7. `Accept`:
+- Waves can focus, edit, and commit text values inside the viewport for `wap://localhost/login` and `wap://localhost/register`
+- committed values survive render refreshes and feed the existing native `POST` submission path
+8. `Spec`:
+- `RQ-RMK-008`, `RQ-RMK-002`, `RQ-RMK-003`
+9. `Notes`:
+- keep first scope to text-style inputs only; do not widen into select/option or mask validation edge cases in this ticket
+
+### A5-05 WML select/option interaction baseline
+
+1. `Status`: `todo`
+2. `Depends On`: `A5-04`
+3. `Owner`: `engine-wasm`, `browser`
+4. `Files`:
+- `engine-wasm/engine/src/parser/wml_parser/*`
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/layout/*`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/frontend/src/app/*`
+5. `Build`:
+- add runtime and viewport interaction for `select`/`option` controls with deterministic choice cycling and commit behavior
+- preserve WML option ordering and selection state in runtime-owned form state
+6. `Tests`:
+- engine fixtures for default selection, cycling, commit, and cancellation
+- browser integration coverage for focus and selection rendering
+7. `Accept`:
+- viewport users can inspect and change `select` values without leaving deterministic engine-owned state
+8. `Spec`:
+- `RQ-RMK-008`, `RQ-RMK-003`
+9. `Notes`:
+- keep this ticket independent from multipart or advanced request-encoding work
+
+### A5-06 Form-state submit integration hardening
+
+1. `Status`: `todo`
+2. `Depends On`: `A5-04`, `A5-05`, `T0-30`
+3. `Owner`: `engine-wasm`, `browser`, `transport-rust`
+4. `Files`:
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/transport.ts`
+- `browser/src-tauri/src/*`
+- `transport-rust/src/*`
+5. `Build`:
+- ensure engine-owned field state is the single source of truth for `postfield` resolution at submit time
+- harden submit-time substitution, empty/default field handling, and deterministic request generation across local/native/browser paths
+6. `Tests`:
+- cross-layer fixtures covering edited field values, default field values, and deterministic postfield ordering
+- Kannel-backed browser smoke proving interactive edits change the submitted payload
+7. `Accept`:
+- interactive viewport edits are reflected in the exact request payload sent through the native transport
+8. `Spec`:
+- `RQ-RMK-008`, `RQ-WAE-008`
+9. `Notes`:
+- this is the hardening bridge between new engine interaction semantics and the already-landed native submit path
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

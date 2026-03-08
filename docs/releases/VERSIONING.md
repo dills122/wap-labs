@@ -4,7 +4,7 @@ This repository is still pre-alpha. Versioning should communicate progress and r
 
 ## Current baseline
 
-- Current coordinated repository version: `0.2.0`
+- Current coordinated repository version: `0.3.0`
 - Pre-`1.0.0` policy: breaking changes are still acceptable when they move the MVP forward
 - Public GitHub releases are milestone-gated and manual
 
@@ -58,7 +58,7 @@ Independent package release lines can be introduced later if those surfaces beco
 Set a new version across managed files:
 
 ```bash
-node scripts/set-release-version.mjs 0.2.0
+node scripts/set-release-version.mjs 0.3.0
 ```
 
 Verify all managed files match `VERSION`:

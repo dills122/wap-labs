@@ -581,7 +581,7 @@ checksum = "cfe29135b180b72b04c74aa97b2b4a2ef275161eff9a6c7955ea9eaedc7e1d4e"
 
 [[package]]
 name = "wavenav_engine"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "js-sys",
  "quick-xml",

@@ -1,7 +1,7 @@
 {
   "name": "@wap-labs/root",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Root scripts for WaveNav/Lowband polyglot repository",
   "license": "MIT",
   "author": "Dylan Steele <dylansteele57@gmail.com>",
