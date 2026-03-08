@@ -86,6 +86,27 @@ fn default_fetch_transport_profile_defaults_to_auto() {
 }
 
 #[test]
+fn auto_transport_profile_uses_native_for_wap_urls() {
+    let profile = super::super::fetch_host::resolve_transport_profile_override(
+        HostFetchTransportProfile::Auto,
+        "wap://localhost/login",
+    );
+    assert_eq!(
+        profile,
+        Some(lowband_transport_rust::FetchTransportProfile::WapNetCore)
+    );
+}
+
+#[test]
+fn auto_transport_profile_leaves_http_urls_unpinned() {
+    let profile = super::super::fetch_host::resolve_transport_profile_override(
+        HostFetchTransportProfile::Auto,
+        "http://localhost:3000/login",
+    );
+    assert_eq!(profile, None);
+}
+
+#[test]
 fn default_fetch_transport_profile_reads_explicit_native_mode() {
     let profile = with_env_var_locked(
         super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
