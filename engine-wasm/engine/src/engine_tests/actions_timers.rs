@@ -25,6 +25,52 @@ fn enter_triggers_accept_do_action_when_no_links_exist() {
 }
 
 #[test]
+fn enter_accept_post_action_sets_external_navigation_post_context() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(alias)"/>
+                <postfield name="pin" value="0000"/>
+              </go>
+            </do>
+            <p>Submit login.</p>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+    assert!(engine.set_var("alias".to_string(), "alice".to_string()));
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should emit post navigation intent");
+    assert_eq!(
+        engine.external_navigation_intent().as_deref(),
+        Some("wap://localhost/login")
+    );
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    assert_eq!(policy.referer_url.as_deref(), Some("wap://localhost/"));
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(post_context.same_deck, Some(false));
+    assert_eq!(
+        post_context.content_type.as_deref(),
+        Some("application/x-www-form-urlencoded")
+    );
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=alice&pin=0000")
+    );
+}
+
+#[test]
 fn enter_accept_prev_action_navigates_back_when_history_exists() {
     let mut engine = WmlEngine::new();
     let xml = r##"

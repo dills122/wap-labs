@@ -2,8 +2,30 @@ use super::{
     extract_wml_body, parse_card_nodes, parse_do_accept_action, parse_first_task_action,
     parse_inline_nodes, parse_onevent_action, parse_timer_value_ds, parse_wml,
 };
-use crate::runtime::card::CardTaskAction;
+use crate::runtime::card::{CardPostField, CardTaskAction};
 use crate::runtime::node::{InlineNode, Node};
+
+fn go_action(href: &str) -> CardTaskAction {
+    CardTaskAction::Go {
+        href: href.to_string(),
+        method: None,
+        post_fields: Vec::new(),
+    }
+}
+
+fn post_go_action(href: &str, fields: &[(&str, &str)]) -> CardTaskAction {
+    CardTaskAction::Go {
+        href: href.to_string(),
+        method: Some("POST".to_string()),
+        post_fields: fields
+            .iter()
+            .map(|(name, value)| CardPostField {
+                name: (*name).to_string(),
+                value: (*value).to_string(),
+            })
+            .collect(),
+    }
+}
 
 #[test]
 fn parses_cards_and_links() {
@@ -203,28 +225,17 @@ fn parses_accept_do_and_card_entry_go_actions() {
     let deck = parse_wml(xml).expect("deck should parse");
     assert_eq!(
         deck.cards[0].accept_action,
-        Some(CardTaskAction::Go {
-            href: "script:calc.wmlsc#main".to_string(),
-        })
+        Some(go_action("script:calc.wmlsc#main"))
     );
     assert_eq!(
         deck.cards[0].onenterforward_action,
-        Some(CardTaskAction::Go {
-            href: "#next".to_string(),
-        })
+        Some(go_action("#next"))
     );
     assert_eq!(
         deck.cards[0].onenterbackward_action,
-        Some(CardTaskAction::Go {
-            href: "#back".to_string(),
-        })
+        Some(go_action("#back"))
     );
-    assert_eq!(
-        deck.cards[0].ontimer_action,
-        Some(CardTaskAction::Go {
-            href: "#timer".to_string(),
-        })
-    );
+    assert_eq!(deck.cards[0].ontimer_action, Some(go_action("#timer")));
     assert_eq!(deck.cards[0].timer_value_ds, Some(0));
 }
 
@@ -265,9 +276,7 @@ fn helper_extract_wml_body_reports_root_errors() {
 fn helper_parse_first_task_action_handles_go_prev_and_malformed() {
     assert_eq!(
         parse_first_task_action("<go href=\"#ok\"/>").expect("go should parse"),
-        Some(CardTaskAction::Go {
-            href: "#ok".to_string(),
-        })
+        Some(go_action("#ok"))
     );
     assert_eq!(
         parse_first_task_action("<prev/>").expect("prev should parse"),
@@ -296,21 +305,31 @@ fn helper_parse_first_task_action_handles_go_prev_and_malformed() {
 }
 
 #[test]
+fn helper_parse_first_task_action_preserves_post_method_and_postfields() {
+    assert_eq!(
+        parse_first_task_action(
+            "<go method=\"post\" href=\"/login\"><postfield name=\"username\" value=\"$(alias)\"/><postfield name=\"pin\" value=\"0000\"/></go>"
+        )
+        .expect("post go should parse"),
+        Some(post_go_action(
+            "/login",
+            &[("username", "$(alias)"), ("pin", "0000")]
+        ))
+    );
+}
+
+#[test]
 fn helper_parse_do_accept_action_exercises_direct_and_error_paths() {
     assert_eq!(
         parse_do_accept_action("<do type=\"accept\" href=\"#direct\"></do>")
             .expect("direct href should parse"),
-        Some(CardTaskAction::Go {
-            href: "#direct".to_string(),
-        })
+        Some(go_action("#direct"))
     );
 
     assert_eq!(
         parse_do_accept_action("<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>")
             .expect("fallback go href should parse"),
-        Some(CardTaskAction::Go {
-            href: "#fallback".to_string(),
-        })
+        Some(go_action("#fallback"))
     );
 
     assert_eq!(
@@ -355,9 +374,7 @@ fn helper_parse_onevent_action_exercises_non_matching_and_error_paths() {
             "onenterforward"
         )
         .expect("matching onevent should parse"),
-        Some(CardTaskAction::Go {
-            href: "#next".to_string(),
-        })
+        Some(go_action("#next"))
     );
 
     assert_eq!(
@@ -366,9 +383,7 @@ fn helper_parse_onevent_action_exercises_non_matching_and_error_paths() {
             "onenterbackward"
         )
         .expect("matching backward onevent should parse"),
-        Some(CardTaskAction::Go {
-            href: "#prev".to_string(),
-        })
+        Some(go_action("#prev"))
     );
 
     assert_eq!(

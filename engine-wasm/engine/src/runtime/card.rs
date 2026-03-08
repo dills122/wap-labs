@@ -1,8 +1,18 @@
 use crate::runtime::node::Node;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CardPostField {
+    pub name: String,
+    pub value: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CardTaskAction {
-    Go { href: String },
+    Go {
+        href: String,
+        method: Option<String>,
+        post_fields: Vec<CardPostField>,
+    },
     Prev,
     Refresh,
     Noop,
