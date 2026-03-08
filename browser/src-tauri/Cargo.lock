@@ -1712,7 +1712,7 @@ checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
 
 [[package]]
 name = "lowband_transport_rust"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "base64 0.22.1",
  "libc",
@@ -4353,7 +4353,7 @@ dependencies = [
 
 [[package]]
 name = "wavenav_engine"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "quick-xml",
  "serde",
@@ -4362,7 +4362,7 @@ dependencies = [
 
 [[package]]
 name = "wavenav_host"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "lowband_transport_rust",
  "serde",
