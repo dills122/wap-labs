@@ -108,6 +108,12 @@ WML/WBXML media-type and transport-normalization boundary.
 
 ## Phase C: Forms and Request Semantics (P2)
 
+Active promotion note:
+
+- The transport-side native submit baseline is now landed.
+- Immediate execution is promoting the first interactive subset of this phase through `A5-04`, `A5-05`, and `A5-06` on `docs/wml-engine/work-items.md`.
+- Keep the remainder of Phase C deferred unless it directly supports those active tickets.
+
 ### C1. Field model
 - Build:
 1. Add input/select/option/fieldset representations.

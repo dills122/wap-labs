@@ -15,23 +15,26 @@ Archive:
 
 ## Current Execution Scope
 
-Target scope is Phase A (`P0`) only:
+Target scope is promoted beyond pure Phase A so the engine can finish the first usable WML form lane:
 
-- parser correctness for MVP tags
 - deterministic render/focus behavior
-- fragment/external navigation behavior
-- stable wasm boundary metadata
+- viewport-editable text-input form controls
+- select/option interaction semantics
+- stable form-state metadata across native and wasm boundaries
 
-No Phase B+ semantics should be added in this board unless explicitly promoted.
+Keep wider Phase B+/C expansion deferred unless it directly serves the active form-interaction sprint.
 
 ## Next In Line (Cross-Project Maintenance Alignment)
 
 Before additional Phase B+ feature promotion, execute aligned maintenance tickets:
 
-1. `M1-02` parity-critical native/wasm regression suite.
-2. `M1-07` parser robustness hardening (no scope expansion) using an existing XML parser backend plus a WML semantic mapper layer.
-3. `M1-08` high-churn file decomposition into boundary modules (engine scope complete; browser/transport baseline decomposition is landed, with only residual cross-project follow-ups remaining).
-4. `M1-03` engine API generator design/bootstrap (non-priority track).
+1. `A5-04` minimal WML text-input interaction baseline.
+2. `A5-05` WML select/option interaction baseline.
+3. `A5-06` form-state submit integration hardening.
+4. `M1-02` parity-critical native/wasm regression suite.
+5. `M1-07` parser robustness hardening (no scope expansion) using an existing XML parser backend plus a WML semantic mapper layer.
+6. `M1-08` high-churn file decomposition into boundary modules (engine scope complete; browser/transport baseline decomposition is landed, with only residual cross-project follow-ups remaining).
+7. `M1-03` engine API generator design/bootstrap (non-priority track).
 
 Source of truth for these items:
 
@@ -146,6 +149,72 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Timer behavior is deterministic and card-scoped under navigation and refresh paths.
 8. `Notes`:
 - Distinct from WaveScript timer hostcalls tracked in `docs/waves/WORK_ITEMS.md`.
+
+### A5-04 Minimal WML text-input interaction baseline
+
+1. `Requirement IDs`: `WML-R-019`
+2. `Status`: `todo`
+3. `Depends On`: `A5-02`, `T0-30`
+4. `Files`:
+- `engine-wasm/engine/src/parser/wml_parser/*`
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/layout/*`
+- `engine-wasm/engine/tests/fixtures/*`
+- `engine-wasm/contracts/wml-engine.ts`
+5. `Build`:
+- parse and retain text-input field metadata as runtime-owned controls instead of submit-only metadata
+- implement deterministic focus, enter-edit, commit, and cancel behavior for text inputs in the constrained viewport
+- render active field values and focus state through the existing engine output contract
+- keep field state authoritative in the engine so browser glue remains input/event plumbing only
+6. `Tests`:
+- fixture matrix for text-input focus traversal, edit commit, edit cancel, and variable updates
+- native/wasm parity checks for rendered field state and submit metadata
+7. `Accept`:
+- login/register-style text fields are editable in the viewport and their committed values survive re-render and submit preparation
+8. `Notes`:
+- first ticket is intentionally text-input only; defer select controls and mask-edge semantics
+
+### A5-05 WML select/option interaction baseline
+
+1. `Requirement IDs`: `WML-R-019`
+2. `Status`: `todo`
+3. `Depends On`: `A5-04`
+4. `Files`:
+- `engine-wasm/engine/src/parser/wml_parser/*`
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/layout/*`
+- `engine-wasm/engine/tests/fixtures/*`
+5. `Build`:
+- add runtime representations for `select` and `option`
+- implement deterministic focus, choice cycling, commit, and cancel behavior
+- preserve option ordering and selected state in engine-owned form state
+6. `Tests`:
+- fixtures for default-selected option, user choice changes, cancel behavior, and rendered selection state
+7. `Accept`:
+- select controls can be navigated and updated without host-owned form state
+8. `Notes`:
+- keep baseline scope to single-select behavior unless live decks force a broader cut
+
+### A5-06 Form-state submit integration hardening
+
+1. `Requirement IDs`: `WML-R-019`
+2. `Status`: `todo`
+3. `Depends On`: `A5-04`, `A5-05`, `T0-30`
+4. `Files`:
+- `engine-wasm/engine/src/runtime/*`
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/contracts/wml-engine.ts`
+- `engine-wasm/engine/tests/fixtures/*`
+5. `Build`:
+- make engine-owned field state the single source of truth for `postfield` resolution at submit time
+- harden substitution timing, empty/default field behavior, and deterministic postfield ordering after interactive edits
+6. `Tests`:
+- fixtures proving edited values, untouched defaults, and empty values yield deterministic submit payloads
+- parity tests for native/wasm request metadata snapshots
+7. `Accept`:
+- interactive viewport edits are reflected in the exact submit metadata emitted by the engine contract
+8. `Notes`:
+- this closes the gap between editable controls and the already-landed native transport `POST` path
 
 ### B5-01 Input mask and commit semantics conformance follow-up
 
