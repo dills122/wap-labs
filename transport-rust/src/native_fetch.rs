@@ -765,6 +765,56 @@ mod tests {
     }
 
     #[test]
+    fn default_service_ports_match_wap_and_waps_defaults() {
+        assert_eq!(default_service_port("wap"), 9200);
+        assert_eq!(default_service_port("waps"), 9202);
+    }
+
+    #[test]
+    fn request_uri_preserves_path_and_query() {
+        let parsed = Url::parse("wap://example.test/login?step=1").expect("url should parse");
+        assert_eq!(request_uri(&parsed), "/login?step=1");
+    }
+
+    #[test]
+    fn build_kannel_request_uri_maps_loopback_and_secure_hosts() {
+        let local = Url::parse("wap://localhost/register").expect("url should parse");
+        let secure = Url::parse("waps://example.test/portal?sid=1").expect("url should parse");
+
+        assert_eq!(
+            build_kannel_request_uri(&local).expect("local uri should build"),
+            "http://localhost:13002/register"
+        );
+        assert_eq!(
+            build_kannel_request_uri(&secure).expect("secure uri should build"),
+            "https://example.test:80/portal?sid=1"
+        );
+    }
+
+    #[test]
+    fn encode_connectionless_content_type_rejects_nul_bytes() {
+        let error = encode_connectionless_content_type(Some("text/plain\0oops"))
+            .expect_err("content type with NUL should fail");
+
+        assert!(error.contains("must not contain NUL bytes"));
+    }
+
+    #[test]
+    fn resolve_destination_socket_addr_uses_default_ports() {
+        let wap = Url::parse("wap://127.0.0.1/").expect("url should parse");
+        let waps = Url::parse("waps://127.0.0.1/").expect("url should parse");
+
+        assert_eq!(
+            resolve_destination_socket_addr(&wap).expect("wap addr should resolve"),
+            "127.0.0.1:9200".parse().expect("literal should parse")
+        );
+        assert_eq!(
+            resolve_destination_socket_addr(&waps).expect("waps addr should resolve"),
+            "127.0.0.1:9202".parse().expect("literal should parse")
+        );
+    }
+
+    #[test]
     fn native_connectionless_post_wire_format_encodes_header_block_and_body() {
         let parsed = Url::parse("wap://localhost/login").expect("url should parse");
         let encoded = encode_connectionless_request(

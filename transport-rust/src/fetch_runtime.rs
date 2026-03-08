@@ -182,3 +182,96 @@ fn extract_native_post_context(
 fn parsed_scheme(url: &str) -> Option<&str> {
     url.split_once(':').map(|(scheme, _)| scheme)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        FetchCacheControlPolicy, FetchDestinationPolicy, FetchPostContext, FetchRequestPolicy,
+    };
+
+    #[test]
+    fn native_profile_override_accepts_wap_get_and_post_only() {
+        let wap = Url::parse("wap://localhost/login").expect("url should parse");
+        let http = Url::parse("http://localhost/login").expect("url should parse");
+
+        assert!(should_use_native_wap_request_for_profile(
+            &wap,
+            "GET",
+            Some(FetchTransportProfile::WapNetCore)
+        ));
+        assert!(should_use_native_wap_request_for_profile(
+            &wap,
+            "POST",
+            Some(FetchTransportProfile::WapNetCore)
+        ));
+        assert!(!should_use_native_wap_request_for_profile(
+            &wap,
+            "HEAD",
+            Some(FetchTransportProfile::WapNetCore)
+        ));
+        assert!(!should_use_native_wap_request_for_profile(
+            &http,
+            "GET",
+            Some(FetchTransportProfile::WapNetCore)
+        ));
+        assert!(!should_use_native_wap_request_for_profile(
+            &wap,
+            "GET",
+            Some(FetchTransportProfile::GatewayBridged)
+        ));
+    }
+
+    #[test]
+    fn extract_native_post_context_defaults_form_content_type_when_payload_present() {
+        let request_policy = FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: Some(FetchCacheControlPolicy::NoCache),
+            referer_url: Some("wap://localhost/login".to_string()),
+            post_context: Some(FetchPostContext {
+                same_deck: Some(false),
+                content_type: None,
+                payload: Some("username=alice&pin=1234".to_string()),
+            }),
+            ua_capability_profile: None,
+        };
+
+        let (payload, content_type) = extract_native_post_context(Some(&request_policy));
+
+        assert_eq!(payload, Some(b"username=alice&pin=1234".to_vec()));
+        assert_eq!(
+            content_type.as_deref(),
+            Some("application/x-www-form-urlencoded")
+        );
+    }
+
+    #[test]
+    fn extract_native_post_context_returns_none_when_payload_missing() {
+        let request_policy = FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: None,
+            referer_url: None,
+            post_context: Some(FetchPostContext {
+                same_deck: Some(false),
+                content_type: Some("application/x-www-form-urlencoded".to_string()),
+                payload: None,
+            }),
+            ua_capability_profile: None,
+        };
+
+        let (payload, content_type) = extract_native_post_context(Some(&request_policy));
+
+        assert_eq!(payload, None);
+        assert_eq!(
+            content_type.as_deref(),
+            Some("application/x-www-form-urlencoded")
+        );
+    }
+
+    #[test]
+    fn parsed_scheme_returns_prefix_before_colon() {
+        assert_eq!(parsed_scheme("wap://localhost/login"), Some("wap"));
+        assert_eq!(parsed_scheme("http://localhost:3000/"), Some("http"));
+        assert_eq!(parsed_scheme("not-a-url"), None);
+    }
+}
