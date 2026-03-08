@@ -1009,6 +1009,7 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..015`, `RQ-TRX-010`
 10. `Notes`:
 - Keep scope constrained to WML form submission first; do not widen into full connection-oriented WSP session work unless required to land baseline login/register flows.
+- Research note: [NATIVE_WSP_POST_RESEARCH_NOTES.md](/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

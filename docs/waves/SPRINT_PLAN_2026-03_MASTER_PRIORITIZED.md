@@ -161,6 +161,10 @@ Extend the native desktop transport lane from baseline `GET` fetches into real W
 3. `fix(transport): enforce payload size guardrails before decode/parse`
 4. `feat(engine): tighten history/session follow-up only if post flow requires it`
 
+Implementation reference:
+
+- [NATIVE_WSP_POST_RESEARCH_NOTES.md](/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
+
 ### Exit Gates
 
 1. `T0-30` is either `done` or split into explicit follow-up tickets without widening scope.
