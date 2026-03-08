@@ -89,42 +89,51 @@ fn transport_build_gateway_request_handles_root_path() {
 
 #[test]
 fn transport_build_gateway_request_rejects_non_wap_scheme() {
-    let headers = HashMap::new();
-    let err = build_gateway_request("http://example.test/home.wml", "GET", &headers)
-        .expect_err("non-wap scheme should be rejected");
-    assert!(err.contains("unsupported scheme"));
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let headers = HashMap::new();
+        let err = build_gateway_request("http://example.test/home.wml", "GET", &headers)
+            .expect_err("non-wap scheme should be rejected");
+        assert!(err.contains("unsupported scheme"));
+    });
 }
 
 #[test]
 fn transport_build_gateway_request_rejects_non_get_method() {
-    let headers = HashMap::new();
-    let err = build_gateway_request("wap://example.test/home.wml", "POST", &headers)
-        .expect_err("non-GET method should be rejected");
-    assert!(err.contains("only supports GET"));
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let headers = HashMap::new();
+        let err = build_gateway_request("wap://example.test/home.wml", "POST", &headers)
+            .expect_err("non-GET method should be rejected");
+        assert!(err.contains("only supports GET"));
+    });
 }
 
 #[test]
 fn transport_build_gateway_request_keeps_target_in_x_wap_target_url_when_port_present() {
-    let headers = HashMap::new();
-    let (_, mapped_headers) =
-        build_gateway_request("wap://example.test:9200/home.wml", "GET", &headers)
-            .expect("gateway mapping with explicit target port should succeed");
-    assert_eq!(
-        mapped_headers.get("X-Wap-Target-Url").map(String::as_str),
-        Some("wap://example.test:9200/home.wml")
-    );
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let headers = HashMap::new();
+        let (_, mapped_headers) =
+            build_gateway_request("wap://example.test:9200/home.wml", "GET", &headers)
+                .expect("gateway mapping with explicit target port should succeed");
+        assert_eq!(
+            mapped_headers.get("X-Wap-Target-Url").map(String::as_str),
+            Some("wap://example.test:9200/home.wml")
+        );
+    });
 }
 
 #[test]
 fn transport_build_gateway_request_keeps_existing_host_header() {
-    let mut headers = HashMap::new();
-    headers.insert("Host".to_string(), "custom.host".to_string());
-    let (_, mapped_headers) = build_gateway_request("wap://example.test/home.wml", "GET", &headers)
-        .expect("gateway mapping should succeed");
-    assert_eq!(
-        mapped_headers.get("Host").map(String::as_str),
-        Some("custom.host")
-    );
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let mut headers = HashMap::new();
+        headers.insert("Host".to_string(), "custom.host".to_string());
+        let (_, mapped_headers) =
+            build_gateway_request("wap://example.test/home.wml", "GET", &headers)
+                .expect("gateway mapping should succeed");
+        assert_eq!(
+            mapped_headers.get("Host").map(String::as_str),
+            Some("custom.host")
+        );
+    });
 }
 
 #[test]
