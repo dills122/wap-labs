@@ -7,12 +7,15 @@ use crate::gateway::build_gateway_request;
 use crate::native_fetch::{execute_native_wap_get, should_use_native_wap_get, NativeFetchPlan};
 use crate::request_meta::{log_transport_event, normalized_request_id};
 use crate::responses::{invalid_request_response, transport_unavailable_response};
-use crate::{FetchDeckRequest, FetchDeckResponse, MAX_URI_OCTETS};
+use crate::{FetchDeckRequest, FetchDeckResponse, FetchTransportProfile, MAX_URI_OCTETS};
 use url::Url;
 
 use self::execution::{execute_fetch, FetchExecutionPlan};
 
-pub(crate) fn fetch_deck_in_process_impl(request: FetchDeckRequest) -> FetchDeckResponse {
+pub(crate) fn fetch_deck_in_process_impl(
+    request: FetchDeckRequest,
+    profile_override: Option<FetchTransportProfile>,
+) -> FetchDeckResponse {
     let FetchDeckRequest {
         url,
         method,
@@ -82,7 +85,7 @@ pub(crate) fn fetch_deck_in_process_impl(request: FetchDeckRequest) -> FetchDeck
         }),
     );
 
-    if should_use_native_wap_get(&parsed, &method) {
+    if should_use_native_wap_get_for_profile(&parsed, &method, profile_override) {
         return execute_native_wap_get(NativeFetchPlan {
             request_url: url,
             outbound_headers,
@@ -127,4 +130,18 @@ pub(crate) fn fetch_deck_in_process_impl(request: FetchDeckRequest) -> FetchDeck
         is_wap_scheme,
         request_id,
     })
+}
+
+fn should_use_native_wap_get_for_profile(
+    parsed: &Url,
+    method: &str,
+    profile_override: Option<FetchTransportProfile>,
+) -> bool {
+    match profile_override {
+        Some(FetchTransportProfile::WapNetCore) => {
+            matches!(parsed.scheme(), "wap" | "waps") && method == "GET"
+        }
+        Some(FetchTransportProfile::GatewayBridged) => false,
+        None => should_use_native_wap_get(parsed, method),
+    }
 }
