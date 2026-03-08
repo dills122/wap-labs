@@ -302,3 +302,57 @@ fn fetch_deck_command_retries_native_wap_request_with_gateway_fallback_when_conf
         ]
     );
 }
+
+#[test]
+#[ignore = "runs against external Kannel dev stack (make up)"]
+fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
+    let _guard = env_lock().lock().expect("env lock should succeed");
+    let previous_profile = std::env::var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV).ok();
+    let previous_fallback = std::env::var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV).ok();
+    std::env::set_var(
+        super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
+        super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE,
+    );
+    std::env::set_var(
+        super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV,
+        super::waves_config::FETCH_TRANSPORT_FALLBACK_DISABLED,
+    );
+
+    let response = fetch_deck(FetchDeckRequest {
+        url: std::env::var("WAP_SMOKE_URL").unwrap_or_else(|_| "wap://localhost/".to_string()),
+        method: Some("GET".to_string()),
+        headers: None,
+        timeout_ms: Some(15000),
+        retries: Some(1),
+        request_id: Some("host-native-smoke".to_string()),
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: None,
+        }),
+    });
+
+    if let Some(old) = previous_profile {
+        std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV);
+    }
+    if let Some(old) = previous_fallback {
+        std::env::set_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV);
+    }
+
+    assert!(
+        response.ok,
+        "expected host native smoke fetch to succeed: {:?}",
+        response.error
+    );
+    let deck = response
+        .engine_deck_input
+        .expect("engineDeckInput should be present");
+    assert!(deck.wml_xml.contains("card id=\"home\""));
+    assert!(deck.wml_xml.contains("Local WAP training environment."));
+}

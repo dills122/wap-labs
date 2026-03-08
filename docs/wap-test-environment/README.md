@@ -112,6 +112,7 @@ Run smoke test:
 
 ```bash
 make smoke
+make smoke-transport-wap
 ```
 
 Stop everything:
@@ -128,6 +129,9 @@ make down
   - `http://localhost:13002`
 - WML server direct HTTP:
   - `http://localhost:3000`
+- Native desktop/browser WAP target:
+  - `wap://localhost/`
+  - `wap://localhost/login`
 - Browser WML card viewer:
   - `http://localhost:3000/viewer`
   - `http://localhost:3000/emulator`
@@ -486,6 +490,7 @@ make ps        # container status
 make logs      # follow logs
 make status    # kannel admin status
 make smoke     # smoke test against running stack
+make smoke-transport-wap  # native WSP/WDP transport + browser-host smoke
 make clean     # remove containers, networks, volumes
 ```
 

@@ -4,28 +4,30 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
 WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3000/health}"
-# Default through the wml-server gateway proxy, which forwards into Kannel
-# in the same docker network and is more stable across host environments.
-GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE:-http://localhost:3000/gateway}"
 WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
 WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL:-wap://localhost/login}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
+SMOKE_ARTIFACT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/transport-wap-smoke.XXXXXX")"
 
 print_failure_diagnostics() {
   local exit_code="$?"
   if [[ "${exit_code}" -eq 0 ]]; then
+    echo "transport-wap-smoke artifacts: ${SMOKE_ARTIFACT_DIR}"
     return 0
   fi
 
   echo
   echo "==> transport-wap-smoke diagnostics (exit ${exit_code})" >&2
+  echo "Artifacts: ${SMOKE_ARTIFACT_DIR}" >&2
   echo "-- Kannel admin status snapshot --" >&2
-  curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" >&2 || true
+  curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" \
+    | tee "${SMOKE_ARTIFACT_DIR}/kannel-status.txt" >&2 || true
   echo >&2
 
   echo "-- WML server health snapshot --" >&2
-  curl -fsS --connect-timeout 2 --max-time 5 "${WML_HEALTH_URL}" >&2 || true
+  curl -fsS --connect-timeout 2 --max-time 5 "${WML_HEALTH_URL}" \
+    | tee "${SMOKE_ARTIFACT_DIR}/wml-health.txt" >&2 || true
   echo >&2
 
   if command -v docker >/dev/null 2>&1; then
@@ -33,7 +35,7 @@ print_failure_diagnostics() {
     (
       cd "${ROOT_DIR}" &&
       docker compose logs --tail=120 kannel wml-server
-    ) >&2 || true
+    ) | tee "${SMOKE_ARTIFACT_DIR}/docker-compose.log" >&2 || true
   fi
 
   return "${exit_code}"
@@ -68,24 +70,35 @@ wait_for_http "${WML_HEALTH_URL}"
 echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
-  WAVES_FETCH_DESTINATION_POLICY="allow-private" \
-    GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE}" \
-    WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
+  WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
     WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL}" \
     TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
     TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES}" \
     RUST_TEST_THREADS=1 \
-    cargo test --test kannel_smoke -- --ignored --test-threads=1
+    cargo test --test kannel_smoke -- --ignored --test-threads=1 \
+    | tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log"
 )
 
-echo "==> Running browser host Kannel smoke integration test"
+echo "==> Running browser host native Kannel smoke unit test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
-  WAVES_FETCH_DESTINATION_POLICY="allow-private" \
-    GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE}" \
-    WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
+  WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
+    TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
+    TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES}" \
     RUST_TEST_THREADS=1 \
-    cargo test kannel_fetch_deck_smoke_loads_into_engine -- --ignored --test-threads=1
+    cargo test host_fetch_deck_command_native_wap_home_smoke_succeeds --lib -- --ignored --test-threads=1 \
+    | tee "${SMOKE_ARTIFACT_DIR}/browser-host-native-smoke.log"
 )
 
-echo "transport-wap-smoke: PASS"
+echo "==> Running browser engine/render native Kannel smoke integration test"
+(
+  cd "${ROOT_DIR}/browser/src-tauri"
+  WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
+    TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
+    TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES}" \
+    RUST_TEST_THREADS=1 \
+    cargo test kannel_fetch_deck_smoke_navigates_into_menu_card -- --ignored --test-threads=1 \
+    | tee "${SMOKE_ARTIFACT_DIR}/browser-render-native-smoke.log"
+)
+
+echo "transport-wap-smoke: PASS (artifacts: ${SMOKE_ARTIFACT_DIR})"
