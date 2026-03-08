@@ -3,7 +3,7 @@ import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { resolveKeyboardIntent } from './keyboard';
 import { isProbeReachable } from './network';
-import { createNavigationStateMachine } from './navigation-state';
+import { createNavigationStateMachine, defaultRequestPolicyForSource } from './navigation-state';
 import { ScriptTimerRegistry } from './script-timer-registry';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
@@ -822,7 +822,7 @@ export class BrowserController {
           headers: this.defaultNavigationHeaders(),
           timeoutMs: WAVES_CONFIG.networkProbeTimeoutMs,
           retries: 0,
-          requestPolicy: { uaCapabilityProfile: WAVES_CONFIG.transportUaCapabilityProfile }
+          requestPolicy: defaultRequestPolicyForSource('user', targetUrl)
         });
         if (isProbeReachable(probe)) {
           this.presenter.setStatus(WAVES_COPY.status.readyNetwork);

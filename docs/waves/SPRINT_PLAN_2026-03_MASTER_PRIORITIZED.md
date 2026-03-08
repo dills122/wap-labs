@@ -134,40 +134,49 @@ Finalize replay-driven promotion evidence and close explicit WTLS boundary postu
 Current result:
 
 1. `T0-21`, `T0-24`, and `T0-25` are complete.
-2. Networking is no longer the pacing sprint constraint.
+2. Networking protocol-policy closure is no longer the pacing constraint, but live desktop/browser ingress still needs a native fetch lane instead of the legacy HTTP gateway bridge.
 
-## Next Sprint Recommendation (2026-03-09 onward)
+## Targeted Sprint Recommendation: Native Desktop Fetch (2026-03-09 onward)
 
 ### Goal
 
-Close the highest-value active runtime/compliance items now that the transport/security baseline is in place.
+Land a narrow native desktop fetch slice so the browser can load baseline Kannel-served decks through the real protocol lane without broad transport refactoring.
 
 ### Must Complete (P0/P1)
 
-1. `A5-01` history entry fidelity follow-up.
-2. `W0-05` timer/dialog integration baseline.
-3. `W1-06` fatal/non-fatal script error taxonomy closure.
+1. `T0-27` native connectionless WSP `GET` fetch path.
+2. `T0-28` browser host native-transport mode selection + fallback.
+3. `T0-29` native Kannel `GET` smoke gate.
 4. `M1-16` transport/engine payload size guardrails.
 
 ### Follow-on (only if capacity remains)
 
-1. `W1-02` bytecode structural verification closure.
-2. `M1-08` browser/transport decomposition follow-up.
-3. `W0-08` external function access-control conformance.
-4. `M1-09` frame migration kickoff (`F0` only).
+1. `A5-01` history entry fidelity follow-up.
+2. `W0-05` timer/dialog integration baseline.
+3. `W1-06` fatal/non-fatal script error taxonomy closure.
+4. `M1-08` browser/transport decomposition follow-up.
 
 ### Concrete commit-order recommendation
 
-1. `feat(engine): preserve request-shaped history entry fidelity`
-2. `feat(wavescript): land timer and dialog host capability baseline`
-3. `fix(engine): close remaining script error taxonomy fixture gaps`
+1. `feat(transport): add native connectionless wsp get fetch executor`
+2. `feat(browser): select native fetch mode with explicit fallback`
+3. `test(transport): add native kannel get smoke coverage`
 4. `fix(transport): enforce payload size guardrails before decode/parse`
 
 ### Exit Gates
 
-1. `A5-01`, `W0-05`, and `W1-06` are either `done` or split into smaller explicit closure follow-ups.
-2. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
-3. No new transport blocker is opened without an explicit promotion-gate reason.
+1. `T0-27`, `T0-28`, and `T0-29` are either `done` or split into explicit follow-up tickets without widening scope.
+2. Desktop/browser can fetch `wap://localhost/` and `wap://localhost/login` through the native lane in controlled mode.
+3. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
+4. Runtime/compliance follow-on work is not blocked by undocumented transport posture.
+
+## Parallel Follow-on Sprint Recommendation
+
+If the native desktop fetch slice stabilizes quickly, resume the previously planned runtime/compliance lane next:
+
+1. `A5-01` history entry fidelity follow-up.
+2. `W0-05` timer/dialog integration baseline.
+3. `W1-06` fatal/non-fatal script error taxonomy closure.
 
 ## Capacity and WIP Rules
 

@@ -6,9 +6,10 @@ Ticket: `T0-14`
 
 ## Canonical decision
 
-1. Active runtime profile: `wap-net-core`.
-2. Target runtime profile: `wap-net-ext`.
-3. Promotion beyond `wap-net-core` remains gated by future extension-lane decisions.
+1. Active implementation target profile: `wap-net-core`.
+2. Live desktop/browser ingress posture: legacy `gateway-bridged` fetch path remains in use until native fetch activation tickets land.
+3. Target runtime profile after desktop activation: `wap-net-core`.
+4. Promotion beyond `wap-net-core` remains gated by future extension-lane decisions.
 
 ## Profile definitions
 
@@ -29,6 +30,10 @@ Fixture lane:
 - Transport ingress is native `WDP -> WTP -> WSP`.
 - Profile activation requires protocol-core fixture evidence and replay-gate evidence.
 - Activation must not alter browser/engine contracts without explicit contract update tickets.
+
+Current caveat:
+
+- protocol-core fixture/promotion gates are satisfied, but live desktop/browser fetch still requires the native activation slice (`T0-27`, `T0-28`, `T0-29`) before this profile is the default browser ingress path.
 
 Fixture lane:
 
@@ -55,7 +60,7 @@ Promotion from `gateway-bridged` to `wap-net-core` required all of:
 5. Local Kannel E2E readiness remains explicit and tracked in:
    - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 
-This gate set is now satisfied and `wap-net-core` is the active profile.
+This gate set is satisfied for protocol-core readiness. Browser/desktop live ingress promotion to `wap-net-core` still depends on `T0-27`, `T0-28`, and `T0-29`.
 
 ## Rollback criteria
 

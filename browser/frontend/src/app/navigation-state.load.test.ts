@@ -135,6 +135,30 @@ describe('navigation-state load behavior', () => {
     });
   });
 
+  it('allows private destination policy for localhost lab URLs', async () => {
+    const requestPolicies: unknown[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          requestPolicies.push(request.requestPolicy);
+          return fetchOk({ finalUrl: request.url });
+        }
+      }),
+      'wap://localhost/'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'wap://localhost/',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    expect(requestPolicies[0]).toEqual({
+      destinationPolicy: 'allow-private',
+      uaCapabilityProfile: 'wap-baseline'
+    });
+  });
+
   it('replays host back using stored request method and request policy', async () => {
     const fetchRequests: Array<{
       url: string;

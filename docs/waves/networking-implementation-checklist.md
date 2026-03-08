@@ -35,11 +35,13 @@ Traceability requirement:
 
 ## 3) Immediate implementation checklist
 
-Execution priority override (`2026-03-07` refresh):
+Execution priority override (`2026-03-08` refresh):
 
-1. `T0-21` (`WTLS` phase boundary/minimal lane, default disabled)
-2. transport lane is otherwise in maintenance/promote posture: `T0-18`, `T0-19`, `T0-20`, `T0-22`, `T0-24`, `T0-25`, and `T0-26` are complete
-3. after `T0-21`, prioritize cross-lane runtime/compliance and hardening work over new transport breadth
+1. `T0-27` native connectionless desktop fetch path
+2. `T0-28` browser host mode selection + fallback
+3. `T0-29` native Kannel smoke evidence gate
+4. `M1-16` payload guardrails
+5. after `T0-27..T0-29`, prioritize cross-lane runtime/compliance work over broader transport breadth
 
 ### F0: Foundation and policy
 
@@ -116,6 +118,17 @@ Execution priority override (`2026-03-07` refresh):
 5. acceptance:
    - all `T0-08..T0-26` gates with explicit owner and artifact.
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
+
+### F6: Native desktop fetch activation
+
+1. add an internal transport-mode selector at the `fetch_deck_in_process` boundary.
+2. implement a narrow native executor for connectionless WSP `GET`/`REPLY` over WDP/UDP.
+3. keep legacy gateway bridge path available as additive fallback.
+4. prove browser-host integration without moving protocol logic into browser code.
+5. acceptance:
+   - desktop/browser can load baseline Kannel-served decks through the native lane
+   - native mode and fallback mode are both explicit and test-backed
+   - no contract changes are required for the initial slice
 
 ## 4) Known adjacent-but-deferred transport context
 
