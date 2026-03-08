@@ -13,5 +13,6 @@ describe('mountBrowserShell', () => {
     expect(refs.baseUrlInput.value).toBe(WAVES_CONFIG.defaultDebugBaseUrl);
     expect(document.querySelectorAll('#fetch-url')).toHaveLength(1);
     expect(document.querySelectorAll('#base-url')).toHaveLength(1);
+    expect(refs.viewportEl.getAttribute('tabindex')).toBe('0');
   });
 });

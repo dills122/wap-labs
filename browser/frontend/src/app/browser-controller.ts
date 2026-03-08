@@ -703,6 +703,9 @@ export class BrowserController {
         );
       } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
         this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));
+        if (source === 'user' || source === 'reload') {
+          this.refs.viewportEl.focus();
+        }
       }
 
       return snapshot;
