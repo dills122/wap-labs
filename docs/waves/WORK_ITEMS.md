@@ -70,10 +70,10 @@ Canonical sprint priority rule:
 
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
-1. `T0-27` Native connectionless WSP GET fetch path (`P0`).
-2. `T0-28` Browser host native-transport mode selection + fallback (`P0`).
-3. `T0-29` Native Kannel GET smoke gate (`P1`).
-4. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+1. `T0-30` Native WSP form POST baseline (`P0`).
+2. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+3. `A5-01` History entry fidelity follow-up (`P1` once native POST behavior is clear).
+4. `W0-05` Timer/dialog integration baseline (`P1` if native transport work is stable).
 5. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
 6. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
 7. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
@@ -975,6 +975,40 @@ Completed `B0` through `B3` tickets are archived in:
 10. `Notes`:
 - This ticket is the evidence gate for promoting native desktop fetch from “experimental” to “default candidate.”
 - Completed with explicit native-only transport smoke, host-native smoke, browser render/navigation smoke, and artifact-preserving smoke runner support.
+
+### T0-30 Native WSP form POST baseline
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-27`, `T0-28`, `T0-29`
+3. `Owner`: `transport-rust`, `browser`, `docs`
+4. `Files`:
+- `transport-rust/src/native_fetch.rs`
+- `transport-rust/src/lib.rs`
+- `transport-rust/tests/kannel_smoke.rs`
+- `browser/src-tauri/src/fetch_host.rs`
+- `browser/src-tauri/tests/kannel_smoke.rs`
+- `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
+- `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+5. `Build`:
+- extend the native fetch executor to support WML form `POST` submission for the training environment login/register flows
+- keep the existing transport contract and host entrypoint stable while adding native `POST`
+- preserve gateway-bridged fallback behavior for rollback/debugging
+6. `Tests`:
+- native-mode transport smoke for login/register `POST` submission
+- browser host smoke proving native `POST` can submit through the host fetch command
+- browser render/navigation smoke proving returned success/error decks load correctly after native `POST`
+7. `Accept`:
+- desktop/browser can submit `wap://localhost/login` and `wap://localhost/register` forms through the native lane
+- no browser-side protocol logic is introduced
+- native `POST` evidence is strong enough to guide later session/connection-oriented work
+8. `Migration gates`:
+- Done-1: native `POST` transport smoke against Kannel is committed and runnable
+- Done-2: host/browser native `POST` smokes are committed and runnable
+- Done-3: docs distinguish native `GET` completion from remaining native `POST` work
+9. `Spec`:
+- `RQ-TRN-001..015`, `RQ-TRX-010`
+10. `Notes`:
+- Keep scope constrained to WML form submission first; do not widen into full connection-oriented WSP session work unless required to land baseline login/register flows.
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

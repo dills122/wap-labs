@@ -4,7 +4,7 @@ This repository is still pre-alpha. Versioning should communicate progress and r
 
 ## Current baseline
 
-- First coordinated repository version: `0.1.0`
+- Current coordinated repository version: `0.2.0`
 - Pre-`1.0.0` policy: breaking changes are still acceptable when they move the MVP forward
 - Public GitHub releases are milestone-gated and manual
 

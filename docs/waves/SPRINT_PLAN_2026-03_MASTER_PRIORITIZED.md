@@ -140,39 +140,37 @@ Current result:
 
 ### Goal
 
-Land a narrow native desktop fetch slice so the browser can load baseline Kannel-served decks through the real protocol lane without broad transport refactoring.
+Extend the native desktop transport lane from baseline `GET` fetches into real WML form submission so the browser can complete Kannel-backed login/register flows without falling back to the legacy bridge.
 
 ### Must Complete (P0/P1)
 
-1. `T0-27` native connectionless WSP `GET` fetch path.
-2. `T0-28` browser host native-transport mode selection + fallback.
-3. `T0-29` native Kannel `GET` smoke gate.
-4. `M1-16` transport/engine payload size guardrails.
+1. `T0-30` native WSP form `POST` baseline.
+2. `M1-16` transport/engine payload size guardrails.
+3. `A5-01` history entry fidelity follow-up.
+4. `W0-05` timer/dialog integration baseline.
 
 ### Follow-on (only if capacity remains)
 
-1. `A5-01` history entry fidelity follow-up.
-2. `W0-05` timer/dialog integration baseline.
-3. `W1-06` fatal/non-fatal script error taxonomy closure.
-4. `M1-08` browser/transport decomposition follow-up.
+1. `W1-06` fatal/non-fatal script error taxonomy closure.
+2. `M1-08` browser/transport decomposition follow-up.
 
 ### Concrete commit-order recommendation
 
-1. `feat(transport): add native connectionless wsp get fetch executor`
-2. `feat(browser): select native fetch mode with explicit fallback`
-3. `test(transport): add native kannel get smoke coverage`
-4. `fix(transport): enforce payload size guardrails before decode/parse`
+1. `feat(transport): add native connectionless wsp post executor`
+2. `test(transport): add native kannel post smoke coverage`
+3. `fix(transport): enforce payload size guardrails before decode/parse`
+4. `feat(engine): tighten history/session follow-up only if post flow requires it`
 
 ### Exit Gates
 
-1. `T0-27`, `T0-28`, and `T0-29` are either `done` or split into explicit follow-up tickets without widening scope.
-2. Desktop/browser can fetch `wap://localhost/` and `wap://localhost/login` through the native lane in controlled mode.
+1. `T0-30` is either `done` or split into explicit follow-up tickets without widening scope.
+2. Desktop/browser can submit login or register forms through the native lane in controlled mode.
 3. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
 4. Runtime/compliance follow-on work is not blocked by undocumented transport posture.
 
 ## Parallel Follow-on Sprint Recommendation
 
-If the native desktop fetch slice stabilizes quickly, resume the previously planned runtime/compliance lane next:
+If the native POST slice stabilizes quickly, resume the runtime/compliance lane next:
 
 1. `A5-01` history entry fidelity follow-up.
 2. `W0-05` timer/dialog integration baseline.
