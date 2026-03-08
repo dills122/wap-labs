@@ -126,6 +126,7 @@ export const createNavigationStateMachine = (
 
     const defaultRequestPolicy = defaultRequestPolicyForSource(
       options.source,
+      requestedUrl,
       hostSessionState.finalUrl
     );
     const requestPolicy = options.requestPolicy
@@ -345,21 +346,61 @@ export const createNavigationStateMachine = (
   };
 };
 
-const defaultRequestPolicyForSource = (
+export const defaultRequestPolicyForSource = (
   source: HostNavigationSource,
+  requestedUrl: string,
   refererUrl?: string
 ): FetchRequestPolicy | undefined => {
   const uaCapabilityProfile = WAVES_CONFIG.transportUaCapabilityProfile;
+  const destinationPolicy = shouldAllowPrivateDestination(requestedUrl)
+    ? 'allow-private'
+    : undefined;
   if (source === 'reload') {
-    return { cacheControl: 'no-cache', uaCapabilityProfile };
+    return { cacheControl: 'no-cache', destinationPolicy, uaCapabilityProfile };
   }
   if (source === 'external-intent' && refererUrl) {
-    return { refererUrl, uaCapabilityProfile };
+    return { refererUrl, destinationPolicy, uaCapabilityProfile };
   }
-  return { uaCapabilityProfile };
+  return { destinationPolicy, uaCapabilityProfile };
 };
 
 const normalizeMethod = (method?: string): string => {
   const normalized = method?.trim().toUpperCase();
   return normalized || 'GET';
+};
+
+const shouldAllowPrivateDestination = (requestedUrl: string): boolean => {
+  try {
+    const { hostname } = new URL(requestedUrl);
+    const normalized = hostname.trim().toLowerCase();
+    if (!normalized) {
+      return false;
+    }
+
+    if (normalized === 'localhost' || normalized === '::1' || normalized.endsWith('.localhost')) {
+      return true;
+    }
+
+    if (/^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(normalized)) {
+      return true;
+    }
+
+    if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(normalized)) {
+      return true;
+    }
+
+    if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(normalized)) {
+      return true;
+    }
+
+    const private172 = normalized.match(/^172\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/);
+    if (private172) {
+      const secondOctet = Number.parseInt(private172[1], 10);
+      return secondOctet >= 16 && secondOctet <= 31;
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
 };

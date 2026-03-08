@@ -70,10 +70,13 @@ Canonical sprint priority rule:
 
 Next execution block is architecture hardening across all active libraries before additional feature expansion:
 
-1. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-2. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
-3. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
-4. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
+1. `T0-27` Native connectionless WSP GET fetch path (`P0`).
+2. `T0-28` Browser host native-transport mode selection + fallback (`P0`).
+3. `T0-29` Native Kannel GET smoke gate (`P1`).
+4. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+5. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
+6. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
+7. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -86,13 +89,13 @@ Reference board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`.
 
 Priority execution order for networking MVP closure:
 
-1. Protocol-core networking closure is complete through `T0-26`, including `T0-21`.
-2. No further protocol-core transport foundation tickets should preempt active runtime/compliance and hardening lanes unless a new transport blocker appears.
-3. Future networking work should focus on deferred security depth, corpus realism, or profile-promotion blockers only.
+1. Protocol-core spec/policy closure is complete through `T0-26`, including `T0-21`, but desktop/browser ingress is still using the legacy HTTP gateway bridge for live `wap://` fetches.
+2. Immediate transport priority is a narrow native execution lane: connectionless WSP `GET`/`REPLY` over WDP/UDP, integrated behind the existing fetch contract.
+3. No broader protocol expansion should preempt active runtime/compliance and hardening lanes unless required to land `T0-27..T0-29`.
 
 Sprint policy:
 
-1. The `gateway-bridged` to `wap-net-core` promotion gate is satisfied; future profile moves require new explicit extension or rollback gates.
+1. The documented `wap-net-core` posture is implementation-target, not fully live browser ingress, until `T0-27..T0-29` land.
 2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
 3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
 
@@ -868,6 +871,109 @@ Completed `B0` through `B3` tickets are archived in:
 10. `Notes`:
 - Tracking ticket only until browser/transport real-gateway E2E gates are promoted into standard verification.
 - Closure landed with explicit scorecard tracking, transport and browser ignored Kannel smokes, one-command runner diagnostics, and direct test/request-policy hardening so loopback-safe local runs do not rely on hidden host env state.
+
+### T0-27 Native connectionless WSP GET fetch path
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-19`, `T0-20`, `T0-22`, `T0-26`
+3. `Owner`: `transport-rust`
+4. `Files`:
+- `transport-rust/src/fetch_runtime.rs`
+- `transport-rust/src/lib.rs`
+- `transport-rust/src/network/wdp/*`
+- `transport-rust/src/network/wsp/*`
+- `transport-rust/src/network/native_fetch.rs` (new)
+- `transport-rust/tests/network/interop/*`
+- `transport-rust/tests/fixtures/transport/*`
+5. `Build`:
+- Add an additive transport-mode selector inside `fetch_deck_in_process` without changing the host contract.
+- Implement a native executor for `wap://` `GET` requests using connectionless WSP `GET`/`REPLY` over WDP/UDP port `9200`.
+- Reuse existing WDP adapter and WSP codec/session modules rather than introducing browser-side protocol logic.
+- Normalize native replies back into the existing `FetchDeckResponse` and engine handoff shape.
+- Keep the legacy gateway bridge as explicit fallback while the native lane is proving out.
+6. `Tests`:
+- unit tests for mode selection and fallback behavior
+- integration tests with a deterministic local UDP responder exercising `GET` -> `REPLY`
+- replay/fixture coverage proving encoded request and decoded reply align with the seed corpus
+7. `Accept`:
+- `fetch_deck_in_process` can load at least `wap://localhost/` and `wap://localhost/login` through the native transport lane
+- browser/engine contracts remain unchanged
+- native path is additive and does not regress gateway-bridged fetches
+8. `Migration gates`:
+- Done-1: native transport mode exists and is selectable without contract drift
+- Done-2: connectionless `GET` request encode/send/receive/decode flow is deterministic and test-backed
+- Done-3: native path returns normalized `FetchDeckResponse` equivalent to existing gateway-bridge success shape for baseline decks
+9. `Spec`:
+- `RQ-TRN-001..004`, `RQ-TRN-010..015`, `RQ-TRN-017..019`
+10. `Notes`:
+- Scope is intentionally narrow: `GET` only, no POST/forms, no full connection-oriented WTP client in this slice.
+- Design goal is low-regret reuse: later POST/session support must extend this executor rather than replace it.
+
+### T0-28 Browser host native-transport mode selection + fallback
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-27`
+3. `Owner`: `browser`, `transport-rust`
+4. `Files`:
+- `browser/src-tauri/src/fetch_host.rs`
+- `browser/src-tauri/src/waves_config.rs`
+- `browser/frontend/src/app/navigation-state.ts`
+- `browser/frontend/src/app/browser-controller.ts`
+- `browser/contracts/transport.ts` (only if additive config becomes contract-visible)
+- `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
+5. `Build`:
+- Introduce explicit desktop host selection between legacy gateway bridge and native protocol fetch, defaulting to the safest posture.
+- Preserve the current `fetch_deck` host command and response shape.
+- Ensure local-lab/private-address fetches can opt into the native lane without weakening public-destination policy for unrelated targets.
+- Retain deterministic fallback to legacy bridge when native mode is disabled or unsupported.
+6. `Tests`:
+- host tests for default mode, override mode, and fallback behavior
+- frontend request-policy/state tests proving network mode uses the intended transport path
+7. `Accept`:
+- desktop browser can deliberately run native mode for `wap://localhost/` and `wap://localhost/login`
+- fallback behavior is explicit and visible rather than accidental
+- no browser-side WSP/WTP logic is introduced
+8. `Migration gates`:
+- Done-1: host-side mode selection is explicit and documented
+- Done-2: browser network mode can target native fetch path without contract breakage
+- Done-3: fallback remains available for rollback and debugging
+9. `Spec`:
+- `RQ-TRX-010`, `RQ-TRN-001..015`
+10. `Notes`:
+- Prefer env/config-first activation before adding user-facing UI controls.
+- Keep all protocol behavior in `transport-rust`; browser host owns only mode selection and diagnostics.
+
+### T0-29 Native Kannel GET smoke gate
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-27`, `T0-28`
+3. `Owner`: `transport-rust`, `browser`, `docs`
+4. `Files`:
+- `transport-rust/tests/kannel_smoke.rs`
+- `browser/src-tauri/tests/kannel_smoke.rs`
+- `scripts/transport-wap-smoke.sh`
+- `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+- `docs/wap-test-environment/README.md`
+5. `Build`:
+- Add a real native-transport smoke lane for baseline Kannel-served `GET` deck fetches.
+- Distinguish native-mode evidence from legacy gateway-bridge evidence in tests and docs.
+- Capture diagnostics that make packet-shape/interoperability failures reviewable.
+6. `Tests`:
+- native-mode transport smoke for root + login decks
+- browser host smoke proving render/navigation from native-mode fetch
+- one-command runner support preserving logs on failure
+7. `Accept`:
+- local Kannel stack can be exercised from the desktop/browser path without relying on the raw HTTP bridge to `13002`
+- readiness docs clearly distinguish native vs legacy evidence
+- native smoke is strong enough to guide subsequent POST/session work
+8. `Migration gates`:
+- Done-1: transport native smoke against Kannel is committed and runnable
+- Done-2: browser host native smoke is committed and runnable
+- Done-3: scorecard/profile docs are updated to reflect the live ingress posture
+9. `Spec`:
+- `RQ-TRN-001..015`, `RQ-TRX-010`
+10. `Notes`:
+- This ticket is the evidence gate for promoting native desktop fetch from “experimental” to “default candidate.”
 
 ## Phase W: WMLScript Runtime and VM (Active)
 

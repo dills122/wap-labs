@@ -70,6 +70,7 @@ Score: `7.0 / 8.0` (`88%`)
 1. it does not prove `wap-net-core` is ready for full browser/UI parity or future `wap-net-ext` promotion
 2. it does not prove full WSP/WTP/WDP conformance
 3. it does not guarantee emulator/browser UX correctness
+4. it does not prove the live desktop/browser `wap://` fetch path is using native protocol ingress rather than the legacy HTTP gateway bridge
 
 ## Current evidence base
 
@@ -87,8 +88,9 @@ Score: `7.0 / 8.0` (`88%`)
 
 1. the Kannel smoke lane is still ignored/manual rather than part of default local Rust test execution
 2. multi-step coverage is limited to deterministic multi-deck GET, not full register/login/session POST flow
-3. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
-4. failure diagnostics are console-first; they are not yet persisted into a structured artifact path
+3. live desktop/browser `wap://` fetch still routes through the legacy HTTP gateway bridge, which is not reliable evidence of true native protocol ingress
+4. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
+5. failure diagnostics are console-first; they are not yet persisted into a structured artifact path
 
 ## Recommended next threshold targets
 
@@ -114,14 +116,14 @@ Required moves:
 
 Suggested ticket:
 
-- `T0-26` Local Kannel E2E readiness gate
+- `T0-29` Native Kannel GET smoke gate
 
 Suggested scope:
 
-1. promote transport smoke from manual-only signal to tracked gate
-2. add one deterministic multi-step Kannel-backed fixture path
-3. add one browser-driven real-gateway smoke
-4. update this scorecard as part of the acceptance criteria
+1. add native-mode transport smoke from desktop/browser fetch path
+2. distinguish native evidence from legacy gateway-bridge evidence
+3. update this scorecard as part of the acceptance criteria
+4. use the result to guide follow-on POST/session scope
 
 ## Update policy
 

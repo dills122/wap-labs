@@ -481,8 +481,7 @@ async function proxyGatewayRequest(req, res) {
   }
 }
 
-app.all('/gateway', proxyGatewayRequest);
-app.all('/gateway/*', proxyGatewayRequest);
+app.all(/^\/gateway(?:\/(.*))?$/, proxyGatewayRequest);
 
 app.get('/viewer', (req, res) => {
   res.sendFile(path.join(__dirname, 'viewer.html'));
