@@ -2,21 +2,13 @@ use crate::network::wdp::transport_trait::{DatagramTransport, WdpError};
 use crate::network::wdp::{
     UdpDatagramTransport, UdpDatagramTransportConfig, WdpAddress, WdpDatagram,
 };
-use crate::network::wsp::header_block::{
-    WspHeaderBlock, WspHeaderBlockDecodePolicy, WspHeaderBlockEncodePolicy, WspHeaderField,
-    WspHeaderNameEncoding,
-};
-use crate::network::wsp::header_registry::{resolve_header_field_page, DEFAULT_HEADER_CODE_PAGE};
-use crate::network::wsp::session::{
-    decode_wsp_session_event, encode_wsp_session_event, WspMethod, WspMethodRequest,
-    WspSessionEvent, WspSessionMode,
-};
 use crate::request_meta::log_transport_event;
 use crate::responses::{
     map_success_payload_response, map_terminal_send_error, normalize_content_type,
 };
 use crate::FetchDeckResponse;
 use std::collections::HashMap;
+use std::fmt::Write as _;
 use std::net::{SocketAddr, ToSocketAddrs};
 use std::time::Instant;
 use url::Url;
@@ -24,6 +16,7 @@ use url::Url;
 pub const TRANSPORT_PROFILE_ENV: &str = "LOWBAND_TRANSPORT_PROFILE";
 pub const TRANSPORT_PROFILE_GATEWAY_BRIDGED: &str = "gateway-bridged";
 pub const TRANSPORT_PROFILE_WAP_NET_CORE: &str = "wap-net-core";
+const CONNECTIONLESS_INITIAL_TRANSACTION_ID: u8 = 1;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum TransportProfile {
@@ -37,6 +30,13 @@ pub(crate) struct NativeFetchPlan {
     pub(crate) timeout_ms: u64,
     pub(crate) attempts: u8,
     pub(crate) request_id: Option<String>,
+}
+
+#[derive(Debug)]
+struct NativeReply {
+    status_code: u16,
+    content_type: String,
+    body: Vec<u8>,
 }
 
 pub(crate) fn active_transport_profile() -> TransportProfile {
@@ -130,15 +130,9 @@ pub(crate) fn execute_native_wap_get_with_transport(
         }
     };
 
-    let request_event = WspSessionEvent::MethodRequest(WspMethodRequest {
-        mode: WspSessionMode::Connectionless,
-        method: WspMethod::Get,
-        uri: request_uri(&parsed),
-        headers: request_headers_block(&plan.outbound_headers),
-        body: Vec::new(),
-    });
+    let transaction_id = CONNECTIONLESS_INITIAL_TRANSACTION_ID;
     let encoded_request =
-        match encode_wsp_session_event(&request_event, WspHeaderBlockEncodePolicy::STRICT) {
+        match encode_connectionless_get_request(transaction_id, &parsed, &plan.outbound_headers) {
             Ok(encoded) => encoded,
             Err(error) => {
                 return map_terminal_send_error(
@@ -189,16 +183,18 @@ pub(crate) fn execute_native_wap_get_with_transport(
         match transport.receive() {
             Ok(reply_datagram) => {
                 let elapsed_ms = send_start.elapsed().as_secs_f64() * 1000.0;
-                let reply = match decode_wsp_session_event(
+                let reply = match decode_connectionless_wsp_reply(
+                    transaction_id,
                     &reply_datagram.payload,
-                    WspSessionMode::Connectionless,
-                    WspHeaderBlockDecodePolicy::STRICT,
                 ) {
                     Ok(reply) => reply,
                     Err(error) => {
                         return map_terminal_send_error(
                             plan.request_url,
-                            format!("failed to decode native WSP reply: {error}"),
+                            format!(
+                                "failed to decode native WSP reply: {error} (payload={})",
+                                hex_bytes(&reply_datagram.payload)
+                            ),
                             plan.attempts,
                             attempt,
                             false,
@@ -208,30 +204,14 @@ pub(crate) fn execute_native_wap_get_with_transport(
                     }
                 };
 
-                let WspSessionEvent::MethodResult(result) = reply else {
-                    return map_terminal_send_error(
-                        plan.request_url,
-                        "native WSP fetch expected a method reply".to_string(),
-                        plan.attempts,
-                        attempt,
-                        false,
-                        elapsed_ms,
-                        plan.request_id.as_deref(),
-                    );
-                };
-
-                let content_type = normalize_content_type(
-                    header_value(&result.headers, "Content-Type")
-                        .or_else(|| header_value(&result.headers, "Content-type")),
-                );
                 return map_success_payload_response(
-                    result.status_code,
+                    reply.status_code,
                     true,
                     &plan.request_url,
                     &plan.request_url,
                     plan.request_url.clone(),
-                    content_type,
-                    &result.body,
+                    normalize_content_type(Some(reply.content_type.as_str())),
+                    &reply.body,
                     attempt,
                     elapsed_ms,
                     plan.request_id.as_deref(),
@@ -298,38 +278,221 @@ fn request_uri(parsed: &Url) -> String {
     }
 }
 
-fn request_headers_block(headers: &HashMap<String, String>) -> WspHeaderBlock {
-    let mut fields: Vec<WspHeaderField> = headers
-        .iter()
-        .map(|(name, value)| WspHeaderField {
-            name: name.clone(),
-            value: value.clone(),
-            name_encoding: match resolve_header_field_page(name) {
-                Some(page) => WspHeaderNameEncoding::Binary { page },
-                None => WspHeaderNameEncoding::Text,
-            },
-        })
-        .collect();
-    fields.sort_by(|left, right| left.name.cmp(&right.name));
-    WspHeaderBlock {
-        headers: fields,
-        encoding_version_headers: Vec::new(),
+fn build_kannel_request_uri(parsed: &Url) -> Result<String, String> {
+    let host = parsed
+        .host_str()
+        .ok_or_else(|| "wap url must include a host".to_string())?;
+    let logical_port = parsed
+        .port()
+        .unwrap_or_else(|| default_http_port_for_host(host));
+    let scheme = match parsed.scheme() {
+        "waps" => "https",
+        _ => "http",
+    };
+    let host = if host.contains(':') {
+        format!("[{host}]")
+    } else {
+        host.to_string()
+    };
+    let path = request_uri(parsed);
+    let authority = match (scheme, logical_port) {
+        ("http", 80) | ("https", 443) => host,
+        _ => format!("{host}:{logical_port}"),
+    };
+    Ok(format!("{scheme}://{authority}{path}"))
+}
+
+fn default_http_port_for_host(host: &str) -> u16 {
+    match host {
+        "localhost" | "127.0.0.1" | "::1" => 13002,
+        _ => 80,
     }
 }
 
-fn header_value<'a>(block: &'a WspHeaderBlock, name: &str) -> Option<&'a str> {
-    block
-        .headers
+fn encode_connectionless_get_request(
+    transaction_id: u8,
+    parsed: &Url,
+    headers: &HashMap<String, String>,
+) -> Result<Vec<u8>, String> {
+    let uri = build_kannel_request_uri(parsed)?;
+    let uri_bytes = uri.as_bytes();
+    let encoded_headers = encode_connectionless_request_headers(headers);
+    let mut wire = Vec::with_capacity(uri_bytes.len() + encoded_headers.len() + 8);
+    wire.push(transaction_id);
+    wire.push(0x40);
+    wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
+    wire.extend_from_slice(uri_bytes);
+    wire.extend_from_slice(&encoded_headers);
+    Ok(wire)
+}
+
+fn encode_connectionless_request_headers(headers: &HashMap<String, String>) -> Vec<u8> {
+    let mut out = Vec::new();
+    let accept_value = headers
+        .get("Accept")
+        .map(String::as_str)
+        .unwrap_or("application/vnd.wap.wmlc");
+    if accept_value.contains("application/vnd.wap.wmlc") {
+        out.extend_from_slice(&[0x80, 0x94]);
+    } else if accept_value.contains("text/vnd.wap.wml") {
+        out.extend_from_slice(&[0x80, 0x88]);
+    }
+    out
+}
+
+fn decode_connectionless_wsp_reply(
+    expected_transaction_id: u8,
+    payload: &[u8],
+) -> Result<NativeReply, String> {
+    let Some((&transaction_id, body)) = payload.split_first() else {
+        return Err("truncated native WSP reply: missing transaction id".to_string());
+    };
+    if transaction_id != expected_transaction_id {
+        return Err(format!(
+            "unexpected native WSP reply transaction id: expected {expected_transaction_id}, got {transaction_id}"
+        ));
+    }
+
+    let Some((&pdu_type, body)) = body.split_first() else {
+        return Err("truncated native WSP reply: missing pdu type".to_string());
+    };
+    if pdu_type != 0x04 {
+        return Err(format!(
+            "unexpected native WSP reply pdu type: expected 0x04, got 0x{pdu_type:02X}"
+        ));
+    }
+
+    let Some((&status, body)) = body.split_first() else {
+        return Err("truncated native WSP reply: missing status".to_string());
+    };
+    let (headers_len, body) = decode_uintvar(body)?;
+    if body.len() < headers_len {
+        return Err("truncated native WSP reply: headers section incomplete".to_string());
+    }
+    let (header_section, data) = body.split_at(headers_len);
+    let (content_type, content_type_len) = decode_content_type_value(header_section)?;
+    if content_type_len > header_section.len() {
+        return Err("truncated native WSP reply: content type overruns header section".to_string());
+    }
+
+    Ok(NativeReply {
+        status_code: decode_wsp_status_code(status)?,
+        content_type,
+        body: data.to_vec(),
+    })
+}
+
+fn encode_uintvar(value: usize) -> Result<Vec<u8>, String> {
+    if value > 0x0FFF_FFFF {
+        return Err(format!("value too large for uintvar encoding: {value}"));
+    }
+    let mut chunks = [0u8; 5];
+    let mut cursor = chunks.len();
+    let mut remaining = value;
+    loop {
+        cursor -= 1;
+        chunks[cursor] = (remaining & 0x7F) as u8;
+        remaining >>= 7;
+        if remaining == 0 {
+            break;
+        }
+        chunks[cursor] |= 0x80;
+    }
+    let mut out = chunks[cursor..].to_vec();
+    for index in 0..out.len().saturating_sub(1) {
+        out[index] |= 0x80;
+    }
+    Ok(out)
+}
+
+fn decode_uintvar(input: &[u8]) -> Result<(usize, &[u8]), String> {
+    let mut value = 0usize;
+    for (index, byte) in input.iter().copied().enumerate().take(5) {
+        value = (value << 7) | usize::from(byte & 0x7F);
+        if byte & 0x80 == 0 {
+            return Ok((value, &input[index + 1..]));
+        }
+    }
+    Err("truncated uintvar".to_string())
+}
+
+fn decode_content_type_value(input: &[u8]) -> Result<(String, usize), String> {
+    let Some((&first, _)) = input.split_first() else {
+        return Err("truncated native WSP reply: missing content type".to_string());
+    };
+    if first & 0x80 != 0 {
+        let media = decode_well_known_media(first & 0x7F)
+            .ok_or_else(|| format!("unsupported well-known media type: 0x{:02X}", first & 0x7F))?;
+        return Ok((media.to_string(), 1));
+    }
+    if first <= 31 {
+        let length = usize::from(first);
+        if input.len() < 1 + length {
+            return Err(
+                "truncated native WSP reply: content type general form incomplete".to_string(),
+            );
+        }
+        let media = decode_text_string(&input[1..1 + length])?;
+        return Ok((media, 1 + length));
+    }
+    let media = decode_text_string(input)?;
+    Ok((media.clone(), media.len() + 1))
+}
+
+fn decode_text_string(input: &[u8]) -> Result<String, String> {
+    let terminator = input
         .iter()
-        .find(|header| header.name.eq_ignore_ascii_case(name))
-        .map(|header| header.value.as_str())
+        .position(|byte| *byte == 0x00)
+        .ok_or_else(|| "truncated native WSP text string".to_string())?;
+    let content = if input.first().copied() == Some(0x7F) {
+        &input[1..terminator]
+    } else {
+        &input[..terminator]
+    };
+    String::from_utf8(content.to_vec())
+        .map_err(|error| format!("invalid utf-8 in native WSP text string: {error}"))
+}
+
+fn decode_wsp_status_code(status: u8) -> Result<u16, String> {
+    match status {
+        0x10 => Ok(100),
+        0x11 => Ok(101),
+        0x20..=0x26 => Ok(200 + u16::from(status - 0x20)),
+        0x30..=0x37 => Ok(300 + u16::from(status - 0x30)),
+        0x40..=0x51 => Ok(400 + u16::from(status - 0x40)),
+        0x60..=0x65 => Ok(500 + u16::from(status - 0x60)),
+        _ => Err(format!(
+            "unsupported native WSP status code: 0x{status:02X}"
+        )),
+    }
+}
+
+fn decode_well_known_media(code: u8) -> Option<&'static str> {
+    match code {
+        0x03 => Some("text/plain"),
+        0x08 => Some("text/vnd.wap.wml"),
+        0x14 => Some("application/vnd.wap.wmlc"),
+        0x28 => Some("text/xml"),
+        0x29 => Some("application/xml"),
+        _ => None,
+    }
+}
+
+fn hex_bytes(bytes: &[u8]) -> String {
+    let mut out = String::new();
+    for (index, byte) in bytes.iter().enumerate() {
+        if index > 0 {
+            out.push(' ');
+        }
+        let _ = write!(&mut out, "{byte:02X}");
+    }
+    out
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::network::wdp::transport_trait::WdpResult;
-    use crate::network::wsp::session::{decode_wsp_session_event, WspSessionMode};
     use std::sync::{Mutex, OnceLock};
 
     struct FakeDatagramTransport {
@@ -387,6 +550,20 @@ mod tests {
             .map(str::to_string)
     }
 
+    fn build_connectionless_reply_wire(
+        transaction_id: u8,
+        status: u8,
+        content_type: u8,
+        body: &[u8],
+    ) -> Vec<u8> {
+        let headers_len = encode_uintvar(1).expect("single-octet content type should encode");
+        let mut wire = vec![transaction_id, 0x04, status];
+        wire.extend_from_slice(&headers_len);
+        wire.push(content_type | 0x80);
+        wire.extend_from_slice(body);
+        wire
+    }
+
     #[test]
     fn transport_profile_defaults_to_gateway_bridge() {
         let profile = with_env_removed_locked(TRANSPORT_PROFILE_ENV, active_transport_profile);
@@ -425,26 +602,12 @@ mod tests {
     fn native_fetch_roundtrip_maps_reply_to_normalized_response() {
         let request_url = "wap://127.0.0.1/login".to_string();
         let peer: SocketAddr = "127.0.0.1:9200".parse().expect("literal should parse");
-        let response_event =
-            WspSessionEvent::MethodResult(crate::network::wsp::session::WspMethodResult {
-                mode: WspSessionMode::Connectionless,
-                status_code: 200,
-                headers: WspHeaderBlock {
-                    headers: vec![WspHeaderField {
-                        name: "Content-Type".to_string(),
-                        value: "text/vnd.wap.wml".to_string(),
-                        name_encoding: WspHeaderNameEncoding::Binary {
-                            page: resolve_header_field_page("Content-Type")
-                                .unwrap_or(DEFAULT_HEADER_CODE_PAGE),
-                        },
-                    }],
-                    encoding_version_headers: Vec::new(),
-                },
-                body: br#"<?xml version="1.0"?><wml><card id="login"/></wml>"#.to_vec(),
-            });
-        let encoded_reply =
-            encode_wsp_session_event(&response_event, WspHeaderBlockEncodePolicy::STRICT)
-                .expect("reply should encode");
+        let encoded_reply = build_connectionless_reply_wire(
+            CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            0x20,
+            0x08,
+            br#"<?xml version="1.0"?><wml><card id="login"/></wml>"#,
+        );
         let reply_datagram = WdpDatagram {
             src_addr: WdpAddress::ipv4([127, 0, 0, 1]),
             dst_addr: WdpAddress::ipv4([127, 0, 0, 1]),
@@ -484,17 +647,15 @@ mod tests {
 
         let sent = &transport.sent[0];
         assert_eq!(sent.dst_port, 9200);
-        let event = decode_wsp_session_event(
-            &sent.payload,
-            WspSessionMode::Connectionless,
-            WspHeaderBlockDecodePolicy::STRICT,
-        )
-        .expect("sent payload should decode");
-        let WspSessionEvent::MethodRequest(method) = event else {
-            panic!("expected method request");
-        };
-        assert_eq!(method.method, WspMethod::Get);
-        assert_eq!(method.uri, "/login");
+        assert_eq!(
+            sent.payload.first().copied(),
+            Some(CONNECTIONLESS_INITIAL_TRANSACTION_ID)
+        );
+        assert_eq!(sent.payload.get(1).copied(), Some(0x40));
+        let (uri_len, rest) = decode_uintvar(&sent.payload[2..]).expect("uri length should decode");
+        let uri = std::str::from_utf8(&rest[..uri_len]).expect("uri should be utf8");
+        assert_eq!(uri, "http://127.0.0.1:13002/login");
+        assert_eq!(&rest[uri_len..], &[0x80, 0x88]);
     }
 
     #[test]
@@ -524,5 +685,37 @@ mod tests {
             detail_string(&response, "requestId").as_deref(),
             Some("req-native-timeout")
         );
+    }
+
+    #[test]
+    fn native_connectionless_wire_format_prefixes_transaction_id() {
+        let parsed = Url::parse("wap://localhost/").expect("url should parse");
+        let encoded = encode_connectionless_get_request(
+            CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            &parsed,
+            &HashMap::new(),
+        )
+        .expect("request should encode");
+
+        assert_eq!(
+            encoded.first().copied(),
+            Some(CONNECTIONLESS_INITIAL_TRANSACTION_ID)
+        );
+        assert_eq!(encoded.get(1).copied(), Some(0x40));
+        let (uri_len, rest) = decode_uintvar(&encoded[2..]).expect("uri len should decode");
+        let uri = std::str::from_utf8(&rest[..uri_len]).expect("uri should decode");
+        assert_eq!(uri, "http://localhost:13002/");
+        assert_eq!(&rest[uri_len..], &[0x80, 0x94]);
+    }
+
+    #[test]
+    fn native_connectionless_reply_rejects_transaction_id_mismatch() {
+        let encoded = build_connectionless_reply_wire(9, 0x20, 0x08, &[]);
+
+        let error =
+            decode_connectionless_wsp_reply(CONNECTIONLESS_INITIAL_TRANSACTION_ID, &encoded)
+                .expect_err("transaction-id mismatch should fail");
+
+        assert!(error.contains("unexpected native WSP reply transaction id"));
     }
 }

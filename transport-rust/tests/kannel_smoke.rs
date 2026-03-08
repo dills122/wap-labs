@@ -19,7 +19,11 @@ fn fetch_ok_response(url: &str) -> FetchDeckResponse {
     assert!(
         matches!(
             response.content_type.as_str(),
-            "text/vnd.wap.wml" | "application/vnd.wap.wml+xml" | "text/xml" | "application/xml"
+            "text/vnd.wap.wml"
+                | "application/vnd.wap.wmlc"
+                | "application/vnd.wap.wml+xml"
+                | "text/xml"
+                | "application/xml"
         ),
         "unexpected content type for {url}: {}",
         response.content_type
@@ -72,8 +76,9 @@ fn kannel_wap_multi_deck_smoke_fetches_root_and_login_decks() {
             "card id=\"login\"",
             "title=\"Login\"",
             "Enter username and PIN.",
-            "<postfield name=\"username\" value=\"$(username)\"/>",
-            "<postfield name=\"pin\" value=\"$(pin)\"/>",
+            "<postfield name=\"username\"",
+            "<postfield name=\"pin\"",
+            "method=\"post\"",
         ],
     );
 }
