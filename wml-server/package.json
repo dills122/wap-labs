@@ -1,6 +1,6 @@
 {
   "name": "wml-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local WML application server for WAP lab",
   "license": "MIT",
   "author": "Dylan Steele <dylansteele57@gmail.com>",

@@ -1,6 +1,6 @@
 {
   "name": "@wavenav/desktop-host-tauri",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "license": "MIT",
   "author": "Dylan Steele <dylansteele57@gmail.com>",
