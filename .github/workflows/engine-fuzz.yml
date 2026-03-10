@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload fuzz artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: engine-wml-fuzz-artifacts
           path: engine-wasm/engine/fuzz/artifacts/engine_wml_fuzzer
