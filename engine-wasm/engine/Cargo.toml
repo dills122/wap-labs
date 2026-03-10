@@ -14,7 +14,7 @@ default = ["wasm-bindings"]
 wasm-bindings = ["dep:serde-wasm-bindgen", "dep:wasm-bindgen"]
 
 [dependencies]
-quick-xml = "0.38"
+quick-xml = "0.39"
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = { version = "0.6", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
