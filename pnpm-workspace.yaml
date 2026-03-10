@@ -7,7 +7,7 @@ catalog:
   "@types/node": "^25.4.0"
   "@typescript-eslint/eslint-plugin": "^8.56.1"
   "@typescript-eslint/parser": "^8.57.0"
-  eslint: "^10.0.2"
+  eslint: "^10.0.3"
   eslint-config-prettier: "^10.1.8"
   globals: "^17.4.0"
   lit: "^3.3.2"
