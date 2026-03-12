@@ -141,11 +141,21 @@ impl WmlEngine {
 
     /// Replace edit-session draft value for the focused input.
     pub fn set_focused_input_edit_draft(&mut self, value: String) -> bool {
-        let Some(edit) = self.active_input_edit.as_mut() else {
+        let Some(input_name) = self
+            .active_input_edit
+            .as_ref()
+            .map(|edit| edit.input_name.clone())
+        else {
             return false;
         };
-        edit.draft_value = value;
-        true
+        let max_len = self.input_max_len_on_active_card(&input_name);
+        let draft = truncate_to_chars(&value, max_len);
+        if let Some(edit) = self.active_input_edit.as_mut() {
+            edit.draft_value = draft;
+            true
+        } else {
+            false
+        }
     }
 
     /// Commit active focused-input edit session.
@@ -373,4 +383,11 @@ impl WmlEngine {
         self.trace_entries.clear();
         self.next_trace_seq = 1;
     }
+}
+
+fn truncate_to_chars(value: &str, max_len: Option<usize>) -> String {
+    let Some(limit) = max_len else {
+        return value.to_string();
+    };
+    value.chars().take(limit).collect()
 }

@@ -302,4 +302,24 @@ impl WmlEngine {
             }
         }
     }
+
+    pub(crate) fn input_max_len_on_active_card(&self, input_name: &str) -> Option<usize> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Input {
+                    name, max_length, ..
+                } = item
+                {
+                    if name == input_name {
+                        return *max_length;
+                    }
+                }
+            }
+        }
+        None
+    }
 }

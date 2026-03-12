@@ -146,10 +146,15 @@ fn parse_input_inline_node(element: &XmlElement) -> Option<InlineNode> {
         .attr("type")
         .map(|value| value.eq_ignore_ascii_case("password"))
         .unwrap_or(false);
+    let max_length = element
+        .attr("maxlength")
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|value| *value > 0);
     Some(InlineNode::Input {
         name,
         value,
         is_password,
+        max_length,
     })
 }
 

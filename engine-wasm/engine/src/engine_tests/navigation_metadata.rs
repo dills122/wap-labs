@@ -311,6 +311,25 @@ fn focused_input_edit_cancel_keeps_original_value() {
 }
 
 #[test]
+fn focused_input_edit_draft_respects_input_maxlength() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="pin" value="" type="text" maxlength="4"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_input_edit()
+        .expect("begin edit should return result");
+    assert!(engine.set_focused_input_edit_draft("123456".to_string()));
+    assert_eq!(engine.focused_input_edit_value(), Some("1234".to_string()));
+}
+
+#[test]
 fn external_navigation_query_only_uses_base_document() {
     let mut engine = WmlEngine::new();
     let xml = r##"

@@ -35,6 +35,7 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             name,
                             value,
                             is_password,
+                            ..
                         } => {
                             let display_value = if *is_password {
                                 "*".repeat(value.chars().count())
@@ -256,11 +257,13 @@ mod tests {
                     name: "UserName".to_string(),
                     value: "AHMED".to_string(),
                     is_password: false,
+                    max_length: None,
                 },
                 InlineNode::Input {
                     name: "Password".to_string(),
                     value: "secret".to_string(),
                     is_password: true,
+                    max_length: None,
                 },
             ])],
             accept_action: None,

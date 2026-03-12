@@ -15,5 +15,6 @@ pub enum InlineNode {
         name: String,
         value: String,
         is_password: bool,
+        max_length: Option<usize>,
     },
 }
