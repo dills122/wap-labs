@@ -73,12 +73,13 @@ Next execution block is architecture hardening across all active libraries befor
 1. `A5-04` Minimal WML text-input interaction baseline (`P0`).
 2. `A5-05` WML select/option interaction baseline (`P0` after `A5-04`).
 3. `A5-06` Form-state submit integration hardening (`P1` after `A5-04` and `A5-05`).
-4. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-5. `A5-01` History entry fidelity follow-up (`P1` once form interaction behavior is clear).
-6. `W0-05` Timer/dialog integration baseline (`P1` if active form work stays green).
-7. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
-8. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
-9. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
+4. `D0-01` Engine debug connector contract and architecture definition (`P1` after `A5-06`).
+5. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+6. `A5-01` History entry fidelity follow-up (`P1` once form interaction behavior is clear).
+7. `W0-05` Timer/dialog integration baseline (`P1` if active form work stays green).
+8. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
+9. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
+10. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -1097,6 +1098,109 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-RMK-008`, `RQ-WAE-008`
 9. `Notes`:
 - this is the hardening bridge between new engine interaction semantics and the already-landed native submit path
+
+## Phase D: Engine Debug Connector (Planning-Ready)
+
+Reference plan:
+
+- `docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md`
+
+### D0-01 Debug connector contract and architecture baseline
+
+1. `Status`: `todo`
+2. `Depends On`: `A5-06`
+3. `Owner`: `engine-wasm`, `browser`, `docs`
+4. `Files`:
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/contracts/engine.ts`
+- `browser/src-tauri/src/contract_types.rs`
+- `docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md`
+- `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+5. `Build`:
+- define additive debug session contracts (`open`, `poll`, `snapshot`, `close`) and event/snapshot type surfaces
+- pin runtime/host responsibilities and determinism constraints for debug instrumentation
+- document masking/default-disable policy for sensitive fields
+6. `Tests`:
+- contract generation/typecheck passes for host/frontend consumers
+- docs lint/checks pass
+7. `Accept`:
+- debug connector interfaces are contract-first, additive, and implementation-ready
+- no existing runtime/host contract behavior is broken
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`
+9. `Notes`:
+- this ticket establishes interfaces only; no runtime emission implementation in this slice
+
+### D0-02 Engine event stream and snapshot emitter
+
+1. `Status`: `todo`
+2. `Depends On`: `D0-01`
+3. `Owner`: `engine-wasm`
+4. `Files`:
+- `engine-wasm/engine/src/lib.rs`
+- `engine-wasm/engine/src/engine_runtime_internal/*`
+- `engine-wasm/engine/src/engine_public_api.rs`
+- `engine-wasm/engine/src/engine_tests/*`
+5. `Build`:
+- add in-engine fixed-size debug event ring buffer with cursor and drop accounting
+- emit deterministic events at deck/nav/focus/input/action/script/timer boundaries
+- add read-only snapshot export with sensitive-field masking defaults
+6. `Tests`:
+- engine tests for event ordering determinism and drop accounting
+- engine tests for masked sensitive fields in snapshot/event payloads
+7. `Accept`:
+- engine exposes deterministic, pollable debug events and snapshots without changing runtime behavior
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
+9. `Notes`:
+- keep emitter path allocation-light and side-effect free for non-debug execution
+
+### D0-03 Host bridge integration for attach/poll/close
+
+1. `Status`: `todo`
+2. `Depends On`: `D0-01`, `D0-02`
+3. `Owner`: `browser`, `engine-wasm`
+4. `Files`:
+- `browser/src-tauri/src/engine_bridge/*`
+- `browser/src-tauri/src/lib.rs`
+- `browser/contracts/generated/*`
+- `browser/src-tauri/src/tests/*`
+5. `Build`:
+- expose tauri commands for debug session lifecycle and event polling
+- map host contract types to engine debug contract surfaces
+- ensure command failures are deterministic and non-fatal to runtime state
+6. `Tests`:
+- tauri command tests for attach/poll/close behavior and error handling
+- contract wrapper generation/typecheck
+7. `Accept`:
+- running desktop host can attach and retrieve debug events/snapshots through host APIs
+8. `Spec`:
+- `RQ-WAE-017`, `RQ-RMK-002`
+9. `Notes`:
+- scope excludes UI panel; this is command/API integration only
+
+### D0-04 Browser debug panel and capture workflow
+
+1. `Status`: `todo`
+2. `Depends On`: `D0-03`
+3. `Owner`: `browser`
+4. `Files`:
+- `browser/frontend/src/app/*`
+- `browser/frontend/src/components/*`
+- `browser/frontend/src/styles.css`
+- `browser/frontend/src/app/*.test.ts`
+5. `Build`:
+- add optional dev-tools panel to start/stop debug session and stream recent events
+- include export-to-json workflow for bug reproduction artifacts
+- keep panel isolated from runtime control path (read-only)
+6. `Tests`:
+- frontend unit/integration tests for panel lifecycle and export behavior
+7. `Accept`:
+- operators can capture deterministic engine debug timelines without console scraping
+8. `Spec`:
+- `RQ-RMK-003`, `RQ-WAE-017`
+9. `Notes`:
+- if UI scope threatens active lane capacity, ship as follow-up after `D0-03`
 
 ## Phase W: WMLScript Runtime and VM (Active)
 
