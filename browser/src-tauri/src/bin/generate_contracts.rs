@@ -6,7 +6,7 @@ use lowband_transport_rust::{
     FetchDestinationPolicy, FetchErrorInfo, FetchPostContext, FetchRequestPolicy, FetchTiming,
     FetchUaCapabilityProfile,
 };
-use ts_rs::TS;
+use ts_rs::{Config, TS};
 use wavenav_host_lib::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineKey, EngineRuntimeSnapshot,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationPostContextSnapshot,
@@ -16,8 +16,9 @@ use wavenav_host_lib::contract_types::{
 };
 
 fn push_decl<T: TS>(out: &mut String) {
+    let cfg = Config::default();
     out.push_str("export ");
-    out.push_str(&T::decl());
+    out.push_str(&T::decl(&cfg));
     out.push_str("\n\n");
 }
 

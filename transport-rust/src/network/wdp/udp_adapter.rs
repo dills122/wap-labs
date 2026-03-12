@@ -199,10 +199,6 @@ mod tests {
             dst_port: 9200,
             payload: b"payload-bytes".to_vec(),
         };
-        sender
-            .socket
-            .connect(format!("127.0.0.1:{recv_port}"))
-            .expect("connect");
         sender.send(&outbound).expect("send should succeed");
 
         let observed = receiver.receive().expect("receiver should get payload");
