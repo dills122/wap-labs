@@ -218,7 +218,18 @@ impl WmlEngine {
             .strip_prefix("$(")
             .and_then(|value| value.strip_suffix(')'))
         {
-            return self.vars.get(name).cloned().unwrap_or_default();
+            if let Some(value) = self.vars.get(name).cloned() {
+                return value;
+            }
+            if let Some(edit) = &self.active_input_edit {
+                if edit.input_name == name {
+                    return edit.draft_value.clone();
+                }
+            }
+            if let Some(value) = self.input_value_on_active_card(name) {
+                return value;
+            }
+            return String::new();
         }
         raw.to_string()
     }
