@@ -153,6 +153,14 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
     )
     .expect("set focused input draft should succeed");
     assert_eq!(drafted.focused_input_edit_value.as_deref(), Some("BOB"));
+    let render =
+        super::super::engine_render(borrowed_state(&state)).expect("render should succeed");
+    assert!(render.draw.iter().any(|cmd| match cmd {
+        DrawCmd::Link { text, href, .. } => {
+            href == "input:UserName" && text.contains("[UserName: BOB]")
+        }
+        _ => false,
+    }));
 
     let committed = super::super::engine_commit_focused_input_edit(borrowed_state(&state))
         .expect("commit focused input edit should succeed");

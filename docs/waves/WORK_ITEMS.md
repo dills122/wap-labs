@@ -1019,7 +1019,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### A5-04 Minimal WML text-input interaction baseline
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `T0-30`, `A5-02`
 3. `Owner`: `engine-wasm`, `browser`
 4. `Files`:
@@ -1045,6 +1045,10 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-RMK-008`, `RQ-RMK-002`, `RQ-RMK-003`
 9. `Notes`:
 - keep first scope to text-style inputs only; do not widen into select/option or mask validation edge cases in this ticket
+- Landed evidence:
+  - engine focused-input lifecycle and maxlength coverage (`engine-wasm/engine/src/engine_tests/navigation_metadata.rs`)
+  - edited input value feeding accept/postfield request payload (`engine-wasm/engine/src/engine_tests/actions_timers.rs`)
+  - host command and render integration for focused input edit (`browser/src-tauri/src/tests/tauri_commands.rs`)
 
 ### A5-05 WML select/option interaction baseline
 

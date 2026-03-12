@@ -514,16 +514,6 @@ export class BrowserController {
     if (!(event instanceof KeyboardEvent)) {
       return;
     }
-    if (this.shouldRouteKeyToInputEdit(event)) {
-      event.preventDefault();
-      void this.withAction('keyboard-input-edit', async () => {
-        const handled = await this.applyFocusedInputEditKey(event.key);
-        if (handled) {
-          this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
-        }
-      })();
-      return;
-    }
     const intent = resolveKeyboardIntent(
       event.key,
       event.ctrlKey,
@@ -532,6 +522,15 @@ export class BrowserController {
     );
 
     if (intent.type === 'none') {
+      if (this.shouldRouteKeyToInputEdit(event)) {
+        event.preventDefault();
+        void this.withAction('keyboard-input-edit', async () => {
+          const handled = await this.applyFocusedInputEditKey(event.key);
+          if (handled) {
+            this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+          }
+        })();
+      }
       return;
     }
     event.preventDefault();
@@ -548,6 +547,13 @@ export class BrowserController {
 
     if (intent.type === 'engine-key') {
       void this.withAction(`keyboard-${intent.key}`, async () => {
+        if (this.shouldRouteKeyToInputEdit(event)) {
+          const handled = await this.applyFocusedInputEditKey(event.key);
+          if (handled) {
+            this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+            return;
+          }
+        }
         await this.applyEngineKey(intent.key);
         this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
       })();
@@ -556,6 +562,13 @@ export class BrowserController {
 
     if (intent.type === 'navigate-back') {
       void this.withAction('keyboard-backspace', async () => {
+        if (this.shouldRouteKeyToInputEdit(event)) {
+          const handled = await this.applyFocusedInputEditKey(event.key);
+          if (handled) {
+            this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+            return;
+          }
+        }
         const mode = await this.navigateBackWithFallback();
         if (mode === 'engine') {
           this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);

@@ -153,7 +153,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-04 Minimal WML text-input interaction baseline
 
 1. `Requirement IDs`: `WML-R-019`
-2. `Status`: `in-progress`
+2. `Status`: `done`
 3. `Depends On`: `A5-02`, `T0-30`
 4. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/*`
@@ -173,6 +173,9 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - login/register-style text fields are editable in the viewport and their committed values survive re-render and submit preparation
 8. `Notes`:
 - first ticket is intentionally text-input only; defer select controls and mask-edge semantics
+- Evidence:
+  - engine input edit lifecycle + maxlength + postfield payload feed tests in `engine-wasm/engine/src/engine_tests/navigation_metadata.rs` and `engine-wasm/engine/src/engine_tests/actions_timers.rs`
+  - host command/render integration tests in `browser/src-tauri/src/tests/tauri_commands.rs`
 
 ### A5-05 WML select/option interaction baseline
 
