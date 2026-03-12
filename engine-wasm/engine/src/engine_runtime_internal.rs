@@ -160,6 +160,10 @@ impl WmlEngine {
                     return Ok(());
                 }
                 let href = &layout.links[self.focused_link_idx];
+                if href.starts_with("input:") {
+                    self.push_trace("ACTION_INPUT", href.clone());
+                    return Ok(());
+                }
                 self.execute_action_href(href, None, &[])?;
             }
             _ => {}

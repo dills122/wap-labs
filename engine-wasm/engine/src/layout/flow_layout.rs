@@ -25,6 +25,19 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                         InlineNode::Link { text, href } => {
                             parts.push((text.clone(), Some(href.clone())));
                         }
+                        InlineNode::Input {
+                            name,
+                            value,
+                            is_password,
+                        } => {
+                            let display_value = if *is_password {
+                                "*".repeat(value.chars().count())
+                            } else {
+                                value.clone()
+                            };
+                            let rendered = format!("[{name}: {display_value}]");
+                            parts.push((rendered, Some(format!("input:{name}"))));
+                        }
                     }
                 }
 
@@ -132,6 +145,7 @@ fn split_long_word(word: &str, width: usize) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::layout_card;
+    use crate::render::render_list::DrawCmd;
     use crate::runtime::card::Card;
     use crate::runtime::node::{InlineNode, Node};
 
@@ -218,5 +232,43 @@ mod tests {
             .collect();
 
         assert_eq!(link_chunks, vec![true, true, true]);
+    }
+
+    #[test]
+    fn input_nodes_render_as_focusable_segments_and_mask_passwords() {
+        let card = Card {
+            id: "home".to_string(),
+            nodes: vec![Node::Paragraph(vec![
+                InlineNode::Input {
+                    name: "UserName".to_string(),
+                    value: "AHMED".to_string(),
+                    is_password: false,
+                },
+                InlineNode::Input {
+                    name: "Password".to_string(),
+                    value: "secret".to_string(),
+                    is_password: true,
+                },
+            ])],
+            accept_action: None,
+            onenterforward_action: None,
+            onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
+        };
+
+        let out = layout_card(&card, 40, 1);
+        assert_eq!(
+            out.links,
+            vec!["input:UserName".to_string(), "input:Password".to_string()]
+        );
+        assert!(out
+            .render_list
+            .draw
+            .iter()
+            .any(|cmd| matches!(cmd, DrawCmd::Link { text, focused: false, href, .. } if text == "[UserName: AHMED]" && href == "input:UserName")));
+        assert!(out.render_list.draw.iter().any(
+            |cmd| matches!(cmd, DrawCmd::Link { text, focused: true, href, .. } if text == "[Password: ******]" && href == "input:Password")
+        ));
     }
 }

@@ -221,6 +221,30 @@ fn clear_external_navigation_intent_removes_intent() {
 }
 
 #[test]
+fn enter_on_focused_input_does_not_trigger_navigation_intent() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="UserName" value="AHMED" type="text"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:UserName:text=[UserName: AHMED]")));
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("input enter should be handled");
+    assert_eq!(engine.external_navigation_intent(), None);
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+}
+
+#[test]
 fn external_navigation_query_only_uses_base_document() {
     let mut engine = WmlEngine::new();
     let xml = r##"

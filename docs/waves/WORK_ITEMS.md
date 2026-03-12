@@ -1019,7 +1019,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### A5-04 Minimal WML text-input interaction baseline
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `T0-30`, `A5-02`
 3. `Owner`: `engine-wasm`, `browser`
 4. `Files`:

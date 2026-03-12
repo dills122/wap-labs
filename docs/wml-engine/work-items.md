@@ -153,7 +153,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-04 Minimal WML text-input interaction baseline
 
 1. `Requirement IDs`: `WML-R-019`
-2. `Status`: `todo`
+2. `Status`: `in-progress`
 3. `Depends On`: `A5-02`, `T0-30`
 4. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/*`
