@@ -28,6 +28,7 @@ export class BrowserPresenter {
 
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private hasRenderedContent = false;
+  private latestSnapshot: EngineRuntimeSnapshot | null = null;
 
   constructor(refs: BrowserShellRefs, initialSession: HostSessionState, maxTimelineEvents: number) {
     this.refs = refs;
@@ -131,7 +132,12 @@ export class BrowserPresenter {
   }
 
   setSnapshot(snapshot: EngineRuntimeSnapshot): void {
+    this.latestSnapshot = snapshot;
     this.refs.snapshotEl.textContent = JSON.stringify(snapshot, null, 2);
+  }
+
+  getSnapshot(): EngineRuntimeSnapshot | null {
+    return this.latestSnapshot ? { ...this.latestSnapshot } : null;
   }
 
   setTransportResponse(response: FetchResponse | null): void {

@@ -514,6 +514,16 @@ export class BrowserController {
     if (!(event instanceof KeyboardEvent)) {
       return;
     }
+    if (this.runMode === 'local' && this.shouldRouteKeyToInputEdit(event)) {
+      event.preventDefault();
+      void this.withAction('keyboard-input-edit', async () => {
+        const handled = await this.applyFocusedInputEditKey(event.key);
+        if (handled) {
+          this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+        }
+      })();
+      return;
+    }
     const intent = resolveKeyboardIntent(
       event.key,
       event.ctrlKey,
@@ -631,6 +641,52 @@ export class BrowserController {
         );
       }
     }
+  }
+
+  private shouldRouteKeyToInputEdit(event: KeyboardEvent): boolean {
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return false;
+    }
+    if (this.isTextEntryTarget(event.target)) {
+      return false;
+    }
+    if (event.key === 'Enter' || event.key === 'Escape' || event.key === 'Backspace') {
+      return true;
+    }
+    return event.key.length === 1;
+  }
+
+  private async applyFocusedInputEditKey(key: string): Promise<boolean> {
+    if (this.runMode !== 'local') {
+      return false;
+    }
+    const initial = this.presenter.getSnapshot() ?? (await this.hostClient.engineSnapshot());
+    let snapshot = initial;
+    if (!snapshot.focusedInputEditName && key.length === 1) {
+      snapshot = await this.hostClient.engineBeginFocusedInputEdit();
+    }
+    if (!snapshot.focusedInputEditName) {
+      return false;
+    }
+
+    if (key === 'Enter') {
+      snapshot = await this.hostClient.engineCommitFocusedInputEdit();
+    } else if (key === 'Escape') {
+      snapshot = await this.hostClient.engineCancelFocusedInputEdit();
+    } else if (key === 'Backspace') {
+      const next = (snapshot.focusedInputEditValue ?? '').slice(0, -1);
+      snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
+    } else if (key.length === 1) {
+      const next = `${snapshot.focusedInputEditValue ?? ''}${key}`;
+      snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
+    } else {
+      return false;
+    }
+
+    this.presenter.setSnapshot(snapshot);
+    this.presenter.drawRenderList(await this.hostClient.engineRender());
+    this.syncLocalSessionFromSnapshot(snapshot);
+    return true;
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {

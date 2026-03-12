@@ -226,6 +226,7 @@ function generateTauriClient(filePath) {
     'LoadDeckRequest',
     'NavigateToCardRequest',
     'RenderList',
+    'SetFocusedInputEditDraftRequest',
     'SetViewportColsRequest'
   ];
   const transportImports = ['FetchDeckRequest', 'FetchDeckResponse'];
@@ -242,7 +243,11 @@ function generateTauriClient(filePath) {
     { name: 'engineSetViewportCols', command: 'engine_set_viewport_cols', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetViewportColsRequest' } },
     { name: 'engineAdvanceTimeMs', command: 'engine_advance_time_ms', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'AdvanceTimeRequest' } },
     { name: 'engineSnapshot', command: 'engine_snapshot', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineClearExternalNavigationIntent', command: 'engine_clear_external_navigation_intent', returns: 'EngineRuntimeSnapshot' }
+    { name: 'engineClearExternalNavigationIntent', command: 'engine_clear_external_navigation_intent', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineBeginFocusedInputEdit', command: 'engine_begin_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineSetFocusedInputEditDraft', command: 'engine_set_focused_input_edit_draft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
+    { name: 'engineCommitFocusedInputEdit', command: 'engine_commit_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineCancelFocusedInputEdit', command: 'engine_cancel_focused_input_edit', returns: 'EngineRuntimeSnapshot' }
   ];
 
   const tauriInvoke = factory.createTypeAliasDeclaration(
