@@ -39,6 +39,8 @@ export class BrowserController {
   private listenersBound = false;
   private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
   private timerTickInFlight = false;
+  private keyboardActionInFlight = false;
+  private keyboardActionQueue: Promise<void> = Promise.resolve();
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
   private bootDeckReadyEmitted = false;
   private runMode: RunMode = 'local';
@@ -543,12 +545,14 @@ export class BrowserController {
     if (intent.type === 'none') {
       if (this.shouldRouteKeyToInputEdit(event)) {
         event.preventDefault();
-        void this.withAction('keyboard-input-edit', async () => {
-          const handled = await this.applyFocusedInputEditKey(event.key);
-          if (handled) {
-            this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
-          }
-        })();
+        this.enqueueKeyboardAction(async () => {
+          await this.withAction('keyboard-input-edit', async () => {
+            const handled = await this.applyFocusedInputEditKey(event.key);
+            if (handled) {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+            }
+          })();
+        });
       }
       return;
     }
@@ -565,40 +569,59 @@ export class BrowserController {
     }
 
     if (intent.type === 'engine-key') {
-      void this.withAction(`keyboard-${intent.key}`, async () => {
-        if (this.shouldRouteKeyToInputEdit(event)) {
-          const handled = await this.applyFocusedInputEditKey(event.key);
-          if (handled && intent.key !== 'enter') {
-            this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
-            return;
+      this.enqueueKeyboardAction(async () => {
+        await this.withAction(`keyboard-${intent.key}`, async () => {
+          if (this.shouldRouteKeyToInputEdit(event)) {
+            const handled = await this.applyFocusedInputEditKey(event.key);
+            if (handled && intent.key !== 'enter') {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+              return;
+            }
           }
-        }
-        await this.applyEngineKey(intent.key);
-        this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
-      })();
+          await this.applyEngineKey(intent.key);
+          this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+        })();
+      });
       return;
     }
 
     if (intent.type === 'navigate-back') {
-      void this.withAction('keyboard-backspace', async () => {
-        if (this.shouldRouteKeyToInputEdit(event)) {
-          const handled = await this.applyFocusedInputEditKey(event.key);
-          if (handled) {
-            this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
-            return;
+      this.enqueueKeyboardAction(async () => {
+        await this.withAction('keyboard-backspace', async () => {
+          if (this.shouldRouteKeyToInputEdit(event)) {
+            const handled = await this.applyFocusedInputEditKey(event.key);
+            if (handled) {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+              return;
+            }
           }
-        }
-        const mode = await this.navigateBackWithFallback();
-        if (mode === 'engine') {
-          this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);
-        } else if (mode === 'host') {
-          this.presenter.setStatus(WAVES_COPY.status.keyboardBackBrowser);
-        } else {
-          this.presenter.setStatus(WAVES_COPY.status.keyboardBackNone);
-        }
-      })();
+          const mode = await this.navigateBackWithFallback();
+          if (mode === 'engine') {
+            this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);
+          } else if (mode === 'host') {
+            this.presenter.setStatus(WAVES_COPY.status.keyboardBackBrowser);
+          } else {
+            this.presenter.setStatus(WAVES_COPY.status.keyboardBackNone);
+          }
+        })();
+      });
     }
   };
+
+  private enqueueKeyboardAction(action: () => Promise<void>): void {
+    this.keyboardActionQueue = this.keyboardActionQueue
+      .then(async () => {
+        this.keyboardActionInFlight = true;
+        try {
+          await action();
+        } finally {
+          this.keyboardActionInFlight = false;
+        }
+      })
+      .catch(() => {
+        this.keyboardActionInFlight = false;
+      });
+  }
 
   private async renderAndSnapshot(): Promise<EngineRuntimeSnapshot> {
     const snapshot = await this.hostClient.engineSnapshot();
@@ -858,7 +881,7 @@ export class BrowserController {
   }
 
   private async tickEngineTimerRuntime(): Promise<void> {
-    if (this.timerTickInFlight) {
+    if (this.timerTickInFlight || this.keyboardActionInFlight) {
       return;
     }
     this.timerTickInFlight = true;

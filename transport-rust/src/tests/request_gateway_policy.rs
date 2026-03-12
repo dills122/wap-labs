@@ -172,7 +172,7 @@ fn apply_request_policy_adds_no_cache_headers_and_referer() {
 }
 
 #[test]
-fn apply_request_policy_suppresses_same_deck_post_without_no_cache() {
+fn apply_request_policy_keeps_same_deck_post_when_payload_present() {
     let policy = FetchRequestPolicy {
         destination_policy: None,
         cache_control: Some(FetchCacheControlPolicy::Default),
@@ -181,6 +181,26 @@ fn apply_request_policy_suppresses_same_deck_post_without_no_cache() {
             same_deck: Some(true),
             content_type: Some("application/x-www-form-urlencoded".to_string()),
             payload: Some("a=1".to_string()),
+        }),
+        ua_capability_profile: None,
+    };
+    let (method, _mapped_headers, suppressed, ua_profile) =
+        apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
+    assert_eq!(method, "POST");
+    assert!(!suppressed);
+    assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
+}
+
+#[test]
+fn apply_request_policy_suppresses_same_deck_post_when_payload_missing() {
+    let policy = FetchRequestPolicy {
+        destination_policy: None,
+        cache_control: Some(FetchCacheControlPolicy::Default),
+        referer_url: None,
+        post_context: Some(FetchPostContext {
+            same_deck: Some(true),
+            content_type: Some("application/x-www-form-urlencoded".to_string()),
+            payload: Some("   ".to_string()),
         }),
         ua_capability_profile: None,
     };

@@ -143,13 +143,20 @@ pub(crate) fn apply_request_policy(
         }
 
         if normalized_method == "POST" {
-            let same_deck = policy
+            let (same_deck, has_payload) = policy
                 .post_context
                 .as_ref()
-                .and_then(|post| post.same_deck)
-                .unwrap_or(false);
+                .map(|post| {
+                    let payload = post
+                        .payload
+                        .as_deref()
+                        .map(str::trim)
+                        .filter(|value| !value.is_empty());
+                    (post.same_deck.unwrap_or(false), payload.is_some())
+                })
+                .unwrap_or((false, false));
             let no_cache = matches!(policy.cache_control, Some(FetchCacheControlPolicy::NoCache));
-            if same_deck && !no_cache {
+            if same_deck && !no_cache && !has_payload {
                 normalized_method = "GET".to_string();
                 suppressed_same_deck_post_context = true;
             }
