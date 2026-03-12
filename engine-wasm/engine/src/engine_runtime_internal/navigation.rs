@@ -211,7 +211,12 @@ impl WmlEngine {
             let value = if field.value.is_empty() {
                 self.resolve_post_field_name_fallback(&field.name)
             } else {
-                self.resolve_post_field_value(&field.value)
+                let resolved = self.resolve_post_field_value(&field.value);
+                if resolved.is_empty() {
+                    self.resolve_post_field_name_fallback(&field.name)
+                } else {
+                    resolved
+                }
             };
             serializer.append_pair(&field.name, &value);
         }
@@ -223,7 +228,7 @@ impl WmlEngine {
             .strip_prefix("$(")
             .and_then(|value| value.strip_suffix(')'))
         {
-            return self.resolve_post_field_name_fallback(name);
+            return self.resolve_post_field_name_fallback(name.trim());
         }
         raw.to_string()
     }
