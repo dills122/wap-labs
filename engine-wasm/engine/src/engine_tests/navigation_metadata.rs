@@ -350,25 +350,14 @@ fn moving_focus_down_exits_current_edit_and_allows_editing_next_input() {
         Some("username".to_string())
     );
     assert!(engine.set_focused_input_edit_draft("dylan".to_string()));
-    assert!(engine
-        .commit_focused_input_edit()
-        .expect("commit should succeed"));
+    engine
+        .handle_key("down".to_string())
+        .expect("down should commit username edit and move focus");
+    assert_eq!(engine.focused_input_edit_name(), None);
     assert_eq!(
         engine.get_var("username".to_string()),
         Some("dylan".to_string())
     );
-
-    engine
-        .begin_focused_input_edit()
-        .expect("begin second edit should return result");
-    assert_eq!(
-        engine.focused_input_edit_name(),
-        Some("username".to_string())
-    );
-    engine
-        .handle_key("down".to_string())
-        .expect("down should move focus and exit edit mode");
-    assert_eq!(engine.focused_input_edit_name(), None);
 
     engine
         .begin_focused_input_edit()
