@@ -87,4 +87,17 @@ describe('BrowserPresenter', () => {
     expect(refs.viewportEl.getAttribute('aria-busy')).toBe('false');
     expect(refs.viewportEl.textContent).toContain('hello');
   });
+
+  it('does not append timeline entries when replacing session state directly', () => {
+    const presenter = new BrowserPresenter(createRefs(), initialSession, 20);
+    presenter.patchSessionState({ navigationStatus: 'loaded' });
+    expect(presenter.timelineLength()).toBe(1);
+
+    presenter.setSessionState({
+      ...presenter.getSessionState(),
+      activeCardId: 'login',
+      focusedLinkIndex: 0
+    });
+    expect(presenter.timelineLength()).toBe(1);
+  });
 });

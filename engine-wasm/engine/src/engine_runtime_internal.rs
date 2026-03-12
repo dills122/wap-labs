@@ -170,6 +170,10 @@ impl WmlEngine {
                         self.push_trace("ACTION_INPUT", name.clone());
                         if self.active_input_edit.is_some() {
                             self.commit_focused_input_edit_internal()?;
+                            if let Some(action) = accept_action {
+                                self.push_trace("ACTION_ACCEPT", String::new());
+                                self.execute_card_task_action(&action)?;
+                            }
                         } else if let Some(action) = accept_action {
                             self.push_trace("ACTION_ACCEPT", String::new());
                             self.execute_card_task_action(&action)?;

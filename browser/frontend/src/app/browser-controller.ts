@@ -1,4 +1,8 @@
-import type { FetchRequestPolicy, HostNavigationSource } from '../../../contracts/transport';
+import type {
+  FetchRequestPolicy,
+  HostNavigationSource,
+  HostSessionState
+} from '../../../contracts/transport';
 import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { resolveKeyboardIntent } from './keyboard';
@@ -495,8 +499,15 @@ export class BrowserController {
   }
 
   private syncLocalSessionFromSnapshot(snapshot: EngineRuntimeSnapshot): void {
+    this.syncLocalSessionFromSnapshotWithOptions(snapshot, true);
+  }
+
+  private syncLocalSessionFromSnapshotWithOptions(
+    snapshot: EngineRuntimeSnapshot,
+    recordTimeline: boolean
+  ): void {
     const resolvedUrl = snapshot.baseUrl || this.refs.fetchUrlInput.value;
-    this.presenter.patchSessionState({
+    const patch: Partial<HostSessionState> = {
       runMode: this.runMode,
       navigationStatus: 'loaded',
       requestedUrl: resolvedUrl,
@@ -507,6 +518,14 @@ export class BrowserController {
       externalNavigationIntent: snapshot.externalNavigationIntent,
       navigationSource: 'user',
       lastError: undefined
+    };
+    if (recordTimeline) {
+      this.presenter.patchSessionState(patch);
+      return;
+    }
+    this.presenter.setSessionState({
+      ...this.presenter.getSessionState(),
+      ...patch
     });
   }
 
@@ -549,7 +568,7 @@ export class BrowserController {
       void this.withAction(`keyboard-${intent.key}`, async () => {
         if (this.shouldRouteKeyToInputEdit(event)) {
           const handled = await this.applyFocusedInputEditKey(event.key);
-          if (handled) {
+          if (handled && intent.key !== 'enter') {
             this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
             return;
           }
@@ -696,13 +715,17 @@ export class BrowserController {
     this.presenter.setSnapshot(snapshot);
     this.presenter.drawRenderList(await this.hostClient.engineRender());
     if (this.runMode === 'local') {
-      this.syncLocalSessionFromSnapshot(snapshot);
+      this.syncLocalSessionFromSnapshotWithOptions(snapshot, false);
     } else {
-      this.presenter.patchSessionState({
+      const patch: Partial<HostSessionState> = {
         activeCardId: snapshot.activeCardId,
         focusedLinkIndex: snapshot.focusedLinkIndex,
         externalNavigationIntent: snapshot.externalNavigationIntent,
         lastError: undefined
+      };
+      this.presenter.setSessionState({
+        ...this.presenter.getSessionState(),
+        ...patch
       });
     }
     return true;
