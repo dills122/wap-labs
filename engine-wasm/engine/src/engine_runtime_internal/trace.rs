@@ -42,4 +42,15 @@ impl WmlEngine {
             .get(self.active_card_idx)
             .ok_or_else(|| "Active card index out of range".to_string())
     }
+
+    pub(crate) fn active_card_internal_mut(&mut self) -> Result<&mut runtime::card::Card, String> {
+        let deck = self
+            .deck
+            .as_mut()
+            .ok_or_else(|| "No deck loaded".to_string())?;
+
+        deck.cards
+            .get_mut(self.active_card_idx)
+            .ok_or_else(|| "Active card index out of range".to_string())
+    }
 }

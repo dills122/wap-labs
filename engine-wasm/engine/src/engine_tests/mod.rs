@@ -5,7 +5,6 @@ use super::{
     ScriptValueLiteral, WmlEngine, MAX_DECK_RAW_BYTES_BASE64_BYTES, MAX_DECK_WML_XML_BYTES,
     MAX_TRACE_ENTRIES,
 };
-use crate::layout::flow_layout::layout_card;
 use crate::render::render_list::DrawCmd;
 use crate::wavescript::value::ScriptValue;
 use crate::wavescript::vm::VmTrap;
@@ -34,12 +33,9 @@ const FIXTURE_TASK_ACTION_ORDER: &str =
     include_str!("../../tests/fixtures/phase-a/task-action-order.wml");
 
 fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
-    let card = engine
-        .active_card_internal()
-        .expect("active card must exist for snapshot");
-    let layout = layout_card(card, engine.viewport_cols, engine.focused_link_idx);
-    layout
-        .render_list
+    engine
+        .render()
+        .expect("render should succeed for snapshot")
         .draw
         .iter()
         .map(|cmd| match cmd {

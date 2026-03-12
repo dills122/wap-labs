@@ -157,6 +157,12 @@ export interface WmlEngineWasm {
   contentType(): string;
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
+  beginFocusedInputEdit(): boolean;
+  setFocusedInputEditDraft(value: string): boolean;
+  commitFocusedInputEdit(): boolean;
+  cancelFocusedInputEdit(): boolean;
+  focusedInputEditName(): string | undefined;
+  focusedInputEditValue(): string | undefined;
   externalNavigationIntent(): string | undefined;
   externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
@@ -211,6 +217,12 @@ export interface WmlEngineNative {
   contentType(): string;
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
+  beginFocusedInputEdit(): boolean;
+  setFocusedInputEditDraft(value: string): boolean;
+  commitFocusedInputEdit(): boolean;
+  cancelFocusedInputEdit(): boolean;
+  focusedInputEditName(): string | undefined;
+  focusedInputEditValue(): string | undefined;
   externalNavigationIntent(): string | undefined;
   externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;

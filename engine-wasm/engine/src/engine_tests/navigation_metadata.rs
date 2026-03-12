@@ -245,6 +245,72 @@ fn enter_on_focused_input_does_not_trigger_navigation_intent() {
 }
 
 #[test]
+fn focused_input_edit_commit_updates_render_and_runtime_var() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="UserName" value="AHMED" type="text"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should start input edit");
+    assert_eq!(
+        engine.focused_input_edit_name(),
+        Some("UserName".to_string())
+    );
+    assert_eq!(engine.focused_input_edit_value(), Some("AHMED".to_string()));
+
+    assert!(engine.set_focused_input_edit_draft("BOB".to_string()));
+    let pending_lines = render_snapshot_lines(&engine);
+    assert!(pending_lines
+        .iter()
+        .any(|line| line.contains("href=input:UserName:text=[UserName: BOB]")));
+
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("commit should succeed"));
+    assert_eq!(engine.focused_input_edit_name(), None);
+    assert_eq!(
+        engine.get_var("UserName".to_string()),
+        Some("BOB".to_string())
+    );
+    let committed_lines = render_snapshot_lines(&engine);
+    assert!(committed_lines
+        .iter()
+        .any(|line| line.contains("href=input:UserName:text=[UserName: BOB]")));
+}
+
+#[test]
+fn focused_input_edit_cancel_keeps_original_value() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="UserName" value="AHMED" type="text"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_input_edit()
+        .expect("begin edit should return result");
+    assert!(engine.set_focused_input_edit_draft("BOB".to_string()));
+    assert!(engine.cancel_focused_input_edit());
+    assert_eq!(engine.focused_input_edit_name(), None);
+    assert_eq!(engine.get_var("UserName".to_string()), None);
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:UserName:text=[UserName: AHMED]")));
+}
+
+#[test]
 fn external_navigation_query_only_uses_base_document() {
     let mut engine = WmlEngine::new();
     let xml = r##"

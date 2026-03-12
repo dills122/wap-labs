@@ -18,6 +18,7 @@ impl WmlEngine {
         let previous_stack_len = self.nav_stack.len();
         let previous_timer = self.active_timer.clone();
         self.stop_active_timer_for_exit();
+        self.active_input_edit = None;
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
@@ -50,6 +51,7 @@ impl WmlEngine {
         };
 
         self.stop_active_timer_for_exit();
+        self.active_input_edit = None;
         self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
@@ -143,6 +145,7 @@ impl WmlEngine {
         }
 
         self.push_trace("ACTION_EXTERNAL", href.to_string());
+        self.active_input_edit = None;
         let resolved_href = self.resolve_external_href(href);
         self.external_nav_intent = Some(resolved_href.clone());
         self.external_nav_request_policy =
