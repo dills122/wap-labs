@@ -146,9 +146,11 @@ impl WmlEngine {
 
         match key {
             "up" => {
+                self.active_input_edit = None;
                 self.focused_link_idx = move_focus_up(self.focused_link_idx, target_total);
             }
             "down" => {
+                self.active_input_edit = None;
                 self.focused_link_idx = move_focus_down(self.focused_link_idx, target_total);
             }
             "enter" => {

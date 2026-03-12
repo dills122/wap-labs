@@ -330,6 +330,58 @@ fn focused_input_edit_draft_respects_input_maxlength() {
 }
 
 #[test]
+fn moving_focus_down_exits_current_edit_and_allows_editing_next_input() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="username" value="AHMED" type="text"/>
+            <input name="pin" value="" type="password"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_input_edit()
+        .expect("begin edit should return result");
+    assert_eq!(
+        engine.focused_input_edit_name(),
+        Some("username".to_string())
+    );
+    assert!(engine.set_focused_input_edit_draft("dylan".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("commit should succeed"));
+    assert_eq!(
+        engine.get_var("username".to_string()),
+        Some("dylan".to_string())
+    );
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin second edit should return result");
+    assert_eq!(
+        engine.focused_input_edit_name(),
+        Some("username".to_string())
+    );
+    engine
+        .handle_key("down".to_string())
+        .expect("down should move focus and exit edit mode");
+    assert_eq!(engine.focused_input_edit_name(), None);
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin pin edit should return result");
+    assert_eq!(engine.focused_input_edit_name(), Some("pin".to_string()));
+    assert!(engine.set_focused_input_edit_draft("1234".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("pin commit should succeed"));
+    assert_eq!(engine.get_var("pin".to_string()), Some("1234".to_string()));
+}
+
+#[test]
 fn external_navigation_query_only_uses_base_document() {
     let mut engine = WmlEngine::new();
     let xml = r##"
