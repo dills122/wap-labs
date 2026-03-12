@@ -170,7 +170,11 @@ pub fn run() {
             crate::engine_set_viewport_cols,
             crate::engine_advance_time_ms,
             crate::engine_snapshot,
-            crate::engine_clear_external_navigation_intent
+            crate::engine_clear_external_navigation_intent,
+            crate::engine_begin_focused_input_edit,
+            crate::engine_set_focused_input_edit_draft,
+            crate::engine_commit_focused_input_edit,
+            crate::engine_cancel_focused_input_edit
         ])
         .run(tauri::generate_context!())
         .expect(waves_config::RUN_ERROR_CONTEXT);

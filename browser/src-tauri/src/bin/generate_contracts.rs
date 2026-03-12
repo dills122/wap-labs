@@ -6,18 +6,19 @@ use lowband_transport_rust::{
     FetchDestinationPolicy, FetchErrorInfo, FetchPostContext, FetchRequestPolicy, FetchTiming,
     FetchUaCapabilityProfile,
 };
-use ts_rs::TS;
+use ts_rs::{Config, TS};
 use wavenav_host_lib::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineKey, EngineRuntimeSnapshot,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationPostContextSnapshot,
     ExternalNavigationRequestPolicySnapshot, HandleKeyRequest, LoadDeckContextRequest,
     LoadDeckRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetViewportColsRequest,
+    ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 
 fn push_decl<T: TS>(out: &mut String) {
+    let cfg = Config::default();
     out.push_str("export ");
-    out.push_str(&T::decl());
+    out.push_str(&T::decl(&cfg));
     out.push_str("\n\n");
 }
 
@@ -42,6 +43,7 @@ fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
     push_decl::<NavigateToCardRequest>(&mut output);
     push_decl::<SetViewportColsRequest>(&mut output);
     push_decl::<AdvanceTimeRequest>(&mut output);
+    push_decl::<SetFocusedInputEditDraftRequest>(&mut output);
     push_decl::<ScriptDialogRequestSnapshot>(&mut output);
     push_decl::<ScriptTimerRequestSnapshot>(&mut output);
     push_decl::<ExternalNavigationCacheControlPolicySnapshot>(&mut output);

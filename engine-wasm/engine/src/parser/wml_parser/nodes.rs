@@ -50,6 +50,11 @@ fn map_card_level_nodes(
                         out.push(Node::Paragraph(vec![InlineNode::Link { text, href }]));
                     }
                 }
+                "input" => {
+                    if let Some(input_node) = parse_input_inline_node(element) {
+                        out.push(Node::Paragraph(vec![input_node]));
+                    }
+                }
                 _ => map_card_level_nodes(&element.children, out, budget, depth + 1)?,
             },
         }
@@ -101,6 +106,12 @@ fn map_inline_nodes_recursive(
                     flush_pending_inline_text(pending_text, out);
                     out.push(InlineNode::Text(" ".to_string()));
                 }
+                "input" => {
+                    flush_pending_inline_text(pending_text, out);
+                    if let Some(input_node) = parse_input_inline_node(element) {
+                        out.push(input_node);
+                    }
+                }
                 _ => map_inline_nodes_recursive(
                     &element.children,
                     pending_text,
@@ -123,6 +134,28 @@ fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode
     if !normalized.is_empty() {
         out.push(InlineNode::Text(normalized));
     }
+}
+
+fn parse_input_inline_node(element: &XmlElement) -> Option<InlineNode> {
+    let name = normalize_text(element.attr("name").unwrap_or_default());
+    if name.is_empty() {
+        return None;
+    }
+    let value = normalize_text(element.attr("value").unwrap_or_default());
+    let is_password = element
+        .attr("type")
+        .map(|value| value.eq_ignore_ascii_case("password"))
+        .unwrap_or(false);
+    let max_length = element
+        .attr("maxlength")
+        .and_then(|value| value.parse::<usize>().ok())
+        .filter(|value| *value > 0);
+    Some(InlineNode::Input {
+        name,
+        value,
+        is_password,
+        max_length,
+    })
 }
 
 fn inline_text_content(

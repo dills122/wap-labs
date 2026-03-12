@@ -61,6 +61,12 @@ pub struct AdvanceTimeRequest {
     pub delta_ms: u32,
 }
 
+#[derive(Clone, Debug, Deserialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct SetFocusedInputEditDraftRequest {
+    pub value: String,
+}
+
 #[derive(Clone, Debug, Serialize, TS)]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub enum ScriptDialogRequestSnapshot {
@@ -127,6 +133,10 @@ pub struct EngineRuntimeSnapshot {
     #[ts(optional)]
     pub active_card_id: Option<String>,
     pub focused_link_index: usize,
+    #[ts(optional)]
+    pub focused_input_edit_name: Option<String>,
+    #[ts(optional)]
+    pub focused_input_edit_value: Option<String>,
     pub base_url: String,
     pub content_type: String,
     #[ts(optional)]

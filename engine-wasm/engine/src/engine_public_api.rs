@@ -24,6 +24,7 @@ impl WmlEngine {
             next_trace_seq: 1,
             timer_dispatch_depth: 0,
             active_timer: None,
+            active_input_edit: None,
         }
     }
 
@@ -75,6 +76,7 @@ impl WmlEngine {
         self.last_script_outcome = None;
         self.last_script_dialog_requests.clear();
         self.last_script_timer_requests.clear();
+        self.active_input_edit = None;
         self.clear_trace_entries();
         self.active_timer = None;
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
@@ -99,7 +101,11 @@ impl WmlEngine {
     /// Render active card into draw commands for the current viewport width.
     pub fn render(&self) -> Result<RenderList, String> {
         let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let mut runtime_card = card.clone();
+        if let Some(edit) = &self.active_input_edit {
+            self.apply_input_value_to_card(&mut runtime_card, &edit.input_name, &edit.draft_value);
+        }
+        let layout = layout_card(&runtime_card, self.viewport_cols, self.focused_link_idx);
         Ok(layout.render_list)
     }
 
@@ -126,6 +132,58 @@ impl WmlEngine {
     /// Set viewport width in columns.
     pub fn set_viewport_cols(&mut self, cols: usize) {
         self.viewport_cols = cols.max(1);
+    }
+
+    /// Start edit session for the currently focused input control.
+    pub fn begin_focused_input_edit(&mut self) -> Result<bool, String> {
+        self.begin_focused_input_edit_internal()
+    }
+
+    /// Replace edit-session draft value for the focused input.
+    pub fn set_focused_input_edit_draft(&mut self, value: String) -> bool {
+        let Some(input_name) = self
+            .active_input_edit
+            .as_ref()
+            .map(|edit| edit.input_name.clone())
+        else {
+            return false;
+        };
+        let max_len = self.input_max_len_on_active_card(&input_name);
+        let draft = truncate_to_chars(&value, max_len);
+        if let Some(edit) = self.active_input_edit.as_mut() {
+            edit.draft_value = draft;
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Commit active focused-input edit session.
+    pub fn commit_focused_input_edit(&mut self) -> Result<bool, String> {
+        self.commit_focused_input_edit_internal()
+    }
+
+    /// Cancel active focused-input edit session.
+    pub fn cancel_focused_input_edit(&mut self) -> bool {
+        if self.active_input_edit.is_none() {
+            return false;
+        }
+        self.active_input_edit = None;
+        true
+    }
+
+    /// Return focused input name when edit session is active.
+    pub fn focused_input_edit_name(&self) -> Option<String> {
+        self.active_input_edit
+            .as_ref()
+            .map(|edit| edit.input_name.clone())
+    }
+
+    /// Return focused input draft value when edit session is active.
+    pub fn focused_input_edit_value(&self) -> Option<String> {
+        self.active_input_edit
+            .as_ref()
+            .map(|edit| edit.draft_value.clone())
     }
 
     /// Get active card id.
@@ -325,4 +383,11 @@ impl WmlEngine {
         self.trace_entries.clear();
         self.next_trace_seq = 1;
     }
+}
+
+fn truncate_to_chars(value: &str, max_len: Option<usize>) -> String {
+    let Some(limit) = max_len else {
+        return value.to_string();
+    };
+    value.chars().take(limit).collect()
 }

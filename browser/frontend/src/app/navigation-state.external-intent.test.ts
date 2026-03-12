@@ -87,4 +87,57 @@ describe('navigation-state external intent behavior', () => {
       uaCapabilityProfile: 'wap-baseline'
     });
   });
+
+  it('uses POST when external intent policy includes post context', async () => {
+    const fetchRequests: Array<{ method: string | undefined; requestPolicy: unknown }> = [];
+    let loadCount = 0;
+    const host = createHostClientMock({
+      fetchDeck: async (request) => {
+        fetchRequests.push({ method: request.method, requestPolicy: request.requestPolicy });
+        return fetchOk({ finalUrl: request.url });
+      },
+      engineLoadDeckContext: async () => {
+        loadCount += 1;
+        if (loadCount === 1) {
+          return snapshot({
+            activeCardId: 'login',
+            externalNavigationIntent: 'http://example.test/login',
+            externalNavigationRequestPolicy: {
+              refererUrl: 'http://example.test/start.wml',
+              postContext: {
+                sameDeck: true,
+                contentType: 'application/x-www-form-urlencoded',
+                payload: 'username=dylan&pin=1234'
+              }
+            }
+          });
+        }
+        return snapshot({
+          activeCardId: 'portal'
+        });
+      }
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test');
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(fetchRequests).toHaveLength(2);
+    expect(fetchRequests[0]).toMatchObject({ method: 'GET' });
+    expect(fetchRequests[1]).toMatchObject({
+      method: 'POST',
+      requestPolicy: {
+        refererUrl: 'http://example.test/start.wml',
+        postContext: {
+          sameDeck: true,
+          contentType: 'application/x-www-form-urlencoded',
+          payload: 'username=dylan&pin=1234'
+        },
+        uaCapabilityProfile: 'wap-baseline'
+      }
+    });
+  });
 });

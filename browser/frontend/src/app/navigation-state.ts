@@ -84,19 +84,25 @@ export const createNavigationStateMachine = (
     hooks.onSessionState?.(hostSessionState);
   };
 
-  const setSessionState = (next: HostSessionState): void => {
+  const setSessionState = (next: HostSessionState): boolean => {
+    if (sessionStatesEqual(hostSessionState, next)) {
+      return false;
+    }
     hostSessionState = next;
     emitSession();
+    return true;
   };
 
   const mergeSessionState = (patch: Partial<HostSessionState>): void => {
-    setSessionState({
+    const changed = setSessionState({
       ...hostSessionState,
       ...patch,
       historyIndex: hostHistory.index,
       history: hostHistory.entries
     });
-    hooks.onStateEvent?.('session-state', { patch });
+    if (changed) {
+      hooks.onStateEvent?.('session-state', { patch });
+    }
   };
 
   const syncSessionFromSnapshot = (snapshot: EngineRuntimeSnapshot): void => {
@@ -121,9 +127,6 @@ export const createNavigationStateMachine = (
     if (!requestedUrl) {
       throw new Error(WAVES_COPY.errors.urlRequired);
     }
-    const method = normalizeMethod(options.method);
-    const pushHistory = options.pushHistory ?? true;
-
     const defaultRequestPolicy = defaultRequestPolicyForSource(
       options.source,
       requestedUrl,
@@ -135,6 +138,8 @@ export const createNavigationStateMachine = (
           ...options.requestPolicy
         }
       : defaultRequestPolicy;
+    const method = resolveTransportMethod(options.method, requestPolicy);
+    const pushHistory = options.pushHistory ?? true;
 
     hooks.onStateEvent?.('load-transport-url', {
       source: options.source,
@@ -274,6 +279,9 @@ export const createNavigationStateMachine = (
 
   const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot> => {
     const snapshot = await hostClient.engineAdvanceTimeMs({ deltaMs });
+    if (!shouldRenderTimerSnapshot(snapshot, hostSessionState)) {
+      return snapshot;
+    }
     updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
     await renderSnapshot(snapshot);
     return snapshot;
@@ -368,6 +376,43 @@ const normalizeMethod = (method?: string): string => {
   const normalized = method?.trim().toUpperCase();
   return normalized || 'GET';
 };
+
+const resolveTransportMethod = (
+  method: string | undefined,
+  requestPolicy: FetchRequestPolicy | undefined
+): string => {
+  // Engine emits POST body via requestPolicy.postContext for WML <go method="post"> intents.
+  // Treat that as authoritative even if caller defaulted method to GET.
+  if (requestPolicy?.postContext) {
+    return 'POST';
+  }
+  return normalizeMethod(method);
+};
+
+const shouldRenderTimerSnapshot = (
+  snapshot: EngineRuntimeSnapshot,
+  session: HostSessionState
+): boolean => {
+  if (snapshot.activeCardId !== session.activeCardId) {
+    return true;
+  }
+  if (snapshot.focusedLinkIndex !== (session.focusedLinkIndex ?? 0)) {
+    return true;
+  }
+  if (snapshot.externalNavigationIntent !== session.externalNavigationIntent) {
+    return true;
+  }
+  if (snapshot.lastScriptRequiresRefresh) {
+    return true;
+  }
+  if (snapshot.lastScriptDialogRequests.length > 0 || snapshot.lastScriptTimerRequests.length > 0) {
+    return true;
+  }
+  return false;
+};
+
+const sessionStatesEqual = (a: HostSessionState, b: HostSessionState): boolean =>
+  JSON.stringify(a) === JSON.stringify(b);
 
 const shouldAllowPrivateDestination = (requestedUrl: string): boolean => {
   try {

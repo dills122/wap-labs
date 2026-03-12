@@ -5,7 +5,13 @@ use crate::runtime::node::{InlineNode, Node};
 #[derive(Clone, Debug, Default)]
 pub struct LayoutResult {
     pub render_list: RenderList,
-    pub links: Vec<String>,
+    pub focus_targets: Vec<FocusTarget>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum FocusTarget {
+    Link(String),
+    Input(String),
 }
 
 pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -> LayoutResult {
@@ -25,15 +31,33 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                         InlineNode::Link { text, href } => {
                             parts.push((text.clone(), Some(href.clone())));
                         }
+                        InlineNode::Input {
+                            name,
+                            value,
+                            is_password,
+                            ..
+                        } => {
+                            let display_value = if *is_password {
+                                "*".repeat(value.chars().count())
+                            } else {
+                                value.clone()
+                            };
+                            let rendered = format!("[{name}: {display_value}]");
+                            parts.push((rendered, Some(format!("input:{name}"))));
+                        }
                     }
                 }
 
                 for (segment, href) in parts {
                     let chunks = wrap_text(&segment, viewport_cols);
-                    let link_index = href.as_ref().map(|_| {
-                        let idx = result.links.len();
-                        if let Some(link_href) = &href {
-                            result.links.push(link_href.clone());
+                    let focus_index = href.as_ref().map(|target| {
+                        let idx = result.focus_targets.len();
+                        if let Some(input_name) = target.strip_prefix("input:") {
+                            result
+                                .focus_targets
+                                .push(FocusTarget::Input(input_name.to_string()));
+                        } else {
+                            result.focus_targets.push(FocusTarget::Link(target.clone()));
                         }
                         idx
                     });
@@ -45,7 +69,7 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                                     x: 0,
                                     y: line,
                                     text: chunk,
-                                    focused: link_index == Some(focused_link_idx),
+                                    focused: focus_index == Some(focused_link_idx),
                                     href: link_href.clone(),
                                 });
                             }
@@ -131,7 +155,8 @@ fn split_long_word(word: &str, width: usize) -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::layout_card;
+    use super::{layout_card, FocusTarget};
+    use crate::render::render_list::DrawCmd;
     use crate::runtime::card::Card;
     use crate::runtime::node::{InlineNode, Node};
 
@@ -154,7 +179,7 @@ mod tests {
         };
 
         let out = layout_card(&card, 10, 0);
-        assert_eq!(out.links.len(), 1);
+        assert_eq!(out.focus_targets.len(), 1);
         assert!(out.render_list.draw.iter().any(|cmd| matches!(
             cmd,
             crate::render::render_list::DrawCmd::Link { focused: true, .. }
@@ -205,7 +230,10 @@ mod tests {
         };
 
         let out = layout_card(&card, 4, 0);
-        assert_eq!(out.links, vec!["#next".to_string()]);
+        assert_eq!(
+            out.focus_targets,
+            vec![FocusTarget::Link("#next".to_string())]
+        );
 
         let link_chunks: Vec<bool> = out
             .render_list
@@ -218,5 +246,48 @@ mod tests {
             .collect();
 
         assert_eq!(link_chunks, vec![true, true, true]);
+    }
+
+    #[test]
+    fn input_nodes_render_as_focusable_segments_and_mask_passwords() {
+        let card = Card {
+            id: "home".to_string(),
+            nodes: vec![Node::Paragraph(vec![
+                InlineNode::Input {
+                    name: "UserName".to_string(),
+                    value: "AHMED".to_string(),
+                    is_password: false,
+                    max_length: None,
+                },
+                InlineNode::Input {
+                    name: "Password".to_string(),
+                    value: "secret".to_string(),
+                    is_password: true,
+                    max_length: None,
+                },
+            ])],
+            accept_action: None,
+            onenterforward_action: None,
+            onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
+        };
+
+        let out = layout_card(&card, 40, 1);
+        assert_eq!(
+            out.focus_targets,
+            vec![
+                FocusTarget::Input("UserName".to_string()),
+                FocusTarget::Input("Password".to_string())
+            ]
+        );
+        assert!(out
+            .render_list
+            .draw
+            .iter()
+            .any(|cmd| matches!(cmd, DrawCmd::Link { text, focused: false, href, .. } if text == "[UserName: AHMED]" && href == "input:UserName")));
+        assert!(out.render_list.draw.iter().any(
+            |cmd| matches!(cmd, DrawCmd::Link { text, focused: true, href, .. } if text == "[Password: ******]" && href == "input:Password")
+        ));
     }
 }

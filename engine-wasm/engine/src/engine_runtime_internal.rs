@@ -141,30 +141,198 @@ impl WmlEngine {
                 card.accept_action.clone(),
             )
         };
-        let link_total = layout.links.len();
-        self.focused_link_idx = clamp_focus(self.focused_link_idx, link_total);
+        let target_total = layout.focus_targets.len();
+        self.focused_link_idx = clamp_focus(self.focused_link_idx, target_total);
 
         match key {
             "up" => {
-                self.focused_link_idx = move_focus_up(self.focused_link_idx, link_total);
+                if self.active_input_edit.is_some() {
+                    self.commit_focused_input_edit_internal()?;
+                }
+                self.focused_link_idx = move_focus_up(self.focused_link_idx, target_total);
             }
             "down" => {
-                self.focused_link_idx = move_focus_down(self.focused_link_idx, link_total);
+                if self.active_input_edit.is_some() {
+                    self.commit_focused_input_edit_internal()?;
+                }
+                self.focused_link_idx = move_focus_down(self.focused_link_idx, target_total);
             }
             "enter" => {
-                if link_total == 0 {
+                if target_total == 0 {
                     if let Some(action) = accept_action {
                         self.push_trace("ACTION_ACCEPT", String::new());
                         self.execute_card_task_action(&action)?;
                     }
                     return Ok(());
                 }
-                let href = &layout.links[self.focused_link_idx];
-                self.execute_action_href(href, None, &[])?;
+                let target = layout
+                    .focus_targets
+                    .get(self.focused_link_idx)
+                    .ok_or_else(|| "Focused target index out of range".to_string())?;
+                match target {
+                    FocusTarget::Input(name) => {
+                        self.push_trace("ACTION_INPUT", name.clone());
+                        if self.active_input_edit.is_some() {
+                            self.commit_focused_input_edit_internal()?;
+                            if let Some(action) = accept_action {
+                                self.push_trace("ACTION_ACCEPT", String::new());
+                                self.execute_card_task_action(&action)?;
+                            }
+                        } else if let Some(action) = accept_action {
+                            self.push_trace("ACTION_ACCEPT", String::new());
+                            self.execute_card_task_action(&action)?;
+                        } else {
+                            self.begin_focused_input_edit_internal()?;
+                        }
+                        return Ok(());
+                    }
+                    FocusTarget::Link(href) => {
+                        self.active_input_edit = None;
+                        self.execute_action_href(href, None, &[])?;
+                    }
+                }
             }
             _ => {}
         }
 
         Ok(())
+    }
+
+    pub(crate) fn begin_focused_input_edit_internal(&mut self) -> Result<bool, String> {
+        let Some(input_name) = self.focused_input_name_internal()? else {
+            return Ok(false);
+        };
+        let current = self
+            .input_value_on_active_card(&input_name)
+            .unwrap_or_default();
+        self.active_input_edit = Some(InputEditState {
+            input_name: input_name.clone(),
+            original_value: current.clone(),
+            draft_value: current,
+        });
+        self.push_trace("INPUT_EDIT_START", input_name);
+        Ok(true)
+    }
+
+    pub(crate) fn commit_focused_input_edit_internal(&mut self) -> Result<bool, String> {
+        let Some(edit) = self.active_input_edit.clone() else {
+            return Ok(false);
+        };
+        let committed = self.set_input_value_on_active_card(&edit.input_name, &edit.draft_value)?;
+        if !committed {
+            return Ok(false);
+        }
+        self.set_var(edit.input_name.clone(), edit.draft_value.clone());
+        self.active_input_edit = None;
+        self.push_trace("INPUT_EDIT_COMMIT", edit.input_name);
+        Ok(true)
+    }
+
+    fn focused_input_name_internal(&self) -> Result<Option<String>, String> {
+        let card = self.active_card_internal()?;
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
+        let Some(target) = layout.focus_targets.get(focused_idx) else {
+            return Ok(None);
+        };
+        match target {
+            FocusTarget::Input(name) => Ok(Some(name.clone())),
+            FocusTarget::Link(_) => Ok(None),
+        }
+    }
+
+    fn input_value_on_active_card(&self, input_name: &str) -> Option<String> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Input { name, value, .. } = item {
+                    if name == input_name {
+                        return Some(value.clone());
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    fn set_input_value_on_active_card(
+        &mut self,
+        input_name: &str,
+        value: &str,
+    ) -> Result<bool, String> {
+        let card = self.active_card_internal_mut()?;
+        let mut updated = false;
+        for node in &mut card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Input {
+                    name,
+                    value: current_value,
+                    ..
+                } = item
+                {
+                    if name == input_name {
+                        *current_value = value.to_string();
+                        updated = true;
+                        break;
+                    }
+                }
+            }
+            if updated {
+                break;
+            }
+        }
+        Ok(updated)
+    }
+
+    pub(crate) fn apply_input_value_to_card(
+        &self,
+        card: &mut runtime::card::Card,
+        input_name: &str,
+        value: &str,
+    ) {
+        for node in &mut card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Input {
+                    name,
+                    value: current_value,
+                    ..
+                } = item
+                {
+                    if name == input_name {
+                        *current_value = value.to_string();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    pub(crate) fn input_max_len_on_active_card(&self, input_name: &str) -> Option<usize> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Input {
+                    name, max_length, ..
+                } = item
+                {
+                    if name == input_name {
+                        return *max_length;
+                    }
+                }
+            }
+        }
+        None
     }
 }

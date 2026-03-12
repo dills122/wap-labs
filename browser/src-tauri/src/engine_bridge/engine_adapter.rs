@@ -1,7 +1,7 @@
 use crate::contract_types::{
     AdvanceTimeRequest, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
     LoadDeckRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetViewportColsRequest,
+    ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use std::sync::Mutex;
 use wavenav_engine::WmlEngine;
@@ -22,6 +22,8 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
     EngineRuntimeSnapshot {
         active_card_id: engine.active_card_id().ok(),
         focused_link_index: engine.focused_link_index(),
+        focused_input_edit_name: engine.focused_input_edit_name(),
+        focused_input_edit_value: engine.focused_input_edit_value(),
         base_url: engine.base_url(),
         content_type: engine.content_type(),
         external_navigation_intent: engine.external_navigation_intent(),
@@ -135,5 +137,32 @@ pub fn apply_engine_snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
 
 pub fn apply_clear_external_navigation_intent(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
     engine.clear_external_navigation_intent();
+    snapshot(engine)
+}
+
+pub fn apply_begin_focused_input_edit(
+    engine: &mut WmlEngine,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.begin_focused_input_edit()?;
+    Ok(snapshot(engine))
+}
+
+pub fn apply_set_focused_input_edit_draft(
+    engine: &mut WmlEngine,
+    request: SetFocusedInputEditDraftRequest,
+) -> EngineRuntimeSnapshot {
+    engine.set_focused_input_edit_draft(request.value);
+    snapshot(engine)
+}
+
+pub fn apply_commit_focused_input_edit(
+    engine: &mut WmlEngine,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.commit_focused_input_edit()?;
+    Ok(snapshot(engine))
+}
+
+pub fn apply_cancel_focused_input_edit(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
+    engine.cancel_focused_input_edit();
     snapshot(engine)
 }

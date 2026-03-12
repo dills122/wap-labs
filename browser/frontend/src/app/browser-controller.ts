@@ -1,4 +1,8 @@
-import type { FetchRequestPolicy, HostNavigationSource } from '../../../contracts/transport';
+import type {
+  FetchRequestPolicy,
+  HostNavigationSource,
+  HostSessionState
+} from '../../../contracts/transport';
 import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { resolveKeyboardIntent } from './keyboard';
@@ -35,6 +39,8 @@ export class BrowserController {
   private listenersBound = false;
   private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
   private timerTickInFlight = false;
+  private keyboardActionInFlight = false;
+  private keyboardActionQueue: Promise<void> = Promise.resolve();
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
   private bootDeckReadyEmitted = false;
   private runMode: RunMode = 'local';
@@ -495,8 +501,15 @@ export class BrowserController {
   }
 
   private syncLocalSessionFromSnapshot(snapshot: EngineRuntimeSnapshot): void {
+    this.syncLocalSessionFromSnapshotWithOptions(snapshot, true);
+  }
+
+  private syncLocalSessionFromSnapshotWithOptions(
+    snapshot: EngineRuntimeSnapshot,
+    recordTimeline: boolean
+  ): void {
     const resolvedUrl = snapshot.baseUrl || this.refs.fetchUrlInput.value;
-    this.presenter.patchSessionState({
+    const patch: Partial<HostSessionState> = {
       runMode: this.runMode,
       navigationStatus: 'loaded',
       requestedUrl: resolvedUrl,
@@ -507,6 +520,14 @@ export class BrowserController {
       externalNavigationIntent: snapshot.externalNavigationIntent,
       navigationSource: 'user',
       lastError: undefined
+    };
+    if (recordTimeline) {
+      this.presenter.patchSessionState(patch);
+      return;
+    }
+    this.presenter.setSessionState({
+      ...this.presenter.getSessionState(),
+      ...patch
     });
   }
 
@@ -522,6 +543,17 @@ export class BrowserController {
     );
 
     if (intent.type === 'none') {
+      if (this.shouldRouteKeyToInputEdit(event)) {
+        event.preventDefault();
+        this.enqueueKeyboardAction(async () => {
+          await this.withAction('keyboard-input-edit', async () => {
+            const handled = await this.applyFocusedInputEditKey(event.key);
+            if (handled) {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+            }
+          })();
+        });
+      }
       return;
     }
     event.preventDefault();
@@ -537,26 +569,59 @@ export class BrowserController {
     }
 
     if (intent.type === 'engine-key') {
-      void this.withAction(`keyboard-${intent.key}`, async () => {
-        await this.applyEngineKey(intent.key);
-        this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
-      })();
+      this.enqueueKeyboardAction(async () => {
+        await this.withAction(`keyboard-${intent.key}`, async () => {
+          if (this.shouldRouteKeyToInputEdit(event)) {
+            const handled = await this.applyFocusedInputEditKey(event.key);
+            if (handled && intent.key !== 'enter') {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+              return;
+            }
+          }
+          await this.applyEngineKey(intent.key);
+          this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+        })();
+      });
       return;
     }
 
     if (intent.type === 'navigate-back') {
-      void this.withAction('keyboard-backspace', async () => {
-        const mode = await this.navigateBackWithFallback();
-        if (mode === 'engine') {
-          this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);
-        } else if (mode === 'host') {
-          this.presenter.setStatus(WAVES_COPY.status.keyboardBackBrowser);
-        } else {
-          this.presenter.setStatus(WAVES_COPY.status.keyboardBackNone);
-        }
-      })();
+      this.enqueueKeyboardAction(async () => {
+        await this.withAction('keyboard-backspace', async () => {
+          if (this.shouldRouteKeyToInputEdit(event)) {
+            const handled = await this.applyFocusedInputEditKey(event.key);
+            if (handled) {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
+              return;
+            }
+          }
+          const mode = await this.navigateBackWithFallback();
+          if (mode === 'engine') {
+            this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);
+          } else if (mode === 'host') {
+            this.presenter.setStatus(WAVES_COPY.status.keyboardBackBrowser);
+          } else {
+            this.presenter.setStatus(WAVES_COPY.status.keyboardBackNone);
+          }
+        })();
+      });
     }
   };
+
+  private enqueueKeyboardAction(action: () => Promise<void>): void {
+    this.keyboardActionQueue = this.keyboardActionQueue
+      .then(async () => {
+        this.keyboardActionInFlight = true;
+        try {
+          await action();
+        } finally {
+          this.keyboardActionInFlight = false;
+        }
+      })
+      .catch(() => {
+        this.keyboardActionInFlight = false;
+      });
+  }
 
   private async renderAndSnapshot(): Promise<EngineRuntimeSnapshot> {
     const snapshot = await this.hostClient.engineSnapshot();
@@ -631,6 +696,83 @@ export class BrowserController {
         );
       }
     }
+  }
+
+  private shouldRouteKeyToInputEdit(event: KeyboardEvent): boolean {
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return false;
+    }
+    if (this.isTextEntryTarget(event.target)) {
+      return false;
+    }
+    if (event.key === 'Enter' || event.key === 'Escape' || event.key === 'Backspace') {
+      return true;
+    }
+    return event.key.length === 1;
+  }
+
+  private async applyFocusedInputEditKey(key: string): Promise<boolean> {
+    const initial = this.presenter.getSnapshot() ?? (await this.hostClient.engineSnapshot());
+    let snapshot = initial;
+    if (!snapshot.focusedInputEditName && key.length === 1) {
+      snapshot = await this.hostClient.engineBeginFocusedInputEdit();
+    }
+    if (!snapshot.focusedInputEditName) {
+      this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
+        key,
+        handled: false,
+        focusedInputEditName: null,
+        focusedInputEditValue: null,
+        focusedLinkIndex: snapshot.focusedLinkIndex
+      });
+      return false;
+    }
+
+    if (key === 'Enter') {
+      snapshot = await this.hostClient.engineCommitFocusedInputEdit();
+    } else if (key === 'Escape') {
+      snapshot = await this.hostClient.engineCancelFocusedInputEdit();
+    } else if (key === 'Backspace') {
+      const next = (snapshot.focusedInputEditValue ?? '').slice(0, -1);
+      snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
+    } else if (key.length === 1) {
+      const next = `${snapshot.focusedInputEditValue ?? ''}${key}`;
+      snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
+    } else {
+      this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
+        key,
+        handled: false,
+        focusedInputEditName: snapshot.focusedInputEditName ?? null,
+        focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
+        focusedLinkIndex: snapshot.focusedLinkIndex
+      });
+      return false;
+    }
+
+    this.presenter.setSnapshot(snapshot);
+    this.presenter.drawRenderList(await this.hostClient.engineRender());
+    if (this.runMode === 'local') {
+      this.syncLocalSessionFromSnapshotWithOptions(snapshot, false);
+    } else {
+      const patch: Partial<HostSessionState> = {
+        activeCardId: snapshot.activeCardId,
+        focusedLinkIndex: snapshot.focusedLinkIndex,
+        externalNavigationIntent: snapshot.externalNavigationIntent,
+        lastError: undefined
+      };
+      this.presenter.setSessionState({
+        ...this.presenter.getSessionState(),
+        ...patch
+      });
+    }
+    this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
+      key,
+      handled: true,
+      focusedInputEditName: snapshot.focusedInputEditName ?? null,
+      focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
+      focusedLinkIndex: snapshot.focusedLinkIndex
+    });
+    return true;
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {
@@ -760,7 +902,7 @@ export class BrowserController {
   }
 
   private async tickEngineTimerRuntime(): Promise<void> {
-    if (this.timerTickInFlight) {
+    if (this.timerTickInFlight || this.keyboardActionInFlight) {
       return;
     }
     this.timerTickInFlight = true;

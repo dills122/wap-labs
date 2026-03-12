@@ -11,7 +11,7 @@ export type FetchUaCapabilityProfile = "disabled" | "wap-baseline";
 
 export type FetchRequestPolicy = { destinationPolicy?: FetchDestinationPolicy, cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, uaCapabilityProfile?: FetchUaCapabilityProfile, };
 
-export type FetchDeckRequest = { url: string, method?: string, headers?: { [key in string]?: string }, timeoutMs?: number, retries?: number, requestId?: string, requestPolicy?: FetchRequestPolicy, };
+export type FetchDeckRequest = { url: string, method?: string, headers?: { [key in string]: string }, timeoutMs?: number, retries?: number, requestId?: string, requestPolicy?: FetchRequestPolicy, };
 
 export type FetchTiming = { encode: number, udpRtt: number, decode: number, };
 

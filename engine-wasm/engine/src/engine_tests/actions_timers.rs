@@ -71,6 +71,456 @@ fn enter_accept_post_action_sets_external_navigation_post_context() {
 }
 
 #[test]
+fn focused_input_commit_feeds_accept_postfield_payload_resolution() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <input name="UserName" value="AHMED" type="text"/>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(UserName)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin focused input edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("BOB".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("commit focused input should succeed"));
+
+    let accept_action = engine
+        .active_card_internal()
+        .expect("active card")
+        .accept_action
+        .clone()
+        .expect("accept action should exist");
+    engine
+        .execute_card_task_action(&accept_action)
+        .expect("accept action execution should succeed");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(post_context.payload.as_deref(), Some("username=BOB"));
+}
+
+#[test]
+fn enter_on_input_with_accept_action_submits_post_context_payload() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <input name="UserName" value="AHMED" type="text"/>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(UserName)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin focused input edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("BOB".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("commit focused input should succeed"));
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should submit accept action");
+    assert_eq!(
+        engine.external_navigation_intent().as_deref(),
+        Some("wap://localhost/login")
+    );
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(post_context.payload.as_deref(), Some("username=BOB"));
+}
+
+#[test]
+fn enter_while_input_edit_active_commits_and_submits_accept_in_one_keypress() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <input name="UserName" value="AHMED" type="text"/>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(UserName)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin focused input edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("dylan".to_string()));
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("single enter should commit draft and submit accept action");
+
+    assert_eq!(
+        engine.external_navigation_intent().as_deref(),
+        Some("wap://localhost/login")
+    );
+    assert_eq!(
+        engine.get_var("UserName".to_string()),
+        Some("dylan".to_string())
+    );
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(post_context.payload.as_deref(), Some("username=dylan"));
+}
+
+#[test]
+fn two_input_focus_move_and_submit_preserves_username_and_pin_payload() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="" type="text"/></p>
+            <p>PIN: <input name="pin" value="" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(username)"/>
+                <postfield name="pin" value="$(pin)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin username edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("dylan".to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("moving to pin should commit username");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin pin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("1234".to_string()));
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should commit pin and submit accept");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=dylan&pin=1234")
+    );
+}
+
+#[test]
+fn submit_uses_card_input_values_when_postfield_vars_are_unset() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="usern1220" type="text"/></p>
+            <p>PIN: <input name="pin" value="1220" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(username)"/>
+                <postfield name="pin" value="$(pin)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should submit accept action");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=usern1220&pin=1220")
+    );
+}
+
+#[test]
+fn submit_preserves_active_input_draft_when_accept_executes() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="" type="text"/></p>
+            <p>PIN: <input name="pin" value="" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(username)"/>
+                <postfield name="pin" value="$(pin)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin username edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("usern1220".to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("moving to pin should commit username");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin pin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("1220".to_string()));
+
+    let accept_action = engine
+        .active_card_internal()
+        .expect("active card")
+        .accept_action
+        .clone()
+        .expect("accept action should exist");
+    engine
+        .execute_card_task_action(&accept_action)
+        .expect("accept action execution should succeed");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=usern1220&pin=1220")
+    );
+}
+
+#[test]
+fn submit_falls_back_to_postfield_name_when_template_value_is_empty() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="" type="text"/></p>
+            <p>PIN: <input name="pin" value="" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value=""/>
+                <postfield name="pin" value=""/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin username edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("tester".to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("moving to pin should commit username");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin pin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("1220".to_string()));
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should commit pin and submit accept");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=tester&pin=1220")
+    );
+}
+
+#[test]
+fn submit_falls_back_to_postfield_name_when_postfield_var_expression_name_is_whitespace_padded() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="" type="text"/></p>
+            <p>PIN: <input name="pin" value="" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$( username )"/>
+                <postfield name="pin" value="$( pin )"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin username edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("tester".to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("moving to pin should commit username");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin pin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("1200".to_string()));
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should commit pin and submit accept");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=tester&pin=1200")
+    );
+}
+
+#[test]
+fn submit_falls_back_to_postfield_name_when_expression_name_is_unresolved() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="tester" type="text"/></p>
+            <p>PIN: <input name="pin" value="1220" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(missing_user_var)"/>
+                <postfield name="pin" value="$(missing_pin_var)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should submit accept action");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=tester&pin=1220")
+    );
+}
+
+#[test]
+fn submit_prefers_non_empty_expression_resolution_over_postfield_name_fallback() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="local-user" type="text"/></p>
+            <p>PIN: <input name="pin" value="1111" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(alias)"/>
+                <postfield name="pin" value="$(pin_alias)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+    assert!(engine.set_var("alias".to_string(), "var-user".to_string()));
+    assert!(engine.set_var("pin_alias".to_string(), "2222".to_string()));
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should submit accept action");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=var-user&pin=2222")
+    );
+}
+
+#[test]
 fn enter_accept_prev_action_navigates_back_when_history_exists() {
     let mut engine = WmlEngine::new();
     let xml = r##"

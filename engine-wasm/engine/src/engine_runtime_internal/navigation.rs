@@ -18,6 +18,7 @@ impl WmlEngine {
         let previous_stack_len = self.nav_stack.len();
         let previous_timer = self.active_timer.clone();
         self.stop_active_timer_for_exit();
+        self.active_input_edit = None;
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
@@ -50,6 +51,7 @@ impl WmlEngine {
         };
 
         self.stop_active_timer_for_exit();
+        self.active_input_edit = None;
         self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
@@ -151,6 +153,7 @@ impl WmlEngine {
                 method,
                 post_fields,
             ));
+        self.active_input_edit = None;
         Ok(())
     }
 
@@ -205,7 +208,17 @@ impl WmlEngine {
     fn encode_post_fields(&self, post_fields: &[CardPostField]) -> String {
         let mut serializer = url::form_urlencoded::Serializer::new(String::new());
         for field in post_fields {
-            serializer.append_pair(&field.name, &self.resolve_post_field_value(&field.value));
+            let value = if field.value.is_empty() {
+                self.resolve_post_field_name_fallback(&field.name)
+            } else {
+                let resolved = self.resolve_post_field_value(&field.value);
+                if resolved.is_empty() {
+                    self.resolve_post_field_name_fallback(&field.name)
+                } else {
+                    resolved
+                }
+            };
+            serializer.append_pair(&field.name, &value);
         }
         serializer.finish()
     }
@@ -215,9 +228,24 @@ impl WmlEngine {
             .strip_prefix("$(")
             .and_then(|value| value.strip_suffix(')'))
         {
-            return self.vars.get(name).cloned().unwrap_or_default();
+            return self.resolve_post_field_name_fallback(name.trim());
         }
         raw.to_string()
+    }
+
+    fn resolve_post_field_name_fallback(&self, name: &str) -> String {
+        if let Some(value) = self.vars.get(name).cloned() {
+            return value;
+        }
+        if let Some(edit) = &self.active_input_edit {
+            if edit.input_name == name {
+                return edit.draft_value.clone();
+            }
+        }
+        if let Some(value) = self.input_value_on_active_card(name) {
+            return value;
+        }
+        String::new()
     }
 
     fn is_same_document_navigation(&self, resolved_href: &str) -> bool {

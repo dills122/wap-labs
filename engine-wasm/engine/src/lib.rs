@@ -24,7 +24,7 @@ mod wavescript;
 #[cfg(test)]
 mod engine_tests;
 
-use layout::flow_layout::layout_card;
+use layout::flow_layout::{layout_card, FocusTarget};
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
 use parser::wml_parser::parse_wml;
 use runtime::card::CardTaskAction;
@@ -69,6 +69,13 @@ struct CardTimerState {
     ontimer_action: Option<CardTaskAction>,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct InputEditState {
+    input_name: String,
+    original_value: String,
+    draft_value: String,
+}
+
 #[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
     deck: Option<Deck>,
@@ -92,6 +99,7 @@ pub struct WmlEngine {
     next_trace_seq: u64,
     timer_dispatch_depth: u8,
     active_timer: Option<CardTimerState>,
+    active_input_edit: Option<InputEditState>,
 }
 
 impl Default for WmlEngine {

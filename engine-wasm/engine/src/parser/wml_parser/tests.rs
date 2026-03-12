@@ -181,6 +181,79 @@ fn decodes_entities_and_uses_href_as_fallback_link_text() {
 }
 
 #[test]
+fn parses_text_and_password_inputs_into_inline_nodes() {
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <p>User <input name="UserName" value="AHMED" type="text"/></p>
+            <input name="Password" value="secret" type="password"/>
+          </card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("deck should parse");
+    match &deck.cards[0].nodes[0] {
+        Node::Paragraph(items) => {
+            assert!(matches!(&items[0], InlineNode::Text(t) if t == "User"));
+            assert!(matches!(
+                &items[1],
+                InlineNode::Input {
+                    name,
+                    value,
+                    is_password,
+                    max_length
+                } if name == "UserName" && value == "AHMED" && !is_password
+                    && max_length.is_none()
+            ));
+        }
+        _ => panic!("expected paragraph"),
+    }
+
+    match &deck.cards[0].nodes[1] {
+        Node::Paragraph(items) => {
+            assert!(matches!(
+                &items[0],
+                InlineNode::Input {
+                    name,
+                    value,
+                    is_password,
+                    max_length
+                } if name == "Password" && value == "secret" && *is_password
+                    && max_length.is_none()
+            ));
+        }
+        _ => panic!("expected input paragraph"),
+    }
+}
+
+#[test]
+fn parses_input_maxlength_when_present() {
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="pin" value="1234" type="text" maxlength="4"/>
+          </card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("deck should parse");
+    match &deck.cards[0].nodes[0] {
+        Node::Paragraph(items) => {
+            assert!(matches!(
+                &items[0],
+                InlineNode::Input {
+                    name,
+                    value,
+                    max_length,
+                    ..
+                } if name == "pin" && value == "1234" && *max_length == Some(4)
+            ));
+        }
+        _ => panic!("expected input paragraph"),
+    }
+}
+
+#[test]
 fn rejects_missing_card_closing_tag() {
     let xml = r#"
         <wml>
