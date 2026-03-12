@@ -718,6 +718,13 @@ export class BrowserController {
       snapshot = await this.hostClient.engineBeginFocusedInputEdit();
     }
     if (!snapshot.focusedInputEditName) {
+      this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
+        key,
+        handled: false,
+        focusedInputEditName: null,
+        focusedInputEditValue: null,
+        focusedLinkIndex: snapshot.focusedLinkIndex
+      });
       return false;
     }
 
@@ -732,6 +739,13 @@ export class BrowserController {
       const next = `${snapshot.focusedInputEditValue ?? ''}${key}`;
       snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
     } else {
+      this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
+        key,
+        handled: false,
+        focusedInputEditName: snapshot.focusedInputEditName ?? null,
+        focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
+        focusedLinkIndex: snapshot.focusedLinkIndex
+      });
       return false;
     }
 
@@ -751,6 +765,13 @@ export class BrowserController {
         ...patch
       });
     }
+    this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
+      key,
+      handled: true,
+      focusedInputEditName: snapshot.focusedInputEditName ?? null,
+      focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
+      focusedLinkIndex: snapshot.focusedLinkIndex
+    });
     return true;
   }
 

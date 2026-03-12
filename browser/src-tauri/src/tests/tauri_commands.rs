@@ -174,3 +174,80 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
         .expect("cancel focused input edit should succeed");
     assert_eq!(cancelled.focused_input_edit_name, None);
 }
+
+#[test]
+fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml>
+      <card id="login">
+        <p>User: <input name="username" value="" type="text"/></p>
+        <p>PIN: <input name="pin" value="" type="password"/></p>
+        <do type="accept">
+          <go method="post" href="/login">
+            <postfield name="username" value="$(username)"/>
+            <postfield name="pin" value="$(pin)"/>
+          </go>
+        </do>
+      </card>
+    </wml>
+    "##;
+
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: wml.to_string(),
+            base_url: "wap://localhost/login".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect("load should succeed");
+
+    super::super::engine_begin_focused_input_edit(borrowed_state(&state))
+        .expect("begin username edit should succeed");
+    super::super::engine_set_focused_input_edit_draft(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: "usern1220".to_string(),
+        },
+    )
+    .expect("username draft should succeed");
+    super::super::engine_handle_key(
+        borrowed_state(&state),
+        HandleKeyRequest {
+            key: EngineKey::Down,
+        },
+    )
+    .expect("down key should commit username and move focus");
+
+    super::super::engine_begin_focused_input_edit(borrowed_state(&state))
+        .expect("begin pin edit should succeed");
+    super::super::engine_set_focused_input_edit_draft(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: "1220".to_string(),
+        },
+    )
+    .expect("pin draft should succeed");
+    super::super::engine_commit_focused_input_edit(borrowed_state(&state))
+        .expect("pin commit should succeed");
+
+    let submitted = super::super::engine_handle_key(
+        borrowed_state(&state),
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("enter should execute accept action");
+    let policy = submitted
+        .external_navigation_request_policy
+        .expect("submit should emit external navigation request policy");
+    let post_context = policy
+        .post_context
+        .expect("submit should include post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=usern1220&pin=1220")
+    );
+}
