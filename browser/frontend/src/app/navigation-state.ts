@@ -121,9 +121,6 @@ export const createNavigationStateMachine = (
     if (!requestedUrl) {
       throw new Error(WAVES_COPY.errors.urlRequired);
     }
-    const method = normalizeMethod(options.method);
-    const pushHistory = options.pushHistory ?? true;
-
     const defaultRequestPolicy = defaultRequestPolicyForSource(
       options.source,
       requestedUrl,
@@ -135,6 +132,8 @@ export const createNavigationStateMachine = (
           ...options.requestPolicy
         }
       : defaultRequestPolicy;
+    const method = resolveTransportMethod(options.method, requestPolicy);
+    const pushHistory = options.pushHistory ?? true;
 
     hooks.onStateEvent?.('load-transport-url', {
       source: options.source,
@@ -367,6 +366,18 @@ export const defaultRequestPolicyForSource = (
 const normalizeMethod = (method?: string): string => {
   const normalized = method?.trim().toUpperCase();
   return normalized || 'GET';
+};
+
+const resolveTransportMethod = (
+  method: string | undefined,
+  requestPolicy: FetchRequestPolicy | undefined
+): string => {
+  // Engine emits POST body via requestPolicy.postContext for WML <go method="post"> intents.
+  // Treat that as authoritative even if caller defaulted method to GET.
+  if (requestPolicy?.postContext) {
+    return 'POST';
+  }
+  return normalizeMethod(method);
 };
 
 const shouldAllowPrivateDestination = (requestedUrl: string): boolean => {
