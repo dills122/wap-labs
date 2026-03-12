@@ -117,3 +117,52 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
     .expect("advance should succeed");
     assert_eq!(advanced.active_card_id.as_deref(), Some("done"));
 }
+
+#[test]
+fn tauri_command_wrappers_handle_focused_input_edit_commands() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml>
+      <card id="home">
+        <input name="UserName" value="AHMED" type="text"/>
+      </card>
+    </wml>
+    "##;
+
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: wml.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect("load should succeed");
+
+    let begin = super::super::engine_begin_focused_input_edit(borrowed_state(&state))
+        .expect("begin focused input edit should succeed");
+    assert_eq!(begin.focused_input_edit_name.as_deref(), Some("UserName"));
+    assert_eq!(begin.focused_input_edit_value.as_deref(), Some("AHMED"));
+
+    let drafted = super::super::engine_set_focused_input_edit_draft(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: "BOB".to_string(),
+        },
+    )
+    .expect("set focused input draft should succeed");
+    assert_eq!(drafted.focused_input_edit_value.as_deref(), Some("BOB"));
+
+    let committed = super::super::engine_commit_focused_input_edit(borrowed_state(&state))
+        .expect("commit focused input edit should succeed");
+    assert_eq!(committed.focused_input_edit_name, None);
+    assert_eq!(committed.focused_input_edit_value, None);
+
+    let begin_again = super::super::engine_begin_focused_input_edit(borrowed_state(&state))
+        .expect("begin focused input edit should succeed");
+    assert_eq!(begin_again.focused_input_edit_value.as_deref(), Some("BOB"));
+    let cancelled = super::super::engine_cancel_focused_input_edit(borrowed_state(&state))
+        .expect("cancel focused input edit should succeed");
+    assert_eq!(cancelled.focused_input_edit_name, None);
+}

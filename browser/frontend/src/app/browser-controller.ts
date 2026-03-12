@@ -514,7 +514,7 @@ export class BrowserController {
     if (!(event instanceof KeyboardEvent)) {
       return;
     }
-    if (this.runMode === 'local' && this.shouldRouteKeyToInputEdit(event)) {
+    if (this.shouldRouteKeyToInputEdit(event)) {
       event.preventDefault();
       void this.withAction('keyboard-input-edit', async () => {
         const handled = await this.applyFocusedInputEditKey(event.key);
@@ -657,9 +657,6 @@ export class BrowserController {
   }
 
   private async applyFocusedInputEditKey(key: string): Promise<boolean> {
-    if (this.runMode !== 'local') {
-      return false;
-    }
     const initial = this.presenter.getSnapshot() ?? (await this.hostClient.engineSnapshot());
     let snapshot = initial;
     if (!snapshot.focusedInputEditName && key.length === 1) {
@@ -685,7 +682,16 @@ export class BrowserController {
 
     this.presenter.setSnapshot(snapshot);
     this.presenter.drawRenderList(await this.hostClient.engineRender());
-    this.syncLocalSessionFromSnapshot(snapshot);
+    if (this.runMode === 'local') {
+      this.syncLocalSessionFromSnapshot(snapshot);
+    } else {
+      this.presenter.patchSessionState({
+        activeCardId: snapshot.activeCardId,
+        focusedLinkIndex: snapshot.focusedLinkIndex,
+        externalNavigationIntent: snapshot.externalNavigationIntent,
+        lastError: undefined
+      });
+    }
     return true;
   }
 
