@@ -291,6 +291,62 @@ fn submit_uses_card_input_values_when_postfield_vars_are_unset() {
 }
 
 #[test]
+fn submit_preserves_active_input_draft_when_accept_executes() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <p>User: <input name="username" value="" type="text"/></p>
+            <p>PIN: <input name="pin" value="" type="password"/></p>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="username" value="$(username)"/>
+                <postfield name="pin" value="$(pin)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin username edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("usern1220".to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("moving to pin should commit username");
+
+    engine
+        .begin_focused_input_edit()
+        .expect("begin pin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("1220".to_string()));
+
+    let accept_action = engine
+        .active_card_internal()
+        .expect("active card")
+        .accept_action
+        .clone()
+        .expect("accept action should exist");
+    engine
+        .execute_card_task_action(&accept_action)
+        .expect("accept action execution should succeed");
+
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("post action should populate post context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=usern1220&pin=1220")
+    );
+}
+
+#[test]
 fn enter_accept_prev_action_navigates_back_when_history_exists() {
     let mut engine = WmlEngine::new();
     let xml = r##"

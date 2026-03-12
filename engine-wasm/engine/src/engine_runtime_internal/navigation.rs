@@ -145,7 +145,6 @@ impl WmlEngine {
         }
 
         self.push_trace("ACTION_EXTERNAL", href.to_string());
-        self.active_input_edit = None;
         let resolved_href = self.resolve_external_href(href);
         self.external_nav_intent = Some(resolved_href.clone());
         self.external_nav_request_policy =
@@ -154,6 +153,7 @@ impl WmlEngine {
                 method,
                 post_fields,
             ));
+        self.active_input_edit = None;
         Ok(())
     }
 
