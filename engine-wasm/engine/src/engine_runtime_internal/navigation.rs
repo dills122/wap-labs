@@ -208,7 +208,12 @@ impl WmlEngine {
     fn encode_post_fields(&self, post_fields: &[CardPostField]) -> String {
         let mut serializer = url::form_urlencoded::Serializer::new(String::new());
         for field in post_fields {
-            serializer.append_pair(&field.name, &self.resolve_post_field_value(&field.value));
+            let value = if field.value.is_empty() {
+                self.resolve_post_field_name_fallback(&field.name)
+            } else {
+                self.resolve_post_field_value(&field.value)
+            };
+            serializer.append_pair(&field.name, &value);
         }
         serializer.finish()
     }
@@ -218,20 +223,24 @@ impl WmlEngine {
             .strip_prefix("$(")
             .and_then(|value| value.strip_suffix(')'))
         {
-            if let Some(value) = self.vars.get(name).cloned() {
-                return value;
-            }
-            if let Some(edit) = &self.active_input_edit {
-                if edit.input_name == name {
-                    return edit.draft_value.clone();
-                }
-            }
-            if let Some(value) = self.input_value_on_active_card(name) {
-                return value;
-            }
-            return String::new();
+            return self.resolve_post_field_name_fallback(name);
         }
         raw.to_string()
+    }
+
+    fn resolve_post_field_name_fallback(&self, name: &str) -> String {
+        if let Some(value) = self.vars.get(name).cloned() {
+            return value;
+        }
+        if let Some(edit) = &self.active_input_edit {
+            if edit.input_name == name {
+                return edit.draft_value.clone();
+            }
+        }
+        if let Some(value) = self.input_value_on_active_card(name) {
+            return value;
+        }
+        String::new()
     }
 
     fn is_same_document_navigation(&self, resolved_href: &str) -> bool {
