@@ -851,6 +851,47 @@ mod tests {
     }
 
     #[test]
+    fn native_connectionless_post_wire_format_preserves_resolved_form_payload_variants() {
+        let parsed = Url::parse("wap://localhost/login").expect("url should parse");
+        let payloads = [
+            "username=tester&pin=1220",
+            "username=usern1220&pin=1200",
+            "username=var-user&pin=2222",
+        ];
+
+        for payload in payloads {
+            let encoded = encode_connectionless_request(
+                CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+                "POST",
+                &parsed,
+                &HashMap::from([("Accept".to_string(), "text/vnd.wap.wml".to_string())]),
+                Some("application/x-www-form-urlencoded"),
+                Some(payload.as_bytes()),
+            )
+            .expect("post request should encode");
+
+            assert_eq!(encoded.get(1).copied(), Some(0x60));
+            let (uri_len, remainder) =
+                decode_uintvar(&encoded[2..]).expect("uri len should decode");
+            let (headers_len, remainder) =
+                decode_uintvar(remainder).expect("headers len should decode");
+            let remainder = &remainder[uri_len..];
+            let body = &remainder[headers_len..];
+            let body_str = std::str::from_utf8(body).expect("body should decode");
+            let fields: HashMap<String, String> = url::form_urlencoded::parse(body)
+                .map(|(k, v)| (k.to_string(), v.to_string()))
+                .collect();
+
+            assert_eq!(body_str, payload, "encoded body should preserve payload");
+            assert!(
+                !fields["username"].is_empty(),
+                "username should be non-empty"
+            );
+            assert!(!fields["pin"].is_empty(), "pin should be non-empty");
+        }
+    }
+
+    #[test]
     fn native_connectionless_reply_rejects_transaction_id_mismatch() {
         let encoded = build_connectionless_reply_wire(9, 0x20, 0x08, &[]);
 
