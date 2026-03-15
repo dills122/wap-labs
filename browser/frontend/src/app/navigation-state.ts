@@ -290,13 +290,13 @@ export const createNavigationStateMachine = (
   const navigateBackWithFallback = async (): Promise<BackNavigationMode> => {
     const before = await hostClient.engineSnapshot();
     const after = await hostClient.engineNavigateBack();
-    await renderSnapshot(after);
 
     const engineHandled =
       before.activeCardId !== after.activeCardId ||
       before.focusedLinkIndex !== after.focusedLinkIndex;
     if (engineHandled) {
       updateCurrentHistoryCard(hostHistory, after.activeCardId);
+      await renderSnapshot(after);
       return 'engine';
     }
 
@@ -412,7 +412,83 @@ export const shouldRenderTimerSnapshot = (
 };
 
 const sessionStatesEqual = (a: HostSessionState, b: HostSessionState): boolean =>
-  JSON.stringify(a) === JSON.stringify(b);
+  a.runMode === b.runMode &&
+  a.navigationStatus === b.navigationStatus &&
+  a.requestedUrl === b.requestedUrl &&
+  a.finalUrl === b.finalUrl &&
+  a.contentType === b.contentType &&
+  a.activeCardId === b.activeCardId &&
+  a.focusedLinkIndex === b.focusedLinkIndex &&
+  a.externalNavigationIntent === b.externalNavigationIntent &&
+  a.lastError === b.lastError &&
+  a.navigationSource === b.navigationSource &&
+  a.historyIndex === b.historyIndex &&
+  historyEntriesEqual(a.history, b.history);
+
+const historyEntriesEqual = (
+  a: HostSessionState['history'],
+  b: HostSessionState['history']
+): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return a === b;
+  }
+  if (a.length !== b.length) {
+    return false;
+  }
+  return a.every((entry, index) => historyEntryEqual(entry, b[index]));
+};
+
+const historyEntryEqual = (
+  a: NonNullable<HostSessionState['history']>[number],
+  b: NonNullable<HostSessionState['history']>[number] | undefined
+): boolean =>
+  !!b &&
+  a.url === b.url &&
+  a.requestedUrl === b.requestedUrl &&
+  a.method === b.method &&
+  a.activeCardId === b.activeCardId &&
+  a.source === b.source &&
+  headersEqual(a.headers, b.headers) &&
+  requestPolicyEqual(a.requestPolicy, b.requestPolicy);
+
+const headersEqual = (a?: Record<string, string>, b?: Record<string, string>): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return a === b;
+  }
+  const aEntries = Object.entries(a);
+  const bEntries = Object.entries(b);
+  if (aEntries.length !== bEntries.length) {
+    return false;
+  }
+  return aEntries.every(([key, value]) => b[key] === value);
+};
+
+const requestPolicyEqual = (a?: FetchRequestPolicy, b?: FetchRequestPolicy): boolean =>
+  a === b ||
+  (!!a &&
+    !!b &&
+    a.destinationPolicy === b.destinationPolicy &&
+    a.cacheControl === b.cacheControl &&
+    a.refererUrl === b.refererUrl &&
+    a.uaCapabilityProfile === b.uaCapabilityProfile &&
+    postContextEqual(a.postContext, b.postContext));
+
+const postContextEqual = (
+  a?: FetchRequestPolicy['postContext'],
+  b?: FetchRequestPolicy['postContext']
+): boolean =>
+  a === b ||
+  (!!a &&
+    !!b &&
+    a.sameDeck === b.sameDeck &&
+    a.contentType === b.contentType &&
+    a.payload === b.payload);
 
 const shouldAllowPrivateDestination = (requestedUrl: string): boolean => {
   try {
