@@ -72,6 +72,7 @@ describe('navigation-state history behavior', () => {
 
   it('falls back to host history when engine back is a no-op', async () => {
     const fetchCalls: string[] = [];
+    let renderCount = 0;
     const machine = createNavigationStateMachine(
       createHostClientMock({
         fetchDeck: async (request) => {
@@ -79,6 +80,10 @@ describe('navigation-state history behavior', () => {
           return fetchOk({
             finalUrl: request.url
           });
+        },
+        engineRender: async () => {
+          renderCount += 1;
+          return { draw: [{ type: 'text', x: 0, y: 0, text: 'ok' }] };
         },
         engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
         engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
@@ -101,6 +106,37 @@ describe('navigation-state history behavior', () => {
     expect(mode).toBe('host');
     expect(fetchCalls.at(-1)).toBe('http://example.test/a.wml');
     expect(machine.getHistoryState().index).toBe(0);
+    expect(renderCount).toBe(3);
+  });
+
+  it('does not emit duplicate session updates when back navigation is a no-op', async () => {
+    const sessions: string[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url
+          }),
+        engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
+        engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+      }),
+      'http://seed.test',
+      {
+        onSessionState: (session) => sessions.push(JSON.stringify(session))
+      }
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    const countAfterLoad = sessions.length;
+    const mode = await machine.navigateBackWithFallback();
+
+    expect(mode).toBe('none');
+    expect(sessions.length).toBe(countAfterLoad);
   });
 
   it('restores latest in-deck card snapshot on host-history back', async () => {

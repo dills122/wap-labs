@@ -4,9 +4,10 @@ use std::time::Instant;
 
 use crate::request_meta::details_with_request_id;
 use crate::wbxml::decode_wmlc;
-use crate::{EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming};
-
-const MAX_MAPPED_PAYLOAD_BYTES: usize = 512 * 1024;
+use crate::{
+    EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming,
+    FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
+};
 
 pub(crate) fn transport_unavailable_response(
     url: String,
@@ -76,7 +77,7 @@ pub(crate) fn payload_too_large_response(
         content_type,
         wml: None,
         error: Some(FetchErrorInfo {
-            code: "PROTOCOL_ERROR".to_string(),
+            code: FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE.to_string(),
             message: match actual_bytes {
                 Some(actual) => {
                     format!("Payload exceeds {limit_bytes}-byte limit (got {actual} bytes)")
@@ -133,36 +134,17 @@ pub(crate) fn map_success_payload_response(
     elapsed_ms: f64,
     request_id: Option<&str>,
 ) -> FetchDeckResponse {
-    if body.len() > MAX_MAPPED_PAYLOAD_BYTES {
-        return FetchDeckResponse {
-            ok: false,
+    if body.len() > MAX_RESPONSE_BODY_BYTES {
+        return payload_too_large_response(
             status,
             final_url,
             content_type,
-            wml: None,
-            error: Some(FetchErrorInfo {
-                code: "PROTOCOL_ERROR".to_string(),
-                message: format!(
-                    "Payload exceeds {}-byte limit (got {} bytes)",
-                    MAX_MAPPED_PAYLOAD_BYTES,
-                    body.len()
-                ),
-                details: details_with_request_id(
-                    request_id,
-                    Some(serde_json::json!({
-                        "attempt": attempt,
-                        "limitBytes": MAX_MAPPED_PAYLOAD_BYTES,
-                        "actualBytes": body.len()
-                    })),
-                ),
-            }),
-            timing_ms: FetchTiming {
-                encode: 0.0,
-                udp_rtt: elapsed_ms,
-                decode: 0.0,
-            },
-            engine_deck_input: None,
-        };
+            MAX_RESPONSE_BODY_BYTES,
+            Some(body.len() as u64),
+            attempt,
+            elapsed_ms,
+            request_id,
+        );
     }
 
     if status >= 400 {

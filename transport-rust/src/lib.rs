@@ -27,6 +27,7 @@ pub use wbxml::preflight_wbxml_decoder;
 
 pub(crate) const MAX_URI_OCTETS: usize = 1024;
 pub(crate) const MAX_RESPONSE_BODY_BYTES: usize = 512 * 1024;
+pub(crate) const FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE: &str = "PAYLOAD_TOO_LARGE";
 
 #[derive(Clone, Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
@@ -111,7 +112,7 @@ pub struct FetchTiming {
 #[serde(rename_all = "camelCase")]
 pub struct FetchErrorInfo {
     #[ts(
-        type = "\"INVALID_REQUEST\" | \"GATEWAY_TIMEOUT\" | \"UNSUPPORTED_CONTENT_TYPE\" | \"WBXML_DECODE_FAILED\" | \"PROTOCOL_ERROR\" | \"TRANSPORT_UNAVAILABLE\""
+        type = "\"INVALID_REQUEST\" | \"GATEWAY_TIMEOUT\" | \"UNSUPPORTED_CONTENT_TYPE\" | \"WBXML_DECODE_FAILED\" | \"PROTOCOL_ERROR\" | \"PAYLOAD_TOO_LARGE\" | \"TRANSPORT_UNAVAILABLE\""
     )]
     pub code: String,
     pub message: String,
