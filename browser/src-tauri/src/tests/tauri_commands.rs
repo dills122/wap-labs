@@ -119,6 +119,39 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
 }
 
 #[test]
+fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
+    let state = AppState::default();
+    let oversized_xml = format!(
+        "<wml><card id=\"home\"><p>{}</p></card></wml>",
+        "a".repeat((512 * 1024) + 1)
+    );
+
+    let xml_error = super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: oversized_xml,
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect_err("oversized xml should fail");
+    assert!(xml_error.contains("Deck payload exceeds"));
+
+    let raw_error = super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: BASIC_NAV_WML.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "application/vnd.wap.wmlc".to_string(),
+            raw_bytes_base64: Some("A".repeat((1024 * 1024) + 1)),
+        },
+    )
+    .expect_err("oversized raw payload should fail");
+    assert!(raw_error.contains("Raw deck payload exceeds"));
+}
+
+#[test]
 fn tauri_command_wrappers_handle_focused_input_edit_commands() {
     let state = AppState::default();
     let wml = r##"

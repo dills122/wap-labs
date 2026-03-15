@@ -191,9 +191,29 @@ fn wasm_handle_key_unknown_is_noop_for_navigation_state() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_load_deck_context_rejects_oversized_wml_payload() {
+    let mut engine = WmlEngine::wasm_new();
+    let oversized_xml = format!(
+        "<wml><card id=\"home\"><p>{}</p></card></wml>",
+        "a".repeat(MAX_DECK_WML_XML_BYTES + 1)
+    );
+
+    let err = engine
+        .load_deck_context_wasm(
+            &oversized_xml,
+            "http://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect_err("oversized wml payload should fail at wasm boundary");
+    let err_msg = err.as_string().expect("error should be a string message");
+    assert!(err_msg.contains("Deck payload exceeds"));
+}
+
+#[wasm_bindgen_test]
 fn wasm_load_deck_context_rejects_oversized_raw_payload() {
     let mut engine = WmlEngine::wasm_new();
-    let oversized_raw = "A".repeat(300_000);
+    let oversized_raw = "A".repeat(MAX_DECK_RAW_BYTES_BASE64_BYTES + 1);
 
     let err = engine
         .load_deck_context_wasm(

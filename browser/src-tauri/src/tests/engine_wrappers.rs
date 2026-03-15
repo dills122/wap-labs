@@ -14,6 +14,43 @@ fn apply_load_deck_returns_error_for_invalid_root() {
 }
 
 #[test]
+fn apply_load_deck_context_rejects_oversized_wml_payload() {
+    let mut engine = WmlEngine::new();
+    let inner = "a".repeat((512 * 1024) + 1);
+    let xml = format!("<wml><card id=\"home\"><p>{inner}</p></card></wml>");
+
+    let error = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: xml,
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect_err("oversized wml should fail");
+    assert!(error.contains("Deck payload exceeds"));
+}
+
+#[test]
+fn apply_load_deck_context_rejects_oversized_raw_payload() {
+    let mut engine = WmlEngine::new();
+    let raw = "A".repeat((1024 * 1024) + 1);
+
+    let error = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: BASIC_NAV_WML.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "application/vnd.wap.wmlc".to_string(),
+            raw_bytes_base64: Some(raw),
+        },
+    )
+    .expect_err("oversized raw payload should fail");
+    assert!(error.contains("Raw deck payload exceeds"));
+}
+
+#[test]
 fn apply_navigate_to_card_returns_error_for_unknown_card() {
     let mut engine = WmlEngine::new();
     apply_load_deck_context(
@@ -184,6 +221,24 @@ fn command_engine_load_deck_path_is_callable() {
     )
     .expect("load_deck wrapper should succeed");
     assert_eq!(out.active_card_id.as_deref(), Some("home"));
+}
+
+#[test]
+fn command_engine_load_deck_context_surfaces_oversized_raw_payload_error() {
+    let state = AppState::default();
+    let raw = "A".repeat((1024 * 1024) + 1);
+
+    let error = command_engine_load_deck_context(
+        &state,
+        LoadDeckContextRequest {
+            wml_xml: BASIC_NAV_WML.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "application/vnd.wap.wmlc".to_string(),
+            raw_bytes_base64: Some(raw),
+        },
+    )
+    .expect_err("oversized raw payload should fail");
+    assert!(error.contains("Raw deck payload exceeds"));
 }
 
 #[test]
