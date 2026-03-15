@@ -15,7 +15,7 @@ export type FetchDeckRequest = { url: string, method?: string, headers?: { [key 
 
 export type FetchTiming = { encode: number, udpRtt: number, decode: number, };
 
-export type FetchErrorInfo = { code: "INVALID_REQUEST" | "GATEWAY_TIMEOUT" | "UNSUPPORTED_CONTENT_TYPE" | "WBXML_DECODE_FAILED" | "PROTOCOL_ERROR" | "TRANSPORT_UNAVAILABLE", message: string, details?: Record<string, unknown>, };
+export type FetchErrorInfo = { code: "INVALID_REQUEST" | "GATEWAY_TIMEOUT" | "UNSUPPORTED_CONTENT_TYPE" | "WBXML_DECODE_FAILED" | "PROTOCOL_ERROR" | "PAYLOAD_TOO_LARGE" | "TRANSPORT_UNAVAILABLE", message: string, details?: Record<string, unknown>, };
 
 export type EngineDeckInputPayload = { wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string, };
 

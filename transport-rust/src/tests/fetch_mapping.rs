@@ -145,7 +145,7 @@ fn transport_map_success_payload_rejects_oversized_body() {
     assert_eq!(response.status, 200);
     assert_eq!(
         response.error.as_ref().map(|err| err.code.as_str()),
-        Some("PROTOCOL_ERROR")
+        Some("PAYLOAD_TOO_LARGE")
     );
     assert!(response
         .error
@@ -764,7 +764,7 @@ fn transport_payload_too_large_response_with_known_actual_bytes() {
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|error| error.code.as_str()),
-        Some("PROTOCOL_ERROR")
+        Some("PAYLOAD_TOO_LARGE")
     );
     let message = response
         .error
@@ -816,6 +816,20 @@ fn transport_error_code_trigger_matrix_is_deterministic() {
                 None,
             ),
             expected_code: "INVALID_REQUEST",
+        },
+        Case {
+            name: "payload-too-large",
+            response: payload_too_large_response(
+                200,
+                "http://example.test/deck.wml".to_string(),
+                "text/vnd.wap.wml".to_string(),
+                512 * 1024,
+                Some(700_000),
+                1,
+                1.0,
+                None,
+            ),
+            expected_code: "PAYLOAD_TOO_LARGE",
         },
         Case {
             name: "protocol-error-5xx",
