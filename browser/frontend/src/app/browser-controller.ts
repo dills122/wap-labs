@@ -7,7 +7,11 @@ import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { resolveKeyboardIntent } from './keyboard';
 import { isProbeReachable } from './network';
-import { createNavigationStateMachine, defaultRequestPolicyForSource } from './navigation-state';
+import {
+  createNavigationStateMachine,
+  defaultRequestPolicyForSource,
+  shouldRenderTimerSnapshot
+} from './navigation-state';
 import { ScriptTimerRegistry } from './script-timer-registry';
 import { defaultStartUrl } from './defaults';
 import type { BrowserPresenter } from './browser-presenter';
@@ -44,6 +48,7 @@ export class BrowserController {
   private keyboardActionQueue: Promise<void> = Promise.resolve();
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
   private bootDeckReadyEmitted = false;
+  private networkProbeGeneration = 0;
   private runMode: RunMode = 'local';
   private activeLocalExampleKey = defaultLocalDeckExample().key;
   private lastNetworkUrl: string;
@@ -107,6 +112,7 @@ export class BrowserController {
   }
 
   dispose(): void {
+    this.cancelPendingNetworkProbe();
     this.stopTimerRuntimeLoop();
     this.unbindListeners();
   }
@@ -399,6 +405,7 @@ export class BrowserController {
   }
 
   private async setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void> {
+    this.cancelPendingNetworkProbe();
     this.runMode = mode;
     this.refs.runModeSelectEl.value = mode;
     this.applyModeUiState();
@@ -413,7 +420,7 @@ export class BrowserController {
 
     this.presenter.setStatus(WAVES_COPY.status.networkModeEnabled);
     this.refs.fetchUrlInput.value = this.lastNetworkUrl || defaultStartUrl();
-    await this.runStartupNetworkProbe();
+    this.startStartupNetworkProbe();
   }
 
   private async loadSelectedLocalDeck(): Promise<void> {
@@ -1018,9 +1025,11 @@ export class BrowserController {
           ? await this.hostClient.engineAdvanceTimeMs({ deltaMs: WAVES_CONFIG.engineTimerTickMs })
           : await this.navigation.applyEngineTimerTick(WAVES_CONFIG.engineTimerTickMs);
       if (this.runMode === 'local') {
-        this.presenter.setSnapshot(snapshot);
-        this.presenter.drawRenderList(await this.hostClient.engineRender());
-        this.syncLocalSessionFromSnapshot(snapshot);
+        if (shouldRenderTimerSnapshot(snapshot, this.presenter.getSessionState())) {
+          this.presenter.setSnapshot(snapshot);
+          this.presenter.drawRenderList(await this.hostClient.engineRender());
+          this.syncLocalSessionFromSnapshot(snapshot);
+        }
       }
       this.applyTimerRequestsFromSnapshot(snapshot);
       const expired = this.scriptTimerRegistry.advance(WAVES_CONFIG.engineTimerTickMs);
@@ -1062,6 +1071,7 @@ export class BrowserController {
   }
 
   private async runStartupNetworkProbe(): Promise<void> {
+    const probeGeneration = this.networkProbeGeneration;
     const targetUrl = this.refs.fetchUrlInput.value.trim();
     if (!targetUrl) {
       return;
@@ -1069,6 +1079,9 @@ export class BrowserController {
     this.lastNetworkUrl = targetUrl;
 
     for (let attempt = 1; attempt <= WAVES_CONFIG.networkProbeMaxAttempts; attempt += 1) {
+      if (!this.isCurrentNetworkProbe(probeGeneration)) {
+        return;
+      }
       this.presenter.recordTimeline('startup-network-probe', 'state', {
         attempt,
         targetUrl
@@ -1082,11 +1095,17 @@ export class BrowserController {
           retries: 0,
           requestPolicy: defaultRequestPolicyForSource('user', targetUrl)
         });
+        if (!this.isCurrentNetworkProbe(probeGeneration)) {
+          return;
+        }
         if (isProbeReachable(probe)) {
           this.presenter.setStatus(WAVES_COPY.status.readyNetwork);
           return;
         }
       } catch {
+        if (!this.isCurrentNetworkProbe(probeGeneration)) {
+          return;
+        }
         // Keep retrying on invocation errors.
       }
       if (attempt < WAVES_CONFIG.networkProbeMaxAttempts) {
@@ -1094,6 +1113,9 @@ export class BrowserController {
       }
     }
 
+    if (!this.isCurrentNetworkProbe(probeGeneration)) {
+      return;
+    }
     const message = WAVES_COPY.status.networkUnavailable;
     this.presenter.patchSessionState({
       navigationStatus: 'error',
@@ -1122,6 +1144,18 @@ export class BrowserController {
     return {
       Accept: WAP_ACCEPT_HEADER
     };
+  }
+
+  private startStartupNetworkProbe(): void {
+    void this.runStartupNetworkProbe();
+  }
+
+  private cancelPendingNetworkProbe(): void {
+    this.networkProbeGeneration += 1;
+  }
+
+  private isCurrentNetworkProbe(probeGeneration: number): boolean {
+    return probeGeneration === this.networkProbeGeneration && this.runMode === 'network';
   }
 }
 

@@ -389,7 +389,7 @@ const resolveTransportMethod = (
   return normalizeMethod(method);
 };
 
-const shouldRenderTimerSnapshot = (
+export const shouldRenderTimerSnapshot = (
   snapshot: EngineRuntimeSnapshot,
   session: HostSessionState
 ): boolean => {
