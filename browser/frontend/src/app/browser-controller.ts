@@ -5,14 +5,10 @@ import type {
 } from '../../../contracts/transport';
 import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
+import { EngineTimerRuntime } from './engine-timer-runtime';
 import { resolveKeyboardIntent } from './keyboard';
-import { isProbeReachable } from './network';
-import {
-  createNavigationStateMachine,
-  defaultRequestPolicyForSource,
-  shouldRenderTimerSnapshot
-} from './navigation-state';
-import { ScriptTimerRegistry } from './script-timer-registry';
+import { createNavigationStateMachine } from './navigation-state';
+import { StartupNetworkProbeController } from './startup-network-probe';
 import { defaultStartUrl } from './defaults';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
@@ -38,17 +34,15 @@ export class BrowserController {
   private readonly refs: BrowserShellRefs;
 
   private readonly navigation: ReturnType<typeof createNavigationStateMachine>;
+  private readonly startupProbe: StartupNetworkProbeController;
+  private readonly timerRuntime: EngineTimerRuntime;
 
   private readonly listenerCleanup: Array<() => void> = [];
 
   private listenersBound = false;
-  private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
-  private timerTickInFlight = false;
   private keyboardActionInFlight = false;
   private keyboardActionQueue: Promise<void> = Promise.resolve();
-  private readonly scriptTimerRegistry = new ScriptTimerRegistry();
   private bootDeckReadyEmitted = false;
-  private networkProbeGeneration = 0;
   private runMode: RunMode = 'local';
   private activeLocalExampleKey = defaultLocalDeckExample().key;
   private lastNetworkUrl: string;
@@ -82,6 +76,49 @@ export class BrowserController {
       },
       WAVES_CONFIG.maxExternalIntentHops
     );
+    this.startupProbe = new StartupNetworkProbeController({
+      fetchDeck: (request) => this.hostClient.fetchDeck(request),
+      getTargetUrl: () => this.refs.fetchUrlInput.value,
+      getRunMode: () => this.runMode,
+      setLastNetworkUrl: (url) => {
+        this.lastNetworkUrl = url;
+      },
+      recordTimeline: (action, details) => this.presenter.recordTimeline(action, 'state', details),
+      setStatus: (message) => this.presenter.setStatus(message),
+      patchSessionState: (patch) => this.presenter.patchSessionState(patch),
+      showToast: (message, tone) => this.presenter.showToast(message, tone),
+      createHeaders: () => this.defaultNavigationHeaders(),
+      wait
+    });
+    this.timerRuntime = new EngineTimerRuntime({
+      canTick: () => !this.keyboardActionInFlight,
+      getRunMode: () => this.runMode,
+      advanceLocal: (deltaMs) => this.hostClient.engineAdvanceTimeMs({ deltaMs }),
+      advanceNetwork: (deltaMs) => this.navigation.applyEngineTimerTick(deltaMs),
+      getSessionState: () => this.presenter.getSessionState(),
+      renderLocalSnapshot: async (snapshot) => {
+        this.presenter.setSnapshot(snapshot);
+        this.presenter.drawRenderList(await this.hostClient.engineRender());
+        this.syncLocalSessionFromSnapshot(snapshot);
+      },
+      handleExternalIntent: async (intentUrl, snapshot) => {
+        if (this.runMode === 'local') {
+          await this.handleExternalIntentInLocalMode(intentUrl);
+          return;
+        }
+        this.refs.fetchUrlInput.value = intentUrl;
+        await this.loadTransportUrl(
+          intentUrl,
+          'external-intent',
+          true,
+          true,
+          snapshot.externalNavigationRequestPolicy,
+          this.defaultNavigationHeaders()
+        );
+      },
+      recordTimeline: (action, phase, details) =>
+        this.presenter.recordTimeline(action, phase, details)
+    });
   }
 
   async init(sampleWml: string): Promise<void> {
@@ -105,15 +142,15 @@ export class BrowserController {
     this.populateLocalExampleOptions();
     this.renderActiveLocalExampleNotes();
     this.bindListeners();
-    this.startTimerRuntimeLoop();
+    this.timerRuntime.start();
     this.presenter.setBootPhase('engine-ready');
     const selectedMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
     await this.setRunMode(selectedMode, { loadLocalOnEnter: true });
   }
 
   dispose(): void {
-    this.cancelPendingNetworkProbe();
-    this.stopTimerRuntimeLoop();
+    this.startupProbe.cancel();
+    this.timerRuntime.stop();
     this.unbindListeners();
   }
 
@@ -137,7 +174,7 @@ export class BrowserController {
         'click',
         this.withAction('load-raw-wml', async () => {
           await this.setViewportCols();
-          this.scriptTimerRegistry.reset();
+          this.timerRuntime.resetScriptTimers();
           const snapshot = await this.hostClient.engineLoadDeckContext({
             wmlXml: this.refs.wmlInput.value,
             baseUrl: this.refs.baseUrlInput.value,
@@ -405,7 +442,7 @@ export class BrowserController {
   }
 
   private async setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void> {
-    this.cancelPendingNetworkProbe();
+    this.startupProbe.cancel();
     this.runMode = mode;
     this.refs.runModeSelectEl.value = mode;
     this.applyModeUiState();
@@ -420,7 +457,7 @@ export class BrowserController {
 
     this.presenter.setStatus(WAVES_COPY.status.networkModeEnabled);
     this.refs.fetchUrlInput.value = this.lastNetworkUrl || defaultStartUrl();
-    this.startStartupNetworkProbe();
+    this.startupProbe.start();
   }
 
   private async loadSelectedLocalDeck(): Promise<void> {
@@ -492,8 +529,8 @@ export class BrowserController {
         navigationSource: 'user',
         lastError: undefined
       });
-      this.scriptTimerRegistry.reset();
-      this.applyTimerRequestsFromSnapshot(snapshot);
+      this.timerRuntime.resetScriptTimers();
+      this.timerRuntime.applySnapshot(snapshot);
       this.presenter.setStatus(WAVES_COPY.status.loadedLocalDeck(example.label));
     } finally {
       if (needsFirstRenderSkeleton && !this.presenter.hasRenderedDeck()) {
@@ -692,7 +729,7 @@ export class BrowserController {
       this.presenter.drawRenderList(await this.hostClient.engineRender());
       this.syncLocalSessionFromSnapshot(snapshot);
     }
-    this.applyTimerRequestsFromSnapshot(snapshot);
+    this.timerRuntime.applySnapshot(snapshot);
     if (snapshot.externalNavigationIntent) {
       if (this.runMode === 'local') {
         await this.handleExternalIntentInLocalMode(snapshot.externalNavigationIntent);
@@ -945,8 +982,8 @@ export class BrowserController {
         headers
       });
       if (snapshot) {
-        this.scriptTimerRegistry.reset();
-        this.applyTimerRequestsFromSnapshot(snapshot);
+        this.timerRuntime.resetScriptTimers();
+        this.timerRuntime.applySnapshot(snapshot);
       }
 
       const state = this.navigation.getSessionState();
@@ -977,152 +1014,8 @@ export class BrowserController {
     }
   }
 
-  private startTimerRuntimeLoop(): void {
-    if (this.timerLoopHandle) {
-      return;
-    }
-    this.timerLoopHandle = setInterval(() => {
-      void this.tickEngineTimerRuntime();
-    }, WAVES_CONFIG.engineTimerTickMs);
-  }
-
-  private stopTimerRuntimeLoop(): void {
-    if (!this.timerLoopHandle) {
-      return;
-    }
-    clearInterval(this.timerLoopHandle);
-    this.timerLoopHandle = null;
-  }
-
-  private applyTimerRequestsFromSnapshot(_snapshot: EngineRuntimeSnapshot): void {
-    const applied = this.scriptTimerRegistry.applyRequests(_snapshot.lastScriptTimerRequests);
-    for (const scheduled of applied.scheduled) {
-      this.presenter.recordTimeline('script-timer-schedule', 'state', {
-        id: scheduled.id,
-        token: scheduled.token,
-        delayMs: scheduled.delayMs,
-        dueMs: scheduled.dueMs,
-        nowMs: this.scriptTimerRegistry.currentTimeMs()
-      });
-    }
-    for (const token of applied.cancelled) {
-      this.presenter.recordTimeline('script-timer-cancel', 'state', {
-        token,
-        nowMs: this.scriptTimerRegistry.currentTimeMs()
-      });
-    }
-  }
-
   private async tickEngineTimerRuntime(): Promise<void> {
-    if (this.timerTickInFlight || this.keyboardActionInFlight) {
-      return;
-    }
-    this.timerTickInFlight = true;
-    try {
-      const before = this.presenter.getSessionState().activeCardId;
-      const snapshot =
-        this.runMode === 'local'
-          ? await this.hostClient.engineAdvanceTimeMs({ deltaMs: WAVES_CONFIG.engineTimerTickMs })
-          : await this.navigation.applyEngineTimerTick(WAVES_CONFIG.engineTimerTickMs);
-      if (this.runMode === 'local') {
-        if (shouldRenderTimerSnapshot(snapshot, this.presenter.getSessionState())) {
-          this.presenter.setSnapshot(snapshot);
-          this.presenter.drawRenderList(await this.hostClient.engineRender());
-          this.syncLocalSessionFromSnapshot(snapshot);
-        }
-      }
-      this.applyTimerRequestsFromSnapshot(snapshot);
-      const expired = this.scriptTimerRegistry.advance(WAVES_CONFIG.engineTimerTickMs);
-      for (const timer of expired) {
-        this.presenter.recordTimeline('script-timer-expire', 'state', {
-          id: timer.id,
-          token: timer.token,
-          dueMs: timer.dueMs,
-          nowMs: this.scriptTimerRegistry.currentTimeMs()
-        });
-      }
-      if (snapshot.externalNavigationIntent) {
-        if (this.runMode === 'local') {
-          await this.handleExternalIntentInLocalMode(snapshot.externalNavigationIntent);
-        } else {
-          this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
-          await this.loadTransportUrl(
-            snapshot.externalNavigationIntent,
-            'external-intent',
-            true,
-            true,
-            snapshot.externalNavigationRequestPolicy,
-            this.defaultNavigationHeaders()
-          );
-        }
-      }
-      if (before && snapshot.activeCardId && before !== snapshot.activeCardId) {
-        this.presenter.recordTimeline('engine-timer-transition', 'state', {
-          from: before,
-          to: snapshot.activeCardId
-        });
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.presenter.recordTimeline('engine-timer-tick', 'error', { message });
-    } finally {
-      this.timerTickInFlight = false;
-    }
-  }
-
-  private async runStartupNetworkProbe(): Promise<void> {
-    const probeGeneration = this.networkProbeGeneration;
-    const targetUrl = this.refs.fetchUrlInput.value.trim();
-    if (!targetUrl) {
-      return;
-    }
-    this.lastNetworkUrl = targetUrl;
-
-    for (let attempt = 1; attempt <= WAVES_CONFIG.networkProbeMaxAttempts; attempt += 1) {
-      if (!this.isCurrentNetworkProbe(probeGeneration)) {
-        return;
-      }
-      this.presenter.recordTimeline('startup-network-probe', 'state', {
-        attempt,
-        targetUrl
-      });
-      try {
-        const probe = await this.hostClient.fetchDeck({
-          url: targetUrl,
-          method: 'GET',
-          headers: this.defaultNavigationHeaders(),
-          timeoutMs: WAVES_CONFIG.networkProbeTimeoutMs,
-          retries: 0,
-          requestPolicy: defaultRequestPolicyForSource('user', targetUrl)
-        });
-        if (!this.isCurrentNetworkProbe(probeGeneration)) {
-          return;
-        }
-        if (isProbeReachable(probe)) {
-          this.presenter.setStatus(WAVES_COPY.status.readyNetwork);
-          return;
-        }
-      } catch {
-        if (!this.isCurrentNetworkProbe(probeGeneration)) {
-          return;
-        }
-        // Keep retrying on invocation errors.
-      }
-      if (attempt < WAVES_CONFIG.networkProbeMaxAttempts) {
-        await wait(WAVES_CONFIG.networkProbeDelayMs);
-      }
-    }
-
-    if (!this.isCurrentNetworkProbe(probeGeneration)) {
-      return;
-    }
-    const message = WAVES_COPY.status.networkUnavailable;
-    this.presenter.patchSessionState({
-      navigationStatus: 'error',
-      lastError: message
-    });
-    this.presenter.setStatus(message);
-    this.presenter.showToast(message, 'error');
+    await this.timerRuntime.tick();
   }
 
   private bindKeyButton(id: string, key: EngineKey): void {
@@ -1144,18 +1037,6 @@ export class BrowserController {
     return {
       Accept: WAP_ACCEPT_HEADER
     };
-  }
-
-  private startStartupNetworkProbe(): void {
-    void this.runStartupNetworkProbe();
-  }
-
-  private cancelPendingNetworkProbe(): void {
-    this.networkProbeGeneration += 1;
-  }
-
-  private isCurrentNetworkProbe(probeGeneration: number): boolean {
-    return probeGeneration === this.networkProbeGeneration && this.runMode === 'network';
   }
 }
 
