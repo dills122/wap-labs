@@ -98,6 +98,56 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
 }
 
 #[test]
+fn tauri_command_wrappers_cover_viewport_and_direct_navigation_paths() {
+    let state = AppState::default();
+
+    let loaded = super::super::engine_load_deck(
+        borrowed_state(&state),
+        LoadDeckRequest {
+            wml_xml: BASIC_NAV_WML.to_string(),
+        },
+    )
+    .expect("load should succeed");
+    assert_eq!(loaded.active_card_id.as_deref(), Some("home"));
+
+    let resized = super::super::engine_set_viewport_cols(
+        borrowed_state(&state),
+        SetViewportColsRequest { cols: 10 },
+    )
+    .expect("viewport resize should succeed");
+    assert_eq!(resized.active_card_id.as_deref(), Some("home"));
+
+    let navigated = super::super::engine_navigate_to_card(
+        borrowed_state(&state),
+        NavigateToCardRequest {
+            card_id: "next".to_string(),
+        },
+    )
+    .expect("direct card navigation should succeed");
+    assert_eq!(navigated.active_card_id.as_deref(), Some("next"));
+
+    let snapshot =
+        super::super::engine_snapshot(borrowed_state(&state)).expect("snapshot should succeed");
+    assert_eq!(snapshot.active_card_id.as_deref(), Some("next"));
+
+    let frame = super::super::engine_navigate_to_card_frame(
+        borrowed_state(&state),
+        NavigateToCardRequest {
+            card_id: "home".to_string(),
+        },
+    )
+    .expect("direct frame navigation should succeed");
+    assert_eq!(frame.snapshot.active_card_id.as_deref(), Some("home"));
+    assert!(
+        frame.render.draw.iter().any(|cmd| match cmd {
+            DrawCmd::Text { text, .. } => text.contains("Hello from Waves"),
+            DrawCmd::Link { text, .. } => text.contains("Next"),
+        }),
+        "frame navigation render should include deck content"
+    );
+}
+
+#[test]
 fn tauri_fetch_deck_command_executes_through_async_boundary() {
     let response = tauri::async_runtime::block_on(super::super::fetch_deck(FetchDeckRequest {
         url: "http://example.test".to_string(),
@@ -149,6 +199,26 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
     let after_clear = super::super::engine_clear_external_navigation_intent(borrowed_state(&state))
         .expect("clear should succeed");
     assert_eq!(after_clear.external_navigation_intent, None);
+
+    let after_enter_frame = super::super::engine_handle_key_frame(
+        borrowed_state(&state),
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("frame enter should set external intent");
+    assert_eq!(
+        after_enter_frame
+            .snapshot
+            .external_navigation_intent
+            .as_deref(),
+        Some("http://local.test/dir/next.wml?foo=1")
+    );
+
+    let after_clear_frame =
+        super::super::engine_clear_external_navigation_intent_frame(borrowed_state(&state))
+            .expect("frame clear should succeed");
+    assert_eq!(after_clear_frame.snapshot.external_navigation_intent, None);
 
     let timer_state = AppState::default();
     let xml = r##"
