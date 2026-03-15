@@ -3,6 +3,10 @@
 Status: planning-ready
 Owner lane: `engine-wasm` + `browser`
 
+Related reference:
+
+- `docs/waves/ENGINE_DEBUG_CONNECTOR_RESEARCH.md`
+
 ## Purpose
 
 Define an attachable debug connector for the running WML engine so a host-integrated debugger or external tool can observe runtime state and event flow without mutating core engine behavior.
