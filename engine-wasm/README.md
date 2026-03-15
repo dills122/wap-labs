@@ -136,12 +136,18 @@ Supported elements:
 - `<br/>`
 - `<a href="...">`
 - `#cardId` navigation
+- text-style `<input>` edit/commit/cancel baseline
+- single-select `<select>/<option>` interaction baseline
+- deterministic timer simulation through `advanceTimeMs(...)`
 
-Ignored in MVP:
+Still out of scope or partial:
 
-- `<input>`, `<select>`, timers, images, tables
+- multi-select behavior
+- advanced input-mask validation semantics
+- images, tables, and broader markup breadth
+- remaining timer/dialog host-integration closure tracked by `W0-05`
 
-Partially supported (phase W0 baseline):
+Partially supported (phase W0 baseline and active follow-ons):
 
 - Script href execution for registered `.wmlsc` units
 - `WMLBrowser` subset: `getVar`, `setVar`, `go`, `prev`
@@ -197,13 +203,12 @@ Type contract:
 
 ## Next implementation slice
 
-1. Execute committed bedrock sprint engine-impacting tickets:
+1. Execute the active engine-impacting runtime lane:
 - `A5-01` history entry fidelity
-- `R0-02` process-order conformance support
-- `R0-03` history/context fidelity closure
-- `W0-06` bytecode verification gates (with `W1-02` as stretch closure)
-2. Keep `A5-03` and `B5-01` queued immediately after sprint closure.
-3. Keep `M1-03` as non-priority generator design/bootstrap follow-up.
+- `W0-05` timer/dialog integration baseline
+- `D0-01` debug connector contract/architecture definition
+2. Keep `W1-06` next after the active runtime lane stabilizes.
+3. Keep `A5-03`, `B5-01`, and `M1-03` queued as follow-on work, not current sprint drivers.
 
 ## Current checklist (planning/execution)
 
@@ -214,6 +219,9 @@ Type contract:
 - [x] Harden parser robustness for malformed/edge markup fixtures (`M1-07`)
 - [x] Decompose high-churn engine file boundaries without behavior changes (`M1-08`, engine scope)
 - [ ] Implement history fidelity follow-up (`A5-01`)
+- [x] Implement minimal text-input interaction baseline (`A5-04`)
+- [x] Implement select/option interaction baseline (`A5-05`)
+- [x] Implement active MVP form-submit hardening slice (`A5-06`)
 - [x] Implement inter-card task pipeline conformance follow-up (`A5-02`)
 - [ ] Implement WML timer lifecycle follow-up (`A5-03`)
 - [ ] Implement input-mask/commit semantics follow-up (`B5-01`)

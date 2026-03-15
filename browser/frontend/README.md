@@ -1,15 +1,14 @@
-# Frontend Shell (Placeholder)
+# Frontend Shell
 
-Future Tauri webview UI shell for the Waves desktop host.
+Frontend UI shell for the Waves desktop host.
 
-Planned responsibilities:
+Current responsibilities:
 
 - URL entry and navigation controls
 - WAP viewport hosting with softkey/input bindings
-- Runtime/debug state panels
-- Integration glue to invoke Tauri commands
-
-This is intentionally a placeholder until the first fetch/render vertical slice is implemented.
+- runtime/debug state panels
+- local/network mode orchestration
+- integration glue to invoke Tauri host commands
 
 Current backend harness commands are available in Tauri (`src-tauri/src/lib.rs`) for
 frontend integration:
@@ -36,12 +35,15 @@ This frontend now includes a browser-style shell with a hidden developer harness
 - local example source of truth is `engine-wasm/examples/generated/examples.ts` (mapped into frontend local mode)
 - local-only example notes panel (collapsed by default) shows metadata + testing AC for the selected local deck
 - local mode captures external form/link intents for inspection instead of fetching them
+- focused text-input and single-select edit flows are driven by engine-owned state, not browser shadow state
 - automatic external intent follow loop (`externalNavigationIntent` fetch/load cycle)
 - debug-only raw WML textarea path (`Load Raw WML (Debug)`)
 - key driving (`up`, `down`, `enter`)
 - render output viewport
 - runtime snapshot panel
 - deterministic event timeline panel + JSON export path for bug triage artifacts
+- developer-panel serialization is gated behind the drawer being open to avoid hot-path churn
+- startup probe, navigation, and host fetch paths have been reduced to avoid unnecessary UI blocking
 
 Developer tools drawer:
 
@@ -51,6 +53,12 @@ Developer tools drawer:
 Session stack helpers:
 
 - `src/session-history.ts` centralizes host URL/card history behavior used by browser back fallback.
+
+Coordinator modules:
+
+- `src/app/startup-network-probe.ts`
+- `src/app/engine-timer-runtime.ts`
+- `src/app/focused-control-edit.ts`
 
 UI component baseline:
 
@@ -87,6 +95,7 @@ Local checks:
 pnpm --dir browser/frontend lint
 pnpm --dir browser/frontend typecheck
 pnpm --dir browser/frontend test
+pnpm --dir browser/frontend test:coverage
 ```
 
 Run from `browser/`:
@@ -101,3 +110,10 @@ Optional startup URL override:
 ```bash
 VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
 ```
+
+Current priority follows the main Waves board:
+
+1. `A5-01` history/session fidelity follow-up
+2. `W0-05` timer/dialog integration baseline
+3. `D0-01` debug connector contract/architecture definition
+4. `M1-09` frame migration only after those stabilize
