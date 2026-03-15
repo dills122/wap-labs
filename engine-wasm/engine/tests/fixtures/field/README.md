@@ -17,9 +17,10 @@ Current files:
 - Future-phase: `template`, `do`, `go`, `prev` task model.
 
 3. `openwave-2011-example-05-forms-variables.wml`
-- Future-phase: forms/inputs/select + variable substitution (`$(var)`).
+- Active manual-test fixture candidate for forms/inputs/select + variable substitution (`$(var)`).
 
 Notes:
 
 - These are normalized from the PDF for consistent testing.
 - Keep one fixture per semantic cluster; avoid over-editing original intent.
+- Local-mode manual test reference: `docs/waves/FORM_HANDLING_LOCAL_MODE_TESTING.md`

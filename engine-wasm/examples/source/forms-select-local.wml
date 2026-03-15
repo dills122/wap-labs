@@ -1,0 +1,29 @@
+<!--
+label: Forms Select (Local)
+work-items: A5-05, A5-06
+spec-items: WML-R-019, RQ-RMK-003, RQ-RMK-008
+description: Local-mode form example for single-select option cycling, commit, cancel, and captured submit intent.
+goal: Verify engine-owned select state cycles deterministically, survives commit/cancel, and feeds a local-only submit intent.
+testing-ac:
+- Load the example in Waves local mode and verify the default selected country is rendered.
+- Focus the Country select, press Enter, then ArrowDown to cycle through options.
+- Press Escape once and confirm the select returns to the original committed option.
+- Re-enter select edit, cycle to a new option, press Enter to commit, then submit and confirm local mode captures the external intent.
+-->
+<wml>
+  <card id="profile" title="Local Select">
+    <p>
+      Country:
+      <select name="Country" title="Country">
+        <option value="Jordan">Jordan</option>
+        <option value="France">France</option>
+        <option value="Germany">Germany</option>
+      </select>
+    </p>
+    <do type="accept">
+      <go method="post" href="/profile">
+        <postfield name="Country" value="$(Country)"/>
+      </go>
+    </do>
+  </card>
+</wml>

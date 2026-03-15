@@ -22,6 +22,7 @@ import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
 type RunMode = 'local' | 'network';
+type ControlEditDisposition = 'unhandled' | 'handled' | 'handled-stop';
 
 const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
 
@@ -572,8 +573,12 @@ export class BrowserController {
       this.enqueueKeyboardAction(async () => {
         await this.withAction(`keyboard-${intent.key}`, async () => {
           if (this.shouldRouteKeyToControlEdit(event)) {
-            const handled = await this.applyFocusedControlEditKey(event.key);
-            if (handled && intent.key !== 'enter') {
+            const disposition = await this.applyFocusedControlEditKey(event.key);
+            if (disposition === 'handled-stop') {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+              return;
+            }
+            if (disposition === 'handled' && intent.key !== 'enter') {
               this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
               return;
             }
@@ -717,18 +722,39 @@ export class BrowserController {
     return event.key.length === 1;
   }
 
-  private async applyFocusedControlEditKey(key: string): Promise<boolean> {
+  private async applyFocusedControlEditKey(key: string): Promise<ControlEditDisposition> {
     const initial = this.presenter.getSnapshot() ?? (await this.hostClient.engineSnapshot());
     if (initial.focusedSelectEditName) {
       return this.applyFocusedSelectEditKey(initial, key);
     }
-    if (
-      (key === 'Enter' || key === 'ArrowUp' || key === 'ArrowDown') &&
-      !initial.focusedInputEditName
-    ) {
+    if (key === 'Enter' && !initial.focusedInputEditName) {
       const selectSnapshot = await this.hostClient.engineBeginFocusedSelectEdit();
       if (selectSnapshot.focusedSelectEditName) {
-        return this.applyFocusedSelectEditKey(selectSnapshot, key);
+        this.presenter.setSnapshot(selectSnapshot);
+        this.presenter.drawRenderList(await this.hostClient.engineRender());
+        if (this.runMode === 'local') {
+          this.syncLocalSessionFromSnapshotWithOptions(selectSnapshot, false);
+        } else {
+          const patch: Partial<HostSessionState> = {
+            activeCardId: selectSnapshot.activeCardId,
+            focusedLinkIndex: selectSnapshot.focusedLinkIndex,
+            externalNavigationIntent: selectSnapshot.externalNavigationIntent,
+            lastError: undefined
+          };
+          this.presenter.setSessionState({
+            ...this.presenter.getSessionState(),
+            ...patch
+          });
+        }
+        this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
+          key,
+          handled: true,
+          focusedSelectEditName: selectSnapshot.focusedSelectEditName ?? null,
+          focusedSelectEditValue: selectSnapshot.focusedSelectEditValue ?? null,
+          focusedLinkIndex: selectSnapshot.focusedLinkIndex,
+          phase: 'engaged'
+        });
+        return 'handled-stop';
       }
     }
     return this.applyFocusedInputEditKey(initial, key);
@@ -737,7 +763,7 @@ export class BrowserController {
   private async applyFocusedInputEditKey(
     initialSnapshot: EngineRuntimeSnapshot,
     key: string
-  ): Promise<boolean> {
+  ): Promise<ControlEditDisposition> {
     let snapshot = initialSnapshot;
     if (!snapshot.focusedInputEditName && key.length === 1) {
       snapshot = await this.hostClient.engineBeginFocusedInputEdit();
@@ -750,7 +776,7 @@ export class BrowserController {
         focusedInputEditValue: null,
         focusedLinkIndex: snapshot.focusedLinkIndex
       });
-      return false;
+      return 'unhandled';
     }
 
     if (key === 'Enter') {
@@ -771,7 +797,7 @@ export class BrowserController {
         focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
         focusedLinkIndex: snapshot.focusedLinkIndex
       });
-      return false;
+      return 'unhandled';
     }
 
     this.presenter.setSnapshot(snapshot);
@@ -797,16 +823,16 @@ export class BrowserController {
       focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
       focusedLinkIndex: snapshot.focusedLinkIndex
     });
-    return true;
+    return 'handled';
   }
 
   private async applyFocusedSelectEditKey(
     initialSnapshot: EngineRuntimeSnapshot,
     key: string
-  ): Promise<boolean> {
+  ): Promise<ControlEditDisposition> {
     let snapshot = initialSnapshot;
     if (!snapshot.focusedSelectEditName) {
-      return false;
+      return 'unhandled';
     }
 
     if (key === 'Enter') {
@@ -825,7 +851,7 @@ export class BrowserController {
         focusedSelectEditValue: snapshot.focusedSelectEditValue ?? null,
         focusedLinkIndex: snapshot.focusedLinkIndex
       });
-      return false;
+      return 'unhandled';
     }
 
     this.presenter.setSnapshot(snapshot);
@@ -851,7 +877,7 @@ export class BrowserController {
       focusedSelectEditValue: snapshot.focusedSelectEditValue ?? null,
       focusedLinkIndex: snapshot.focusedLinkIndex
     });
-    return true;
+    return 'handled-stop';
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {

@@ -213,6 +213,72 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//OPENWAVE.COM//DTD WML 1.3//EN\"\n\"http://www.openwave.com/dtd/wml13.dtd\">\n<wml>\n  <card id=\"main\" title=\"Wireless Programming\">\n    <p align=\"center\" mode=\"wrap\">\n      Welcome to our <em>Online Mobile Course</em><br/>\n      <big><strong>Wireless Programming</strong></big>\n    </p>\n    <p>To Continue Click <a href=\"#content\">Here</a></p>\n  </card>\n  <card id=\"content\" title=\"Services\">\n    <p>\n      List of our services<br/>\n      <a href=\"dictionary.wml\">WAP Dictionary</a><br/>\n      <a href=\"Lectures.wml\">WAP Lectures</a><br/>\n      <a href=\"Quizes.wml\">WAP Quizes</a><br/>\n      <a href=\"Assignments.wml\">WAP Assignments</a><br/>\n      <a href=\"FAQ.wml\">WAP FAQ</a><br/>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "formsSelectLocal",
+    "label": "Forms Select (Local)",
+    "description": "Local-mode form example for single-select option cycling, commit, cancel, and captured submit intent.",
+    "goal": "Verify engine-owned select state cycles deterministically, survives commit/cancel, and feeds a local-only submit intent.",
+    "workItems": [
+      "A5-05",
+      "A5-06"
+    ],
+    "specItems": [
+      "WML-R-019",
+      "RQ-RMK-003",
+      "RQ-RMK-008"
+    ],
+    "testingAc": [
+      "Load the example in Waves local mode and verify the default selected country is rendered.",
+      "Focus the Country select, press Enter, then ArrowDown to cycle through options.",
+      "Press Escape once and confirm the select returns to the original committed option.",
+      "Re-enter select edit, cycle to a new option, press Enter to commit, then submit and confirm local mode captures the external intent."
+    ],
+    "wml": "<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n      </go>\n    </do>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "formsSelectNavigationLocal",
+    "label": "Forms Select + Navigation (Local)",
+    "description": "Local-mode select example with surrounding links and inputs to verify entering, exiting, and moving focus away from select edit mode.",
+    "goal": "Verify select edit can be engaged, committed or canceled, and then cleanly disengaged so focus navigation resumes across other page items.",
+    "workItems": [
+      "A5-05",
+      "A5-06"
+    ],
+    "specItems": [
+      "WML-R-019",
+      "RQ-RMK-003",
+      "RQ-RMK-008"
+    ],
+    "testingAc": [
+      "Load the example in Waves local mode and confirm the first focus target is the \"Help\" link.",
+      "Move focus to the Country select, press Enter to begin edit, then ArrowDown to change the draft option.",
+      "Press Enter to commit and confirm a subsequent ArrowDown moves focus to the PIN input instead of changing Country again.",
+      "Re-enter Country edit, change the draft option, then press Escape and confirm the original committed option remains visible.",
+      "Submit the card and confirm Waves captures the local-mode external intent without fetching."
+    ],
+    "wml": "<wml>\n  <card id=\"profile\" title=\"Select Navigation\">\n    <p><a href=\"#help\">Help</a></p>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n        <option value=\"Japan\">Japan</option>\n      </select>\n    </p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <p><a href=\"#review\">Review</a></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n  </card>\n  <card id=\"help\" title=\"Help\">\n    <p>Use Enter to begin or commit select edit.</p>\n    <p>Use Escape to cancel select edit.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n  <card id=\"review\" title=\"Review\">\n    <p>Review card reached through normal focus navigation.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "formsTextSubmitLocal",
+    "label": "Forms Text Submit (Local)",
+    "description": "Local-mode form example for text and password input editing with captured POST intent.",
+    "goal": "Verify engine-owned text form state commits deterministically and local mode captures submit intent without fetching.",
+    "workItems": [
+      "A5-04",
+      "A5-06"
+    ],
+    "specItems": [
+      "WML-R-019",
+      "RQ-RMK-008"
+    ],
+    "testingAc": [
+      "Load the example in Waves local mode and confirm activeCardId starts at login.",
+      "Press Enter on the username field, type a new value, and press Enter to commit.",
+      "Move to the PIN field, type digits, and confirm the viewport masks the committed value.",
+      "Submit the card and confirm Waves reports a captured external intent instead of performing a fetch."
+    ],
+    "wml": "<wml>\n  <card id=\"login\" title=\"Local Login\">\n    <p>User: <input name=\"username\" value=\"AHMED\" type=\"text\"/></p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/login\">\n        <postfield name=\"username\" value=\"$(username)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "historyBackProcessOrder",
     "label": "History Back Process Order",
     "description": "Exercises multi-step fragment navigation and deterministic back traversal order.",
