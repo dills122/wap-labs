@@ -1,21 +1,21 @@
-import type { EngineRuntimeSnapshot } from '../../../contracts/engine';
+import type { EngineFrame, EngineRuntimeSnapshot } from '../../../contracts/engine';
 
 export type ControlEditDisposition = 'unhandled' | 'handled' | 'handled-stop';
 
 export interface FocusedControlEditHost {
   getSnapshot(): EngineRuntimeSnapshot | null;
   loadSnapshot(): Promise<EngineRuntimeSnapshot>;
-  renderSnapshot(snapshot: EngineRuntimeSnapshot): Promise<void>;
   syncSnapshot(snapshot: EngineRuntimeSnapshot): void;
   recordTimeline(action: string, details: Record<string, unknown>): void;
-  beginFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
-  setFocusedInputEditDraft(value: string): Promise<EngineRuntimeSnapshot>;
-  commitFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
-  cancelFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
-  beginFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
-  moveFocusedSelectEdit(delta: number): Promise<EngineRuntimeSnapshot>;
-  commitFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
-  cancelFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
+  applyFrame(frame: EngineFrame): void;
+  beginFocusedInputEdit(): Promise<EngineFrame>;
+  setFocusedInputEditDraft(value: string): Promise<EngineFrame>;
+  commitFocusedInputEdit(): Promise<EngineFrame>;
+  cancelFocusedInputEdit(): Promise<EngineFrame>;
+  beginFocusedSelectEdit(): Promise<EngineFrame>;
+  moveFocusedSelectEdit(delta: number): Promise<EngineFrame>;
+  commitFocusedSelectEdit(): Promise<EngineFrame>;
+  cancelFocusedSelectEdit(): Promise<EngineFrame>;
 }
 
 export class FocusedControlEditController {
@@ -27,9 +27,10 @@ export class FocusedControlEditController {
       return this.applyFocusedSelectEditKey(initial, key);
     }
     if (key === 'Enter' && !initial.focusedInputEditName) {
-      const selectSnapshot = await this.host.beginFocusedSelectEdit();
+      const selectFrame = await this.host.beginFocusedSelectEdit();
+      const selectSnapshot = selectFrame.snapshot;
       if (selectSnapshot.focusedSelectEditName) {
-        await this.applyInteractiveSnapshot(selectSnapshot);
+        this.applyInteractiveFrame(selectFrame);
         this.host.recordTimeline('keyboard-select-edit-state', {
           key,
           handled: true,
@@ -50,7 +51,7 @@ export class FocusedControlEditController {
   ): Promise<ControlEditDisposition> {
     let snapshot = initialSnapshot;
     if (!snapshot.focusedInputEditName && key.length === 1) {
-      snapshot = await this.host.beginFocusedInputEdit();
+      snapshot = (await this.host.beginFocusedInputEdit()).snapshot;
     }
     if (!snapshot.focusedInputEditName) {
       this.host.recordTimeline('keyboard-input-edit-state', {
@@ -63,16 +64,17 @@ export class FocusedControlEditController {
       return 'unhandled';
     }
 
+    let frame: EngineFrame;
     if (key === 'Enter') {
-      snapshot = await this.host.commitFocusedInputEdit();
+      frame = await this.host.commitFocusedInputEdit();
     } else if (key === 'Escape') {
-      snapshot = await this.host.cancelFocusedInputEdit();
+      frame = await this.host.cancelFocusedInputEdit();
     } else if (key === 'Backspace') {
-      snapshot = await this.host.setFocusedInputEditDraft(
+      frame = await this.host.setFocusedInputEditDraft(
         (snapshot.focusedInputEditValue ?? '').slice(0, -1)
       );
     } else if (key.length === 1) {
-      snapshot = await this.host.setFocusedInputEditDraft(
+      frame = await this.host.setFocusedInputEditDraft(
         `${snapshot.focusedInputEditValue ?? ''}${key}`
       );
     } else {
@@ -86,7 +88,8 @@ export class FocusedControlEditController {
       return 'unhandled';
     }
 
-    await this.applyInteractiveSnapshot(snapshot);
+    snapshot = frame.snapshot;
+    this.applyInteractiveFrame(frame);
     this.host.recordTimeline('keyboard-input-edit-state', {
       key,
       handled: true,
@@ -106,14 +109,15 @@ export class FocusedControlEditController {
       return 'unhandled';
     }
 
+    let frame: EngineFrame;
     if (key === 'Enter') {
-      snapshot = await this.host.commitFocusedSelectEdit();
+      frame = await this.host.commitFocusedSelectEdit();
     } else if (key === 'Escape') {
-      snapshot = await this.host.cancelFocusedSelectEdit();
+      frame = await this.host.cancelFocusedSelectEdit();
     } else if (key === 'ArrowUp') {
-      snapshot = await this.host.moveFocusedSelectEdit(-1);
+      frame = await this.host.moveFocusedSelectEdit(-1);
     } else if (key === 'ArrowDown') {
-      snapshot = await this.host.moveFocusedSelectEdit(1);
+      frame = await this.host.moveFocusedSelectEdit(1);
     } else {
       this.host.recordTimeline('keyboard-select-edit-state', {
         key,
@@ -125,7 +129,8 @@ export class FocusedControlEditController {
       return 'unhandled';
     }
 
-    await this.applyInteractiveSnapshot(snapshot);
+    snapshot = frame.snapshot;
+    this.applyInteractiveFrame(frame);
     this.host.recordTimeline('keyboard-select-edit-state', {
       key,
       handled: true,
@@ -136,8 +141,8 @@ export class FocusedControlEditController {
     return 'handled-stop';
   }
 
-  private async applyInteractiveSnapshot(snapshot: EngineRuntimeSnapshot): Promise<void> {
-    await this.host.renderSnapshot(snapshot);
-    this.host.syncSnapshot(snapshot);
+  private applyInteractiveFrame(frame: EngineFrame): void {
+    this.host.applyFrame(frame);
+    this.host.syncSnapshot(frame.snapshot);
   }
 }

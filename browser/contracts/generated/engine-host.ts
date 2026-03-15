@@ -31,6 +31,8 @@ export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalN
 
 export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
+export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, };
+
 export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | { "type": "link", x: number, y: number, text: string, focused: boolean, href: string, };
 
 export type RenderList = { draw: Array<DrawCmd>, };
@@ -38,20 +40,35 @@ export type RenderList = { draw: Array<DrawCmd>, };
 export interface EngineHostClient {
     loadDeck(request: LoadDeckRequest): Promise<EngineRuntimeSnapshot>;
     loadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;
+    loadDeckContextFrame(request: LoadDeckContextRequest): Promise<EngineFrame>;
     render(): Promise<RenderList>;
+    renderFrame(): Promise<EngineFrame>;
     handleKey(request: HandleKeyRequest): Promise<EngineRuntimeSnapshot>;
+    handleKeyFrame(request: HandleKeyRequest): Promise<EngineFrame>;
     navigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
+    navigateToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
     navigateBack(): Promise<EngineRuntimeSnapshot>;
+    navigateBackFrame(): Promise<EngineFrame>;
     setViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
     advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
+    advanceTimeMsFrame(request: AdvanceTimeRequest): Promise<EngineFrame>;
     snapshot(): Promise<EngineRuntimeSnapshot>;
     clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
+    clearExternalNavigationIntentFrame(): Promise<EngineFrame>;
     beginFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
+    beginFocusedInputEditFrame(): Promise<EngineFrame>;
     setFocusedInputEditDraft(request: SetFocusedInputEditDraftRequest): Promise<EngineRuntimeSnapshot>;
+    setFocusedInputEditDraftFrame(request: SetFocusedInputEditDraftRequest): Promise<EngineFrame>;
     commitFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
+    commitFocusedInputEditFrame(): Promise<EngineFrame>;
     cancelFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
+    cancelFocusedInputEditFrame(): Promise<EngineFrame>;
     beginFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
+    beginFocusedSelectEditFrame(): Promise<EngineFrame>;
     moveFocusedSelectEdit(request: MoveFocusedSelectEditRequest): Promise<EngineRuntimeSnapshot>;
+    moveFocusedSelectEditFrame(request: MoveFocusedSelectEditRequest): Promise<EngineFrame>;
     commitFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
+    commitFocusedSelectEditFrame(): Promise<EngineFrame>;
     cancelFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
+    cancelFocusedSelectEditFrame(): Promise<EngineFrame>;
 }

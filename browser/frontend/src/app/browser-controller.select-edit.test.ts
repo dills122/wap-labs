@@ -3,7 +3,7 @@ import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
 import { BrowserPresenter } from './browser-presenter';
-import { renderStub, snapshot } from './navigation-state.test-helpers';
+import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
 
 const createRefs = (): BrowserShellRefs => {
   const viewportEl = document.createElement('div');
@@ -85,6 +85,14 @@ describe('BrowserController select edit keyboard routing', () => {
         focusedSelectEditValue: 'Jordan'
       })
     );
+    const engineBeginFocusedSelectEditFrame = vi.fn(async () =>
+      frame({
+        activeCardId: 'profile',
+        focusedLinkIndex: 1,
+        focusedSelectEditName: 'Country',
+        focusedSelectEditValue: 'Jordan'
+      })
+    );
     const engineCommitFocusedSelectEdit = vi.fn(async () =>
       snapshot({
         activeCardId: 'profile',
@@ -96,12 +104,18 @@ describe('BrowserController select edit keyboard routing', () => {
       fetchDeck: vi.fn(),
       engineLoadDeck: vi.fn(),
       engineLoadDeckContext: vi.fn(),
+      engineLoadDeckContextFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineRender: vi.fn(async () => renderStub),
+      engineRenderFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineHandleKey,
+      engineHandleKeyFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineNavigateToCard: vi.fn(),
+      engineNavigateToCardFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineNavigateBack: vi.fn(),
+      engineNavigateBackFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineSetViewportCols: vi.fn(),
       engineAdvanceTimeMs: vi.fn(),
+      engineAdvanceTimeMsFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineSnapshot: vi.fn(async () =>
         snapshot({
           activeCardId: 'profile',
@@ -109,21 +123,32 @@ describe('BrowserController select edit keyboard routing', () => {
         })
       ),
       engineClearExternalNavigationIntent: vi.fn(),
+      engineClearExternalNavigationIntentFrame: vi.fn(async () =>
+        frame({ activeCardId: 'profile' })
+      ),
       engineBeginFocusedInputEdit: vi.fn(),
+      engineBeginFocusedInputEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineSetFocusedInputEditDraft: vi.fn(),
+      engineSetFocusedInputEditDraftFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineCommitFocusedInputEdit: vi.fn(),
+      engineCommitFocusedInputEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineCancelFocusedInputEdit: vi.fn(),
+      engineCancelFocusedInputEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineBeginFocusedSelectEdit,
+      engineBeginFocusedSelectEditFrame,
       engineMoveFocusedSelectEdit: vi.fn(),
+      engineMoveFocusedSelectEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineCommitFocusedSelectEdit,
-      engineCancelFocusedSelectEdit: vi.fn()
+      engineCommitFocusedSelectEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
+      engineCancelFocusedSelectEdit: vi.fn(),
+      engineCancelFocusedSelectEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' }))
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
     (controller as any).handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
     await (controller as any).keyboardActionQueue;
 
-    expect(engineBeginFocusedSelectEdit).toHaveBeenCalledTimes(1);
+    expect(engineBeginFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineCommitFocusedSelectEdit).not.toHaveBeenCalled();
     expect(engineHandleKey).not.toHaveBeenCalled();
     expect(presenter.getSnapshot()?.focusedSelectEditName).toBe('Country');
@@ -148,17 +173,29 @@ describe('BrowserController select edit keyboard routing', () => {
         focusedLinkIndex: 1
       })
     );
+    const engineCommitFocusedSelectEditFrame = vi.fn(async () =>
+      frame({
+        activeCardId: 'profile',
+        focusedLinkIndex: 1
+      })
+    );
     const hostClient = {
       health: vi.fn(async () => 'ok'),
       fetchDeck: vi.fn(),
       engineLoadDeck: vi.fn(),
       engineLoadDeckContext: vi.fn(),
+      engineLoadDeckContextFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineRender: vi.fn(async () => renderStub),
+      engineRenderFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineHandleKey,
+      engineHandleKeyFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineNavigateToCard: vi.fn(),
+      engineNavigateToCardFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineNavigateBack: vi.fn(),
+      engineNavigateBackFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineSetViewportCols: vi.fn(),
       engineAdvanceTimeMs: vi.fn(),
+      engineAdvanceTimeMsFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineSnapshot: vi.fn(async () =>
         snapshot({
           activeCardId: 'profile',
@@ -168,21 +205,32 @@ describe('BrowserController select edit keyboard routing', () => {
         })
       ),
       engineClearExternalNavigationIntent: vi.fn(),
+      engineClearExternalNavigationIntentFrame: vi.fn(async () =>
+        frame({ activeCardId: 'profile' })
+      ),
       engineBeginFocusedInputEdit: vi.fn(),
+      engineBeginFocusedInputEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineSetFocusedInputEditDraft: vi.fn(),
+      engineSetFocusedInputEditDraftFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineCommitFocusedInputEdit: vi.fn(),
+      engineCommitFocusedInputEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineCancelFocusedInputEdit: vi.fn(),
+      engineCancelFocusedInputEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineBeginFocusedSelectEdit: vi.fn(),
+      engineBeginFocusedSelectEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineMoveFocusedSelectEdit: vi.fn(),
+      engineMoveFocusedSelectEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' })),
       engineCommitFocusedSelectEdit,
-      engineCancelFocusedSelectEdit: vi.fn()
+      engineCommitFocusedSelectEditFrame,
+      engineCancelFocusedSelectEdit: vi.fn(),
+      engineCancelFocusedSelectEditFrame: vi.fn(async () => frame({ activeCardId: 'profile' }))
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
     (controller as any).handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
     await (controller as any).keyboardActionQueue;
 
-    expect(engineCommitFocusedSelectEdit).toHaveBeenCalledTimes(1);
+    expect(engineCommitFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineHandleKey).not.toHaveBeenCalled();
     expect(presenter.getSnapshot()?.focusedSelectEditName).toBeUndefined();
   });

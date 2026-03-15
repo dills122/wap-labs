@@ -3,7 +3,7 @@ import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
 import { BrowserPresenter } from './browser-presenter';
-import { renderStub, snapshot } from './navigation-state.test-helpers';
+import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
 
 const createRefs = (): BrowserShellRefs => {
   const viewportEl = document.createElement('div');
@@ -89,23 +89,61 @@ describe('BrowserController local timer behavior', () => {
       engineLoadDeck: vi.fn(),
       engineLoadDeckContext: vi.fn(),
       engineRender,
+      engineRenderFrame: vi.fn(async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })),
       engineHandleKey: vi.fn(),
+      engineHandleKeyFrame: vi.fn(async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })),
       engineNavigateToCard: vi.fn(),
+      engineNavigateToCardFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineNavigateBack: vi.fn(),
+      engineNavigateBackFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineSetViewportCols: vi.fn(),
       engineAdvanceTimeMs: vi.fn(async () =>
         snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
       ),
+      engineAdvanceTimeMsFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineSnapshot: vi.fn(async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })),
       engineClearExternalNavigationIntent: vi.fn(),
+      engineClearExternalNavigationIntentFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineBeginFocusedInputEdit: vi.fn(),
+      engineBeginFocusedInputEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineSetFocusedInputEditDraft: vi.fn(),
+      engineSetFocusedInputEditDraftFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineCommitFocusedInputEdit: vi.fn(),
+      engineCommitFocusedInputEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineCancelFocusedInputEdit: vi.fn(),
+      engineCancelFocusedInputEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineBeginFocusedSelectEdit: vi.fn(),
+      engineBeginFocusedSelectEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineMoveFocusedSelectEdit: vi.fn(),
+      engineMoveFocusedSelectEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
       engineCommitFocusedSelectEdit: vi.fn(),
-      engineCancelFocusedSelectEdit: vi.fn()
+      engineCommitFocusedSelectEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      ),
+      engineCancelFocusedSelectEdit: vi.fn(),
+      engineCancelFocusedSelectEditFrame: vi.fn(async () =>
+        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+      )
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
