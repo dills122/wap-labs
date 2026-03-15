@@ -50,6 +50,54 @@ fn tauri_command_wrappers_drive_managed_state_roundtrip() {
 }
 
 #[test]
+fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
+    let state = AppState::default();
+
+    let loaded = super::super::engine_load_deck_context_frame(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: BASIC_NAV_WML.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect("frame load should succeed");
+    assert_eq!(loaded.snapshot.active_card_id.as_deref(), Some("home"));
+    assert!(
+        loaded.render.draw.iter().any(|cmd| match cmd {
+            DrawCmd::Text { text, .. } => text.contains("Hello from Waves"),
+            DrawCmd::Link { text, .. } => text.contains("Next"),
+        }),
+        "frame load render should include deck content"
+    );
+
+    let rendered = super::super::engine_render_frame(borrowed_state(&state))
+        .expect("frame render should succeed");
+    assert_eq!(rendered.snapshot.active_card_id.as_deref(), Some("home"));
+
+    let after_enter = super::super::engine_handle_key_frame(
+        borrowed_state(&state),
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("frame enter should succeed");
+    assert_eq!(after_enter.snapshot.active_card_id.as_deref(), Some("next"));
+
+    let after_back = super::super::engine_navigate_back_frame(borrowed_state(&state))
+        .expect("frame back should succeed");
+    assert_eq!(after_back.snapshot.active_card_id.as_deref(), Some("home"));
+
+    let advanced = super::super::engine_advance_time_ms_frame(
+        borrowed_state(&state),
+        AdvanceTimeRequest { delta_ms: 50 },
+    )
+    .expect("frame advance should succeed");
+    assert_eq!(advanced.snapshot.active_card_id.as_deref(), Some("home"));
+}
+
+#[test]
 fn tauri_fetch_deck_command_executes_through_async_boundary() {
     let response = tauri::async_runtime::block_on(super::super::fetch_deck(FetchDeckRequest {
         url: "http://example.test".to_string(),
@@ -232,6 +280,61 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
 }
 
 #[test]
+fn tauri_frame_command_wrappers_handle_focused_input_edit_commands() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml>
+      <card id="home">
+        <input name="UserName" value="AHMED" type="text"/>
+      </card>
+    </wml>
+    "##;
+
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: wml.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect("load should succeed");
+
+    let begin = super::super::engine_begin_focused_input_edit_frame(borrowed_state(&state))
+        .expect("frame begin focused input edit should succeed");
+    assert_eq!(
+        begin.snapshot.focused_input_edit_name.as_deref(),
+        Some("UserName")
+    );
+
+    let drafted = super::super::engine_set_focused_input_edit_draft_frame(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: "BOB".to_string(),
+        },
+    )
+    .expect("frame set focused input draft should succeed");
+    assert_eq!(
+        drafted.snapshot.focused_input_edit_value.as_deref(),
+        Some("BOB")
+    );
+    assert!(drafted.render.draw.iter().any(|cmd| match cmd {
+        DrawCmd::Link { text, href, .. } =>
+            href == "input:UserName" && text.contains("[UserName: BOB]"),
+        _ => false,
+    }));
+
+    let committed = super::super::engine_commit_focused_input_edit_frame(borrowed_state(&state))
+        .expect("frame commit focused input edit should succeed");
+    assert_eq!(committed.snapshot.focused_input_edit_name, None);
+
+    let cancelled = super::super::engine_cancel_focused_input_edit_frame(borrowed_state(&state))
+        .expect("frame cancel focused input edit should succeed");
+    assert_eq!(cancelled.snapshot.focused_input_edit_name, None);
+}
+
+#[test]
 fn tauri_command_wrappers_handle_focused_select_edit_commands() {
     let state = AppState::default();
     let wml = r##"
@@ -287,6 +390,62 @@ fn tauri_command_wrappers_handle_focused_select_edit_commands() {
     let cancelled = super::super::engine_cancel_focused_select_edit(borrowed_state(&state))
         .expect("cancel focused select edit should succeed");
     assert_eq!(cancelled.focused_select_edit_name, None);
+}
+
+#[test]
+fn tauri_frame_command_wrappers_handle_focused_select_edit_commands() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml>
+      <card id="home">
+        <select name="Country" title="Country">
+          <option value="Jordan">Jordan</option>
+          <option value="France">France</option>
+          <option value="Germany">Germany</option>
+        </select>
+      </card>
+    </wml>
+    "##;
+
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: wml.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect("load should succeed");
+
+    let begin = super::super::engine_begin_focused_select_edit_frame(borrowed_state(&state))
+        .expect("frame begin focused select edit should succeed");
+    assert_eq!(
+        begin.snapshot.focused_select_edit_name.as_deref(),
+        Some("Country")
+    );
+
+    let moved = super::super::engine_move_focused_select_edit_frame(
+        borrowed_state(&state),
+        MoveFocusedSelectEditRequest { delta: 1 },
+    )
+    .expect("frame move focused select edit should succeed");
+    assert_eq!(
+        moved.snapshot.focused_select_edit_value.as_deref(),
+        Some("France")
+    );
+    assert!(moved.render.draw.iter().any(|cmd| match cmd {
+        DrawCmd::Link { text, href, .. } => href == "select:Country" && text.contains("France"),
+        _ => false,
+    }));
+
+    let committed = super::super::engine_commit_focused_select_edit_frame(borrowed_state(&state))
+        .expect("frame commit focused select edit should succeed");
+    assert_eq!(committed.snapshot.focused_select_edit_name, None);
+
+    let cancelled = super::super::engine_cancel_focused_select_edit_frame(borrowed_state(&state))
+        .expect("frame cancel focused select edit should succeed");
+    assert_eq!(cancelled.snapshot.focused_select_edit_name, None);
 }
 
 #[test]
