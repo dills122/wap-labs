@@ -6,6 +6,7 @@ import type {
 import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { EngineTimerRuntime } from './engine-timer-runtime';
+import { FocusedControlEditController, type ControlEditDisposition } from './focused-control-edit';
 import { resolveKeyboardIntent } from './keyboard';
 import { createNavigationStateMachine } from './navigation-state';
 import { StartupNetworkProbeController } from './startup-network-probe';
@@ -22,7 +23,6 @@ import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
 type RunMode = 'local' | 'network';
-type ControlEditDisposition = 'unhandled' | 'handled' | 'handled-stop';
 
 const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
 
@@ -36,6 +36,7 @@ export class BrowserController {
   private readonly navigation: ReturnType<typeof createNavigationStateMachine>;
   private readonly startupProbe: StartupNetworkProbeController;
   private readonly timerRuntime: EngineTimerRuntime;
+  private readonly focusedControlEdit: FocusedControlEditController;
 
   private readonly listenerCleanup: Array<() => void> = [];
 
@@ -118,6 +119,25 @@ export class BrowserController {
       },
       recordTimeline: (action, phase, details) =>
         this.presenter.recordTimeline(action, phase, details)
+    });
+    this.focusedControlEdit = new FocusedControlEditController({
+      getSnapshot: () => this.presenter.getSnapshot(),
+      loadSnapshot: () => this.hostClient.engineSnapshot(),
+      renderSnapshot: async (snapshot) => {
+        this.presenter.setSnapshot(snapshot);
+        this.presenter.drawRenderList(await this.hostClient.engineRender());
+      },
+      syncSnapshot: (snapshot) => this.syncInteractiveSnapshot(snapshot),
+      recordTimeline: (action, details) => this.presenter.recordTimeline(action, 'state', details),
+      beginFocusedInputEdit: () => this.hostClient.engineBeginFocusedInputEdit(),
+      setFocusedInputEditDraft: (value) =>
+        this.hostClient.engineSetFocusedInputEditDraft({ value }),
+      commitFocusedInputEdit: () => this.hostClient.engineCommitFocusedInputEdit(),
+      cancelFocusedInputEdit: () => this.hostClient.engineCancelFocusedInputEdit(),
+      beginFocusedSelectEdit: () => this.hostClient.engineBeginFocusedSelectEdit(),
+      moveFocusedSelectEdit: (delta) => this.hostClient.engineMoveFocusedSelectEdit({ delta }),
+      commitFocusedSelectEdit: () => this.hostClient.engineCommitFocusedSelectEdit(),
+      cancelFocusedSelectEdit: () => this.hostClient.engineCancelFocusedSelectEdit()
     });
   }
 
@@ -576,6 +596,23 @@ export class BrowserController {
     });
   }
 
+  private syncInteractiveSnapshot(snapshot: EngineRuntimeSnapshot): void {
+    if (this.runMode === 'local') {
+      this.syncLocalSessionFromSnapshotWithOptions(snapshot, false);
+      return;
+    }
+    const patch: Partial<HostSessionState> = {
+      activeCardId: snapshot.activeCardId,
+      focusedLinkIndex: snapshot.focusedLinkIndex,
+      externalNavigationIntent: snapshot.externalNavigationIntent,
+      lastError: undefined
+    };
+    this.presenter.setSessionState({
+      ...this.presenter.getSessionState(),
+      ...patch
+    });
+  }
+
   private readonly handleWindowKeydown = (event: Event): void => {
     if (!(event instanceof KeyboardEvent)) {
       return;
@@ -767,161 +804,7 @@ export class BrowserController {
   }
 
   private async applyFocusedControlEditKey(key: string): Promise<ControlEditDisposition> {
-    const initial = this.presenter.getSnapshot() ?? (await this.hostClient.engineSnapshot());
-    if (initial.focusedSelectEditName) {
-      return this.applyFocusedSelectEditKey(initial, key);
-    }
-    if (key === 'Enter' && !initial.focusedInputEditName) {
-      const selectSnapshot = await this.hostClient.engineBeginFocusedSelectEdit();
-      if (selectSnapshot.focusedSelectEditName) {
-        this.presenter.setSnapshot(selectSnapshot);
-        this.presenter.drawRenderList(await this.hostClient.engineRender());
-        if (this.runMode === 'local') {
-          this.syncLocalSessionFromSnapshotWithOptions(selectSnapshot, false);
-        } else {
-          const patch: Partial<HostSessionState> = {
-            activeCardId: selectSnapshot.activeCardId,
-            focusedLinkIndex: selectSnapshot.focusedLinkIndex,
-            externalNavigationIntent: selectSnapshot.externalNavigationIntent,
-            lastError: undefined
-          };
-          this.presenter.setSessionState({
-            ...this.presenter.getSessionState(),
-            ...patch
-          });
-        }
-        this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
-          key,
-          handled: true,
-          focusedSelectEditName: selectSnapshot.focusedSelectEditName ?? null,
-          focusedSelectEditValue: selectSnapshot.focusedSelectEditValue ?? null,
-          focusedLinkIndex: selectSnapshot.focusedLinkIndex,
-          phase: 'engaged'
-        });
-        return 'handled-stop';
-      }
-    }
-    return this.applyFocusedInputEditKey(initial, key);
-  }
-
-  private async applyFocusedInputEditKey(
-    initialSnapshot: EngineRuntimeSnapshot,
-    key: string
-  ): Promise<ControlEditDisposition> {
-    let snapshot = initialSnapshot;
-    if (!snapshot.focusedInputEditName && key.length === 1) {
-      snapshot = await this.hostClient.engineBeginFocusedInputEdit();
-    }
-    if (!snapshot.focusedInputEditName) {
-      this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
-        key,
-        handled: false,
-        focusedInputEditName: null,
-        focusedInputEditValue: null,
-        focusedLinkIndex: snapshot.focusedLinkIndex
-      });
-      return 'unhandled';
-    }
-
-    if (key === 'Enter') {
-      snapshot = await this.hostClient.engineCommitFocusedInputEdit();
-    } else if (key === 'Escape') {
-      snapshot = await this.hostClient.engineCancelFocusedInputEdit();
-    } else if (key === 'Backspace') {
-      const next = (snapshot.focusedInputEditValue ?? '').slice(0, -1);
-      snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
-    } else if (key.length === 1) {
-      const next = `${snapshot.focusedInputEditValue ?? ''}${key}`;
-      snapshot = await this.hostClient.engineSetFocusedInputEditDraft({ value: next });
-    } else {
-      this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
-        key,
-        handled: false,
-        focusedInputEditName: snapshot.focusedInputEditName ?? null,
-        focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
-        focusedLinkIndex: snapshot.focusedLinkIndex
-      });
-      return 'unhandled';
-    }
-
-    this.presenter.setSnapshot(snapshot);
-    this.presenter.drawRenderList(await this.hostClient.engineRender());
-    if (this.runMode === 'local') {
-      this.syncLocalSessionFromSnapshotWithOptions(snapshot, false);
-    } else {
-      const patch: Partial<HostSessionState> = {
-        activeCardId: snapshot.activeCardId,
-        focusedLinkIndex: snapshot.focusedLinkIndex,
-        externalNavigationIntent: snapshot.externalNavigationIntent,
-        lastError: undefined
-      };
-      this.presenter.setSessionState({
-        ...this.presenter.getSessionState(),
-        ...patch
-      });
-    }
-    this.presenter.recordTimeline('keyboard-input-edit-state', 'state', {
-      key,
-      handled: true,
-      focusedInputEditName: snapshot.focusedInputEditName ?? null,
-      focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
-      focusedLinkIndex: snapshot.focusedLinkIndex
-    });
-    return 'handled';
-  }
-
-  private async applyFocusedSelectEditKey(
-    initialSnapshot: EngineRuntimeSnapshot,
-    key: string
-  ): Promise<ControlEditDisposition> {
-    let snapshot = initialSnapshot;
-    if (!snapshot.focusedSelectEditName) {
-      return 'unhandled';
-    }
-
-    if (key === 'Enter') {
-      snapshot = await this.hostClient.engineCommitFocusedSelectEdit();
-    } else if (key === 'Escape') {
-      snapshot = await this.hostClient.engineCancelFocusedSelectEdit();
-    } else if (key === 'ArrowUp') {
-      snapshot = await this.hostClient.engineMoveFocusedSelectEdit({ delta: -1 });
-    } else if (key === 'ArrowDown') {
-      snapshot = await this.hostClient.engineMoveFocusedSelectEdit({ delta: 1 });
-    } else {
-      this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
-        key,
-        handled: false,
-        focusedSelectEditName: snapshot.focusedSelectEditName ?? null,
-        focusedSelectEditValue: snapshot.focusedSelectEditValue ?? null,
-        focusedLinkIndex: snapshot.focusedLinkIndex
-      });
-      return 'unhandled';
-    }
-
-    this.presenter.setSnapshot(snapshot);
-    this.presenter.drawRenderList(await this.hostClient.engineRender());
-    if (this.runMode === 'local') {
-      this.syncLocalSessionFromSnapshotWithOptions(snapshot, false);
-    } else {
-      const patch: Partial<HostSessionState> = {
-        activeCardId: snapshot.activeCardId,
-        focusedLinkIndex: snapshot.focusedLinkIndex,
-        externalNavigationIntent: snapshot.externalNavigationIntent,
-        lastError: undefined
-      };
-      this.presenter.setSessionState({
-        ...this.presenter.getSessionState(),
-        ...patch
-      });
-    }
-    this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
-      key,
-      handled: true,
-      focusedSelectEditName: snapshot.focusedSelectEditName ?? null,
-      focusedSelectEditValue: snapshot.focusedSelectEditValue ?? null,
-      focusedLinkIndex: snapshot.focusedLinkIndex
-    });
-    return 'handled-stop';
+    return this.focusedControlEdit.applyKey(key);
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {
