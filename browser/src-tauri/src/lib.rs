@@ -8,14 +8,16 @@ mod fetch_host;
 
 use contract_types::{
     AdvanceTimeRequest, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, NavigateToCardRequest, RenderList, SetFocusedInputEditDraftRequest,
-    SetViewportColsRequest,
+    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList,
+    SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use engine_bridge::{
     command_engine_advance_time_ms, command_engine_begin_focused_input_edit,
-    command_engine_cancel_focused_input_edit, command_engine_clear_external_navigation_intent,
-    command_engine_commit_focused_input_edit, command_engine_handle_key, command_engine_load_deck,
-    command_engine_load_deck_context, command_engine_navigate_back,
+    command_engine_begin_focused_select_edit, command_engine_cancel_focused_input_edit,
+    command_engine_cancel_focused_select_edit, command_engine_clear_external_navigation_intent,
+    command_engine_commit_focused_input_edit, command_engine_commit_focused_select_edit,
+    command_engine_handle_key, command_engine_load_deck, command_engine_load_deck_context,
+    command_engine_move_focused_select_edit, command_engine_navigate_back,
     command_engine_navigate_to_card, command_engine_render,
     command_engine_set_focused_input_edit_draft, command_engine_set_viewport_cols,
     command_engine_snapshot, AppState,
@@ -145,6 +147,39 @@ fn engine_cancel_focused_input_edit(
     state: State<AppState>,
 ) -> Result<EngineRuntimeSnapshot, String> {
     command_engine_cancel_focused_input_edit(state.inner())
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_begin_focused_select_edit(
+    state: State<AppState>,
+) -> Result<EngineRuntimeSnapshot, String> {
+    command_engine_begin_focused_select_edit(state.inner())
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_move_focused_select_edit(
+    state: State<AppState>,
+    request: MoveFocusedSelectEditRequest,
+) -> Result<EngineRuntimeSnapshot, String> {
+    command_engine_move_focused_select_edit(state.inner(), request)
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_commit_focused_select_edit(
+    state: State<AppState>,
+) -> Result<EngineRuntimeSnapshot, String> {
+    command_engine_commit_focused_select_edit(state.inner())
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_cancel_focused_select_edit(
+    state: State<AppState>,
+) -> Result<EngineRuntimeSnapshot, String> {
+    command_engine_cancel_focused_select_edit(state.inner())
 }
 
 #[cfg(test)]

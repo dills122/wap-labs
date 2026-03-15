@@ -224,6 +224,7 @@ function generateTauriClient(filePath) {
     'HandleKeyRequest',
     'LoadDeckContextRequest',
     'LoadDeckRequest',
+    'MoveFocusedSelectEditRequest',
     'NavigateToCardRequest',
     'RenderList',
     'SetFocusedInputEditDraftRequest',
@@ -247,7 +248,11 @@ function generateTauriClient(filePath) {
     { name: 'engineBeginFocusedInputEdit', command: 'engine_begin_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
     { name: 'engineSetFocusedInputEditDraft', command: 'engine_set_focused_input_edit_draft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
     { name: 'engineCommitFocusedInputEdit', command: 'engine_commit_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineCancelFocusedInputEdit', command: 'engine_cancel_focused_input_edit', returns: 'EngineRuntimeSnapshot' }
+    { name: 'engineCancelFocusedInputEdit', command: 'engine_cancel_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineBeginFocusedSelectEdit', command: 'engine_begin_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineMoveFocusedSelectEdit', command: 'engine_move_focused_select_edit', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
+    { name: 'engineCommitFocusedSelectEdit', command: 'engine_commit_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineCancelFocusedSelectEdit', command: 'engine_cancel_focused_select_edit', returns: 'EngineRuntimeSnapshot' }
   ];
 
   const tauriInvoke = factory.createTypeAliasDeclaration(
@@ -416,7 +421,15 @@ appendInterfaces(engineGeneratedPath, [
     { name: 'setViewportCols', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetViewportColsRequest' } },
     { name: 'advanceTimeMs', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'AdvanceTimeRequest' } },
     { name: 'snapshot', returns: 'EngineRuntimeSnapshot' },
-    { name: 'clearExternalNavigationIntent', returns: 'EngineRuntimeSnapshot' }
+    { name: 'clearExternalNavigationIntent', returns: 'EngineRuntimeSnapshot' },
+    { name: 'beginFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'setFocusedInputEditDraft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
+    { name: 'commitFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'cancelFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'beginFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'moveFocusedSelectEdit', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
+    { name: 'commitFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'cancelFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' }
   ])
 ]);
 

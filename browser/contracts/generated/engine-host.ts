@@ -17,6 +17,8 @@ export type AdvanceTimeRequest = { deltaMs: number, };
 
 export type SetFocusedInputEditDraftRequest = { value: string, };
 
+export type MoveFocusedSelectEditRequest = { delta: number, };
+
 export type ScriptDialogRequestSnapshot = { "type": "alert", message: string, } | { "type": "confirm", message: string, } | { "type": "prompt", message: string, defaultValue?: string, };
 
 export type ScriptTimerRequestSnapshot = { "type": "schedule", delayMs: number, token?: string, } | { "type": "cancel", token: string, };
@@ -27,7 +29,7 @@ export type ExternalNavigationPostContextSnapshot = { sameDeck?: boolean, conten
 
 export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalNavigationCacheControlPolicySnapshot, refererUrl?: string, postContext?: ExternalNavigationPostContextSnapshot, };
 
-export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, focusedInputEditName?: string, focusedInputEditValue?: string, baseUrl: string, contentType: string, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
+export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
 export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | { "type": "link", x: number, y: number, text: string, focused: boolean, href: string, };
 
@@ -44,4 +46,12 @@ export interface EngineHostClient {
     advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
     snapshot(): Promise<EngineRuntimeSnapshot>;
     clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
+    beginFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
+    setFocusedInputEditDraft(request: SetFocusedInputEditDraftRequest): Promise<EngineRuntimeSnapshot>;
+    commitFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
+    cancelFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;
+    beginFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
+    moveFocusedSelectEdit(request: MoveFocusedSelectEditRequest): Promise<EngineRuntimeSnapshot>;
+    commitFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
+    cancelFocusedSelectEdit(): Promise<EngineRuntimeSnapshot>;
 }

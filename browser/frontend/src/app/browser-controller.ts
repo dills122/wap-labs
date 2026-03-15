@@ -22,6 +22,7 @@ import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
 type RunMode = 'local' | 'network';
+type ControlEditDisposition = 'unhandled' | 'handled' | 'handled-stop';
 
 const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
 
@@ -543,11 +544,11 @@ export class BrowserController {
     );
 
     if (intent.type === 'none') {
-      if (this.shouldRouteKeyToInputEdit(event)) {
+      if (this.shouldRouteKeyToControlEdit(event)) {
         event.preventDefault();
         this.enqueueKeyboardAction(async () => {
-          await this.withAction('keyboard-input-edit', async () => {
-            const handled = await this.applyFocusedInputEditKey(event.key);
+          await this.withAction('keyboard-control-edit', async () => {
+            const handled = await this.applyFocusedControlEditKey(event.key);
             if (handled) {
               this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
             }
@@ -571,9 +572,13 @@ export class BrowserController {
     if (intent.type === 'engine-key') {
       this.enqueueKeyboardAction(async () => {
         await this.withAction(`keyboard-${intent.key}`, async () => {
-          if (this.shouldRouteKeyToInputEdit(event)) {
-            const handled = await this.applyFocusedInputEditKey(event.key);
-            if (handled && intent.key !== 'enter') {
+          if (this.shouldRouteKeyToControlEdit(event)) {
+            const disposition = await this.applyFocusedControlEditKey(event.key);
+            if (disposition === 'handled-stop') {
+              this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
+              return;
+            }
+            if (disposition === 'handled' && intent.key !== 'enter') {
               this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
               return;
             }
@@ -588,8 +593,8 @@ export class BrowserController {
     if (intent.type === 'navigate-back') {
       this.enqueueKeyboardAction(async () => {
         await this.withAction('keyboard-backspace', async () => {
-          if (this.shouldRouteKeyToInputEdit(event)) {
-            const handled = await this.applyFocusedInputEditKey(event.key);
+          if (this.shouldRouteKeyToControlEdit(event)) {
+            const handled = await this.applyFocusedControlEditKey(event.key);
             if (handled) {
               this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
               return;
@@ -698,22 +703,68 @@ export class BrowserController {
     }
   }
 
-  private shouldRouteKeyToInputEdit(event: KeyboardEvent): boolean {
+  private shouldRouteKeyToControlEdit(event: KeyboardEvent): boolean {
     if (event.ctrlKey || event.metaKey || event.altKey) {
       return false;
     }
     if (this.isTextEntryTarget(event.target)) {
       return false;
     }
-    if (event.key === 'Enter' || event.key === 'Escape' || event.key === 'Backspace') {
+    if (
+      event.key === 'Enter' ||
+      event.key === 'Escape' ||
+      event.key === 'Backspace' ||
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown'
+    ) {
       return true;
     }
     return event.key.length === 1;
   }
 
-  private async applyFocusedInputEditKey(key: string): Promise<boolean> {
+  private async applyFocusedControlEditKey(key: string): Promise<ControlEditDisposition> {
     const initial = this.presenter.getSnapshot() ?? (await this.hostClient.engineSnapshot());
-    let snapshot = initial;
+    if (initial.focusedSelectEditName) {
+      return this.applyFocusedSelectEditKey(initial, key);
+    }
+    if (key === 'Enter' && !initial.focusedInputEditName) {
+      const selectSnapshot = await this.hostClient.engineBeginFocusedSelectEdit();
+      if (selectSnapshot.focusedSelectEditName) {
+        this.presenter.setSnapshot(selectSnapshot);
+        this.presenter.drawRenderList(await this.hostClient.engineRender());
+        if (this.runMode === 'local') {
+          this.syncLocalSessionFromSnapshotWithOptions(selectSnapshot, false);
+        } else {
+          const patch: Partial<HostSessionState> = {
+            activeCardId: selectSnapshot.activeCardId,
+            focusedLinkIndex: selectSnapshot.focusedLinkIndex,
+            externalNavigationIntent: selectSnapshot.externalNavigationIntent,
+            lastError: undefined
+          };
+          this.presenter.setSessionState({
+            ...this.presenter.getSessionState(),
+            ...patch
+          });
+        }
+        this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
+          key,
+          handled: true,
+          focusedSelectEditName: selectSnapshot.focusedSelectEditName ?? null,
+          focusedSelectEditValue: selectSnapshot.focusedSelectEditValue ?? null,
+          focusedLinkIndex: selectSnapshot.focusedLinkIndex,
+          phase: 'engaged'
+        });
+        return 'handled-stop';
+      }
+    }
+    return this.applyFocusedInputEditKey(initial, key);
+  }
+
+  private async applyFocusedInputEditKey(
+    initialSnapshot: EngineRuntimeSnapshot,
+    key: string
+  ): Promise<ControlEditDisposition> {
+    let snapshot = initialSnapshot;
     if (!snapshot.focusedInputEditName && key.length === 1) {
       snapshot = await this.hostClient.engineBeginFocusedInputEdit();
     }
@@ -725,7 +776,7 @@ export class BrowserController {
         focusedInputEditValue: null,
         focusedLinkIndex: snapshot.focusedLinkIndex
       });
-      return false;
+      return 'unhandled';
     }
 
     if (key === 'Enter') {
@@ -746,7 +797,7 @@ export class BrowserController {
         focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
         focusedLinkIndex: snapshot.focusedLinkIndex
       });
-      return false;
+      return 'unhandled';
     }
 
     this.presenter.setSnapshot(snapshot);
@@ -772,7 +823,61 @@ export class BrowserController {
       focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
       focusedLinkIndex: snapshot.focusedLinkIndex
     });
-    return true;
+    return 'handled';
+  }
+
+  private async applyFocusedSelectEditKey(
+    initialSnapshot: EngineRuntimeSnapshot,
+    key: string
+  ): Promise<ControlEditDisposition> {
+    let snapshot = initialSnapshot;
+    if (!snapshot.focusedSelectEditName) {
+      return 'unhandled';
+    }
+
+    if (key === 'Enter') {
+      snapshot = await this.hostClient.engineCommitFocusedSelectEdit();
+    } else if (key === 'Escape') {
+      snapshot = await this.hostClient.engineCancelFocusedSelectEdit();
+    } else if (key === 'ArrowUp') {
+      snapshot = await this.hostClient.engineMoveFocusedSelectEdit({ delta: -1 });
+    } else if (key === 'ArrowDown') {
+      snapshot = await this.hostClient.engineMoveFocusedSelectEdit({ delta: 1 });
+    } else {
+      this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
+        key,
+        handled: false,
+        focusedSelectEditName: snapshot.focusedSelectEditName ?? null,
+        focusedSelectEditValue: snapshot.focusedSelectEditValue ?? null,
+        focusedLinkIndex: snapshot.focusedLinkIndex
+      });
+      return 'unhandled';
+    }
+
+    this.presenter.setSnapshot(snapshot);
+    this.presenter.drawRenderList(await this.hostClient.engineRender());
+    if (this.runMode === 'local') {
+      this.syncLocalSessionFromSnapshotWithOptions(snapshot, false);
+    } else {
+      const patch: Partial<HostSessionState> = {
+        activeCardId: snapshot.activeCardId,
+        focusedLinkIndex: snapshot.focusedLinkIndex,
+        externalNavigationIntent: snapshot.externalNavigationIntent,
+        lastError: undefined
+      };
+      this.presenter.setSessionState({
+        ...this.presenter.getSessionState(),
+        ...patch
+      });
+    }
+    this.presenter.recordTimeline('keyboard-select-edit-state', 'state', {
+      key,
+      handled: true,
+      focusedSelectEditName: snapshot.focusedSelectEditName ?? null,
+      focusedSelectEditValue: snapshot.focusedSelectEditValue ?? null,
+      focusedLinkIndex: snapshot.focusedLinkIndex
+    });
+    return 'handled-stop';
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {

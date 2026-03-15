@@ -25,6 +25,7 @@ impl WmlEngine {
             timer_dispatch_depth: 0,
             active_timer: None,
             active_input_edit: None,
+            active_select_edit: None,
         }
     }
 
@@ -77,6 +78,7 @@ impl WmlEngine {
         self.last_script_dialog_requests.clear();
         self.last_script_timer_requests.clear();
         self.active_input_edit = None;
+        self.active_select_edit = None;
         self.clear_trace_entries();
         self.active_timer = None;
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
@@ -104,6 +106,9 @@ impl WmlEngine {
         let mut runtime_card = card.clone();
         if let Some(edit) = &self.active_input_edit {
             self.apply_input_value_to_card(&mut runtime_card, &edit.input_name, &edit.draft_value);
+        }
+        if let Some(edit) = &self.active_select_edit {
+            self.apply_select_index_to_card(&mut runtime_card, &edit.select_name, edit.draft_index);
         }
         let layout = layout_card(&runtime_card, self.viewport_cols, self.focused_link_idx);
         Ok(layout.render_list)
@@ -172,6 +177,48 @@ impl WmlEngine {
         true
     }
 
+    /// Start edit session for the currently focused select control.
+    pub fn begin_focused_select_edit(&mut self) -> Result<bool, String> {
+        self.begin_focused_select_edit_internal()
+    }
+
+    /// Move the draft selection for the active focused-select edit session.
+    pub fn move_focused_select_edit(&mut self, delta: i32) -> bool {
+        let Some(select_name) = self
+            .active_select_edit
+            .as_ref()
+            .map(|edit| edit.select_name.clone())
+        else {
+            return false;
+        };
+        let Some(option_count) = self.select_option_count_on_active_card(&select_name) else {
+            return false;
+        };
+        if option_count == 0 {
+            return false;
+        }
+        if let Some(edit) = self.active_select_edit.as_mut() {
+            edit.draft_index = wrap_select_index(edit.draft_index, delta, option_count);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Commit active focused-select edit session.
+    pub fn commit_focused_select_edit(&mut self) -> Result<bool, String> {
+        self.commit_focused_select_edit_internal()
+    }
+
+    /// Cancel active focused-select edit session.
+    pub fn cancel_focused_select_edit(&mut self) -> bool {
+        if self.active_select_edit.is_none() {
+            return false;
+        }
+        self.active_select_edit = None;
+        true
+    }
+
     /// Return focused input name when edit session is active.
     pub fn focused_input_edit_name(&self) -> Option<String> {
         self.active_input_edit
@@ -184,6 +231,19 @@ impl WmlEngine {
         self.active_input_edit
             .as_ref()
             .map(|edit| edit.draft_value.clone())
+    }
+
+    /// Return focused select name when edit session is active.
+    pub fn focused_select_edit_name(&self) -> Option<String> {
+        self.active_select_edit
+            .as_ref()
+            .map(|edit| edit.select_name.clone())
+    }
+
+    /// Return focused select draft value when edit session is active.
+    pub fn focused_select_edit_value(&self) -> Option<String> {
+        let edit = self.active_select_edit.as_ref()?;
+        self.select_value_on_active_card(&edit.select_name, edit.draft_index)
     }
 
     /// Get active card id.
@@ -390,4 +450,11 @@ fn truncate_to_chars(value: &str, max_len: Option<usize>) -> String {
         return value.to_string();
     };
     value.chars().take(limit).collect()
+}
+
+fn wrap_select_index(current: usize, delta: i32, len: usize) -> usize {
+    let len = len.max(1) as i32;
+    let current = current as i32;
+    let next = (current + delta).rem_euclid(len);
+    next as usize
 }

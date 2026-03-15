@@ -1,8 +1,9 @@
 pub(super) use super::{fetch_deck, health};
 pub(super) use crate::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineKey, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, NavigateToCardRequest, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
+    ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest,
+    SetViewportColsRequest,
 };
 pub(super) use crate::engine_bridge::{
     apply_advance_time_ms, apply_clear_external_navigation_intent, apply_engine_snapshot,

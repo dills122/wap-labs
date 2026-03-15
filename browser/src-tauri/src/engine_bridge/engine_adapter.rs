@@ -1,7 +1,8 @@
 use crate::contract_types::{
     AdvanceTimeRequest, EngineRuntimeSnapshot, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList,
+    ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest,
+    SetViewportColsRequest,
 };
 use std::sync::Mutex;
 use wavenav_engine::WmlEngine;
@@ -24,6 +25,8 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         focused_link_index: engine.focused_link_index(),
         focused_input_edit_name: engine.focused_input_edit_name(),
         focused_input_edit_value: engine.focused_input_edit_value(),
+        focused_select_edit_name: engine.focused_select_edit_name(),
+        focused_select_edit_value: engine.focused_select_edit_value(),
         base_url: engine.base_url(),
         content_type: engine.content_type(),
         external_navigation_intent: engine.external_navigation_intent(),
@@ -164,5 +167,32 @@ pub fn apply_commit_focused_input_edit(
 
 pub fn apply_cancel_focused_input_edit(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
     engine.cancel_focused_input_edit();
+    snapshot(engine)
+}
+
+pub fn apply_begin_focused_select_edit(
+    engine: &mut WmlEngine,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.begin_focused_select_edit()?;
+    Ok(snapshot(engine))
+}
+
+pub fn apply_move_focused_select_edit(
+    engine: &mut WmlEngine,
+    request: MoveFocusedSelectEditRequest,
+) -> EngineRuntimeSnapshot {
+    engine.move_focused_select_edit(request.delta);
+    snapshot(engine)
+}
+
+pub fn apply_commit_focused_select_edit(
+    engine: &mut WmlEngine,
+) -> Result<EngineRuntimeSnapshot, String> {
+    engine.commit_focused_select_edit()?;
+    Ok(snapshot(engine))
+}
+
+pub fn apply_cancel_focused_select_edit(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
+    engine.cancel_focused_select_edit();
     snapshot(engine)
 }

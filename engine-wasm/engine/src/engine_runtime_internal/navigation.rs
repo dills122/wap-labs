@@ -19,6 +19,7 @@ impl WmlEngine {
         let previous_timer = self.active_timer.clone();
         self.stop_active_timer_for_exit();
         self.active_input_edit = None;
+        self.active_select_edit = None;
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
@@ -52,6 +53,7 @@ impl WmlEngine {
 
         self.stop_active_timer_for_exit();
         self.active_input_edit = None;
+        self.active_select_edit = None;
         self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
@@ -154,6 +156,7 @@ impl WmlEngine {
                 post_fields,
             ));
         self.active_input_edit = None;
+        self.active_select_edit = None;
         Ok(())
     }
 

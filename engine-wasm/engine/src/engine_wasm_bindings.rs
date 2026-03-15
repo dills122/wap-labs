@@ -69,6 +69,36 @@ impl WmlEngine {
         self.focused_input_edit_value()
     }
 
+    #[wasm_bindgen(js_name = beginFocusedSelectEdit)]
+    pub fn begin_focused_select_edit_wasm(&mut self) -> Result<bool, JsValue> {
+        self.begin_focused_select_edit().map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = moveFocusedSelectEdit)]
+    pub fn move_focused_select_edit_wasm(&mut self, delta: i32) -> bool {
+        self.move_focused_select_edit(delta)
+    }
+
+    #[wasm_bindgen(js_name = commitFocusedSelectEdit)]
+    pub fn commit_focused_select_edit_wasm(&mut self) -> Result<bool, JsValue> {
+        self.commit_focused_select_edit().map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = cancelFocusedSelectEdit)]
+    pub fn cancel_focused_select_edit_wasm(&mut self) -> bool {
+        self.cancel_focused_select_edit()
+    }
+
+    #[wasm_bindgen(js_name = focusedSelectEditName)]
+    pub fn focused_select_edit_name_wasm(&self) -> Option<String> {
+        self.focused_select_edit_name()
+    }
+
+    #[wasm_bindgen(js_name = focusedSelectEditValue)]
+    pub fn focused_select_edit_value_wasm(&self) -> Option<String> {
+        self.focused_select_edit_value()
+    }
+
     #[wasm_bindgen(js_name = render)]
     pub fn render_wasm(&self) -> Result<JsValue, JsValue> {
         to_js_value(&self.render().map_err(as_js_err)?)

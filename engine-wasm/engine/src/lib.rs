@@ -76,6 +76,13 @@ struct InputEditState {
     draft_value: String,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct SelectEditState {
+    select_name: String,
+    original_index: usize,
+    draft_index: usize,
+}
+
 #[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
     deck: Option<Deck>,
@@ -100,6 +107,7 @@ pub struct WmlEngine {
     timer_dispatch_depth: u8,
     active_timer: Option<CardTimerState>,
     active_input_edit: Option<InputEditState>,
+    active_select_edit: Option<SelectEditState>,
 }
 
 impl Default for WmlEngine {

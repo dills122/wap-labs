@@ -1,4 +1,4 @@
-use crate::runtime::node::{InlineNode, Node};
+use crate::runtime::node::{InlineNode, Node, SelectOption};
 
 #[cfg(test)]
 use super::xml::{extract_attr, starts_with_tag_at};
@@ -53,6 +53,12 @@ fn map_card_level_nodes(
                 "input" => {
                     if let Some(input_node) = parse_input_inline_node(element) {
                         out.push(Node::Paragraph(vec![input_node]));
+                    }
+                }
+                "select" => {
+                    if let Some(select_node) = parse_select_inline_node(element, budget, depth + 1)?
+                    {
+                        out.push(Node::Paragraph(vec![select_node]));
                     }
                 }
                 _ => map_card_level_nodes(&element.children, out, budget, depth + 1)?,
@@ -112,6 +118,13 @@ fn map_inline_nodes_recursive(
                         out.push(input_node);
                     }
                 }
+                "select" => {
+                    flush_pending_inline_text(pending_text, out);
+                    if let Some(select_node) = parse_select_inline_node(element, budget, depth + 1)?
+                    {
+                        out.push(select_node);
+                    }
+                }
                 _ => map_inline_nodes_recursive(
                     &element.children,
                     pending_text,
@@ -156,6 +169,78 @@ fn parse_input_inline_node(element: &XmlElement) -> Option<InlineNode> {
         is_password,
         max_length,
     })
+}
+
+fn parse_select_inline_node(
+    element: &XmlElement,
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<Option<InlineNode>, String> {
+    let name = normalize_text(element.attr("name").unwrap_or_default());
+    if name.is_empty() {
+        return Ok(None);
+    }
+
+    let title = {
+        let value = normalize_text(element.attr("title").unwrap_or_default());
+        if value.is_empty() {
+            None
+        } else {
+            Some(value)
+        }
+    };
+
+    let mut options = Vec::new();
+    let mut selected_index = None;
+
+    budget.enter_scope(depth, "select option traversal")?;
+    for child in &element.children {
+        budget.visit_node("select option traversal")?;
+        let XmlNode::Element(option) = child else {
+            continue;
+        };
+        if option.name != "option" {
+            continue;
+        }
+
+        let label = normalize_text(&inline_text_content(&option.children, budget, depth + 1)?);
+        if label.is_empty() {
+            continue;
+        }
+        let value = {
+            let explicit = normalize_text(option.attr("value").unwrap_or_default());
+            if explicit.is_empty() {
+                label.clone()
+            } else {
+                explicit
+            }
+        };
+        let is_selected = option
+            .attr("selected")
+            .map(|value| {
+                let value = value.trim();
+                value.is_empty()
+                    || value.eq_ignore_ascii_case("true")
+                    || value.eq_ignore_ascii_case("selected")
+            })
+            .unwrap_or(false);
+        let idx = options.len();
+        options.push(SelectOption { label, value });
+        if is_selected && selected_index.is_none() {
+            selected_index = Some(idx);
+        }
+    }
+
+    if options.is_empty() {
+        return Ok(None);
+    }
+
+    Ok(Some(InlineNode::Select {
+        name,
+        title,
+        options,
+        selected_index: selected_index.unwrap_or(0),
+    }))
 }
 
 fn inline_text_content(
