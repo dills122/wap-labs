@@ -73,13 +73,14 @@ Next execution block is architecture hardening across all active libraries befor
 1. `A5-04` Minimal WML text-input interaction baseline (`P0`).
 2. `A5-05` WML select/option interaction baseline (`P0` after `A5-04`).
 3. `A5-06` Form-state submit integration hardening (`P1` after `A5-04` and `A5-05`).
-4. `D0-01` Engine debug connector contract and architecture definition (`P1` after `A5-06`).
-5. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-6. `A5-01` History entry fidelity follow-up (`P1` once form interaction behavior is clear).
-7. `W0-05` Timer/dialog integration baseline (`P1` if active form work stays green).
-8. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
-9. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
-10. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
+4. `A5-07` Browser responsiveness and startup blocking investigation spike (`P1` after `A5-06`).
+5. `D0-01` Engine debug connector contract and architecture definition (`P1` after `A5-06`).
+6. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
+7. `A5-01` History entry fidelity follow-up (`P1` once form interaction behavior is clear).
+8. `W0-05` Timer/dialog integration baseline (`P1` if active form work stays green).
+9. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
+10. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
+11. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -1098,6 +1099,36 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-RMK-008`, `RQ-WAE-008`
 9. `Notes`:
 - this is the hardening bridge between new engine interaction semantics and the already-landed native submit path
+
+### A5-07 Browser responsiveness and startup blocking investigation spike
+
+1. `Status`: `todo`
+2. `Depends On`: `A5-06`
+3. `Owner`: `browser`, `docs`
+4. `Files`:
+- `browser/frontend/src/app/*`
+- `browser/frontend/src/main.ts`
+- `browser/src-tauri/src/*`
+- `docs/waves/WORK_ITEMS.md`
+- follow-up design note if the spike produces a concrete execution plan
+5. `Build`:
+- perform a deep investigation of UI-blocking paths during browser startup and run-mode transitions
+- trace which browser, Tauri, and engine calls are currently awaited on the critical interaction path
+- define a contract for which checks/load operations must be backgroundable versus user-blocking
+- propose a concrete remediation plan that preserves deterministic state while removing avoidable UI stalls
+6. `Tests`:
+- reproduce and document the current lag cases with targeted frontend timing/regression coverage where feasible
+- capture before/after measurement approach for startup and mode-switch responsiveness
+7. `Accept`:
+- there is a documented diagnosis for the known lag cases:
+- network-mode startup with no reachable server blocks before the unavailable notification
+- switching from local mode back to network mode waits on the fetch/probe path before the mode change fully settles
+- the spike outputs an implementation-ready follow-up plan for moving non-critical checks and loads into async/background execution
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`
+9. `Notes`:
+- treat this as design and diagnosis first; do not land speculative async rewrites without measured evidence
+- evaluate browser-shell architecture holistically, not just the startup probe, to identify any awaited work that degrades perceived UI responsiveness
 
 ## Phase D: Engine Debug Connector (Planning-Ready)
 
