@@ -111,14 +111,13 @@ Required moves:
 
 Suggested ticket:
 
-- `M1-16` transport/engine payload size guardrails
+- `A5-01` history entry fidelity follow-up
 
 Suggested scope:
 
-1. enforce deterministic oversized-payload rejection before decode/parse
-2. keep transport and engine boundary behavior aligned for large deck bodies
-3. preserve current native Kannel smoke coverage while hardening failure paths
-4. update this scorecard only if hardening changes execution posture or signal quality
+1. preserve current native Kannel/browser smoke credibility while tightening history/session fidelity after network navigation
+2. verify browser-visible back/reload behavior stays aligned with engine/runtime history semantics
+3. update this scorecard only if the browser-to-kannel execution posture or signal quality changes materially
 
 ## Update policy
 

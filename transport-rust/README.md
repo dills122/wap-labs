@@ -41,6 +41,7 @@ When `FetchDeckResponse.ok === false`:
 - `UNSUPPORTED_CONTENT_TYPE`: unsupported upstream content-type for deck handoff
 - `WBXML_DECODE_FAILED`: WBXML payload could not be decoded
 - `PROTOCOL_ERROR`: upstream HTTP `status >= 400`
+- `PAYLOAD_TOO_LARGE`: payload exceeded the explicit transport/engine handoff limit
 - `TRANSPORT_UNAVAILABLE` / `GATEWAY_TIMEOUT`: request/send/timeout path failures
 
 ## Error Trigger Matrix (`T0-03`)
@@ -51,6 +52,7 @@ When `FetchDeckResponse.ok === false`:
 | `PROTOCOL_ERROR` | Upstream HTTP response status is `>= 400` |
 | `UNSUPPORTED_CONTENT_TYPE` | Upstream success (`2xx`) but normalized content-type is not WML/WBXML-supported |
 | `WBXML_DECODE_FAILED` | Upstream success with `application/vnd.wap.wmlc` but decode pipeline fails |
+| `PAYLOAD_TOO_LARGE` | Response/deck body exceeds explicit guardrail limits before successful handoff |
 | `GATEWAY_TIMEOUT` | Terminal send/read failure where timeout classification is true |
 | `TRANSPORT_UNAVAILABLE` | Terminal send/read/client/gateway path failure not classified as timeout |
 
@@ -61,9 +63,9 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Execute `T0-16` spec queue canonicalization follow-up in parallel with transport fixtures.
-2. Keep `M1-08` active in parallel for transport high-churn file boundary decomposition.
-3. Keep `M1-03` as non-priority downstream generator-consumer follow-up.
+1. Support the active cross-lane runtime fidelity work without reopening completed transport lanes.
+2. Keep residual `M1-08` transport cleanup opportunistic only if a new hotspot emerges.
+3. Keep `T0-07`, broader conformance fixtures, and `M1-03` as follow-on work rather than current priority drivers.
 
 ## Current checklist (planning/execution)
 
@@ -72,6 +74,7 @@ When `FetchDeckResponse.ok === false`:
 - [x] Decompose transport internals into clearer module boundaries (`M1-04`)
 - [x] Add CI guardrails for contract drift checks (`M1-06`)
 - [ ] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
+- [x] Add explicit payload-size guardrails with deterministic oversized rejection (`M1-16`)
 - [x] Add cache/reload request-policy conformance plumbing (`T0-04`)
 - [x] Add deterministic WTP replay-window fixtures (`T0-08`)
 - [x] Add UA capability header conformance path (`T0-05`)

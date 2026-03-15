@@ -111,8 +111,8 @@ WML/WBXML media-type and transport-normalization boundary.
 Active promotion note:
 
 - The transport-side native submit baseline is now landed.
-- Immediate execution is promoting the first interactive subset of this phase through `A5-04`, `A5-05`, and `A5-06` on `docs/wml-engine/work-items.md`.
-- Keep the remainder of Phase C deferred unless it directly supports those active tickets.
+- The first interactive subset of this phase (`A5-04`, `A5-05`, `A5-06`) is now landed on `docs/wml-engine/work-items.md`.
+- Keep the remainder of Phase C deferred unless it directly supports the current runtime-fidelity lane (`A5-01`, `W0-05`, `D0-01`).
 
 ### C1. Field model
 - Build:

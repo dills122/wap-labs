@@ -66,21 +66,27 @@ Canonical sprint priority rule:
 1. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` is the single ordering authority when section-level "Next In Line" lists differ.
 2. Section-level lists below are lane-local guidance and must not override master P0/P1 gating.
 
-## Next In Line (Architecture Maintenance Sprint)
+## Next In Line (Current Cross-Lane Priority Refresh - 2026-03-15)
 
-Next execution block is architecture hardening across all active libraries before additional feature expansion:
+The previous form + browser responsiveness block is no longer the active queue. `A5-04`, `A5-05`, `A5-06`, `A5-07`, and the first `M1-16` hardening slice are landed through `#108`, `#109`, and `#110`.
 
-1. `A5-04` Minimal WML text-input interaction baseline (`P0`).
-2. `A5-05` WML select/option interaction baseline (`P0` after `A5-04`).
-3. `A5-06` Form-state submit integration hardening (`P1` after `A5-04` and `A5-05`).
-4. `A5-07` Browser responsiveness and startup blocking investigation spike (`P1` after `A5-06`).
-5. `D0-01` Engine debug connector contract and architecture definition (`P1` after `A5-06`).
-6. `M1-16` Transport/engine payload size guardrails (memory pressure hardening) (`P1`).
-7. `A5-01` History entry fidelity follow-up (`P1` once form interaction behavior is clear).
-8. `W0-05` Timer/dialog integration baseline (`P1` if active form work stays green).
-9. `M1-09` Engine-host frame interface migration execution (`F0` only if active compliance work stays green).
-10. `M1-03` Engine API generator design/bootstrap (non-priority track; do not preempt active compliance lanes).
-11. `M1-08` Residual high-churn decomposition follow-up only if new hot files emerge during feature work.
+Current priority order is:
+
+1. `A5-01` History entry fidelity follow-up (`P0` active runtime correctness gap).
+2. `W0-05` Timer/dialog integration baseline (`P1`, already in progress; do not let it drift indefinitely).
+3. `D0-01` Engine debug connector contract and architecture definition (`P1`, planning-ready and now unblocked by the browser hot-path cleanup).
+4. `W1-06` Fatal/non-fatal script taxonomy closure (`P1` after the active runtime lane stabilizes).
+5. `M1-09` Engine-host frame migration execution (`F0` only after `A5-01`, `W0-05`, and `D0-01` are stable enough not to churn the boundary again).
+6. `M1-03` Engine API generator design/bootstrap (non-priority track).
+7. `M1-08` Residual high-churn decomposition follow-up only if new hotspots emerge during active ticket work.
+
+Planning assessment:
+
+1. A full replanning cycle is not required immediately; the next tranche is now clearer than it was before `#109/#110`.
+2. The next formal planning refresh should happen when either:
+- `A5-01` and `W0-05` are closed, or
+- `D0-01` materially changes the host/engine boundary, or
+- `M1-09` is promoted from deferred to active execution.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -1054,7 +1060,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### A5-05 WML select/option interaction baseline
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `A5-04`
 3. `Owner`: `engine-wasm`, `browser`
 4. `Files`:
@@ -1075,10 +1081,11 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-RMK-008`, `RQ-RMK-003`
 9. `Notes`:
 - keep this ticket independent from multipart or advanced request-encoding work
+- Landed in `#108` (`Select Support in Forms`) with engine select/option runtime support, host contract updates, browser select-edit integration, and local/manual regression coverage in `docs/waves/FORM_HANDLING_LOCAL_MODE_TESTING.md`.
 
 ### A5-06 Form-state submit integration hardening
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `A5-04`, `A5-05`, `T0-30`
 3. `Owner`: `engine-wasm`, `browser`, `transport-rust`
 4. `Files`:
@@ -1099,10 +1106,11 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-RMK-008`, `RQ-WAE-008`
 9. `Notes`:
 - this is the hardening bridge between new engine interaction semantics and the already-landed native submit path
+- Landed across `#105`, `#108`, and `#109`, including edited-field payload coverage, select-aware submit flow, native Kannel browser/host smoke, and deterministic external-intent/request-policy handling.
 
 ### A5-07 Browser responsiveness and startup blocking investigation spike
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `A5-06`
 3. `Owner`: `browser`, `docs`
 4. `Files`:
@@ -1129,6 +1137,8 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Notes`:
 - treat this as design and diagnosis first; do not land speculative async rewrites without measured evidence
 - evaluate browser-shell architecture holistically, not just the startup probe, to identify any awaited work that degrades perceived UI responsiveness
+- Review artifact landed in `docs/waves/WAVES_REVIEW_2026-03-15.md`.
+- Follow-through landed in `#109` and `#110`: background startup probing, timer/render churn reduction, stale-safe navigation, combined frame-oriented host commands, off-UI-thread fetch execution, and targeted coverage around the affected coordinators.
 
 ## Phase D: Engine Debug Connector (Planning-Ready)
 

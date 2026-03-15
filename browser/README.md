@@ -108,12 +108,12 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 
 ## Next implementation slice
 
-1. Execute committed bedrock sprint host-impacting tickets:
-- `T0-04` request-policy plumbing (`cache-control`, referer policy, post context)
-- `R0-02` inter-card process-order host/runtime integration checks
-- `R0-03` history/context fidelity in browser session-state flow
-2. Keep `M1-08` active in parallel: split browser high-churn files into boundary modules without behavior changes.
-3. Defer `M1-09` (`F0-F4` frame migration) until committed bedrock sprint tickets are stable.
+1. Execute the current host-impacting runtime fidelity lane:
+- `A5-01` history entry fidelity follow-up
+- `W0-05` timer/dialog integration baseline
+- `D0-01` debug connector contract/architecture baseline
+2. Keep `M1-08` residual cleanup opportunistic only; do not preempt active runtime tickets with broad browser reshaping.
+3. Defer `M1-09` (`F0-F4` frame migration) until the current runtime/debug boundary work is stable enough not to churn the host contract again.
 4. Keep `M1-03` as non-priority generator follow-up.
 
 ## Planning + Traceability
@@ -135,6 +135,8 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 - [x] Add hybrid back behavior (engine card-history + host URL fallback)
 - [x] Remove frontend contract type duplication and import shared engine/transport contracts directly (`M1-01`)
 - [x] Add browser-side automated regression checks for navigation state machine (`M1-05`)
-- [ ] Decompose browser high-churn files into boundary modules (`M1-08`)
+- [ ] Decompose browser high-churn files into boundary modules (`M1-08`, baseline landed; residual cleanup remains opportunistic)
 - [x] Wire cache/reload and request-policy metadata from runtime to transport flow (`T0-04`)
 - [x] Wire profile-gated UA capability header controls in host flow (`T0-05`)
+- [x] Land browser responsiveness and UI-blocking remediation for startup/navigation/fetch hot paths (`A5-07`, `#109`, `#110`)
+- [x] Land active payload-size guardrails across transport/engine/browser boundaries (`M1-16`)

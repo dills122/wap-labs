@@ -2,13 +2,13 @@
 
 Status: active reference
 Owner lane: `engine-wasm` + `browser`
-Last reviewed: `2026-03-14`
+Last reviewed: `2026-03-15`
 
 ## Purpose
 
 Provide a manual test reference for the current form-handling baseline in Waves, with emphasis on local mode behavior.
 
-This document is intended for quick regression checks while `A5-05` and follow-on form work are still in flight.
+This document is intended for quick regression checks now that `A5-04`, `A5-05`, and the active `A5-06` hardening slice are landed for the current MVP lane.
 
 ## Current Scope
 
@@ -19,10 +19,10 @@ Covered by the current implementation:
 3. single-select `select`/`option` focus/edit/cycle/commit/cancel
 4. local-mode capture of external submit intents without network fetch
 
-Not covered yet:
+Still not covered in this local-mode reference:
 
 1. multi-select behavior
-2. full submit hardening across all runtime/transport cases
+2. broader submit hardening beyond the active MVP path and smoke-covered browser/host cases
 3. advanced mask validation semantics
 4. local-mode replay of captured form submits
 
@@ -202,7 +202,7 @@ These are not regressions for the current baseline:
 
 1. local mode does not complete the remote submit roundtrip
 2. local mode only proves engine-owned edit state and intent generation
-3. submit payload hardening across all edge cases is still follow-on work under `A5-06`
+3. submit payload hardening beyond the active MVP path remains future follow-on work, but the current browser/host/native lane is already covered by the landed `A5-06` slice
 
 ## Related Files
 

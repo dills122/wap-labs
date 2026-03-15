@@ -29,14 +29,14 @@ Secondary docs:
 
 ## Progress Snapshot
 
-Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md`, `.github/workflows/engine-fuzz.yml` (updated 2026-03-06).
+Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md`, `.github/workflows/engine-fuzz.yml` (updated 2026-03-15).
 
 | Track | Implemented | Roadmap / In Progress |
 |---|---|---|
-| Waves desktop app (`browser/`) | Core browser shell works: load pages, move around cards, follow links, go back, and inspect runtime state | Better release safety checks, cleaner internal structure, and finishing request/network policy behavior |
-| WaveNav runtime (`engine-wasm/`) | MVP runtime is in place: parse WML, navigate cards, manage focus, and render stable output | Broader parity coverage, parser hardening, and follow-up behavior work for deeper spec correctness |
-| Lowband transport (`transport-rust/`) | Stable fetch + normalization baseline with clear error categories | More modular internals, stronger CI checks, and additional conformance scenarios |
-| Frame-based render/input migration | Migration plan and phased work tickets are defined | Move hosts to a shared frame/input boundary and retire legacy render/input paths |
+| Waves desktop app (`browser/`) | Desktop shell is usable end-to-end: network/local mode, runtime deck navigation, focused text/select editing, browser back/reload flow, debug/timeline surfaces, and reduced UI blocking on failed/slow network paths | History/session fidelity follow-up, timer/dialog runtime completion, and debug connector contract work |
+| WaveNav runtime (`engine-wasm/`) | Runtime covers deck/card parsing, navigation, focus, text-input editing, select interaction, deterministic render output, and native/wasm parity-critical behavior | History fidelity, timer/dialog semantics, and deeper spec-conformance follow-ups |
+| Lowband transport (`transport-rust/`) | Native/browser fetch pipeline is stable with request-policy controls, explicit payload guardrails, and real Kannel-backed smoke coverage | Additional conformance fixtures, remaining high-value cleanup, and future protocol breadth only when it serves active priorities |
+| Frame-based render/input migration | Additive frame-oriented host commands are already in place for the hot browser paths | Finish the deliberate `M1-09` migration only after the current runtime/debug boundary work settles |
 | Fuzz hardening (`engine-wasm/engine/fuzz`) | Cargo-fuzz scaffold with `engine_wml_fuzzer`, starter corpus seeds, and scheduled weekly CI run | Add target coverage for transport/protocol surfaces, grow dictionaries/corpus, and tune campaign budgets |
 | Legacy/demo stack (`gateway-kannel/`, `wml-server/`) | Still available for compatibility smoke checks | Maintenance only; not the main build track |
 
@@ -106,7 +106,7 @@ make smoke-transport-wap
 # GATEWAY_HTTP_BASE=http://localhost:13002 make smoke-transport-wap
 ```
 
-`make smoke-transport-wap` defaults to `GATEWAY_HTTP_BASE=http://localhost:3000/gateway` so host-side smoke remains stable while still exercising Kannel through the existing proxy path.
+`make smoke-transport-wap` is the local Kannel/browser transport smoke entrypoint for the active native/browser validation lane; check `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` for current posture and evidence.
 
 Marketing site local dev:
 

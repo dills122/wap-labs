@@ -38,7 +38,8 @@ Completed maintenance tickets are archived in:
 - `transport-rust/README.md`
 5. `Notes`:
 - Active execution is currently anchored to `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`.
-- Keep `M1-08` parallelized while committed compliance tickets execute.
+- `M1-14`, `M1-15`, and the first `M1-16`/browser responsiveness slices landed in `#109` and `#110`.
+- Keep residual `M1-08` cleanup opportunistic while committed compliance tickets execute.
 
 ### M1-14 Browser host boundary hardening (CSP + DOM injection sinks)
 
@@ -92,7 +93,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-16 Transport/engine payload size guardrails (memory pressure hardening)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P1`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -112,6 +113,9 @@ Completed maintenance tickets are archived in:
 - Normal-size WML/WBXML paths remain unchanged.
 7. `Notes`:
 - Security audit follow-up for medium-severity resource exhaustion risk.
+- Landed transport-side explicit `PAYLOAD_TOO_LARGE` classification and host contract regeneration in `#109`.
+- Added host/engine oversized deck boundary coverage in Tauri and WASM tests in `#109`.
+- Current baseline rejects oversized payloads deterministically before decode/parse escalation in the active transport/engine/browser handoff path.
 
 ### M1-17 Network fetch destination policy guardrails (SSRF/probing reduction)
 
@@ -170,7 +174,8 @@ Completed maintenance tickets are archived in:
 6. `Notes`:
 - Engine-side decomposition has landed and merged.
 - Browser and transport boundary decomposition baselines have landed.
-- Remaining scope is residual opportunistic cleanup only if new hot files emerge or a boundary proves unstable under feature work.
+- Browser-side follow-up landed additional probe/timer/focused-edit coordinators in `#109`.
+- Remaining scope is residual opportunistic cleanup only if new hot files emerge or a boundary proves unstable under feature work; do not let this preempt active compliance/runtime tickets.
 
 ### M1-09 Engine-host frame interface migration execution
 

@@ -15,25 +15,25 @@ Archive:
 
 ## Current Execution Scope
 
-Target scope is promoted beyond pure Phase A so the engine can finish the first usable WML form lane:
+The first usable WML form lane is now landed. Active engine focus should shift back to runtime fidelity and deferred capability closure:
 
-- deterministic render/focus behavior
-- viewport-editable text-input form controls
-- select/option interaction semantics
-- stable form-state metadata across native and wasm boundaries
+- deterministic history/context fidelity
+- timer/dialog runtime semantics
+- stable native/wasm parity for active runtime surfaces
+- planning-ready debug boundary contracts before fresh host-boundary migration work
 
-Keep wider Phase B+/C expansion deferred unless it directly serves the active form-interaction sprint.
+Keep wider Phase B+/C expansion deferred unless it directly serves the active runtime-compliance lane.
 
-## Next In Line (Cross-Project Maintenance Alignment)
+## Next In Line (Cross-Project Alignment Refresh)
 
-Before additional Phase B+ feature promotion, execute aligned maintenance tickets:
+After the completed forms/browser responsiveness slice, current aligned engine priorities are:
 
-1. `A5-04` minimal WML text-input interaction baseline.
-2. `A5-05` WML select/option interaction baseline.
-3. `A5-06` form-state submit integration hardening.
-4. `M1-02` parity-critical native/wasm regression suite.
-5. `M1-07` parser robustness hardening (no scope expansion) using an existing XML parser backend plus a WML semantic mapper layer.
-6. `M1-08` high-churn file decomposition into boundary modules (engine scope complete; browser/transport baseline decomposition is landed, with only residual cross-project follow-ups remaining).
+1. `A5-01` history entry fidelity follow-up.
+2. `W0-05` timer/dialog integration baseline.
+3. `D0-01` debug connector contract and architecture baseline.
+4. `W1-06` fatal/non-fatal script taxonomy closure.
+5. `M1-02` parity-critical native/wasm regression suite.
+6. `M1-08` residual high-churn cleanup only if new hotspots emerge.
 7. `M1-03` engine API generator design/bootstrap (non-priority track).
 
 Source of truth for these items:
@@ -180,7 +180,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-05 WML select/option interaction baseline
 
 1. `Requirement IDs`: `WML-R-019`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A5-04`
 4. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/*`
@@ -197,11 +197,12 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - select controls can be navigated and updated without host-owned form state
 8. `Notes`:
 - keep baseline scope to single-select behavior unless live decks force a broader cut
+- Landed in `#108` with deterministic select edit lifecycle, render integration, host command coverage, and local example fixtures.
 
 ### A5-06 Form-state submit integration hardening
 
 1. `Requirement IDs`: `WML-R-019`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `A5-04`, `A5-05`, `T0-30`
 4. `Files`:
 - `engine-wasm/engine/src/runtime/*`
@@ -218,6 +219,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - interactive viewport edits are reflected in the exact submit metadata emitted by the engine contract
 8. `Notes`:
 - this closes the gap between editable controls and the already-landed native transport `POST` path
+- Closed for the active MVP lane via native/browser submit coverage and deterministic engine-owned field-state resolution across the merged form/browser hardening series.
 
 ### B5-01 Input mask and commit semantics conformance follow-up
 
