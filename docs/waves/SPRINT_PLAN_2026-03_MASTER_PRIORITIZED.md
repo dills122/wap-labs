@@ -1,7 +1,7 @@
 # Master Prioritized Sprint Plan (March 2026)
 
 Status: active  
-Effective date: 2026-03-07  
+Effective date: 2026-03-15  
 Planning horizon: 3 consecutive sprints
 
 This plan is the cross-lane source of truth for "what is next" and resolves priority collisions between runtime compliance, networking closure, and maintenance.
@@ -22,18 +22,23 @@ This plan is the cross-lane source of truth for "what is next" and resolves prio
 - `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - `docs/wml-engine/work-items.md`
 
-## Current Snapshot (as of 2026-03-07)
+## Current Snapshot (as of 2026-03-15)
 
 This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
 | Ticket | Lane | Current status | Immediate dependency action |
 | --- | --- | --- | --- |
 | `A5-01` | engine/runtime | `in-progress` | finish request-shaped history entry fidelity and restore semantics |
+| `A5-04` | engine + browser | `done` | viewport-editable text input baseline is closed |
+| `A5-05` | engine + browser | `done` | select/option interaction baseline is closed |
+| `A5-06` | engine + browser + transport | `done` | form-state submit hardening is closed for the active MVP lane |
+| `A5-07` | browser | `done` | blocking startup/navigation/browser hot-path remediation landed in `#109/#110` |
 | `R0-02` | engine + browser + transport | `done` | closed with deterministic host/runtime request-fidelity coverage |
 | `R0-03` | engine + browser | `done` | closed with history/context fidelity integration evidence |
 | `W0-05` | wavescript/runtime | `in-progress` | finish host capability plumbing and deterministic timer/dialog traces |
 | `W0-06` | engine/wavescript | `done` | strict structural closure continues in `W1-02` |
 | `W1-06` | wavescript/runtime | `in-progress` | finalize remaining fatal/non-fatal fixture classes and close checklist split |
+| `D0-01` | engine + browser + docs | `todo` | next planning-ready contract/architecture slice after active runtime correctness work |
 | `T0-18` | transport | `done` | retransmission/duplicate/NACK hold-off baseline is closed |
 | `T0-19` | transport | `done` | WDP ingress and UDP mapping baseline is closed |
 | `T0-20` | transport | `done` | WSP registry/header/session baseline is closed |
@@ -42,7 +47,8 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 | `T0-24` | transport/docs | `done` | seed corpus is formalized and promotion-gated |
 | `T0-25` | docs/spec-processing | `done` | external vector adoption sweep is closed |
 | `T0-26` | transport/browser/docs | `done` | local Kannel readiness gate is explicit and runnable |
-| `M1-16` | maintenance/security | `todo` | next hardening item after active P0/P1 closure |
+| `M1-08` | maintenance | `in-progress` | browser/transport cleanup is residual only and should stay non-preemptive |
+| `M1-16` | maintenance/security | `done` | payload-size guardrails are closed for the current transport/engine/browser boundary |
 
 ## Sprint 1 Review: Bedrock + Networking Unblockers
 
@@ -136,32 +142,30 @@ Current result:
 1. `T0-21`, `T0-24`, and `T0-25` are complete.
 2. Networking protocol-policy closure is no longer the pacing constraint, but live desktop/browser ingress still needs a native fetch lane instead of the legacy HTTP gateway bridge.
 
-## Targeted Sprint Recommendation: Interactive WML Forms (2026-03-10 onward)
+## Targeted Sprint Recommendation: Runtime Fidelity + Debug Boundary Reset (2026-03-15 onward)
 
 ### Goal
 
-Extend the now-working native submit lane into real viewport-editable WML forms so the browser can complete Kannel-backed login/register flows through engine-owned field state instead of smoke-only request metadata.
+Now that the interactive forms lane and browser responsiveness remediation are landed, shift the active sprint back toward runtime correctness closure and the next planning-ready boundary definition.
 
 ### Must Complete (P0/P1)
 
-1. `A5-04` minimal WML text-input interaction baseline.
-2. `A5-05` WML select/option interaction baseline.
-3. `A5-06` form-state submit integration hardening.
-4. `M1-16` transport/engine payload size guardrails.
+1. `A5-01` history entry fidelity follow-up.
+2. `W0-05` timer/dialog integration baseline.
+3. `D0-01` debug connector contract and architecture baseline.
 
 ### Follow-on (only if capacity remains)
 
-1. `A5-01` history entry fidelity follow-up.
-2. `W0-05` timer/dialog integration baseline.
-3. `W1-06` fatal/non-fatal script error taxonomy closure.
+1. `W1-06` fatal/non-fatal script error taxonomy closure.
+2. `M1-09` frame migration kickoff (`F0-*` only).
+3. residual `M1-08` cleanup if a new hotspot emerges during the active lane.
 
 ### Concrete commit-order recommendation
 
-1. `feat(engine): add viewport text-input field state and edit semantics`
-2. `feat(browser): wire viewport edit mode to engine-owned form controls`
-3. `feat(engine): add select-option interaction baseline`
-4. `test(browser): prove edited field values change native post payload`
-5. `fix(transport): enforce payload size guardrails before decode/parse`
+1. `fix(engine): close history entry fidelity gaps under request-shaped navigation`
+2. `feat(runtime): finish timer/dialog host capability plumbing`
+3. `docs(debug): lock engine debug connector contract and boundary rules`
+4. `feat(host): start frame migration only after the above boundaries are stable`
 
 Implementation reference:
 
@@ -169,24 +173,26 @@ Implementation reference:
 
 ### Exit Gates
 
-1. Waves can focus, edit, and submit the training-environment login/register forms from inside the viewport.
-2. Edited field values are preserved in engine-owned state and visible in render output.
-3. Native Kannel browser evidence proves interactive edits change the submitted payload.
-4. `M1-16` lands with deterministic oversized-payload rejection behavior across transport and engine boundaries.
+1. History/session fidelity gaps are reduced without reopening the now-stable form/browser responsiveness lane.
+2. Timer/dialog runtime semantics are host-integrated and deterministic.
+3. Debug connector architecture is contract-ready before another host-boundary migration starts.
+4. A fresh planning cycle is only needed once those three items materially change the execution picture.
 
 ## Parallel Follow-on Sprint Recommendation
 
-If the interactive form slice stabilizes quickly, resume the runtime/compliance lane next:
+Current recommendation after this refresh:
 
 1. `A5-01` history entry fidelity follow-up.
 2. `W0-05` timer/dialog integration baseline.
-3. `W1-06` fatal/non-fatal script error taxonomy closure.
+3. `D0-01` debug connector contract baseline.
+4. `W1-06` fatal/non-fatal script error taxonomy closure.
 
 Completed this sprint:
 
-1. native connectionless WSP `POST` interop for login/register through Kannel
-2. host-native `POST` smoke through the Tauri fetch command
-3. browser-engine native `POST` smoke proving login-success deck load/render after gateway roundtrip
+1. interactive text-input and select-control viewport editing
+2. native/browser submit hardening for the active form lane
+3. browser responsiveness and UI-blocking remediation
+4. transport/engine payload-size guardrails for active boundaries
 
 ## Capacity and WIP Rules
 
