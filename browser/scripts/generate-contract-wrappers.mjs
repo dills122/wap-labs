@@ -220,6 +220,7 @@ function createTypeOnlyImport(names, modulePath) {
 function generateTauriClient(filePath) {
   const engineImports = [
     'AdvanceTimeRequest',
+    'EngineFrame',
     'EngineRuntimeSnapshot',
     'HandleKeyRequest',
     'LoadDeckContextRequest',
@@ -237,22 +238,37 @@ function generateTauriClient(filePath) {
     { name: 'fetchDeck', command: 'fetch_deck', returns: 'FetchDeckResponse', param: { name: 'request', type: 'FetchDeckRequest' } },
     { name: 'engineLoadDeck', command: 'engine_load_deck', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckRequest' } },
     { name: 'engineLoadDeckContext', command: 'engine_load_deck_context', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckContextRequest' } },
+    { name: 'engineLoadDeckContextFrame', command: 'engine_load_deck_context_frame', returns: 'EngineFrame', param: { name: 'request', type: 'LoadDeckContextRequest' } },
     { name: 'engineRender', command: 'engine_render', returns: 'RenderList' },
+    { name: 'engineRenderFrame', command: 'engine_render_frame', returns: 'EngineFrame' },
     { name: 'engineHandleKey', command: 'engine_handle_key', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'HandleKeyRequest' } },
+    { name: 'engineHandleKeyFrame', command: 'engine_handle_key_frame', returns: 'EngineFrame', param: { name: 'request', type: 'HandleKeyRequest' } },
     { name: 'engineNavigateToCard', command: 'engine_navigate_to_card', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'NavigateToCardRequest' } },
+    { name: 'engineNavigateToCardFrame', command: 'engine_navigate_to_card_frame', returns: 'EngineFrame', param: { name: 'request', type: 'NavigateToCardRequest' } },
     { name: 'engineNavigateBack', command: 'engine_navigate_back', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineNavigateBackFrame', command: 'engine_navigate_back_frame', returns: 'EngineFrame' },
     { name: 'engineSetViewportCols', command: 'engine_set_viewport_cols', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetViewportColsRequest' } },
     { name: 'engineAdvanceTimeMs', command: 'engine_advance_time_ms', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'AdvanceTimeRequest' } },
+    { name: 'engineAdvanceTimeMsFrame', command: 'engine_advance_time_ms_frame', returns: 'EngineFrame', param: { name: 'request', type: 'AdvanceTimeRequest' } },
     { name: 'engineSnapshot', command: 'engine_snapshot', returns: 'EngineRuntimeSnapshot' },
     { name: 'engineClearExternalNavigationIntent', command: 'engine_clear_external_navigation_intent', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineClearExternalNavigationIntentFrame', command: 'engine_clear_external_navigation_intent_frame', returns: 'EngineFrame' },
     { name: 'engineBeginFocusedInputEdit', command: 'engine_begin_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineBeginFocusedInputEditFrame', command: 'engine_begin_focused_input_edit_frame', returns: 'EngineFrame' },
     { name: 'engineSetFocusedInputEditDraft', command: 'engine_set_focused_input_edit_draft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
+    { name: 'engineSetFocusedInputEditDraftFrame', command: 'engine_set_focused_input_edit_draft_frame', returns: 'EngineFrame', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
     { name: 'engineCommitFocusedInputEdit', command: 'engine_commit_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineCommitFocusedInputEditFrame', command: 'engine_commit_focused_input_edit_frame', returns: 'EngineFrame' },
     { name: 'engineCancelFocusedInputEdit', command: 'engine_cancel_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineCancelFocusedInputEditFrame', command: 'engine_cancel_focused_input_edit_frame', returns: 'EngineFrame' },
     { name: 'engineBeginFocusedSelectEdit', command: 'engine_begin_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineBeginFocusedSelectEditFrame', command: 'engine_begin_focused_select_edit_frame', returns: 'EngineFrame' },
     { name: 'engineMoveFocusedSelectEdit', command: 'engine_move_focused_select_edit', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
+    { name: 'engineMoveFocusedSelectEditFrame', command: 'engine_move_focused_select_edit_frame', returns: 'EngineFrame', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
     { name: 'engineCommitFocusedSelectEdit', command: 'engine_commit_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineCancelFocusedSelectEdit', command: 'engine_cancel_focused_select_edit', returns: 'EngineRuntimeSnapshot' }
+    { name: 'engineCommitFocusedSelectEditFrame', command: 'engine_commit_focused_select_edit_frame', returns: 'EngineFrame' },
+    { name: 'engineCancelFocusedSelectEdit', command: 'engine_cancel_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'engineCancelFocusedSelectEditFrame', command: 'engine_cancel_focused_select_edit_frame', returns: 'EngineFrame' }
   ];
 
   const tauriInvoke = factory.createTypeAliasDeclaration(
@@ -404,6 +420,7 @@ const engineExportedTypes = collectExportedTypeNames(engineGeneratedPath);
 const transportExportedTypes = collectExportedTypeNames(transportGeneratedPath);
 
 ensureRequired('engine-host.ts', engineExportedTypes, [
+  'EngineFrame',
   'LoadDeckContextRequest',
   'ScriptDialogRequestSnapshot',
   'ScriptTimerRequestSnapshot'
@@ -414,22 +431,38 @@ appendInterfaces(engineGeneratedPath, [
   makeInterface('EngineHostClient', [
     { name: 'loadDeck', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckRequest' } },
     { name: 'loadDeckContext', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckContextRequest' } },
+    { name: 'loadDeckContextFrame', returns: 'EngineFrame', param: { name: 'request', type: 'LoadDeckContextRequest' } },
     { name: 'render', returns: 'RenderList' },
+    { name: 'renderFrame', returns: 'EngineFrame' },
     { name: 'handleKey', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'HandleKeyRequest' } },
+    { name: 'handleKeyFrame', returns: 'EngineFrame', param: { name: 'request', type: 'HandleKeyRequest' } },
     { name: 'navigateToCard', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'NavigateToCardRequest' } },
+    { name: 'navigateToCardFrame', returns: 'EngineFrame', param: { name: 'request', type: 'NavigateToCardRequest' } },
     { name: 'navigateBack', returns: 'EngineRuntimeSnapshot' },
+    { name: 'navigateBackFrame', returns: 'EngineFrame' },
     { name: 'setViewportCols', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetViewportColsRequest' } },
     { name: 'advanceTimeMs', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'AdvanceTimeRequest' } },
+    { name: 'advanceTimeMsFrame', returns: 'EngineFrame', param: { name: 'request', type: 'AdvanceTimeRequest' } },
     { name: 'snapshot', returns: 'EngineRuntimeSnapshot' },
     { name: 'clearExternalNavigationIntent', returns: 'EngineRuntimeSnapshot' },
+    { name: 'clearExternalNavigationIntentFrame', returns: 'EngineFrame' },
     { name: 'beginFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'beginFocusedInputEditFrame', returns: 'EngineFrame' },
     { name: 'setFocusedInputEditDraft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
+    { name: 'setFocusedInputEditDraftFrame', returns: 'EngineFrame', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
     { name: 'commitFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'commitFocusedInputEditFrame', returns: 'EngineFrame' },
     { name: 'cancelFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'cancelFocusedInputEditFrame', returns: 'EngineFrame' },
     { name: 'beginFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'beginFocusedSelectEditFrame', returns: 'EngineFrame' },
     { name: 'moveFocusedSelectEdit', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
+    { name: 'moveFocusedSelectEditFrame', returns: 'EngineFrame', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
     { name: 'commitFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' },
+    { name: 'commitFocusedSelectEditFrame', returns: 'EngineFrame' },
     { name: 'cancelFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' }
+    ,
+    { name: 'cancelFocusedSelectEditFrame', returns: 'EngineFrame' }
   ])
 ]);
 

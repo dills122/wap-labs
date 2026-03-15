@@ -1,5 +1,5 @@
 import type { FetchResponse } from '../../../contracts/transport';
-import type { EngineRuntimeSnapshot, RenderList } from '../../../contracts/engine';
+import type { EngineFrame, EngineRuntimeSnapshot, RenderList } from '../../../contracts/engine';
 import type { NavigationHostClient } from './navigation-state';
 
 export const renderStub: RenderList = {
@@ -15,6 +15,14 @@ export const snapshot = (
   lastScriptDialogRequests: [],
   lastScriptTimerRequests: [],
   ...overrides
+});
+
+export const frame = (
+  snapshotOverrides: Partial<EngineRuntimeSnapshot> = {},
+  render: RenderList = renderStub
+): EngineFrame => ({
+  snapshot: snapshot(snapshotOverrides),
+  render
 });
 
 export const fetchOk = (overrides: Partial<FetchResponse> = {}): FetchResponse => ({
@@ -35,7 +43,7 @@ export const fetchOk = (overrides: Partial<FetchResponse> = {}): FetchResponse =
 export const createHostClientMock = (
   overrides: Partial<NavigationHostClient> = {}
 ): NavigationHostClient => {
-  const base: NavigationHostClient = {
+  const base = {
     fetchDeck: async () => fetchOk(),
     engineLoadDeckContext: async () => snapshot({ activeCardId: 'home' }),
     engineRender: async () => renderStub,
@@ -46,8 +54,54 @@ export const createHostClientMock = (
     engineAdvanceTimeMs: async () => snapshot({ activeCardId: 'home' }),
     engineClearExternalNavigationIntent: async () => snapshot({ activeCardId: 'home' })
   };
-  return {
+  const host = {
     ...base,
     ...overrides
+  };
+  const renderForFrame = async (): Promise<RenderList> => host.engineRender();
+  return {
+    ...host,
+    engineLoadDeckContextFrame:
+      overrides.engineLoadDeckContextFrame ??
+      (async (request) => ({
+        snapshot: await host.engineLoadDeckContext(request),
+        render: await renderForFrame()
+      })),
+    engineRenderFrame:
+      overrides.engineRenderFrame ??
+      (async () => ({
+        snapshot: await host.engineSnapshot(),
+        render: await renderForFrame()
+      })),
+    engineHandleKeyFrame:
+      overrides.engineHandleKeyFrame ??
+      (async (request) => ({
+        snapshot: await host.engineHandleKey(request),
+        render: await renderForFrame()
+      })),
+    engineNavigateBackFrame:
+      overrides.engineNavigateBackFrame ??
+      (async () => ({
+        snapshot: await host.engineNavigateBack(),
+        render: await renderForFrame()
+      })),
+    engineNavigateToCardFrame:
+      overrides.engineNavigateToCardFrame ??
+      (async (request) => ({
+        snapshot: await host.engineNavigateToCard(request),
+        render: await renderForFrame()
+      })),
+    engineAdvanceTimeMsFrame:
+      overrides.engineAdvanceTimeMsFrame ??
+      (async (request) => ({
+        snapshot: await host.engineAdvanceTimeMs(request),
+        render: await renderForFrame()
+      })),
+    engineClearExternalNavigationIntentFrame:
+      overrides.engineClearExternalNavigationIntentFrame ??
+      (async () => ({
+        snapshot: await host.engineClearExternalNavigationIntent(),
+        render: await renderForFrame()
+      }))
   };
 };

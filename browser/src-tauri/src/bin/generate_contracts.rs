@@ -8,7 +8,7 @@ use lowband_transport_rust::{
 };
 use ts_rs::{Config, TS};
 use wavenav_host_lib::contract_types::{
-    AdvanceTimeRequest, DrawCmd, EngineKey, EngineRuntimeSnapshot,
+    AdvanceTimeRequest, DrawCmd, EngineFrame, EngineKey, EngineRuntimeSnapshot,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationPostContextSnapshot,
     ExternalNavigationRequestPolicySnapshot, HandleKeyRequest, LoadDeckContextRequest,
     LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList,
@@ -52,6 +52,7 @@ fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
     push_decl::<ExternalNavigationPostContextSnapshot>(&mut output);
     push_decl::<ExternalNavigationRequestPolicySnapshot>(&mut output);
     push_decl::<EngineRuntimeSnapshot>(&mut output);
+    push_decl::<EngineFrame>(&mut output);
     push_decl::<DrawCmd>(&mut output);
     push_decl::<RenderList>(&mut output);
 

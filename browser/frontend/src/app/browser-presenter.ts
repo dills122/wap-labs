@@ -29,15 +29,23 @@ export class BrowserPresenter {
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private hasRenderedContent = false;
   private latestSnapshot: EngineRuntimeSnapshot | null = null;
+  private latestTransportResponse: FetchResponse | null = null;
   private sessionStateText = '';
   private timelineText = '';
   private snapshotText = '';
   private transportResponseText = '';
+  private sessionStateDirty = true;
+  private timelineDirty = true;
+  private snapshotDirty = true;
+  private transportResponseDirty = true;
 
   constructor(refs: BrowserShellRefs, initialSession: HostSessionState, maxTimelineEvents: number) {
     this.refs = refs;
     this.maxTimelineEvents = maxTimelineEvents;
     this.hostSessionState = initialSession;
+    this.refs.devDrawerEl.addEventListener('toggle', () => {
+      this.flushDeveloperPanels();
+    });
   }
 
   getSessionState(): HostSessionState {
@@ -46,11 +54,8 @@ export class BrowserPresenter {
 
   setSessionState(next: HostSessionState): void {
     this.hostSessionState = next;
-    this.sessionStateText = this.writeTextIfChanged(
-      this.refs.sessionStateEl,
-      this.sessionStateText,
-      JSON.stringify(this.hostSessionState, null, 2)
-    );
+    this.sessionStateDirty = true;
+    this.flushDeveloperPanels();
     const shownUrl =
       this.hostSessionState.finalUrl ?? this.hostSessionState.requestedUrl ?? WAVES_COPY.shell.idle;
     this.refs.activeUrlLabelEl.textContent = shownUrl;
@@ -66,11 +71,8 @@ export class BrowserPresenter {
 
   clearTimeline(): void {
     this.timelineState = clearTimelineState();
-    this.timelineText = this.writeTextIfChanged(
-      this.refs.timelineEl,
-      this.timelineText,
-      JSON.stringify(this.timelineState.entries, null, 2)
-    );
+    this.timelineDirty = true;
+    this.flushDeveloperPanels();
   }
 
   recordTimeline(
@@ -87,11 +89,8 @@ export class BrowserPresenter {
       details
     );
     uiEvents.emit('timeline', { action, phase });
-    this.timelineText = this.writeTextIfChanged(
-      this.refs.timelineEl,
-      this.timelineText,
-      JSON.stringify(this.timelineState.entries, null, 2)
-    );
+    this.timelineDirty = true;
+    this.flushDeveloperPanels();
   }
 
   setStatus(message: string): void {
@@ -149,11 +148,8 @@ export class BrowserPresenter {
 
   setSnapshot(snapshot: EngineRuntimeSnapshot): void {
     this.latestSnapshot = snapshot;
-    this.snapshotText = this.writeTextIfChanged(
-      this.refs.snapshotEl,
-      this.snapshotText,
-      JSON.stringify(snapshot, null, 2)
-    );
+    this.snapshotDirty = true;
+    this.flushDeveloperPanels();
   }
 
   getSnapshot(): EngineRuntimeSnapshot | null {
@@ -161,11 +157,9 @@ export class BrowserPresenter {
   }
 
   setTransportResponse(response: FetchResponse | null): void {
-    this.transportResponseText = this.writeTextIfChanged(
-      this.refs.transportResponseEl,
-      this.transportResponseText,
-      response ? JSON.stringify(response, null, 2) : ''
-    );
+    this.latestTransportResponse = response;
+    this.transportResponseDirty = true;
+    this.flushDeveloperPanels();
   }
 
   drawRenderList(renderList: RenderList): void {
@@ -195,6 +189,44 @@ export class BrowserPresenter {
 
   timelineLength(): number {
     return this.timelineState.entries.length;
+  }
+
+  private flushDeveloperPanels(): void {
+    if (!this.refs.devDrawerEl.open) {
+      return;
+    }
+    if (this.sessionStateDirty) {
+      this.sessionStateText = this.writeTextIfChanged(
+        this.refs.sessionStateEl,
+        this.sessionStateText,
+        JSON.stringify(this.hostSessionState, null, 2)
+      );
+      this.sessionStateDirty = false;
+    }
+    if (this.timelineDirty) {
+      this.timelineText = this.writeTextIfChanged(
+        this.refs.timelineEl,
+        this.timelineText,
+        JSON.stringify(this.timelineState.entries, null, 2)
+      );
+      this.timelineDirty = false;
+    }
+    if (this.snapshotDirty) {
+      this.snapshotText = this.writeTextIfChanged(
+        this.refs.snapshotEl,
+        this.snapshotText,
+        this.latestSnapshot ? JSON.stringify(this.latestSnapshot, null, 2) : ''
+      );
+      this.snapshotDirty = false;
+    }
+    if (this.transportResponseDirty) {
+      this.transportResponseText = this.writeTextIfChanged(
+        this.refs.transportResponseEl,
+        this.transportResponseText,
+        this.latestTransportResponse ? JSON.stringify(this.latestTransportResponse, null, 2) : ''
+      );
+      this.transportResponseDirty = false;
+    }
   }
 
   private writeTextIfChanged<T extends HTMLElement>(

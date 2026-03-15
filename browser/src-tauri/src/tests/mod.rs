@@ -1,4 +1,4 @@
-pub(super) use super::{fetch_deck, health};
+pub(super) use super::health;
 pub(super) use crate::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineKey, HandleKeyRequest, LoadDeckContextRequest,
     LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
@@ -14,6 +14,7 @@ pub(super) use crate::engine_bridge::{
     command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
     command_engine_snapshot, AppState,
 };
+pub(super) use crate::fetch_host::fetch_deck;
 pub(super) use crate::fetch_host::{
     default_fetch_destination_policy, default_fetch_transport_fallback,
     default_fetch_transport_profile, ensure_request_id, next_request_id,

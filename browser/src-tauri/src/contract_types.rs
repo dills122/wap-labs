@@ -167,6 +167,13 @@ pub struct EngineRuntimeSnapshot {
     pub last_script_timer_requests: Vec<ScriptTimerRequestSnapshot>,
 }
 
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct EngineFrame {
+    pub snapshot: EngineRuntimeSnapshot,
+    pub render: RenderList,
+}
+
 impl From<engine::ScriptNavigationRequestPolicyLiteral>
     for ExternalNavigationRequestPolicySnapshot
 {

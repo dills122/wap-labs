@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserPresenter } from './browser-presenter';
@@ -64,6 +64,20 @@ const initialSession: HostSessionState = {
 };
 
 describe('BrowserPresenter', () => {
+  let createObjectUrlSpy: ReturnType<typeof vi.spyOn>;
+  let revokeObjectUrlSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    createObjectUrlSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test');
+    revokeObjectUrlSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    createObjectUrlSpy.mockRestore();
+    revokeObjectUrlSpy.mockRestore();
+    document.body.innerHTML = '';
+  });
+
   it('sets boot phase on document body', () => {
     const presenter = new BrowserPresenter(createRefs(), initialSession, 20);
     presenter.setBootPhase('engine-ready');
@@ -99,5 +113,67 @@ describe('BrowserPresenter', () => {
       focusedLinkIndex: 0
     });
     expect(presenter.timelineLength()).toBe(1);
+  });
+
+  it('only flushes developer panel state when the drawer is open', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+    presenter.setSessionState({
+      ...initialSession,
+      navigationStatus: 'loaded',
+      finalUrl: 'http://local.test/start.wml'
+    });
+    presenter.setSnapshot({
+      activeCardId: 'home',
+      focusedLinkIndex: 0,
+      baseUrl: 'http://local.test/start.wml',
+      contentType: 'text/vnd.wap.wml',
+      lastScriptDialogRequests: [],
+      lastScriptTimerRequests: []
+    });
+    presenter.setTransportResponse({
+      ok: true,
+      status: 200,
+      finalUrl: 'http://local.test/start.wml',
+      contentType: 'text/vnd.wap.wml',
+      wml: '<wml/>',
+      timingMs: { encode: 0, udpRtt: 1, decode: 0 },
+      engineDeckInput: undefined
+    });
+
+    expect(refs.sessionStateEl.textContent).toBe('');
+    expect(refs.snapshotEl.textContent).toBe('');
+    expect(refs.transportResponseEl.textContent).toBe('');
+
+    refs.devDrawerEl.open = true;
+    refs.devDrawerEl.dispatchEvent(new Event('toggle'));
+
+    expect(refs.sessionStateEl.textContent).toContain('"navigationStatus": "loaded"');
+    expect(refs.snapshotEl.textContent).toContain('"activeCardId": "home"');
+    expect(refs.transportResponseEl.textContent).toContain('"status": 200');
+    expect(refs.activeUrlLabelEl.textContent).toBe('http://local.test/start.wml');
+  });
+
+  it('exports timeline data through a blob download', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    refs.devDrawerEl.open = true;
+
+    presenter.patchSessionState({ navigationStatus: 'loaded', activeCardId: 'home' });
+    presenter.recordTimeline('load', 'start', { url: 'http://local.test/start.wml' });
+    presenter.recordTimeline('render', 'state', { count: 1 });
+
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined);
+
+    presenter.exportTimeline();
+
+    expect(createObjectUrlSpy).toHaveBeenCalledTimes(1);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    expect(revokeObjectUrlSpy).toHaveBeenCalledWith('blob:test');
+
+    clickSpy.mockRestore();
   });
 });

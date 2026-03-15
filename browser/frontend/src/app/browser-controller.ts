@@ -3,7 +3,7 @@ import type {
   HostNavigationSource,
   HostSessionState
 } from '../../../contracts/transport';
-import type { EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
+import type { EngineFrame, EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { EngineTimerRuntime } from './engine-timer-runtime';
 import { FocusedControlEditController, type ControlEditDisposition } from './focused-control-edit';
@@ -98,8 +98,7 @@ export class BrowserController {
       advanceNetwork: (deltaMs) => this.navigation.applyEngineTimerTick(deltaMs),
       getSessionState: () => this.presenter.getSessionState(),
       renderLocalSnapshot: async (snapshot) => {
-        this.presenter.setSnapshot(snapshot);
-        this.presenter.drawRenderList(await this.hostClient.engineRender());
+        this.applyFrame(await this.hostClient.engineRenderFrame(), snapshot);
         this.syncLocalSessionFromSnapshot(snapshot);
       },
       handleExternalIntent: async (intentUrl, snapshot) => {
@@ -123,21 +122,18 @@ export class BrowserController {
     this.focusedControlEdit = new FocusedControlEditController({
       getSnapshot: () => this.presenter.getSnapshot(),
       loadSnapshot: () => this.hostClient.engineSnapshot(),
-      renderSnapshot: async (snapshot) => {
-        this.presenter.setSnapshot(snapshot);
-        this.presenter.drawRenderList(await this.hostClient.engineRender());
-      },
       syncSnapshot: (snapshot) => this.syncInteractiveSnapshot(snapshot),
       recordTimeline: (action, details) => this.presenter.recordTimeline(action, 'state', details),
-      beginFocusedInputEdit: () => this.hostClient.engineBeginFocusedInputEdit(),
+      applyFrame: (frame) => this.applyFrame(frame),
+      beginFocusedInputEdit: () => this.hostClient.engineBeginFocusedInputEditFrame(),
       setFocusedInputEditDraft: (value) =>
-        this.hostClient.engineSetFocusedInputEditDraft({ value }),
-      commitFocusedInputEdit: () => this.hostClient.engineCommitFocusedInputEdit(),
-      cancelFocusedInputEdit: () => this.hostClient.engineCancelFocusedInputEdit(),
-      beginFocusedSelectEdit: () => this.hostClient.engineBeginFocusedSelectEdit(),
-      moveFocusedSelectEdit: (delta) => this.hostClient.engineMoveFocusedSelectEdit({ delta }),
-      commitFocusedSelectEdit: () => this.hostClient.engineCommitFocusedSelectEdit(),
-      cancelFocusedSelectEdit: () => this.hostClient.engineCancelFocusedSelectEdit()
+        this.hostClient.engineSetFocusedInputEditDraftFrame({ value }),
+      commitFocusedInputEdit: () => this.hostClient.engineCommitFocusedInputEditFrame(),
+      cancelFocusedInputEdit: () => this.hostClient.engineCancelFocusedInputEditFrame(),
+      beginFocusedSelectEdit: () => this.hostClient.engineBeginFocusedSelectEditFrame(),
+      moveFocusedSelectEdit: (delta) => this.hostClient.engineMoveFocusedSelectEditFrame({ delta }),
+      commitFocusedSelectEdit: () => this.hostClient.engineCommitFocusedSelectEditFrame(),
+      cancelFocusedSelectEdit: () => this.hostClient.engineCancelFocusedSelectEditFrame()
     });
   }
 
@@ -195,13 +191,13 @@ export class BrowserController {
         this.withAction('load-raw-wml', async () => {
           await this.setViewportCols();
           this.timerRuntime.resetScriptTimers();
-          const snapshot = await this.hostClient.engineLoadDeckContext({
+          const frame = await this.hostClient.engineLoadDeckContextFrame({
             wmlXml: this.refs.wmlInput.value,
             baseUrl: this.refs.baseUrlInput.value,
             contentType: 'text/vnd.wap.wml'
           });
-          this.presenter.setSnapshot(snapshot);
-          this.presenter.drawRenderList(await this.hostClient.engineRender());
+          const snapshot = frame.snapshot;
+          this.applyFrame(frame);
           this.presenter.patchSessionState({
             navigationStatus: 'loaded',
             requestedUrl: this.refs.baseUrlInput.value,
@@ -463,6 +459,7 @@ export class BrowserController {
 
   private async setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void> {
     this.startupProbe.cancel();
+    this.navigation.cancelPendingNavigation();
     this.runMode = mode;
     this.refs.runModeSelectEl.value = mode;
     this.applyModeUiState();
@@ -524,13 +521,13 @@ export class BrowserController {
 
     try {
       this.presenter.setStatus(WAVES_COPY.status.loading(example.baseUrl));
-      const snapshot = await this.hostClient.engineLoadDeckContext({
+      const frame = await this.hostClient.engineLoadDeckContextFrame({
         wmlXml: example.wml,
         baseUrl: example.baseUrl,
         contentType: 'text/vnd.wap.wml'
       });
-      this.presenter.setSnapshot(snapshot);
-      this.presenter.drawRenderList(await this.hostClient.engineRender());
+      const snapshot = frame.snapshot;
+      this.applyFrame(frame);
       if (!this.bootDeckReadyEmitted) {
         this.bootDeckReadyEmitted = true;
         this.presenter.setBootPhase('deck-ready');
@@ -710,10 +707,9 @@ export class BrowserController {
   }
 
   private async renderAndSnapshot(): Promise<EngineRuntimeSnapshot> {
-    const snapshot = await this.hostClient.engineSnapshot();
-    this.presenter.setSnapshot(snapshot);
-    this.presenter.drawRenderList(await this.hostClient.engineRender());
-    return snapshot;
+    const frame = await this.hostClient.engineRenderFrame();
+    this.applyFrame(frame);
+    return frame.snapshot;
   }
 
   private async setViewportCols(): Promise<void> {
@@ -757,13 +753,11 @@ export class BrowserController {
   }
 
   private async applyEngineKey(key: EngineKey): Promise<void> {
-    const snapshot =
-      this.runMode === 'local'
-        ? await this.hostClient.engineHandleKey({ key })
-        : await this.navigation.applyEngineKey(key);
+    const localFrame =
+      this.runMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
+    const snapshot = localFrame ? localFrame.snapshot : await this.navigation.applyEngineKey(key);
     if (this.runMode === 'local') {
-      this.presenter.setSnapshot(snapshot);
-      this.presenter.drawRenderList(await this.hostClient.engineRender());
+      this.applyFrame(localFrame ?? (await this.hostClient.engineRenderFrame()), snapshot);
       this.syncLocalSessionFromSnapshot(snapshot);
     }
     this.timerRuntime.applySnapshot(snapshot);
@@ -809,10 +803,13 @@ export class BrowserController {
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {
     if (this.runMode === 'local') {
-      const before = await this.hostClient.engineSnapshot();
-      const after = await this.hostClient.engineNavigateBack();
-      this.presenter.setSnapshot(after);
-      this.presenter.drawRenderList(await this.hostClient.engineRender());
+      const before = {
+        activeCardId: this.presenter.getSessionState().activeCardId,
+        focusedLinkIndex: this.presenter.getSessionState().focusedLinkIndex ?? 0
+      };
+      const frame = await this.hostClient.engineNavigateBackFrame();
+      const after = frame.snapshot;
+      this.applyFrame(frame);
       this.syncLocalSessionFromSnapshot(after);
       const engineHandled =
         before.activeCardId !== after.activeCardId ||
@@ -920,6 +917,11 @@ export class BrowserController {
     return {
       Accept: WAP_ACCEPT_HEADER
     };
+  }
+
+  private applyFrame(frame: EngineFrame, snapshot = frame.snapshot): void {
+    this.presenter.setSnapshot(snapshot);
+    this.presenter.drawRenderList(frame.render);
   }
 }
 
