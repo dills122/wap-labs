@@ -12,6 +12,7 @@ pub struct LayoutResult {
 pub enum FocusTarget {
     Link(String),
     Input(String),
+    Select(String),
 }
 
 pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -> LayoutResult {
@@ -45,6 +46,21 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             let rendered = format!("[{name}: {display_value}]");
                             parts.push((rendered, Some(format!("input:{name}"))));
                         }
+                        InlineNode::Select {
+                            name,
+                            title,
+                            options,
+                            selected_index,
+                        } => {
+                            let selected = options
+                                .get(*selected_index)
+                                .or_else(|| options.first())
+                                .map(|option| option.label.clone())
+                                .unwrap_or_default();
+                            let label = title.clone().unwrap_or_else(|| name.clone());
+                            let rendered = format!("[{label}: {selected}]");
+                            parts.push((rendered, Some(format!("select:{name}"))));
+                        }
                     }
                 }
 
@@ -56,6 +72,10 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             result
                                 .focus_targets
                                 .push(FocusTarget::Input(input_name.to_string()));
+                        } else if let Some(select_name) = target.strip_prefix("select:") {
+                            result
+                                .focus_targets
+                                .push(FocusTarget::Select(select_name.to_string()));
                         } else {
                             result.focus_targets.push(FocusTarget::Link(target.clone()));
                         }
@@ -265,6 +285,21 @@ mod tests {
                     is_password: true,
                     max_length: None,
                 },
+                InlineNode::Select {
+                    name: "Country".to_string(),
+                    title: Some("Country".to_string()),
+                    options: vec![
+                        crate::runtime::node::SelectOption {
+                            label: "Jordan".to_string(),
+                            value: "Jordan".to_string(),
+                        },
+                        crate::runtime::node::SelectOption {
+                            label: "France".to_string(),
+                            value: "France".to_string(),
+                        },
+                    ],
+                    selected_index: 1,
+                },
             ])],
             accept_action: None,
             onenterforward_action: None,
@@ -278,7 +313,8 @@ mod tests {
             out.focus_targets,
             vec![
                 FocusTarget::Input("UserName".to_string()),
-                FocusTarget::Input("Password".to_string())
+                FocusTarget::Input("Password".to_string()),
+                FocusTarget::Select("Country".to_string())
             ]
         );
         assert!(out
@@ -288,6 +324,9 @@ mod tests {
             .any(|cmd| matches!(cmd, DrawCmd::Link { text, focused: false, href, .. } if text == "[UserName: AHMED]" && href == "input:UserName")));
         assert!(out.render_list.draw.iter().any(
             |cmd| matches!(cmd, DrawCmd::Link { text, focused: true, href, .. } if text == "[Password: ******]" && href == "input:Password")
+        ));
+        assert!(out.render_list.draw.iter().any(
+            |cmd| matches!(cmd, DrawCmd::Link { text, focused: false, href, .. } if text == "[Country: France]" && href == "select:Country")
         ));
     }
 }

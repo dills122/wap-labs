@@ -330,6 +330,114 @@ fn focused_input_edit_draft_respects_input_maxlength() {
 }
 
 #[test]
+fn select_control_renders_default_selected_option() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <select name="Country" title="Country">
+              <option value="Jordan">Jordan</option>
+              <option value="France" selected="true">France</option>
+              <option value="Germany">Germany</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=select:Country:text=[Country: France]")));
+}
+
+#[test]
+fn focused_select_edit_cycle_commit_updates_render_and_runtime_var() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <select name="Country" title="Country">
+              <option value="Jordan">Jordan</option>
+              <option value="France">France</option>
+              <option value="Germany">Germany</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("enter should start select edit");
+    assert_eq!(
+        engine.focused_select_edit_name(),
+        Some("Country".to_string())
+    );
+    assert_eq!(
+        engine.focused_select_edit_value(),
+        Some("Jordan".to_string())
+    );
+
+    engine
+        .handle_key("down".to_string())
+        .expect("down should cycle");
+    assert_eq!(
+        engine.focused_select_edit_value(),
+        Some("France".to_string())
+    );
+    let pending_lines = render_snapshot_lines(&engine);
+    assert!(pending_lines
+        .iter()
+        .any(|line| line.contains("href=select:Country:text=[Country: France]")));
+
+    engine
+        .commit_focused_select_edit()
+        .expect("commit should succeed");
+    assert_eq!(engine.focused_select_edit_name(), None);
+    assert_eq!(
+        engine.get_var("Country".to_string()),
+        Some("France".to_string())
+    );
+    let committed_lines = render_snapshot_lines(&engine);
+    assert!(committed_lines
+        .iter()
+        .any(|line| line.contains("href=select:Country:text=[Country: France]")));
+}
+
+#[test]
+fn focused_select_edit_cancel_keeps_original_value() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <select name="Country" title="Country">
+              <option value="Jordan">Jordan</option>
+              <option value="France">France</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_select_edit()
+        .expect("begin edit should return result");
+    assert!(engine.move_focused_select_edit(1));
+    assert_eq!(
+        engine.focused_select_edit_value(),
+        Some("France".to_string())
+    );
+    assert!(engine.cancel_focused_select_edit());
+    assert_eq!(engine.focused_select_edit_name(), None);
+    assert_eq!(engine.get_var("Country".to_string()), None);
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=select:Country:text=[Country: Jordan]")));
+}
+
+#[test]
 fn moving_focus_down_exits_current_edit_and_allows_editing_next_input() {
     let mut engine = WmlEngine::new();
     let xml = r#"

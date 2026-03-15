@@ -146,12 +146,20 @@ impl WmlEngine {
 
         match key {
             "up" => {
+                if self.active_select_edit.is_some() {
+                    self.move_focused_select_edit(-1);
+                    return Ok(());
+                }
                 if self.active_input_edit.is_some() {
                     self.commit_focused_input_edit_internal()?;
                 }
                 self.focused_link_idx = move_focus_up(self.focused_link_idx, target_total);
             }
             "down" => {
+                if self.active_select_edit.is_some() {
+                    self.move_focused_select_edit(1);
+                    return Ok(());
+                }
                 if self.active_input_edit.is_some() {
                     self.commit_focused_input_edit_internal()?;
                 }
@@ -171,6 +179,7 @@ impl WmlEngine {
                     .ok_or_else(|| "Focused target index out of range".to_string())?;
                 match target {
                     FocusTarget::Input(name) => {
+                        self.active_select_edit = None;
                         self.push_trace("ACTION_INPUT", name.clone());
                         if self.active_input_edit.is_some() {
                             self.commit_focused_input_edit_internal()?;
@@ -186,8 +195,19 @@ impl WmlEngine {
                         }
                         return Ok(());
                     }
+                    FocusTarget::Select(name) => {
+                        self.active_input_edit = None;
+                        self.push_trace("ACTION_SELECT", name.clone());
+                        if self.active_select_edit.is_some() {
+                            self.commit_focused_select_edit_internal()?;
+                        } else {
+                            self.begin_focused_select_edit_internal()?;
+                        }
+                        return Ok(());
+                    }
                     FocusTarget::Link(href) => {
                         self.active_input_edit = None;
+                        self.active_select_edit = None;
                         self.execute_action_href(href, None, &[])?;
                     }
                 }
@@ -205,6 +225,7 @@ impl WmlEngine {
         let current = self
             .input_value_on_active_card(&input_name)
             .unwrap_or_default();
+        self.active_select_edit = None;
         self.active_input_edit = Some(InputEditState {
             input_name: input_name.clone(),
             original_value: current.clone(),
@@ -228,6 +249,40 @@ impl WmlEngine {
         Ok(true)
     }
 
+    pub(crate) fn begin_focused_select_edit_internal(&mut self) -> Result<bool, String> {
+        let Some(select_name) = self.focused_select_name_internal()? else {
+            return Ok(false);
+        };
+        let Some(current_index) = self.select_selected_index_on_active_card(&select_name) else {
+            return Ok(false);
+        };
+        self.active_input_edit = None;
+        self.active_select_edit = Some(SelectEditState {
+            select_name: select_name.clone(),
+            original_index: current_index,
+            draft_index: current_index,
+        });
+        self.push_trace("SELECT_EDIT_START", select_name);
+        Ok(true)
+    }
+
+    pub(crate) fn commit_focused_select_edit_internal(&mut self) -> Result<bool, String> {
+        let Some(edit) = self.active_select_edit.clone() else {
+            return Ok(false);
+        };
+        let committed =
+            self.set_select_selected_index_on_active_card(&edit.select_name, edit.draft_index)?;
+        if !committed {
+            return Ok(false);
+        }
+        if let Some(value) = self.select_value_on_active_card(&edit.select_name, edit.draft_index) {
+            self.set_var(edit.select_name.clone(), value);
+        }
+        self.active_select_edit = None;
+        self.push_trace("SELECT_EDIT_COMMIT", edit.select_name);
+        Ok(true)
+    }
+
     fn focused_input_name_internal(&self) -> Result<Option<String>, String> {
         let card = self.active_card_internal()?;
         let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
@@ -237,7 +292,20 @@ impl WmlEngine {
         };
         match target {
             FocusTarget::Input(name) => Ok(Some(name.clone())),
-            FocusTarget::Link(_) => Ok(None),
+            FocusTarget::Select(_) | FocusTarget::Link(_) => Ok(None),
+        }
+    }
+
+    fn focused_select_name_internal(&self) -> Result<Option<String>, String> {
+        let card = self.active_card_internal()?;
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
+        let Some(target) = layout.focus_targets.get(focused_idx) else {
+            return Ok(None);
+        };
+        match target {
+            FocusTarget::Select(name) => Ok(Some(name.clone())),
+            FocusTarget::Input(_) | FocusTarget::Link(_) => Ok(None),
         }
     }
 
@@ -309,6 +377,129 @@ impl WmlEngine {
                 {
                     if name == input_name {
                         *current_value = value.to_string();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    pub(crate) fn select_selected_index_on_active_card(&self, select_name: &str) -> Option<usize> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select {
+                    name,
+                    selected_index,
+                    ..
+                } = item
+                {
+                    if name == select_name {
+                        return Some(*selected_index);
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    pub(crate) fn select_option_count_on_active_card(&self, select_name: &str) -> Option<usize> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select { name, options, .. } = item {
+                    if name == select_name {
+                        return Some(options.len());
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    pub(crate) fn select_value_on_active_card(
+        &self,
+        select_name: &str,
+        selected_index: usize,
+    ) -> Option<String> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select { name, options, .. } = item {
+                    if name == select_name {
+                        return options
+                            .get(selected_index)
+                            .or_else(|| options.first())
+                            .map(|option| option.value.clone());
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    pub(crate) fn set_select_selected_index_on_active_card(
+        &mut self,
+        select_name: &str,
+        selected_index: usize,
+    ) -> Result<bool, String> {
+        let card = self.active_card_internal_mut()?;
+        let mut updated = false;
+        for node in &mut card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select {
+                    name,
+                    options,
+                    selected_index: current_index,
+                    ..
+                } = item
+                {
+                    if name == select_name && selected_index < options.len() {
+                        *current_index = selected_index;
+                        updated = true;
+                        break;
+                    }
+                }
+            }
+            if updated {
+                break;
+            }
+        }
+        Ok(updated)
+    }
+
+    pub(crate) fn apply_select_index_to_card(
+        &self,
+        card: &mut runtime::card::Card,
+        select_name: &str,
+        selected_index: usize,
+    ) {
+        for node in &mut card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select {
+                    name,
+                    options,
+                    selected_index: current_index,
+                    ..
+                } = item
+                {
+                    if name == select_name && selected_index < options.len() {
+                        *current_index = selected_index;
                         return;
                     }
                 }

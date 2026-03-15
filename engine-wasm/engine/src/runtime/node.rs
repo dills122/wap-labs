@@ -5,6 +5,12 @@ pub enum Node {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SelectOption {
+    pub label: String,
+    pub value: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum InlineNode {
     Text(String),
     Link {
@@ -16,5 +22,11 @@ pub enum InlineNode {
         value: String,
         is_password: bool,
         max_length: Option<usize>,
+    },
+    Select {
+        name: String,
+        title: Option<String>,
+        options: Vec<SelectOption>,
+        selected_index: usize,
     },
 }

@@ -176,6 +176,64 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
 }
 
 #[test]
+fn tauri_command_wrappers_handle_focused_select_edit_commands() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml>
+      <card id="home">
+        <select name="Country" title="Country">
+          <option value="Jordan">Jordan</option>
+          <option value="France">France</option>
+          <option value="Germany">Germany</option>
+        </select>
+      </card>
+    </wml>
+    "##;
+
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: wml.to_string(),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+        },
+    )
+    .expect("load should succeed");
+
+    let begin = super::super::engine_begin_focused_select_edit(borrowed_state(&state))
+        .expect("begin focused select edit should succeed");
+    assert_eq!(begin.focused_select_edit_name.as_deref(), Some("Country"));
+    assert_eq!(begin.focused_select_edit_value.as_deref(), Some("Jordan"));
+
+    let moved = super::super::engine_move_focused_select_edit(
+        borrowed_state(&state),
+        MoveFocusedSelectEditRequest { delta: 1 },
+    )
+    .expect("move focused select edit should succeed");
+    assert_eq!(moved.focused_select_edit_value.as_deref(), Some("France"));
+    let render =
+        super::super::engine_render(borrowed_state(&state)).expect("render should succeed");
+    assert!(render.draw.iter().any(|cmd| match cmd {
+        DrawCmd::Link { text, href, .. } => href == "select:Country" && text.contains("France"),
+        _ => false,
+    }));
+
+    let committed = super::super::engine_commit_focused_select_edit(borrowed_state(&state))
+        .expect("commit focused select edit should succeed");
+    assert_eq!(committed.focused_select_edit_name, None);
+    let begin_again = super::super::engine_begin_focused_select_edit(borrowed_state(&state))
+        .expect("begin focused select edit should succeed");
+    assert_eq!(
+        begin_again.focused_select_edit_value.as_deref(),
+        Some("France")
+    );
+    let cancelled = super::super::engine_cancel_focused_select_edit(borrowed_state(&state))
+        .expect("cancel focused select edit should succeed");
+    assert_eq!(cancelled.focused_select_edit_name, None);
+}
+
+#[test]
 fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
     let state = AppState::default();
     let wml = r##"

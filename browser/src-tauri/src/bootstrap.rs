@@ -174,7 +174,11 @@ pub fn run() {
             crate::engine_begin_focused_input_edit,
             crate::engine_set_focused_input_edit_draft,
             crate::engine_commit_focused_input_edit,
-            crate::engine_cancel_focused_input_edit
+            crate::engine_cancel_focused_input_edit,
+            crate::engine_begin_focused_select_edit,
+            crate::engine_move_focused_select_edit,
+            crate::engine_commit_focused_select_edit,
+            crate::engine_cancel_focused_select_edit
         ])
         .run(tauri::generate_context!())
         .expect(waves_config::RUN_ERROR_CONTEXT);

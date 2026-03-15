@@ -163,6 +163,12 @@ export interface WmlEngineWasm {
   cancelFocusedInputEdit(): boolean;
   focusedInputEditName(): string | undefined;
   focusedInputEditValue(): string | undefined;
+  beginFocusedSelectEdit(): boolean;
+  moveFocusedSelectEdit(delta: number): boolean;
+  commitFocusedSelectEdit(): boolean;
+  cancelFocusedSelectEdit(): boolean;
+  focusedSelectEditName(): string | undefined;
+  focusedSelectEditValue(): string | undefined;
   externalNavigationIntent(): string | undefined;
   externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
@@ -223,6 +229,12 @@ export interface WmlEngineNative {
   cancelFocusedInputEdit(): boolean;
   focusedInputEditName(): string | undefined;
   focusedInputEditValue(): string | undefined;
+  beginFocusedSelectEdit(): boolean;
+  moveFocusedSelectEdit(delta: number): boolean;
+  commitFocusedSelectEdit(): boolean;
+  cancelFocusedSelectEdit(): boolean;
+  focusedSelectEditName(): string | undefined;
+  focusedSelectEditValue(): string | undefined;
   externalNavigationIntent(): string | undefined;
   externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
   clearExternalNavigationIntent(): void;
