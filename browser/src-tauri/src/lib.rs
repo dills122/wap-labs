@@ -32,8 +32,27 @@ fn health() -> String {
 }
 
 #[tauri::command]
-fn fetch_deck(request: FetchDeckRequest) -> FetchDeckResponse {
-    host_fetch_deck(request)
+async fn fetch_deck(request: FetchDeckRequest) -> FetchDeckResponse {
+    tauri::async_runtime::spawn_blocking(move || host_fetch_deck(request))
+        .await
+        .unwrap_or_else(|join_error| FetchDeckResponse {
+            ok: false,
+            status: 0,
+            final_url: String::new(),
+            content_type: "text/plain".to_string(),
+            wml: None,
+            error: Some(lowband_transport_rust::FetchErrorInfo {
+                code: "TRANSPORT_UNAVAILABLE".to_string(),
+                message: format!("host fetch task failed: {join_error}"),
+                details: None,
+            }),
+            timing_ms: lowband_transport_rust::FetchTiming {
+                encode: 0.0,
+                udp_rtt: 0.0,
+                decode: 0.0,
+            },
+            engine_deck_input: None,
+        })
 }
 
 #[tauri::command]

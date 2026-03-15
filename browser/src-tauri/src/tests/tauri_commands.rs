@@ -50,6 +50,29 @@ fn tauri_command_wrappers_drive_managed_state_roundtrip() {
 }
 
 #[test]
+fn tauri_fetch_deck_command_executes_through_async_boundary() {
+    let response = tauri::async_runtime::block_on(super::super::fetch_deck(FetchDeckRequest {
+        url: "http://example.test".to_string(),
+        method: Some("POST".to_string()),
+        headers: None,
+        timeout_ms: None,
+        retries: None,
+        request_id: Some("async-fetch-command".to_string()),
+        request_policy: None,
+    }));
+    assert!(!response.ok);
+    assert_eq!(
+        response
+            .error
+            .as_ref()
+            .and_then(|error| error.details.as_ref())
+            .and_then(|details| details.get("requestId"))
+            .and_then(|value| value.as_str()),
+        Some("async-fetch-command")
+    );
+}
+
+#[test]
 fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
     let state = AppState::default();
 
