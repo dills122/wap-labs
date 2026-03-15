@@ -29,6 +29,10 @@ export class BrowserPresenter {
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private hasRenderedContent = false;
   private latestSnapshot: EngineRuntimeSnapshot | null = null;
+  private sessionStateText = '';
+  private timelineText = '';
+  private snapshotText = '';
+  private transportResponseText = '';
 
   constructor(refs: BrowserShellRefs, initialSession: HostSessionState, maxTimelineEvents: number) {
     this.refs = refs;
@@ -42,7 +46,11 @@ export class BrowserPresenter {
 
   setSessionState(next: HostSessionState): void {
     this.hostSessionState = next;
-    this.refs.sessionStateEl.textContent = JSON.stringify(this.hostSessionState, null, 2);
+    this.sessionStateText = this.writeTextIfChanged(
+      this.refs.sessionStateEl,
+      this.sessionStateText,
+      JSON.stringify(this.hostSessionState, null, 2)
+    );
     const shownUrl =
       this.hostSessionState.finalUrl ?? this.hostSessionState.requestedUrl ?? WAVES_COPY.shell.idle;
     this.refs.activeUrlLabelEl.textContent = shownUrl;
@@ -58,7 +66,11 @@ export class BrowserPresenter {
 
   clearTimeline(): void {
     this.timelineState = clearTimelineState();
-    this.refs.timelineEl.textContent = JSON.stringify(this.timelineState.entries, null, 2);
+    this.timelineText = this.writeTextIfChanged(
+      this.refs.timelineEl,
+      this.timelineText,
+      JSON.stringify(this.timelineState.entries, null, 2)
+    );
   }
 
   recordTimeline(
@@ -75,7 +87,11 @@ export class BrowserPresenter {
       details
     );
     uiEvents.emit('timeline', { action, phase });
-    this.refs.timelineEl.textContent = JSON.stringify(this.timelineState.entries, null, 2);
+    this.timelineText = this.writeTextIfChanged(
+      this.refs.timelineEl,
+      this.timelineText,
+      JSON.stringify(this.timelineState.entries, null, 2)
+    );
   }
 
   setStatus(message: string): void {
@@ -133,7 +149,11 @@ export class BrowserPresenter {
 
   setSnapshot(snapshot: EngineRuntimeSnapshot): void {
     this.latestSnapshot = snapshot;
-    this.refs.snapshotEl.textContent = JSON.stringify(snapshot, null, 2);
+    this.snapshotText = this.writeTextIfChanged(
+      this.refs.snapshotEl,
+      this.snapshotText,
+      JSON.stringify(snapshot, null, 2)
+    );
   }
 
   getSnapshot(): EngineRuntimeSnapshot | null {
@@ -141,7 +161,11 @@ export class BrowserPresenter {
   }
 
   setTransportResponse(response: FetchResponse | null): void {
-    this.refs.transportResponseEl.textContent = response ? JSON.stringify(response, null, 2) : '';
+    this.transportResponseText = this.writeTextIfChanged(
+      this.refs.transportResponseEl,
+      this.transportResponseText,
+      response ? JSON.stringify(response, null, 2) : ''
+    );
   }
 
   drawRenderList(renderList: RenderList): void {
@@ -171,6 +195,18 @@ export class BrowserPresenter {
 
   timelineLength(): number {
     return this.timelineState.entries.length;
+  }
+
+  private writeTextIfChanged<T extends HTMLElement>(
+    element: T,
+    currentText: string,
+    nextText: string
+  ): string {
+    if (currentText === nextText) {
+      return currentText;
+    }
+    element.textContent = nextText;
+    return nextText;
   }
 }
 
