@@ -119,6 +119,7 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 ## Planning + Traceability
 
 - Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
+- User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 - Test coverage matrix: `docs/waves/SPEC_TEST_COVERAGE.md`
 - Browser architecture baseline: `docs/waves/TECHNICAL_ARCHITECTURE.md`
