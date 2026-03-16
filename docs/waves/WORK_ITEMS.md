@@ -73,19 +73,18 @@ The previous form + browser responsiveness block is no longer the active queue. 
 
 Current priority order is:
 
-1. `A5-01` History entry fidelity follow-up (`P0` active runtime correctness gap).
-2. `W0-05` Timer/dialog integration baseline (`P1`, already in progress; do not let it drift indefinitely).
-3. `D0-01` Engine debug connector contract and architecture definition (`P1`, planning-ready and now unblocked by the browser hot-path cleanup).
-4. `W1-06` Fatal/non-fatal script taxonomy closure (`P1` after the active runtime lane stabilizes).
-5. `M1-09` Engine-host frame migration execution (`F0` only after `A5-01`, `W0-05`, and `D0-01` are stable enough not to churn the boundary again).
-6. `M1-03` Engine API generator design/bootstrap (non-priority track).
-7. `M1-08` Residual high-churn decomposition follow-up only if new hotspots emerge during active ticket work.
+1. `W0-05` Timer/dialog integration baseline (`P1`, already in progress; do not let it drift indefinitely).
+2. `D0-01` Engine debug connector contract and architecture definition (`P1`, planning-ready and now unblocked by the browser hot-path cleanup).
+3. `W1-06` Fatal/non-fatal script taxonomy closure (`P1` after the active runtime lane stabilizes).
+4. `M1-09` Engine-host frame migration execution (`F0` only after `W0-05` and `D0-01` are stable enough not to churn the boundary again).
+5. `M1-03` Engine API generator design/bootstrap (non-priority track).
+6. `M1-08` Residual high-churn decomposition follow-up only if new hotspots emerge during active ticket work.
 
 Planning assessment:
 
 1. A full replanning cycle is not required immediately; the next tranche is now clearer than it was before `#109/#110`.
 2. The next formal planning refresh should happen when either:
-- `A5-01` and `W0-05` are closed, or
+- `W0-05` is closed, or
 - `D0-01` materially changes the host/engine boundary, or
 - `M1-09` is promoted from deferred to active execution.
 

@@ -329,14 +329,13 @@ export const createNavigationStateMachine = (
 
   const navigateBackWithFallback = async (): Promise<BackNavigationMode> => {
     const before = await hostClient.engineSnapshot();
-    const after = await hostClient.engineNavigateBack();
+    const afterFrame = await hostClient.engineNavigateBackFrame();
+    const after = afterFrame.snapshot;
 
-    const engineHandled =
-      before.activeCardId !== after.activeCardId ||
-      before.focusedLinkIndex !== after.focusedLinkIndex;
+    const engineHandled = !engineSnapshotsEqual(before, after);
     if (engineHandled) {
       updateCurrentHistoryCard(hostHistory, after.activeCardId);
-      await renderSnapshot(after);
+      applyFrame(afterFrame);
       return 'engine';
     }
 
@@ -417,6 +416,93 @@ export const defaultRequestPolicyForSource = (
 const normalizeMethod = (method?: string): string => {
   const normalized = method?.trim().toUpperCase();
   return normalized || 'GET';
+};
+
+const engineSnapshotsEqual = (a: EngineRuntimeSnapshot, b: EngineRuntimeSnapshot): boolean =>
+  a.activeCardId === b.activeCardId &&
+  a.focusedLinkIndex === b.focusedLinkIndex &&
+  a.focusedInputEditName === b.focusedInputEditName &&
+  a.focusedInputEditValue === b.focusedInputEditValue &&
+  a.focusedSelectEditName === b.focusedSelectEditName &&
+  a.focusedSelectEditValue === b.focusedSelectEditValue &&
+  a.baseUrl === b.baseUrl &&
+  a.contentType === b.contentType &&
+  a.externalNavigationIntent === b.externalNavigationIntent &&
+  requestPoliciesEqual(a.externalNavigationRequestPolicy, b.externalNavigationRequestPolicy) &&
+  a.lastScriptExecutionOk === b.lastScriptExecutionOk &&
+  a.lastScriptExecutionTrap === b.lastScriptExecutionTrap &&
+  a.lastScriptExecutionErrorClass === b.lastScriptExecutionErrorClass &&
+  a.lastScriptExecutionErrorCategory === b.lastScriptExecutionErrorCategory &&
+  a.lastScriptRequiresRefresh === b.lastScriptRequiresRefresh &&
+  dialogRequestsEqual(a.lastScriptDialogRequests, b.lastScriptDialogRequests) &&
+  timerRequestsEqual(a.lastScriptTimerRequests, b.lastScriptTimerRequests);
+
+const requestPoliciesEqual = (
+  a: EngineRuntimeSnapshot['externalNavigationRequestPolicy'],
+  b: EngineRuntimeSnapshot['externalNavigationRequestPolicy']
+): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return !a && !b;
+  }
+  return (
+    a.cacheControl === b.cacheControl &&
+    a.refererUrl === b.refererUrl &&
+    postContextsEqual(a.postContext, b.postContext)
+  );
+};
+
+const postContextsEqual = (
+  a: NonNullable<EngineRuntimeSnapshot['externalNavigationRequestPolicy']>['postContext'],
+  b: NonNullable<EngineRuntimeSnapshot['externalNavigationRequestPolicy']>['postContext']
+): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return !a && !b;
+  }
+  return a.sameDeck === b.sameDeck && a.contentType === b.contentType && a.payload === b.payload;
+};
+
+const dialogRequestsEqual = (
+  a: EngineRuntimeSnapshot['lastScriptDialogRequests'],
+  b: EngineRuntimeSnapshot['lastScriptDialogRequests']
+): boolean => {
+  if (a.length !== b.length) {
+    return false;
+  }
+  return a.every((request, index) => {
+    const other = b[index];
+    return (
+      other !== undefined &&
+      request.type === other.type &&
+      request.message === other.message &&
+      ('defaultValue' in request ? request.defaultValue : undefined) ===
+        ('defaultValue' in other ? other.defaultValue : undefined)
+    );
+  });
+};
+
+const timerRequestsEqual = (
+  a: EngineRuntimeSnapshot['lastScriptTimerRequests'],
+  b: EngineRuntimeSnapshot['lastScriptTimerRequests']
+): boolean => {
+  if (a.length !== b.length) {
+    return false;
+  }
+  return a.every((request, index) => {
+    const other = b[index];
+    return (
+      other !== undefined &&
+      request.type === other.type &&
+      ('delayMs' in request ? request.delayMs : undefined) ===
+        ('delayMs' in other ? other.delayMs : undefined) &&
+      request.token === other.token
+    );
+  });
 };
 
 const resolveTransportMethod = (

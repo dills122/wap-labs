@@ -28,13 +28,12 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 After the completed forms/browser responsiveness slice, current aligned engine priorities are:
 
-1. `A5-01` history entry fidelity follow-up.
-2. `W0-05` timer/dialog integration baseline.
-3. `D0-01` debug connector contract and architecture baseline.
-4. `W1-06` fatal/non-fatal script taxonomy closure.
-5. `M1-02` parity-critical native/wasm regression suite.
-6. `M1-08` residual high-churn cleanup only if new hotspots emerge.
-7. `M1-03` engine API generator design/bootstrap (non-priority track).
+1. `W0-05` timer/dialog integration baseline.
+2. `D0-01` debug connector contract and architecture baseline.
+3. `W1-06` fatal/non-fatal script taxonomy closure.
+4. `M1-02` parity-critical native/wasm regression suite.
+5. `M1-08` residual high-churn cleanup only if new hotspots emerge.
+6. `M1-03` engine API generator design/bootstrap (non-priority track).
 
 Source of truth for these items:
 
@@ -112,7 +111,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-01 History entry fidelity follow-up
 
 1. `Requirement IDs`: `WML-R-008`
-2. `Status`: `in-progress`
+2. `Status`: `done`
 3. `Depends On`: `A2-03`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -130,6 +129,9 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Back behavior is deterministic and history entries preserve required request identity fields.
 8. `Notes`:
 - Compliance delta for `A2-03` without changing its completed status.
+- Evidence:
+  - Engine in-deck history/back semantics remain covered in `engine-wasm/engine/src/engine_tests/actions_timers.rs` (`navigate_back_restores_previous_card`, `navigate_back_returns_false_when_history_empty`) and `engine-wasm/engine/src/engine_tests/traces_public_api.rs` (`m1_02_handle_key_render_and_navigate_back_public_api_flow`).
+  - Browser request-shaped host history coverage landed in `browser/frontend/src/session-history.test.ts`, `browser/frontend/src/app/navigation-state.load.test.ts`, and `browser/frontend/src/app/navigation-state.history.test.ts`, including repeated-URL entries, method-aware/post-aware replay, and deterministic restore/fallback behavior.
 
 ### A5-03 WML timer lifecycle runtime follow-up
 

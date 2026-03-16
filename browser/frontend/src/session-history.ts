@@ -1,19 +1,13 @@
 import type {
   FetchRequestPolicy,
   HostHistoryEntry,
+  HostHistoryRequestIdentity,
   HostNavigationSource
 } from '../../contracts/transport';
 
 export interface HostHistoryState {
   entries: HostHistoryEntry[];
   index: number;
-}
-
-export interface HostHistoryRequestIdentity {
-  requestedUrl?: string;
-  method?: string;
-  headers?: Record<string, string>;
-  requestPolicy?: FetchRequestPolicy;
 }
 
 export const createHostHistoryState = (): HostHistoryState => ({
@@ -113,8 +107,8 @@ const isSameHistoryIdentity = (
     (current.requestedUrl ?? undefined) === requestIdentity.requestedUrl &&
     (normalizeMethod(current.method) ?? undefined) === requestIdentity.method &&
     headerSignature(current.headers) === headerSignature(requestIdentity.headers) &&
-    postPayloadFromPolicy(current.requestPolicy) ===
-      postPayloadFromPolicy(requestIdentity.requestPolicy)
+    requestPolicySignature(current.requestPolicy) ===
+      requestPolicySignature(requestIdentity.requestPolicy)
   );
 };
 
@@ -161,8 +155,25 @@ const headerSignature = (headers?: Record<string, string>): string =>
         .join('\n')
     : '';
 
-const postPayloadFromPolicy = (policy?: FetchRequestPolicy): string | undefined =>
-  policy?.postContext?.payload ?? undefined;
+const requestPolicySignature = (policy?: FetchRequestPolicy): string => {
+  if (!policy) {
+    return '';
+  }
+  const identity = {
+    refererUrl: policy.refererUrl,
+    postContext: policy.postContext
+      ? {
+          sameDeck: policy.postContext.sameDeck,
+          contentType: policy.postContext.contentType,
+          payload: policy.postContext.payload
+        }
+      : undefined
+  };
+  if (!identity.refererUrl && !identity.postContext) {
+    return '';
+  }
+  return JSON.stringify(identity);
+};
 
 const cloneHeaders = (headers?: Record<string, string>): Record<string, string> | undefined =>
   headers ? { ...headers } : undefined;

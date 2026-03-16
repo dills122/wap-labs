@@ -136,6 +136,37 @@ describe('session-history', () => {
     expect(state.entries[1]?.headers).toEqual({ accept: 'application/vnd.wap.wmlc' });
   });
 
+  it('keeps separate entries when request policy metadata differs', () => {
+    const state = createHostHistoryState();
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET',
+      requestPolicy: {
+        refererUrl: 'http://local.test/start-a.wml',
+        uaCapabilityProfile: 'wap-baseline'
+      }
+    });
+    pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
+      requestedUrl: 'http://local.test/a',
+      method: 'GET',
+      requestPolicy: {
+        refererUrl: 'http://local.test/start-b.wml',
+        uaCapabilityProfile: 'wap-baseline'
+      }
+    });
+
+    expect(state.index).toBe(1);
+    expect(state.entries).toHaveLength(2);
+    expect(state.entries[0]?.requestPolicy).toEqual({
+      refererUrl: 'http://local.test/start-a.wml',
+      uaCapabilityProfile: 'wap-baseline'
+    });
+    expect(state.entries[1]?.requestPolicy).toEqual({
+      refererUrl: 'http://local.test/start-b.wml',
+      uaCapabilityProfile: 'wap-baseline'
+    });
+  });
+
   it('drops forward history when pushing after a back step', () => {
     const state = createHostHistoryState();
     pushHostHistoryEntry(state, 'http://local.test/a', 'a', 'user');

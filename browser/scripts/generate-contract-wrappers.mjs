@@ -389,6 +389,7 @@ function generateTransportWrapper(filePath, transportExportedTypes) {
         'EngineDeckInput',
         'FetchResponse',
         'HostHistoryEntry',
+        'HostHistoryRequestIdentity',
         'HostNavigationSource',
         'HostSessionState',
         'RawPayload',
