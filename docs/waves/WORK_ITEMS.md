@@ -58,6 +58,7 @@ Project planning links:
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
 - Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
 
@@ -1242,6 +1243,130 @@ Reference plan:
 - `RQ-RMK-003`, `RQ-WAE-017`
 9. `Notes`:
 - if UI scope threatens active lane capacity, ship as follow-up after `D0-03`
+
+## Phase U: User Onboarding + Help Experience (Planning-Ready)
+
+Reference plan:
+
+- `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
+
+### U0-01 Welcome home and first-run entrypoint
+
+1. `Status`: `todo`
+2. `Depends On`: none
+3. `Owner`: `browser`, `docs`
+4. `Files`:
+- `browser/frontend/src/app/*`
+- `browser/frontend/src/components/*`
+- `browser/frontend/src/styles.css`
+- `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
+- `browser/frontend/src/app/*.test.ts`
+5. `Build`:
+- add a first-run intro/home surface for Waves
+- explain what Waves is and present primary entry points (`Take the tour`, `Try local examples`, `Connect to a WAP server`, `Open help`)
+- keep the experience skippable and non-blocking for returning users
+6. `Tests`:
+- frontend tests for first-run visibility, dismissal, and re-entry behavior
+- content rendering checks for primary call-to-action states
+7. `Accept`:
+- new users are not dropped directly into an unexplained shell state
+- first screen explains product purpose and gives a safe next step
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`
+9. `Notes`:
+- shell-level orientation only; do not fold tutorial sequencing or hint systems into this ticket
+
+### U0-02 Guided tour and replayable concept walkthrough
+
+1. `Status`: `todo`
+2. `Depends On`: `U0-01`
+3. `Owner`: `browser`, `docs`
+4. `Files`:
+- `browser/frontend/src/app/*`
+- `browser/frontend/src/components/*`
+- `browser/frontend/src/styles.css`
+- `browser/frontend/src/app/*.test.ts`
+5. `Build`:
+- add a replayable guided tour for shell chrome, local vs network mode, example loading, and debug-surface discovery
+- keep the tour step-based, skippable, and resumable within a session
+6. `Tests`:
+- frontend tests for step progression, skip/replay behavior, and state reset
+7. `Accept`:
+- users can complete a short product tour without leaving Waves
+- returning users can replay the tour from Help
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`
+9. `Notes`:
+- do not tie this ticket to deep runtime/debug implementation work; it is a shell-level teaching layer
+
+### U0-03 Help hub and durable in-app documentation
+
+1. `Status`: `todo`
+2. `Depends On`: `U0-01`
+3. `Owner`: `browser`, `docs`
+4. `Files`:
+- `browser/frontend/src/app/*`
+- `browser/frontend/src/components/*`
+- `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
+- `browser/frontend/src/app/*.test.ts`
+5. `Build`:
+- add an in-app help hub with `Start Here`, `Quickstart`, `Core Concepts`, `Troubleshooting`, `Developer Guide`, and `Reference`
+- make help reachable after onboarding, not just during first launch
+6. `Tests`:
+- frontend tests for section navigation and stable rendering of core help content
+7. `Accept`:
+- users can access core help inside the product without external documentation
+- help content is versioned in-repo and can be updated with product changes
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-017`
+9. `Notes`:
+- keep content local-first and testable; avoid building a docs sync pipeline in the MVP slice
+
+### U0-04 Tutorial decks and task-based learning content
+
+1. `Status`: `todo`
+2. `Depends On`: `U0-03`
+3. `Owner`: `browser`, `engine-wasm`, `docs`
+4. `Files`:
+- `engine-wasm/examples/source/*`
+- `engine-wasm/examples/generated/examples.ts`
+- `browser/frontend/src/app/*`
+- `docs/waves/FORM_HANDLING_LOCAL_MODE_TESTING.md`
+5. `Build`:
+- add local tutorial content for common tasks (`first deck`, `edit and submit a form`, `understand local vs network mode`, `inspect runtime state`)
+- connect tutorial discovery through the welcome page and help hub
+6. `Tests`:
+- example generation remains green
+- frontend tests verify tutorial discovery and launch paths
+7. `Accept`:
+- users can learn core Waves interactions through built-in content and examples
+- tutorial content remains within normal engine/browser boundaries
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-008`
+9. `Notes`:
+- prefer product-native tutorial content over external-only prose
+
+### U0-05 Contextual hints and onboarding state persistence
+
+1. `Status`: `todo`
+2. `Depends On`: `U0-02`, `U0-03`
+3. `Owner`: `browser`
+4. `Files`:
+- `browser/frontend/src/app/*`
+- `browser/frontend/src/components/*`
+- `browser/frontend/src/app/*.test.ts`
+5. `Build`:
+- add lightweight contextual hints for first network failure, first local example load, first edit flow, and first dev-tools open
+- persist dismiss/replay state locally with a clear reset path
+6. `Tests`:
+- frontend tests for trigger rules, dismissal, and persistence/reset behavior
+7. `Accept`:
+- contextual help appears only when relevant and remains dismissible
+- returning users are not forced through repeated onboarding
+8. `Spec`:
+- `RQ-RMK-002`, `RQ-RMK-003`
+9. `Notes`:
+- hints are additive and non-blocking; do not replace the welcome page or help hub with hint-only onboarding
 
 ## Phase W: WMLScript Runtime and VM (Active)
 
