@@ -333,6 +333,54 @@ h1 {
   border-radius: 32px;
 }
 
+.gallery-band {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.gallery-copy,
+.gallery-shot {
+  border-radius: 28px;
+  border: 1px solid var(--edge);
+  background: var(--paper);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.gallery-copy {
+  padding: 22px;
+}
+
+.gallery-copy h2 {
+  margin-top: 4px;
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+  line-height: 1.02;
+}
+
+.gallery-copy p:last-child {
+  margin-top: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.gallery-shot {
+  overflow: hidden;
+}
+
+.gallery-shot img {
+  width: 100%;
+  aspect-ratio: 2272 / 1762;
+  object-fit: cover;
+}
+
+.gallery-shot figcaption {
+  padding: 14px 16px 18px;
+  color: var(--muted);
+  font: 500 0.9rem/1.45 "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
 .cta-band h2 {
   margin-top: 4px;
   font-size: clamp(1.8rem, 3vw, 3rem);
@@ -369,7 +417,8 @@ h1 {
 
   .status-strip,
   .content-grid,
-  .milestone-grid {
+  .milestone-grid,
+  .gallery-band {
     grid-template-columns: 1fr;
   }
 

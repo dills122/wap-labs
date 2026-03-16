@@ -8,6 +8,8 @@ WAP Labs is focused on building a modern, deterministic WAP browser stack:
 
 The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`, `wml-server/`), but it is no longer the primary product focus.
 
+![Waves rendering a WML page with selectable links](images/waves-network-page-with-links.png)
+
 ## Start Here
 
 - Browser/engine architecture and roadmap: `docs/waves/TECHNICAL_ARCHITECTURE.md`

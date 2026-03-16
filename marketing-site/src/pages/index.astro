@@ -60,10 +60,10 @@ const statusCards = [
         </figure>
         <figure class="stage-card stage-card-accent">
           <img
-            src="./waves-network-error.png"
-            alt="Waves showing a network error state while remaining interactive"
+            src="./waves-network-page-with-links.png"
+            alt="Waves showing a network-rendered WML page with selectable links"
           />
-          <figcaption>Network mode that surfaces failures without freezing the whole shell.</figcaption>
+          <figcaption>Network-rendered decks keep the old mobile-web interaction model visible and testable.</figcaption>
         </figure>
       </div>
     </header>
@@ -127,6 +127,33 @@ const statusCards = [
           </div>
         </div>
       </article>
+    </section>
+
+    <section class="gallery-band">
+      <article class="gallery-copy">
+        <p class="section-tag">Real states</p>
+        <h2>Waves is now credible across happy-path and failure-path browsing.</h2>
+        <p>
+          The shell can load local examples, render live linked decks, and stay communicative when
+          network startup or fetches go sideways.
+        </p>
+      </article>
+
+      <figure class="gallery-shot">
+        <img
+          src="./waves-network-loading.png"
+          alt="Waves waiting for its first network deck render while keeping the interface visible"
+        />
+        <figcaption>Loading state with the browser shell still intact and readable.</figcaption>
+      </figure>
+
+      <figure class="gallery-shot">
+        <img
+          src="./waves-network-error.png"
+          alt="Waves showing a network error state in the desktop shell"
+        />
+        <figcaption>Failure state surfaced as product behavior, not a frozen window.</figcaption>
+      </figure>
     </section>
 
     <section class="cta-band">
