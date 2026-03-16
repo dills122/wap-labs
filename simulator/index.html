@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WaveNav Host Sample</title>
+    <script type="module" crossorigin src="./assets/index-ddlOnq3i.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DK7x5Xre.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="controls">
+        <h1>WaveNav Quick Harness</h1>
+        <p>Keyboard: ArrowUp, ArrowDown, Enter</p>
+        <div class="row">
+          <label for="example-select">Example Deck</label>
+          <select id="example-select"></select>
+        </div>
+        <section class="example-meta" aria-live="polite">
+          <div class="example-meta-header">
+            <h2 id="example-title">Example Metadata</h2>
+            <button
+              id="toggle-example-meta"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="example-meta-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="example-meta-body">
+            <p id="example-coverage" class="example-coverage"></p>
+            <p id="example-description"></p>
+            <p id="example-goal"></p>
+            <ul id="example-testing-ac"></ul>
+          </div>
+        </section>
+        <section class="editor-wrap">
+          <div class="section-header">
+            <h2>Deck Editor</h2>
+            <button
+              id="toggle-editor"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="editor-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="editor-body">
+            <div class="row">
+              <label class="checkbox-row" for="live-reload">
+                <input id="live-reload" type="checkbox" />
+                Live reload on editor changes (memory only)
+              </label>
+            </div>
+            <textarea id="deck-input" spellcheck="false"></textarea>
+          </div>
+        </section>
+        <div class="buttons">
+          <button id="reload-deck" type="button">Reload Deck</button>
+          <button id="press-back" type="button">Back</button>
+          <button id="press-up" type="button">Up</button>
+          <button id="press-down" type="button">Down</button>
+          <button id="press-enter" type="button">Enter</button>
+          <button id="tick-100ms" type="button">Tick +100ms</button>
+          <button id="tick-1s" type="button">Tick +1s</button>
+        </div>
+        <div class="row">
+          <label for="auto-tick-step">Auto Tick Step</label>
+          <select id="auto-tick-step">
+            <option value="100">100ms</option>
+            <option value="250">250ms</option>
+            <option value="500">500ms</option>
+            <option value="1000">1000ms</option>
+          </select>
+          <button id="toggle-auto-tick" type="button" aria-pressed="false">Auto Tick: Off</button>
+        </div>
+        <p id="status" class="status">Ready.</p>
+        <div class="runtime-actions">
+          <button id="clear-intent" type="button">Clear Intent</button>
+          <button id="copy-intent" type="button">Copy Intent URL</button>
+        </div>
+        <section class="runtime-actions" aria-label="Script API probe">
+          <button id="probe-execute-script" type="button">Probe executeScriptRef</button>
+          <button id="probe-invoke-script" type="button">Probe invokeScriptRef</button>
+        </section>
+        <pre id="runtime-state" class="runtime-state">Waiting for engine...</pre>
+        <section class="event-log-wrap">
+          <div class="section-header">
+            <h2>Event Tracker</h2>
+            <button
+              id="toggle-event-log"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="event-log-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="event-log-body">
+            <div class="event-log-actions">
+              <button id="clear-event-log" type="button">Clear Current Example Log</button>
+              <label class="event-export-label" for="event-log-export-format">Export as</label>
+              <select id="event-log-export-format">
+                <option value="txt">Text (.txt)</option>
+                <option value="json">JSON (.json)</option>
+              </select>
+              <button id="export-event-log" type="button">Export Current Example Log</button>
+            </div>
+            <pre id="event-log" class="event-log">No events yet.</pre>
+          </div>
+        </section>
+        <section class="trace-wrap">
+          <div class="section-header">
+            <h2>Runtime Inspector</h2>
+            <button
+              id="toggle-trace"
+              class="meta-toggle"
+              type="button"
+              aria-expanded="true"
+              aria-controls="trace-body"
+            >
+              Collapse
+            </button>
+          </div>
+          <div id="trace-body">
+            <runtime-inspector-panel id="runtime-inspector"></runtime-inspector-panel>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen-wrap">
+        <canvas id="wap-screen" width="240" height="320"></canvas>
+      </section>
+    </main>
+
+  </body>
+</html>
