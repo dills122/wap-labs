@@ -109,12 +109,12 @@ When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
 ## Next implementation slice
 
 1. Execute the current host-impacting runtime fidelity lane:
-- `A5-01` history entry fidelity follow-up
 - `W0-05` timer/dialog integration baseline
 - `D0-01` debug connector contract/architecture baseline
-2. Keep `M1-08` residual cleanup opportunistic only; do not preempt active runtime tickets with broad browser reshaping.
-3. Defer `M1-09` (`F0-F4` frame migration) until the current runtime/debug boundary work is stable enough not to churn the host contract again.
-4. Keep `M1-03` as non-priority generator follow-up.
+2. Keep `W1-06` next after the current runtime/debug lane is stable.
+3. Keep `M1-08` residual cleanup opportunistic only; do not preempt active runtime tickets with broad browser reshaping.
+4. Defer `M1-09` (`F0-F4` frame migration) until the current runtime/debug boundary work is stable enough not to churn the host contract again.
+5. Keep `M1-03` as non-priority generator follow-up.
 
 ## Planning + Traceability
 

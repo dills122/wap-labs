@@ -28,7 +28,7 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 
 | Ticket | Lane | Current status | Immediate dependency action |
 | --- | --- | --- | --- |
-| `A5-01` | engine/runtime | `in-progress` | finish request-shaped history entry fidelity and restore semantics |
+| `A5-01` | engine/runtime | `done` | request-shaped history fidelity and deterministic restore semantics are covered |
 | `A5-04` | engine + browser | `done` | viewport-editable text input baseline is closed |
 | `A5-05` | engine + browser | `done` | select/option interaction baseline is closed |
 | `A5-06` | engine + browser + transport | `done` | form-state submit hardening is closed for the active MVP lane |
@@ -85,7 +85,7 @@ Close committed bedrock compliance work while unblocking networking P0 blockers 
 Current result:
 
 1. Transport/spec unblockers are complete.
-2. `A5-01` is not actually `done`; it remains active on the engine board and should stay in the next sprint.
+2. `A5-01` is now closed by engine history/back evidence plus browser request-shaped host-history coverage.
 3. The original Sprint 1 snapshot overstated closure on at least one engine/runtime item and should not be used as the current source of truth.
 
 ## Sprint 2 Review: Networking Protocol-Core Blockers
@@ -150,9 +150,9 @@ Now that the interactive forms lane and browser responsiveness remediation are l
 
 ### Must Complete (P0/P1)
 
-1. `A5-01` history entry fidelity follow-up.
-2. `W0-05` timer/dialog integration baseline.
-3. `D0-01` debug connector contract and architecture baseline.
+1. `W0-05` timer/dialog integration baseline.
+2. `D0-01` debug connector contract and architecture baseline.
+3. `W1-06` fatal/non-fatal script error taxonomy closure.
 
 ### Follow-on (only if capacity remains)
 
@@ -162,9 +162,9 @@ Now that the interactive forms lane and browser responsiveness remediation are l
 
 ### Concrete commit-order recommendation
 
-1. `fix(engine): close history entry fidelity gaps under request-shaped navigation`
-2. `feat(runtime): finish timer/dialog host capability plumbing`
-3. `docs(debug): lock engine debug connector contract and boundary rules`
+1. `feat(runtime): finish timer/dialog host capability plumbing`
+2. `docs(debug): lock engine debug connector contract and boundary rules`
+3. `fix(runtime): close remaining fatal/non-fatal script taxonomy gaps`
 4. `feat(host): start frame migration only after the above boundaries are stable`
 
 Implementation reference:

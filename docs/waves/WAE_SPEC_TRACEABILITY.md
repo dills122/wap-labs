@@ -225,9 +225,9 @@ Legend:
   - `WAP-236` 7.11.1
   - SCR: `WAESpec-UAB-C-001 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Forward navigation performs push, backward performs pop.
-  - [ ] History entry stores request identity fields required for deterministic back behavior.
+  - Evidence: [x] Engine evidence in `engine-wasm/engine/src/engine_tests/actions_timers.rs` (`navigate_back_restores_previous_card`, `navigate_back_returns_false_when_history_empty`) and `engine-wasm/engine/src/engine_tests/traces_public_api.rs` (`m1_02_handle_key_render_and_navigate_back_public_api_flow`); browser request-shaped host-history evidence in `browser/frontend/src/session-history.test.ts`, `browser/frontend/src/app/navigation-state.load.test.ts`, and `browser/frontend/src/app/navigation-state.history.test.ts`. Commands: `cd engine-wasm/engine && cargo test navigate_back_ && cargo test m1_02_handle_key_render_and_navigate_back_public_api_flow` and `pnpm --dir browser/frontend test -- --runInBand session-history.test.ts navigation-state.load.test.ts navigation-state.history.test.ts`
+  - [x] Forward navigation performs push, backward performs pop.
+  - [x] History entry stores request identity fields required for deterministic back behavior.
 
 ### RQ-WAE-017 BACK key behavior
 
@@ -239,9 +239,9 @@ Legend:
   - `WAP-236` 7.11.2
   - SCRs: `WAESpec-UAB-C-002 (M)`, `WAESpec-UAB-C-003 (M)`, `WAESpec-UAB-C-004 (O)`, `WAESpec-UAB-C-005 (O)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] Engine back-pop semantics are covered in `engine-wasm/engine/src/engine_tests/actions_timers.rs` and `engine-wasm/engine/src/engine_tests/traces_public_api.rs`; browser fallback and deterministic restore behavior are covered in `browser/frontend/src/app/navigation-state.history.test.ts` and `browser/frontend/src/app/navigation-state.load.test.ts`.
   - [ ] UI always exposes BACK action path.
-  - [ ] BACK-to-pop behavior verified in runtime integration tests.
+  - [x] BACK-to-pop behavior verified in runtime integration tests.
   - [ ] WML1-specific prev/override semantics covered in fixture tests.
 
 ### RQ-WAE-018 WBMP baseline format support

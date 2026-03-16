@@ -218,7 +218,7 @@ Type contract:
 - [x] Add parity-critical native/wasm regression coverage (`M1-02`)
 - [x] Harden parser robustness for malformed/edge markup fixtures (`M1-07`)
 - [x] Decompose high-churn engine file boundaries without behavior changes (`M1-08`, engine scope)
-- [ ] Implement history fidelity follow-up (`A5-01`)
+- [x] Implement history fidelity follow-up (`A5-01`)
 - [x] Implement minimal text-input interaction baseline (`A5-04`)
 - [x] Implement select/option interaction baseline (`A5-05`)
 - [x] Implement active MVP form-submit hardening slice (`A5-06`)
