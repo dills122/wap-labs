@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createNavigationStateMachine } from './navigation-state';
-import { createHostClientMock, fetchOk, snapshot } from './navigation-state.test-helpers';
+import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-state.test-helpers';
 
 describe('navigation-state history behavior', () => {
   it('keeps host history pointer stable when history-back transport load fails', async () => {
@@ -53,7 +53,7 @@ describe('navigation-state history behavior', () => {
             finalUrl: request.url
           }),
         engineSnapshot: async () => snapshot({ activeCardId: 'next', focusedLinkIndex: 0 }),
-        engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+        engineNavigateBackFrame: async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })
       }),
       'http://seed.test'
     );
@@ -68,6 +68,44 @@ describe('navigation-state history behavior', () => {
     expect(mode).toBe('engine');
     expect(machine.getHistoryState().index).toBe(0);
     expect(machine.getHistoryState().entries[0]?.activeCardId).toBe('home');
+  });
+
+  it('treats engine back as handled when runtime context changes without card or focus change', async () => {
+    const fetchCalls: string[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          fetchCalls.push(request.url);
+          return fetchOk({ finalUrl: request.url });
+        },
+        engineSnapshot: async () =>
+          snapshot({
+            activeCardId: 'home',
+            focusedLinkIndex: 0,
+            baseUrl: 'http://example.test/flow-b.wml'
+          }),
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: 'home',
+            focusedLinkIndex: 0,
+            baseUrl: 'http://example.test/flow-a.wml'
+          })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    const mode = await machine.navigateBackWithFallback();
+
+    expect(mode).toBe('engine');
+    expect(fetchCalls).toEqual(['http://example.test/a.wml']);
+    expect(machine.getSessionState().activeCardId).toBe('home');
+    expect(machine.getSessionState().finalUrl).toBe('http://example.test/a.wml');
   });
 
   it('falls back to host history when engine back is a no-op', async () => {
@@ -86,7 +124,7 @@ describe('navigation-state history behavior', () => {
           return { draw: [{ type: 'text', x: 0, y: 0, text: 'ok' }] };
         },
         engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
-        engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+        engineNavigateBackFrame: async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })
       }),
       'http://seed.test'
     );
@@ -118,7 +156,7 @@ describe('navigation-state history behavior', () => {
             finalUrl: request.url
           }),
         engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
-        engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+        engineNavigateBackFrame: async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })
       }),
       'http://seed.test',
       {
@@ -164,8 +202,8 @@ describe('navigation-state history behavior', () => {
           snapshot({ activeCardId: 'details-a', baseUrl: 'http://example.test/a.wml' }),
         engineSnapshot: async () =>
           snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
-        engineNavigateBack: async () =>
-          snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
+        engineNavigateBackFrame: async () =>
+          frame({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
         engineNavigateToCard: async ({ cardId }) => {
           navigateToCardCalls.push(cardId);
           return snapshot({ activeCardId: cardId, baseUrl: 'http://example.test/a.wml' });
@@ -216,8 +254,8 @@ describe('navigation-state history behavior', () => {
         },
         engineSnapshot: async () =>
           snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' }),
-        engineNavigateBack: async () =>
-          snapshot({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' })
+        engineNavigateBackFrame: async () =>
+          frame({ activeCardId: 'home-b', baseUrl: 'http://example.test/b.wml' })
       }),
       'http://seed.test'
     );
@@ -255,7 +293,7 @@ describe('navigation-state history behavior', () => {
             finalUrl: request.url
           }),
         engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
-        engineNavigateBack: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+        engineNavigateBackFrame: async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })
       }),
       'http://seed.test',
       {
