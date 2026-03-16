@@ -1,52 +1,147 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const proofPoints = [
+  {
+    label: 'Engine fidelity',
+    text: 'Deck and card navigation, forms, timers, and script/runtime semantics are driven by an engine-first contract.'
+  },
+  {
+    label: 'Desktop host',
+    text: 'Waves gives the stack a fast desktop shell for fixtures, local examples, debug views, and real network sessions.'
+  },
+  {
+    label: 'Protocol realism',
+    text: 'Transport and gateway layers stay separate so constrained-network behavior does not leak into the runtime.'
+  }
+];
+
+const statusCards = [
+  'Local examples, forms, and select controls now work directly in Waves.',
+  'Network mode handles offline and slow-server cases with less UI blocking.',
+  'Payload guardrails and deterministic history behavior are covered end to end.'
+];
 ---
 
 <Layout>
-  <header class="hero">
-    <p class="kicker">WaveNav Labs</p>
-    <h1>WAP Emulator Stack For Deterministic Engine Work</h1>
-    <p class="lede">
-      A pre-alpha layered emulator stack focused on WML deck/card fidelity, strict layer boundaries,
-      and reproducible behavior across parser, runtime, and host integration.
-    </p>
-    <div class="hero-actions">
-      <a class="button" href="./simulator/">Open Simulator</a>
-    </div>
-  </header>
+  <main class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="kicker">WaveNav Labs</p>
+        <h1>Build and test the mobile web that existed before modern browsers.</h1>
+        <p class="lede">
+          Waves is the desktop face of a layered WAP/WML emulator stack focused on deterministic
+          runtime behavior, protocol realism, and tooling that makes this niche platform usable again.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="./simulator/">Open Simulator</a>
+          <a class="button button-secondary" href="https://github.com/dills122/wap-labs">View GitHub</a>
+        </div>
+        <ul class="hero-proof" aria-label="Key project qualities">
+          {
+            proofPoints.map((point) => (
+              <li>
+                <strong>{point.label}</strong>
+                <span>{point.text}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
 
-  <main class="content">
-    <section class="panel">
-      <h2>Stack Layers</h2>
-      <ul>
-        <li><strong>Gateway:</strong> kannel environment + protocol behavior</li>
-        <li><strong>Transport:</strong> WBXML and constrained transport APIs</li>
-        <li><strong>Engine:</strong> Rust/WASM WML parser, runtime, layout, navigation</li>
-        <li><strong>Desktop Host:</strong> simulator harness and integration adapters</li>
-      </ul>
+      <div class="hero-stage" aria-label="Waves product screenshots">
+        <figure class="stage-card stage-card-primary">
+          <img
+            src="./waves-local-forms-example.png"
+            alt="Waves rendering a WML form example with editable fields and event timeline"
+            loading="eager"
+          />
+          <figcaption>Local mode with working forms, examples, and runtime inspection.</figcaption>
+        </figure>
+        <figure class="stage-card stage-card-accent">
+          <img
+            src="./waves-network-error.png"
+            alt="Waves showing a network error state while remaining interactive"
+          />
+          <figcaption>Network mode that surfaces failures without freezing the whole shell.</figcaption>
+        </figure>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-label="Current progress">
+      {
+        statusCards.map((card) => (
+          <article class="status-card">
+            <p>{card}</p>
+          </article>
+        ))
+      }
     </section>
 
-    <section class="panel">
-      <h2>Current Focus</h2>
-      <ul>
-        <li>Deterministic deck/card navigation semantics</li>
-        <li>Stable wasm contract for host integration</li>
-        <li>Repeatable fixture-driven engine behavior</li>
-        <li>Manual and scripted validation through simulator timelines</li>
-      </ul>
+    <section class="content-grid">
+      <article class="panel panel-feature">
+        <p class="section-tag">Why it exists</p>
+        <h2>WAP stacks are usually either historically vague or hard to work on.</h2>
+        <p>
+          This project is aimed at a stricter middle ground: preserve authentic behavior where it
+          matters, but make the engine, host, and transport layers testable enough for modern iteration.
+        </p>
+      </article>
+
+      <article class="panel">
+        <p class="section-tag">Stack</p>
+        <h2>Layered by design</h2>
+        <ul class="detail-list">
+          <li><strong>Gateway</strong><span>Kannel environment and gateway wiring.</span></li>
+          <li><strong>Transport</strong><span>WBXML, WSP/WTP behavior, and constrained fetch rules.</span></li>
+          <li><strong>Engine</strong><span>Rust/WASM WML parser, runtime, layout, navigation, and script execution.</span></li>
+          <li><strong>Waves</strong><span>Tauri desktop host with examples, debug affordances, and integration coverage.</span></li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <p class="section-tag">Inside Waves</p>
+        <h2>The product shell is now useful, not just a harness.</h2>
+        <p>
+          Use local examples to learn the runtime, flip to network mode for live fetches, and inspect
+          session state, snapshots, timelines, and transport responses while you work.
+        </p>
+        <p><a class="inline-link" href="./simulator/">Launch the simulator</a></p>
+      </article>
+
+      <article class="panel panel-wide">
+        <p class="section-tag">What is shipping now</p>
+        <h2>Recent work moved Waves from fragile prototype toward usable emulator shell.</h2>
+        <div class="milestone-grid">
+          <div>
+            <h3>Interaction</h3>
+            <p>Text inputs, select controls, and form-submit handling are wired through the engine and desktop host.</p>
+          </div>
+          <div>
+            <h3>Responsiveness</h3>
+            <p>Network mode startup and failed fetches no longer monopolize the entire interface the way they did before.</p>
+          </div>
+          <div>
+            <h3>Determinism</h3>
+            <p>History replay, payload limits, and frame-oriented engine updates now have better behavioral coverage.</p>
+          </div>
+        </div>
+      </article>
     </section>
 
-    <section class="panel">
-      <h2>Simulator</h2>
-      <p>
-        The simulator includes curated fixtures, metadata-driven acceptance checklists,
-        runtime state snapshots, and per-example event tracking with export.
-      </p>
-      <p><a class="inline-link" href="./simulator/">Launch /simulator</a></p>
+    <section class="cta-band">
+      <div>
+        <p class="section-tag">Next step</p>
+        <h2>Explore Waves, then dig into the stack.</h2>
+      </div>
+      <div class="cta-actions">
+        <a class="button" href="./simulator/">Open Simulator</a>
+        <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">Browse Browser Source</a>
+      </div>
     </section>
+
+    <footer class="footer">
+      <p>WaveNav Labs · Pre-alpha WAP/WML emulator tooling and runtime research</p>
+    </footer>
   </main>
-
-  <footer class="footer">
-    <p>WaveNav Labs · Pre-alpha WAP/WML engine development</p>
-  </footer>
 </Layout>
