@@ -215,6 +215,64 @@ describe('navigation-state load behavior', () => {
     });
   });
 
+  it('replays host back using stored POST payload identity when previous entry was a submit', async () => {
+    const fetchRequests: Array<{
+      url: string;
+      method: string | undefined;
+      requestPolicy: unknown;
+    }> = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          fetchRequests.push({
+            url: request.url,
+            method: request.method,
+            requestPolicy: request.requestPolicy
+          });
+          return fetchOk({ finalUrl: request.url });
+        },
+        engineSnapshot: async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }),
+        engineNavigateBack: async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/login.wml',
+      method: 'POST',
+      source: 'user',
+      followExternalIntent: false,
+      requestPolicy: {
+        refererUrl: 'http://example.test/home.wml',
+        postContext: {
+          contentType: 'application/x-www-form-urlencoded',
+          payload: 'username=alice&pin=1234'
+        }
+      }
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/done.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    const mode = await machine.navigateBackWithFallback();
+
+    expect(mode).toBe('host');
+    expect(fetchRequests.at(-1)).toEqual({
+      url: 'http://example.test/login.wml',
+      method: 'POST',
+      requestPolicy: {
+        refererUrl: 'http://example.test/home.wml',
+        uaCapabilityProfile: 'wap-baseline',
+        postContext: {
+          contentType: 'application/x-www-form-urlencoded',
+          payload: 'username=alice&pin=1234'
+        }
+      }
+    });
+  });
+
   it('applies timer tick via host advanceTimeMs and renders snapshot', async () => {
     const machine = createNavigationStateMachine(
       createHostClientMock({

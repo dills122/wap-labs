@@ -25,12 +25,19 @@ export type HostNavigationSource =
   | 'engine-back'
   | 'keyboard';
 
-export interface HostHistoryEntry {
-  url: string;
+export interface HostHistoryRequestIdentity {
   requestedUrl?: string;
   method?: string;
   headers?: Record<string, string>;
   requestPolicy?: FetchRequestPolicy;
+}
+
+export interface HostHistoryEntry {
+  url: string;
+  requestedUrl?: HostHistoryRequestIdentity['requestedUrl'];
+  method?: HostHistoryRequestIdentity['method'];
+  headers?: HostHistoryRequestIdentity['headers'];
+  requestPolicy?: HostHistoryRequestIdentity['requestPolicy'];
   activeCardId?: string;
   source?: HostNavigationSource;
 }

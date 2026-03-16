@@ -3,4 +3,4 @@
 
 export type { EngineDeckInputPayload, FetchCacheControlPolicy, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchErrorInfo, FetchPostContext, FetchRequestPolicy, FetchTiming, FetchUaCapabilityProfile, TransportClient } from "./generated/transport-host";
 export type FetchRequest = import("./generated/transport-host").FetchDeckRequest;
-export type { EngineDeckInput, FetchResponse, HostHistoryEntry, HostNavigationSource, HostSessionState, RawPayload, RunMode, TimingMs, TransportErrorInfo } from "./transport-app";
+export type { EngineDeckInput, FetchResponse, HostHistoryEntry, HostHistoryRequestIdentity, HostNavigationSource, HostSessionState, RawPayload, RunMode, TimingMs, TransportErrorInfo } from "./transport-app";
