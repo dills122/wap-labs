@@ -16,11 +16,6 @@ const proofPoints = [
   }
 ];
 
-const statusCards = [
-  'Forms, select controls, and local examples now work directly inside Waves.',
-  'Network mode is much more resilient when a server is slow or offline.',
-  'History behavior and payload limits are now covered much more consistently end to end.'
-];
 ---
 
 <Layout>
@@ -67,16 +62,6 @@ const statusCards = [
         </figure>
       </div>
     </header>
-
-    <section class="status-strip" aria-label="Current progress">
-      {
-        statusCards.map((card) => (
-          <article class="status-card">
-            <p>{card}</p>
-          </article>
-        ))
-      }
-    </section>
 
     <section class="content-grid">
       <article class="panel panel-feature">

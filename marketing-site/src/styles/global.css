@@ -198,14 +198,6 @@ h1 {
   transform: rotate(4.2deg);
 }
 
-.status-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin: 12px 0 24px;
-}
-
-.status-card,
 .panel,
 .cta-band {
   border: 1px solid var(--edge);
@@ -214,21 +206,11 @@ h1 {
   box-shadow: var(--shadow);
 }
 
-.status-card {
-  padding: 18px;
-  border-radius: 24px;
-}
-
-.status-card p {
-  margin: 0;
-  font: 600 0.97rem/1.55 "IBM Plex Sans", "Segoe UI", sans-serif;
-  color: #3e352b;
-}
-
 .content-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+  margin-top: 12px;
 }
 
 .panel {
@@ -415,7 +397,6 @@ h1 {
     transform: none;
   }
 
-  .status-strip,
   .content-grid,
   .milestone-grid,
   .gallery-band {
@@ -444,7 +425,6 @@ h1 {
   }
 
   .panel,
-  .status-card,
   .cta-band {
     border-radius: 22px;
   }
