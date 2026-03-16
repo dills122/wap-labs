@@ -286,23 +286,51 @@ h1 {
   text-decoration: underline;
 }
 
-.milestone-grid {
+.shipping-layout {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 18px;
   margin-top: 18px;
 }
 
-.milestone-grid div {
+.shipping-summary {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 250, 241, 0.74);
+  border: 1px solid rgba(103, 79, 41, 0.12);
+}
+
+.shipping-summary p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.74;
+}
+
+.shipping-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shipping-list li {
+  display: grid;
+  gap: 4px;
   padding: 16px;
   border-radius: 20px;
   background: rgba(255, 250, 241, 0.74);
   border: 1px solid rgba(103, 79, 41, 0.12);
 }
 
-.milestone-grid p {
-  margin-top: 8px;
+.shipping-list strong {
+  font: 700 0.96rem/1.2 "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+.shipping-list span {
+  color: var(--muted);
   font-size: 0.95rem;
+  line-height: 1.55;
 }
 
 .cta-band {
@@ -398,7 +426,7 @@ h1 {
   }
 
   .content-grid,
-  .milestone-grid,
+  .shipping-layout,
   .gallery-band {
     grid-template-columns: 1fr;
   }

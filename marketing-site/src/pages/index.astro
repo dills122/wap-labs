@@ -97,19 +97,31 @@ const proofPoints = [
       <article class="panel panel-wide">
         <p class="section-tag">What is shipping now</p>
         <h2>Recent work has made Waves much more practical to use.</h2>
-        <div class="milestone-grid">
-          <div>
-            <h3>Interaction</h3>
-            <p>Text inputs, select controls, and form submission now work through the engine and browser together.</p>
+        <div class="shipping-layout">
+          <div class="shipping-summary">
+            <p>
+              Waves is no longer just a shell around the engine. You can use it to browse examples,
+              load live pages, try real interactions, and inspect what the browser is doing as you go.
+            </p>
           </div>
-          <div>
-            <h3>Responsiveness</h3>
-            <p>Slow startup and failed fetches no longer tie up the whole UI the way they used to.</p>
-          </div>
-          <div>
-            <h3>Determinism</h3>
-            <p>History replay, payload limits, and key runtime paths now have stronger behavioral coverage.</p>
-          </div>
+          <ul class="shipping-list">
+            <li>
+              <strong>Browse</strong>
+              <span>Open local examples or follow linked pages in the same desktop browser.</span>
+            </li>
+            <li>
+              <strong>Interact</strong>
+              <span>Edit fields, move through select controls, and submit forms through the real runtime.</span>
+            </li>
+            <li>
+              <strong>Inspect</strong>
+              <span>Use session state, snapshots, transport data, and timelines to understand what happened.</span>
+            </li>
+            <li>
+              <strong>Recover</strong>
+              <span>Loading, back/history behavior, and failed requests are much less disruptive than they were before.</span>
+            </li>
+          </ul>
         </div>
       </article>
     </section>
