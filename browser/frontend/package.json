@@ -36,7 +36,7 @@
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
     "globals": "catalog:",
-    "jsdom": "^28.1.0",
+    "jsdom": "^29.0.0",
     "prettier": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
