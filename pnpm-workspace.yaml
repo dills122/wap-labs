@@ -13,4 +13,4 @@ catalog:
   lit: "^3.3.2"
   prettier: "^3.8.3"
   typescript: "^6.0.3"
-  vite: "^8.0.9"
+  vite: "^8.0.10"
