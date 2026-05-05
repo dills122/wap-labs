@@ -23,7 +23,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,css}\""
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.8.0",
+    "@tauri-apps/api": "^2.11.0",
     "clsx": "^2.1.1",
     "lit": "catalog:",
     "nanoevents": "^9.1.0"
