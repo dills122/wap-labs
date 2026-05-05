@@ -4,23 +4,18 @@ import Layout from '../layouts/Layout.astro';
 const proofPoints = [
   {
     label: 'Engine fidelity',
-    text: 'Deck and card navigation, forms, timers, and script/runtime semantics are driven by an engine-first contract.'
+    text: 'Navigation, forms, timers, and script behavior are driven by the engine instead of being faked in the UI.'
   },
   {
     label: 'Desktop host',
-    text: 'Waves gives the stack a fast desktop shell for fixtures, local examples, debug views, and real network sessions.'
+    text: 'Waves gives the project a desktop browser you can actually use for examples, testing, and live sessions.'
   },
   {
     label: 'Protocol realism',
-    text: 'Transport and gateway layers stay separate so constrained-network behavior does not leak into the runtime.'
+    text: 'Transport stays separate from the runtime, so network constraints can be tested without muddying engine behavior.'
   }
 ];
 
-const statusCards = [
-  'Local examples, forms, and select controls now work directly in Waves.',
-  'Network mode handles offline and slow-server cases with less UI blocking.',
-  'Payload guardrails and deterministic history behavior are covered end to end.'
-];
 ---
 
 <Layout>
@@ -28,10 +23,10 @@ const statusCards = [
     <header class="hero">
       <div class="hero-copy">
         <p class="kicker">WaveNav Labs</p>
-        <h1>Build and test the mobile web that existed before modern browsers.</h1>
+        <h1>A desktop browser for the early mobile web.</h1>
         <p class="lede">
-          Waves is the desktop face of a layered WAP/WML emulator stack focused on deterministic
-          runtime behavior, protocol realism, and tooling that makes this niche platform usable again.
+          Waves is a desktop WAP/WML browser built for people who want to explore, test, and improve
+          this stack without fighting vague emulation or throwaway demos.
         </p>
         <div class="hero-actions">
           <a class="button" href="./simulator/">Open Simulator</a>
@@ -56,35 +51,25 @@ const statusCards = [
             alt="Waves rendering a WML form example with editable fields and event timeline"
             loading="eager"
           />
-          <figcaption>Local mode with working forms, examples, and runtime inspection.</figcaption>
+          <figcaption>Local mode with working examples, forms, and runtime inspection.</figcaption>
         </figure>
         <figure class="stage-card stage-card-accent">
           <img
             src="./waves-network-page-with-links.png"
             alt="Waves showing a network-rendered WML page with selectable links"
           />
-          <figcaption>Network-rendered decks keep the old mobile-web interaction model visible and testable.</figcaption>
+          <figcaption>Live pages still feel like WAP, but are much easier to inspect and debug.</figcaption>
         </figure>
       </div>
     </header>
 
-    <section class="status-strip" aria-label="Current progress">
-      {
-        statusCards.map((card) => (
-          <article class="status-card">
-            <p>{card}</p>
-          </article>
-        ))
-      }
-    </section>
-
     <section class="content-grid">
       <article class="panel panel-feature">
         <p class="section-tag">Why it exists</p>
-        <h2>WAP stacks are usually either historically vague or hard to work on.</h2>
+        <h2>Most WAP tooling is either inaccurate, unfinished, or painful to work with.</h2>
         <p>
-          This project is aimed at a stricter middle ground: preserve authentic behavior where it
-          matters, but make the engine, host, and transport layers testable enough for modern iteration.
+          Waves is meant to be the practical middle ground: close enough to the original platform to
+          be worth trusting, but modern enough to support debugging, iteration, and real development work.
         </p>
       </article>
 
@@ -92,39 +77,51 @@ const statusCards = [
         <p class="section-tag">Stack</p>
         <h2>Layered by design</h2>
         <ul class="detail-list">
-          <li><strong>Gateway</strong><span>Kannel environment and gateway wiring.</span></li>
-          <li><strong>Transport</strong><span>WBXML, WSP/WTP behavior, and constrained fetch rules.</span></li>
-          <li><strong>Engine</strong><span>Rust/WASM WML parser, runtime, layout, navigation, and script execution.</span></li>
-          <li><strong>Waves</strong><span>Tauri desktop host with examples, debug affordances, and integration coverage.</span></li>
+          <li><strong>Gateway</strong><span>Kannel and the surrounding environment for compatibility testing.</span></li>
+          <li><strong>Transport</strong><span>WBXML, WSP/WTP behavior, and the fetch rules that sit underneath the browser.</span></li>
+          <li><strong>Engine</strong><span>The Rust/WASM runtime that parses WML, handles navigation, and renders cards.</span></li>
+          <li><strong>Waves</strong><span>The desktop host that ties everything together into a usable browser experience.</span></li>
         </ul>
       </article>
 
       <article class="panel">
         <p class="section-tag">Inside Waves</p>
-        <h2>The product shell is now useful, not just a harness.</h2>
+        <h2>Waves is becoming a real browser, not just a test harness.</h2>
         <p>
-          Use local examples to learn the runtime, flip to network mode for live fetches, and inspect
-          session state, snapshots, timelines, and transport responses while you work.
+          You can load local examples, browse live pages, and inspect session state, snapshots, timelines,
+          and transport behavior without leaving the app.
         </p>
         <p><a class="inline-link" href="./simulator/">Launch the simulator</a></p>
       </article>
 
       <article class="panel panel-wide">
         <p class="section-tag">What is shipping now</p>
-        <h2>Recent work moved Waves from fragile prototype toward usable emulator shell.</h2>
-        <div class="milestone-grid">
-          <div>
-            <h3>Interaction</h3>
-            <p>Text inputs, select controls, and form-submit handling are wired through the engine and desktop host.</p>
+        <h2>Recent work has made Waves much more practical to use.</h2>
+        <div class="shipping-layout">
+          <div class="shipping-summary">
+            <p>
+              Waves is no longer just a shell around the engine. You can use it to browse examples,
+              load live pages, try real interactions, and inspect what the browser is doing as you go.
+            </p>
           </div>
-          <div>
-            <h3>Responsiveness</h3>
-            <p>Network mode startup and failed fetches no longer monopolize the entire interface the way they did before.</p>
-          </div>
-          <div>
-            <h3>Determinism</h3>
-            <p>History replay, payload limits, and frame-oriented engine updates now have better behavioral coverage.</p>
-          </div>
+          <ul class="shipping-list">
+            <li>
+              <strong>Browse</strong>
+              <span>Open local examples or follow linked pages in the same desktop browser.</span>
+            </li>
+            <li>
+              <strong>Interact</strong>
+              <span>Edit fields, move through select controls, and submit forms through the real runtime.</span>
+            </li>
+            <li>
+              <strong>Inspect</strong>
+              <span>Use session state, snapshots, transport data, and timelines to understand what happened.</span>
+            </li>
+            <li>
+              <strong>Recover</strong>
+              <span>Loading, back/history behavior, and failed requests are much less disruptive than they were before.</span>
+            </li>
+          </ul>
         </div>
       </article>
     </section>
@@ -132,10 +129,10 @@ const statusCards = [
     <section class="gallery-band">
       <article class="gallery-copy">
         <p class="section-tag">Real states</p>
-        <h2>Waves is now credible across happy-path and failure-path browsing.</h2>
+        <h2>Loading and failure states are part of the product now, not dead ends.</h2>
         <p>
-          The shell can load local examples, render live linked decks, and stay communicative when
-          network startup or fetches go sideways.
+          It can load local examples, follow live links, and still tell you what is happening when
+          startup is slow or a network request fails.
         </p>
       </article>
 
@@ -144,7 +141,7 @@ const statusCards = [
           src="./waves-network-loading.png"
           alt="Waves waiting for its first network deck render while keeping the interface visible"
         />
-        <figcaption>Loading state with the browser shell still intact and readable.</figcaption>
+        <figcaption>The loading state keeps the shell visible instead of collapsing into a blank wait.</figcaption>
       </figure>
 
       <figure class="gallery-shot">
@@ -152,14 +149,14 @@ const statusCards = [
           src="./waves-network-error.png"
           alt="Waves showing a network error state in the desktop shell"
         />
-        <figcaption>Failure state surfaced as product behavior, not a frozen window.</figcaption>
+        <figcaption>Failures are surfaced as part of the product, not as a frozen or blocked app.</figcaption>
       </figure>
     </section>
 
     <section class="cta-band">
-      <div>
+      <div class="cta-copy">
         <p class="section-tag">Next step</p>
-        <h2>Explore Waves, then dig into the stack.</h2>
+        <h2>Try Waves first, then dig into the stack behind it.</h2>
       </div>
       <div class="cta-actions">
         <a class="button" href="./simulator/">Open Simulator</a>
@@ -168,7 +165,7 @@ const statusCards = [
     </section>
 
     <footer class="footer">
-      <p>WaveNav Labs · Pre-alpha WAP/WML emulator tooling and runtime research</p>
+      <p>WaveNav Labs · WAP/WML browser, runtime, and protocol tooling</p>
     </footer>
   </main>
 </Layout>
