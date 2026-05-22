@@ -151,7 +151,7 @@ h1 {
 .hero-proof {
   display: grid;
   gap: 12px;
-  margin: 22px 0 0;
+  margin: 18px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -179,7 +179,7 @@ h1 {
 
 .hero-stage {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 .stage-card {
@@ -209,7 +209,7 @@ h1 {
 .stage-highlights {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -218,7 +218,7 @@ h1 {
 .stage-highlights li {
   display: grid;
   gap: 4px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1px solid var(--edge);
   border-radius: 18px;
   background: rgba(255, 250, 241, 0.76);
@@ -246,7 +246,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
 }
 
 .panel {
@@ -334,21 +334,25 @@ h1 {
 .shipping-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
-  margin-top: 18px;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .shipping-summary {
-  padding: 18px;
-  border-radius: 22px;
-  background: rgba(255, 250, 241, 0.74);
-  border: 1px solid rgba(103, 79, 41, 0.12);
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
 }
 
-.shipping-summary p {
+.shipping-summary ul {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.74;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font: 500 0.98rem/1.62 "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+.shipping-summary li + li {
+  margin-top: 6px;
 }
 
 .shipping-list {
@@ -382,9 +386,9 @@ h1 {
 .cta-band {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
   padding: 28px;
   border-radius: 32px;
 }
@@ -393,10 +397,9 @@ h1 {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
 }
 
-.gallery-copy,
 .gallery-shot {
   border-radius: 28px;
   border: 1px solid var(--edge);
@@ -407,7 +410,7 @@ h1 {
 
 .gallery-copy {
   grid-column: span 4;
-  padding: 24px;
+  padding: 8px 2px 8px 0;
 }
 
 .gallery-copy h2 {
@@ -442,14 +445,21 @@ h1 {
 }
 
 .cta-copy {
-  max-width: 44rem;
+  max-width: 38rem;
 }
 
 .cta-band h2 {
   margin-top: 4px;
-  max-width: 14ch;
+  max-width: 16ch;
   font-size: clamp(1.75rem, 2.6vw, 2.7rem);
   line-height: 1;
+}
+
+.cta-copy p:last-child {
+  margin: 12px 0 0;
+  color: var(--muted);
+  max-width: 52ch;
+  font: 500 0.96rem/1.58 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
 .footer {

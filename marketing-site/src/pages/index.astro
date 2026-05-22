@@ -9,10 +9,6 @@ const proofPoints = [
   {
     label: 'Built for actual workflows',
     text: 'Run local examples, follow live pages, and inspect state without leaving one desktop app.'
-  },
-  {
-    label: 'Layered stack integrity',
-    text: 'Transport stays separate from the runtime so network constraints can be tested without muddying engine behavior.'
   }
 ];
 
@@ -34,7 +30,7 @@ const proofPoints = [
         </ul>
         <div class="hero-actions">
           <a class="button" href="./simulator/">Open Simulator</a>
-          <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">Browse Browser Source</a>
+          <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">View Browser Source</a>
         </div>
         <ul class="hero-proof" aria-label="Key project qualities">
           {
@@ -102,10 +98,10 @@ const proofPoints = [
         <h2>Recent work turned core browser flows into day-to-day tooling.</h2>
         <div class="shipping-layout">
           <div class="shipping-summary">
-            <p>
-              The current build is optimized for real usage loops: open a deck, interact with it,
-              inspect what happened, and continue even when startup or network behavior is imperfect.
-            </p>
+            <ul aria-label="Current release outcomes">
+              <li>Open a deck, interact, inspect, and continue in one stable loop.</li>
+              <li>Diagnose slow or failed requests without losing browser context.</li>
+            </ul>
           </div>
           <ul class="shipping-list">
             <li>
@@ -160,10 +156,11 @@ const proofPoints = [
       <div class="cta-copy">
         <p class="section-tag">Next step</p>
         <h2>Try Waves first, then dig into the stack behind it.</h2>
+        <p>Start in the simulator, then inspect browser internals and source from the same workflow.</p>
       </div>
       <div class="cta-actions">
         <a class="button" href="./simulator/">Open Simulator</a>
-        <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">Browse Browser Source</a>
+        <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">View Browser Source</a>
       </div>
     </section>
 
