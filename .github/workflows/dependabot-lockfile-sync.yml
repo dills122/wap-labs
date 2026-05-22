@@ -1,0 +1,73 @@
+name: Dependabot Lockfile Sync
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-lockfiles:
+    name: Sync lockfiles for Dependabot PRs
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            marketing-site/pnpm-lock.yaml
+            engine-wasm/host-sample/pnpm-lock.yaml
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Refresh root pnpm lockfile
+        run: pnpm install --lockfile-only
+
+      - name: Refresh marketing-site pnpm lockfile
+        run: pnpm --dir marketing-site --ignore-workspace install --lockfile-only
+
+      - name: Refresh host-sample pnpm lockfile
+        run: pnpm --dir engine-wasm/host-sample --ignore-workspace install --lockfile-only
+
+      - name: Refresh wml-server npm lockfile
+        run: npm --prefix wml-server install --package-lock-only
+
+      - name: Refresh transport-rust Cargo.lock
+        run: cargo update --workspace
+        working-directory: transport-rust
+
+      - name: Refresh browser/src-tauri Cargo.lock
+        run: cargo update --workspace
+        working-directory: browser/src-tauri
+
+      - name: Refresh engine fuzz Cargo.lock
+        run: cargo update --workspace
+        working-directory: engine-wasm/engine/fuzz
+
+      - name: Commit lockfile updates (if needed)
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore: sync lockfiles"
+          file_pattern: |
+            pnpm-lock.yaml
+            marketing-site/pnpm-lock.yaml
+            engine-wasm/host-sample/pnpm-lock.yaml
+            wml-server/package-lock.json
+            transport-rust/Cargo.lock
+            browser/src-tauri/Cargo.lock
+            engine-wasm/engine/fuzz/Cargo.lock
