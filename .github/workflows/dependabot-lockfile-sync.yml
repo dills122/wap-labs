@@ -60,7 +60,7 @@ jobs:
         working-directory: engine-wasm/engine/fuzz
 
       - name: Commit lockfile updates (if needed)
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: sync lockfiles"
           file_pattern: |
