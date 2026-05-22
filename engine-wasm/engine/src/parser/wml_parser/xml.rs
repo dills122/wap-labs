@@ -1,5 +1,6 @@
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::Reader;
+use quick_xml::XmlVersion;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -74,7 +75,7 @@ fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, String> {
         let attr = attr.map_err(|err| format!("Malformed XML attribute: {err}"))?;
         let key = String::from_utf8_lossy(attr.key.as_ref()).to_ascii_lowercase();
         let value = attr
-            .unescape_value()
+            .normalized_value(XmlVersion::Implicit1_0)
             .map_err(|err| format!("Malformed XML attribute value: {err}"))?
             .into_owned();
         attrs.insert(key, decode_entities(&value));
