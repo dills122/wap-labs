@@ -17,14 +17,6 @@ updates:
       - javascript
 
   - package-ecosystem: npm
-    directory: /engine-wasm/host-sample
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies
-      - javascript
-
-  - package-ecosystem: npm
     directory: /marketing-site
     schedule:
       interval: weekly

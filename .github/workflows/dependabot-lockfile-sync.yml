@@ -30,7 +30,6 @@ jobs:
           cache-dependency-path: |
             pnpm-lock.yaml
             marketing-site/pnpm-lock.yaml
-            engine-wasm/host-sample/pnpm-lock.yaml
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -40,9 +39,6 @@ jobs:
 
       - name: Refresh marketing-site pnpm lockfile
         run: pnpm --dir marketing-site --ignore-workspace install --lockfile-only
-
-      - name: Refresh host-sample pnpm lockfile
-        run: pnpm --dir engine-wasm/host-sample --ignore-workspace install --lockfile-only
 
       - name: Refresh wml-server npm lockfile
         run: npm --prefix wml-server install --package-lock-only
@@ -66,7 +62,6 @@ jobs:
           file_pattern: |
             pnpm-lock.yaml
             marketing-site/pnpm-lock.yaml
-            engine-wasm/host-sample/pnpm-lock.yaml
             wml-server/package-lock.json
             transport-rust/Cargo.lock
             browser/src-tauri/Cargo.lock
