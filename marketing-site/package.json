@@ -11,7 +11,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.4.4"
+    "astro": "^6.4.7"
   },
   "repository": {
     "type": "git",
