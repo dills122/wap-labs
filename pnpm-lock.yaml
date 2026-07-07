@@ -22,8 +22,8 @@ catalogs:
       specifier: ^10.1.8
       version: 10.1.8
     globals:
-      specifier: ^17.6.0
-      version: 17.6.0
+      specifier: ^17.7.0
+      version: 17.7.0
     lit:
       specifier: ^3.3.3
       version: 3.3.3
@@ -56,7 +56,7 @@ importers:
         version: 10.1.8(eslint@10.5.0)
       globals:
         specifier: 'catalog:'
-        version: 17.6.0
+        version: 17.7.0
       lint-staged:
         specifier: ^17.0.7
         version: 17.0.7
@@ -99,7 +99,7 @@ importers:
         version: 10.1.8(eslint@10.5.0)
       globals:
         specifier: 'catalog:'
-        version: 17.6.0
+        version: 17.7.0
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
@@ -139,7 +139,7 @@ importers:
         version: 10.1.8(eslint@10.5.0)
       globals:
         specifier: 'catalog:'
-        version: 17.6.0
+        version: 17.7.0
       prettier:
         specifier: 'catalog:'
         version: 3.8.4
@@ -989,8 +989,8 @@ packages:
     resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
     engines: {node: '>=10.13.0'}
 
-  globals@17.6.0:
-    resolution: {integrity: sha512-sepffkT8stwnIYbsMBpoCHJuJM5l98FUF2AnE07hfvE0m/qp3R586hw4jF4uadbhvg1ooIdzuu7CsfD2jzCaNA==}
+  globals@17.7.0:
+    resolution: {integrity: sha512-Czmyns5dUsq4seFBR/Kdydhmo8y9kC79hiSkPn0YcGtNnYWnrgt0vjrSjx9tspoDGWm2CMarffRuLjM4xUz8xg==}
     engines: {node: '>=18'}
 
   has-flag@4.0.0:
@@ -2329,7 +2329,7 @@ snapshots:
     dependencies:
       is-glob: 4.0.3
 
-  globals@17.6.0: {}
+  globals@17.7.0: {}
 
   has-flag@4.0.0: {}
 
