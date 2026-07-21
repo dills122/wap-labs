@@ -6,7 +6,7 @@ packages:
 catalog:
   "@types/node": "^26.1.1"
   "@typescript-eslint/eslint-plugin": "^8.62.1"
-  "@typescript-eslint/parser": "^8.62.1"
+  "@typescript-eslint/parser": "^8.65.0"
   eslint: "^10.7.0"
   eslint-config-prettier: "^10.1.8"
   globals: "^17.7.0"
