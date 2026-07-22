@@ -42,7 +42,7 @@ Jobs:
   - `cargo fmt --check`
   - coverage gate with `cargo llvm-cov`
 - `Rust Transport`
-  - installs `libwbxml` runtime packages
+  - installs the isolated `wbxml2xml` decoder
   - `cargo fmt --check`
   - `cargo clippy -- -D warnings`
   - coverage gate with `cargo llvm-cov`

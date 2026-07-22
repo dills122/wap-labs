@@ -218,7 +218,7 @@ fn fetch_deck_command_applies_default_destination_policy_when_missing() {
 }
 
 #[test]
-fn fetch_deck_command_preserves_explicit_destination_policy_override() {
+fn fetch_deck_command_rejects_renderer_destination_policy_override() {
     let response =
         with_env_removed_locked(super::waves_config::FETCH_DESTINATION_POLICY_ENV, || {
             fetch_deck(FetchDeckRequest {
@@ -237,6 +237,31 @@ fn fetch_deck_command_preserves_explicit_destination_policy_override() {
                 }),
             })
         });
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.as_ref().map(|err| err.code.as_str()),
+        Some("INVALID_REQUEST")
+    );
+}
+
+#[test]
+fn fetch_deck_command_honors_host_allow_private_override() {
+    let response = with_env_var_locked(
+        super::waves_config::FETCH_DESTINATION_POLICY_ENV,
+        super::waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+        || {
+            fetch_deck(FetchDeckRequest {
+                url: "http://127.0.0.1:9/deck.wml".to_string(),
+                method: None,
+                headers: None,
+                timeout_ms: Some(100),
+                retries: Some(0),
+                request_id: Some("req-host-private-policy".to_string()),
+                request_policy: None,
+            })
+        },
+    );
+
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|err| err.code.as_str()),

@@ -90,11 +90,8 @@ pnpm --dir browser run tauri:icons
 
 - `GATEWAY_HTTP_BASE` (default `http://localhost:13002`)
 - `VITE_WAVES_DEFAULT_URL` (frontend startup URL, default `http://127.0.0.1:3000/`)
-- Decoder backend order:
-  - preferred: in-process `libwbxml` shared library
-  - fallback: `wbxml2xml` CLI
-- `WBXML2XML_BIN` (optional explicit path to `wbxml2xml` fallback binary)
-- `LOWBAND_DISABLE_LIBWBXML=1` (debug/testing: force CLI fallback path)
+- Decoder backend: isolated `wbxml2xml` subprocess with bounded runtime and decoded output.
+- `WBXML2XML_BIN` (optional explicit absolute path to a trusted `wbxml2xml` binary)
 
 ## Bundled WBXML decoder
 
@@ -105,6 +102,7 @@ You can bundle `wbxml2xml` as a Tauri resource:
 - `src-tauri/resources/wbxml/windows/wbxml2xml.exe`
 
 When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
+Otherwise the host resolves `wbxml2xml` from absolute entries on `PATH`.
 
 ## Next implementation slice
 

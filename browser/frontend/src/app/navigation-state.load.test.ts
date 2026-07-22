@@ -135,7 +135,7 @@ describe('navigation-state load behavior', () => {
     });
   });
 
-  it('allows private destination policy for localhost lab URLs', async () => {
+  it('does not let renderer navigation weaken the host destination policy', async () => {
     const requestPolicies: unknown[] = [];
     const machine = createNavigationStateMachine(
       createHostClientMock({
@@ -153,10 +153,7 @@ describe('navigation-state load behavior', () => {
       followExternalIntent: false
     });
 
-    expect(requestPolicies[0]).toEqual({
-      destinationPolicy: 'allow-private',
-      uaCapabilityProfile: 'wap-baseline'
-    });
+    expect(requestPolicies[0]).toEqual({ uaCapabilityProfile: 'wap-baseline' });
   });
 
   it('replays host back using stored request method and request policy', async () => {

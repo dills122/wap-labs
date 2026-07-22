@@ -1,13 +1,21 @@
 use crate::fetch_body::{read_response_body_limited, ReadBodyError};
+use crate::fetch_policy::{resolve_fetch_destination_addresses, validate_fetch_destination};
 use crate::request_meta::log_transport_event;
 use crate::responses::{
-    map_success_payload_response, map_terminal_send_error, normalize_content_type,
-    payload_too_large_response, transport_unavailable_response,
+    invalid_request_response, map_success_payload_response, map_terminal_send_error,
+    normalize_content_type, payload_too_large_response, transport_unavailable_response,
 };
-use crate::{FetchDeckResponse, MAX_RESPONSE_BODY_BYTES};
-use reqwest::blocking::Client;
+use crate::{FetchDeckResponse, FetchDestinationPolicy, MAX_RESPONSE_BODY_BYTES};
+use reqwest::blocking::{Client, ClientBuilder};
+use reqwest::dns::{Addrs, Name, Resolve, Resolving};
+use reqwest::redirect::Policy;
 use std::collections::HashMap;
+use std::fmt;
+use std::io;
+use std::sync::Arc;
 use std::time::{Duration, Instant};
+
+const MAX_HTTP_REDIRECTS: usize = 10;
 
 pub(super) struct FetchExecutionPlan {
     pub(super) url: String,
@@ -17,6 +25,62 @@ pub(super) struct FetchExecutionPlan {
     pub(super) attempts: u8,
     pub(super) is_wap_scheme: bool,
     pub(super) request_id: Option<String>,
+    pub(super) destination_policy: FetchDestinationPolicy,
+}
+
+#[derive(Debug)]
+struct DestinationPolicyError(String);
+
+impl fmt::Display for DestinationPolicyError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str(&self.0)
+    }
+}
+
+impl std::error::Error for DestinationPolicyError {}
+
+#[derive(Clone)]
+struct PolicyDnsResolver {
+    destination_policy: FetchDestinationPolicy,
+}
+
+impl Resolve for PolicyDnsResolver {
+    fn resolve(&self, name: Name) -> Resolving {
+        let host = name.as_str().to_string();
+        let destination_policy = self.destination_policy.clone();
+        Box::pin(async move {
+            match resolve_fetch_destination_addresses(&host, 0, &destination_policy) {
+                Ok(addresses) => Ok(Box::new(addresses.into_iter()) as Addrs),
+                Err(message) if message.starts_with("Destination blocked by fetch policy") => {
+                    Err(Box::new(DestinationPolicyError(message))
+                        as Box<dyn std::error::Error + Send + Sync>)
+                }
+                Err(message) => {
+                    Err(Box::new(io::Error::other(message))
+                        as Box<dyn std::error::Error + Send + Sync>)
+                }
+            }
+        })
+    }
+}
+
+fn http_client_builder(
+    timeout_ms: u64,
+    destination_policy: FetchDestinationPolicy,
+) -> ClientBuilder {
+    let redirect_destination_policy = destination_policy.clone();
+    Client::builder()
+        .timeout(Duration::from_millis(timeout_ms))
+        .dns_resolver(Arc::new(PolicyDnsResolver { destination_policy }))
+        .redirect(Policy::custom(move |attempt| {
+            if attempt.previous().len() >= MAX_HTTP_REDIRECTS {
+                return attempt.error(io::Error::other("too many redirects"));
+            }
+            match validate_fetch_destination(attempt.url(), &redirect_destination_policy) {
+                Ok(()) => attempt.follow(),
+                Err(message) => attempt.error(DestinationPolicyError(message)),
+            }
+        }))
 }
 
 pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
@@ -28,12 +92,10 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
         attempts,
         is_wap_scheme,
         request_id,
+        destination_policy,
     } = plan;
     let request_url = url.clone();
-    let client = match Client::builder()
-        .timeout(Duration::from_millis(timeout_ms))
-        .build()
-    {
+    let client = match http_client_builder(timeout_ms, destination_policy).build() {
         Ok(client) => client,
         Err(err) => {
             log_transport_event(
@@ -179,6 +241,13 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                 );
             }
             Err(err) => {
+                if let Some(message) = destination_policy_error(&err) {
+                    return invalid_request_response(
+                        request_url.clone(),
+                        message,
+                        request_id.as_deref(),
+                    );
+                }
                 last_error = err.to_string();
                 last_is_timeout = err.is_timeout();
                 last_elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
@@ -223,4 +292,70 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
         last_elapsed_ms,
         request_id.as_deref(),
     )
+}
+
+fn destination_policy_error(error: &reqwest::Error) -> Option<String> {
+    let mut current: Option<&(dyn std::error::Error + 'static)> = Some(error);
+    while let Some(cause) = current {
+        if let Some(policy_error) = cause.downcast_ref::<DestinationPolicyError>() {
+            return Some(policy_error.0.clone());
+        }
+        current = cause.source();
+    }
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use std::net::TcpListener;
+    use std::thread;
+
+    #[test]
+    fn http_client_rejects_private_dns_answer() {
+        let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
+            .no_proxy()
+            .build()
+            .expect("build DNS policy test client");
+        let error = client
+            .get("http://localhost:9/private")
+            .send()
+            .expect_err("private DNS answer must be rejected");
+
+        let message =
+            destination_policy_error(&error).expect("policy error should survive reqwest wrapping");
+        assert!(message.contains("public-only"));
+        assert!(message.contains("loopback"));
+    }
+
+    #[test]
+    fn http_client_rejects_redirect_to_private_destination() {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind redirect test server");
+        let listener_address = listener.local_addr().expect("read redirect server address");
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept redirect request");
+            stream
+                .write_all(
+                    b"HTTP/1.1 302 Found\r\nLocation: http://127.0.0.1:9/private\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                )
+                .expect("write redirect response");
+        });
+
+        let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
+            .no_proxy()
+            .resolve("public.test", listener_address)
+            .build()
+            .expect("build redirect test client");
+        let error = client
+            .get(format!("http://public.test:{}/", listener_address.port()))
+            .send()
+            .expect_err("private redirect must be rejected");
+        server.join().expect("redirect test server should exit");
+
+        let message =
+            destination_policy_error(&error).expect("policy error should survive reqwest wrapping");
+        assert!(message.contains("public-only"));
+        assert!(message.contains("loopback"));
+    }
 }

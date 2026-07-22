@@ -397,20 +397,17 @@ export const createNavigationStateMachine = (
 
 export const defaultRequestPolicyForSource = (
   source: HostNavigationSource,
-  requestedUrl: string,
+  _requestedUrl: string,
   refererUrl?: string
 ): FetchRequestPolicy | undefined => {
   const uaCapabilityProfile = WAVES_CONFIG.transportUaCapabilityProfile;
-  const destinationPolicy = shouldAllowPrivateDestination(requestedUrl)
-    ? 'allow-private'
-    : undefined;
   if (source === 'reload') {
-    return { cacheControl: 'no-cache', destinationPolicy, uaCapabilityProfile };
+    return { cacheControl: 'no-cache', uaCapabilityProfile };
   }
   if (source === 'external-intent' && refererUrl) {
-    return { refererUrl, destinationPolicy, uaCapabilityProfile };
+    return { refererUrl, uaCapabilityProfile };
   }
-  return { destinationPolicy, uaCapabilityProfile };
+  return { uaCapabilityProfile };
 };
 
 const normalizeMethod = (method?: string): string => {
@@ -617,39 +614,3 @@ const postContextEqual = (
     a.sameDeck === b.sameDeck &&
     a.contentType === b.contentType &&
     a.payload === b.payload);
-
-const shouldAllowPrivateDestination = (requestedUrl: string): boolean => {
-  try {
-    const { hostname } = new URL(requestedUrl);
-    const normalized = hostname.trim().toLowerCase();
-    if (!normalized) {
-      return false;
-    }
-
-    if (normalized === 'localhost' || normalized === '::1' || normalized.endsWith('.localhost')) {
-      return true;
-    }
-
-    if (/^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(normalized)) {
-      return true;
-    }
-
-    if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(normalized)) {
-      return true;
-    }
-
-    if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(normalized)) {
-      return true;
-    }
-
-    const private172 = normalized.match(/^172\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/);
-    if (private172) {
-      const secondOctet = Number.parseInt(private172[1], 10);
-      return secondOctet >= 16 && secondOctet <= 31;
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
-};

@@ -114,9 +114,10 @@ Current transport responsibilities:
 Fetch destination policy posture (`M1-17`):
 
 1. default mode is `public-only` for `fetch_deck` destinations to reduce SSRF/internal probing exposure if renderer/UI code is compromised.
-2. `public-only` blocks loopback/private/link-local/unspecified/multicast literal host targets for `http`/`https`/`wap`/`waps` requests.
-3. developer override is explicit via `WAVES_FETCH_DESTINATION_POLICY=allow-private` in host environment; this is intended for local integration workflows only.
-4. policy behavior is deterministic in transport error mapping (`INVALID_REQUEST` for blocked destinations) and does not alter engine navigation semantics.
+2. the host policy is authoritative: renderer-supplied request policy may tighten it but cannot enable private destinations.
+3. `public-only` normalizes IPv4-mapped IPv6 addresses, rejects non-public literal targets, validates every DNS answer used by the HTTP connector, revalidates every redirect hop, and validates native WAP peer addresses.
+4. developer override is explicit via `WAVES_FETCH_DESTINATION_POLICY=allow-private` in host environment; this is intended for local integration workflows only. Operator-configured gateway endpoints remain governed by host configuration after the original WAP destination is validated.
+5. policy behavior is deterministic in transport error mapping (`INVALID_REQUEST` for blocked destinations) and does not alter engine navigation semantics.
 
 Current protocol stack posture:
 

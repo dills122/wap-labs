@@ -1,4 +1,5 @@
 use super::*;
+use std::time::Duration;
 
 #[test]
 fn transport_decode_wmlc_missing_tool_returns_structured_error() {
@@ -31,6 +32,56 @@ fn transport_decode_wmlc_success_with_fake_tool() {
 }
 
 #[test]
+#[cfg(unix)]
+fn transport_decode_wmlc_uses_subprocess_backend() {
+    let script = write_fake_decoder_script("<wml><card id=\"isolated\"/></wml>");
+    let decoded = with_env_var_locked("WBXML2XML_BIN", script.to_string_lossy().as_ref(), || {
+        decode_wmlc(b"\x03\x01\x6a\x00")
+    })
+    .expect("configured subprocess decoder should be used");
+
+    assert!(decoded.contains("isolated"));
+}
+
+#[test]
+#[cfg(unix)]
+fn transport_decode_wmlc_tool_timeout_is_bounded() {
+    let script =
+        write_decoder_script("#!/bin/sh\nsleep 2\nout=\"$2\"\nprintf '%s' '<wml/>' > \"$out\"\n");
+    let error = decode_wmlc_with_tool_limits(
+        b"\x03\x01\x6a\x00",
+        script.to_string_lossy().as_ref(),
+        Duration::from_millis(50),
+        1024,
+    )
+    .expect_err("decoder exceeding its deadline must fail");
+
+    assert!(error.contains("timed out"));
+}
+
+#[test]
+#[cfg(unix)]
+fn transport_decode_wmlc_tool_output_is_bounded() {
+    let script = write_fake_decoder_script("<wml><card>oversized</card></wml>");
+    let error = decode_wmlc_with_tool_limits(
+        b"\x03\x01\x6a\x00",
+        script.to_string_lossy().as_ref(),
+        Duration::from_secs(1),
+        16,
+    )
+    .expect_err("oversized decoder output must fail");
+
+    assert!(error.contains("output exceeds"));
+}
+
+#[test]
+fn transport_decoder_rejects_relative_executable_paths() {
+    let error = resolve_wbxml_decoder_path("./wbxml2xml")
+        .expect_err("relative executable path must not be trusted");
+    assert!(error.contains("absolute"));
+}
+
+#[test]
 fn transport_wbxml2xml_bin_uses_default_when_env_missing() {
     let value = with_env_removed_locked("WBXML2XML_BIN", wbxml2xml_bin);
     assert_eq!(value, "wbxml2xml");
@@ -43,92 +94,14 @@ fn transport_wbxml2xml_bin_uses_env_override() {
 }
 
 #[test]
-fn transport_libwbxml_disable_flag_honored() {
-    let disabled = with_env_var_locked("LOWBAND_DISABLE_LIBWBXML", "true", || {
-        libwbxml_disabled_by_env()
-    });
-    assert!(disabled);
-
-    let disabled_yes = with_env_var_locked("LOWBAND_DISABLE_LIBWBXML", "yes", || {
-        libwbxml_disabled_by_env()
-    });
-    assert!(disabled_yes);
-
-    let not_disabled =
-        with_env_removed_locked("LOWBAND_DISABLE_LIBWBXML", libwbxml_disabled_by_env);
-    assert!(!not_disabled);
-}
-
-#[test]
-fn transport_libwbxml_error_text_handles_null_pointer_message() {
-    unsafe extern "C" fn null_msg(_: i32) -> *const u8 {
-        std::ptr::null()
-    }
-    let text = libwbxml_error_text(null_msg, -9);
-    assert_eq!(text, "libwbxml error code -9");
-}
-
-#[test]
-fn transport_libwbxml_available_or_disabled_result_is_deterministic() {
-    let result = libwbxml_available();
-    assert!(result.is_ok() || result.is_err());
-}
-
-#[test]
-fn transport_decode_wmlc_with_libwbxml_disable_returns_unavailable() {
-    let result = with_env_var_locked("LOWBAND_DISABLE_LIBWBXML", "1", || {
-        decode_wmlc_with_libwbxml(b"\x03\x01\x6a\x00")
-    });
-    assert!(matches!(result, Err(LibwbxmlDecodeError::Unavailable(_))));
-}
-
-#[test]
-fn transport_decode_wmlc_with_libwbxml_empty_payload_returns_failed() {
-    let result =
-        with_env_removed_locked(
-            "LOWBAND_DISABLE_LIBWBXML",
-            || decode_wmlc_with_libwbxml(&[]),
-        );
-    assert!(matches!(result, Err(LibwbxmlDecodeError::Failed(_))));
-}
-
-#[test]
-fn transport_decode_wmlc_with_libwbxml_attempts_decoder_path() {
-    let result = decode_wmlc_with_libwbxml(b"\x03\x01\x6a\x00");
-    match result {
-        Ok(xml) => assert!(!xml.is_empty()),
-        Err(LibwbxmlDecodeError::Failed(message))
-        | Err(LibwbxmlDecodeError::Unavailable(message)) => {
-            assert!(!message.is_empty())
-        }
-    }
-}
-
-#[test]
-#[cfg(unix)]
-fn transport_decode_wmlc_prefers_cli_when_lib_disabled() {
-    let script = write_fake_decoder_script("<wml><card id=\"c\"/></wml>");
-    let result = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
-        "WBXML2XML_BIN",
-        script.to_string_lossy().as_ref(),
-        || decode_wmlc(b"\x03\x01\x6a\x00"),
-    );
-    assert!(result.is_ok());
-}
-
-#[test]
 fn transport_preflight_wbxml_decoder_reports_backend_or_error() {
     let result = preflight_wbxml_decoder();
     match result {
-        Ok(backend) => assert!(backend == "libwbxml" || backend == "wbxml2xml-cli"),
+        Ok(backend) => assert_eq!(backend, "wbxml2xml-cli-isolated"),
         Err(message) => assert!(!message.is_empty()),
     }
 
-    let forced_err = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
+    let forced_err = with_env_var_locked(
         "WBXML2XML_BIN",
         "__missing_wbxml2xml__",
         preflight_wbxml_decoder,
@@ -140,10 +113,8 @@ fn transport_preflight_wbxml_decoder_reports_backend_or_error() {
 }
 
 #[test]
-fn transport_preflight_wbxml_decoder_errors_when_all_backends_disabled() {
-    let result = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
+fn transport_preflight_wbxml_decoder_errors_when_cli_is_missing() {
+    let result = with_env_var_locked(
         "WBXML2XML_BIN",
         "__missing_wbxml2xml__",
         preflight_wbxml_decoder,
@@ -153,38 +124,21 @@ fn transport_preflight_wbxml_decoder_errors_when_all_backends_disabled() {
 
 #[test]
 fn transport_preflight_wbxml_decoder_cli_success_path() {
-    let result = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
-        "WBXML2XML_BIN",
-        "true",
-        preflight_wbxml_decoder,
-    );
-    assert_eq!(result.ok().as_deref(), Some("wbxml2xml-cli"));
+    let result = with_env_var_locked("WBXML2XML_BIN", "true", preflight_wbxml_decoder);
+    assert_eq!(result.ok().as_deref(), Some("wbxml2xml-cli-isolated"));
 }
 
 #[test]
 fn transport_preflight_wbxml_decoder_cli_nonzero_maps_error() {
-    let result = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
-        "WBXML2XML_BIN",
-        "false",
-        preflight_wbxml_decoder,
-    );
+    let result = with_env_var_locked("WBXML2XML_BIN", "false", preflight_wbxml_decoder);
     assert!(result.is_err());
 }
 
 #[test]
-fn transport_decode_wmlc_when_backends_missing_combines_errors() {
-    let err = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
-        "WBXML2XML_BIN",
-        "__missing_wbxml2xml__",
-        || decode_wmlc(b"\x03\x01\x6a\x00").expect_err("all backends should fail"),
-    );
-    assert!(err.contains("libwbxml disabled"));
+fn transport_decode_wmlc_when_cli_is_missing_returns_structured_error() {
+    let err = with_env_var_locked("WBXML2XML_BIN", "__missing_wbxml2xml__", || {
+        decode_wmlc(b"\x03\x01\x6a\x00").expect_err("missing decoder should fail")
+    });
     assert!(err.contains("WBXML decoder tool not available"));
 }
 
@@ -214,41 +168,6 @@ fn transport_with_env_removed_locked_restores_existing_value() {
     });
     assert_eq!(std::env::var(TEST_ENV).ok().as_deref(), Some("old-value"));
     std::env::remove_var(TEST_ENV);
-}
-
-#[test]
-fn transport_with_two_env_vars_locked_restores_existing_values() {
-    let _guard = env_lock().lock().expect("env lock should succeed");
-    std::env::set_var("WBXML2XML_BIN", "old-one");
-    std::env::set_var("LOWBAND_DISABLE_LIBWBXML", "old-two");
-    drop(_guard);
-
-    with_two_env_vars_locked(
-        "WBXML2XML_BIN",
-        "new-one",
-        "LOWBAND_DISABLE_LIBWBXML",
-        "new-two",
-        || {
-            assert_eq!(
-                std::env::var("WBXML2XML_BIN").ok().as_deref(),
-                Some("new-one")
-            );
-            assert_eq!(
-                std::env::var("LOWBAND_DISABLE_LIBWBXML").ok().as_deref(),
-                Some("new-two")
-            );
-        },
-    );
-    assert_eq!(
-        std::env::var("WBXML2XML_BIN").ok().as_deref(),
-        Some("old-one")
-    );
-    assert_eq!(
-        std::env::var("LOWBAND_DISABLE_LIBWBXML").ok().as_deref(),
-        Some("old-two")
-    );
-    std::env::remove_var("WBXML2XML_BIN");
-    std::env::remove_var("LOWBAND_DISABLE_LIBWBXML");
 }
 
 #[test]
@@ -298,8 +217,7 @@ fn transport_wbxml_sample_corpus_decodes_or_fails_structured() {
             Err(message) => {
                 let lower = message.to_ascii_lowercase();
                 let looks_structured = lower.contains("wbxml decode failed")
-                    || lower.contains("decoder tool not available")
-                    || lower.contains("libwbxml");
+                    || lower.contains("decoder tool not available");
                 assert!(
                     looks_structured,
                     "decode failure should be structured for {}: {}",

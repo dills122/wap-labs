@@ -1,15 +1,17 @@
+use crate::fetch_policy::resolve_fetch_destination_addresses;
 use crate::network::wdp::transport_trait::{DatagramTransport, WdpError};
 use crate::network::wdp::{
     UdpDatagramTransport, UdpDatagramTransportConfig, WdpAddress, WdpDatagram,
 };
 use crate::request_meta::log_transport_event;
 use crate::responses::{
-    map_success_payload_response, map_terminal_send_error, normalize_content_type,
+    invalid_request_response, map_success_payload_response, map_terminal_send_error,
+    normalize_content_type,
 };
-use crate::FetchDeckResponse;
+use crate::{FetchDeckResponse, FetchDestinationPolicy};
 use std::collections::HashMap;
 use std::fmt::Write as _;
-use std::net::{SocketAddr, ToSocketAddrs};
+use std::net::SocketAddr;
 use std::time::Instant;
 use url::Url;
 
@@ -33,6 +35,7 @@ pub(crate) struct NativeFetchPlan {
     pub(crate) timeout_ms: u64,
     pub(crate) attempts: u8,
     pub(crate) request_id: Option<String>,
+    pub(crate) destination_policy: FetchDestinationPolicy,
 }
 
 #[derive(Debug)]
@@ -76,16 +79,13 @@ pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResp
         }
     };
 
-    let peer = match resolve_destination_socket_addr(&parsed) {
+    let peer = match resolve_destination_socket_addr(&parsed, &plan.destination_policy) {
         Ok(peer) => peer,
         Err(error) => {
-            return map_terminal_send_error(
+            return map_destination_resolution_error(
                 plan.request_url,
                 error,
                 plan.attempts,
-                1,
-                false,
-                0.0,
                 plan.request_id.as_deref(),
             );
         }
@@ -253,19 +253,33 @@ fn default_bind_address(peer: &SocketAddr) -> String {
     }
 }
 
-fn resolve_destination_socket_addr(parsed: &Url) -> Result<SocketAddr, String> {
+fn resolve_destination_socket_addr(
+    parsed: &Url,
+    destination_policy: &FetchDestinationPolicy,
+) -> Result<SocketAddr, String> {
     let host = parsed
         .host_str()
         .ok_or_else(|| "wap url must include a host".to_string())?;
     let port = parsed
         .port()
         .unwrap_or_else(|| default_service_port(parsed.scheme()));
-    let mut resolved = (host, port)
-        .to_socket_addrs()
-        .map_err(|error| format!("failed to resolve wap host {host}:{port}: {error}"))?;
-    resolved
-        .find(|addr| addr.is_ipv4() || addr.is_ipv6())
+    resolve_fetch_destination_addresses(host, port, destination_policy)?
+        .into_iter()
+        .next()
         .ok_or_else(|| format!("failed to resolve wap host {host}:{port}"))
+}
+
+fn map_destination_resolution_error(
+    request_url: String,
+    error: String,
+    attempts: u8,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
+    if error.starts_with("Destination blocked by fetch policy") {
+        invalid_request_response(request_url, error, request_id)
+    } else {
+        map_terminal_send_error(request_url, error, attempts, 1, false, 0.0, request_id)
+    }
 }
 
 fn default_service_port(scheme: &str) -> u16 {
@@ -682,6 +696,7 @@ mod tests {
                 timeout_ms: 200,
                 attempts: 1,
                 request_id: Some("req-native-get".to_string()),
+                destination_policy: FetchDestinationPolicy::AllowPrivate,
             },
         );
 
@@ -726,6 +741,7 @@ mod tests {
                 timeout_ms: 100,
                 attempts: 1,
                 request_id: Some("req-native-timeout".to_string()),
+                destination_policy: FetchDestinationPolicy::AllowPrivate,
             },
         );
 
@@ -805,12 +821,45 @@ mod tests {
         let waps = Url::parse("waps://127.0.0.1/").expect("url should parse");
 
         assert_eq!(
-            resolve_destination_socket_addr(&wap).expect("wap addr should resolve"),
+            resolve_destination_socket_addr(&wap, &FetchDestinationPolicy::AllowPrivate)
+                .expect("wap addr should resolve"),
             "127.0.0.1:9200".parse().expect("literal should parse")
         );
         assert_eq!(
-            resolve_destination_socket_addr(&waps).expect("waps addr should resolve"),
+            resolve_destination_socket_addr(&waps, &FetchDestinationPolicy::AllowPrivate)
+                .expect("waps addr should resolve"),
             "127.0.0.1:9202".parse().expect("literal should parse")
+        );
+    }
+
+    #[test]
+    fn resolve_destination_socket_addr_rejects_private_peer_under_public_only() {
+        let wap = Url::parse("wap://127.0.0.1/").expect("url should parse");
+
+        let error = resolve_destination_socket_addr(&wap, &FetchDestinationPolicy::PublicOnly)
+            .expect_err("public-only must reject a resolved loopback peer");
+
+        assert!(error.contains("public-only"));
+        assert!(error.contains("loopback"));
+    }
+
+    #[test]
+    fn native_destination_policy_failure_maps_invalid_request() {
+        let response = map_destination_resolution_error(
+            "wap://private.test/".to_string(),
+            "Destination blocked by fetch policy (public-only): resolved to private address"
+                .to_string(),
+            1,
+            Some("req-native-policy"),
+        );
+
+        assert_eq!(
+            response.error.as_ref().map(|error| error.code.as_str()),
+            Some("INVALID_REQUEST")
+        );
+        assert_eq!(
+            detail_string(&response, "requestId").as_deref(),
+            Some("req-native-policy")
         );
     }
 
