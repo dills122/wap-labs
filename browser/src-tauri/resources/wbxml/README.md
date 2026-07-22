@@ -7,4 +7,6 @@ Expected paths:
 
 At startup, the host resolves the current platform path and sets `WBXML2XML_BIN`
 to that bundled binary when present. If missing, it falls back to `WBXML2XML_BIN`
-from environment or `wbxml2xml` on PATH and performs a startup preflight check.
+from environment or `wbxml2xml` on absolute PATH entries and performs a startup
+preflight check. Runtime decoding occurs in the subprocess with bounded execution
+time and decoded output; WBXML is never parsed by native code in the host process.

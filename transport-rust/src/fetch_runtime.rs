@@ -9,7 +9,10 @@ use crate::native_fetch::{
 };
 use crate::request_meta::{log_transport_event, normalized_request_id};
 use crate::responses::{invalid_request_response, transport_unavailable_response};
-use crate::{FetchDeckRequest, FetchDeckResponse, FetchTransportProfile, MAX_URI_OCTETS};
+use crate::{
+    FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchTransportProfile,
+    MAX_URI_OCTETS,
+};
 use url::Url;
 
 use self::execution::{execute_fetch, FetchExecutionPlan};
@@ -107,6 +110,7 @@ pub(crate) fn fetch_deck_in_process_impl(
             timeout_ms: timeout_ms.unwrap_or(5000).clamp(100, 30000),
             attempts,
             request_id,
+            destination_policy,
         });
     }
 
@@ -144,6 +148,13 @@ pub(crate) fn fetch_deck_in_process_impl(
         attempts,
         is_wap_scheme,
         request_id,
+        destination_policy: if is_wap_scheme {
+            // The gateway URL is operator configuration, not a renderer-selected
+            // destination. The original WAP URL was validated above.
+            FetchDestinationPolicy::AllowPrivate
+        } else {
+            destination_policy
+        },
     })
 }
 

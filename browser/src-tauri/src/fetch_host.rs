@@ -79,16 +79,24 @@ pub fn default_fetch_transport_fallback() -> HostFetchTransportFallback {
 }
 
 pub fn apply_default_destination_policy(request: &mut FetchDeckRequest) {
-    let default_policy = default_fetch_destination_policy();
+    let host_policy = default_fetch_destination_policy();
+    let requested_policy = request
+        .request_policy
+        .as_ref()
+        .and_then(|policy| policy.destination_policy.clone());
+    let effective_policy = match host_policy {
+        FetchDestinationPolicy::PublicOnly => FetchDestinationPolicy::PublicOnly,
+        FetchDestinationPolicy::AllowPrivate => {
+            requested_policy.unwrap_or(FetchDestinationPolicy::AllowPrivate)
+        }
+    };
     match request.request_policy.as_mut() {
         Some(policy) => {
-            if policy.destination_policy.is_none() {
-                policy.destination_policy = Some(default_policy);
-            }
+            policy.destination_policy = Some(effective_policy);
         }
         None => {
             request.request_policy = Some(FetchRequestPolicy {
-                destination_policy: Some(default_policy),
+                destination_policy: Some(effective_policy),
                 cache_control: None,
                 referer_url: None,
                 post_context: None,

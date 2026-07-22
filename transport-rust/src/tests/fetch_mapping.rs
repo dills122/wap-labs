@@ -351,26 +351,20 @@ fn transport_map_success_payload_wmlc_decode_failure_maps_error() {
 fn transport_map_success_payload_wmlc_decode_success_maps_ok() {
     let script = write_fake_decoder_script("<wml><card id=\"d\"/></wml>");
     let body = b"\x03\x01\x6a\x00";
-    let response = with_two_env_vars_locked(
-        "LOWBAND_DISABLE_LIBWBXML",
-        "1",
-        "WBXML2XML_BIN",
-        script.to_string_lossy().as_ref(),
-        || {
-            map_success_payload_response(
-                200,
-                false,
-                "http://request.example",
-                "http://upstream.example",
-                "http://request.example".to_string(),
-                "application/vnd.wap.wmlc".to_string(),
-                body,
-                1,
-                2.0,
-                None,
-            )
-        },
-    );
+    let response = with_env_var_locked("WBXML2XML_BIN", script.to_string_lossy().as_ref(), || {
+        map_success_payload_response(
+            200,
+            false,
+            "http://request.example",
+            "http://upstream.example",
+            "http://request.example".to_string(),
+            "application/vnd.wap.wmlc".to_string(),
+            body,
+            1,
+            2.0,
+            None,
+        )
+    });
     assert!(response.ok);
     assert_eq!(response.status, 200);
     let deck = response
@@ -706,6 +700,57 @@ fn transport_classify_ip_covers_blocked_destination_classes() {
         classify_ip(IpAddr::V6(Ipv6Addr::new(0xff02, 0, 0, 0, 0, 0, 0, 1))),
         DestinationHostClass::Multicast
     );
+}
+
+#[test]
+fn transport_classify_ip_normalizes_ipv4_mapped_ipv6() {
+    assert_eq!(
+        classify_ip(IpAddr::V6(Ipv4Addr::LOCALHOST.to_ipv6_mapped())),
+        DestinationHostClass::Loopback
+    );
+    assert_eq!(
+        classify_ip(IpAddr::V6(Ipv4Addr::new(10, 1, 2, 3).to_ipv6_mapped())),
+        DestinationHostClass::Private
+    );
+}
+
+#[test]
+fn transport_destination_policy_rejects_private_resolved_addresses() {
+    let addresses = [
+        "93.184.216.34:80"
+            .parse::<SocketAddr>()
+            .expect("public address"),
+        "127.0.0.1:80"
+            .parse::<SocketAddr>()
+            .expect("loopback address"),
+    ];
+
+    let error =
+        validate_resolved_destination_addresses(&addresses, &FetchDestinationPolicy::PublicOnly)
+            .expect_err("mixed public and loopback answers must be rejected");
+
+    assert!(error.contains("public-only"));
+    assert!(error.contains("loopback"));
+}
+
+#[test]
+fn transport_destination_policy_accepts_public_resolved_addresses() {
+    let addresses = [
+        "93.184.216.34:80"
+            .parse::<SocketAddr>()
+            .expect("public address"),
+        "[2606:2800:220:1:248:1893:25c8:1946]:80"
+            .parse::<SocketAddr>()
+            .expect("public ipv6 address"),
+    ];
+
+    validate_resolved_destination_addresses(&addresses, &FetchDestinationPolicy::PublicOnly)
+        .expect("public answers should remain valid");
+    validate_resolved_destination_addresses(
+        &["127.0.0.1:80".parse().expect("loopback address")],
+        &FetchDestinationPolicy::AllowPrivate,
+    )
+    .expect("operator allow-private policy should remain supported");
 }
 
 #[test]

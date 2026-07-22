@@ -1,241 +1,179 @@
-use libc::c_void;
-use libloading::Library;
 use std::env;
-use std::fs;
-use std::process::Command;
+use std::fs::{self, File};
+use std::io::Read;
+use std::path::{Path, PathBuf};
+use std::process::{Child, Command, ExitStatus, Stdio};
+use std::thread;
+use std::time::{Duration, Instant};
 use tempfile::tempdir;
+
+const WBXML_DECODE_TIMEOUT: Duration = Duration::from_secs(5);
+const MAX_DECODED_WBXML_BYTES: usize = 2 * 1024 * 1024;
+const CHILD_POLL_INTERVAL: Duration = Duration::from_millis(10);
 
 pub(crate) fn wbxml2xml_bin() -> String {
     env::var("WBXML2XML_BIN").unwrap_or_else(|_| "wbxml2xml".to_string())
 }
 
-#[derive(Debug)]
-pub(crate) enum LibwbxmlDecodeError {
-    Unavailable(String),
-    Failed(String),
-}
+pub(crate) fn resolve_wbxml_decoder_path(tool: &str) -> Result<PathBuf, String> {
+    let configured = Path::new(tool);
+    if configured.is_absolute() {
+        return validate_decoder_executable(configured);
+    }
+    if configured.components().count() != 1 {
+        return Err(format!(
+            "WBXML decoder path must be absolute when it contains path components: {tool}"
+        ));
+    }
 
-fn libwbxml_candidates() -> &'static [&'static str] {
-    #[cfg(target_os = "macos")]
-    {
-        &[
-            "libwbxml2.dylib",
-            "/opt/homebrew/lib/libwbxml2.dylib",
-            "/usr/local/lib/libwbxml2.dylib",
-        ]
-    }
-    #[cfg(target_os = "linux")]
-    {
-        &["libwbxml2.so.1", "libwbxml2.so"]
-    }
-    #[cfg(target_os = "windows")]
-    {
-        &["libwbxml2.dll"]
-    }
-}
+    let path = env::var_os("PATH").ok_or_else(|| {
+        format!("WBXML decoder tool not available: {tool}. PATH is not configured.")
+    })?;
+    for directory in env::split_paths(&path).filter(|directory| directory.is_absolute()) {
+        let candidate = directory.join(tool);
+        if let Ok(resolved) = validate_decoder_executable(&candidate) {
+            return Ok(resolved);
+        }
 
-pub(crate) fn libwbxml_disabled_by_env() -> bool {
-    matches!(
-        env::var("LOWBAND_DISABLE_LIBWBXML")
-            .ok()
-            .map(|value| value.to_ascii_lowercase())
-            .as_deref(),
-        Some("1" | "true" | "yes")
-    )
-}
-
-pub(crate) fn libwbxml_available() -> Result<(), String> {
-    if libwbxml_disabled_by_env() {
-        return Err("libwbxml disabled by LOWBAND_DISABLE_LIBWBXML".to_string());
-    }
-    let mut last_err = String::new();
-    for candidate in libwbxml_candidates() {
-        match unsafe { Library::new(candidate) } {
-            Ok(lib) => {
-                unsafe {
-                    let create = lib
-                        .get::<unsafe extern "C" fn(*mut *mut c_void) -> i32>(
-                            b"wbxml_conv_wbxml2xml_create\0",
-                        )
-                        .map_err(|err| {
-                            format!("missing wbxml_conv_wbxml2xml_create in {candidate}: {err}")
-                        })?;
-                    let destroy = lib
-                        .get::<unsafe extern "C" fn(*mut c_void)>(b"wbxml_conv_wbxml2xml_destroy\0")
-                        .map_err(|err| {
-                            format!("missing wbxml_conv_wbxml2xml_destroy in {candidate}: {err}")
-                        })?;
-                    let mut conv: *mut c_void = std::ptr::null_mut();
-                    let create_rc = create(&mut conv);
-                    if create_rc != 0 || conv.is_null() {
-                        return Err(format!(
-                            "libwbxml converter init failed in {candidate} (code {create_rc})"
-                        ));
-                    }
-                    destroy(conv);
-                }
-                return Ok(());
-            }
-            Err(err) => {
-                last_err = format!("{candidate}: {err}");
+        #[cfg(windows)]
+        if candidate.extension().is_none() {
+            let candidate = directory.join(format!("{tool}.exe"));
+            if let Ok(resolved) = validate_decoder_executable(&candidate) {
+                return Ok(resolved);
             }
         }
     }
+
     Err(format!(
-        "libwbxml shared library not available ({last_err})"
+        "WBXML decoder tool not available: {tool}. Install libwbxml/wbxml2xml."
     ))
 }
 
-pub(crate) fn libwbxml_error_text(
-    errors_string: unsafe extern "C" fn(i32) -> *const u8,
-    code: i32,
-) -> String {
-    let ptr = unsafe { errors_string(code) };
-    if ptr.is_null() {
-        return format!("libwbxml error code {code}");
-    }
-    unsafe { std::ffi::CStr::from_ptr(ptr as *const i8) }
-        .to_string_lossy()
-        .into_owned()
-}
-
-pub(crate) fn decode_wmlc_with_libwbxml(payload: &[u8]) -> Result<String, LibwbxmlDecodeError> {
-    if libwbxml_disabled_by_env() {
-        return Err(LibwbxmlDecodeError::Unavailable(
-            "libwbxml disabled by LOWBAND_DISABLE_LIBWBXML".to_string(),
-        ));
-    }
-    if payload.is_empty() {
-        return Err(LibwbxmlDecodeError::Failed(
-            "WBXML decode failed: empty payload".to_string(),
+fn validate_decoder_executable(path: &Path) -> Result<PathBuf, String> {
+    let canonical = path.canonicalize().map_err(|_| {
+        format!(
+            "WBXML decoder tool not available: {}. Install libwbxml/wbxml2xml.",
+            path.display()
+        )
+    })?;
+    let metadata = fs::metadata(&canonical).map_err(|error| {
+        format!(
+            "WBXML decoder metadata unavailable at {}: {error}",
+            canonical.display()
+        )
+    })?;
+    if !metadata.is_file() {
+        return Err(format!(
+            "WBXML decoder path is not a file: {}",
+            canonical.display()
         ));
     }
 
-    let mut last_load_err = String::new();
-    for candidate in libwbxml_candidates() {
-        let lib = match unsafe { Library::new(candidate) } {
-            Ok(lib) => lib,
-            Err(err) => {
-                last_load_err = format!("{candidate}: {err}");
-                continue;
-            }
-        };
-
-        let result = unsafe {
-            let create = lib
-                .get::<unsafe extern "C" fn(*mut *mut c_void) -> i32>(
-                    b"wbxml_conv_wbxml2xml_create\0",
-                )
-                .map_err(|err| {
-                    LibwbxmlDecodeError::Failed(format!(
-                        "libwbxml missing create symbol in {candidate}: {err}"
-                    ))
-                })?;
-            let run = lib
-                .get::<unsafe extern "C" fn(*mut c_void, *mut u8, u32, *mut *mut u8, *mut u32) -> i32>(
-                    b"wbxml_conv_wbxml2xml_run\0",
-                )
-                .map_err(|err| {
-                    LibwbxmlDecodeError::Failed(format!(
-                        "libwbxml missing run symbol in {candidate}: {err}"
-                    ))
-                })?;
-            let destroy = lib
-                .get::<unsafe extern "C" fn(*mut c_void)>(b"wbxml_conv_wbxml2xml_destroy\0")
-                .map_err(|err| {
-                    LibwbxmlDecodeError::Failed(format!(
-                        "libwbxml missing destroy symbol in {candidate}: {err}"
-                    ))
-                })?;
-            let errors_string = lib
-                .get::<unsafe extern "C" fn(i32) -> *const u8>(b"wbxml_errors_string\0")
-                .map_err(|err| {
-                    LibwbxmlDecodeError::Failed(format!(
-                        "libwbxml missing errors symbol in {candidate}: {err}"
-                    ))
-                })?;
-
-            let mut conv: *mut c_void = std::ptr::null_mut();
-            let create_rc = create(&mut conv);
-            if create_rc != 0 || conv.is_null() {
-                return Err(LibwbxmlDecodeError::Failed(format!(
-                    "WBXML decode failed: {}",
-                    libwbxml_error_text(*errors_string, create_rc)
-                )));
-            }
-
-            let mut xml_ptr: *mut u8 = std::ptr::null_mut();
-            let mut xml_len: u32 = 0;
-            let run_rc = run(
-                conv,
-                payload.as_ptr() as *mut u8,
-                payload.len() as u32,
-                &mut xml_ptr,
-                &mut xml_len,
-            );
-            destroy(conv);
-
-            if run_rc != 0 {
-                return Err(LibwbxmlDecodeError::Failed(format!(
-                    "WBXML decode failed: {}",
-                    libwbxml_error_text(*errors_string, run_rc)
-                )));
-            }
-            if xml_ptr.is_null() || xml_len == 0 {
-                return Err(LibwbxmlDecodeError::Failed(
-                    "WBXML decode failed: decoder returned empty output".to_string(),
-                ));
-            }
-
-            let xml_slice = std::slice::from_raw_parts(xml_ptr, xml_len as usize);
-            let xml_text = String::from_utf8_lossy(xml_slice).trim().to_string();
-            libc::free(xml_ptr as *mut c_void);
-
-            if xml_text.is_empty() {
-                return Err(LibwbxmlDecodeError::Failed(
-                    "WBXML decode failed: decoder returned empty output".to_string(),
-                ));
-            }
-            Ok(xml_text)
-        };
-        return result;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if metadata.permissions().mode() & 0o111 == 0 {
+            return Err(format!(
+                "WBXML decoder is not executable: {}",
+                canonical.display()
+            ));
+        }
     }
 
-    Err(LibwbxmlDecodeError::Unavailable(format!(
-        "libwbxml shared library not available ({last_load_err})"
-    )))
+    Ok(canonical)
 }
 
 pub(crate) fn decode_wmlc_with_tool(payload: &[u8], tool: &str) -> Result<String, String> {
+    decode_wmlc_with_tool_limits(payload, tool, WBXML_DECODE_TIMEOUT, MAX_DECODED_WBXML_BYTES)
+}
+
+pub(crate) fn decode_wmlc_with_tool_limits(
+    payload: &[u8],
+    tool: &str,
+    timeout: Duration,
+    max_output_bytes: usize,
+) -> Result<String, String> {
     if payload.is_empty() {
         return Err("WBXML decode failed: empty payload".to_string());
     }
 
-    let tmp_dir = tempdir().map_err(|err| format!("WBXML decode failed: temp dir: {err}"))?;
+    let decoder = resolve_wbxml_decoder_path(tool)?;
+    let tmp_dir = tempdir().map_err(|error| format!("WBXML decode failed: temp dir: {error}"))?;
     let input_path = tmp_dir.path().join("input.wmlc");
     let output_path = tmp_dir.path().join("output.xml");
     fs::write(&input_path, payload)
-        .map_err(|err| format!("WBXML decode failed: write input: {err}"))?;
+        .map_err(|error| format!("WBXML decode failed: write input: {error}"))?;
 
-    let proc = Command::new(tool)
+    let mut child = Command::new(&decoder)
         .arg("-o")
         .arg(&output_path)
         .arg(&input_path)
-        .output()
-        .map_err(|_| {
-            format!("WBXML decoder tool not available: {tool}. Install libwbxml/wbxml2xml.")
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .map_err(|error| {
+            format!(
+                "WBXML decoder tool not available: {} ({error})",
+                decoder.display()
+            )
         })?;
-    if !proc.status.success() {
-        let stderr = String::from_utf8_lossy(&proc.stderr);
-        let first = stderr
-            .lines()
-            .next()
-            .unwrap_or("decoder returned non-zero status");
-        return Err(format!("WBXML decode failed: {first}"));
+    let status = wait_for_child(&mut child, timeout)?;
+    if !status.success() {
+        return Err(format!(
+            "WBXML decode failed: decoder returned non-zero status ({status})"
+        ));
     }
 
-    let xml = fs::read_to_string(&output_path)
-        .map_err(|err| format!("WBXML decode failed: read output: {err}"))?;
+    read_decoder_output(&output_path, max_output_bytes)
+}
+
+fn wait_for_child(child: &mut Child, timeout: Duration) -> Result<ExitStatus, String> {
+    let started = Instant::now();
+    loop {
+        match child.try_wait() {
+            Ok(Some(status)) => return Ok(status),
+            Ok(None) if started.elapsed() < timeout => thread::sleep(CHILD_POLL_INTERVAL),
+            Ok(None) => {
+                let _ = child.kill();
+                let _ = child.wait();
+                return Err(format!(
+                    "WBXML decode failed: decoder timed out after {} ms",
+                    timeout.as_millis()
+                ));
+            }
+            Err(error) => {
+                let _ = child.kill();
+                let _ = child.wait();
+                return Err(format!("WBXML decode failed: wait for decoder: {error}"));
+            }
+        }
+    }
+}
+
+fn read_decoder_output(path: &Path, max_output_bytes: usize) -> Result<String, String> {
+    let metadata =
+        fs::metadata(path).map_err(|error| format!("WBXML decode failed: read output: {error}"))?;
+    if metadata.len() > max_output_bytes as u64 {
+        return Err(format!(
+            "WBXML decode failed: output exceeds {max_output_bytes}-byte limit"
+        ));
+    }
+
+    let mut bytes = Vec::with_capacity(metadata.len() as usize);
+    File::open(path)
+        .map_err(|error| format!("WBXML decode failed: read output: {error}"))?
+        .take(max_output_bytes as u64 + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|error| format!("WBXML decode failed: read output: {error}"))?;
+    if bytes.len() > max_output_bytes {
+        return Err(format!(
+            "WBXML decode failed: output exceeds {max_output_bytes}-byte limit"
+        ));
+    }
+
+    let xml = String::from_utf8(bytes)
+        .map_err(|error| format!("WBXML decode failed: output is not UTF-8: {error}"))?;
     let trimmed = xml.trim().to_string();
     if trimmed.is_empty() {
         return Err("WBXML decode failed: decoder returned empty output".to_string());
@@ -244,38 +182,32 @@ pub(crate) fn decode_wmlc_with_tool(payload: &[u8], tool: &str) -> Result<String
 }
 
 pub(crate) fn decode_wmlc(payload: &[u8]) -> Result<String, String> {
-    match decode_wmlc_with_libwbxml(payload) {
-        Ok(xml) => Ok(xml),
-        Err(LibwbxmlDecodeError::Failed(err)) => Err(err),
-        Err(LibwbxmlDecodeError::Unavailable(lib_err)) => {
-            match decode_wmlc_with_tool(payload, &wbxml2xml_bin()) {
-                Ok(xml) => Ok(xml),
-                Err(tool_err) => Err(format!("{lib_err}; {tool_err}")),
-            }
-        }
-    }
+    decode_wmlc_with_tool(payload, &wbxml2xml_bin())
 }
 
 pub fn preflight_wbxml_decoder() -> Result<String, String> {
-    if libwbxml_available().is_ok() {
-        return Ok("libwbxml".to_string());
-    }
-
-    let tool = wbxml2xml_bin();
-    let output = Command::new(&tool)
+    let configured = wbxml2xml_bin();
+    let decoder = resolve_wbxml_decoder_path(&configured).map_err(|error| {
+        format!("WBXML decoder unavailable. No isolated wbxml2xml CLI is accessible: {error}")
+    })?;
+    let mut child = Command::new(&decoder)
         .arg("--version")
-        .output()
-        .map_err(|_| {
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .map_err(|error| {
             format!(
-                "WBXML decoder unavailable. Neither libwbxml shared library nor `{tool}` is accessible."
+                "WBXML decoder preflight failed at {}: {error}",
+                decoder.display()
             )
         })?;
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let reason = stderr.lines().next().unwrap_or("non-zero exit");
+    let status = wait_for_child(&mut child, WBXML_DECODE_TIMEOUT)?;
+    if !status.success() {
         return Err(format!(
-            "WBXML decoder preflight failed at `{tool}`: {reason}"
+            "WBXML decoder preflight failed at {}: {status}",
+            decoder.display()
         ));
     }
-    Ok("wbxml2xml-cli".to_string())
+    Ok("wbxml2xml-cli-isolated".to_string())
 }

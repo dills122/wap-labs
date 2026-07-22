@@ -26,17 +26,16 @@ Current profile decision point:
 1. protocol migration stays behind explicit profile gates and feature flags.
 2. transport contracts (`browser/contracts/transport.ts` and engine handoff paths) remain the compatibility boundary during all migration stages.
 
-## Phase A (Ready Now): In-process WBXML decode via `libwbxml` FFI
+## Phase A (Complete): Isolated WBXML decode
 
 Objective:
 
-- Replace shelling out to `wbxml2xml` with direct in-process decode.
+- Decode untrusted WBXML without exposing the host process to native decoder faults.
 
 Scope:
 
-- Add `libwbxml` FFI layer (`-sys` style module/crate boundary).
-- Use `bindgen` for generated C bindings.
-- Add safe Rust wrapper API for decode entrypoints and error mapping.
+- Invoke a trusted, absolute `wbxml2xml` executable as an isolated subprocess.
+- Bound decoder execution time and decoded XML output.
 - Preserve existing error taxonomy (`WBXML_DECODE_FAILED`, etc.).
 - Keep all decode logic in `transport-rust` (no browser/runtime decode).
 
@@ -49,8 +48,8 @@ Non-goals:
 Definition of done:
 
 - `fetch_deck` behavior unchanged for callers.
-- `WBXML2XML_BIN` dependency removed from normal runtime path.
-- Transport tests cover success + failure decode branches through FFI wrapper.
+- No untrusted WBXML reaches native decoder code in the host process.
+- Transport tests cover success, failure, timeout, output-limit, and executable-path branches.
 
 ## Phase B: Streaming XML event boundary after decode
 
@@ -123,7 +122,7 @@ Objective:
 
 Recommended now:
 
-- `bindgen` for `libwbxml` FFI generation.
+- No native WBXML FFI dependency; package or install the isolated `wbxml2xml` decoder.
 
 Recommended later by phase:
 

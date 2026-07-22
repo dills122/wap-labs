@@ -2,7 +2,7 @@ use crate::{
     FetchCacheControlPolicy, FetchDestinationPolicy, FetchRequestPolicy, FetchUaCapabilityProfile,
 };
 use std::collections::HashMap;
-use std::net::IpAddr;
+use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use url::{Host, Url};
 
 pub(crate) fn resolve_fetch_destination_policy(
@@ -89,6 +89,9 @@ pub(crate) fn classify_ip(ip: IpAddr) -> DestinationHostClass {
             }
         }
         IpAddr::V6(v6) => {
+            if let Some(mapped) = v6.to_ipv4_mapped() {
+                return classify_ip(IpAddr::V4(mapped));
+            }
             if v6.is_loopback() {
                 DestinationHostClass::Loopback
             } else if v6.is_unique_local() {
@@ -104,6 +107,42 @@ pub(crate) fn classify_ip(ip: IpAddr) -> DestinationHostClass {
             }
         }
     }
+}
+
+pub(crate) fn resolve_fetch_destination_addresses(
+    host: &str,
+    port: u16,
+    destination_policy: &FetchDestinationPolicy,
+) -> Result<Vec<SocketAddr>, String> {
+    let addresses = (host, port)
+        .to_socket_addrs()
+        .map_err(|error| format!("failed to resolve destination {host}:{port}: {error}"))?
+        .collect::<Vec<_>>();
+    if addresses.is_empty() {
+        return Err(format!("failed to resolve destination {host}:{port}"));
+    }
+    validate_resolved_destination_addresses(&addresses, destination_policy)?;
+    Ok(addresses)
+}
+
+pub(crate) fn validate_resolved_destination_addresses(
+    addresses: &[SocketAddr],
+    destination_policy: &FetchDestinationPolicy,
+) -> Result<(), String> {
+    if matches!(destination_policy, FetchDestinationPolicy::AllowPrivate) {
+        return Ok(());
+    }
+
+    for address in addresses {
+        let class = classify_ip(address.ip());
+        if class != DestinationHostClass::Public {
+            return Err(format!(
+                "Destination blocked by fetch policy (public-only): resolved to {} address",
+                class.label()
+            ));
+        }
+    }
+    Ok(())
 }
 
 pub(crate) fn apply_request_policy(

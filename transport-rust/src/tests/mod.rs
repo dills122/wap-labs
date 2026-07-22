@@ -23,7 +23,7 @@ pub(super) use super::{
 };
 pub(super) use crate::fetch_policy::{
     apply_request_policy, classify_destination_host, classify_ip, resolve_fetch_destination_policy,
-    validate_fetch_destination, DestinationHostClass,
+    validate_fetch_destination, validate_resolved_destination_addresses, DestinationHostClass,
 };
 pub(super) use crate::gateway::build_gateway_request;
 pub(super) use crate::request_meta::{
@@ -34,15 +34,15 @@ pub(super) use crate::responses::{
     map_terminal_send_error, normalize_content_type, payload_too_large_response,
 };
 pub(super) use crate::wbxml::{
-    decode_wmlc, decode_wmlc_with_libwbxml, decode_wmlc_with_tool, libwbxml_available,
-    libwbxml_disabled_by_env, libwbxml_error_text, wbxml2xml_bin, LibwbxmlDecodeError,
+    decode_wmlc, decode_wmlc_with_tool, decode_wmlc_with_tool_limits, resolve_wbxml_decoder_path,
+    wbxml2xml_bin,
 };
 pub(super) use base64::engine::general_purpose::STANDARD as BASE64;
 pub(super) use base64::Engine as _;
 pub(super) use serde::Deserialize;
 pub(super) use std::collections::HashMap;
 pub(super) use std::fs;
-pub(super) use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+pub(super) use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 pub(super) use std::path::PathBuf;
 pub(super) use std::sync::{Mutex, OnceLock};
 pub(super) use toml::Value;
@@ -111,39 +111,18 @@ fn with_env_removed_locked<T>(name: &str, f: impl FnOnce() -> T) -> T {
     out
 }
 
-fn with_two_env_vars_locked<T>(
-    first_name: &str,
-    first_value: &str,
-    second_name: &str,
-    second_value: &str,
-    f: impl FnOnce() -> T,
-) -> T {
-    let _env_guard = env_lock().lock().expect("env lock should succeed");
-    let first_prev = std::env::var(first_name).ok();
-    let second_prev = std::env::var(second_name).ok();
-    std::env::set_var(first_name, first_value);
-    std::env::set_var(second_name, second_value);
-    let out = f();
-    if let Some(old) = first_prev {
-        std::env::set_var(first_name, old);
-    } else {
-        std::env::remove_var(first_name);
-    }
-    if let Some(old) = second_prev {
-        std::env::set_var(second_name, old);
-    } else {
-        std::env::remove_var(second_name);
-    }
-    out
-}
-
 #[cfg(unix)]
 fn write_fake_decoder_script(xml: &str) -> PathBuf {
-    use std::os::unix::fs::PermissionsExt;
     let script = format!(
         "#!/bin/sh\nif [ \"$1\" != \"-o\" ]; then exit 2; fi\nout=\"$2\"\nprintf '%s' '{}' > \"$out\"\n",
         xml
     );
+    write_decoder_script(&script)
+}
+
+#[cfg(unix)]
+fn write_decoder_script(script: &str) -> PathBuf {
+    use std::os::unix::fs::PermissionsExt;
     let dir = tempfile::tempdir().expect("tempdir should create");
     let path = dir.path().join("fake-wbxml2xml.sh");
     fs::write(&path, script).expect("fake decoder script should write");

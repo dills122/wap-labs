@@ -12,26 +12,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Start Kannel + WML stack
         run: docker compose up -d --build kannel wml-server
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
 
       - name: Cache Rust build artifacts
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           shared-key: ${{ env.RUST_SHARED_KEY }}
           workspaces: |
             transport-rust -> target
 
-      - name: Install libwbxml runtime
+      - name: Install isolated WBXML decoder
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwbxml2-dev || sudo apt-get install -y libwbxml2-0
-          sudo apt-get install -y libwbxml2-utils || true
+          sudo apt-get install -y libwbxml2-utils
 
       - name: Run WAP smoke
         run: make smoke-transport-wap
