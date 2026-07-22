@@ -150,6 +150,20 @@ Bootstrap/refresh local tool and dependency setup:
 ./scripts/init-refresh.sh
 ```
 
+### Local AI context
+
+Repo-specific instructions and the existing WAP-focused Codex skills stay checked in. Reusable
+skills and shared steering are linked from the sibling `ai-central` checkout and are ignored by
+Git:
+
+```bash
+pnpm codex:links
+```
+
+The script expects AI Central at `../ai-central` by default. Set `AI_CENTRAL_HOME` to either the
+AI Central repository or its `templates` directory when the checkout lives elsewhere. Use
+`pnpm codex:links -- --dry-run` to preview the links.
+
 Local hook behavior:
 
 - commit: runs `lint-staged` on staged files only (Prettier + rustfmt)

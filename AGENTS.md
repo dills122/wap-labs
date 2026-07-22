@@ -21,14 +21,18 @@ Breaking compatibility is acceptable at this stage when it helps move the MVP fo
 
 When a change spans multiple layers, preserve boundaries and update contracts first.
 
-## Contract-first files
+## Contract-first surfaces
 
 Treat these as interface contracts before implementation details:
 
 - `browser/contracts/transport.ts`
 - `engine-wasm/contracts/wml-engine.ts`
 
-If behavior changes, update the relevant contract and docs in the same change.
+`browser/contracts/transport.ts` is generated. Transport contract changes start in the exported
+Rust types under `transport-rust/src/lib.rs`, then regenerate and verify the TypeScript contract
+with `pnpm --dir browser run contracts:check`. Do not edit generated contract files directly.
+
+If behavior changes, update the relevant contract surface and docs in the same change.
 
 ## Multi-target compatibility policy
 
@@ -51,7 +55,7 @@ MUST NOT:
 
 - move rendering logic into transport services
 - add network-fetch behavior to the WASM runtime
-- parse WBXML in TypeScript/Electron adapter code
+- parse WBXML in TypeScript/Tauri adapter code
 - introduce broad cross-layer refactors unless explicitly requested
 
 ## MVP authenticity priorities
@@ -102,8 +106,9 @@ Prefer work that improves:
 - WASM engine tests: `cd engine-wasm/engine && cargo test`
 - Rust transport checks: `make lint-rust-transport` and `make test-rust-transport`
 
-## Additional Info & Standard
+## Additional standards
 
-please refer to `docs/agents/AGENT_STANDARDS.md` for a more in depth, language specific reference on standards
-and `docs/agents/RUST_STEERING.md` for Rust-specific implementation rules.
-Use `docs/agents/SHELL_STEERING.md` and `docs/agents/SCRIPTING_STEERING.md` for reusable shell/script guidance (POSIX-first, Alpine-compatible where possible, reuse existing tools before custom scripting).
+- Use `docs/agents/AGENT_STANDARDS.md` for repository-wide contributor and architecture standards.
+- Use `docs/agents/RUST_ENGINE_STEERING.md` for WaveNav engine Rust rules.
+- Use `docs/agents/RUST_TRANSPORT_STEERING.md` for Lowband transport Rust rules.
+- Use `docs/agents/SHELL_STEERING.md` and `docs/agents/SCRIPTING_STEERING.md` for reusable shell/script guidance (POSIX-first, Alpine-compatible where possible, reuse existing tools before custom scripting).

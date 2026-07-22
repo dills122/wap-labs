@@ -19,6 +19,7 @@
     }
   },
   "scripts": {
+    "codex:links": "node scripts/setup-codex-links.mjs",
     "lint:node": "pnpm -r --if-present run lint",
     "format:node": "pnpm -r --if-present run format",
     "format:check:node": "pnpm -r --if-present run format:check",

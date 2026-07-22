@@ -1,4 +1,4 @@
-# Rust Steering (WaveNav Engine)
+# Rust Engine Steering (WaveNav)
 
 Purpose: project-specific Rust rules for contributors and coding agents working on the WaveNav engine (`engine-wasm/engine`).
 
@@ -203,17 +203,23 @@ Follow Rust API Guidelines directly for naming, traits, docs, predictability:
 
 3. No direct FFI expansion without explicit design review.
 
-## 12. CI/Quality Gates (Rust)
+## 12. CI/Quality Gates (Rust Engine)
 
-Current required Rust gates:
+Current required local gates:
 
 1. `cargo fmt --check`
 2. `cargo test`
 
-Optional/disabled gates (enable intentionally later):
+CI also enforces engine coverage through `cargo llvm-cov` with the current thresholds:
+
+1. 90% line coverage
+2. 85% function coverage
+
+Optional/disabled gate (enable intentionally later):
 
 1. `cargo clippy --all-targets --all-features -- -D warnings`
-2. rustdoc lint escalation (for public crate hardening)
+
+Rustdoc lint escalation remains optional for later public-crate hardening.
 
 ## 13. PR Checklist (Rust Changes)
 
@@ -223,8 +229,9 @@ Before merge, verify:
 2. No wasm boundary signature drift without contract/doc updates.
 3. `cargo fmt --check` passes.
 4. `cargo test` passes.
-5. Relevant `docs/wml-engine/*` updated when semantics changed.
-6. No generated artifacts committed unless intentionally required.
+5. Coverage remains above the current CI thresholds when behavior changes.
+6. Relevant `docs/wml-engine/*` updated when semantics changed.
+7. No generated artifacts committed unless intentionally required.
 
 ## 14. Common Anti-Patterns to Avoid
 
@@ -243,6 +250,12 @@ cd engine-wasm/engine
 cargo fmt --check
 cargo test
 wasm-pack build --target web --out-dir ../pkg
+```
+
+Coverage gate (from repo root):
+
+```bash
+make coverage-rust-engine
 ```
 
 Host sample sanity (requires built pkg):
