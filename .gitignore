@@ -155,3 +155,8 @@ tmp
 _site
 
 **/fuzz/corpus/**
+
+# Local AI Central links (repo-owned Codex files remain tracked)
+.codex/skills/
+.codex/steering/frontend-design-steering.md
+.codex/steering/javascript-esm-steering.md
