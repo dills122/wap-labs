@@ -1,6 +1,6 @@
 # Waves Spec Coverage Dashboard
 
-Version: v0.1  
+Version: v0.2
 Status: Active
 
 ## Coverage status
@@ -10,6 +10,17 @@ Status: Active
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 - Scope: all canonical root-level source PDFs under `spec-processing/source-material` (98 files)
 - Status: all 98 canonical PDFs are `deep-extracted`
+- Primary target: WAP 1.2.1 with WML 1.3
+- Target-source status: 21/97 byte-exact, 4/97 same-name/content-different,
+  72/97 missing from the canonical PDF corpus
+- Private target-source status: all 97 release members plus WAP-215 are
+  byte/hash verified outside Git; public promotion remains permission-gated
+- Selected profile: exact WAP-215 Class C client `CCR-CLASSC-C-001`
+- Important: `deep-extracted` describes review of the current WAP 2.0-heavy
+  local corpus. It is not evidence that the WAP 1.2.1 target source set or
+  implementation is complete.
+- Target source baseline:
+  `docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`
 - Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves) plus `2` supplemental context-source parses (`WAP.pdf`, Wiley tech brief)
 
 ### Completed traceability domains
@@ -19,6 +30,11 @@ Status: Active
 - Sources:
   - `WAP-191*` (WML + SIN lineage)
   - `WAP-192*` (WBXML + SIN lineage)
+- WBXML ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
+  - 15 active rows and 3 selected Class C client rows
+  - selected audit: 0 implemented, 1 partial, 2 missing
+  - direct normative test evidence: 0/3; one subprocess-boundary test linked
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
@@ -30,9 +46,17 @@ Status: Active
 
 3. WAE user-agent behavior and media framework
 - Doc: `docs/waves/WAE_SPEC_TRACEABILITY.md`
-- Sources:
+- Strict-target sources:
+  - `WAP-190-WAESpec-20000329-a`
+  - `WAP-190_101`, `_102`, `_103`, and `_104` approved SINs
+  - WAP-215 `WAESpec:MCF` Class C selection
+- Ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-wae-scr.json`
+  - 86 active rows, 22 SIN-removed rows, and 11 selected Class C client rows
+  - selected audit: 5 implemented, 3 partial, 3 missing
+- Successor delta sources:
   - `WAP-236-WAESpec-20020207-a`
-  - `WAP-237-WAEMT-20010515-a`
+  - `WAP-237-WAEMT-20010515-a` (optional-media delta still pending)
 
 4. Transport rewrite stack
 - Doc: `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
@@ -100,11 +124,27 @@ Status: Active
 
 ## Open coverage gaps
 
-0. WAP-191 full-stack conformance closure (`WML-01..75`)
-- Status: in progress (planned execution lane created)
+0. Effective WAP-191 full-stack conformance closure (76 actor-specific SCR IDs)
+- Status: in progress (source ledger + mandatory code audit complete; clause,
+  optional-capability, and release evidence pending)
+- Selected-profile scope: 39 required Class C client rows, 27 optional client
+  rows, and 10 server/encoder rows not applicable to the client
 - Deliverables:
+  - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
+  - `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md`
   - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
   - Phase R tickets in `docs/waves/WORK_ITEMS.md` (`R0-01`..`R0-08`)
+
+0a. Effective WAP-192 WBXML conformance closure (15 actor-specific SCR IDs)
+- Status: in progress (source ledger and selected-client code audit complete;
+  nested clauses and direct normative fixtures pending)
+- Selected-profile scope: 3 required Class C client rows and 12
+  server/document/encoder rows outside the client profile
+- Deliverables:
+  - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
+  - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
+  - `RQ-RMK-010` in `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+  - corrective fixture/tooling closure in `R0-08` and `WML-203`
 
 1. WMLScript bedrock conformance closure (`WAP-193_101` + `WAP-194/194_103`)
 - Status: in progress (active implementation, bedrock-first closure lane added)

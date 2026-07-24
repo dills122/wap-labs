@@ -1,9 +1,25 @@
 # Waves Source Material Review Ledger
 
-Version: v0.1
-Status: complete (docling rerun validation pass complete for in-scope high-value domains)
+Version: v0.2
+Status: current-corpus review complete; WAP 1.2.1 target recovery in progress
 
 This ledger tracks review state for all canonical root-level source PDFs in `spec-processing/source-material` (98 files).
+
+This status applies only to the PDFs currently present in the repository. It
+does not mean that the WAP 1.2.1 / WML 1.3 target corpus or its conformance
+obligations are complete. Target membership, exact-byte preservation status,
+and effective-family precedence are tracked in:
+
+- `docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`
+- `spec-processing/source-manifests/wap-1.2.1-release.json`
+- `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`
+- `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-wae-scr.json`
+
+The recovered WAP-190 chain is outside the canonical root PDF corpus and is
+therefore not added to the per-file table below. Its five-document effective
+order, 86 active SCR rows, 22 removed-row records, and exact Class C selection
+are nevertheless fully captured by the target manifests above.
 
 Legend:
 - `deep-extracted`: normative sections reviewed and mapped into traceability docs

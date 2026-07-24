@@ -54,6 +54,8 @@ Integrated dependencies:
 
 Project planning links:
 
+- WAP 1.2.1 / WML 1.3 compliance program: `docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md`
+- Machine-readable compliance work program: `docs/waves/wap-1.2.1-compliance-program.json`
 - Master prioritized sprint plan: `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
@@ -66,6 +68,10 @@ Canonical sprint priority rule:
 
 1. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` is the single ordering authority when section-level "Next In Line" lists differ.
 2. Section-level lists below are lane-local guidance and must not override master P0/P1 gating.
+3. The WAP 1.2.1 compliance program defines target-completeness and
+   dependency gates. It does not reorder work already in progress until
+   `CONF-1` produces the selected-profile obligation ledger and the master
+   priority plan is refreshed from that evidence.
 
 ## Next In Line (Current Cross-Lane Priority Refresh - 2026-03-15)
 
@@ -294,6 +300,11 @@ Completed `B0` through `B3` tickets are archived in:
 - WBXML boundary behavior is conformance-backed beyond decode happy-path checks.
 7. `Spec`:
 - `RQ-RMK-007`, `RQ-WAE-005`
+8. `Notes`:
+- The WBXML SCR audit found that current tests establish isolation/error
+  behavior but do not directly prove literal/token equivalence. The additive
+  normative closure remains open in `R0-08`; this completed ticket is not
+  reopened.
 
 ### T0-08 WTP TID/MPL replay-window conformance follow-up
 
@@ -1142,6 +1153,35 @@ Completed `B0` through `B3` tickets are archived in:
 - Review artifact landed in `docs/waves/WAVES_REVIEW_2026-03-15.md`.
 - Follow-through landed in `#109` and `#110`: background startup probing, timer/render churn reduction, stale-safe navigation, combined frame-oriented host commands, off-UI-thread fetch execution, and targeted coverage around the affected coordinators.
 
+## WAE Selected-Profile Gap Queue
+
+### WAE-607 HTTP Basic authentication closure
+
+1. `Status`: `todo`
+2. `Depends On`: `CONF-002`, `WSP-8`
+3. `Owner`: `transport-rust`, `browser`
+4. `Files`:
+- `transport-rust/src/network/wsp/*`
+- `transport-rust/src/fetch_policy.rs`
+- `browser/src-tauri/src/*`
+- `browser/frontend/src/*`
+- `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`
+5. `Build`:
+- Parse and surface Basic authentication challenges across the active
+  transport profiles.
+- Define host-owned credential acquisition/storage/cancellation policy.
+- Retry with `Authorization` deterministically without logging credentials.
+- Preserve explicit failure and user-cancel outcomes.
+6. `Tests`:
+- Challenge parsing and malformed-challenge fixtures.
+- Credential retry, wrong-credential, cancellation, and retry-bound tests.
+- Browser-host tests proving secrets do not enter traces or persisted history.
+7. `Accept`:
+- `WAESpec-C-002` has an end-to-end browser/transport flow; WSP header token
+  registration alone cannot close the item.
+8. `Spec`:
+- `WAESpec-C-002`, WAP-190 section `5.1.2`, `RQ-WAE-014`
+
 ## Phase D: Engine Debug Connector (Planning-Ready)
 
 Reference plan:
@@ -1614,11 +1654,12 @@ Completed `W0-01` through `W0-04` are archived in:
 Reference:
 
 - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
-- `spec-processing/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
+- `spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191-WML-20000219-a.cleaned.md`
+- `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`
 
 ### R0-01 WML-191 conformance matrix and CI gate
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `S0-14`
 3. `Files`:
 - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
@@ -1626,14 +1667,27 @@ Reference:
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 - `.github/workflows/*`
 4. `Build`:
-- Create a machine-checkable WML-191 conformance matrix (`WML-01..WML-75`) with status + test mapping.
+- Create a machine-checkable effective WML 1.3 conformance matrix
+  (`WML-C-01..59`, `WML-S-60..69`, `WML-C-70..76`) with source SCR ID,
+  status, profile disposition, and test mapping.
+- Apply `WAP-191_105` after `WAP-191_104`; SIN 105 adds optional
+  `WML-C-76` (`tabindex`) and clarifies POST/multipart behavior.
 - Add CI guardrail that fails when mandatory items are unmapped.
 5. `Tests`:
 - CI dry-run with one intentionally unmapped mandatory ID.
 6. `Accept`:
 - Mandatory WML IDs cannot silently regress to unmapped/untracked state.
 7. `Spec`:
-- `WAP-191` section `15.1` through `15.4`
+- effective `WAP-191` section `15.1` through `15.4` plus
+  `WAP-191_105` section `3`
+8. `Notes`:
+- Source/status/disposition/work-item accounting is implemented in
+  `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
+  `node scripts/check-wap-conformance-ledger.mjs`.
+- The exact sequence includes `WML-S-60..69`. The mandatory code audit records
+  2 implemented, 23 partial, and 22 missing rows, with direct tests for 25
+  rows. Nested clause, optional capability, and release-gate evidence remain,
+  so this ticket is not done.
 
 ### R0-02 Inter-card navigation process-order conformance
 
@@ -1764,15 +1818,26 @@ Reference:
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+- `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
 4. `Build`:
 - Add tooling/fixtures that validate WML token table expectations, XML well-formed/validation gates, and server/client conformance constraints.
+- Close the selected `WBXML-C-001`, `WBXML-C-010`, and `WBXML-C-011` rows
+  against a pinned decoder implementation rather than permissive subprocess
+  behavior.
 - Keep ownership explicit where behavior is authoring/tooling vs runtime-execution.
 5. `Tests`:
 - Fixture matrix for valid/invalid tokenization and decode compatibility classes.
+- Source-derived cases for WBXML headers, multi-byte integers, string tables,
+  code pages, global tokens, entities, opaque/extensions, literals, default
+  attributes, and malformed input.
 6. `Accept`:
 - Section `14` and `15.2/15.3/15.4` obligations are concretely represented in testable artifacts.
+- All three `WBXML:MCF` client rows have direct normative evidence or a
+  deterministic explicit unsupported result; fake fixed-output decoders and
+  `either` fixtures cannot satisfy the gate.
 7. `Spec`:
 - `WML-60`, `WML-61`, `WML-62`, `WML-63`, `WML-64`, `WML-65`, `WML-70`
+- `RQ-RMK-010`, `WBXML-C-001`, `WBXML-C-010`, `WBXML-C-011`
 
 ### R0-09 BACK key hard-availability and `do type=prev` precedence
 

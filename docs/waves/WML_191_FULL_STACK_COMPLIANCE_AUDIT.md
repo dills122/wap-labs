@@ -1,8 +1,16 @@
 # WAP-191 (WML 1.3) Full-Stack Compliance Audit
 
-Version: v0.1  
-Date: 2026-03-02  
-Primary source: `spec-processing/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
+Version: v0.2
+Date: 2026-07-23
+
+Effective primary source chain:
+
+- `WAP-191-WML-20000219-a`
+- `WAP-191_102-WML-20001213-a`
+- `WAP-191_104-WML-20010718-a`
+- `WAP-191_105-WML-20020212-a`
+- precedence lock:
+  `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`
 
 ## Purpose
 
@@ -14,11 +22,13 @@ Create a project-wide, implementation-facing audit of WAP-191 obligations across
 - browser host/session behavior
 - encoder/validation tooling expectations
 
-This audit is scoped to WAP-191 only. It does not replace WMLScript, WAE, WSP, WTP, WDP, or security-domain traceability docs.
+This audit is scoped to effective WML 1.3 only. It does not replace WMLScript,
+WAE, WSP, WTP, WDP, or security-domain traceability docs.
 
 ## Method
 
-1. Sweep all normative chapters in WAP-191 sections 5-15.
+1. Sweep all normative chapters in effective WAP-191 sections 5-15 after
+   applying the release-carried SINs.
 2. Cross-check current implementation shape in:
 - `transport-rust/`
 - `engine-wasm/engine/`
@@ -50,11 +60,15 @@ This audit is scoped to WAP-191 only. It does not replace WMLScript, WAE, WSP, W
 | Image semantics | 11.9, 15.1.6 | parser + renderer + host media | missing/partial | Minimal/none in engine renderer | Implement `img` element semantics and capability-gated hints |
 | UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | partial | Unknown-tag robustness exists | Add access control enforcement path, low-memory policy behavior, deterministic unknown-DTD handling |
 | WML binary representation and token tables | 14.x, 15.2 | transport/encoder tooling | partial | WBXML decode boundary present | Add encoder/validation tooling path and WBXML token/literal conformance fixtures |
-| Static conformance statement execution model | 15.x | all layers + QA tooling | missing (formal) | Fragmented coverage in multiple boards | Add machine-readable conformance matrix + CI gate |
+| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + mandatory audit) | 76-row source ledger; WAP-215 selects 39 required Class C client rows assessed as 2 implemented / 23 partial / 14 missing; 25 exact test links across the full ledger | Extract nested clauses, assess optional capabilities, close gaps, and add release CI gate |
 
 ## Major Gaps Not Fully Tracked Before This Audit
 
-1. Full `WML-01..75` conformance closure is not currently represented as a single executable board.
+1. The 76-row source ledger and first mandatory implementation audit now
+   exist. Exact direct tests are linked for 25 rows; 22 mandatory rows are
+   explicitly missing. The exact identifiers are `WML-C-01..59`,
+   `WML-S-60..69`, and `WML-C-70..76`; SIN 105 adds optional `WML-C-76` for
+   `tabindex`.
 2. Section 12.5 inter-card process ordering (including failure semantics) is only partially ticketed.
 3. Server/client conformance constraints in section 15.3/15.4 are not yet mapped to deterministic validation tooling.
 4. Table/pre/image semantics in section 11.8/11.9 were under-specified in backlog until this pass.
@@ -83,3 +97,9 @@ Engine-level additive tickets are tracked in `docs/wml-engine/work-items.md` (B5
 - explicitly profile-gated/deferred with rationale.
 3. Browser + engine + transport contract fields are traceable to WAP-191 requirement IDs without orphan behavior.
 4. CI includes a conformance status check that fails on unmapped mandatory IDs.
+
+Source-ledger evidence:
+
+- `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
+- `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md`
+- `node scripts/check-wap-conformance-ledger.mjs`
