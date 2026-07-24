@@ -28,9 +28,10 @@ node spec-processing/scripts/check-wap-class-conformance.mjs
 node scripts/check-wap-conformance-ledger.mjs
 node scripts/check-wap-wae-conformance-ledger.mjs
 node scripts/check-wap-wbxml-conformance-ledger.mjs
+node scripts/check-wap-wmlscript-conformance-ledger.mjs
 ```
 
-The first three `CONF-1` family increments are complete at SCR level:
+The first five `CONF-1` family increments are complete at SCR level:
 
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
@@ -57,10 +58,21 @@ The first three `CONF-1` family increments are complete at SCR level:
 - the selected WBXML audit is 0 implemented, 1 partial, and 2 missing; the
   single linked test proves the subprocess boundary rather than normative
   decode semantics, so direct normative evidence remains 0/3.
+- 112 effective WMLScript rows are extracted from the consolidated
+  WAP-193_101 table; `WMLScript:MCF` selects 41 mandatory interpreter rows;
+- the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,
+  with zero direct normative WAP bytecode tests;
+- 95 effective WMLScript Libraries rows are extracted after adding optional
+  `WMLSSL-C-095`; `WMLScriptLibs:MCF` selects 80 mandatory interpreter rows;
+- the selected libraries audit is 0 implemented, 14 partial, and 66 missing,
+  with zero direct normative library tests;
+- source-exact `WMLSSL048` is preserved with normalized alias `WMLSSL-048`.
 
 See `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md` and
 `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`, and
-`docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`.
+`docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`,
+`docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`, and
+`docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`.
 
 ## Compatibility and enhancement policy
 
@@ -134,9 +146,9 @@ closes `SRC-004` without changing the redistribution boundary.
 
 1. Finish `SRC-0` by locking normative external dependencies and resolving
    the remaining redistribution blocker.
-2. Continue `CONF-1` ledgers from the completed WML, WAE, and WBXML increments
-   into the other six selected Class C families, with WTP added only for the
-   connection-mode WSP capability.
+2. Continue `CONF-1` ledgers from the completed WML, WAE, WBXML, WMLScript,
+   and WMLScript Libraries increments into caching, WSP, WDP, and WCMP, with
+   WTP added only for the connection-mode WSP capability.
 3. Continue the completed first-pass WML reconciliation into nested clauses
    and other families. Do not reopen completed tickets; add narrowly scoped
    gap work.

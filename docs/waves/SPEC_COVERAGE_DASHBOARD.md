@@ -43,6 +43,14 @@ Status: Active
   - `WAP-193_101-WMLScript-20010928-a`
   - `WAP-194-WMLScriptLibraries-20000925-a`
   - `WAP-194_103-WMLScriptLibraries-20020318-a`
+- Ledgers:
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+  - 112 rows and 41 selected Class C interpreter rows
+  - selected audit: 0 implemented, 23 partial, 18 missing
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+  - 95 rows and 80 selected Class C interpreter rows
+  - selected audit: 0 implemented, 14 partial, 66 missing
+  - direct normative test evidence: 0/121 selected rows
 
 3. WAE user-agent behavior and media framework
 - Doc: `docs/waves/WAE_SPEC_TRACEABILITY.md`
@@ -147,15 +155,21 @@ Status: Active
   - corrective fixture/tooling closure in `R0-08` and `WML-203`
 
 1. WMLScript bedrock conformance closure (`WAP-193_101` + `WAP-194/194_103`)
-- Status: in progress (active implementation, bedrock-first closure lane added)
+- Status: in progress (exact source ledgers and implementation audit complete;
+  nested clauses, direct fixtures, implementation, and CI closure pending)
 - Deliverables:
   - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md` (active baseline + bedrock priority groups)
-  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-06`)
+  - `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
+  - `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-07`)
 - Priority closure focus:
-  - bytecode structural verification gates
+  - actual WAP-193 compilation-unit and instruction decoding
   - external-call/pragma/access-control conformance
   - content-type routing for WMLScript payloads
   - core function/local/conversion/error semantics
+  - Lang, Float, String, URL, WMLBrowser, and Dialogs exact IDs/behavior
 
 2. Transport bedrock conformance closure (`WAP-259`, `WAP-224`, `WAP-230`)
 - Status: in progress (cleaned-source table-grounded closure lane added)

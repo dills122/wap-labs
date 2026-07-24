@@ -1418,7 +1418,9 @@ Reference architecture:
 
 Compliance target for this lane:
 
-- Drive Waves toward `~90-95%` practical WMLScript/WMLSL conformance for in-scope runtime behavior.
+- Implement and prove all 121 mandatory interpreter/library rows selected by
+  WAP 1.2.1 Class C (`WMLScript:MCF` + `WMLScriptLibs:MCF`). Optional
+  capabilities and enhancements remain separately declared.
 - Prioritize bedrock compliance closure before breadth-library expansion:
   - external-call/pragma/url invocation correctness
   - bytecode structure verification gates
@@ -1475,7 +1477,10 @@ Completed `W0-01` through `W0-04` are archived in:
 8. `Notes`:
 - Additive compliance follow-up to completed decoder skeleton (`W0-02`).
 - Completed with pre-execution structural gates in decoder and boundary entry validation in VM (`invalid local index references`, `call arity/frame bounds`, `host arg-count bounds`, and instruction-boundary entry checks).
-- Strict header/pool/function-table verification closure remains tracked in `W1-02`.
+- This completed slice applies to the project-specific VM skeleton. It is
+  provisional architecture evidence, not WAP-193 bytecode conformance.
+- Strict WAP header/pool/function-table/instruction verification closure
+  remains tracked in `W1-02`.
 
 ### W0-07 `newContext` + `getCurrentCard` semantics follow-up
 
@@ -1547,10 +1552,15 @@ Completed `W0-01` through `W0-04` are archived in:
 - `engine-wasm/engine/src/wavescript/vm.rs`
 - `engine-wasm/engine/src/lib.rs`
 4. `Build`:
-- Implement pre-execution verification gates for bytecode structure and references.
+- Replace or front the project-specific byte stream with the effective
+  WAP-193 compilation-unit format.
+- Implement pre-execution verification gates for WAP header, constant pool,
+  pragma pool, function pool, instruction stream, and references.
 - Keep trap taxonomy deterministic and host-safe.
 5. `Tests`:
-- Malformed fixture set covering invalid section sizes, pool references, function boundaries, and jump targets.
+- Source-derived valid `.wmlsc` fixtures plus malformed cases covering
+  version/header fields, multi-byte encodings, section sizes, pool references,
+  function boundaries, every mandatory instruction family, and jump targets.
 6. `Accept`:
 - Invalid bytecode fails before execution, with deterministic trap class.
 7. `Spec`:
@@ -1592,21 +1602,43 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W1-05 SCR conformance matrix and CI guardrail for WMLScript lane
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W1-02`, `W1-03`, `W1-04`
 3. `Files`:
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+- `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
+- `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+- `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+- `scripts/check-wap-wmlscript-conformance-ledger.mjs`
 - `.github/workflows/*`
 4. `Build`:
-- Add machine-checkable mapping for mandatory SCRs (`WMLS-C-*`, `WMLSSL-*`) to implemented tests/status.
+- Maintain the machine-checkable mapping for all 112 WMLScript rows and 95
+  effective WMLScript Libraries rows, including source-exact `WMLSSL048`.
+- Apply exact Class C selection: 41 `WMLScript:MCF` rows and 80
+  `WMLScriptLibs:MCF` rows.
 - Fail CI when mandatory SCRs are unmapped or regress to untracked.
 5. `Tests`:
+- `node scripts/check-wap-wmlscript-conformance-ledger.mjs`
 - CI dry-run with one intentionally unmapped mandatory SCR.
 6. `Accept`:
-- Bedrock WMLScript compliance cannot silently drift.
+- [x] Effective SCR source/order/status/profile mappings are machine-checked.
+- [x] Every selected row maps to implementation status, requirements, and
+  open work.
+- [ ] Every selected row has direct normative test evidence or an explicit
+  release-blocking gap.
+- [ ] The validator runs in required CI and an intentional mapping regression
+  fails the job.
 7. `Spec`:
 - `RQ-WMLS-001..022` (mandatory subsets first)
+8. `Notes`:
+- Current audit is intentionally conservative:
+  - WMLScript: 23 partial / 18 missing / 0 implemented;
+  - Libraries: 14 partial / 66 missing / 0 implemented;
+  - direct normative tests: 0.
+- Existing custom-VM tests are provisional links only. They cannot close
+  WAP-193 binary-format or standard-library identifier rows.
 
 ### W1-06 Fatal/non-fatal script error taxonomy closure
 

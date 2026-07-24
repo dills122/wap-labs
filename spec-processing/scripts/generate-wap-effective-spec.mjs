@@ -195,13 +195,45 @@ const families = [...grouped.entries()]
                   'WAP-192_105 corrects the actor-specific WBXML 1.3 SCR and restores omitted WAP-192.101 changes. ' +
                   'The selected Class C client applies WBXML:MCF to the three effective mandatory client rows.'
               }
-          : {
-              status: 'pending-line-item-ledger',
-              governingDocument: 'WAP-221-CREQ-20010425-a',
-              note:
-                'SCR tables and SIN changes require line-item extraction; this graph establishes ' +
-                'source precedence only.'
-            },
+            : family === 'wmlscript'
+              ? {
+                  status: 'line-item-ledger-complete-class-c-applied',
+                  governingDocument: 'WAP-221-CREQ-20010425-a',
+                  governingClassProfileDocument:
+                    'WAP-215-ClassConform-20001213-a',
+                  ledger:
+                    'spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json',
+                  classProfileLedger:
+                    'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
+                  selectedProfile: 'CCR-CLASSC-C-001',
+                  selectedFeatureGroup: 'WMLScript:MCF',
+                  note:
+                    'WAP-193_101 supplies the consolidated actor-specific 112-row WMLScript SCR. ' +
+                    'The selected Class C client applies WMLScript:MCF to the 41 effective mandatory interpreter rows.'
+                }
+              : family === 'wmlscript-libraries'
+                ? {
+                    status: 'line-item-ledger-complete-class-c-applied',
+                    governingDocument: 'WAP-221-CREQ-20010425-a',
+                    governingClassProfileDocument:
+                      'WAP-215-ClassConform-20001213-a',
+                    ledger:
+                      'spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json',
+                    classProfileLedger:
+                      'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
+                    selectedProfile: 'CCR-CLASSC-C-001',
+                    selectedFeatureGroup: 'WMLScriptLibs:MCF',
+                    note:
+                      'WAP-194 supplies 94 SCR rows and WAP-194_103 adds optional immediate-refresh row WMLSSL-C-095. ' +
+                      'The selected Class C client applies WMLScriptLibs:MCF to the 80 effective mandatory interpreter rows.'
+                  }
+                : {
+                    status: 'pending-line-item-ledger',
+                    governingDocument: 'WAP-221-CREQ-20010425-a',
+                    note:
+                      'SCR tables and SIN changes require line-item extraction; this graph establishes ' +
+                      'source precedence only.'
+                  },
       successorEvidence: (successorEvidence.get(family) ?? []).map(
         (documentId) => ({
           documentId,

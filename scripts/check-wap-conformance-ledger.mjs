@@ -435,3 +435,15 @@ const wbxmlCheck = spawnSync(
 if (wbxmlCheck.status !== 0) {
   process.exit(wbxmlCheck.status ?? 1);
 }
+
+const wmlscriptCheck = spawnSync(
+  process.execPath,
+  ['scripts/check-wap-wmlscript-conformance-ledger.mjs'],
+  {
+    cwd: root,
+    stdio: 'inherit'
+  }
+);
+if (wmlscriptCheck.status !== 0) {
+  process.exit(wmlscriptCheck.status ?? 1);
+}

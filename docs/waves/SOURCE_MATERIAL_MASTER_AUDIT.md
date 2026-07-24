@@ -146,8 +146,9 @@ Supplemental-source precedence:
 - WAP-215 Class A/B/C profile mapping is complete; WAP-221 conformance grammar
   still needs to be carried into the remaining family ledgers
 - one-to-one mandatory/optional obligation ledgers for the WAP 1.2.1 target
-  (WML 1.3, WAE, and WBXML complete at SCR/source-work-item level; remaining
-  families, nested clauses, and direct test evidence pending)
+  (WML 1.3, WAE, WBXML, WMLScript, and WMLScript Libraries complete at
+  SCR/source-work-item level; remaining families, nested clauses, and direct
+  test evidence pending)
 - WAP 1.2.1-to-WAP 2.0 delta records for areas implemented from successor
   documents (selected WAE Class C concepts complete; broader/other-family
   deltas pending)
@@ -159,8 +160,11 @@ source order. The exact class graph exists at
 line-item SCR ledgers now exist at
 `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`,
 `spec-processing/source-manifests/wap-1.2.1-wae-scr.json`, and
-`spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`; six other selected
-family SCRs and all nested normative-clause ledgers remain pending.
+`spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`;
+four other selected family SCRs and all nested normative-clause ledgers remain
+pending. WTP is additionally conditional on connection-mode WSP.
 
 ## Audit deliverables (what “done” looks like)
 

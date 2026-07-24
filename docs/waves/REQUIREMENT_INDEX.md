@@ -17,6 +17,12 @@ For WBXML, use the exact corrected row crosswalk in
 `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`; boundary ownership
 under `RQ-RMK-007` does not establish decoder conformance under
 `RQ-RMK-010`.
+For WMLScript, the thematic `RQ-WMLS-*` groups do not establish exact
+conformance. Use
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json` and
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`;
+the selected Class C audit currently has 121 mandatory rows, zero implemented
+rows, and zero direct normative tests.
 
 | Requirement ID | Owner Layer | Primary Ticket Lane | Test Status | Traceability Doc |
 |---|---|---|---|---|
@@ -103,10 +109,10 @@ under `RQ-RMK-007` does not establish decoder conformance under
 | `RQ-WMLS-010` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-011` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-012` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-013` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-014` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-015` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-016` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-013` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-014` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-015` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-016` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-017` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-018` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-019` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |

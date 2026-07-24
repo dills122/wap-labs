@@ -206,6 +206,58 @@ if (
 ) {
   failures.push('CONF-002 must retain the WBXML SCR ledger and validator');
 }
+for (const ledgerPath of [
+  'spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json',
+  'spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json'
+]) {
+  if (!conf002?.outputs?.includes(ledgerPath)) {
+    failures.push(`CONF-002 must retain ${ledgerPath}`);
+  }
+}
+if (
+  !conf002?.evidence?.includes(
+    'node scripts/check-wap-wmlscript-conformance-ledger.mjs'
+  )
+) {
+  failures.push(
+    'CONF-002 must retain the paired WMLScript SCR validator'
+  );
+}
+const wmlscriptSprint = program.sprints.find(
+  (sprint) => sprint.id === 'WMLS-5'
+);
+const wmlscriptLibraries = wmlscriptSprint?.workItems.find(
+  (workItem) => workItem.id === 'WMLS-504'
+);
+if (
+  wmlscriptSprint?.status !== 'in-progress' ||
+  wmlscriptLibraries?.status !== 'in-progress' ||
+  !wmlscriptLibraries?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json'
+  ) ||
+  !wmlscriptLibraries?.acceptance?.some((line) =>
+    line.includes('80 mandatory WMLScriptLibs:MCF rows')
+  ) ||
+  !wmlscriptLibraries?.evidence?.includes(
+    'node scripts/check-wap-wmlscript-conformance-ledger.mjs'
+  )
+) {
+  failures.push(
+    'WMLS-504 must retain exact 80-row WMLScriptLibs:MCF ledger closure'
+  );
+}
+const wmlscriptBytecode = wmlscriptSprint?.workItems.find(
+  (workItem) => workItem.id === 'WMLS-501'
+);
+if (
+  !wmlscriptBytecode?.acceptance?.some((line) =>
+    line.includes('41 mandatory WMLScript:MCF rows')
+  )
+) {
+  failures.push(
+    'WMLS-501 must retain exact 41-row WMLScript:MCF bytecode closure'
+  );
+}
 const wml203 = program.sprints
   .find((sprint) => sprint.id === 'WML-2')
   ?.workItems.find((workItem) => workItem.id === 'WML-203');

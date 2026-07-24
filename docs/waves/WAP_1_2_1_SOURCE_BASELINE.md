@@ -151,7 +151,7 @@ together, in publication order:
 - WSP: `WAP-203` + SINs `001`, `003`, `005`
 - WTLS: `WAP-199` + SINs `102` through `106`
 
-The first three effective family SCR ledgers are now complete at feature
+The first five effective family SCR ledgers are now complete at feature
 level:
 
 - WML: 76 active rows; `WML:MCF` selects 39 mandatory user-agent rows.
@@ -159,9 +159,15 @@ level:
   selects 11 mandatory client rows.
 - WBXML: 15 active rows; `WBXML:MCF` selects all three mandatory client rows
   and leaves 12 server/document/encoder rows outside the client profile.
+- WMLScript: 112 active rows; `WMLScript:MCF` selects 41 mandatory
+  interpreter rows.
+- WMLScript Libraries: 95 effective rows; `WMLScriptLibs:MCF` selects 80
+  mandatory interpreter rows and keeps two optional interpreter rows
+  separately declared.
 
-Nested normative-clause extraction remains open for all three families. The
-other six selected Class C family ledgers are still pending.
+Nested normative-clause extraction remains open for all five families.
+Caching, WSP, WDP, and WCMP are the four remaining selected Class C family
+ledgers. WTP is additionally required if connection-mode WSP is claimed.
 
 The WAP 2.0-era WAE (`WAP-236`), WDP (`WAP-259`), WTP (`WAP-224`), WSP
 (`WAP-230`), WTLS (`WAP-261`), and architecture (`WAP-210`) documents are

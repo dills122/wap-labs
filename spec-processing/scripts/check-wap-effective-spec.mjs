@@ -150,6 +150,29 @@ if (
     'WBXML family must apply the selected WAP-215 Class C profile'
   );
 }
+for (const [
+  familyName,
+  selectedFeatureGroup
+] of [
+  ['wmlscript', 'WMLScript:MCF'],
+  ['wmlscript-libraries', 'WMLScriptLibs:MCF']
+]) {
+  const family = graph.families?.find(
+    (entry) => entry.family === familyName
+  );
+  if (
+    family?.scrExtraction?.status !==
+      'line-item-ledger-complete-class-c-applied' ||
+    family?.scrExtraction?.governingClassProfileDocument !==
+      classConformance.authority?.documentId ||
+    family?.scrExtraction?.classProfileLedger !== graph.classProfileLedger ||
+    family?.scrExtraction?.selectedFeatureGroup !== selectedFeatureGroup
+  ) {
+    failures.push(
+      `${familyName} family must apply ${selectedFeatureGroup} from the selected WAP-215 Class C profile`
+    );
+  }
+}
 
 if (seenDocuments.size !== manifest.members.length) {
   failures.push(
