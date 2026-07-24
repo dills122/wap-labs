@@ -58,8 +58,16 @@ Print a fresh AI context pack to standard output:
 node scripts/wap-context-pack.mjs WML-2
 ```
 
-The pilot currently rejects targets other than `WML-2` so expansion remains an explicit,
-reviewable change.
+For implementation or review of one pilot work item, request a focused pack:
+
+```sh
+node scripts/wap-context-pack.mjs WML-203
+```
+
+The supported retrieval targets are `WML-2` and `WML-201` through `WML-205`. A work-item target
+keeps sprint dependencies and conformance governance in view while limiting work-item details,
+direct obligations, mapping gaps, and source documents to the selected slice. Other targets
+remain rejected so graph expansion is explicit and reviewable.
 
 ## Graph contract
 
@@ -109,3 +117,7 @@ The generated context pack follows four rules:
 
 This keeps the pack bounded while retaining the information needed to challenge compliance
 claims.
+
+Codex discovers this workflow through the repository `AGENTS.md`. Claude Code discovers the same
+rules through the root `CLAUDE.md`, which imports `AGENTS.md` and
+`docs/agents/COMPLIANCE_CONTEXT_RETRIEVAL.md`.

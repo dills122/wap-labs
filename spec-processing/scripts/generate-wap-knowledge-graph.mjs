@@ -682,20 +682,41 @@ function directClausesForWorkItem(graph, workItemId) {
     .sort((left, right) => left.key.localeCompare(right.key));
 }
 
-export function renderContextPack(graph) {
+export function renderContextPack(graph, focusWorkItemId = null) {
   const sprint = findNode(graph, nodeId('sprint', graph.target.sprint));
-  const workItems = graph.edges
+  const allWorkItems = graph.edges
     .filter((edge) => edge.from === sprint.id && edge.relation === 'contains')
     .map((edge) => findNode(graph, edge.to))
     .sort((left, right) => left.key.localeCompare(right.key));
+  const focusedWorkItem = focusWorkItemId
+    ? allWorkItems.find((workItem) => workItem.key === focusWorkItemId)
+    : undefined;
+  if (focusWorkItemId && !focusedWorkItem) {
+    throw new Error(
+      `Work item ${focusWorkItemId} is not part of the ${graph.target.sprint} knowledge graph`
+    );
+  }
+  const workItems = focusedWorkItem ? [focusedWorkItem] : allWorkItems;
   const dependencyNodes = graph.edges
     .filter((edge) => edge.from === sprint.id && edge.relation === 'depends-on')
     .map((edge) => findNode(graph, edge.to));
   const downstreamNodes = graph.edges
     .filter((edge) => edge.to === sprint.id && edge.relation === 'depends-on')
     .map((edge) => findNode(graph, edge.from));
+  const selectedFamilies = new Set(
+    workItems.flatMap((workItem) => [
+      ...workItem.properties.sourceFamilies,
+      ...directClausesForWorkItem(graph, workItem.key).map((clause) => clause.properties.family)
+    ])
+  );
   const sourceDocuments = graph.nodes
     .filter((node) => node.type === 'source-document')
+    .filter(
+      (node) =>
+        !focusedWorkItem ||
+        selectedFamilies.has(node.properties.family) ||
+        node.properties.family === 'conformance-governance'
+    )
     .sort((left, right) => left.key.localeCompare(right.key));
   const workItemSections = workItems.map((workItem) => {
     const directClauses = directClausesForWorkItem(graph, workItem.key);
@@ -704,7 +725,9 @@ export function renderContextPack(graph) {
 - Status: \`${workItem.properties.status}\`
 - Owner layers: ${workItem.properties.ownerLayers.map((item) => `\`${item}\``).join(', ')}
 - Source families: ${workItem.properties.sourceFamilies.map((item) => `\`${item}\``).join(', ')}
-- Existing tickets: ${workItem.properties.existingTickets.map((item) => `\`${item}\``).join(', ') || 'None'}
+- Existing tickets: ${
+      workItem.properties.existingTickets.map((item) => `\`${item}\``).join(', ') || 'None'
+    }
 - Direct normative clauses: ${directClauses.length}
 
 Outputs:
@@ -732,11 +755,21 @@ ${codeList(workItem.properties.evidence)}
         );
         const fixture = fixtureEdge ? findNode(graph, fixtureEdge.to) : undefined;
         return `- **${clause.key}** — ${clause.properties.obligationSynopsis}
-  - Family: \`${clause.properties.family}\`; force: \`${clause.properties.normativeForce}\`; level: \`${clause.properties.obligationLevel}\`
-  - Source: \`${clause.properties.sourceAnchor.documentId}\` §${clause.properties.sourceAnchor.section} (${clause.properties.sourceAnchor.heading})
+  - Family: \`${clause.properties.family}\`; force: \`${
+          clause.properties.normativeForce
+        }\`; level: \`${clause.properties.obligationLevel}\`
+  - Source: \`${clause.properties.sourceAnchor.documentId}\` §${
+          clause.properties.sourceAnchor.section
+        } (${clause.properties.sourceAnchor.heading})
   - Parents: ${clause.properties.parentRows.map((item) => `\`${item}\``).join(', ')}
-  - Requirements: ${clause.properties.requirementIds.map((item) => `\`${item}\``).join(', ') || 'None'}
-  - Fixture: ${fixture ? `\`${fixture.key}\` (\`${fixture.properties.kind}\`, \`${fixture.properties.status}\`)` : 'Missing'}`;
+  - Requirements: ${
+    clause.properties.requirementIds.map((item) => `\`${item}\``).join(', ') || 'None'
+  }
+  - Fixture: ${
+    fixture
+      ? `\`${fixture.key}\` (\`${fixture.properties.kind}\`, \`${fixture.properties.status}\`)`
+      : 'Missing'
+  }`;
       });
       return `### ${workItem.key}
 
@@ -744,29 +777,53 @@ ${lines.join('\n')}
 `;
     })
     .filter(Boolean);
-  const gapLines = graph.summary.workItemsWithoutDirectClauses.map(
+  const selectedWorkItemIds = new Set(workItems.map((workItem) => workItem.key));
+  const workItemsWithoutDirectClauses = graph.summary.workItemsWithoutDirectClauses.filter(
+    (workItem) => selectedWorkItemIds.has(workItem)
+  );
+  const unmappedNormativeFamiliesByWorkItem = Object.fromEntries(
+    Object.entries(graph.summary.unmappedNormativeFamiliesByWorkItem).filter(([workItem]) =>
+      selectedWorkItemIds.has(workItem)
+    )
+  );
+  const gapLines = workItemsWithoutDirectClauses.map(
     (workItem) =>
       `- \`${workItem}\` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.`
   );
-  const familyGapLines = Object.entries(graph.summary.unmappedNormativeFamiliesByWorkItem).map(
+  const familyGapLines = Object.entries(unmappedNormativeFamiliesByWorkItem).map(
     ([workItem, families]) =>
-      `- \`${workItem}\` declares ${families.map((family) => `\`${family}\``).join(', ')} scope without a direct clause mapping from that family. Clauses from another family do not close this gap.`
+      `- \`${workItem}\` declares ${families
+        .map((family) => `\`${family}\``)
+        .join(
+          ', '
+        )} scope without a direct clause mapping from that family. Clauses from another family do not close this gap.`
   );
   const sourceLines = sourceDocuments.map((document) => {
     const url = document.properties.authorityUrl ? ` — ${document.properties.authorityUrl}` : '';
     return `- \`${document.key}\`: ${document.title}${url}`;
   });
 
-  return `# WML-2 AI Context Pack
+  const directClauseCount = workItems.reduce(
+    (sum, workItem) => sum + directClausesForWorkItem(graph, workItem.key).length,
+    0
+  );
+  const focusLine = focusedWorkItem ? `- Focus work item: \`${focusedWorkItem.key}\`\n` : '';
+  const selectionRule = focusedWorkItem
+    ? 'include the target sprint, its direct dependency/downstream neighbors, the focused work item, and only normative clauses explicitly mapped to that work item.'
+    : 'include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.';
+
+  return `# ${focusedWorkItem?.key ?? 'WML-2'} AI Context Pack
 
 > Generated from the WAP 1.2.1 knowledge graph pilot. Canonical manifests remain authoritative.
 
 ## Retrieval contract
 
 - Target: \`${graph.target.sprint}\`
-- Release/profile: ${graph.target.release}, ${graph.target.markup}, \`${graph.target.profile}\`
+${focusLine}- Release/profile: ${graph.target.release}, ${graph.target.markup}, \`${
+    graph.target.profile
+  }\`
 - Compatibility floor: \`${graph.target.compatibilityFloor}\`
-- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Selection rule: ${selectionRule}
 - Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
 - Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
 
@@ -774,9 +831,12 @@ ${lines.join('\n')}
 
 - Nodes: ${graph.summary.nodeCount}
 - Edges: ${graph.summary.edgeCount}
-- Direct normative clauses: ${Object.values(graph.summary.directClauseCountsByWorkItem).reduce((sum, count) => sum + count, 0)}
-- Work items without direct clause mappings: ${graph.summary.workItemsWithoutDirectClauses.length}
-- Work items with unmapped declared normative families: ${Object.keys(graph.summary.unmappedNormativeFamiliesByWorkItem).length}
+- Selected work items: ${workItems.length}
+- Direct normative clauses: ${directClauseCount}
+- Work items without direct clause mappings: ${workItemsWithoutDirectClauses.length}
+- Work items with unmapped declared normative families: ${
+    Object.keys(unmappedNormativeFamiliesByWorkItem).length
+  }
 
 ## Execution target
 
@@ -785,7 +845,9 @@ ${lines.join('\n')}
 - Status: \`${sprint.properties.status}\`
 - Goal: ${sprint.properties.goal}
 - Depends on: ${dependencyNodes.map((node) => `\`${node.key}\``).join(', ') || 'None'}
-- Direct downstream sprints: ${downstreamNodes.map((node) => `\`${node.key}\``).join(', ') || 'None'}
+- Direct downstream sprints: ${
+    downstreamNodes.map((node) => `\`${node.key}\``).join(', ') || 'None'
+  }
 
 Exit gates:
 
@@ -796,7 +858,11 @@ ${markdownList(sprint.properties.exitGates)}
 ${workItemSections.join('\n')}
 ## Direct normative obligations
 
-${obligationSections.join('\n')}
+${
+  obligationSections.length
+    ? obligationSections.join('\n')
+    : '- None directly mapped for this selection. Treat the explicit mapping gaps below as unresolved.'
+}
 ## Explicit mapping gaps
 
 ${gapLines.length ? gapLines.join('\n') : '- None'}

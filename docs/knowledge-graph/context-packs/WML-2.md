@@ -15,6 +15,7 @@
 
 - Nodes: 154
 - Edges: 395
+- Selected work items: 5
 - Direct normative clauses: 51
 - Work items without direct clause mappings: 3
 - Work items with unmapped declared normative families: 5

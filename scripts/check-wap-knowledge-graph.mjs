@@ -4,7 +4,8 @@ import process from 'node:process';
 
 import {
   buildGeneratedArtifacts,
-  checkGeneratedArtifacts
+  checkGeneratedArtifacts,
+  renderContextPack
 } from '../spec-processing/scripts/generate-wap-knowledge-graph.mjs';
 
 const allowedNodeTypes = new Set([
@@ -159,6 +160,26 @@ for (const clause of graph.nodes.filter((node) => node.type === 'clause')) {
   }
 }
 
+const focusedPack = renderContextPack(graph, 'WML-203');
+if (
+  !focusedPack.startsWith('# WML-203 AI Context Pack') ||
+  !focusedPack.includes('### WML-203:') ||
+  focusedPack.includes('### WML-202:') ||
+  !focusedPack.includes('- Selected work items: 1')
+) {
+  failures.push(
+    'focused work-item context rendering must remain bounded to the selected work item'
+  );
+}
+try {
+  renderContextPack(graph, 'WML-999');
+  failures.push('unknown work-item context targets must be rejected');
+} catch (error) {
+  if (!error.message.includes('is not part of')) {
+    failures.push(`unexpected unknown work-item error: ${error.message}`);
+  }
+}
+
 failures.push(...checkGeneratedArtifacts(root, artifacts));
 
 if (failures.length) {
@@ -171,5 +192,11 @@ if (failures.length) {
 
 const directClauseCount = graph.nodes.filter((node) => node.type === 'clause').length;
 console.log(
-  `WAP knowledge graph check OK (${graph.summary.nodeCount} nodes, ${graph.summary.edgeCount} edges, ${directClauseCount} direct clauses, ${graph.summary.workItemsWithoutDirectClauses.length} zero-clause gaps, ${Object.keys(graph.summary.unmappedNormativeFamiliesByWorkItem).length} family gaps)`
+  `WAP knowledge graph check OK (${graph.summary.nodeCount} nodes, ${
+    graph.summary.edgeCount
+  } edges, ${directClauseCount} direct clauses, ${
+    graph.summary.workItemsWithoutDirectClauses.length
+  } zero-clause gaps, ${
+    Object.keys(graph.summary.unmappedNormativeFamiliesByWorkItem).length
+  } family gaps)`
 );

@@ -59,6 +59,7 @@
 ## Engineering Standards
 
 - `agents/AGENT_STANDARDS.md`: multi-language contributor/agent standards
+- `agents/COMPLIANCE_CONTEXT_RETRIEVAL.md`: bounded knowledge-graph retrieval and trust rules for Codex, Claude Code, and other coding agents
 - `agents/RUST_ENGINE_STEERING.md`: Rust-specific steering for WaveNav engine development
 - `agents/RUST_TRANSPORT_STEERING.md`: Rust-specific steering for Lowband transport and protocol development
 - `agents/SHELL_STEERING.md`: POSIX-first shell steering and Alpine portability rules
