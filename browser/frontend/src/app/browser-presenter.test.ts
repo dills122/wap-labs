@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserPresenter } from './browser-presenter';
+import { WAVES_COPY } from './waves-copy';
 
 const createRefs = (): BrowserShellRefs => {
   const viewportEl = document.createElement('div');
@@ -153,6 +154,112 @@ describe('BrowserPresenter', () => {
     expect(refs.snapshotEl.textContent).toContain('"activeCardId": "home"');
     expect(refs.transportResponseEl.textContent).toContain('"status": 200');
     expect(refs.activeUrlLabelEl.textContent).toBe('http://local.test/start.wml');
+  });
+
+  it('clears the frozen skeleton placeholder markup when a first load fails', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+    presenter.setViewportSkeleton(true);
+    expect(refs.viewportEl.querySelector('.skeleton-hint')).not.toBeNull();
+
+    // First load failed before any deck ever rendered: hiding the skeleton
+    // must clear the placeholder markup (shimmering bars + hint text), not
+    // just the CSS class, or it stays frozen on screen forever.
+    presenter.setViewportSkeleton(false);
+
+    expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+    expect(refs.viewportEl.getAttribute('aria-busy')).toBe('false');
+    expect(refs.viewportEl.querySelector('.skeleton-hint')).toBeNull();
+    expect(refs.viewportEl.innerHTML).toBe('');
+  });
+
+  it('does not touch viewport markup when hiding the skeleton after a successful render', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+    presenter.setViewportSkeleton(true);
+    presenter.drawRenderList({
+      draw: [{ type: 'text', text: 'hello', x: 0, y: 0 }]
+    });
+
+    // Redundant setViewportSkeleton(false) calls after a successful render
+    // (e.g. from a caller's finally block) must not wipe the real content.
+    presenter.setViewportSkeleton(false);
+
+    expect(refs.viewportEl.textContent).toContain('hello');
+  });
+
+  it('queues a toast instead of clobbering one that is still showing', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+      presenter.showToast('first message', 'error', 1000);
+      expect(refs.toastEl.textContent).toBe('first message');
+      expect(refs.toastEl.className).toBe('toast toast-error');
+
+      // Fired before the first toast's TTL elapses -- must not clobber it.
+      presenter.showToast('second message', 'ok', 1000);
+      expect(refs.toastEl.textContent).toBe('first message');
+
+      vi.advanceTimersByTime(1000);
+      expect(refs.toastEl.textContent).toBe('second message');
+      expect(refs.toastEl.className).toBe('toast toast-ok');
+
+      vi.advanceTimersByTime(1000);
+      expect(refs.toastEl.className).toBe('toast toast-hidden');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('announces a new script dialog request as a toast', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+      presenter.setSnapshot({
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        baseUrl: 'http://local.test/start.wml',
+        contentType: 'text/vnd.wap.wml',
+        lastScriptDialogRequests: [{ type: 'confirm', message: 'Proceed?' }],
+        lastScriptTimerRequests: []
+      });
+
+      expect(refs.toastEl.textContent).toBe(WAVES_COPY.status.scriptDialogConfirm('Proceed?'));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not re-announce the same dialog request across repeated snapshots', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      const baseSnapshot = {
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        baseUrl: 'http://local.test/start.wml',
+        contentType: 'text/vnd.wap.wml',
+        lastScriptDialogRequests: [{ type: 'alert' as const, message: 'Hi' }],
+        lastScriptTimerRequests: []
+      };
+
+      presenter.setSnapshot(baseSnapshot);
+      expect(refs.toastEl.textContent).toBe(WAVES_COPY.status.scriptDialogAlert('Hi'));
+
+      refs.toastEl.textContent = '__unchanged__';
+      presenter.setSnapshot({ ...baseSnapshot });
+
+      expect(refs.toastEl.textContent).toBe('__unchanged__');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('exports timeline data through a blob download', () => {

@@ -53,6 +53,15 @@ export interface NavigationHooks {
   onRender?(render: RenderList): void;
   onTransportResponse?(response: FetchResponse | null): void;
   onNetworkUnavailable?(): void;
+  /**
+   * Fired for every navigation failure that transitions navigationStatus to
+   * 'error' (timeout, non-200/protocol error, malformed/missing payload,
+   * external-intent hop limit) - including TRANSPORT_UNAVAILABLE, which also
+   * fires the more specific onNetworkUnavailable hook. Lets callers surface a
+   * consistent, visible failure indicator (e.g. a toast) regardless of which
+   * failure kind occurred, instead of only the quieter status-panel text.
+   */
+  onNavigationError?(message: string): void;
   onStateEvent?(action: string, details?: Record<string, unknown>): void;
 }
 
@@ -213,6 +222,7 @@ export const createNavigationStateMachine = (
       if (transport.error?.code === 'TRANSPORT_UNAVAILABLE') {
         hooks.onNetworkUnavailable?.();
       }
+      hooks.onNavigationError?.(errorMessage);
       return null;
     }
 
@@ -230,6 +240,7 @@ export const createNavigationStateMachine = (
         contentType: transport.contentType,
         lastError: WAVES_COPY.errors.missingWmlPayload
       });
+      hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload);
       return null;
     }
 
@@ -303,6 +314,7 @@ export const createNavigationStateMachine = (
         if (hop === maxExternalIntentHops) {
           const message = `External intent hop limit reached (${maxExternalIntentHops}).`;
           mergeSessionState({ navigationStatus: 'error', lastError: message });
+          hooks.onNavigationError?.(message);
         }
       }
     }

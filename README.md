@@ -25,6 +25,7 @@ The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`,
 
 Secondary docs:
 
+- Usability and graceful-failure backlog: `docs/waves/USABILITY_RESILIENCE_BACKLOG.md`
 - Legacy test environment guide: `docs/wap-test-environment/README.md`
 - Browser emulator quickstart: `docs/browser-emulator/README.md`
 - Spec-processing subproject: `spec-processing/README.md`

@@ -58,6 +58,100 @@ describe('navigation-state load behavior', () => {
     expect(networkUnavailable).toBe(1);
   });
 
+  it('fires onNavigationError for transport failures, alongside onNetworkUnavailable', async () => {
+    let networkUnavailable = 0;
+    const navigationErrors: string[] = [];
+    const host = createHostClientMock({
+      fetchDeck: async () =>
+        fetchOk({
+          ok: false,
+          status: 0,
+          contentType: 'text/plain',
+          error: { code: 'TRANSPORT_UNAVAILABLE', message: 'offline' },
+          engineDeckInput: undefined,
+          wml: undefined
+        })
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNetworkUnavailable: () => {
+        networkUnavailable += 1;
+      },
+      onNavigationError: (message) => {
+        navigationErrors.push(message);
+      }
+    });
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(networkUnavailable).toBe(1);
+    expect(navigationErrors).toEqual(['offline']);
+  });
+
+  it('fires onNavigationError (but not onNetworkUnavailable) for non-transport-unavailable failure kinds', async () => {
+    let networkUnavailable = 0;
+    const navigationErrors: string[] = [];
+    const host = createHostClientMock({
+      fetchDeck: async () =>
+        fetchOk({
+          ok: false,
+          status: 504,
+          contentType: 'text/plain',
+          error: { code: 'GATEWAY_TIMEOUT', message: 'gateway timed out' },
+          engineDeckInput: undefined,
+          wml: undefined
+        })
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNetworkUnavailable: () => {
+        networkUnavailable += 1;
+      },
+      onNavigationError: (message) => {
+        navigationErrors.push(message);
+      }
+    });
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(networkUnavailable).toBe(0);
+    expect(navigationErrors).toEqual(['gateway timed out']);
+  });
+
+  it('fires onNavigationError when the fetch succeeds but returns no WML payload', async () => {
+    const navigationErrors: string[] = [];
+    const host = createHostClientMock({
+      fetchDeck: async () =>
+        fetchOk({
+          ok: true,
+          status: 200,
+          engineDeckInput: undefined,
+          wml: undefined
+        })
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNavigationError: (message) => {
+        navigationErrors.push(message);
+      }
+    });
+
+    const result = await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(result).toBeNull();
+    expect(machine.getSessionState().navigationStatus).toBe('error');
+    expect(navigationErrors).toHaveLength(1);
+  });
+
   it('does not push duplicate history entry when reload uses pushHistory=false', async () => {
     const machine = createNavigationStateMachine(createHostClientMock(), 'http://seed.test');
 

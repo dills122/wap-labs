@@ -72,6 +72,9 @@ export class BrowserController {
         onNetworkUnavailable: () => {
           this.presenter.showToast(WAVES_COPY.status.networkUnavailableToast, 'error');
         },
+        onNavigationError: (message) => {
+          this.presenter.showToast(WAVES_COPY.status.fetchFailed(message), 'error');
+        },
         onStateEvent: (action, details) => {
           this.presenter.recordTimeline(action, 'state', details);
         }

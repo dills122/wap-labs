@@ -103,7 +103,12 @@ const locale = {
     fetchedAndLoadedDeck: (url: string) => `Fetched and loaded deck from ${url}`,
     networkUnavailableToast: 'No network available currently. WAP server/gateway is unreachable.',
     networkUnavailable: 'No network available currently. Could not reach WAP server/gateway.',
-    error: (message: string) => `Error: ${message}`
+    error: (message: string) => `Error: ${message}`,
+    scriptDialogAlert: (message: string) => `Script alert("${message}") shown.`,
+    scriptDialogConfirm: (message: string) =>
+      `Script confirm("${message}") - Waves answered: Cancel (deterministic default).`,
+    scriptDialogPrompt: (message: string, value: string) =>
+      `Script prompt("${message}") - Waves answered: "${value}" (deterministic default).`
   }
 } as const;
 

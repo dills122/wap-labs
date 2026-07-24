@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { HostSessionState } from '../../../contracts/transport';
+import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
 import { BrowserPresenter } from './browser-presenter';
@@ -176,6 +176,16 @@ const createHostClient = () => {
 
 afterEach(() => {
   document.body.innerHTML = '';
+});
+
+const gatewayTimeoutResponse = (): FetchResponse => ({
+  ok: false,
+  status: 504,
+  finalUrl: 'http://example.test/network.wml',
+  contentType: 'text/plain',
+  error: { code: 'GATEWAY_TIMEOUT', message: 'gateway timed out' },
+  timingMs: { encode: 0, udpRtt: 0, decode: 0 },
+  engineDeckInput: undefined
 });
 
 describe('BrowserController behavior coverage', () => {
@@ -385,5 +395,48 @@ describe('BrowserController behavior coverage', () => {
       controller as unknown as { tickEngineTimerRuntime(): Promise<void> }
     ).tickEngineTimerRuntime();
     expect(hostClient.engineAdvanceTimeMs).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears the frozen skeleton placeholder when the very first deck load fails', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    // Fail the very first engine load (the default local example, loaded
+    // during init()) so the skeleton shown for the app's first-ever render
+    // never gets replaced by real content.
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockRejectedValue(new Error('boom'));
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await expect(controller.init('<wml><card id="seed"/></wml>')).rejects.toThrow('boom');
+
+    expect(presenter.hasRenderedDeck()).toBe(false);
+    // Previously setViewportSkeleton(false) only removed the CSS class,
+    // leaving the shimmering bars + "waiting for first render" hint frozen
+    // in the viewport forever even though the load already failed.
+    expect(refs.viewportEl.querySelector('.skeleton-hint')).toBeNull();
+    expect(refs.viewportEl.querySelector('.skeleton-line')).toBeNull();
+    expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+  });
+
+  it('shows a toast for a non-transport-unavailable fetch failure kind', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    vi.mocked(hostClient.fetchDeck).mockResolvedValue(gatewayTimeoutResponse() as never);
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+
+    refs.fetchUrlInput.value = 'http://example.test/network.wml';
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+
+    // Previously only TRANSPORT_UNAVAILABLE reached the toast; other failure
+    // kinds (timeout, non-200, malformed payload) only updated the quieter
+    // status panel. Every navigation-failure kind must now also toast.
+    expect(refs.toastEl.textContent).toBe(WAVES_COPY.status.fetchFailed('gateway timed out'));
+    expect(refs.toastEl.className).toBe('toast toast-error');
+    // Status panel behavior is preserved, not replaced.
+    expect(presenter.getSessionState().lastError).toBe('gateway timed out');
   });
 });

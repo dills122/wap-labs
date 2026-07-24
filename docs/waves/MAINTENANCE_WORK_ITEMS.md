@@ -179,6 +179,49 @@ Completed maintenance tickets are archived in:
 - `cargo test` stays green for `transport-rust`; native fetch behavior is unchanged for existing passing fixtures/smokes.
 - `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` / `TRANSPORT_RUST_PHASE_PLAN.md` updated to reflect that `wap-net-core` is genuinely live end-to-end, not just profile-gated.
 
+### M1-19 `fetch_policy.rs` pre-flight destination check is shallow relative to the enforced check (2026-07-24)
+
+1. `Status`: `todo`
+2. `Priority`: `P3`
+3. `Files`:
+- `transport-rust/src/fetch_policy.rs` (`classify_destination_host`, `validate_fetch_destination`)
+- `transport-rust/src/fetch_runtime/execution.rs` (`PolicyDnsResolver`)
+- `transport-rust/src/native_fetch.rs` (`resolve_fetch_destination_addresses`)
+4. `Finding`:
+- `classify_destination_host` treats every non-`localhost`/`*.localhost` hostname as `Public` — a fast pre-flight check only. The authoritative SSRF guard is the DNS-resolution-time check (`PolicyDnsResolver` in `execution.rs`, and `resolve_fetch_destination_addresses` for the native path), confirmed present, correctly ordered, and tested. Not a live hole today, but nothing stops a future refactor from trusting the shallow pre-flight check in isolation and quietly dropping the resolution-time enforcement.
+5. `Recommendation`:
+- Add a regression test (or an inline invariant comment referencing the resolution-time check) that fails loudly if `validate_fetch_destination` is ever called as the sole gate without the resolver-level check also running.
+6. `Accept`:
+- A future refactor that removes the resolution-time check without also updating the pre-flight check fails a test, rather than silently reopening the class of bug.
+
+### M1-20 Gateway-bridged fetch profile force-sets `AllowPrivate` with no invariant test
+
+1. `Status`: `todo`
+2. `Priority`: `P3`
+3. `Files`:
+- `transport-rust/src/fetch_runtime/execution.rs` (`destination_policy` override for `wap://`/`waps://` traffic)
+- `transport-rust/src/gateway.rs` (`GATEWAY_HTTP_BASE`)
+4. `Finding`:
+- For the default `gateway-bridged` profile, `destination_policy` is force-set to `AllowPrivate` because the upstream target is the operator-configured `GATEWAY_HTTP_BASE`, not the original WAP URL. This is intentional and appears safe (the gateway base is env-configured, not attacker-influenced) but rests entirely on `GATEWAY_HTTP_BASE` never becoming attacker-settable — there's no test pinning that invariant.
+5. `Recommendation`:
+- Add a test asserting `GATEWAY_HTTP_BASE` is read only from process environment/config, never from request-supplied data, so a future change can't silently make it attacker-influenced without breaking a test.
+6. `Accept`:
+- A regression test exists that would fail if `GATEWAY_HTTP_BASE` (or its equivalent) became derivable from untrusted input.
+
+### M1-21 `fetch_host.rs` gateway-transport-fallback host scope unconfirmed
+
+1. `Status`: `todo`
+2. `Priority`: `P3`
+3. `Files`:
+- `browser/src-tauri/src/fetch_host.rs` (`default_fetch_transport_fallback`)
+- `transport-rust/src/gateway.rs`
+4. `Finding`:
+- `default_fetch_transport_fallback()` (the gateway-bridged fallback path for failed `wap`/`waps` GET requests) reads `WAVES_FETCH_TRANSPORT_FALLBACK` with no host/scope restriction visible in `fetch_host.rs` itself; enforcement of where the `GatewayBridged` profile can actually connect lives entirely in `transport-rust`/`gateway.rs`, outside this file's audit scope when it was originally reviewed.
+5. `Recommendation`:
+- Confirm (with a test, not just a read-through) that the gateway transport path is constrained the same way `native_fetch` is — i.e. it can't be pointed at an arbitrary host via this fallback env var.
+6. `Accept`:
+- A test demonstrates the gateway-fallback path cannot be redirected to an arbitrary non-configured host.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`
