@@ -50,7 +50,7 @@
       "family": "wml",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "d4933b7f72b0244fe30a6f02da5adb32265d05de425375e5312c3e1d61304200",
+      "parentLedgerSha256": "c175886342f055e2732e6e5d0c4ca20732505952bc509181b93366388f36f09e",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -484,7 +484,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -637,7 +637,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -3047,7 +3047,7 @@
             ],
             "parentImplementationSnapshot": {
               "WML-C-14": "missing",
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3086,7 +3086,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3125,7 +3125,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3164,7 +3164,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3203,7 +3203,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3242,7 +3242,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3281,7 +3281,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -3320,7 +3320,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "missing"
+              "WML-C-21": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -5751,7 +5751,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-30": "missing"
+              "WML-C-30": "implemented"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -5790,7 +5790,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-30": "missing"
+              "WML-C-30": "implemented"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

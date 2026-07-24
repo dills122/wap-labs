@@ -60,7 +60,7 @@ WAE, WSP, WTP, WDP, or security-domain traceability docs.
 | Image semantics | 11.9, 15.1.6 | parser + renderer + host media | missing/partial | Minimal/none in engine renderer | Implement `img` element semantics and capability-gated hints |
 | UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | partial | Unknown-tag robustness exists | Add access control enforcement path, low-memory policy behavior, deterministic unknown-DTD handling |
 | WML binary representation and token tables | 14.x, 15.2 | transport/encoder tooling | partial | WBXML decode boundary present | Add encoder/validation tooling path and WBXML token/literal conformance fixtures |
-| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | 76-row source ledger; WAP-215 selects 39 required Class C client rows expanded into 174 clauses and assessed as 2 implemented / 23 partial / 14 missing; 25 exact test links across the full ledger | Execute direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
+| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | 76-row source ledger; WAP-215 selects 39 required Class C client rows expanded into 174 clauses and assessed as 3 implemented / 24 partial / 12 missing; 27 exact test links across the full ledger | Execute direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
 
 ## Major Gaps Not Fully Tracked Before This Audit
 
