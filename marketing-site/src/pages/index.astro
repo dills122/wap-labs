@@ -1,171 +1,325 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const proofPoints = [
+const architectureLayers = [
   {
-    label: 'Real runtime behavior',
-    text: 'Navigation, forms, timers, and script execution come from the engine, not a mocked UI.'
+    number: '01',
+    name: 'Gateway',
+    owner: 'Kannel + environment',
+    detail: 'Compatibility testing at the edge of the stack.'
   },
   {
-    label: 'Built for actual workflows',
-    text: 'Run local examples, follow live pages, and inspect state without leaving one desktop app.'
+    number: '02',
+    name: 'Transport',
+    owner: 'Lowband',
+    detail: 'WBXML, WSP/WTP behavior, and the fetch rules beneath the browser.'
+  },
+  {
+    number: '03',
+    name: 'Engine',
+    owner: 'WaveNav',
+    detail: 'A Rust/WASM runtime for parsing WML, navigation, and card rendering.'
+  },
+  {
+    number: '04',
+    name: 'Browser',
+    owner: 'Waves',
+    detail: 'The desktop host that turns the layers into a usable browser.'
   }
 ];
 
+const capabilities = [
+  ['Browse', 'Open local examples and follow linked WML pages in the same session.'],
+  ['Interact', 'Edit fields, move focus, and submit forms through the real runtime.'],
+  ['Inspect', 'Check state, snapshots, and timelines to understand every transition.'],
+  ['Recover', 'Keep loading and failure states visible instead of hitting a dead end.']
+];
+
+const shippingNow = [
+  {
+    label: 'Session',
+    title: 'Faster navigation loops',
+    detail: 'Back, history, and follow-link behavior stay stable while you iterate.',
+    outcome: 'Follow a link and continue without restarting the browsing loop.'
+  },
+  {
+    label: 'Diagnostics',
+    title: 'Actionable runtime detail',
+    detail: 'Transport state, runtime snapshots, and timelines stay visible in the browser.',
+    outcome: 'Understand why a transition happened without attaching extra tooling.'
+  },
+  {
+    label: 'Sources',
+    title: 'Local and live parity',
+    detail: 'Move between local examples and live WML pages with the same browser shell.',
+    outcome: 'Keep one input model and inspection workflow across both sources.'
+  },
+  {
+    label: 'Recovery',
+    title: 'Explicit degraded states',
+    detail: 'Loading and network failures keep the current browser context visible.',
+    outcome: 'Inspect what happened and continue instead of landing on a frozen shell.'
+  }
+];
 ---
 
 <Layout>
-  <main class="page-shell">
-    <header class="hero">
-      <div class="hero-copy">
-        <p class="kicker">WaveNav Labs</p>
-        <h1>A desktop browser for the early mobile web.</h1>
-        <p class="lede">
-          Waves is a practical WAP/WML browser for exploring, testing, and improving the stack without
-          vague emulation or throwaway demos.
-        </p>
-        <ul class="hero-benefits" aria-label="Core outcomes">
-          <li>Load local examples and live decks in one tool.</li>
-          <li>Inspect runtime state and transport behavior as you browse.</li>
-        </ul>
-        <div class="hero-actions">
-          <a class="button" href="./simulator/">Open Simulator</a>
-          <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">View Browser Source</a>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="site-frame">
+    <header class="masthead" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="WaveNav Labs home">
+        <span class="brand-mark" aria-hidden="true">W</span>
+        <span>
+          <strong>WaveNav Labs</strong>
+          <small>Early mobile web workshop</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="On this page">
+        <a href="#why" data-section-link>Why Waves</a>
+        <a href="#stack" data-section-link>The Stack</a>
+        <a href="#shipping" data-section-link>Shipping</a>
+      </nav>
+
+      <p class="build-label"><span aria-hidden="true"></span> Experimental build</p>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">WAP/WML browser · desktop edition</p>
+          <h1 id="hero-title">
+            The early mobile web,<br /><span class="hero-highlight"><span>back on</span><br /><span>the air.</span></span>
+          </h1>
+          <p class="hero-lede">
+            Waves is a practical desktop browser for exploring, testing, and improving the WAP/WML
+            stack—without vague emulation or throwaway demos.
+          </p>
+
+          <div class="hero-actions" aria-label="Get started">
+            <a class="button button-primary" href="./simulator/">
+              <span>Open simulator</span><span aria-hidden="true">→</span>
+            </a>
+            <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">
+              <span>View browser source</span><span aria-hidden="true">↗</span>
+            </a>
+          </div>
+
+          <dl class="hero-facts" aria-label="Project qualities">
+            <div>
+              <dt>Real runtime</dt>
+              <dd>Navigation, forms, timers, and scripts come from the engine—not a mock UI.</dd>
+            </div>
+            <div>
+              <dt>One workspace</dt>
+              <dd>Run local examples, follow live pages, and inspect state in one desktop app.</dd>
+            </div>
+          </dl>
         </div>
-        <ul class="hero-proof" aria-label="Key project qualities">
+
+        <figure class="hero-figure">
+          <div class="figure-header">
+            <p class="figure-index">
+              <span>Capture</span>
+              <strong>01</strong>
+            </p>
+            <p class="figure-title">
+              <span>WaveNav field note</span>
+              <strong>Forms, focus &amp; session trace</strong>
+            </p>
+            <p class="figure-status"><span aria-hidden="true"></span> Local example</p>
+          </div>
+          <div class="image-mat">
+            <img
+              src="./waves-local-forms-example.png"
+              alt="Waves rendering a WML form example with editable fields and an event timeline"
+              width="2272"
+              height="1762"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+          <figcaption>
+            <span class="figure-caption-label">WML interaction study</span>
+            <span class="figure-caption-copy">One shell for local decks, live links, interaction, and inspection.</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <aside class="signal-strip" aria-label="Product highlights">
+        <p><span>01</span> Softkey-style input</p>
+        <p><span>02</span> Visible session trace</p>
+        <p><span>03</span> Constrained transport</p>
+        <p class="signal-strip-end" aria-hidden="true">WAVES // ONLINE</p>
+      </aside>
+
+      <section class="manifesto section-block" id="why" aria-labelledby="why-title">
+        <div class="section-heading" data-reveal>
+          <p class="section-number">01 / Why it exists</p>
+          <h2 id="why-title">Old protocol.<br />Serious tooling.</h2>
+        </div>
+        <div class="manifesto-copy" data-reveal>
+          <p class="statement">
+            Most WAP tooling is either inaccurate, unfinished, or painful to work with.
+          </p>
+          <p>
+            Waves is the practical middle ground: close enough to the original platform to be worth
+            trusting, but modern enough to support debugging, iteration, and real development work.
+          </p>
+          <ul class="outcome-list" aria-label="Core outcomes">
+            <li>Load local examples and live decks in one tool.</li>
+            <li>Inspect runtime state and transport behavior while you browse.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="stack-section section-block" id="stack" aria-labelledby="stack-title">
+        <div class="section-heading section-heading-wide" data-reveal>
+          <p class="section-number">02 / The system</p>
+          <h2 id="stack-title">Layered on purpose.</h2>
+          <p>Each part of the stack does one job, with the browser sitting at the top—not swallowing the layers below.</p>
+        </div>
+
+        <ol class="architecture-list">
           {
-            proofPoints.map((point) => (
-              <li>
-                <strong>{point.label}</strong>
-                <span>{point.text}</span>
+            architectureLayers.map((layer, index) => (
+              <li data-reveal style={`--reveal-order: ${index}`}>
+                <span class="architecture-number">{layer.number}</span>
+                <div>
+                  <h3>{layer.name}</h3>
+                  <p class="architecture-owner">{layer.owner}</p>
+                </div>
+                <p class="architecture-detail">{layer.detail}</p>
               </li>
             ))
           }
-        </ul>
-      </div>
+        </ol>
+      </section>
 
-      <div class="hero-stage" aria-label="Waves product screenshots">
-        <figure class="stage-card stage-card-primary">
-          <img
-            src="./waves-local-forms-example.png"
-            alt="Waves rendering a WML form example with editable fields and event timeline"
-            loading="eager"
-          />
-          <figcaption>One desktop shell for local decks, live links, form interaction, and runtime inspection.</figcaption>
-        </figure>
-        <ul class="stage-highlights" aria-label="Product highlights">
-          <li><strong>Input model</strong><span>Softkey-style navigation and focused controls.</span></li>
-          <li><strong>Session trace</strong><span>State, snapshots, and timeline visibility while browsing.</span></li>
-          <li><strong>Network realism</strong><span>Transport boundaries preserved for constrained-flow testing.</span></li>
-        </ul>
-      </div>
-    </header>
-
-    <section class="content-grid">
-      <article class="panel panel-feature panel-span-4">
-        <p class="section-tag">Why it exists</p>
-        <h2>Most WAP tooling is either inaccurate, unfinished, or painful to work with.</h2>
-        <p>
-          Waves is meant to be the practical middle ground: close enough to the original platform to
-          be worth trusting, but modern enough to support debugging, iteration, and real development work.
-        </p>
-      </article>
-
-      <article class="panel panel-span-4">
-        <p class="section-tag">Stack</p>
-        <h2>Layered by design</h2>
-        <ul class="detail-list">
-          <li><strong>Gateway</strong><span>Kannel and the surrounding environment for compatibility testing.</span></li>
-          <li><strong>Transport</strong><span>WBXML, WSP/WTP behavior, and the fetch rules that sit underneath the browser.</span></li>
-          <li><strong>Engine</strong><span>The Rust/WASM runtime that parses WML, handles navigation, and renders cards.</span></li>
-          <li><strong>Waves</strong><span>The desktop host that ties everything together into a usable browser experience.</span></li>
-        </ul>
-      </article>
-
-      <article class="panel panel-span-4">
-        <p class="section-tag">What you can do today</p>
-        <h2>Use Waves as a browser, not just a harness.</h2>
-        <ul class="detail-list capability-list">
-          <li><strong>Browse</strong><span>Open local examples and follow linked WML pages in the same session.</span></li>
-          <li><strong>Interact</strong><span>Edit fields, move focus, and submit forms through the real runtime.</span></li>
-          <li><strong>Inspect</strong><span>Check state, snapshots, and timelines to understand why each transition happened.</span></li>
-          <li><strong>Recover</strong><span>Loading and failures stay visible as product states instead of dead ends.</span></li>
-        </ul>
-      </article>
-
-      <article class="panel panel-span-12">
-        <p class="section-tag">What is shipping now</p>
-        <h2>Recent work turned core browser flows into day-to-day tooling.</h2>
-        <div class="shipping-layout">
-          <div class="shipping-summary">
-            <ul aria-label="Current release outcomes">
-              <li>Open a deck, interact, inspect, and continue in one stable loop.</li>
-              <li>Diagnose slow or failed requests without losing browser context.</li>
-            </ul>
-          </div>
-          <ul class="shipping-list">
-            <li>
-              <strong>Faster navigation loops</strong>
-              <span>Back/history and follow-link behavior stay stable while you iterate.</span>
-            </li>
-            <li>
-              <strong>Actionable diagnostics</strong>
-              <span>Transport and runtime details are visible without attaching extra tooling.</span>
-            </li>
-            <li>
-              <strong>Local and live parity</strong>
-              <span>Move between local examples and live pages with the same browser shell.</span>
-            </li>
-            <li>
-              <strong>Explicit degraded states</strong>
-              <span>Loading and network failure conditions are surfaced clearly, not hidden or frozen.</span>
-            </li>
-          </ul>
+      <section class="capabilities section-block" aria-labelledby="capabilities-title">
+        <div class="section-heading" data-reveal>
+          <p class="section-number">03 / In practice</p>
+          <h2 id="capabilities-title">A browser,<br />not just a harness.</h2>
         </div>
-      </article>
-    </section>
+        <ol class="capability-list">
+          {
+            capabilities.map(([title, detail], index) => (
+              <li data-reveal style={`--reveal-order: ${index}`}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <h3>{title}</h3>
+                <p>{detail}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
 
-    <section class="gallery-band">
-      <article class="gallery-copy">
-        <p class="section-tag">Proof in the product</p>
-        <h2>When requests are slow or fail, the browser stays usable and explicit.</h2>
-        <p>
-          These states are now first-class behavior. You can still inspect, understand, and continue instead
-          of guessing whether the shell is broken.
-        </p>
-      </article>
+      <section class="shipping section-block" id="shipping" aria-labelledby="shipping-title">
+        <div class="section-heading" data-reveal>
+          <p class="section-number">04 / Shipping now</p>
+          <h2 id="shipping-title">Core flows, turned into day-to-day tools.</h2>
+          <p>Open a deck, interact, inspect, and continue in one stable loop—even when the network slows down or fails.</p>
+          <ol class="shipping-flow" aria-label="Current browser workflow">
+            <li><span>01</span>Open deck</li>
+            <li><span>02</span>Interact</li>
+            <li><span>03</span>Inspect</li>
+            <li><span>04</span>Continue</li>
+          </ol>
+        </div>
+        <ol class="shipping-list">
+          {
+            shippingNow.map((item, index) => (
+              <li data-reveal style={`--reveal-order: ${index}`}>
+                <span class="shipping-index">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <p class="shipping-label">{item.label}</p>
+                  <h3>{item.title}</h3>
+                  <p>{item.detail}</p>
+                  <p class="shipping-outcome">{item.outcome}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
 
-      <figure class="gallery-shot">
-        <img
-          src="./waves-network-loading.png"
-          alt="Waves waiting for its first network deck render while keeping the interface visible"
-        />
-        <figcaption>Loading keeps context visible so sessions do not collapse into blank waiting.</figcaption>
-      </figure>
-
-      <figure class="gallery-shot">
-        <img
-          src="./waves-network-error.png"
-          alt="Waves showing a network error state in the desktop shell"
-        />
-        <figcaption>Failures are surfaced in-product so you can debug and continue quickly.</figcaption>
-      </figure>
-    </section>
-
-    <section class="cta-band">
-      <div class="cta-copy">
-        <p class="section-tag">Next step</p>
-        <h2>Try Waves first, then dig into the stack behind it.</h2>
-        <p>Start in the simulator, then inspect browser internals and source from the same workflow.</p>
-      </div>
-      <div class="cta-actions">
-        <a class="button" href="./simulator/">Open Simulator</a>
-        <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">View Browser Source</a>
-      </div>
-    </section>
+      <section class="final-cta" aria-labelledby="cta-title">
+        <div class="final-cta-copy" data-reveal>
+          <p class="section-number">Your next transmission</p>
+          <h2 id="cta-title">Try the browser.<br />Then open the stack.</h2>
+          <p>Start in the simulator, then inspect the browser internals and source from the same workflow.</p>
+        </div>
+        <div class="final-cta-actions" data-reveal>
+          <a class="button button-light" href="./simulator/">
+            <span>Open simulator</span><span aria-hidden="true">→</span>
+          </a>
+          <a class="text-link" href="https://github.com/dills122/wap-labs/tree/main/browser">Browse source on GitHub ↗</a>
+        </div>
+      </section>
+    </main>
 
     <footer class="footer">
-      <p>WaveNav Labs · WAP/WML browser, runtime, and protocol tooling</p>
+      <a class="brand footer-brand" href="./" aria-label="WaveNav Labs home">
+        <span class="brand-mark" aria-hidden="true">W</span>
+        <span><strong>WaveNav Labs</strong><small>WAP/WML browser, runtime, and protocol tooling</small></span>
+      </a>
+      <p>Built for the small-screen web that started it all.</p>
+      <a href="#main-content">Back to top ↑</a>
     </footer>
-  </main>
+  </div>
 </Layout>
+
+<script>
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealItems = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+
+  if (!reducedMotion && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('motion-ready');
+
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.12 }
+    );
+
+    for (const item of revealItems) revealObserver.observe(item);
+  } else {
+    for (const item of revealItems) item.classList.add('is-visible');
+  }
+
+  const sectionLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('[data-section-link]')
+  );
+  const linkedSections = sectionLinks
+    .map((link) => {
+      const id = link.hash.slice(1);
+      return id ? document.getElementById(id) : null;
+    })
+    .filter((section): section is HTMLElement => section !== null);
+
+  if ('IntersectionObserver' in window) {
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const activeSection = entries.find((entry) => entry.isIntersecting);
+        if (!activeSection) return;
+
+        for (const link of sectionLinks) {
+          const isActive = link.hash === `#${activeSection.target.id}`;
+          link.classList.toggle('is-active', isActive);
+          if (isActive) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        }
+      },
+      { rootMargin: '-24% 0px -62% 0px', threshold: 0 }
+    );
+
+    for (const section of linkedSections) sectionObserver.observe(section);
+  }
+</script>
