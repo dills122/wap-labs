@@ -67,6 +67,25 @@ For the selected Class C client, the WBXML ledger selects three mandatory
 client rows. The other 12 document/encoder rows remain source-wide obligations
 outside the client profile.
 
+`wap-1.2.1-wmlscript-scr.json` records the consolidated 112-row WMLScript SCR
+from `WAP-193_101`. It preserves encoder/interpreter actors, exact status and
+source sections, `WMLScript:MCF` selection, and conservative mappings to the
+current custom VM skeleton.
+
+For the selected Class C client, the WMLScript ledger selects 41 mandatory
+interpreter rows. Three optional interpreter rows and all 68 encoder rows
+remain outside the selected feature group.
+
+`wap-1.2.1-wmlscript-libraries-scr.json` records the 94-row WAP-194 base SCR
+plus optional `WMLSSL-C-095` from `WAP-194_103`. It preserves the canonical
+PDF's `WMLSSL048` identifier typo with an explicit `WMLSSL-048` normalized
+alias, the separate encoder/interpreter actors, and exact
+`WMLScriptLibs:MCF` selection.
+
+For the selected Class C client, the libraries ledger selects 80 mandatory
+interpreter rows. Two optional interpreter rows and all 13 encoder rows remain
+outside the selected feature group.
+
 Generate the lock from a separately retrieved official archive:
 
 ```sh
@@ -101,6 +120,7 @@ node scripts/check-wap-external-dependencies.mjs
 node scripts/check-wap-conformance-ledger.mjs
 node scripts/check-wap-wae-conformance-ledger.mjs
 node scripts/check-wap-wbxml-conformance-ledger.mjs
+node scripts/check-wap-wmlscript-conformance-ledger.mjs
 ```
 
 Generate the WML SCR ledger from private text extractions:
@@ -127,6 +147,26 @@ Generate the WBXML SCR ledger from the effective SIN and WAP-221 extractions:
 ```sh
 node spec-processing/scripts/generate-wap-wbxml-scr-ledger.mjs \
   --wbxml-sin-text /absolute/path/WAP-192_105-WBXML-20011015-a.txt \
+  --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
+  --recorded-on YYYY-MM-DD
+```
+
+Generate the WMLScript SCR ledger from the consolidated effective text:
+
+```sh
+node spec-processing/scripts/generate-wap-wmlscript-scr-ledger.mjs \
+  --wmlscript-effective-text /absolute/path/WAP-193_101-WMLScript-20010928-a.txt \
+  --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
+  --recorded-on YYYY-MM-DD
+```
+
+Generate the WMLScript Libraries ledger from the base and immediate-refresh
+SIN:
+
+```sh
+node spec-processing/scripts/generate-wap-wmlscript-libraries-scr-ledger.mjs \
+  --libraries-base-text /absolute/path/WAP-194-WMLScriptLibraries-20000925-a.txt \
+  --libraries-sin-text /absolute/path/WAP-194_103-WMLScriptLibraries-20020318-a.txt \
   --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
   --recorded-on YYYY-MM-DD
 ```

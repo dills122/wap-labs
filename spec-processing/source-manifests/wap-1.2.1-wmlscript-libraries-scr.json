@@ -1,0 +1,4196 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wmlscript-libraries",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-194-WMLScriptLibraries",
+      "WAP-194_103-WMLScriptLibraries"
+    ],
+    "extractionSources": [
+      {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "filename": "WAP-194-WMLScriptLibraries-20000925-a.pdf",
+        "sha256": "cf8ced8446a62fbc958a0beed5097aa3a0a41a864abcdfee86e7ad4f5c3d5680",
+        "role": "base",
+        "textExtractionBytes": 138740,
+        "textExtractionSha256": "0e3c8884b13aef22387dcf8ce5496f27e81f1a5b5edb582613b1bc84b26aea25"
+      },
+      {
+        "documentId": "WAP-194_103-WMLScriptLibraries",
+        "filename": "WAP-194_103-WMLScriptLibraries-20020318-a.pdf",
+        "sha256": "7716dbaf7289a1335e9c46a21d0ce209be711f9917f946ca88fab17f1e6a446c",
+        "role": "immediate-refresh-scr-addition",
+        "textExtractionBytes": 7512,
+        "textExtractionSha256": "0c4a03afdad4e7450561a6ee156a14382817b4c699fd2398de4a95ab380124c5"
+      }
+    ],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "textExtractionBytes": 24020,
+      "textExtractionSha256": "5b2454adabb7f0478edb2ea8fe0576dc05851f7dc4e02e74cbf0ada1b0da8cdf"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WMLScriptLibs:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "interpretation": "Apply WAP-194_103 after the 94-row WAP-194 SCR. The SIN adds optional WMLSSL-C-095 for immediate refresh. WAP-221 applies WMLScriptLibs:MCF to 80 mandatory interpreter rows; encoder and optional interpreter rows remain outside the selected Class C client profile.",
+    "extractionMethod": "Normalized row transcription from hash-locked text plus visual inspection of the canonical base SCR page; source PDFs, full text, and temporary page images remain outside Git.",
+    "sourceAnomalies": [
+      {
+        "sourceId": "WMLSSL048",
+        "normalizedAlias": "WMLSSL-048",
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "page": "56(59)",
+        "note": "The canonical PDF visibly omits the hyphen in the Float.floor SCR identifier; the ledger preserves the printed ID and exposes a normalized alias for planning/search."
+      }
+    ]
+  },
+  "summary": {
+    "itemCount": 95,
+    "mandatoryCount": 93,
+    "optionalCount": 2,
+    "selectedClassCRequiredCount": 80,
+    "selectedClassCOptionalCount": 2,
+    "selectedClassCNotApplicableCount": 13,
+    "byActor": {
+      "wmlscript-library-encoder": 13,
+      "wmlscript-library-interpreter": 82
+    },
+    "byGroup": {
+      "dialogs-library": 3,
+      "encoder-capabilities": 13,
+      "float-library": 9,
+      "interpreter-capabilities": 17,
+      "lang-library": 15,
+      "miscellaneous": 1,
+      "string-library": 16,
+      "url-library": 14,
+      "wmlbrowser-library": 7
+    },
+    "selectedImplementationStatus": {
+      "missing": 66,
+      "partial": 14
+    },
+    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedProvisionalTestEvidenceCount": 14
+  },
+  "obligations": [
+    {
+      "id": "WMLSSL-001",
+      "ordinal": 1,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports Lang library and all functions",
+      "referencedSection": "Supports Lang library and all functions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-002",
+      "ordinal": 2,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports Float library and all functions",
+      "referencedSection": "Supports Float library and all functions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-003",
+      "ordinal": 3,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports String library and all functions",
+      "referencedSection": "Supports String library and all functions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-004",
+      "ordinal": 4,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports URL library and all functions",
+      "referencedSection": "Supports URL library and all functions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-005",
+      "ordinal": 5,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports WMLBrowser library and all functions",
+      "referencedSection": "Supports WMLBrowser library and all functions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-006",
+      "ordinal": 6,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports Dialogs library and all functions",
+      "referencedSection": "Supports Dialogs library and all functions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-007",
+      "ordinal": 7,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports all standard-library identifiers",
+      "referencedSection": "Supports all standard-library identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-008",
+      "ordinal": 8,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports Lang function identifiers",
+      "referencedSection": "Supports Lang function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-009",
+      "ordinal": 9,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports Float function identifiers",
+      "referencedSection": "Supports Float function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-010",
+      "ordinal": 10,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports String function identifiers",
+      "referencedSection": "Supports String function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-011",
+      "ordinal": 11,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports URL function identifiers",
+      "referencedSection": "Supports URL function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-012",
+      "ordinal": 12,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports WMLBrowser function identifiers",
+      "referencedSection": "Supports WMLBrowser function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-013",
+      "ordinal": 13,
+      "actor": "wmlscript-library-encoder",
+      "group": "encoder-capabilities",
+      "feature": "Supports Dialogs function identifiers",
+      "referencedSection": "Supports Dialogs function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-014",
+      "ordinal": 14,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports integer, boolean, string, invalid, and float data types",
+      "referencedSection": "Supports integer, boolean, string, invalid, and float data types",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/value.rs",
+            "symbol": "ScriptValue"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_script_types.rs",
+            "symbol": "ScriptExecutionOutcome"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "vm_trap_error_category_matrix_is_explicit",
+            "limitation": "Local types and traps are not yet proven against the complete WMLScript Library conversion and error conventions."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-015",
+      "ordinal": 15,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports automatic type conversions",
+      "referencedSection": "Supports automatic type conversions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/value.rs",
+            "symbol": "ScriptValue"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_script_types.rs",
+            "symbol": "ScriptExecutionOutcome"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "vm_trap_error_category_matrix_is_explicit",
+            "limitation": "Local types and traps are not yet proven against the complete WMLScript Library conversion and error conventions."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-016",
+      "ordinal": 16,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports error handling",
+      "referencedSection": "Supports error handling",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/value.rs",
+            "symbol": "ScriptValue"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_script_types.rs",
+            "symbol": "ScriptExecutionOutcome"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "vm_trap_error_category_matrix_is_explicit",
+            "limitation": "Local types and traps are not yet proven against the complete WMLScript Library conversion and error conventions."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-017",
+      "ordinal": 17,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports floating-point operations",
+      "referencedSection": "Supports floating-point operations",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "source-expression",
+        "raw": "WMLS-111",
+        "note": "Preserved from the base SCR; cross-spec identifier normalization remains a source erratum question."
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional interpreter SCR retained for an explicit capability decision; it is not selected by WMLScriptLibs:MCF.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLSSL-018",
+      "ordinal": 18,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports Lang library",
+      "referencedSection": "Supports Lang library",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-019",
+      "ordinal": 19,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports Float library",
+      "referencedSection": "Supports Float library",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-020",
+      "ordinal": 20,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports String library",
+      "referencedSection": "Supports String library",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-021",
+      "ordinal": 21,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports URL library",
+      "referencedSection": "Supports URL library",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-022",
+      "ordinal": 22,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports WMLBrowser library",
+      "referencedSection": "Supports WMLBrowser library",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-017"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WmlBrowserHost"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "dialog_calls_record_requests_with_deterministic_return_values",
+            "limitation": "Only a subset is exposed through project-specific host IDs; full library/function-ID conformance is absent."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-023",
+      "ordinal": 23,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports Dialogs library",
+      "referencedSection": "Supports Dialogs library",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-022"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WmlBrowserHost"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "dialog_calls_record_requests_with_deterministic_return_values",
+            "limitation": "Only a subset is exposed through project-specific host IDs; full library/function-ID conformance is absent."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-024",
+      "ordinal": 24,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports all standard-library identifiers",
+      "referencedSection": "Supports all standard-library identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-017"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-025",
+      "ordinal": 25,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports Lang function identifiers",
+      "referencedSection": "Supports Lang function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-026",
+      "ordinal": 26,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports Float function identifiers",
+      "referencedSection": "Supports Float function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-027",
+      "ordinal": 27,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports String function identifiers",
+      "referencedSection": "Supports String function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-028",
+      "ordinal": 28,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports URL function identifiers",
+      "referencedSection": "Supports URL function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-029",
+      "ordinal": 29,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports WMLBrowser function identifiers",
+      "referencedSection": "Supports WMLBrowser function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-017"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-030",
+      "ordinal": 30,
+      "actor": "wmlscript-library-interpreter",
+      "group": "interpreter-capabilities",
+      "feature": "Supports Dialogs function identifiers",
+      "referencedSection": "Supports Dialogs function identifiers",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-022"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-031",
+      "ordinal": 31,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.abs",
+      "referencedSection": "Lang.abs",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-032",
+      "ordinal": 32,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.min",
+      "referencedSection": "Lang.min",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-033",
+      "ordinal": 33,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.max",
+      "referencedSection": "Lang.max",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-034",
+      "ordinal": 34,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.parseInt",
+      "referencedSection": "Lang.parseInt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-035",
+      "ordinal": 35,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.parseFloat",
+      "referencedSection": "Lang.parseFloat",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-036",
+      "ordinal": 36,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.isInt",
+      "referencedSection": "Lang.isInt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-037",
+      "ordinal": 37,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.isFloat",
+      "referencedSection": "Lang.isFloat",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-038",
+      "ordinal": 38,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.maxInt",
+      "referencedSection": "Lang.maxInt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-039",
+      "ordinal": 39,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.minInt",
+      "referencedSection": "Lang.minInt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-040",
+      "ordinal": 40,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.float",
+      "referencedSection": "Lang.float",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-041",
+      "ordinal": 41,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.exit",
+      "referencedSection": "Lang.exit",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-042",
+      "ordinal": 42,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.abort",
+      "referencedSection": "Lang.abort",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-043",
+      "ordinal": 43,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.random",
+      "referencedSection": "Lang.random",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-044",
+      "ordinal": 44,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.seed",
+      "referencedSection": "Lang.seed",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-045",
+      "ordinal": 45,
+      "actor": "wmlscript-library-interpreter",
+      "group": "lang-library",
+      "feature": "Lang.characterSet",
+      "referencedSection": "Lang.characterSet",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "lang-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-013"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-046",
+      "ordinal": 46,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float functions return invalid when floating point is unsupported",
+      "referencedSection": "Float functions return invalid when floating point is unsupported",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-047",
+      "ordinal": 47,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.int",
+      "referencedSection": "Float.int",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL048",
+      "normalizedAlias": "WMLSSL-048",
+      "ordinal": 48,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.floor",
+      "referencedSection": "Float.floor",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-049",
+      "ordinal": 49,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.ceil",
+      "referencedSection": "Float.ceil",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-050",
+      "ordinal": 50,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.pow",
+      "referencedSection": "Float.pow",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-051",
+      "ordinal": 51,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.round",
+      "referencedSection": "Float.round",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-052",
+      "ordinal": 52,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.sqrt",
+      "referencedSection": "Float.sqrt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-053",
+      "ordinal": 53,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.maxFloat",
+      "referencedSection": "Float.maxFloat",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-054",
+      "ordinal": 54,
+      "actor": "wmlscript-library-interpreter",
+      "group": "float-library",
+      "feature": "Float.minFloat",
+      "referencedSection": "Float.minFloat",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "float-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-014",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-055",
+      "ordinal": 55,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.length",
+      "referencedSection": "String.length",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-056",
+      "ordinal": 56,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.isEmpty",
+      "referencedSection": "String.isEmpty",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-057",
+      "ordinal": 57,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.charAt",
+      "referencedSection": "String.charAt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-058",
+      "ordinal": 58,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.subString",
+      "referencedSection": "String.subString",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-059",
+      "ordinal": 59,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.find",
+      "referencedSection": "String.find",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-060",
+      "ordinal": 60,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.replace",
+      "referencedSection": "String.replace",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-061",
+      "ordinal": 61,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.elements",
+      "referencedSection": "String.elements",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-062",
+      "ordinal": 62,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.elementAt",
+      "referencedSection": "String.elementAt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-063",
+      "ordinal": 63,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.removeAt",
+      "referencedSection": "String.removeAt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-064",
+      "ordinal": 64,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.replaceAt",
+      "referencedSection": "String.replaceAt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-065",
+      "ordinal": 65,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.insertAt",
+      "referencedSection": "String.insertAt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-066",
+      "ordinal": 66,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.squeeze",
+      "referencedSection": "String.squeeze",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-067",
+      "ordinal": 67,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.trim",
+      "referencedSection": "String.trim",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-068",
+      "ordinal": 68,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.compare",
+      "referencedSection": "String.compare",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-069",
+      "ordinal": 69,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.toString",
+      "referencedSection": "String.toString",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-070",
+      "ordinal": 70,
+      "actor": "wmlscript-library-interpreter",
+      "group": "string-library",
+      "feature": "String.format",
+      "referencedSection": "String.format",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "string-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-015"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-071",
+      "ordinal": 71,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.isValid",
+      "referencedSection": "URL.isValid",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-072",
+      "ordinal": 72,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getScheme",
+      "referencedSection": "URL.getScheme",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-073",
+      "ordinal": 73,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getHost",
+      "referencedSection": "URL.getHost",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-074",
+      "ordinal": 74,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getPort",
+      "referencedSection": "URL.getPort",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-075",
+      "ordinal": 75,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getPath",
+      "referencedSection": "URL.getPath",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-076",
+      "ordinal": 76,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getParameters",
+      "referencedSection": "URL.getParameters",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-077",
+      "ordinal": 77,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getQuery",
+      "referencedSection": "URL.getQuery",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-078",
+      "ordinal": 78,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getFragment",
+      "referencedSection": "URL.getFragment",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-079",
+      "ordinal": 79,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getBase",
+      "referencedSection": "URL.getBase",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-080",
+      "ordinal": 80,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.getReferer",
+      "referencedSection": "URL.getReferer",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-081",
+      "ordinal": 81,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.resolve",
+      "referencedSection": "URL.resolve",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-082",
+      "ordinal": 82,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.escapeString",
+      "referencedSection": "URL.escapeString",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-083",
+      "ordinal": 83,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.unescapeString",
+      "referencedSection": "URL.unescapeString",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-084",
+      "ordinal": 84,
+      "actor": "wmlscript-library-interpreter",
+      "group": "url-library",
+      "feature": "URL.loadString",
+      "referencedSection": "URL.loadString",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "url-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-016"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-085",
+      "ordinal": 85,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.getVar",
+      "referencedSection": "WMLBrowser.getVar",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-017"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WMLBrowser.getVar"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "set_and_get_var_roundtrip",
+            "limitation": "Behavior is useful implementation evidence, but nested normative clauses and standard library/function identifiers are not fully verified."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-086",
+      "ordinal": 86,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.setVar",
+      "referencedSection": "WMLBrowser.setVar",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-017"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WMLBrowser.setVar"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "set_and_get_var_roundtrip",
+            "limitation": "Behavior is useful implementation evidence, but nested normative clauses and standard library/function identifiers are not fully verified."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-087",
+      "ordinal": 87,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.go",
+      "referencedSection": "WMLBrowser.go",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-018"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WMLBrowser.go"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "go_and_prev_update_deferred_navigation_intent",
+            "limitation": "Behavior is useful implementation evidence, but nested normative clauses and standard library/function identifiers are not fully verified."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-088",
+      "ordinal": 88,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.prev",
+      "referencedSection": "WMLBrowser.prev",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-018"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WMLBrowser.prev"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "go_and_prev_update_deferred_navigation_intent",
+            "limitation": "Behavior is useful implementation evidence, but nested normative clauses and standard library/function identifiers are not fully verified."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-089",
+      "ordinal": 89,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.newContext",
+      "referencedSection": "WMLBrowser.newContext",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-019"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WMLBrowser.newContext"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "new_context_requests_context_reset_when_context_is_valid",
+            "limitation": "Behavior is useful implementation evidence, but nested normative clauses and standard library/function identifiers are not fully verified."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-090",
+      "ordinal": 90,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.getCurrentCard",
+      "referencedSection": "WMLBrowser.getCurrentCard",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-020"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WMLBrowser.getCurrentCard"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "get_current_card_returns_fragment_for_current_context",
+            "limitation": "Behavior is useful implementation evidence, but nested normative clauses and standard library/function identifiers are not fully verified."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-091",
+      "ordinal": 91,
+      "actor": "wmlscript-library-interpreter",
+      "group": "wmlbrowser-library",
+      "feature": "WMLBrowser.refresh",
+      "referencedSection": "WMLBrowser.refresh",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlbrowser-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-021"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLSSL-092",
+      "ordinal": 92,
+      "actor": "wmlscript-library-interpreter",
+      "group": "dialogs-library",
+      "feature": "Dialogs.prompt",
+      "referencedSection": "Dialogs.prompt",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "dialogs-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-022"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "Dialogs.prompt"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/dialogs.rs",
+            "symbol": "deterministic placeholder result"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "dialog_calls_record_requests_with_deterministic_return_values",
+            "limitation": "The host records requests but returns placeholder results without complete interactive host integration."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-093",
+      "ordinal": 93,
+      "actor": "wmlscript-library-interpreter",
+      "group": "dialogs-library",
+      "feature": "Dialogs.confirm",
+      "referencedSection": "Dialogs.confirm",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "dialogs-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-022"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "Dialogs.confirm"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/dialogs.rs",
+            "symbol": "deterministic placeholder result"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "dialog_calls_record_requests_with_deterministic_return_values",
+            "limitation": "The host records requests but returns placeholder results without complete interactive host integration."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-094",
+      "ordinal": 94,
+      "actor": "wmlscript-library-interpreter",
+      "group": "dialogs-library",
+      "feature": "Dialogs.alert",
+      "referencedSection": "Dialogs.alert",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194-WMLScriptLibraries",
+        "staticConformanceSection": "12.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "dialogs-library",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-022"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "WMLS-505",
+          "W1-05",
+          "W0-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but exact WAP-194 semantics, identifiers, and nested clauses are not fully proven.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "Dialogs.alert"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/dialogs.rs",
+            "symbol": "deterministic placeholder result"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "dialog_calls_record_requests_with_deterministic_return_values",
+            "limitation": "The host records requests but returns placeholder results without complete interactive host integration."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLSSL-C-095",
+      "ordinal": 95,
+      "actor": "wmlscript-library-interpreter",
+      "group": "miscellaneous",
+      "feature": "WMLBrowser.refresh immediate-refresh support",
+      "referencedSection": "11.7",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-194_103-WMLScriptLibraries",
+        "staticConformanceSection": "12.5 / WAP-194_103 3.3",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "miscellaneous",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-021"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional interpreter SCR retained for an explicit capability decision; it is not selected by WMLScriptLibs:MCF.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    }
+  ]
+}
