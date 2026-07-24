@@ -1,0 +1,64 @@
+---
+---
+
+<section class="manifesto section-block" id="why" aria-labelledby="why-title">
+  <div class="section-heading" data-reveal>
+    <p class="section-number">01 / Why it exists</p>
+    <h2 id="why-title">Old protocol.<br />Serious tooling.</h2>
+  </div>
+  <div class="manifesto-copy" data-reveal>
+    <p class="statement">
+      Most WAP tooling is either inaccurate, unfinished, or painful to work with.
+    </p>
+    <p>
+      Waves is the practical middle ground: close enough to the original platform to be worth
+      trusting, but modern enough to support debugging, iteration, and real development work.
+    </p>
+    <ul class="outcome-list" aria-label="Core outcomes">
+      <li>Load local examples and live decks in one tool.</li>
+      <li>Inspect runtime state and transport behavior while you browse.</li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .statement {
+    max-width: 24ch;
+    font-size: clamp(1.65rem, 2.5vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+  }
+
+  .manifesto-copy > p:nth-child(2) {
+    max-width: 43rem;
+    margin-top: var(--space-5);
+    color: var(--color-ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+
+  .outcome-list {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: var(--space-5);
+    list-style: none;
+  }
+
+  .outcome-list li {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr;
+    gap: 0.65rem;
+    align-items: start;
+    font: 700 0.78rem/1.5 var(--font-mono);
+  }
+
+  .outcome-list li::before {
+    display: grid;
+    height: 1.4rem;
+    place-items: center;
+    content: '+';
+    color: var(--color-paper);
+    background: var(--color-terminal);
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+---
+
+<footer class="footer">
+  <a class="brand footer-brand" href="./" aria-label="WaveNav Labs home">
+    <span class="brand-mark" aria-hidden="true">W</span>
+    <span><strong>WaveNav Labs</strong><small>WAP/WML browser, runtime, and protocol tooling</small></span>
+  </a>
+  <p>Built for the small-screen web that started it all.</p>
+  <a href="#main-content">Back to top ↑</a>
+</footer>
+
+<style>
+  .footer {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: var(--space-5);
+    align-items: center;
+    min-height: 8rem;
+    border-top: var(--rule-thick);
+  }
+
+  .footer p,
+  .footer > a:last-child {
+    color: var(--color-ink-soft);
+    font: 700 0.62rem/1.4 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .footer > a:last-child {
+    text-underline-offset: 0.3rem;
+    transition: color var(--motion-duration-fast) ease;
+  }
+
+  .footer > a:last-child:hover {
+    color: var(--color-terminal);
+  }
+
+  @media (max-width: 50rem) {
+    .footer {
+      grid-template-columns: 1fr auto;
+    }
+
+    .footer p {
+      display: none;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .footer {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 1.5rem 0;
+    }
+  }
+</style>

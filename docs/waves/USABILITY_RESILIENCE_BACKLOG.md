@@ -127,16 +127,20 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U8 `marketing-site/global.css` is a single 1261-line unsplit stylesheet
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P4`
 3. `Files`:
 - `marketing-site/src/styles/global.css`
+- `marketing-site/src/components/*.astro` (new)
+- `marketing-site/src/pages/index.astro`
 4. `Finding`:
 - No component-level splitting; will get harder to maintain as the site grows. Not broken today.
 5. `Recommendation`:
 - Defer until the next marketing-site change that touches styling meaningfully; not worth a standalone pass.
 6. `Accept`:
 - N/A — cosmetic, low priority.
+7. `Resolution`:
+- Extracted the nine previously inline page sections (header/nav, hero, signal strip, manifesto, stack, capabilities, shipping, final CTA, footer) into `marketing-site/src/components/*.astro`, each carrying its own scoped `<style>` block for the rules that belong to it alone, including that section's responsive breakpoint overrides. `global.css` was trimmed to ~380 lines of genuinely cross-cutting rules: design tokens, the base reset, page-shell utilities, the shared brand mark (header+footer), shared button styles (hero+final-cta), shared section-heading/typography rules, and shared entrance-animation keyframes. `index.astro` now just composes the components; its reveal/nav-highlight `<script>` is unchanged. Verified via a structural diff of the built CSS (665/665 normalized declarations match between the old monolithic output and the new split output; the one apparent mismatch is a cosmetic artifact of Astro's own compiler rewriting `.hero-copy > *` to an equivalent attribute-selector form) and a full diff of the built `index.html` (identical DOM/classes/ids/text/script; the only additions are Astro's own inert `data-astro-cid-*` scoping attributes). `pnpm --dir marketing-site --ignore-workspace run build` succeeds.
 
 ## Also tracked elsewhere (not duplicated here)
 

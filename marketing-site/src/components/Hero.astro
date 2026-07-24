@@ -1,0 +1,389 @@
+---
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="eyebrow">WAP/WML browser · desktop edition</p>
+    <h1 id="hero-title">
+      The early mobile web,<br /><span class="hero-highlight"><span>back on</span><br /><span>the air.</span></span>
+    </h1>
+    <p class="hero-lede">
+      Waves is a practical desktop browser for exploring, testing, and improving the WAP/WML
+      stack—without vague emulation or throwaway demos.
+    </p>
+
+    <div class="hero-actions" aria-label="Get started">
+      <a class="button button-primary" href="./simulator/">
+        <span>Open simulator</span><span aria-hidden="true">→</span>
+      </a>
+      <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">
+        <span>View browser source</span><span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <dl class="hero-facts" aria-label="Project qualities">
+      <div>
+        <dt>Real runtime</dt>
+        <dd>Navigation, forms, timers, and scripts come from the engine—not a mock UI.</dd>
+      </div>
+      <div>
+        <dt>One workspace</dt>
+        <dd>Run local examples, follow live pages, and inspect state in one desktop app.</dd>
+      </div>
+    </dl>
+  </div>
+
+  <figure class="hero-figure">
+    <div class="figure-header">
+      <p class="figure-index">
+        <span>Capture</span>
+        <strong>01</strong>
+      </p>
+      <p class="figure-title">
+        <span>WaveNav field note</span>
+        <strong>Forms, focus &amp; session trace</strong>
+      </p>
+      <p class="figure-status"><span aria-hidden="true"></span> Local example</p>
+    </div>
+    <div class="image-mat">
+      <img
+        src="./waves-local-forms-example.png"
+        alt="Waves rendering a WML form example with editable fields and an event timeline"
+        width="2272"
+        height="1762"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </div>
+    <figcaption>
+      <span class="figure-caption-label">WML interaction study</span>
+      <span class="figure-caption-copy">One shell for local decks, live links, interaction, and inspection.</span>
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(28rem, 1.22fr);
+    gap: clamp(2rem, 4vw, 4.5rem);
+    align-items: center;
+    padding: clamp(2.5rem, 5vh, 3.5rem) 0;
+  }
+
+  h1 {
+    max-width: 10ch;
+    margin-top: var(--space-4);
+    font-size: clamp(3.1rem, 4.8vw, 5.25rem);
+    line-height: 0.81;
+  }
+
+  h1 .hero-highlight {
+    display: inline-block;
+    margin-top: 0.12em;
+    line-height: 0.9;
+  }
+
+  h1 .hero-highlight span {
+    display: inline-block;
+    color: var(--color-paper);
+    background: var(--color-terminal);
+    box-shadow:
+      0.12em 0 0 var(--color-terminal),
+      -0.04em 0 0 var(--color-terminal);
+  }
+
+  .hero-lede {
+    max-width: 37rem;
+    margin-top: var(--space-4);
+    color: var(--color-ink-soft);
+    font-size: clamp(1rem, 1.35vw, 1.25rem);
+    line-height: 1.55;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .hero-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+    padding-top: 1.25rem;
+    border-top: var(--rule-thin);
+  }
+
+  .hero-facts dt {
+    font: 900 0.72rem/1.2 var(--font-display);
+    text-transform: uppercase;
+  }
+
+  .hero-facts dd {
+    margin-top: 0.5rem;
+    color: var(--color-ink-soft);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .hero-figure {
+    position: relative;
+    min-width: 0;
+    border: var(--rule-thick);
+    background: var(--color-paper);
+    box-shadow: 0.45rem 0.45rem 0 var(--color-rule);
+    animation: field-note-in 760ms var(--motion-ease-out) 180ms both;
+  }
+
+  .figure-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-height: 4.15rem;
+    align-items: stretch;
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    border-top: 0.4rem solid var(--color-signal);
+    border-bottom: var(--rule-thin);
+  }
+
+  .figure-header p {
+    margin: 0;
+  }
+
+  .figure-index {
+    display: grid;
+    width: 4.75rem;
+    align-content: space-between;
+    padding: 0.45rem 0.6rem 0.55rem;
+    color: var(--color-paper);
+    background: var(--color-night);
+    border-right: var(--rule-thin);
+  }
+
+  .figure-index span {
+    font: 700 0.56rem/1 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .figure-index strong {
+    justify-self: end;
+    color: var(--color-signal);
+    font: 900 2rem/0.8 var(--font-display);
+  }
+
+  .figure-title {
+    display: grid;
+    align-content: center;
+    gap: 0.3rem;
+    padding: 0.65rem 0.9rem;
+  }
+
+  .figure-title span,
+  .figure-status {
+    font: 700 0.58rem/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .figure-title span {
+    color: var(--color-ink-soft);
+  }
+
+  .figure-title strong {
+    overflow-wrap: anywhere;
+    font: 900 0.84rem/1.1 var(--font-display);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .figure-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.9rem;
+    color: var(--color-ink-soft);
+    border-left: 1px solid var(--color-rule-soft);
+  }
+
+  .figure-status span {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--color-positive);
+    border-radius: 50%;
+    animation: status-ping 2.8s ease-out 1.45s infinite;
+  }
+
+  .image-mat {
+    padding: 0.55rem;
+    background: var(--color-paper);
+  }
+
+  .image-mat img {
+    width: 100%;
+    aspect-ratio: 2272 / 1762;
+    object-fit: cover;
+    border: var(--rule-thin);
+  }
+
+  .hero-figure figcaption {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    align-items: center;
+    min-height: 2.8rem;
+    padding: 0.65rem 0.85rem;
+    color: var(--color-ink-soft);
+    background: var(--color-canvas);
+    border-top: var(--rule-thin);
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .figure-caption-label {
+    color: var(--color-ink);
+    font: 700 0.63rem/1.3 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .figure-caption-copy {
+    color: var(--color-ink-soft);
+    font: 500 0.78rem/1.4 var(--font-body);
+  }
+
+  .hero-copy > * {
+    animation: tune-in var(--motion-duration-slow) var(--motion-ease-out) both;
+  }
+
+  .hero-copy > :nth-child(1) {
+    animation-delay: 80ms;
+  }
+
+  .hero-copy > :nth-child(2) {
+    animation-delay: 150ms;
+  }
+
+  .hero-copy > :nth-child(3) {
+    animation-delay: 220ms;
+  }
+
+  .hero-copy > :nth-child(4) {
+    animation-delay: 290ms;
+  }
+
+  .hero-copy > :nth-child(5) {
+    animation-delay: 360ms;
+  }
+
+  @media (min-width: 68.0625rem) and (max-height: 58rem) {
+    .hero {
+      padding: 2rem 0 2.75rem;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 4.4vw, 4.75rem);
+    }
+
+    .hero-lede {
+      margin-top: 1.2rem;
+      line-height: 1.45;
+    }
+
+    .hero-actions {
+      margin-top: 1.2rem;
+    }
+
+    .hero-facts {
+      margin-top: 1.5rem;
+    }
+
+    .hero-figure {
+      width: min(100%, 46rem);
+      justify-self: end;
+    }
+  }
+
+  @media (max-width: 68rem) {
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .hero-copy {
+      max-width: 47rem;
+    }
+
+    .hero-figure {
+      width: min(100%, 54rem);
+      justify-self: end;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .hero {
+      gap: 2.5rem;
+      padding: 3rem 0 3.75rem;
+    }
+
+    h1 {
+      font-size: clamp(2.65rem, 12.5vw, 4.5rem);
+    }
+
+    .hero-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .hero-facts {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-figure {
+      box-shadow: 0.4rem 0.4rem 0 var(--color-rule);
+    }
+
+    .figure-header {
+      grid-template-columns: auto minmax(0, 1fr);
+      min-height: 4.2rem;
+    }
+
+    .figure-index {
+      width: 4.25rem;
+      padding: 0.5rem 0.55rem;
+    }
+
+    .figure-index span {
+      font-size: 0.48rem;
+    }
+
+    .figure-index strong {
+      font-size: 1.85rem;
+    }
+
+    .figure-title {
+      padding: 0.65rem 0.75rem;
+    }
+
+    .figure-title strong {
+      font-size: 0.78rem;
+    }
+
+    .figure-status {
+      display: none;
+    }
+
+    .image-mat {
+      padding: 0.35rem;
+    }
+
+    .hero-figure figcaption {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+      padding: 0.7rem 0.75rem;
+    }
+  }
+</style>
