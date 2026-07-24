@@ -147,7 +147,23 @@ const families = [...grouped.entries()]
       historicalDocuments: historical.map((document) => document.documentId),
       relationships,
       scrExtraction:
-        family === 'wml'
+        family === 'caching'
+          ? {
+              status: 'line-item-ledger-complete-class-c-applied',
+              governingDocument: 'WAP-221-CREQ-20010425-a',
+              governingClassProfileDocument:
+                'WAP-215-ClassConform-20001213-a',
+              ledger:
+                'spec-processing/source-manifests/wap-1.2.1-caching-scr.json',
+              classProfileLedger:
+                'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
+              selectedProfile: 'CCR-CLASSC-C-001',
+              selectedFeatureGroup: 'WAPCachingMod:MCF',
+              note:
+                'WAP-120 Appendix A supplies eleven actor-specific caching SCR rows. ' +
+                'The selected Class C client applies WAPCachingMod:MCF to the five mandatory user-agent rows; zero-byte cache remains a valid but explicit behavior profile.'
+            }
+          : family === 'wml'
           ? {
               status: 'line-item-ledger-complete-class-c-applied',
               governingDocument: 'WAP-221-CREQ-20010425-a',

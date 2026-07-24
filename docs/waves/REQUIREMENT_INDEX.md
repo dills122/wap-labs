@@ -23,6 +23,11 @@ conformance. Use
 `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`;
 the selected Class C audit currently has 121 mandatory rows, zero implemented
 rows, and zero direct normative tests.
+For caching, use the exact WAP-120 row crosswalk in
+`spec-processing/source-manifests/wap-1.2.1-caching-scr.json`. The selected
+`WAPCachingMod:MCF` audit has five mandatory user-agent rows, zero implemented
+rows, and zero direct normative tests; `RQ-WAE-008` remains a thematic owner,
+not a substitute for those five source obligations.
 
 | Requirement ID | Owner Layer | Primary Ticket Lane | Test Status | Traceability Doc |
 |---|---|---|---|---|

@@ -29,9 +29,10 @@ node scripts/check-wap-conformance-ledger.mjs
 node scripts/check-wap-wae-conformance-ledger.mjs
 node scripts/check-wap-wbxml-conformance-ledger.mjs
 node scripts/check-wap-wmlscript-conformance-ledger.mjs
+node scripts/check-wap-caching-conformance-ledger.mjs
 ```
 
-The first five `CONF-1` family increments are complete at SCR level:
+The first six `CONF-1` family increments are complete at SCR level:
 
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
@@ -67,12 +68,19 @@ The first five `CONF-1` family increments are complete at SCR level:
 - the selected libraries audit is 0 implemented, 14 partial, and 66 missing,
   with zero direct normative library tests;
 - source-exact `WMLSSL048` is preserved with normalized alias `WMLSSL-048`.
+- 11 WAP-120 caching SCR rows are extracted; `WAPCachingMod:MCF` selects
+  exactly five mandatory user-agent rows and leaves optional time
+  synchronization plus all gateway rows outside the selected client profile;
+- the selected caching audit is 0 implemented, 3 partial, and 2 missing, with
+  zero direct normative WAP-120 tests; the current no-storage behavior is
+  treated only as a provisional zero-byte-cache profile.
 
 See `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md` and
 `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`, and
 `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`,
 `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`, and
-`docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`.
+`docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`, and
+`docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`.
 
 ## Compatibility and enhancement policy
 
@@ -147,7 +155,7 @@ closes `SRC-004` without changing the redistribution boundary.
 1. Finish `SRC-0` by locking normative external dependencies and resolving
    the remaining redistribution blocker.
 2. Continue `CONF-1` ledgers from the completed WML, WAE, WBXML, WMLScript,
-   and WMLScript Libraries increments into caching, WSP, WDP, and WCMP, with
+   WMLScript Libraries, and caching increments into WSP, WDP, and WCMP, with
    WTP added only for the connection-mode WSP capability.
 3. Continue the completed first-pass WML reconciliation into nested clauses
    and other families. Do not reopen completed tickets; add narrowly scoped

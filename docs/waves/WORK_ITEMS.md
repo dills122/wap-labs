@@ -513,6 +513,15 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: profile switch does not alter cache semantics without explicit migration note.
 9. `Spec`:
 - `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
+10. `Notes`:
+- This completed ticket established request-policy and deterministic reload
+  plumbing. It is not full WAP-120 conformance and is not reopened.
+- Exact corrective closure remains in program item `WAE-603`:
+  `WAPCachingMod:MCF` selects five mandatory client rows, currently audited as
+  0 implemented / 3 partial / 2 missing with zero direct normative tests.
+- Source authority:
+  `spec-processing/source-manifests/wap-1.2.1-caching-scr.json` and
+  `docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`.
 
 ### T0-16 Spec queue canonicalization and conflict resolution follow-up
 

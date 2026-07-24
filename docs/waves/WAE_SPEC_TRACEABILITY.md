@@ -155,14 +155,28 @@ Legend:
 ### RQ-WAE-008 Cache model support
 
 - Requirement:
-  - UA must support WAP caching model per spec.
+  - UA must support the WAP-120 caching model, including the permitted
+    zero-byte-cache posture, history revalidation branches, intra-resource
+    navigation, and cache-content protection.
 - Spec:
-  - `WAP-236` 7.1.2.2
-  - SCR: `WAESpec-HTS-C-004 (M)`
+  - strict target: `WAP-120` 4.1, 4.1.1, 4.1.2, 6, Appendix A
+  - selected SCRs: `UACache-C-001..004`, `UACache-C-006` (`M`)
+  - machine ledger:
+    `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+  - successor evidence only: `WAP-236` 7.1.2.2 /
+    `WAESpec-HTS-C-004`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Cache behavior policy exists for deck/script/media retrieval and invalidation.
-  - [ ] Integration tests verify deterministic cache hit/miss expectations.
+  - Evidence: [ ] Direct WAP-120 fixtures remain open in `WAE-603`; validate
+    source/status/work mapping with
+    `node scripts/check-wap-caching-conformance-ledger.mjs`.
+  - [ ] Zero-byte versus HTTP-cache capability is explicit and host caches
+    cannot silently alter strict behavior.
+  - [ ] Stale history replay covers both `must-revalidate` branches with the
+    exact original request identity.
+  - [ ] WML intra-deck and WMLScript intra-compilation-unit transitions do not
+    revalidate.
+  - [ ] Cached/retained sensitive data has an explicit protection and
+    lifetime policy.
 
 ### RQ-WAE-009 WSP client-header caching in proxy
 

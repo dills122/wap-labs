@@ -154,6 +154,7 @@ for (const [
   familyName,
   selectedFeatureGroup
 ] of [
+  ['caching', 'WAPCachingMod:MCF'],
   ['wmlscript', 'WMLScript:MCF'],
   ['wmlscript-libraries', 'WMLScriptLibs:MCF']
 ]) {

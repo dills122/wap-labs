@@ -447,3 +447,15 @@ const wmlscriptCheck = spawnSync(
 if (wmlscriptCheck.status !== 0) {
   process.exit(wmlscriptCheck.status ?? 1);
 }
+
+const cachingCheck = spawnSync(
+  process.execPath,
+  ['scripts/check-wap-caching-conformance-ledger.mjs'],
+  {
+    cwd: root,
+    stdio: 'inherit'
+  }
+);
+if (cachingCheck.status !== 0) {
+  process.exit(cachingCheck.status ?? 1);
+}

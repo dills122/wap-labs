@@ -86,6 +86,14 @@ For the selected Class C client, the libraries ledger selects 80 mandatory
 interpreter rows. Two optional interpreter rows and all 13 encoder rows remain
 outside the selected feature group.
 
+`wap-1.2.1-caching-scr.json` records all 11 WAP-120 Appendix A caching rows,
+the RFC 2616/RFC 1305 dependency locks, exact `WAPCachingMod:MCF` selection,
+and the explicit zero-byte-cache interpretation.
+
+For the selected Class C client, the caching ledger selects five mandatory
+user-agent rows. Optional user-agent TOD synchronization and all five gateway
+rows remain outside the selected feature group.
+
 Generate the lock from a separately retrieved official archive:
 
 ```sh
@@ -121,6 +129,7 @@ node scripts/check-wap-conformance-ledger.mjs
 node scripts/check-wap-wae-conformance-ledger.mjs
 node scripts/check-wap-wbxml-conformance-ledger.mjs
 node scripts/check-wap-wmlscript-conformance-ledger.mjs
+node scripts/check-wap-caching-conformance-ledger.mjs
 ```
 
 Generate the WML SCR ledger from private text extractions:
@@ -167,6 +176,15 @@ SIN:
 node spec-processing/scripts/generate-wap-wmlscript-libraries-scr-ledger.mjs \
   --libraries-base-text /absolute/path/WAP-194-WMLScriptLibraries-20000925-a.txt \
   --libraries-sin-text /absolute/path/WAP-194_103-WMLScriptLibraries-20020318-a.txt \
+  --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
+  --recorded-on YYYY-MM-DD
+```
+
+Generate the WAP-120 caching SCR ledger:
+
+```sh
+node spec-processing/scripts/generate-wap-caching-scr-ledger.mjs \
+  --caching-text /absolute/path/WAP-120-WAPCachingMod-20010413-a.txt \
   --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
   --recorded-on YYYY-MM-DD
 ```

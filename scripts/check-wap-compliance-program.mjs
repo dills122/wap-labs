@@ -208,7 +208,8 @@ if (
 }
 for (const ledgerPath of [
   'spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json',
-  'spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json'
+  'spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json',
+  'spec-processing/source-manifests/wap-1.2.1-caching-scr.json'
 ]) {
   if (!conf002?.outputs?.includes(ledgerPath)) {
     failures.push(`CONF-002 must retain ${ledgerPath}`);
@@ -222,6 +223,13 @@ if (
   failures.push(
     'CONF-002 must retain the paired WMLScript SCR validator'
   );
+}
+if (
+  !conf002?.evidence?.includes(
+    'node scripts/check-wap-caching-conformance-ledger.mjs'
+  )
+) {
+  failures.push('CONF-002 must retain the WAP-120 caching SCR validator');
 }
 const wmlscriptSprint = program.sprints.find(
   (sprint) => sprint.id === 'WMLS-5'
@@ -256,6 +264,25 @@ if (
 ) {
   failures.push(
     'WMLS-501 must retain exact 41-row WMLScript:MCF bytecode closure'
+  );
+}
+const waeCaching = program.sprints
+  .find((sprint) => sprint.id === 'WAE-6')
+  ?.workItems.find((workItem) => workItem.id === 'WAE-603');
+if (
+  waeCaching?.status !== 'in-progress' ||
+  !waeCaching?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-caching-scr.json'
+  ) ||
+  !waeCaching?.acceptance?.some((line) =>
+    line.includes('five mandatory WAPCachingMod:MCF rows')
+  ) ||
+  !waeCaching?.evidence?.includes(
+    'node scripts/check-wap-caching-conformance-ledger.mjs'
+  )
+) {
+  failures.push(
+    'WAE-603 must retain exact five-row WAPCachingMod:MCF closure'
   );
 }
 const wml203 = program.sprints

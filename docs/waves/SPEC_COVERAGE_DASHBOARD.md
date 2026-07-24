@@ -62,6 +62,11 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wae-scr.json`
   - 86 active rows, 22 SIN-removed rows, and 11 selected Class C client rows
   - selected audit: 5 implemented, 3 partial, 3 missing
+- Caching ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+  - 11 WAP-120 rows and 5 selected Class C user-agent rows
+  - selected audit: 0 implemented, 3 partial, 2 missing
+  - direct normative test evidence: 0/5
 - Successor delta sources:
   - `WAP-236-WAESpec-20020207-a`
   - `WAP-237-WAEMT-20010515-a` (optional-media delta still pending)
@@ -153,6 +158,19 @@ Status: Active
   - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
   - `RQ-RMK-010` in `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
   - corrective fixture/tooling closure in `R0-08` and `WML-203`
+
+0b. WAP-120 caching conformance closure (11 actor-specific SCR IDs)
+- Status: in progress (source ledger and selected-client audit complete;
+  explicit zero-byte-cache policy, normative fixtures, and implementation
+  closure pending)
+- Selected-profile scope: 5 required Class C user-agent rows; one optional
+  user-agent row and all five gateway rows remain outside the selected client
+  profile
+- Deliverables:
+  - `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+  - `docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`
+  - `RQ-WAE-008` in `docs/waves/WAE_SPEC_TRACEABILITY.md`
+  - corrective closure in `WAE-603`
 
 1. WMLScript bedrock conformance closure (`WAP-193_101` + `WAP-194/194_103`)
 - Status: in progress (exact source ledgers and implementation audit complete;
