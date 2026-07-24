@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>CI Setup and Operations · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="ci/ci_setup"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>ci</span></nav><p class="doc-path">docs/ci/ci_setup.md</p><div class="markdown-body"><h1 id="ci-setup-and-operations">CI Setup and Operations</h1>
+<p>This document describes all active GitHub Actions automation for this repository, including validation CI, security scanning, dependency updates, and deployment.</p>
+<h2 id="quick-reference">Quick Reference</h2>
+<ul>
+<li>Main validation workflow: <code>.github/workflows/ci.yml</code></li>
+<li>Release branch preparation workflow: <code>.github/workflows/release-prepare.yml</code></li>
+<li>Milestone GitHub release workflow: <code>.github/workflows/milestone-release.yml</code></li>
+<li>Security workflow: <code>.github/workflows/security.yml</code></li>
+<li>Dependabot auto-merge workflow: <code>.github/workflows/dependabot-auto-merge.yml</code></li>
+<li>Code scanning workflow: <code>.github/workflows/codeql.yml</code></li>
+<li>Pages deployment workflow: <code>.github/workflows/pages.yml</code></li>
+<li>Manual transport smoke workflow: <code>.github/workflows/transport-wap-smoke.yml</code></li>
+<li>Dependency updates: <code>.github/dependabot.yml</code></li>
+<li>Branch protection check policy: <code>docs/ci/REQUIRED_CHECKS.md</code></li>
+</ul>
+<h2 id="workflows">Workflows</h2>
+<h3 id="1-ci-githubworkflowsciyml">1) CI (<code>.github/workflows/ci.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Primary merge gate for product code quality and parity checks.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code></li>
+<li><code>push</code> to <code>main</code></li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Core behavior:</p>
+<ul>
+<li>Uses path filtering (<code>Detect Changed Areas</code>) to skip unrelated layer jobs on PRs.</li>
+<li>Runs repository-wide hygiene checks and layer-specific Rust/Node checks.</li>
+</ul>
+<p>Jobs:</p>
+<ul>
+<li><code>Repo Hygiene</code>
+<ul>
+<li>Node workspace install and lint/type/format checks</li>
+<li>WaveNav WASM package build</li>
+<li>Host-sample example manifest generation</li>
+<li>Browser frontend typecheck contract drift guard</li>
+<li>Transport contract parity script</li>
+</ul>
+</li>
+<li><code>Rust Engine</code>
+<ul>
+<li><code>cargo fmt --check</code></li>
+<li>coverage gate with <code>cargo llvm-cov</code></li>
+</ul>
+</li>
+<li><code>Rust Transport</code>
+<ul>
+<li>installs the isolated <code>wbxml2xml</code> decoder</li>
+<li><code>cargo fmt --check</code></li>
+<li><code>cargo clippy -- -D warnings</code></li>
+<li>coverage gate with <code>cargo llvm-cov</code></li>
+</ul>
+</li>
+<li><code>WaveNav Host Sample Build</code>
+<ul>
+<li>builds WASM package and host-sample app</li>
+<li>host-sample typecheck/lint/format checks</li>
+</ul>
+</li>
+<li><code>Marketing Site Build</code>
+<ul>
+<li>builds marketing site (required/optional per branch-protection policy)</li>
+</ul>
+</li>
+<li><code>Browser Shell Skeleton Checks</code>
+<ul>
+<li>installs Linux Tauri system packages</li>
+<li>Rust fmt and coverage checks for <code>browser/src-tauri</code></li>
+<li>Rust-&gt;TS contract codegen drift check</li>
+</ul>
+</li>
+<li><code>WML Server Sanity</code>
+<ul>
+<li>installs <code>wml-server</code> deps and runs Node syntax check</li>
+</ul>
+</li>
+</ul>
+<p>Caching:</p>
+<ul>
+<li>pnpm and npm lockfile caches (via <code>actions/setup-node</code>)</li>
+<li>Rust build artifact cache (<code>Swatinem/rust-cache</code>)</li>
+<li><code>wasm-pack</code> binary cache (<code>actions/cache</code>)</li>
+</ul>
+<h3 id="2-security-githubworkflowssecurityyml">2) Security (<code>.github/workflows/security.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Dependency risk checks and advisory scanning.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code></li>
+<li><code>push</code> to <code>main</code></li>
+<li>weekly cron (<code>27 6 * * 1</code>)</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Jobs:</p>
+<ul>
+<li><code>Dependency Review</code>
+<ul>
+<li>PR-only</li>
+<li>runs <code>actions/dependency-review-action</code></li>
+</ul>
+</li>
+<li><code>Rust Advisory Audit</code>
+<ul>
+<li>runs <code>cargo audit</code> in:
+<ul>
+<li><code>engine-wasm/engine</code></li>
+<li><code>transport-rust</code></li>
+<li><code>browser/src-tauri</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>Node Dependency Audit</code>
+<ul>
+<li>runs <code>pnpm audit --audit-level high</code></li>
+<li>runs <code>npm audit --audit-level=high</code> for <code>wml-server</code></li>
+</ul>
+</li>
+</ul>
+<p>Caching:</p>
+<ul>
+<li>Rust build artifact cache for audit crates</li>
+<li>pnpm cache for workspace audit</li>
+<li>npm cache for <code>wml-server</code> audit</li>
+</ul>
+<h3 id="3-release-prepare-githubworkflowsrelease-prepareyml">3) Release Prepare (<code>.github/workflows/release-prepare.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Manually create a frozen <code>release/vX.Y.Z</code> branch without publishing a GitHub release.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>checks out a chosen source ref (default <code>main</code>)</li>
+<li>syncs all managed manifest versions from the requested semver</li>
+<li>verifies version consistency</li>
+<li>commits the release version bump only if needed</li>
+<li>pushes a new <code>release/vX.Y.Z</code> branch and fails if it already exists</li>
+</ul>
+<h3 id="4-milestone-release-githubworkflowsmilestone-releaseyml">4) Milestone Release (<code>.github/workflows/milestone-release.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Manually publish a milestone-tagged GitHub release from an existing release branch.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>checks out <code>release/vX.Y.Z</code> by default</li>
+<li>verifies managed versions still match <code>VERSION</code></li>
+<li>builds the static site and simulator bundle</li>
+<li>creates an annotated <code>vX.Y.Z</code> tag</li>
+<li>publishes a GitHub release with downloadable source and site-bundle assets</li>
+</ul>
+<h3 id="5-codeql-githubworkflowscodeqlyml">5) CodeQL (<code>.github/workflows/codeql.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>GitHub code scanning (SAST) for Rust and JavaScript/TypeScript.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code> targeting <code>main</code></li>
+<li><code>push</code> to <code>main</code></li>
+<li>weekly cron (<code>43 5 * * 2</code>)</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Matrix checks:</p>
+<ul>
+<li><code>Analyze (javascript-typescript)</code></li>
+<li><code>Analyze (rust)</code></li>
+</ul>
+<p>Rust-specific setup:</p>
+<ul>
+<li>installs Tauri Linux system dependencies (GTK/GLib/WebKit)</li>
+<li>creates <code>browser/frontend/dist/index.html</code> placeholder for Tauri compile-time config</li>
+<li>performs <code>cargo check</code> for:
+<ul>
+<li><code>engine-wasm/engine</code></li>
+<li><code>transport-rust</code></li>
+<li><code>browser/src-tauri</code></li>
+</ul>
+</li>
+</ul>
+<p>Config:</p>
+<ul>
+<li><code>.github/codeql/codeql-config.yml</code>
+<ul>
+<li>includes core source paths: <code>browser</code>, <code>engine-wasm</code>, <code>transport-rust</code>, <code>wml-server</code>, <code>scripts</code></li>
+<li>excludes generated/build paths such as <code>target</code>, <code>dist</code>, <code>node_modules</code>, <code>engine-wasm/pkg</code>, and generated browser contracts</li>
+</ul>
+</li>
+</ul>
+<p>Caching:</p>
+<ul>
+<li>Rust build artifact cache for the Rust matrix leg</li>
+</ul>
+<h3 id="6-deploy-pages-githubworkflowspagesyml">6) Deploy Pages (<code>.github/workflows/pages.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Build and publish static artifacts to <code>gh-pages</code>.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>push</code> to <code>main</code> when paths change:
+<ul>
+<li><code>marketing-site/**</code></li>
+<li><code>engine-wasm/host-sample/**</code></li>
+<li><code>.github/workflows/pages.yml</code></li>
+</ul>
+</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>builds marketing site and host-sample</li>
+<li>assembles combined <code>_site</code> artifact</li>
+<li>deploys to <code>gh-pages</code> branch with <code>peaceiris/actions-gh-pages</code></li>
+</ul>
+<h3 id="7-transport-wap-smoke-githubworkflowstransport-wap-smokeyml">7) Transport WAP Smoke (<code>.github/workflows/transport-wap-smoke.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>On-demand end-to-end smoke for Kannel + WML stack integration.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>workflow_dispatch</code> only</li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>starts Docker services (<code>kannel</code>, <code>wml-server</code>)</li>
+<li>runs <code>make smoke-transport-wap</code></li>
+<li>executes both:
+<ul>
+<li>transport-rust ignored Kannel smoke tests</li>
+<li>browser host ignored Kannel smoke test</li>
+</ul>
+</li>
+<li>dumps service logs on failure</li>
+<li>always tears down stack</li>
+</ul>
+<h2 id="dependency-update-automation">Dependency Update Automation</h2>
+<p>File:</p>
+<ul>
+<li><code>.github/dependabot.yml</code></li>
+<li><code>.github/workflows/dependabot-auto-merge.yml</code></li>
+</ul>
+<p>Configured ecosystems:</p>
+<ul>
+<li><code>github-actions</code> (root)</li>
+<li>npm:
+<ul>
+<li>root workspace (<code>/</code>)</li>
+<li><code>/marketing-site</code></li>
+<li><code>/wml-server</code></li>
+</ul>
+</li>
+<li>cargo:
+<ul>
+<li><code>/engine-wasm/engine</code></li>
+<li><code>/transport-rust</code></li>
+<li><code>/browser/src-tauri</code></li>
+</ul>
+</li>
+</ul>
+<p>Cadence:</p>
+<ul>
+<li>weekly for all ecosystems</li>
+</ul>
+<p>Auto-merge behavior:</p>
+<ul>
+<li>Dependabot pull requests have GitHub auto-merge enabled via workflow on <code>pull_request_target</code>.</li>
+<li>The workflow uses <code>gh pr merge --auto --squash</code>, so GitHub merges only after required branch-protection checks and rules pass.</li>
+<li>On Dependabot rebases/synchronizations, the workflow re-runs and re-enables auto-merge for the updated head.</li>
+<li>Repository setting prerequisite: <code>Allow auto-merge</code> must be enabled in GitHub repository settings.</li>
+</ul>
+<h2 id="branch-protection-guidance">Branch Protection Guidance</h2>
+<p>Use <code>docs/ci/REQUIRED_CHECKS.md</code> as the source of truth for required checks on <code>main</code>.</p>
+<p>For immutable release branches, use <code>docs/ci/RELEASE_BRANCH_RULESET.md</code> as the source of truth for GitHub ruleset configuration.</p>
+<p>At minimum, require:</p>
+<ul>
+<li>Main CI check jobs from <code>ci.yml</code></li>
+<li>Security jobs from <code>security.yml</code></li>
+<li>CodeQL matrix checks from <code>codeql.yml</code></li>
+</ul>
+<p>Do not require:</p>
+<ul>
+<li><code>Transport WAP Smoke</code> (manual)</li>
+<li><code>Deploy Pages</code> (deployment workflow)</li>
+</ul>
+<h2 id="common-failure-modes">Common Failure Modes</h2>
+<ul>
+<li>Tauri/GTK pkg-config errors (<code>gio-2.0</code>, <code>glib-2.0</code>, <code>gobject-2.0</code>)
+<ul>
+<li>Ensure Linux dependencies are installed in the workflow before Rust build/check steps.</li>
+</ul>
+</li>
+<li>Tauri frontend dist missing during Rust compile
+<ul>
+<li>Ensure <code>browser/frontend/dist/index.html</code> placeholder exists for CI/build-time config.</li>
+</ul>
+</li>
+<li>Lockfile/cache mismatches
+<ul>
+<li>Confirm the correct lockfile path is used for <code>actions/setup-node</code> cache keys.</li>
+</ul>
+</li>
+<li>Branch protection check name mismatch
+<ul>
+<li>If a workflow job name changes, update <code>docs/ci/REQUIRED_CHECKS.md</code> and branch protection settings immediately.</li>
+</ul>
+</li>
+<li>Release branch remains mutable
+<ul>
+<li>Confirm the <code>release/v*</code> ruleset blocks updates and deletions after branch creation.</li>
+</ul>
+</li>
+<li>Version drift failure in CI
+<ul>
+<li>Run <code>node scripts/set-release-version.mjs &lt;semver&gt;</code> and then <code>node scripts/check-release-version.mjs</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="maintenance-checklist">Maintenance Checklist</h2>
+<p>When changing CI:</p>
+<ol>
+<li>Update workflow YAML.</li>
+<li>Update <code>docs/ci/REQUIRED_CHECKS.md</code> if check names change or required policy changes.</li>
+<li>Update <code>docs/ci/RELEASE_BRANCH_RULESET.md</code> when release branch governance changes.</li>
+<li>Update <code>docs/releases/VERSIONING.md</code> when versioning semantics or release cadence changes.</li>
+<li>Update this document when behavior/triggers/caches change.</li>
+<li>Validate with at least one PR run after merge.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#ci-setup-and-operations">CI Setup and Operations</a></li><li class="depth-2"><a href="#quick-reference">Quick Reference</a></li><li class="depth-2"><a href="#workflows">Workflows</a></li><li class="depth-3"><a href="#1-ci-githubworkflowsciyml">1) CI (.github/workflows/ci.yml)</a></li><li class="depth-3"><a href="#2-security-githubworkflowssecurityyml">2) Security (.github/workflows/security.yml)</a></li><li class="depth-3"><a href="#3-release-prepare-githubworkflowsrelease-prepareyml">3) Release Prepare (.github/workflows/release-prepare.yml)</a></li><li class="depth-3"><a href="#4-milestone-release-githubworkflowsmilestone-releaseyml">4) Milestone Release (.github/workflows/milestone-release.yml)</a></li><li class="depth-3"><a href="#5-codeql-githubworkflowscodeqlyml">5) CodeQL (.github/workflows/codeql.yml)</a></li><li class="depth-3"><a href="#6-deploy-pages-githubworkflowspagesyml">6) Deploy Pages (.github/workflows/pages.yml)</a></li><li class="depth-3"><a href="#7-transport-wap-smoke-githubworkflowstransport-wap-smokeyml">7) Transport WAP Smoke (.github/workflows/transport-wap-smoke.yml)</a></li><li class="depth-2"><a href="#dependency-update-automation">Dependency Update Automation</a></li><li class="depth-2"><a href="#branch-protection-guidance">Branch Protection Guidance</a></li><li class="depth-2"><a href="#common-failure-modes">Common Failure Modes</a></li><li class="depth-2"><a href="#maintenance-checklist">Maintenance Checklist</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/ci/ci_setup.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Spec-Derived Requirements (WML 1.1 -&gt; Engine) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/spec-derived-requirements"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/spec-derived-requirements.md</p><div class="markdown-body"><h1 id="spec-derived-requirements-wml-11---engine">Spec-Derived Requirements (WML 1.1 -&gt; Engine)</h1>
+<p>This file translates WML 1.1 requirements into explicit engineering requirements for the WASM runtime.</p>
+<h2 id="1-input-contract">1. Input Contract</h2>
+<p>Transport layer must normalize network payloads to:</p>
+<ul>
+<li><code>wmlXml: string</code></li>
+<li><code>baseUrl: string</code></li>
+<li><code>contentType: string</code> (<code>text/vnd.wap.wml</code> or normalized from <code>application/vnd.wap.wmlc</code>)</li>
+<li>optional <code>rawBytesBase64: string</code></li>
+</ul>
+<p>Engine must not parse WBXML directly in MVP.</p>
+<h2 id="2-deckcard-structure">2. Deck/Card Structure</h2>
+<p>Engine parser must support the WML deck model where root contains cards and optional pre-card structures.</p>
+<p>Required now:</p>
+<ul>
+<li><code>&lt;wml&gt;</code> root</li>
+<li>one or more <code>&lt;card&gt;</code></li>
+<li><code>&lt;p&gt;</code>, <code>&lt;br/&gt;</code>, <code>&lt;a href="..."&gt;</code></li>
+</ul>
+<p>Planned soon (already in WML model):</p>
+<ul>
+<li><code>&lt;head&gt;</code>, <code>&lt;template&gt;</code></li>
+<li><code>&lt;do&gt;</code>, <code>&lt;go&gt;</code>, <code>&lt;prev&gt;</code>, <code>&lt;noop&gt;</code>, <code>&lt;refresh&gt;</code></li>
+<li><code>&lt;onevent&gt;</code>, <code>&lt;timer&gt;</code></li>
+</ul>
+<h2 id="3-url--navigation-semantics">3. URL + Navigation Semantics</h2>
+<ul>
+<li><code>href="#cardId"</code> means same-deck card transition.</li>
+<li>Relative references resolve against <code>baseUrl</code>.</li>
+<li>Non-fragment URLs trigger host navigation request.</li>
+<li>History model must support back behavior per card/deck transitions.</li>
+</ul>
+<h2 id="4-state-and-context-semantics">4. State and Context Semantics</h2>
+<p>WML defines context models around state/history/new context. Engine requirements:</p>
+<ul>
+<li>Keep per-deck runtime state.</li>
+<li>Preserve history stack entries containing deck URL + active card + variable store snapshot.</li>
+<li>For context-changing actions, allow replace/push behavior in runtime API (already partly represented by history mode).</li>
+</ul>
+<h2 id="5-access-control-metadata">5. Access Control Metadata</h2>
+<p>WML cards can contain access hints (domain/path). Engine requirements:</p>
+<ul>
+<li>Parse and retain card access attributes in runtime model.</li>
+<li>Defer enforcement to host policy layer in MVP.</li>
+<li>Expose parsed access metadata for debug and later policy checks.</li>
+</ul>
+<h2 id="6-variable-and-substitution-semantics">6. Variable and Substitution Semantics</h2>
+<p>WML text and URL-like values may contain variable references.</p>
+<p>Requirements by phase:</p>
+<ul>
+<li>MVP: parse text literally, no substitution.</li>
+<li>Phase 2: add <code>VariableStore</code> and substitution for text + href + relevant attributes.</li>
+<li>Phase 3: apply substitution in task/form execution paths.</li>
+</ul>
+<h2 id="7-tasks-events-and-activation">7. Tasks, Events, and Activation</h2>
+<p>WML includes task-driven navigation and event bindings.</p>
+<p>Required progression:</p>
+<ul>
+<li>MVP: clickable <code>&lt;a href&gt;</code> and Enter activation only.</li>
+<li>Phase 2: <code>&lt;do&gt;</code> softkey task binding + <code>go|prev|noop|refresh</code> runtime behavior.</li>
+<li>Phase 3: <code>&lt;onevent&gt;</code> and timer dispatch with deterministic event loop hooks.</li>
+</ul>
+<h2 id="8-rendering-semantics">8. Rendering Semantics</h2>
+<p>Engine output remains a host render list, not HTML.</p>
+<p>Minimum output guarantees:</p>
+<ul>
+<li>vertical flow</li>
+<li>line wrap by viewport columns</li>
+<li>deterministic y-order</li>
+<li>focused link state</li>
+<li>one active card rendered at a time</li>
+</ul>
+<h2 id="9-error-semantics">9. Error Semantics</h2>
+<ul>
+<li>Parsing errors must be structured and surfaced to host.</li>
+<li>Unknown tags in MVP should be ignored or captured as unsupported nodes, not crash runtime.</li>
+<li>Invalid internal target (<code>#missing</code>) must emit a runtime error event.</li>
+</ul>
+<h2 id="10-conformance-baseline-for-this-project">10. Conformance Baseline (for this project)</h2>
+<p>MVP conformance target:</p>
+<ul>
+<li>Correct deck/card parse for supported elements.</li>
+<li>Correct card switch for valid internal anchors.</li>
+<li>Correct host handoff for external navigation.</li>
+<li>Deterministic focus movement and render list for same inputs.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#spec-derived-requirements-wml-11---engine">Spec-Derived Requirements (WML 1.1 -&gt; Engine)</a></li><li class="depth-2"><a href="#1-input-contract">1. Input Contract</a></li><li class="depth-2"><a href="#2-deckcard-structure">2. Deck/Card Structure</a></li><li class="depth-2"><a href="#3-url--navigation-semantics">3. URL + Navigation Semantics</a></li><li class="depth-2"><a href="#4-state-and-context-semantics">4. State and Context Semantics</a></li><li class="depth-2"><a href="#5-access-control-metadata">5. Access Control Metadata</a></li><li class="depth-2"><a href="#6-variable-and-substitution-semantics">6. Variable and Substitution Semantics</a></li><li class="depth-2"><a href="#7-tasks-events-and-activation">7. Tasks, Events, and Activation</a></li><li class="depth-2"><a href="#8-rendering-semantics">8. Rendering Semantics</a></li><li class="depth-2"><a href="#9-error-semantics">9. Error Semantics</a></li><li class="depth-2"><a href="#10-conformance-baseline-for-this-project">10. Conformance Baseline (for this project)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/spec-derived-requirements.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

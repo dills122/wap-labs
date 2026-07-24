@@ -1,0 +1,368 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves WaveScript VM Architecture · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wavescript_vm_architecture"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wavescript_vm_architecture.md</p><div class="markdown-body"><h1 id="waves-wavescript-vm-architecture">Waves WaveScript VM Architecture</h1>
+<p>Version: v0.1<br>
+Status: Active (Phase W execution in progress)</p>
+<p>Companion tracking matrix:</p>
+<ul>
+<li><code>docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md</code></li>
+</ul>
+<h2 id="scope">Scope</h2>
+<p>This document defines how WaveScript VM support should be integrated into Waves, aligned with:</p>
+<ul>
+<li>runtime-first architecture</li>
+<li>Tauri host model</li>
+<li>Rust in-process transport</li>
+<li>deterministic behavior gates before protocol rewrite</li>
+</ul>
+<p>Primary source references:</p>
+<ul>
+<li><code>spec-processing/source-material/WAP-193-WMLScript-20001025-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-193_101-WMLScript-20010928-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf</code></li>
+</ul>
+<p>Secondary implementation reference (tutorial material):</p>
+<ul>
+<li><a href="https://www.developershome.com/wap/wmlscript/">https://www.developershome.com/wap/wmlscript/</a></li>
+</ul>
+<h2 id="goals">Goals</h2>
+<ul>
+<li>Execute WMLScript bytecode units inside <code>engine-wasm</code> runtime.</li>
+<li>Support runtime integration points used by decks:
+<ul>
+<li>softkey actions (<code>&lt;do&gt;</code>)</li>
+<li>intrinsic event handlers (<code>&lt;onevent&gt;</code>, <code>ontimer</code>, <code>onenter*</code>, <code>onpick</code>)</li>
+<li><code>WMLBrowser.*</code> APIs (vars, nav, timers)</li>
+</ul>
+</li>
+<li>Keep strict separation between:
+<ul>
+<li>VM core (bytecode execution)</li>
+<li>runtime host bindings (navigation/vars/dialogs/timers)</li>
+</ul>
+</li>
+<li>Roll out incrementally with a usable MVP before completeness.</li>
+</ul>
+<h2 id="kickoff-decisions">Kickoff decisions</h2>
+<ul>
+<li>VM/interpreter execution live in <code>engine-wasm</code> (not in <code>browser/</code>).</li>
+<li>Host integrations are limited to side effects: dialogs, timer wake/tick, and optional script fetch for cache misses.</li>
+<li>First runnable host path is <code>engine-wasm/host-sample</code>; Waves browser integration follows later.</li>
+<li><code>WMLBrowser.refresh()</code> baseline is deferred refresh semantics first; immediate refresh stays feature-gated.</li>
+</ul>
+<h2 id="w0-01-contract-baseline-implemented">W0-01 Contract Baseline (Implemented)</h2>
+<p><code>engine-wasm/contracts/wml-engine.ts</code> now defines the script invocation model used by Phase W work:</p>
+<ul>
+<li><code>ScriptInvocationContext</code>: runtime-owned call-site metadata (<code>callSite</code>, <code>cardId</code>, optional <code>sourceHref</code>).</li>
+<li><code>ScriptInvocationRef</code>: script reference plus invocation context and args.</li>
+<li><code>ScriptPostInvocationEffects</code>: deterministic post-invocation runtime effects (<code>navigationIntent</code>, <code>requiresRefresh</code>).</li>
+<li><code>ScriptInvocationOutcome</code> and <code>ScriptExecutionOutcome</code>: unified outcome shape with <code>effects</code> envelope.</li>
+<li><code>ScriptHostCapabilities</code>: host side-effect adapters only (<code>dialogs</code>, <code>timers</code>, optional <code>scriptFetch</code>).</li>
+</ul>
+<p>This contract keeps VM/interpreter semantics in <code>engine-wasm</code> while limiting host responsibilities to side effects.</p>
+<p>Contract-level fixture coverage for W0-01 is tracked with host-sample decks:</p>
+<ul>
+<li><code>engine-wasm/host-sample/examples/wmlbrowser-var-nav.wml</code></li>
+<li><code>engine-wasm/host-sample/examples/wavescript-nav-order.wml</code></li>
+<li><code>engine-wasm/host-sample/examples/wavescript-go-cancel.wml</code></li>
+<li><code>engine-wasm/host-sample/examples/wavescript-refresh-policy.wml</code></li>
+</ul>
+<h2 id="external-implementation-references-modern-browser-architecture">External implementation references (modern browser architecture)</h2>
+<p>These references are used as architecture guidance only (not behavior spec authority):</p>
+<ul>
+<li>Chromium process model and site isolation:
+<ul>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/main/docs/process_model_and_site_isolation.md">https://chromium.googlesource.com/chromium/src/+/main/docs/process_model_and_site_isolation.md</a></li>
+<li><a href="https://www.chromium.org/developers/design-documents/site-isolation/">https://www.chromium.org/developers/design-documents/site-isolation/</a></li>
+</ul>
+</li>
+<li>WebKit multi-process architecture:
+<ul>
+<li><a href="https://docs.webkit.org/Deep%20Dive/Architecture/WebKit2.html">https://docs.webkit.org/Deep%20Dive/Architecture/WebKit2.html</a></li>
+</ul>
+</li>
+<li>Event loop and navigation processing model:
+<ul>
+<li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#event-loops">https://html.spec.whatwg.org/multipage/webappapis.html#event-loops</a></li>
+<li><a href="https://html.spec.whatwg.org/multipage/browsing-the-web.html">https://html.spec.whatwg.org/multipage/browsing-the-web.html</a></li>
+</ul>
+</li>
+<li>Execution safety model reference:
+<ul>
+<li><a href="https://webassembly.org/docs/security/">https://webassembly.org/docs/security/</a></li>
+</ul>
+</li>
+</ul>
+<p>Derived implementation standards for Waves WaveScript VM runtime:</p>
+<ol>
+<li>Runtime semantics authority stays in engine:</li>
+</ol>
+<ul>
+<li>Script decode/verify/execute semantics are resolved in <code>engine-wasm</code>, not in host UI layers.</li>
+</ul>
+<ol start="2">
+<li>Host interface is capability-minimal:</li>
+</ol>
+<ul>
+<li>Host only performs side effects requested by engine (dialogs/timer wake/script fetch on miss).</li>
+</ul>
+<ol start="3">
+<li>Verification before execution:</li>
+</ol>
+<ul>
+<li>Bytecode unit structure and limits are validated before instruction execution.</li>
+</ul>
+<ol start="4">
+<li>Bounded execution by default:</li>
+</ol>
+<ul>
+<li>Step, stack, call-depth, and memory growth limits are required in MVP.</li>
+</ul>
+<ol start="5">
+<li>Trap, do not crash:</li>
+</ol>
+<ul>
+<li>Script failures surface as deterministic runtime errors and do not terminate host process.</li>
+</ul>
+<ol start="6">
+<li>Deferred side-effect application:</li>
+</ol>
+<ul>
+<li>Navigation intents raised in script are applied by runtime at deterministic boundaries (post invocation).</li>
+</ul>
+<h2 id="non-goals-initial">Non-goals (initial)</h2>
+<ul>
+<li>Full WTAI/telephony/device-specific behavior parity.</li>
+<li>Full vendor quirk parity across all historical microbrowsers.</li>
+<li>In-engine <code>.wmls</code> source compiler (assume compiled bytecode path first).</li>
+</ul>
+<h2 id="architecture">Architecture</h2>
+<h3 id="components">Components</h3>
+<ol>
+<li>
+<p>WaveScript loader<br>
+Resolves script URL/function references to loaded bytecode units and function IDs.</p>
+</li>
+<li>
+<p>Bytecode decoder<br>
+Parses and validates compilation units into an internal representation.</p>
+</li>
+<li>
+<p>VM core (stack machine)<br>
+Runs instruction streams with bounded stacks/frames/PC and deterministic traps.</p>
+</li>
+<li>
+<p>Runtime host bindings<br>
+Implements runtime-facing library behavior (<code>WMLBrowser</code>, dialogs, vars, timers, URL utilities).</p>
+</li>
+<li>
+<p>Engine integration layer<br>
+Connects script invocation into existing navigation/event/softkey runtime flow.</p>
+</li>
+</ol>
+<h3 id="boundary-split">Boundary split</h3>
+<p>Inside Rust/WASM:</p>
+<ul>
+<li>decoder</li>
+<li>VM core</li>
+<li>pure stdlib utilities (<code>Lang</code>, <code>String</code>, <code>URL</code>, <code>Float</code>)</li>
+<li>runtime state mutation logic</li>
+</ul>
+<p>In host (<code>browser/</code>):</p>
+<ul>
+<li>dialog UI presentation</li>
+<li>optional timer scheduling hostcalls</li>
+<li>script fetch hostcalls (if not cached in runtime)</li>
+</ul>
+<h2 id="data-model">Data model</h2>
+<h3 id="values">Values</h3>
+<p>Recommended tagged union:</p>
+<ul>
+<li><code>Bool</code></li>
+<li><code>Int32</code></li>
+<li><code>Float64</code></li>
+<li><code>String</code></li>
+<li><code>Url</code> (string wrapper)</li>
+<li><code>Invalid</code> / sentinel (optional)</li>
+</ul>
+<p>All coercion rules must be centralized and deterministic.</p>
+<h3 id="vm-state">VM state</h3>
+<ul>
+<li>operand stack</li>
+<li>call frames</li>
+<li>PC</li>
+<li>current unit/function</li>
+</ul>
+<h3 id="runtime-context">Runtime context</h3>
+<ul>
+<li>active deck/card identity</li>
+<li>navigation stack</li>
+<li>string-keyed variable store</li>
+<li>timer queue</li>
+<li>pending navigation intent</li>
+</ul>
+<h2 id="instruction-strategy">Instruction strategy</h2>
+<p>Phase 1 recommendation:</p>
+<ul>
+<li>decode and execute close to spec opcode model first</li>
+<li>optional internal IR translation later for optimization and maintainability</li>
+</ul>
+<h2 id="standard-library-rollout">Standard library rollout</h2>
+<h3 id="tier-0-mvp-critical">Tier 0 (MVP-critical)</h3>
+<ul>
+<li><code>Lang</code> (coercions/checks)</li>
+<li><code>String</code> (basic operations)</li>
+<li><code>WMLBrowser</code> subset:
+<ul>
+<li><code>getVar</code></li>
+<li><code>setVar</code></li>
+<li><code>go</code></li>
+<li>history/back behavior (subset)</li>
+<li>timer subset (as adopted)</li>
+</ul>
+</li>
+</ul>
+<h3 id="tier-1">Tier 1</h3>
+<ul>
+<li><code>URL</code> helpers</li>
+<li><code>Dialogs</code> (<code>alert</code>, <code>confirm</code>, <code>prompt</code>) via host or runtime UI layer</li>
+</ul>
+<h3 id="tier-2">Tier 2</h3>
+<ul>
+<li>broader <code>Float</code> coverage and compatibility refinements</li>
+</ul>
+<h2 id="engine-integration-points">Engine integration points</h2>
+<h3 id="softkeys-do">Softkeys (<code>&lt;do&gt;</code>)</h3>
+<p>Action model should support script calls as first-class action type, not only <code>go</code>.</p>
+<h3 id="intrinsic-events-onevent">Intrinsic events (<code>&lt;onevent&gt;</code>)</h3>
+<p>Handlers execute in deterministic order; scripts may mutate vars, set timers, or trigger navigation.</p>
+<h3 id="timers-ontimer">Timers (<code>ontimer</code>)</h3>
+<p>Runtime should own deterministic timer semantics; host may provide wake/tick primitives.</p>
+<h3 id="navigation-terminal-behavior">Navigation terminal behavior</h3>
+<p>Default policy (configurable): <code>go()</code> inside a handler is terminal for current handler chain.</p>
+<p>Compatibility notes to validate against <code>WAP-193*</code>/<code>WAP-194*</code>:</p>
+<ul>
+<li>browser transition effects are applied when control returns from script execution</li>
+<li>multiple navigation calls in one invocation should collapse to the final effective navigation action</li>
+<li>repeated <code>prev()</code> in one invocation may only apply once in some user-agent behaviors</li>
+</ul>
+<h3 id="practical-compatibility-notes-tutorial-derived-validate-against-spec-pdfs">Practical compatibility notes (tutorial-derived, validate against spec PDFs)</h3>
+<ul>
+<li>callable entry points from WML should be treated as exported functions (<code>extern</code> usage pattern)</li>
+<li>WMLScript is linked externally from WML (<code>script.wmls#function()</code> form), not embedded inline</li>
+<li><code>WMLBrowser.setVar()</code> updates often require explicit refresh behavior (<code>WMLBrowser.refresh()</code>) to surface UI changes on current card</li>
+<li><code>WMLBrowser.go()</code> and <code>WMLBrowser.prev()</code> are commonly treated as returning success sentinel vs invalid on error in deployed tutorial examples</li>
+</ul>
+<h2 id="wasmhost-calls">WASM/Host calls</h2>
+<p>Minimum hostcall shape (if used):</p>
+<ul>
+<li>fetch script bytecode</li>
+<li>dialog operations</li>
+<li>timer schedule/cancel</li>
+</ul>
+<p>Keep host API surface minimal and deterministic.</p>
+<h2 id="error-model-and-safety">Error model and safety</h2>
+<p>Traps should be runtime errors, not process crashes:</p>
+<ul>
+<li>bytecode format error</li>
+<li>stack underflow</li>
+<li>type error</li>
+<li>unknown library function</li>
+<li>invalid URL</li>
+<li>execution limit exceeded</li>
+</ul>
+<p>Execution guardrails required from first runnable VM:</p>
+<ul>
+<li>max instruction steps</li>
+<li>max call depth</li>
+<li>max stack size</li>
+<li>bounded string growth</li>
+</ul>
+<h2 id="milestones">Milestones</h2>
+<h3 id="m-a-script-aware-runtime-no-execution">M-A Script-aware runtime (no execution)</h3>
+<ul>
+<li>parse and resolve script bindings</li>
+<li>event/softkey call-site plumbing and trace logging</li>
+</ul>
+<h3 id="m-b-vm-core-executes-minimal-bytecode">M-B VM core executes minimal bytecode</h3>
+<ul>
+<li>decoder skeleton</li>
+<li>stack/frame/return behavior</li>
+<li>arithmetic/branch baseline</li>
+</ul>
+<h3 id="m-c-wmlbrowser-vars--go">M-C <code>WMLBrowser</code> vars + <code>go</code></h3>
+<ul>
+<li>invoke scripts from softkey and <code>onenterforward</code></li>
+<li>vars and navigation mutation path</li>
+</ul>
+<h3 id="m-d-timers--dialogs">M-D Timers + dialogs</h3>
+<ul>
+<li>timer scheduling and <code>ontimer</code> dispatch</li>
+<li>dialog host integration path</li>
+</ul>
+<h3 id="m-e-compatibility-and-coverage-expansion">M-E Compatibility and coverage expansion</h3>
+<ul>
+<li>broader stdlib support</li>
+<li>coercion parity improvements</li>
+<li>corpus and fuzz-style robustness testing</li>
+</ul>
+<h2 id="testing-strategy">Testing strategy</h2>
+<ol>
+<li>Golden corpus:</li>
+</ol>
+<ul>
+<li>fixture decks + compiled units + expected outcomes</li>
+</ul>
+<ol start="2">
+<li>Deterministic VM unit tests:</li>
+</ol>
+<ul>
+<li>opcode behavior</li>
+<li>stdlib coercion/function tests</li>
+</ul>
+<ol start="3">
+<li>Integration tests:</li>
+</ol>
+<ul>
+<li>enter/event/script/navigation chains</li>
+<li>softkey script behavior</li>
+<li>multi-nav-in-single-invocation behavior (<code>go/go</code>, <code>go/prev</code>, <code>prev/prev</code>) for compatibility profiling</li>
+</ul>
+<ol start="4">
+<li>Optional differential testing:</li>
+</ol>
+<ul>
+<li>compare navigation/variable traces against reference emulators where feasible</li>
+</ul>
+<h2 id="repository-module-targets-planned">Repository module targets (planned)</h2>
+<ul>
+<li><code>engine-wasm/engine/src/wavescript/decoder.rs</code></li>
+<li><code>engine-wasm/engine/src/wavescript/vm.rs</code></li>
+<li><code>engine-wasm/engine/src/wavescript/value.rs</code></li>
+<li><code>engine-wasm/engine/src/wavescript/stdlib/*</code></li>
+<li><code>engine-wasm/engine/src/runtime/events.rs</code></li>
+<li><code>engine-wasm/engine/src/runtime/softkeys.rs</code></li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>This plan intentionally assumes transport CLI viability and substantial runtime maturity.</li>
+<li>It does not authorize implementation start by itself; start remains gated by project kickoff.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-wavescript-vm-architecture">Waves WaveScript VM Architecture</a></li><li class="depth-2"><a href="#scope">Scope</a></li><li class="depth-2"><a href="#goals">Goals</a></li><li class="depth-2"><a href="#kickoff-decisions">Kickoff decisions</a></li><li class="depth-2"><a href="#w0-01-contract-baseline-implemented">W0-01 Contract Baseline (Implemented)</a></li><li class="depth-2"><a href="#external-implementation-references-modern-browser-architecture">External implementation references (modern browser architecture)</a></li><li class="depth-2"><a href="#non-goals-initial">Non-goals (initial)</a></li><li class="depth-2"><a href="#architecture">Architecture</a></li><li class="depth-3"><a href="#components">Components</a></li><li class="depth-3"><a href="#boundary-split">Boundary split</a></li><li class="depth-2"><a href="#data-model">Data model</a></li><li class="depth-3"><a href="#values">Values</a></li><li class="depth-3"><a href="#vm-state">VM state</a></li><li class="depth-3"><a href="#runtime-context">Runtime context</a></li><li class="depth-2"><a href="#instruction-strategy">Instruction strategy</a></li><li class="depth-2"><a href="#standard-library-rollout">Standard library rollout</a></li><li class="depth-3"><a href="#tier-0-mvp-critical">Tier 0 (MVP-critical)</a></li><li class="depth-3"><a href="#tier-1">Tier 1</a></li><li class="depth-3"><a href="#tier-2">Tier 2</a></li><li class="depth-2"><a href="#engine-integration-points">Engine integration points</a></li><li class="depth-3"><a href="#softkeys-do">Softkeys (&lt;do&gt;)</a></li><li class="depth-3"><a href="#intrinsic-events-onevent">Intrinsic events (&lt;onevent&gt;)</a></li><li class="depth-3"><a href="#timers-ontimer">Timers (ontimer)</a></li><li class="depth-3"><a href="#navigation-terminal-behavior">Navigation terminal behavior</a></li><li class="depth-3"><a href="#practical-compatibility-notes-tutorial-derived-validate-against-spec-pdfs">Practical compatibility notes (tutorial-derived, validate against spec PDFs)</a></li><li class="depth-2"><a href="#wasmhost-calls">WASM/Host calls</a></li><li class="depth-2"><a href="#error-model-and-safety">Error model and safety</a></li><li class="depth-2"><a href="#milestones">Milestones</a></li><li class="depth-3"><a href="#m-a-script-aware-runtime-no-execution">M-A Script-aware runtime (no execution)</a></li><li class="depth-3"><a href="#m-b-vm-core-executes-minimal-bytecode">M-B VM core executes minimal bytecode</a></li><li class="depth-3"><a href="#m-c-wmlbrowser-vars--go">M-C WMLBrowser vars + go</a></li><li class="depth-3"><a href="#m-d-timers--dialogs">M-D Timers + dialogs</a></li><li class="depth-3"><a href="#m-e-compatibility-and-coverage-expansion">M-E Compatibility and coverage expansion</a></li><li class="depth-2"><a href="#testing-strategy">Testing strategy</a></li><li class="depth-2"><a href="#repository-module-targets-planned">Repository module targets (planned)</a></li><li class="depth-2"><a href="#notes">Notes</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wavescript_vm_architecture.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

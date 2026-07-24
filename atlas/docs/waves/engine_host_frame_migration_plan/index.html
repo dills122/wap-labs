@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Engine-Host Frame Interface Migration Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/engine_host_frame_migration_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/engine_host_frame_migration_plan.md</p><div class="markdown-body"><h1 id="engine-host-frame-interface-migration-plan">Engine-Host Frame Interface Migration Plan</h1>
+<p>Status: planning-ready<br>
+Last updated: 2026-03-03</p>
+<h2 id="purpose">Purpose</h2>
+<p>Define a deterministic, multi-target rendering boundary where the engine emits structured frame data and hosts render it, without engine-generated HTML or host DOM-coupled assumptions.</p>
+<p>This plan is intentionally scoped to interface and rendering-boundary migration only.</p>
+<h2 id="scope">Scope</h2>
+<p>In scope:</p>
+<ul>
+<li>engine output model migration from <code>RenderList</code> to <code>EngineFrame</code> (additive first)</li>
+<li>engine input model migration from key-only calls to typed <code>EngineInputEvent</code> (additive first)</li>
+<li>host adapter updates for:
+<ul>
+<li>WASM browser harness (<code>engine-wasm/host-sample</code>)</li>
+<li>Waves Tauri frontend (<code>browser/frontend</code>)</li>
+</ul>
+</li>
+<li>contract-source and type-generation alignment across Rust and TypeScript</li>
+<li>parity and determinism validation across native + wasm targets</li>
+</ul>
+<p>Out of scope:</p>
+<ul>
+<li>protocol stack redesign</li>
+<li>broad runtime feature expansion unrelated to interface migration</li>
+<li>GPU renderer implementation (only compatibility posture)</li>
+</ul>
+<h2 id="current-baseline-observed">Current Baseline (Observed)</h2>
+<ol>
+<li>Engine already emits structured draw commands (<code>RenderList</code>, <code>DrawCmd::Text|Link</code>).</li>
+<li>WASM host sample already consumes draw commands and paints to Canvas2D.</li>
+<li>Tauri frontend currently converts draw commands into HTML string lines (<code>innerHTML</code>) for viewport presentation.</li>
+<li>Input flow is key-driven (<code>up/down/enter</code>) with host-triggered back and timer ticks; no click/scroll event boundary exists yet.</li>
+<li>Type contracts are partly centralized:
+<ul>
+<li>generated host contracts from Rust (<code>ts-rs</code>) in <code>browser/contracts/generated/*</code></li>
+<li>handwritten engine wasm contract in <code>engine-wasm/contracts/wml-engine.ts</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="target-architecture">Target Architecture</h2>
+<h3 id="engine-output-boundary">Engine Output Boundary</h3>
+<p>Engine returns a frame object with enough data for renderer independence:</p>
+<ul>
+<li><code>EngineFrame</code>
+<ul>
+<li><code>viewport</code></li>
+<li><code>drawCommands</code></li>
+<li>optional <code>hitRegions</code> (for deterministic click mapping)</li>
+<li>optional <code>metadata</code> (diagnostics/version/feature flags)</li>
+</ul>
+</li>
+</ul>
+<h3 id="engine-input-boundary">Engine Input Boundary</h3>
+<p>Engine accepts typed input events:</p>
+<ul>
+<li><code>EngineInputEvent</code>
+<ul>
+<li><code>KeyPress</code></li>
+<li><code>Click</code></li>
+<li><code>Scroll</code></li>
+<li>optional future events (<code>Softkey</code>, <code>TextCommit</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="host-responsibilities">Host Responsibilities</h3>
+<ul>
+<li>renderer implementation selection (Canvas2D now, future GPU later)</li>
+<li>mapping host/native/browser input into <code>EngineInputEvent</code></li>
+<li>transport, windowing, and side-effect policy remain host-owned</li>
+</ul>
+<h3 id="engine-responsibilities">Engine Responsibilities</h3>
+<ul>
+<li>deterministic layout, navigation, focus, and hit-testing</li>
+<li>deterministic frame generation (host-agnostic)</li>
+<li>zero DOM/HTML assumptions</li>
+</ul>
+<h2 id="compatibility-strategy">Compatibility Strategy</h2>
+<p>Use additive migration with compatibility shims:</p>
+<ol>
+<li>Introduce new frame/input API while preserving existing <code>render()</code> and <code>handleKey()</code> paths.</li>
+<li>Migrate hosts to new APIs incrementally.</li>
+<li>Keep regression parity tests on both APIs until cutover.</li>
+<li>Remove legacy API only after parity gate is green.</li>
+</ol>
+<h2 id="contract-first-plan">Contract-First Plan</h2>
+<p>Primary contract evolution sequence:</p>
+<ol>
+<li>Define canonical Rust-side interface types (<code>EngineFrame</code>, <code>DrawCommand</code>, <code>EngineInputEvent</code>, <code>EngineCommand</code>).</li>
+<li>Generate TypeScript bindings from Rust-owned types for host usage.</li>
+<li>Keep <code>engine-wasm/contracts/wml-engine.ts</code> aligned as contract surface until fully generator-backed.</li>
+<li>Update <code>browser/contracts/generated/engine-host.ts</code> generation pipeline for new methods and shapes.</li>
+</ol>
+<p>Contract guardrails:</p>
+<ul>
+<li>no host-specific fields in engine-owned frame/input contracts</li>
+<li>serialization-only target glue at adapters</li>
+<li>contract changes require docs and parity-test updates in same change</li>
+</ul>
+<h2 id="migration-phases">Migration Phases</h2>
+<h3 id="phase-f0-contracts-and-adapters-no-behavior-change">Phase F0: Contracts and Adapters (No Behavior Change)</h3>
+<ul>
+<li>define frame/input types</li>
+<li>add engine API methods:
+<ul>
+<li><code>renderFrame() -&gt; EngineFrame</code></li>
+<li><code>handleInput(event: EngineInputEvent)</code></li>
+</ul>
+</li>
+<li>keep legacy methods with wrappers:
+<ul>
+<li><code>render()</code></li>
+<li><code>handleKey()</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="phase-f1-host-renderer-migration">Phase F1: Host Renderer Migration</h3>
+<ul>
+<li>update WASM host sample to consume <code>EngineFrame</code> path</li>
+<li>replace Tauri frontend viewport HTML rendering with Canvas2D renderer adapter</li>
+<li>keep presenter/session/timeline behavior unchanged outside rendering surface</li>
+</ul>
+<h3 id="phase-f2-input-event-surface-expansion">Phase F2: Input Event Surface Expansion</h3>
+<ul>
+<li>add click and scroll routing from hosts to engine</li>
+<li>implement deterministic hit testing in engine frame/hit-region model</li>
+<li>keep keyboard path behavior identical</li>
+</ul>
+<h3 id="phase-f3-internal-engine-boundary-cleanup">Phase F3: Internal Engine Boundary Cleanup</h3>
+<ul>
+<li>split current combined layout+draw generation into:
+<ul>
+<li>layout phase</li>
+<li>paint phase</li>
+</ul>
+</li>
+<li>preserve draw ordering and focus determinism across targets</li>
+</ul>
+<h3 id="phase-f4-cutover-and-legacy-removal">Phase F4: Cutover and Legacy Removal</h3>
+<ul>
+<li>require parity suite green on native + wasm for frame/input paths</li>
+<li>remove legacy <code>RenderList</code> and key-only API surfaces</li>
+<li>finalize docs and coverage mappings</li>
+</ul>
+<h2 id="determinism-and-parity-gates">Determinism and Parity Gates</h2>
+<p>Must remain deterministic across native and wasm:</p>
+<ul>
+<li><code>loadDeckContext</code></li>
+<li><code>handleInput(KeyPress)</code></li>
+<li><code>renderFrame</code></li>
+<li>script invocation side effects</li>
+<li>back-stack/focus transitions</li>
+<li>timer-driven transitions</li>
+</ul>
+<p>Parity-critical coverage must include:</p>
+<ul>
+<li>snapshot parity for frame command sequence</li>
+<li>focus and navigation parity under identical input traces</li>
+<li>click hit-target parity using frame/hit-region mapping fixtures</li>
+</ul>
+<h2 id="risks-and-mitigations">Risks and Mitigations</h2>
+<ol>
+<li>Risk: contract drift between handwritten and generated TS types.</li>
+</ol>
+<ul>
+<li>Mitigation: make Rust-owned contract generation authoritative and add CI drift checks.</li>
+</ul>
+<ol start="2">
+<li>Risk: renderer-dependent text metrics affecting determinism.</li>
+</ol>
+<ul>
+<li>Mitigation: keep engine layout in logical units (rows/cols) and avoid host-measured line wrapping.</li>
+</ul>
+<ol start="3">
+<li>Risk: click semantics diverge by target host.</li>
+</ol>
+<ul>
+<li>Mitigation: engine-owned hit-region identifiers in frame output; hosts send coordinates only.</li>
+</ul>
+<ol start="4">
+<li>Risk: migration stalls due to dual-path complexity.</li>
+</ol>
+<ul>
+<li>Mitigation: strict phase gates and explicit legacy removal criteria.</li>
+</ul>
+<h2 id="documentation-update-requirements-per-phase">Documentation Update Requirements Per Phase</h2>
+<p>Each migration phase PR must update:</p>
+<ul>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>engine-wasm/README.md</code></li>
+<li><code>browser/contracts/generated/engine-host.ts</code> (generated output)</li>
+<li><code>docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md</code></li>
+<li><code>docs/waves/SPEC_TEST_COVERAGE.md</code></li>
+<li><code>docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md</code> status</li>
+</ul>
+<h2 id="acceptance-criteria-program-level">Acceptance Criteria (Program-Level)</h2>
+<p>Migration is complete when:</p>
+<ol>
+<li>Engine no longer exposes legacy <code>RenderList</code>/<code>handleKey</code> API in primary host path.</li>
+<li>Both hosts consume <code>EngineFrame</code> and <code>EngineInputEvent</code>.</li>
+<li>Tauri viewport rendering no longer depends on HTML line injection.</li>
+<li>Native/wasm parity suite covers frame/input critical paths and passes.</li>
+<li>Contract and docs drift checks enforce boundary consistency in CI.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#engine-host-frame-interface-migration-plan">Engine-Host Frame Interface Migration Plan</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#scope">Scope</a></li><li class="depth-2"><a href="#current-baseline-observed">Current Baseline (Observed)</a></li><li class="depth-2"><a href="#target-architecture">Target Architecture</a></li><li class="depth-3"><a href="#engine-output-boundary">Engine Output Boundary</a></li><li class="depth-3"><a href="#engine-input-boundary">Engine Input Boundary</a></li><li class="depth-3"><a href="#host-responsibilities">Host Responsibilities</a></li><li class="depth-3"><a href="#engine-responsibilities">Engine Responsibilities</a></li><li class="depth-2"><a href="#compatibility-strategy">Compatibility Strategy</a></li><li class="depth-2"><a href="#contract-first-plan">Contract-First Plan</a></li><li class="depth-2"><a href="#migration-phases">Migration Phases</a></li><li class="depth-3"><a href="#phase-f0-contracts-and-adapters-no-behavior-change">Phase F0: Contracts and Adapters (No Behavior Change)</a></li><li class="depth-3"><a href="#phase-f1-host-renderer-migration">Phase F1: Host Renderer Migration</a></li><li class="depth-3"><a href="#phase-f2-input-event-surface-expansion">Phase F2: Input Event Surface Expansion</a></li><li class="depth-3"><a href="#phase-f3-internal-engine-boundary-cleanup">Phase F3: Internal Engine Boundary Cleanup</a></li><li class="depth-3"><a href="#phase-f4-cutover-and-legacy-removal">Phase F4: Cutover and Legacy Removal</a></li><li class="depth-2"><a href="#determinism-and-parity-gates">Determinism and Parity Gates</a></li><li class="depth-2"><a href="#risks-and-mitigations">Risks and Mitigations</a></li><li class="depth-2"><a href="#documentation-update-requirements-per-phase">Documentation Update Requirements Per Phase</a></li><li class="depth-2"><a href="#acceptance-criteria-program-level">Acceptance Criteria (Program-Level)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/engine_host_frame_migration_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

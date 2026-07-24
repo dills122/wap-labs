@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Source Material Triage (spec-processing/source-material) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/source-material-triage"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/source-material-triage.md</p><div class="markdown-body"><h1 id="source-material-triage-spec-processingsource-material">Source Material Triage (spec-processing/source-material)</h1>
+<p>This triage reviews all <code>93</code> files in <code>spec-processing/source-material</code> and scopes only what matters for the WASM WML rendering/runtime engine.</p>
+<p>Note: this is a full-corpus triage document. For the currently reviewed canonical extraction conclusions, use <code>source-material-review.md</code>.</p>
+<h2 id="decision-rule">Decision Rule</h2>
+<p>Include documents only if they directly affect one of:</p>
+<ul>
+<li>WML deck/card syntax and semantics</li>
+<li>WML runtime behavior (tasks, events, variables, history/context)</li>
+<li>WML media-type/format handling needed by the engine boundary</li>
+<li>WML-adjacent presentation/runtime features we plan to add (styles, script, transforms)</li>
+</ul>
+<h2 id="in-scope-for-engine-work">In-Scope for Engine Work</h2>
+<h3 id="tier-0-must-use-now">Tier 0 (Must-use now)</h3>
+<ol>
+<li><code>WAP-191-WML-20000219-a.pdf</code></li>
+<li><code>WAP-191_102-WML-20001213-a.pdf</code></li>
+<li><code>WAP-191_104-WML-20010718-a.pdf</code></li>
+<li><code>WAP-191_105-WML-20020212-a.pdf</code></li>
+<li><code>WAP-236-WAESpec-20020207-a.pdf</code></li>
+</ol>
+<p>Why:</p>
+<ul>
+<li><code>WAP-191*</code> is the core markup language definition and SIN lineage.</li>
+<li><code>WAP-236</code> defines browser/runtime environment semantics that affect task execution, navigation/history, and context behavior.</li>
+</ul>
+<h3 id="tier-1-needed-soon">Tier 1 (Needed soon)</h3>
+<ol>
+<li><code>WAP-192-WBXML-20010725-a.pdf</code></li>
+<li><code>WAP-192_105-WBXML-20011015-a.pdf</code></li>
+<li><code>WAP-237-WAEMT-20010515-a.pdf</code></li>
+<li><code>WAP-210-WAPArch-20010712-a.pdf</code></li>
+</ol>
+<p>Why:</p>
+<ul>
+<li><code>WAP-192*</code> informs tokenized document handling assumptions (even if decode is currently transport-side).</li>
+<li><code>WAP-237</code> covers MIME/media typing and content handling implications.</li>
+<li><code>WAP-210</code> provides architecture context for boundary decisions and conformance reasoning.</li>
+</ul>
+<h3 id="tier-2-planned-features">Tier 2 (Planned features)</h3>
+<ol>
+<li><code>WAP-193-WMLScript-20001025-a.pdf</code></li>
+<li><code>WAP-193_101-WMLScript-20010928-a.pdf</code></li>
+<li><code>WAP-194-WMLScriptLibraries-20000925-a.pdf</code></li>
+<li><code>WAP-194_103-WMLScriptLibraries-20020318-a.pdf</code></li>
+<li><code>WAP-239-WCSS-20011026-a.pdf</code></li>
+<li><code>WAP-239-101-WCSS-20020430-a.pdf</code></li>
+<li><code>WAP-244-WMLTR-20011106-a.pdf</code></li>
+<li><code>WAP-188-WAPGenFormats-20010710-a.pdf</code></li>
+</ol>
+<p>Why:</p>
+<ul>
+<li>Needed only when enabling script, styling, and transform/extended formatting behavior.</li>
+</ul>
+<h2 id="out-of-scope-for-wasm-engine-current">Out-of-Scope for WASM Engine (Current)</h2>
+<p>These were reviewed by title/spec code and intentionally excluded from engine implementation scope now.</p>
+<h3 id="securitypkiidentity">Security/PKI/Identity</h3>
+<ul>
+<li><code>WAP-211*</code>, <code>OMA-WAP-211*</code> (WAPCert)</li>
+<li><code>WAP-217*</code>, <code>OMA-WAP-217*</code> (WPKI)</li>
+<li><code>WAP-219*</code> (TLS)</li>
+<li><code>WAP-260*</code>, <code>OMA-WAP-260*</code> (WIM)</li>
+<li><code>WAP-261*</code> (WTLS)</li>
+<li><code>WAP-187*</code> (TransportE2ESec)</li>
+<li><code>WAP-196</code> (ClientID)</li>
+</ul>
+<h3 id="transportprotocol-stack-network-layer-not-engine-semantics">Transport/Protocol Stack (network layer, not engine semantics)</h3>
+<ul>
+<li><code>WAP-224*</code> (WTP)</li>
+<li><code>WAP-230</code> (WSP)</li>
+<li><code>WAP-259</code> (WDP)</li>
+<li><code>WAP-202</code> (WCMP)</li>
+<li><code>WAP-225</code> (TCP)</li>
+<li><code>WAP-229*</code> (HTTP)</li>
+<li><code>WAP-223*</code> (HTTPSM)</li>
+<li><code>WAP-159</code> (WDP/WCMP adapt)</li>
+<li><code>WAP-204*</code> (WAP over GSM USSD)</li>
+</ul>
+<h3 id="pushprovisioningota">Push/Provisioning/OTA</h3>
+<ul>
+<li><code>WAP-235*</code> (Push OTA)</li>
+<li><code>WAP-247*</code> (PAP)</li>
+<li><code>WAP-249*</code> (PPG Service)</li>
+<li><code>WAP-250</code> (Push Arch Overview)</li>
+<li><code>WAP-251</code> (Push Message)</li>
+<li><code>WAP-182</code>, <code>WAP-183*</code>, <code>WAP-184*</code>, <code>WAP-185</code>, <code>WAP-186</code> (Provisioning)</li>
+</ul>
+<h3 id="messagingsyncservice-indication">Messaging/Sync/Service Indication</h3>
+<ul>
+<li><code>WAP-205</code>, <code>WAP-206</code>, <code>WAP-209</code> (MMS)</li>
+<li><code>WAP-234</code> (SYNC)</li>
+<li><code>WAP-167*</code> (ServiceInd)</li>
+<li><code>WAP-168*</code> (ServiceLoad)</li>
+<li><code>WAP-175*</code> (CacheOp)</li>
+<li><code>WAP-120</code> (Caching Mod)</li>
+</ul>
+<h3 id="telephonywta-families">Telephony/WTA Families</h3>
+<ul>
+<li><code>WAP-266</code>, <code>WAP-268</code>, <code>WAP-228</code>, <code>WAP-255</code>, <code>WAP-269</code>, <code>WAP-270</code></li>
+</ul>
+<h3 id="other-non-target-markup-families">Other Non-target Markup Families</h3>
+<ul>
+<li><code>WAP-277-XHTMLMP-20011029-a.pdf</code> (WAP 2.0 profile family; not in 1.x engine target)</li>
+</ul>
+<h2 id="practical-read-order-for-engine-team">Practical Read Order for Engine Team</h2>
+<ol>
+<li><code>WAP-191_105</code> (latest WML + corrections)</li>
+<li><code>WAP-191_104</code>, <code>WAP-191_102</code>, <code>WAP-191</code> (back-reference for change lineage)</li>
+<li><code>WAP-236</code> (runtime/browser semantics)</li>
+<li><code>WAP-237</code> (media types)</li>
+<li><code>WAP-192_105</code> + <code>WAP-192</code> (tokenized format context)</li>
+</ol>
+<h2 id="mapping-to-active-engine-tickets">Mapping to Active Engine Tickets</h2>
+<ul>
+<li>Phase A in <code>ticket-plan.md</code> depends primarily on <code>WAP-191*</code> + <code>WAP-236</code>.</li>
+<li>Phase B task/event/variable work depends heavily on <code>WAP-236</code> + <code>WAP-191*</code>.</li>
+<li>Phase C form/payload work depends on WML form and action semantics in <code>WAP-191*</code>.</li>
+<li>Deferred Phase D work aligns to <code>WAP-193*</code>, <code>WAP-194*</code>, <code>WAP-239*</code>, and <code>WAP-244</code>.</li>
+</ul>
+<h2 id="recommended-next-step">Recommended Next Step</h2>
+<p>Before implementing Phase 2+, extract normative clauses from <code>WAP-191_105</code> and <code>WAP-236</code> into a dedicated requirements matrix (<code>requirement -&gt; engine module -&gt; test case</code>).</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#source-material-triage-spec-processingsource-material">Source Material Triage (spec-processing/source-material)</a></li><li class="depth-2"><a href="#decision-rule">Decision Rule</a></li><li class="depth-2"><a href="#in-scope-for-engine-work">In-Scope for Engine Work</a></li><li class="depth-3"><a href="#tier-0-must-use-now">Tier 0 (Must-use now)</a></li><li class="depth-3"><a href="#tier-1-needed-soon">Tier 1 (Needed soon)</a></li><li class="depth-3"><a href="#tier-2-planned-features">Tier 2 (Planned features)</a></li><li class="depth-2"><a href="#out-of-scope-for-wasm-engine-current">Out-of-Scope for WASM Engine (Current)</a></li><li class="depth-3"><a href="#securitypkiidentity">Security/PKI/Identity</a></li><li class="depth-3"><a href="#transportprotocol-stack-network-layer-not-engine-semantics">Transport/Protocol Stack (network layer, not engine semantics)</a></li><li class="depth-3"><a href="#pushprovisioningota">Push/Provisioning/OTA</a></li><li class="depth-3"><a href="#messagingsyncservice-indication">Messaging/Sync/Service Indication</a></li><li class="depth-3"><a href="#telephonywta-families">Telephony/WTA Families</a></li><li class="depth-3"><a href="#other-non-target-markup-families">Other Non-target Markup Families</a></li><li class="depth-2"><a href="#practical-read-order-for-engine-team">Practical Read Order for Engine Team</a></li><li class="depth-2"><a href="#mapping-to-active-engine-tickets">Mapping to Active Engine Tickets</a></li><li class="depth-2"><a href="#recommended-next-step">Recommended Next Step</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/source-material-triage.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

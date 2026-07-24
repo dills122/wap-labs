@@ -1,0 +1,466 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Engine Debug Connector Research Notes · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/engine_debug_connector_research"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/engine_debug_connector_research.md</p><div class="markdown-body"><h1 id="engine-debug-connector-research-notes">Engine Debug Connector Research Notes</h1>
+<p>Status: reference
+Owner lane: <code>engine-wasm</code> + <code>browser</code>
+Last reviewed: <code>2026-03-14</code></p>
+<h2 id="purpose">Purpose</h2>
+<p>Capture external debugger architecture patterns relevant to Waves so D0 implementation work can borrow proven ideas instead of inventing a bespoke inspection model from scratch.</p>
+<p>This document complements, but does not replace, <code>docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md</code>.</p>
+<h2 id="current-waves-baseline">Current Waves Baseline</h2>
+<p>Current local architecture already provides some useful starting points:</p>
+<ol>
+<li>Tauri host owns a single in-process <code>WmlEngine</code> instance behind <code>Mutex&lt;WmlEngine&gt;</code>.</li>
+<li>Host commands already expose deterministic read-only runtime snapshots after each command.</li>
+<li>Engine already has lightweight trace capture for harness/debug workflows.</li>
+<li>Existing trace support is useful scaffolding, but it is not yet an attachable debugger protocol.</li>
+</ol>
+<p>Relevant files:</p>
+<ul>
+<li><code>browser/src-tauri/src/engine_bridge/engine_adapter.rs</code></li>
+<li><code>browser/src-tauri/src/contract_types.rs</code></li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>engine-wasm/engine/src/engine_runtime_internal/trace.rs</code></li>
+</ul>
+<h2 id="research-goal">Research Goal</h2>
+<p>Identify debugger and inspector designs from mature systems that resemble Waves in at least one key way:</p>
+<ol>
+<li>embedded runtime inspected through a host process</li>
+<li>structured event/state inspection</li>
+<li>attachable sessions or targets</li>
+<li>optional first-party UI layered on top of a protocol or bridge</li>
+</ol>
+<h2 id="reviewed-systems">Reviewed Systems</h2>
+<h3 id="1-chrome-devtools-protocol-cdp">1. Chrome DevTools Protocol (CDP)</h3>
+<p>References:</p>
+<ul>
+<li><a href="https://chromedevtools.github.io/devtools-protocol/">https://chromedevtools.github.io/devtools-protocol/</a></li>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/refs/heads/main/third_party/blink/public/devtools_protocol/README.md">https://chromium.googlesource.com/chromium/src/+/refs/heads/main/third_party/blink/public/devtools_protocol/README.md</a></li>
+</ul>
+<p>Why it matters:</p>
+<ol>
+<li>CDP is a strong reference for typed command/event protocols over a host boundary.</li>
+<li>It separates runtime instrumentation from the inspector frontend.</li>
+<li>It treats attach, enable, and target/session concepts as explicit protocol elements.</li>
+</ol>
+<p>Patterns worth borrowing:</p>
+<ol>
+<li>group debugging features into additive typed surfaces instead of one catch-all blob</li>
+<li>use stable string identifiers and event names</li>
+<li>require explicit client opt-in before streaming heavier event traffic</li>
+<li>keep commands/events protocol-oriented rather than UI-oriented</li>
+</ol>
+<p>Notable caution:</p>
+<ol>
+<li>CDP is much broader than Waves needs; copying its domain sprawl would be counterproductive.</li>
+</ol>
+<h3 id="2-firefox-remote-debugging-protocol-rdp">2. Firefox Remote Debugging Protocol (RDP)</h3>
+<p>Reference:</p>
+<ul>
+<li><a href="https://firefox-source-docs.mozilla.org/devtools/backend/protocol.html">https://firefox-source-docs.mozilla.org/devtools/backend/protocol.html</a></li>
+</ul>
+<p>Why it matters:</p>
+<ol>
+<li>RDP shows a clean attachable lifecycle with explicit actor ownership and teardown.</li>
+<li>It models request/reply and notification traffic cleanly.</li>
+<li>It is a good example of inspection over a brokered runtime boundary.</li>
+</ol>
+<p>Patterns worth borrowing:</p>
+<ol>
+<li>make resource/session lifetime explicit</li>
+<li>allow read-only notifications without making the runtime depend on an always-live client</li>
+<li>keep parent/child ownership clear between broker and inspected runtime</li>
+</ol>
+<p>Notable caution:</p>
+<ol>
+<li>Actor-model machinery would be excessive for the first Waves implementation.</li>
+</ol>
+<h3 id="3-vs-code-debug-adapter-protocol-dap">3. VS Code Debug Adapter Protocol (DAP)</h3>
+<p>References:</p>
+<ul>
+<li><a href="https://microsoft.github.io/debug-adapter-protocol/">https://microsoft.github.io/debug-adapter-protocol/</a></li>
+<li><a href="https://code.visualstudio.com/api/extension-guides/debugger-extension">https://code.visualstudio.com/api/extension-guides/debugger-extension</a></li>
+</ul>
+<p>Why it matters:</p>
+<ol>
+<li>DAP is the clearest precedent for separating debugger UI from runtime-specific debugging logic.</li>
+<li>The adapter sits between generic tooling and the actual runtime/debugger.</li>
+<li>It proves the value of a host-owned translation layer.</li>
+</ol>
+<p>Patterns worth borrowing:</p>
+<ol>
+<li>keep the host bridge as an adapter, not as the runtime itself</li>
+<li>keep the frontend consumer reusable by depending on typed host contracts</li>
+<li>advertise capabilities up front so clients can adapt to partial support</li>
+</ol>
+<p>Notable caution:</p>
+<ol>
+<li>DAP assumes a richer command model than Waves needs in MVP; Waves should stay read-only.</li>
+</ol>
+<h3 id="4-node-inspector">4. Node Inspector</h3>
+<p>Reference:</p>
+<ul>
+<li><a href="https://nodejs.org/en/learn/getting-started/debugging">https://nodejs.org/en/learn/getting-started/debugging</a></li>
+</ul>
+<p>Why it matters:</p>
+<ol>
+<li>Node is a strong precedent for local attach, session URLs/ids, and secure-by-default warnings.</li>
+<li>It treats debugger access as privileged.</li>
+</ol>
+<p>Patterns worth borrowing:</p>
+<ol>
+<li>default to local-only debugging surfaces</li>
+<li>disable or omit the connector outside development profiles by default</li>
+<li>make attachability a deliberate act, not ambient behavior</li>
+</ol>
+<p>Notable caution:</p>
+<ol>
+<li>Waves should avoid exposing a network-listening inspector in MVP.</li>
+</ol>
+<h3 id="5-webkit-remote-inspection">5. WebKit Remote Inspection</h3>
+<p>Reference:</p>
+<ul>
+<li><a href="https://webkit.org/web-inspector/enabling-web-inspector/">https://webkit.org/web-inspector/enabling-web-inspector/</a></li>
+</ul>
+<p>Why it matters:</p>
+<ol>
+<li>WebKit shows how an embedded runtime can remain inspectable without mixing inspector logic into app UI logic.</li>
+<li>It reinforces the value of a host-managed inspection surface for embedded contexts.</li>
+</ol>
+<p>Patterns worth borrowing:</p>
+<ol>
+<li>make the runtime inspectable through a host boundary</li>
+<li>preserve runtime semantics even when inspection is attached</li>
+<li>keep the inspector out of the core execution path</li>
+</ol>
+<h3 id="6-redux-devtools--remote-redux-devtools">6. Redux DevTools / Remote Redux DevTools</h3>
+<p>References:</p>
+<ul>
+<li><a href="https://github.com/reduxjs/redux-devtools">https://github.com/reduxjs/redux-devtools</a></li>
+<li><a href="https://github.com/zalmoxisus/remote-redux-devtools">https://github.com/zalmoxisus/remote-redux-devtools</a></li>
+</ul>
+<p>Why it matters:</p>
+<ol>
+<li>It is a practical example of structured state/action history, export, replay-oriented artifacts, and an optional remote monitor.</li>
+<li>It is closer to Waves than a full debugger when thinking about timeline inspection and bug triage.</li>
+</ol>
+<p>Patterns worth borrowing:</p>
+<ol>
+<li>keep event history structured and exportable</li>
+<li>support an in-app first-party monitor first</li>
+<li>treat remote monitoring as optional and additive</li>
+</ol>
+<p>Notable caution:</p>
+<ol>
+<li>Waves is runtime inspection, not just state history; event payloads still need runtime-specific design.</li>
+</ol>
+<h2 id="repeated-patterns-across-mature-systems">Repeated Patterns Across Mature Systems</h2>
+<p>These themes appeared consistently across the systems above:</p>
+<ol>
+<li>Separate runtime semantics from debugger transport and UI.</li>
+<li>Model debugging as attachable sessions or targets.</li>
+<li>Use structured, typed events and snapshots instead of free-form logs.</li>
+<li>Gate heavier inspection behind explicit attach/enable.</li>
+<li>Keep debugging additive and non-disruptive to normal runtime behavior.</li>
+<li>Prefer local/dev-only exposure for privileged debugging surfaces.</li>
+<li>Use stable string ids and event names.</li>
+<li>Preserve determinism even if the debugger is disconnected, slow, or absent.</li>
+</ol>
+<h2 id="recommended-waves-architecture">Recommended Waves Architecture</h2>
+<p>Based on repo constraints and the systems reviewed above, Waves should use a three-layer debug connector:</p>
+<h3 id="layer-1-engine-owned-recorder">Layer 1: Engine-owned recorder</h3>
+<p>Location:</p>
+<ul>
+<li><code>engine-wasm/engine</code></li>
+</ul>
+<p>Responsibilities:</p>
+<ol>
+<li>deterministic event emission at runtime boundaries</li>
+<li>fixed-size ring buffer with drop-oldest behavior</li>
+<li>monotonic sequence numbering</li>
+<li>read-only debug snapshot generation</li>
+<li>sensitive-field masking before data leaves engine-owned structures</li>
+</ol>
+<p>Non-responsibilities:</p>
+<ol>
+<li>no host IPC</li>
+<li>no session bookkeeping</li>
+<li>no UI-specific formatting</li>
+</ol>
+<h3 id="layer-2-host-owned-session-broker">Layer 2: Host-owned session broker</h3>
+<p>Location:</p>
+<ul>
+<li><code>browser/src-tauri</code></li>
+<li><code>browser/contracts/*</code></li>
+</ul>
+<p>Responsibilities:</p>
+<ol>
+<li>debug session open/close lifecycle</li>
+<li>local policy gating and dev-mode enablement</li>
+<li>command validation and error handling</li>
+<li>mapping engine debug types to generated Rust/TypeScript contracts</li>
+<li>optional later expansion to external tooling surfaces</li>
+</ol>
+<p>Non-responsibilities:</p>
+<ol>
+<li>no reinterpretation of engine runtime semantics</li>
+<li>no mutation/debugger control plane in MVP</li>
+</ol>
+<h3 id="layer-3-consumer-uitooling">Layer 3: Consumer UI/tooling</h3>
+<p>Location:</p>
+<ul>
+<li><code>browser/frontend</code></li>
+<li>possible later external tool bridge</li>
+</ul>
+<p>Responsibilities:</p>
+<ol>
+<li>polling recent events</li>
+<li>rendering timeline and snapshot views</li>
+<li>export-to-JSON capture flow</li>
+<li>filtering/search/presets</li>
+</ol>
+<p>Non-responsibilities:</p>
+<ol>
+<li>no direct runtime mutation</li>
+<li>no source of truth for masking or sequencing</li>
+</ol>
+<h2 id="recommended-mvp-contract-style">Recommended MVP Contract Style</h2>
+<p>The current plan direction is correct. The preferred additive surface is:</p>
+<ol>
+<li><code>openDebugSession(options) -&gt; { sessionId, cursor, capabilities }</code></li>
+<li><code>pollDebugEvents({ sessionId, cursor, maxEvents }) -&gt; { events, nextCursor, droppedCount }</code></li>
+<li><code>getDebugSnapshot({ sessionId }) -&gt; EngineDebugSnapshot</code></li>
+<li><code>closeDebugSession({ sessionId }) -&gt; { closed: boolean }</code></li>
+</ol>
+<p>Recommended notes:</p>
+<ol>
+<li><code>sessionId</code> should be host-owned, process-local, and opaque</li>
+<li>engine should expose cursor-based polling primitives, but should not own per-client sessions</li>
+<li><code>capabilities</code> should be explicit so clients can adapt safely</li>
+</ol>
+<p>Suggested initial capabilities:</p>
+<ol>
+<li><code>supportsSnapshots: true</code></li>
+<li><code>supportsPolling: true</code></li>
+<li><code>masking: "masked"</code></li>
+<li><code>supportsUnmaskSensitive: false</code></li>
+</ol>
+<h2 id="polling-vs-push">Polling vs Push</h2>
+<p>Recommendation: use polling for MVP.</p>
+<p>Why:</p>
+<ol>
+<li>simpler host/runtime integration</li>
+<li>easier deterministic testing</li>
+<li>avoids background event pump complexity in Tauri</li>
+<li>works for both native host integration and future WASM-boundary use</li>
+<li>failure in the consumer does not pressure the engine execution path</li>
+</ol>
+<p>Suggested behavior:</p>
+<ol>
+<li>consumer polls only while debug panel/tool is open</li>
+<li>host or UI can use a bounded interval such as <code>100-250ms</code></li>
+<li>event delivery remains best-effort within the ring-buffer window</li>
+</ol>
+<h2 id="event-ordering-and-time">Event Ordering and Time</h2>
+<p>Recommendation:</p>
+<ol>
+<li><code>seq</code> is the primary ordering key</li>
+<li><code>tsMs</code> is useful for operator context, but not for correctness</li>
+<li>snapshots and replay-oriented tooling should trust <code>seq</code>, not wall clock</li>
+</ol>
+<p>Reasoning:</p>
+<ol>
+<li>deterministic runtime ordering is more important than wall-clock precision</li>
+<li>monotonic sequence values are stable across local triage and tests</li>
+</ol>
+<h2 id="session-ownership">Session Ownership</h2>
+<p>Recommendation:</p>
+<ol>
+<li>host owns sessions</li>
+<li>engine owns event history and snapshot generation</li>
+</ol>
+<p>Why:</p>
+<ol>
+<li>the engine currently models one running runtime, not a debugger multiplexer</li>
+<li>host-managed sessions make future multi-client support additive</li>
+<li>this preserves clean boundaries between runtime semantics and IPC/lifecycle concerns</li>
+</ol>
+<h2 id="sensitive-data-policy">Sensitive Data Policy</h2>
+<p>Recommendation:</p>
+<ol>
+<li>mask sensitive values at the engine boundary</li>
+<li>keep local unmasking off by default</li>
+<li>avoid exposing raw transport credentials or secrets in events or snapshots</li>
+</ol>
+<p>Suggested sensitive-field heuristics for MVP:</p>
+<ol>
+<li>password-type inputs</li>
+<li>field names including <code>pin</code>, <code>passwd</code>, <code>password</code></li>
+<li>runtime vars derived from masked fields</li>
+</ol>
+<p>Reasoning:</p>
+<ol>
+<li>frontend-only masking is too easy to bypass accidentally</li>
+<li>engine-side masking gives consistent behavior across all consumers</li>
+</ol>
+<h2 id="recommended-event-set-for-waves-mvp">Recommended Event Set for Waves MVP</h2>
+<p>The event list in the current plan remains sound:</p>
+<ol>
+<li><code>deck.load</code></li>
+<li><code>card.enter</code></li>
+<li><code>card.exit</code></li>
+<li><code>focus.change</code></li>
+<li><code>input.edit.start</code></li>
+<li><code>input.edit.draft</code></li>
+<li><code>input.edit.commit</code></li>
+<li><code>input.edit.cancel</code></li>
+<li><code>action.accept</code></li>
+<li><code>action.external</code></li>
+<li><code>nav.intent</code></li>
+<li><code>postfield.resolve</code></li>
+<li><code>script.invoke</code></li>
+<li><code>script.trap</code></li>
+<li><code>timer.schedule</code></li>
+<li><code>timer.fire</code></li>
+<li><code>timer.cancel</code></li>
+</ol>
+<p>Strong recommendation:</p>
+<ol>
+<li><code>postfield.resolve</code> should include resolution source per field:
+<ul>
+<li><code>var</code></li>
+<li><code>draft</code></li>
+<li><code>card</code></li>
+<li><code>fallback</code></li>
+</ul>
+</li>
+</ol>
+<p>This is the single highest-value event detail for form-submit triage.</p>
+<h2 id="recommended-snapshot-contents">Recommended Snapshot Contents</h2>
+<p>The snapshot should cover enough state to explain the latest behavior without requiring a full memory dump.</p>
+<p>Recommended MVP snapshot:</p>
+<ol>
+<li>active card id</li>
+<li>focused link index</li>
+<li>focused input edit name/value with masking applied</li>
+<li>runtime vars with masking applied</li>
+<li>active card form-state summary</li>
+<li>pending external navigation intent</li>
+<li>pending external navigation request policy including post context</li>
+<li>timer state summary</li>
+<li>debug buffer metadata: <code>oldestSeq</code>, <code>latestSeq</code>, <code>droppedCount</code></li>
+<li>viewport cols</li>
+<li>base URL</li>
+<li>content type</li>
+</ol>
+<h2 id="relationship-to-existing-traceentries">Relationship to Existing <code>traceEntries()</code></h2>
+<p>Current trace support is useful, but it should not become the long-term debug connector contract.</p>
+<p>Recommended stance:</p>
+<ol>
+<li>treat <code>traceEntries()</code> as legacy harness/debug support</li>
+<li>reuse trace learnings and some emission points where practical</li>
+<li>move D0 work onto typed events/snapshots rather than extending string-detail traces indefinitely</li>
+</ol>
+<p>Reasoning:</p>
+<ol>
+<li>traces are useful for humans, but weak as a stable contract</li>
+<li>typed events will age better for host/frontend/test consumers</li>
+</ol>
+<h2 id="recommended-mvp-delivery-strategy">Recommended MVP Delivery Strategy</h2>
+<p>The best first usable setup is:</p>
+<ol>
+<li>engine-owned ring buffer and snapshot builder</li>
+<li>Tauri-host debug session commands</li>
+<li>Waves first-party debug panel</li>
+<li>JSON export for bug artifacts</li>
+</ol>
+<p>Do not start with:</p>
+<ol>
+<li>remote networked debugger transport</li>
+<li>mutable debugger commands</li>
+<li>full external IDE/tool integration</li>
+</ol>
+<p>Reasoning:</p>
+<ol>
+<li>the in-app panel is the fastest path to real debugging value</li>
+<li>it exercises the right contracts without forcing protocol or security complexity too early</li>
+<li>external tooling can be added later on the same host-backed API</li>
+</ol>
+<h2 id="proposed-reference-model-for-waves">Proposed Reference Model for Waves</h2>
+<p>If Waves borrows selectively from mature systems, the best blend is:</p>
+<ol>
+<li>CDP for protocol shape and typed event surfaces</li>
+<li>DAP for layered architecture and host-adapter thinking</li>
+<li>Firefox RDP for attach/detach lifecycle clarity</li>
+<li>Node inspector and WebKit for dev-only/local safety posture</li>
+<li>Redux DevTools for timeline/export workflow ideas</li>
+</ol>
+<p>This mix fits Waves better than copying any single ecosystem whole.</p>
+<h2 id="guidance-for-d0-work-items">Guidance for D0 Work Items</h2>
+<h3 id="d0-01-contract-and-architecture-baseline">D0-01 Contract and architecture baseline</h3>
+<p>Focus:</p>
+<ol>
+<li>additive contract types only</li>
+<li>explicit session lifecycle</li>
+<li>capabilities and masking policy</li>
+<li>no runtime event emission yet</li>
+</ol>
+<h3 id="d0-02-engine-event-stream-and-snapshot-emitter">D0-02 Engine event stream and snapshot emitter</h3>
+<p>Focus:</p>
+<ol>
+<li>fixed-size event ring buffer</li>
+<li>deterministic event ordering and drop accounting</li>
+<li>engine-side masking</li>
+<li>no host/UI concerns in engine implementation</li>
+</ol>
+<h3 id="d0-03-host-bridge-integration">D0-03 Host bridge integration</h3>
+<p>Focus:</p>
+<ol>
+<li>Tauri commands for open/poll/snapshot/close</li>
+<li>deterministic error handling</li>
+<li>contract generation for frontend clients</li>
+</ol>
+<h3 id="d0-04-browser-debug-panel">D0-04 Browser debug panel</h3>
+<p>Focus:</p>
+<ol>
+<li>optional read-only panel</li>
+<li>bounded polling while visible</li>
+<li>export-to-JSON bug artifact workflow</li>
+</ol>
+<h2 id="decisions-recommended-before-implementation">Decisions Recommended Before Implementation</h2>
+<p>These should be settled in D0-01 before code lands:</p>
+<ol>
+<li>event timestamps: monotonic only vs monotonic plus optional wall-clock projection</li>
+<li>default ring-buffer size in dev and CI contexts</li>
+<li>whether MVP supports more than one concurrent session</li>
+<li>exact masking heuristics for WML input names/types</li>
+<li>exact <code>postfield.resolve</code> payload schema</li>
+</ol>
+<h2 id="bottom-line">Bottom Line</h2>
+<p>The strongest proven pattern for Waves is:</p>
+<ol>
+<li>engine-owned recorder</li>
+<li>host-owned sessions</li>
+<li>read-only polling contract</li>
+<li>engine-side masking</li>
+<li>first-party Waves panel first</li>
+<li>external debugger/tool bridge later, reusing the same host-backed API</li>
+</ol>
+<p>That gives Waves a practical runtime debugger without violating current layer boundaries or overcommitting to a remote-debug protocol too early.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#engine-debug-connector-research-notes">Engine Debug Connector Research Notes</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#current-waves-baseline">Current Waves Baseline</a></li><li class="depth-2"><a href="#research-goal">Research Goal</a></li><li class="depth-2"><a href="#reviewed-systems">Reviewed Systems</a></li><li class="depth-3"><a href="#1-chrome-devtools-protocol-cdp">1. Chrome DevTools Protocol (CDP)</a></li><li class="depth-3"><a href="#2-firefox-remote-debugging-protocol-rdp">2. Firefox Remote Debugging Protocol (RDP)</a></li><li class="depth-3"><a href="#3-vs-code-debug-adapter-protocol-dap">3. VS Code Debug Adapter Protocol (DAP)</a></li><li class="depth-3"><a href="#4-node-inspector">4. Node Inspector</a></li><li class="depth-3"><a href="#5-webkit-remote-inspection">5. WebKit Remote Inspection</a></li><li class="depth-3"><a href="#6-redux-devtools--remote-redux-devtools">6. Redux DevTools / Remote Redux DevTools</a></li><li class="depth-2"><a href="#repeated-patterns-across-mature-systems">Repeated Patterns Across Mature Systems</a></li><li class="depth-2"><a href="#recommended-waves-architecture">Recommended Waves Architecture</a></li><li class="depth-3"><a href="#layer-1-engine-owned-recorder">Layer 1: Engine-owned recorder</a></li><li class="depth-3"><a href="#layer-2-host-owned-session-broker">Layer 2: Host-owned session broker</a></li><li class="depth-3"><a href="#layer-3-consumer-uitooling">Layer 3: Consumer UI/tooling</a></li><li class="depth-2"><a href="#recommended-mvp-contract-style">Recommended MVP Contract Style</a></li><li class="depth-2"><a href="#polling-vs-push">Polling vs Push</a></li><li class="depth-2"><a href="#event-ordering-and-time">Event Ordering and Time</a></li><li class="depth-2"><a href="#session-ownership">Session Ownership</a></li><li class="depth-2"><a href="#sensitive-data-policy">Sensitive Data Policy</a></li><li class="depth-2"><a href="#recommended-event-set-for-waves-mvp">Recommended Event Set for Waves MVP</a></li><li class="depth-2"><a href="#recommended-snapshot-contents">Recommended Snapshot Contents</a></li><li class="depth-2"><a href="#relationship-to-existing-traceentries">Relationship to Existing traceEntries()</a></li><li class="depth-2"><a href="#recommended-mvp-delivery-strategy">Recommended MVP Delivery Strategy</a></li><li class="depth-2"><a href="#proposed-reference-model-for-waves">Proposed Reference Model for Waves</a></li><li class="depth-2"><a href="#guidance-for-d0-work-items">Guidance for D0 Work Items</a></li><li class="depth-3"><a href="#d0-01-contract-and-architecture-baseline">D0-01 Contract and architecture baseline</a></li><li class="depth-3"><a href="#d0-02-engine-event-stream-and-snapshot-emitter">D0-02 Engine event stream and snapshot emitter</a></li><li class="depth-3"><a href="#d0-03-host-bridge-integration">D0-03 Host bridge integration</a></li><li class="depth-3"><a href="#d0-04-browser-debug-panel">D0-04 Browser debug panel</a></li><li class="depth-2"><a href="#decisions-recommended-before-implementation">Decisions Recommended Before Implementation</a></li><li class="depth-2"><a href="#bottom-line">Bottom Line</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/engine_debug_connector_research.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

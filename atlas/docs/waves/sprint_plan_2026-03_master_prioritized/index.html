@@ -1,0 +1,359 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Master Prioritized Sprint Plan (March 2026) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/sprint_plan_2026-03_master_prioritized"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/sprint_plan_2026-03_master_prioritized.md</p><div class="markdown-body"><h1 id="master-prioritized-sprint-plan-march-2026">Master Prioritized Sprint Plan (March 2026)</h1>
+<p>Status: active for already-in-flight cross-lane work; WAP 1.2.1 completion is governed by the compliance program</p>
+<p>Effective date: 2026-03-15</p>
+<p>Planning horizon: 3 consecutive sprints</p>
+<p>This plan resolves priority collisions for work already in flight. For new
+WAP 1.2.1 work and any completion/conformance claim, the dependency authority
+is <code>docs/waves/wap-1.2.1-compliance-program.json</code>, summarized by
+<code>docs/waves/WAP_1_2_1_PLANNING_BASELINE.md</code>.</p>
+<h2 id="priority-model">Priority Model</h2>
+<ol>
+<li>P0: unblock and close committed bedrock compliance tickets already in the active sprint lane.</li>
+<li>P0: close networking dependency chain required before protocol-native implementation blockers can move.</li>
+<li>P1: close already-active runtime/compliance work before starting fresh feature breadth.</li>
+<li>P1: keep transport/security follow-up work limited to deferred depth or newly discovered blockers.</li>
+<li>P2: run maintenance in parallel only when it does not starve P0/P1.</li>
+</ol>
+<h2 id="canonical-sources">Canonical Sources</h2>
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/NETWORKING_GAP_MASTER.md</code></li>
+<li><code>docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md</code></li>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></li>
+<li><code>docs/wml-engine/work-items.md</code></li>
+<li><code>docs/waves/WAP_1_2_1_PLANNING_BASELINE.md</code></li>
+<li><code>docs/waves/wap-1.2.1-compliance-program.json</code></li>
+</ul>
+<h2 id="wap-compliance-rebase-2026-07-24">WAP Compliance Rebase (2026-07-24)</h2>
+<p>Source/spec planning for the selected WAP-215 Class C profile is complete:
+201 selected parent rows, 781 planned clause fixtures, and a
+13-sprint/78-item execution program. The conservative implementation snapshot
+is 7 implemented, 84 partial, and 110 missing parent rows; clause-level
+assessment is still 0/781.</p>
+<p>Use this order for new completion work:</p>
+<ol>
+<li><code>WML-2</code> and <code>TRN-7</code> may proceed in parallel.</li>
+<li><code>WML-3</code> follows <code>WML-2</code>.</li>
+<li><code>REN-4</code> and <code>WMLS-5</code> follow <code>WML-3</code>.</li>
+<li><code>WAE-6</code> follows runtime, rendering, and script closure.</li>
+<li><code>WSP-8</code> follows <code>TRN-7</code> and <code>WAE-6</code>.</li>
+<li><code>INT-9</code> and then <code>REL-10</code> close cross-layer and release evidence.</li>
+<li><code>OPT-11</code> and <code>ENH-12</code> remain post-<code>REL-10</code> capability lanes.</li>
+</ol>
+<p>Existing downstream work may continue as an isolated foundation, but it
+cannot close its sprint or satisfy an upstream obligation early. The blocked
+source item <code>SRC-006</code> gates public redistribution only and does not block
+internal implementation or evidence work.</p>
+<h2 id="current-snapshot-as-of-2026-03-15">Current Snapshot (as of 2026-03-15)</h2>
+<p>This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.</p>
+<table>
+<thead>
+<tr>
+<th>Ticket</th>
+<th>Lane</th>
+<th>Current status</th>
+<th>Immediate dependency action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A5-01</code></td>
+<td>engine/runtime</td>
+<td><code>done</code></td>
+<td>request-shaped history fidelity and deterministic restore semantics are covered</td>
+</tr>
+<tr>
+<td><code>A5-04</code></td>
+<td>engine + browser</td>
+<td><code>done</code></td>
+<td>viewport-editable text input baseline is closed</td>
+</tr>
+<tr>
+<td><code>A5-05</code></td>
+<td>engine + browser</td>
+<td><code>done</code></td>
+<td>select/option interaction baseline is closed</td>
+</tr>
+<tr>
+<td><code>A5-06</code></td>
+<td>engine + browser + transport</td>
+<td><code>done</code></td>
+<td>form-state submit hardening is closed for the active MVP lane</td>
+</tr>
+<tr>
+<td><code>A5-07</code></td>
+<td>browser</td>
+<td><code>done</code></td>
+<td>blocking startup/navigation/browser hot-path remediation landed in <code>#109/#110</code></td>
+</tr>
+<tr>
+<td><code>R0-02</code></td>
+<td>engine + browser + transport</td>
+<td><code>done</code></td>
+<td>closed with deterministic host/runtime request-fidelity coverage</td>
+</tr>
+<tr>
+<td><code>R0-03</code></td>
+<td>engine + browser</td>
+<td><code>done</code></td>
+<td>closed with history/context fidelity integration evidence</td>
+</tr>
+<tr>
+<td><code>W0-05</code></td>
+<td>wavescript/runtime</td>
+<td><code>in-progress</code></td>
+<td>finish host capability plumbing and deterministic timer/dialog traces</td>
+</tr>
+<tr>
+<td><code>W0-06</code></td>
+<td>engine/wavescript</td>
+<td><code>done</code></td>
+<td>strict structural closure continues in <code>W1-02</code></td>
+</tr>
+<tr>
+<td><code>W1-06</code></td>
+<td>wavescript/runtime</td>
+<td><code>in-progress</code></td>
+<td>finalize remaining fatal/non-fatal fixture classes and close checklist split</td>
+</tr>
+<tr>
+<td><code>D0-01</code></td>
+<td>engine + browser + docs</td>
+<td><code>todo</code></td>
+<td>next planning-ready contract/architecture slice after active runtime correctness work</td>
+</tr>
+<tr>
+<td><code>T0-18</code></td>
+<td>transport</td>
+<td><code>done</code></td>
+<td>retransmission/duplicate/NACK hold-off baseline is closed</td>
+</tr>
+<tr>
+<td><code>T0-19</code></td>
+<td>transport</td>
+<td><code>done</code></td>
+<td>WDP ingress and UDP mapping baseline is closed</td>
+</tr>
+<tr>
+<td><code>T0-20</code></td>
+<td>transport</td>
+<td><code>done</code></td>
+<td>WSP registry/header/session baseline is closed</td>
+</tr>
+<tr>
+<td><code>T0-21</code></td>
+<td>transport/security</td>
+<td><code>done</code></td>
+<td>explicit WTLS boundary and minimal reliability lane are now closed</td>
+</tr>
+<tr>
+<td><code>T0-22</code></td>
+<td>transport</td>
+<td><code>done</code></td>
+<td>replay promotion gate is closed and seed-backed</td>
+</tr>
+<tr>
+<td><code>T0-24</code></td>
+<td>transport/docs</td>
+<td><code>done</code></td>
+<td>seed corpus is formalized and promotion-gated</td>
+</tr>
+<tr>
+<td><code>T0-25</code></td>
+<td>docs/spec-processing</td>
+<td><code>done</code></td>
+<td>external vector adoption sweep is closed</td>
+</tr>
+<tr>
+<td><code>T0-26</code></td>
+<td>transport/browser/docs</td>
+<td><code>done</code></td>
+<td>local Kannel readiness gate is explicit and runnable</td>
+</tr>
+<tr>
+<td><code>M1-08</code></td>
+<td>maintenance</td>
+<td><code>in-progress</code></td>
+<td>browser/transport cleanup is residual only and should stay non-preemptive</td>
+</tr>
+<tr>
+<td><code>M1-16</code></td>
+<td>maintenance/security</td>
+<td><code>done</code></td>
+<td>payload-size guardrails are closed for the current transport/engine/browser boundary</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sprint-1-review-bedrock--networking-unblockers">Sprint 1 Review: Bedrock + Networking Unblockers</h2>
+<h3 id="goal">Goal</h3>
+<p>Close committed bedrock compliance work while unblocking networking P0 blockers through dependency tickets.</p>
+<h3 id="must-complete-p0">Must Complete (P0)</h3>
+<ol>
+<li><code>A5-01</code> history entry fidelity.</li>
+<li><code>R0-02</code> inter-card process-order conformance.</li>
+<li><code>R0-03</code> history/context fidelity completion.</li>
+<li><code>W0-06</code> bytecode verification gates follow-up.</li>
+<li><code>T0-10</code> WSP assigned-number registry conformance fixtures.</li>
+<li><code>T0-11</code> WSP capability-bound and negotiation-limit enforcement.</li>
+<li><code>T0-12</code> Wireless Profiled TCP compatibility profile declaration.</li>
+<li><code>T0-13</code> SMPP adaptation scope gate and fixture baseline.</li>
+<li><code>T0-14</code> networking profile decision record and migration gates.</li>
+<li><code>T0-08</code> WTP replay-window conformance follow-up.</li>
+<li><code>T0-09</code> WSP connectionless primitive-profile conformance.</li>
+<li><code>T0-16</code> spec queue canonicalization follow-up.</li>
+</ol>
+<h3 id="stretch-only-if-all-p0-are-green">Stretch (only if all P0 are green)</h3>
+<ol>
+<li><code>W1-02</code> bytecode structural verification closure.</li>
+<li><code>M1-08</code> residual browser/transport cleanup only if new hot files emerge.</li>
+</ol>
+<h3 id="exit-gates">Exit Gates</h3>
+<ol>
+<li>Bedrock tickets <code>A5-01</code>, <code>R0-02</code>, <code>R0-03</code>, <code>W0-06</code> are <code>done</code> with mapped tests in <code>docs/waves/SPEC_TEST_COVERAGE.md</code>.</li>
+<li>Networking unblockers <code>T0-10</code>, <code>T0-11</code>, <code>T0-12</code>, <code>T0-13</code>, <code>T0-14</code>, <code>T0-08</code>, <code>T0-09</code>, <code>T0-16</code> are <code>done</code>.</li>
+<li>No P0 ticket is left in <code>blocked</code> due to unresolved dependency chain.</li>
+</ol>
+<p>Current result:</p>
+<ol>
+<li>Transport/spec unblockers are complete.</li>
+<li><code>A5-01</code> is now closed by engine history/back evidence plus browser request-shaped host-history coverage.</li>
+<li>The original Sprint 1 snapshot overstated closure on at least one engine/runtime item and should not be used as the current source of truth.</li>
+</ol>
+<h2 id="sprint-2-review-networking-protocol-core-blockers">Sprint 2 Review: Networking Protocol-Core Blockers</h2>
+<h3 id="goal-1">Goal</h3>
+<p>Close protocol-native transport P0 blockers and make replay harness work executable.</p>
+<h3 id="must-complete-p1">Must Complete (P1)</h3>
+<ol>
+<li><code>T0-19</code> WDP datagram trait + UDP port mapping baseline.</li>
+<li><code>T0-18</code> WTP retransmission/NACK hold-off policy implementation.</li>
+<li><code>T0-20</code> WSP header registry completion and unknown-token policy. <code>done</code></li>
+</ol>
+<h3 id="follow-on-same-sprint-if-capacity-allows">Follow-on (same sprint if capacity allows)</h3>
+<ol>
+<li><code>T0-22</code> networking interop replay harness and golden event corpus.</li>
+</ol>
+<h3 id="exit-gates-1">Exit Gates</h3>
+<ol>
+<li><code>T0-19</code>, <code>T0-18</code>, <code>T0-20</code> are <code>done</code> with deterministic fixture coverage.</li>
+<li><code>T0-22</code> is <code>done</code>.</li>
+<li>Promotion-gate preconditions in <code>docs/waves/networking-migration-readiness-checklist.md</code> are updated with current evidence.</li>
+</ol>
+<p>Current result:</p>
+<ol>
+<li>Sprint 2 transport goals are complete.</li>
+<li><code>T0-24</code>, <code>T0-25</code>, and <code>T0-26</code> also landed ahead of the original plan.</li>
+</ol>
+<h2 id="sprint-3-review-promotion-hardening--wtls-boundary">Sprint 3 Review: Promotion Hardening + WTLS Boundary</h2>
+<h3 id="goal-2">Goal</h3>
+<p>Finalize replay-driven promotion evidence and close explicit WTLS boundary posture.</p>
+<h3 id="must-complete">Must Complete</h3>
+<ol>
+<li><code>T0-22</code> (if not already done in Sprint 2).</li>
+<li><code>T0-21</code> WTLS phase boundary and minimal handshake reliability lane (default disabled).</li>
+</ol>
+<h3 id="optional">Optional</h3>
+<ol>
+<li><code>T0-24</code> PCAP seed corpus spike.</li>
+<li><code>T0-25</code> external conformance/vector source sweep.</li>
+<li><code>M1-09</code> frame migration kickoff (<code>F0-*</code> only) if P0/P1 lanes are stable.</li>
+</ol>
+<h3 id="exit-gates-2">Exit Gates</h3>
+<ol>
+<li>Networking promotion gate rule from <code>docs/waves/NETWORKING_GAP_MASTER.md</code> is fully satisfiable by committed evidence.</li>
+<li>WTLS posture is explicit, default-safe, and test-backed (<code>no-op</code> vs minimal active mode).</li>
+</ol>
+<p>Current result:</p>
+<ol>
+<li><code>T0-21</code>, <code>T0-24</code>, and <code>T0-25</code> are complete.</li>
+<li>Networking protocol-policy closure is no longer the pacing constraint, but live desktop/browser ingress still needs a native fetch lane instead of the legacy HTTP gateway bridge.</li>
+</ol>
+<h2 id="targeted-sprint-recommendation-runtime-fidelity--debug-boundary-reset-2026-03-15-onward">Targeted Sprint Recommendation: Runtime Fidelity + Debug Boundary Reset (2026-03-15 onward)</h2>
+<h3 id="goal-3">Goal</h3>
+<p>Now that the interactive forms lane and browser responsiveness remediation are landed, shift the active sprint back toward runtime correctness closure and the next planning-ready boundary definition.</p>
+<h3 id="must-complete-p0p1">Must Complete (P0/P1)</h3>
+<ol>
+<li><code>W0-05</code> timer/dialog integration baseline.</li>
+<li><code>D0-01</code> debug connector contract and architecture baseline.</li>
+<li><code>W1-06</code> fatal/non-fatal script error taxonomy closure.</li>
+</ol>
+<h3 id="follow-on-only-if-capacity-remains">Follow-on (only if capacity remains)</h3>
+<ol>
+<li><code>W1-06</code> fatal/non-fatal script error taxonomy closure.</li>
+<li><code>M1-09</code> frame migration kickoff (<code>F0-*</code> only).</li>
+<li>residual <code>M1-08</code> cleanup if a new hotspot emerges during the active lane.</li>
+</ol>
+<h3 id="concrete-commit-order-recommendation">Concrete commit-order recommendation</h3>
+<ol>
+<li><code>feat(runtime): finish timer/dialog host capability plumbing</code></li>
+<li><code>docs(debug): lock engine debug connector contract and boundary rules</code></li>
+<li><code>fix(runtime): close remaining fatal/non-fatal script taxonomy gaps</code></li>
+<li><code>feat(host): start frame migration only after the above boundaries are stable</code></li>
+</ol>
+<p>Implementation reference:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md">NATIVE_WSP_POST_RESEARCH_NOTES.md</a></li>
+</ul>
+<h3 id="exit-gates-3">Exit Gates</h3>
+<ol>
+<li>History/session fidelity gaps are reduced without reopening the now-stable form/browser responsiveness lane.</li>
+<li>Timer/dialog runtime semantics are host-integrated and deterministic.</li>
+<li>Debug connector architecture is contract-ready before another host-boundary migration starts.</li>
+<li>A fresh planning cycle is only needed once those three items materially change the execution picture.</li>
+</ol>
+<h2 id="parallel-follow-on-sprint-recommendation">Parallel Follow-on Sprint Recommendation</h2>
+<p>Current recommendation after the compliance rebase:</p>
+<ol>
+<li>Start the <code>WML-2</code> parser/deck/validation fixture lane.</li>
+<li>Continue <code>TRN-7</code> WDP/WCMP source-derived packet and error evidence in
+parallel.</li>
+<li>Treat <code>W0-05</code> and <code>W1-06</code> as <code>WMLS-5</code> foundations; do not declare that
+sprint complete before <code>WML-3</code>.</li>
+<li>Keep <code>D0-01</code> and maintenance work non-preemptive while strict P0/P1
+obligations are open.</li>
+</ol>
+<p>Completed this sprint:</p>
+<ol>
+<li>interactive text-input and select-control viewport editing</li>
+<li>native/browser submit hardening for the active form lane</li>
+<li>browser responsiveness and UI-blocking remediation</li>
+<li>transport/engine payload-size guardrails for active boundaries</li>
+</ol>
+<h2 id="capacity-and-wip-rules">Capacity and WIP Rules</h2>
+<ol>
+<li>Max two concurrent P0/P1 tickets per lane (<code>engine</code>, <code>transport</code>, <code>browser</code>).</li>
+<li>Never start P2 work when any P0/P1 ticket is <code>blocked</code> without an owner-assigned unblock action.</li>
+<li>Maintenance tickets may run in parallel only when they do not delay P0/P1 acceptance gates.</li>
+</ol>
+<h2 id="weekly-operating-cadence">Weekly Operating Cadence</h2>
+<ol>
+<li>Monday planning sync: confirm active ticket set and dependency risks.</li>
+<li>Mid-week gate check: verify test evidence and cross-board status sync.</li>
+<li>Friday closeout: update <code>WORK_ITEMS.md</code>, <code>SPEC_TEST_COVERAGE.md</code>, and this plan in the same PR(s).</li>
+</ol>
+<h2 id="change-control-rule">Change-Control Rule</h2>
+<p>If a new high-priority ticket appears, insert it into this plan by explicit priority tier and dependency impact; do not bypass current P0/P1 gates without documented reason.</p>
+<h2 id="merge-readiness-checklist">Merge Readiness Checklist</h2>
+<ol>
+<li><code>docs/waves/WORK_ITEMS.md</code> points to this file as canonical sprint ordering.</li>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code> and <code>docs/wml-engine/work-items.md</code> reference this file for active sprint priority.</li>
+<li>Sprint 1 tickets are tracked with current status fields on their source boards before code execution starts.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#master-prioritized-sprint-plan-march-2026">Master Prioritized Sprint Plan (March 2026)</a></li><li class="depth-2"><a href="#priority-model">Priority Model</a></li><li class="depth-2"><a href="#canonical-sources">Canonical Sources</a></li><li class="depth-2"><a href="#wap-compliance-rebase-2026-07-24">WAP Compliance Rebase (2026-07-24)</a></li><li class="depth-2"><a href="#current-snapshot-as-of-2026-03-15">Current Snapshot (as of 2026-03-15)</a></li><li class="depth-2"><a href="#sprint-1-review-bedrock--networking-unblockers">Sprint 1 Review: Bedrock + Networking Unblockers</a></li><li class="depth-3"><a href="#goal">Goal</a></li><li class="depth-3"><a href="#must-complete-p0">Must Complete (P0)</a></li><li class="depth-3"><a href="#stretch-only-if-all-p0-are-green">Stretch (only if all P0 are green)</a></li><li class="depth-3"><a href="#exit-gates">Exit Gates</a></li><li class="depth-2"><a href="#sprint-2-review-networking-protocol-core-blockers">Sprint 2 Review: Networking Protocol-Core Blockers</a></li><li class="depth-3"><a href="#goal-1">Goal</a></li><li class="depth-3"><a href="#must-complete-p1">Must Complete (P1)</a></li><li class="depth-3"><a href="#follow-on-same-sprint-if-capacity-allows">Follow-on (same sprint if capacity allows)</a></li><li class="depth-3"><a href="#exit-gates-1">Exit Gates</a></li><li class="depth-2"><a href="#sprint-3-review-promotion-hardening--wtls-boundary">Sprint 3 Review: Promotion Hardening + WTLS Boundary</a></li><li class="depth-3"><a href="#goal-2">Goal</a></li><li class="depth-3"><a href="#must-complete">Must Complete</a></li><li class="depth-3"><a href="#optional">Optional</a></li><li class="depth-3"><a href="#exit-gates-2">Exit Gates</a></li><li class="depth-2"><a href="#targeted-sprint-recommendation-runtime-fidelity--debug-boundary-reset-2026-03-15-onward">Targeted Sprint Recommendation: Runtime Fidelity + Debug Boundary Reset (2026-03-15 onward)</a></li><li class="depth-3"><a href="#goal-3">Goal</a></li><li class="depth-3"><a href="#must-complete-p0p1">Must Complete (P0/P1)</a></li><li class="depth-3"><a href="#follow-on-only-if-capacity-remains">Follow-on (only if capacity remains)</a></li><li class="depth-3"><a href="#concrete-commit-order-recommendation">Concrete commit-order recommendation</a></li><li class="depth-3"><a href="#exit-gates-3">Exit Gates</a></li><li class="depth-2"><a href="#parallel-follow-on-sprint-recommendation">Parallel Follow-on Sprint Recommendation</a></li><li class="depth-2"><a href="#capacity-and-wip-rules">Capacity and WIP Rules</a></li><li class="depth-2"><a href="#weekly-operating-cadence">Weekly Operating Cadence</a></li><li class="depth-2"><a href="#change-control-rule">Change-Control Rule</a></li><li class="depth-2"><a href="#merge-readiness-checklist">Merge Readiness Checklist</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/sprint_plan_2026-03_master_prioritized.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

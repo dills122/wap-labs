@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Networking Gap Master (Consolidated) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/networking_gap_master"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/networking_gap_master.md</p><div class="markdown-body"><h1 id="networking-gap-master-consolidated">Networking Gap Master (Consolidated)</h1>
+<p>Status: active
+Updated: 2026-03-05</p>
+<p>This document consolidates prior networking gap docs into one execution-oriented reference.</p>
+<p>Supersedes:</p>
+<ul>
+<li><code>docs/waves/archive/networking/networking-gap-analysis.md</code></li>
+<li><code>docs/waves/archive/networking/networking-strict-gap-audit.md</code></li>
+<li><code>docs/waves/archive/networking/networking-gap-to-source-map.md</code></li>
+</ul>
+<h2 id="scope">Scope</h2>
+<p>WAP protocol-native transport closure for:</p>
+<ul>
+<li>WDP</li>
+<li>WTP</li>
+<li>WSP</li>
+<li>WTLS (phase-gated, default disabled)</li>
+</ul>
+<h2 id="p0-blockers">P0 Blockers</h2>
+<ol>
+<li>WTP reliability core (<code>RQ-TRN-005..009</code>, <code>RQ-TRN-016</code>)</li>
+</ol>
+<ul>
+<li>Missing: deterministic retransmission policy, duplicate/TID window handling, NACK hold-off profile behavior.</li>
+<li>Ticket lane: <code>T0-18</code></li>
+</ul>
+<ol start="2">
+<li>WDP datagram/UDP contract (<code>RQ-TRN-001..004</code>)</li>
+</ol>
+<ul>
+<li>Missing: concrete protocol-native datagram trait as ingress boundary, deterministic malformed/MTU/SAR profile behavior.</li>
+<li>Ticket lane: <code>T0-19</code></li>
+</ul>
+<ol start="3">
+<li>WSP registry and unknown-token behavior (<code>RQ-TRN-014</code>, <code>RQ-TRN-018</code>)</li>
+</ol>
+<ul>
+<li>Missing: full assigned-number coverage in active profile with deterministic unknown-token/page policy.</li>
+<li>Ticket lane: <code>T0-20</code></li>
+</ul>
+<h2 id="p1-critical-next">P1 Critical Next</h2>
+<ol>
+<li>WTLS phase boundary (<code>RQ-SEC-004</code>, <code>RQ-SEC-005</code>)</li>
+</ol>
+<ul>
+<li>Explicit no-op vs minimal-active mode; no implicit activation.</li>
+<li>Ticket lane: <code>T0-21</code></li>
+</ul>
+<ol start="2">
+<li>Replay/interop promotion gates (<code>RQ-TRN-005..019</code>)</li>
+</ol>
+<ul>
+<li>CONNECT/GET/REPLY + retransmit/duplicate fixture corpus required for profile promotion.</li>
+<li>Ticket lane: <code>T0-22</code></li>
+</ul>
+<h2 id="p2-hardening">P2 Hardening</h2>
+<ol>
+<li>Adjacent-profile source classification and scope lock (<code>RQ-TRX-*</code>)</li>
+</ol>
+<ul>
+<li>Ticket lanes: <code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></li>
+<li>Current index/evidence source:
+<ul>
+<li><code>docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md</code></li>
+<li><code>spec-processing/external-source-index.json</code></li>
+<li><code>spec-processing/new-source-material/external-networking/README.md</code></li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>Canonical source-pipeline quality controls</li>
+</ol>
+<ul>
+<li>Keep parse/promote governance aligned with spec-processing flow and drift checks.</li>
+</ul>
+<ol start="3">
+<li>External vector adoption ranking (<code>RQ-TRN-*</code>, <code>RQ-SEC-*</code>)</li>
+</ol>
+<ul>
+<li>Ticket lane: <code>T0-25</code></li>
+<li>Current adoption register:
+<ul>
+<li><code>docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md</code></li>
+<li><code>docs/waves/networking-vector-adoption.json</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="source-anchors">Source anchors</h2>
+<p>Primary requirement sources:</p>
+<ul>
+<li><code>docs/waves/TRANSPORT_SPEC_TRACEABILITY.md</code></li>
+<li><code>docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></li>
+<li><code>docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md</code></li>
+</ul>
+<p>Execution sources:</p>
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/networking-implementation-checklist.md</code></li>
+<li><code>docs/waves/networking-migration-readiness-checklist.md</code></li>
+<li><code>docs/waves/networking-layer-definition.md</code></li>
+</ul>
+<h2 id="promotion-gate-rule">Promotion gate rule</h2>
+<p>Promotion from <code>gateway-bridged</code> to <code>wap-net-core</code> required:</p>
+<ol>
+<li><code>T0-18</code>, <code>T0-19</code>, <code>T0-20</code>, <code>T0-22</code> are green.</li>
+<li><code>T0-21</code> posture is explicit and default-safe.</li>
+<li>profile gates in <code>docs/waves/networking-migration-readiness-checklist.md</code> are satisfied.</li>
+</ol>
+<p>This promotion gate is now satisfied; future networking gap work targets <code>wap-net-ext</code> depth and any regression-triggered rollback conditions.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#networking-gap-master-consolidated">Networking Gap Master (Consolidated)</a></li><li class="depth-2"><a href="#scope">Scope</a></li><li class="depth-2"><a href="#p0-blockers">P0 Blockers</a></li><li class="depth-2"><a href="#p1-critical-next">P1 Critical Next</a></li><li class="depth-2"><a href="#p2-hardening">P2 Hardening</a></li><li class="depth-2"><a href="#source-anchors">Source anchors</a></li><li class="depth-2"><a href="#promotion-gate-rule">Promotion gate rule</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/networking_gap_master.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

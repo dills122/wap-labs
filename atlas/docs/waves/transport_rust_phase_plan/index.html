@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Transport Rust Phase Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/transport_rust_phase_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/transport_rust_phase_plan.md</p><div class="markdown-body"><h1 id="transport-rust-phase-plan">Transport Rust Phase Plan</h1>
+<p>Status: active implementation roadmap for <code>transport-rust/</code></p>
+<h2 id="goal">Goal</h2>
+<p>Incrementally evolve the in-process Rust transport from gateway-backed HTTP bridging to native protocol handling without leaking runtime/render concerns into transport.</p>
+<p>Transport boundary ends at normalized deck payload and optional XML event stream handoff.</p>
+<h2 id="current-baseline">Current Baseline</h2>
+<ul>
+<li><code>transport-rust</code> is integrated in browser host (<code>browser/src-tauri</code>).</li>
+<li>The browser’s default <code>auto</code> profile selects the in-process <code>wap-net-core</code>
+path for <code>wap://</code>/<code>waps://</code>; an explicit <code>gateway-bridged</code> profile remains
+available as a fallback/comparison path.</li>
+<li>Native GET/POST ingress is available under <code>wap-net-core</code>, but the live path
+is constrained connectionless WSP over WDP/UDP and does not yet call the
+fixture-tested <code>network::wsp</code>/<code>network::wtp</code> modules.</li>
+<li><code>waps://</code> currently selects port 9202 but does not apply WTLS or any other
+protection. Pre-alpha development/interoperability profiles may keep this
+path available with an unavoidable no-WTLS warning and false protection
+state; release profiles must fail closed.</li>
+<li>WBXML decode currently uses external <code>wbxml2xml</code> executable invocation.</li>
+<li>Retry/timeout/error mapping and coverage gate are active in Rust CI.</li>
+</ul>
+<p>Profile modes in use:</p>
+<ol>
+<li><code>gateway-bridged</code> (legacy): terminal path enters through configured gateway and remains available as rollback posture.</li>
+<li><code>wap-net-core</code> (current): in-process WDP/UDP -&gt; connectionless WSP with
+deterministic profile gating; WTP is not activated by the strict profile.</li>
+<li><code>wap-net-ext</code> (future): additional bearers, connection-oriented WSP/WTP,
+Push, and advanced sessions after explicit migration approval.</li>
+</ol>
+<p>Current profile decision point:</p>
+<ol>
+<li>protocol migration stays behind explicit profile gates and feature flags.</li>
+<li>transport contracts (<code>browser/contracts/transport.ts</code> and engine handoff paths) remain the compatibility boundary during all migration stages.</li>
+</ol>
+<h2 id="phase-a-complete-isolated-wbxml-decode">Phase A (Complete): Isolated WBXML decode</h2>
+<p>Objective:</p>
+<ul>
+<li>Decode untrusted WBXML without exposing the host process to native decoder faults.</li>
+</ul>
+<p>Scope:</p>
+<ul>
+<li>Invoke a trusted, absolute <code>wbxml2xml</code> executable as an isolated subprocess.</li>
+<li>Bound decoder execution time and decoded XML output.</li>
+<li>Preserve existing error taxonomy (<code>WBXML_DECODE_FAILED</code>, etc.).</li>
+<li>Keep all decode logic in <code>transport-rust</code> (no browser/runtime decode).</li>
+</ul>
+<p>Non-goals:</p>
+<ul>
+<li>No WSP/WTP parser rewrite yet.</li>
+<li>No WTLS session implementation.</li>
+<li>No runtime/render changes.</li>
+</ul>
+<p>Definition of done:</p>
+<ul>
+<li><code>fetch_deck</code> behavior unchanged for callers.</li>
+<li>No untrusted WBXML reaches native decoder code in the host process.</li>
+<li>Transport tests cover success, failure, timeout, output-limit, and executable-path branches.</li>
+</ul>
+<h2 id="phase-b-streaming-xml-event-boundary-after-decode">Phase B: Streaming XML event boundary after decode</h2>
+<p>Status: optional + low priority while protocol-stack lanes are incomplete.</p>
+<p>Objective:</p>
+<ul>
+<li>Support low-memory, deck-scoped processing from decoded XML stream.</li>
+</ul>
+<p>Scope:</p>
+<ul>
+<li>Introduce streaming parser layer (preferred: <code>quick-xml</code>; <code>xml-rs</code> acceptable if constrained).</li>
+<li>Add bounded parsing/memory guardrails and deterministic failure mapping.</li>
+<li>Keep engine-facing contract stable unless explicitly versioned.</li>
+</ul>
+<h2 id="phase-c-native-connectionless-wspwdp-path">Phase C: Native connectionless WSP/WDP path</h2>
+<p>Status: active protocol lane.</p>
+<p>Objective:</p>
+<ul>
+<li>Add direct binary protocol path while retaining gateway-backed mode.</li>
+</ul>
+<p>Scope:</p>
+<ul>
+<li>Close exact WAP-200 and WAP-203 selected rows for WDP and connectionless
+WSP framing/headers.</li>
+<li>Add the selected WAP-202 WCMP core.</li>
+<li>Introduce transport mode flags and clear fallback strategy.</li>
+<li>Keep browser API stable (<code>fetch_deck</code> contract first).</li>
+<li>Keep connection-oriented WSP/WTP as a separately gated extension.</li>
+</ul>
+<h2 id="phase-d-wtls-and-security-profile-expansion-deferred">Phase D: WTLS and security profile expansion (deferred)</h2>
+<p>Status: deferred until transport protocol gates close.</p>
+<p>Objective:</p>
+<ul>
+<li>Add exact historical encrypted-session support only after protocol parity gates close.</li>
+<li>Keep direct modern TLS, WAP-261 WTLS compatibility, plain WAP, and any future DTLS route as
+explicit profiles with no automatic downgrade.</li>
+<li>ASN.1/WTLS certificate handling is subject to a dedicated design and dependency review.</li>
+<li>Legacy cipher/profile handling remains behind an additive Cargo capability and an explicit
+runtime gateway allowlist.</li>
+<li>Follow
+<code>docs/architecture/wtls-modernization-research.md</code> and
+<code>docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md</code>.</li>
+</ul>
+<p>Immediate safety prerequisite, outside the deferred crypto implementation:</p>
+<ul>
+<li>report the current development/interoperability <code>waps://</code> route as unprotected and emit an
+unavoidable no-WTLS warning;</li>
+<li>block credentials and sensitive submissions on that route by default;</li>
+<li>prohibit the insecure testing exception in release profiles.</li>
+</ul>
+<h2 id="migration-lane-for-this-repo-protocol-aligned-execution-stack">Migration lane for this repo: protocol-aligned execution stack</h2>
+<ol>
+<li><code>T0-08</code>: WTP retransmission and replay behavior</li>
+<li><code>T0-09</code>: WSP connectionless primitive enforcement</li>
+<li><code>T0-10</code>: WSP assigned-number fidelity</li>
+<li><code>T0-11</code>: WSP capability negotiation and bounds</li>
+<li><code>T0-12</code>: TCP capability profile declaration</li>
+<li><code>T0-13</code>: SMPP adaptation scope decision</li>
+<li><code>T0-14</code>: transport profile decision and promotion gates</li>
+<li><code>T0-16</code>: source queue/variant canonicalization lock</li>
+<li><code>T0-17</code>: transport-adjacent scope sweep</li>
+<li><code>T0-18</code>: WTP retransmission/NACK hold-off policy implementation</li>
+<li><code>T0-19</code>: WDP datagram trait + UDP mapping baseline</li>
+<li><code>T0-20</code>: WSP registry/unknown-token policy completion</li>
+<li><code>T0-21</code>: WTLS phase boundary and minimal reliability lane</li>
+<li><code>T0-22</code>: interop replay harness and golden event corpus</li>
+</ol>
+<h2 id="regrouped-networking-priority-order-2026-03-05">Regrouped networking priority order (<code>2026-03-05</code>)</h2>
+<ol>
+<li><code>T0-19</code> WDP datagram trait + UDP mapping baseline</li>
+<li><code>T0-18</code> WTP retransmission/duplicate/NACK hold-off behavior</li>
+<li><code>T0-20</code> WSP registry/token and unknown-codepage handling</li>
+<li><code>T0-22</code> interop replay harness and golden event corpus</li>
+<li><code>T0-21</code> WTLS phase boundary/minimal lane (default disabled)</li>
+</ol>
+<h2 id="notes">Notes</h2>
+<ul>
+<li><code>Phase D</code> does not run forward until profile gates close and explicit security-profile scope is settled in <code>T0-14</code> and <code>T0-21</code>.</li>
+<li><code>WTLS-00</code> insecure-test labeling and release gating are not blocked on Phase D and should land
+with the native browser foundation.</li>
+<li>Completed <code>T0-*</code> implementation lanes are provisional evidence. Exact
+strict-profile closure is tracked by <code>TRN-701</code>, <code>TRN-703</code>, and
+<code>WSP-801</code>/<code>802</code>/<code>804</code>/<code>805</code>.</li>
+</ul>
+<h2 id="dependency-guidance">Dependency Guidance</h2>
+<p>Recommended now:</p>
+<ul>
+<li>No native WBXML FFI dependency; package or install the isolated <code>wbxml2xml</code> decoder.</li>
+</ul>
+<p>Recommended later by phase:</p>
+<ul>
+<li>Phase B: streaming XML parser crate.</li>
+<li>Phase C: binary parser/fsm crate(s), likely <code>nom</code>.</li>
+<li>Phase D: WTLS certificate/trust and legacy crypto providers, feature-gated and independently
+reviewed. Dependency selection follows the frozen WAP-261 client profile; do not choose a
+general crypto stack before that matrix exists.</li>
+</ul>
+<h2 id="guardrails">Guardrails</h2>
+<ul>
+<li>Transport must not own rendering, runtime navigation, or WMLScript execution.</li>
+<li>Engine must not own network transport or WBXML decode.</li>
+<li>Contract updates (<code>browser/contracts/transport.ts</code>) must accompany behavior changes.</li>
+</ul>
+<h2 id="tracking">Tracking</h2>
+<ul>
+<li>Update related execution items in <code>docs/waves/WORK_ITEMS.md</code>.</li>
+<li>Keep CI gates in sync with transport scope (<code>fmt</code>, <code>test</code>, <code>coverage</code>).</li>
+<li>Track local Kannel/browser E2E execution readiness in <code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code>.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#transport-rust-phase-plan">Transport Rust Phase Plan</a></li><li class="depth-2"><a href="#goal">Goal</a></li><li class="depth-2"><a href="#current-baseline">Current Baseline</a></li><li class="depth-2"><a href="#phase-a-complete-isolated-wbxml-decode">Phase A (Complete): Isolated WBXML decode</a></li><li class="depth-2"><a href="#phase-b-streaming-xml-event-boundary-after-decode">Phase B: Streaming XML event boundary after decode</a></li><li class="depth-2"><a href="#phase-c-native-connectionless-wspwdp-path">Phase C: Native connectionless WSP/WDP path</a></li><li class="depth-2"><a href="#phase-d-wtls-and-security-profile-expansion-deferred">Phase D: WTLS and security profile expansion (deferred)</a></li><li class="depth-2"><a href="#migration-lane-for-this-repo-protocol-aligned-execution-stack">Migration lane for this repo: protocol-aligned execution stack</a></li><li class="depth-2"><a href="#regrouped-networking-priority-order-2026-03-05">Regrouped networking priority order (2026-03-05)</a></li><li class="depth-2"><a href="#notes">Notes</a></li><li class="depth-2"><a href="#dependency-guidance">Dependency Guidance</a></li><li class="depth-2"><a href="#guardrails">Guardrails</a></li><li class="depth-2"><a href="#tracking">Tracking</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/transport_rust_phase_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

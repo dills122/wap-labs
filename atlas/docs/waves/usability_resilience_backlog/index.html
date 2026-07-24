@@ -1,0 +1,297 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Usability &amp; Resilience Backlog (2026-07-24) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/usability_resilience_backlog"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/usability_resilience_backlog.md</p><div class="markdown-body"><h1 id="waves-usability--resilience-backlog-2026-07-24">Waves Usability &amp; Resilience Backlog (2026-07-24)</h1>
+<p>Follow-up backlog from a usability/graceful-failure audit of the Waves browser
+frontend, grounded against Chromium’s own stated design principles (“no god
+objects,” “content not chrome,” keyboard/screen-reader access as core not
+afterthought), Firefox’s network-error-page pattern (plain-language error +
+visible retry), and Nielsen Norman’s usability heuristics (visibility of
+system status; help users recognize, diagnose, and recover from errors;
+consistency and standards).</p>
+<p>Sources: <a href="https://chromium.googlesource.com/chromium/src/+/lkgr/docs/chrome_browser_design_principles.md">Chromium browser design principles</a>, <a href="https://www.chromium.org/user-experience/">Chromium User Experience</a>, <a href="https://www.nngroup.com/articles/usability-heuristics-complex-applications/">NN/g 10 usability heuristics</a>, <a href="https://wiki.mozilla.org/Firefox/Projects/Network_Error_Pages">Firefox network error page design</a>.</p>
+<p>The higher-severity items from this same audit pass (WMLScript dialog
+visibility, frozen first-load skeleton, toast queueing, uniform
+fetch-failure toasting, focused-link/softkey ARIA) were fixed directly —
+see the PR that lands alongside this doc. This file tracks what was
+deliberately deferred.</p>
+<h2 id="how-to-use">How to use</h2>
+<p>Same convention as <code>MAINTENANCE_WORK_ITEMS.md</code>: each entry is a
+self-contained story with status/priority/files/finding/recommendation/
+acceptance. Pull one into a branch when picked up; update status in place.</p>
+<h2 id="current-queue">Current queue</h2>
+<h3 id="u1-no-progress-indication-on-repeat-navigations">U1 No progress indication on repeat navigations</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P2</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/browser-controller.ts</code> (navigation trigger sites)</li>
+<li><code>browser/frontend/src/app/browser-presenter.ts</code></li>
+<li><code>browser/frontend/src/components/status-panel.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>The shimmering skeleton loading state only ever shows for the very first deck render (<code>needsFirstRenderSkeleton = !this.presenter.hasRenderedDeck()</code>). Every subsequent navigation (link click, reload, back/forward, external intent) has zero in-progress indicator beyond a status-panel text color change — the viewport itself just sits static with the old content until the new response lands.</li>
+<li>Under real network latency (<code>WAVES_CONFIG.transportFetchTimeoutMs</code> = 5000ms plus a retry), a slow-but-working load is visually indistinguishable from a stuck one unless the user is actively watching the status panel text.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Reuse the existing skeleton/progress affordance (or a lighter inline spinner) for every navigation, not just the first, gated by a short delay (e.g. only show if the fetch hasn’t resolved within ~150-200ms) so instant local-mode loads don’t flash it unnecessarily.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Any navigation that takes longer than the short delay threshold shows a visible in-progress state in the viewport itself, not just the status panel.</li>
+</ul>
+<h3 id="u2-deck-parse-and-script-trap-errors-are-indistinguishable-from-network-errors">U2 Deck-parse and script-trap errors are indistinguishable from network errors</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P2</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/navigation-state.ts</code> (<code>EngineRuntimeSnapshot</code> fields: <code>lastScriptExecutionOk</code>, <code>lastScriptExecutionTrap</code>, <code>lastScriptExecutionErrorClass</code>, <code>lastScriptExecutionErrorCategory</code>)</li>
+<li><code>browser/frontend/src/app/browser-controller.ts</code></li>
+<li><code>browser/frontend/src/app/waves-copy.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>The engine already exposes a proper error taxonomy for script traps (<code>lastScriptExecutionErrorClass</code>/<code>errorCategory</code>), but the frontend only reads these fields for render change-detection (<code>engineSnapshotsEqual</code>) — never to change a status message or visual state. A malformed WML payload, a network timeout, and a WMLScript fatal trap all produce the exact same generic “error” status-panel text today.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Branch the status/toast message on the actual failure category (network vs. malformed-payload vs. script-trap) using data the engine already computes, so users (and anyone debugging a deck) can tell which layer failed without opening the dev drawer.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>The three failure classes produce visibly distinct, correctly-worded status messages.</li>
+</ul>
+<h3 id="u3-back-button-never-reflects-no-history-state">U3 Back button never reflects “no history” state</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/browser-controller.ts</code></li>
+<li><code>browser/frontend/src/app/browser-shell-template.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li><code>#btn-back</code> is never disabled, even when there is provably no back history (<code>navigateBackWithFallback</code> returns <code>'none'</code>). Both Chrome and Firefox dim/disable their back button at the start of history as a passive “don’t bother” signal rather than requiring the user to click and read a status message.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Track back-availability in render state and toggle <code>disabled</code>/<code>aria-disabled</code> on <code>#btn-back</code> accordingly. Low effort, matches an established platform convention.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Back button is disabled exactly when there is no engine or host history to go back to.</li>
+</ul>
+<h3 id="u4-color-palette-hardcoded-and-duplicated-no-shared-design-tokens">U4 Color palette hardcoded and duplicated, no shared design tokens</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/styles.css</code></li>
+<li><code>browser/frontend/src/components/status-panel.ts</code></li>
+<li><code>browser/frontend/src/components/surface-panel.ts</code></li>
+<li><code>browser/frontend/src/vendor/win95/win95.css</code> (read-only reference, third-party)</li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>Only <code>--motion-fast</code>/<code>--motion-base</code>/<code>--ease-standard</code>/<code>--waves-teal</code> exist as CSS custom properties. Everything else (status-panel tones, toast tones, win95-gray palette) is hardcoded hex, repeated independently in <code>styles.css</code> and inline in each Lit component’s <code>static styles</code>.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Extract a small shared token set (status/toast semantic colors at minimum) into <code>:root</code> custom properties, consumed by both plain CSS and the Lit components’ <code>css</code> templates.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Status/toast/error colors are defined once and referenced everywhere, not restated.</li>
+</ul>
+<h3 id="u5-no-runtime-configurable-timeoutcontrastfont-size">U5 No runtime-configurable timeout/contrast/font-size</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Priority</code>: <code>P4</code> (likely won’t do — flagging for a scope decision, not recommending)</li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/waves-config.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>All UX-relevant timing/behavior constants (<code>transportFetchTimeoutMs</code>, <code>transportFetchRetries</code>, <code>networkProbeMaxAttempts/DelayMs/TimeoutMs</code>, <code>toastTtlMs</code>, <code>engineTimerTickMs</code>) are compile-time constants with no UI to change them at runtime; same for any visual accessibility preference (contrast, font size).</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Before investing here, get an explicit call on scope: AGENTS.md frames this repo as a deterministic MVP emulator, not a modern-browser feature-parity target. This may be intentionally out of scope. Do not build a settings panel speculatively.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>N/A until a scope decision is made.</li>
+</ul>
+<h3 id="u6-browserpresenter-has-no-dispose-lifecycle-symmetry">U6 <code>BrowserPresenter</code> has no <code>dispose()</code> lifecycle symmetry</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/browser-presenter.ts</code></li>
+<li><code>browser/frontend/src/app/browser-controller.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li><code>BrowserPresenter</code>’s constructor registers a <code>devDrawerEl.addEventListener('toggle', ...)</code> with no matching teardown; <code>BrowserController.dispose()</code> never disposes its presenter. Currently harmless because <code>mountBrowserShell</code> replaces <code>#app.innerHTML</code> wholesale on every bootstrap/HMR cycle, dropping the old listener with the old DOM — but the class has no lifecycle symmetry with the controller that owns it.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Add a <code>dispose()</code> to <code>BrowserPresenter</code> that removes its listener(s); call it from <code>BrowserController.dispose()</code>.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Presenter listeners are torn down explicitly, not just implicitly via DOM replacement.</li>
+</ul>
+<h3 id="u7-debug-panel-full-json-reserialize-on-every-mutation">U7 Debug-panel full-JSON reserialize on every mutation</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/browser-presenter.ts</code> (<code>flushDeveloperPanels</code>, <code>scheduleDeveloperPanelFlush</code>)</li>
+<li><code>browser/frontend/src/app/browser-presenter.test.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>When the dev drawer is open, every session/snapshot/timeline mutation re-serializes the entire object graph via <code>JSON.stringify(..., null, 2)</code> rather than diffing. Gated behind <code>devDrawerEl.open</code> and dirty flags already (better than the original 2026-03-15 review’s “every update” finding), but still O(n) per mutation while open.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Not urgent — developer-facing panel, not user-facing. Revisit only if it shows up in real profiling, or bundle into a future <code>M1-08</code> follow-up pass.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>N/A — low priority, informational.</li>
+</ul>
+<ol start="7">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Fixed as part of the <code>M1-08</code> follow-up pass. <code>setSessionState</code>/<code>clearTimeline</code>/<code>recordTimeline</code>/
+<code>setSnapshot</code>/<code>setTransportResponse</code> no longer call <code>flushDeveloperPanels()</code> synchronously and
+immediately; they call a new <code>scheduleDeveloperPanelFlush()</code>, which coalesces same-tick
+mutations (e.g. <code>patchSessionState</code>’s <code>setSessionState</code> + <code>recordTimeline</code> pair, or several
+<code>recordTimeline</code> calls made back-to-back while stepping through a navigation) into a single
+microtask-deferred flush instead of one full <code>JSON.stringify</code> pass per call. The dev-drawer
+<code>toggle</code> listener still calls <code>flushDeveloperPanels()</code> directly/synchronously so opening the
+drawer shows current state immediately rather than a tick late. <code>flushDeveloperPanels()</code> itself
+is unchanged (still per-field dirty-gated, still a no-op while the drawer is closed). Verified
+with a new regression test (<code>coalesces a burst of same-tick timeline mutations into a single reserialize</code>) that spies on <code>JSON.stringify</code> and asserts three synchronous <code>recordTimeline</code>
+calls produce exactly one reserialize of the timeline array, plus a companion test confirming
+mutations in separate ticks still each flush. Low-risk, no behavior change to what’s displayed.</li>
+</ul>
+<h3 id="u8-marketing-siteglobalcss-is-a-single-1261-line-unsplit-stylesheet">U8 <code>marketing-site/global.css</code> is a single 1261-line unsplit stylesheet</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P4</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>marketing-site/src/styles/global.css</code></li>
+<li><code>marketing-site/src/components/*.astro</code> (new)</li>
+<li><code>marketing-site/src/pages/index.astro</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>No component-level splitting; will get harder to maintain as the site grows. Not broken today.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Defer until the next marketing-site change that touches styling meaningfully; not worth a standalone pass.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>N/A — cosmetic, low priority.</li>
+</ul>
+<ol start="7">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Extracted the nine previously inline page sections (header/nav, hero, signal strip, manifesto, stack, capabilities, shipping, final CTA, footer) into <code>marketing-site/src/components/*.astro</code>, each carrying its own scoped <code>&lt;style&gt;</code> block for the rules that belong to it alone, including that section’s responsive breakpoint overrides. <code>global.css</code> was trimmed to ~380 lines of genuinely cross-cutting rules: design tokens, the base reset, page-shell utilities, the shared brand mark (header+footer), shared button styles (hero+final-cta), shared section-heading/typography rules, and shared entrance-animation keyframes. <code>index.astro</code> now just composes the components; its reveal/nav-highlight <code>&lt;script&gt;</code> is unchanged. Verified via a structural diff of the built CSS (665/665 normalized declarations match between the old monolithic output and the new split output; the one apparent mismatch is a cosmetic artifact of Astro’s own compiler rewriting <code>.hero-copy &gt; *</code> to an equivalent attribute-selector form) and a full diff of the built <code>index.html</code> (identical DOM/classes/ids/text/script; the only additions are Astro’s own inert <code>data-astro-cid-*</code> scoping attributes). <code>pnpm --dir marketing-site --ignore-workspace run build</code> succeeds.</li>
+</ul>
+<h2 id="also-tracked-elsewhere-not-duplicated-here">Also tracked elsewhere (not duplicated here)</h2>
+<ul>
+<li><code>BrowserController</code> god-file decomposition — tracked as <code>M1-08</code> in <code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code> (status: done — residual DOM-listener-wiring and keyboard-intent-routing extraction landed).</li>
+<li><code>network::wsp</code> dead-code-vs-live-fetch-path split — tracked as <code>M1-18</code>.</li>
+<li><code>fetch_policy.rs</code> shallow destination-check hardening, gateway-bridged <code>AllowPrivate</code> invariant pinning, and <code>fetch_host.rs</code> gateway-transport-fallback host-scope confirmation — transport/tauri-layer hardening items surfaced in the same audit; see the maintenance doc entries <code>M1-19</code>/<code>M1-20</code>/<code>M1-21</code> added alongside this file.</li>
+<li>Full field-level IPC response-shape validation (currently only a null/undefined boundary guard) — deliberately partial; revisit as its own scoped design decision (schema library vs. hand-rolled checks), not bundled here.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-usability--resilience-backlog-2026-07-24">Waves Usability &amp; Resilience Backlog (2026-07-24)</a></li><li class="depth-2"><a href="#how-to-use">How to use</a></li><li class="depth-2"><a href="#current-queue">Current queue</a></li><li class="depth-3"><a href="#u1-no-progress-indication-on-repeat-navigations">U1 No progress indication on repeat navigations</a></li><li class="depth-3"><a href="#u2-deck-parse-and-script-trap-errors-are-indistinguishable-from-network-errors">U2 Deck-parse and script-trap errors are indistinguishable from network errors</a></li><li class="depth-3"><a href="#u3-back-button-never-reflects-no-history-state">U3 Back button never reflects “no history” state</a></li><li class="depth-3"><a href="#u4-color-palette-hardcoded-and-duplicated-no-shared-design-tokens">U4 Color palette hardcoded and duplicated, no shared design tokens</a></li><li class="depth-3"><a href="#u5-no-runtime-configurable-timeoutcontrastfont-size">U5 No runtime-configurable timeout/contrast/font-size</a></li><li class="depth-3"><a href="#u6-browserpresenter-has-no-dispose-lifecycle-symmetry">U6 BrowserPresenter has no dispose() lifecycle symmetry</a></li><li class="depth-3"><a href="#u7-debug-panel-full-json-reserialize-on-every-mutation">U7 Debug-panel full-JSON reserialize on every mutation</a></li><li class="depth-3"><a href="#u8-marketing-siteglobalcss-is-a-single-1261-line-unsplit-stylesheet">U8 marketing-site/global.css is a single 1261-line unsplit stylesheet</a></li><li class="depth-2"><a href="#also-tracked-elsewhere-not-duplicated-here">Also tracked elsewhere (not duplicated here)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/usability_resilience_backlog.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

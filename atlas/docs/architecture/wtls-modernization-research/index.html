@@ -1,0 +1,744 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WTLS Compatibility and Modern Transport Security Research · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="architecture/wtls-modernization-research"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>architecture</span></nav><p class="doc-path">docs/architecture/wtls-modernization-research.md</p><div class="markdown-body"><h1 id="wtls-compatibility-and-modern-transport-security-research">WTLS Compatibility and Modern Transport Security Research</h1>
+<p>Date: 2026-07-24
+Status: research recommendation
+Compatibility target: WAP 1.2.1 with WML 1.3
+Implementation target: Lowband transport in <code>transport-rust</code></p>
+<h2 id="executive-decision">Executive decision</h2>
+<p>Use two separate security lanes:</p>
+<ol>
+<li><strong>Modern transport security is the default.</strong> Direct <code>https://</code> uses a maintained TLS
+implementation with TLS 1.3 preferred, authenticated encryption, current certificate
+validation, and no legacy WTLS algorithms.</li>
+<li><strong>Historical WTLS is an explicit compatibility profile.</strong> It implements the WAP-261 wire
+protocol and selected conformance requirements exactly, but is disabled by default, scoped to
+an allowlisted WAP gateway, and visibly reported as legacy security.</li>
+</ol>
+<p>Do not silently fall back from modern TLS to WTLS, from WTLS to clear WAP, or from a stronger
+WTLS suite to an export suite after a failed handshake.</p>
+<p>If a modern secure datagram route is eventually required between two Lowband-controlled peers,
+evaluate DTLS 1.3 as a separate protocol profile. It must not be called standards-compliant WTLS
+and it will not interoperate with historical WAP gateways.</p>
+<h2 id="the-aes-correction">The AES correction</h2>
+<p>AES is not the obsolete part of historical WTLS:</p>
+<ul>
+<li>WAP-261 defines no AES cipher.</li>
+<li>Its bulk-encryption registry contains <code>NULL</code>, RC5-CBC, DES-CBC, 3DES-CBC-EDE, and IDEA-CBC
+variants.</li>
+<li>AES remains a current NIST standard with 128-, 192-, and 256-bit keys.</li>
+<li>The current TLS 1.3 specification requires implementations to support
+<code>TLS_AES_128_GCM_SHA256</code> and recommends AES-256-GCM and ChaCha20-Poly1305 support.</li>
+</ul>
+<p>There is therefore no historically accurate “legacy AES mode” for this target. The historical
+fallback is WTLS with its original algorithms and wire behavior. The modern mode is TLS 1.3, or
+potentially DTLS 1.3 for a new controlled datagram route.</p>
+<h2 id="source-authority-and-review-ledger">Source authority and review ledger</h2>
+<p>Repository source authority follows
+<a href="../waves/SOURCE_AUTHORITY_POLICY.md"><code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Class</th>
+<th>Use in this decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WAP-261-WTLS-20010406-a.pdf</code></td>
+<td>Normative historical</td>
+<td>WTLS record, alert, handshake, algorithms, classes, and SCR baseline</td>
+</tr>
+<tr>
+<td><code>WAP-261_100-WTLS-20010926-a.pdf</code></td>
+<td>Normative historical overlay</td>
+<td>Server-certificate selection and trusted-authority clarification</td>
+</tr>
+<tr>
+<td><code>WAP-261_101-WTLS-20011027-a.pdf</code></td>
+<td>Normative historical overlay</td>
+<td>Public-key hash calculation clarification</td>
+</tr>
+<tr>
+<td><code>WAP-261_102-WTLS-20011027-a.pdf</code></td>
+<td>Normative historical overlay</td>
+<td>Certificate-request key-identifier correction</td>
+</tr>
+<tr>
+<td>NIST FIPS 197-upd1</td>
+<td>Current cryptographic standard</td>
+<td>AES status and key sizes</td>
+</tr>
+<tr>
+<td>RFC 9846</td>
+<td>Current Internet standard</td>
+<td>TLS 1.3 protocol and cipher-suite baseline; obsoletes RFC 8446</td>
+</tr>
+<tr>
+<td>RFC 9325 / BCP 195</td>
+<td>Current operational guidance</td>
+<td>Version, cipher, and downgrade policy</td>
+</tr>
+<tr>
+<td>RFC 8439</td>
+<td>Current cryptographic construction</td>
+<td>ChaCha20-Poly1305 and software-efficiency rationale</td>
+</tr>
+<tr>
+<td>RFC 9147, updated by RFC 9853</td>
+<td>Current Internet standard</td>
+<td>Optional future secure datagram profile</td>
+</tr>
+<tr>
+<td>NIST SP 800-52 Rev. 2</td>
+<td>Current guidance under review</td>
+<td>TLS configuration and TLS 1.3 adoption context</td>
+</tr>
+<tr>
+<td>NIST SP 800-131A Rev. 2</td>
+<td>Current transition guidance</td>
+<td>Legacy algorithm transition context</td>
+</tr>
+</tbody>
+</table>
+<p>The local WAP corpus contains the WAP-261 baseline and all three identified WTLS SIN overlays.
+No additional WAP-261 algorithm overlay was found in the reviewed corpus.</p>
+<h2 id="what-wap-261-actually-specifies">What WAP-261 actually specifies</h2>
+<h3 id="protocol-shape">Protocol shape</h3>
+<p>WAP-261 describes a WTLS protocol version value of <code>1</code> and says the current specification covers
+WTLS implementation Class 1. WTLS is similar in purpose to TLS 1.0 but changes the wire protocol
+for constrained and datagram transports.</p>
+<p>Important differences from TLS include:</p>
+<ul>
+<li>a compact bit-field record header;</li>
+<li>optional record length;</li>
+<li>explicit 16-bit sequence numbers required over datagrams;</li>
+<li>transport-layer fragmentation rather than TLS record fragmentation;</li>
+<li>handshake retransmission and message concatenation rules for lossy datagrams;</li>
+<li>dynamic key refresh;</li>
+<li>WTLS-optimized certificates and trust identifiers;</li>
+<li>different algorithm registries and a 20-byte WTLS <code>master_secret</code>;</li>
+<li>a three-level alert model with a four-byte checksum.</li>
+</ul>
+<p>WTLS is not TLS with smaller packets. TLS or Rustls records cannot be placed on WAP secure ports
+and expected to interoperate.</p>
+<h3 id="key-exchange-registry">Key-exchange registry</h3>
+<p>WAP-261 Appendix A assigns the following key-exchange families:</p>
+<ul>
+<li><code>NULL</code> and <code>SHARED_SECRET</code>;</li>
+<li>anonymous finite-field DH, including 512- and 768-bit-limited forms;</li>
+<li>anonymous RSA, including 512- and 768-bit-limited forms;</li>
+<li>authenticated RSA, including 512- and 768-bit-limited forms;</li>
+<li>anonymous ECDH with compressed or uncompressed points and limited-size forms;</li>
+<li>authenticated <code>ECDH_ECDSA</code> with compressed or uncompressed points.</li>
+</ul>
+<p>Several choices are anonymous, export-limited, use small parameters, or rely on historical
+certificate and signature rules. Recognition of an assigned value is not permission to negotiate
+it in the shipping browser.</p>
+<h3 id="bulk-encryption-registry">Bulk-encryption registry</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Assigned value</th>
+<th>WAP-261 name</th>
+<th style="text-align: right">Effective key bits</th>
+<th>Modern product policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">0</td>
+<td><code>NULL</code></td>
+<td style="text-align: right">0</td>
+<td>Never accepted for a request requiring security</td>
+</tr>
+<tr>
+<td style="text-align: right">1</td>
+<td><code>RC5_CBC_40</code></td>
+<td style="text-align: right">40</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">2</td>
+<td><code>RC5_CBC_56</code></td>
+<td style="text-align: right">56</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">3</td>
+<td><code>RC5_CBC</code></td>
+<td style="text-align: right">128</td>
+<td>Legacy WTLS provider only, if required by interop profile</td>
+</tr>
+<tr>
+<td style="text-align: right">4</td>
+<td><code>DES_CBC_40</code></td>
+<td style="text-align: right">40</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">5</td>
+<td><code>DES_CBC</code></td>
+<td style="text-align: right">56</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">6</td>
+<td><code>3DES_CBC_EDE</code></td>
+<td style="text-align: right">112-equivalent</td>
+<td>Legacy WTLS provider only, if required by interop profile</td>
+</tr>
+<tr>
+<td style="text-align: right">7</td>
+<td><code>IDEA_CBC_40</code></td>
+<td style="text-align: right">40</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">8</td>
+<td><code>IDEA_CBC_56</code></td>
+<td style="text-align: right">56</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">9</td>
+<td><code>IDEA_CBC</code></td>
+<td style="text-align: right">128</td>
+<td>Legacy WTLS provider only, if required by interop profile</td>
+</tr>
+<tr>
+<td style="text-align: right">10</td>
+<td><code>RC5_CBC_64</code></td>
+<td style="text-align: right">64</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+<tr>
+<td style="text-align: right">11</td>
+<td><code>IDEA_CBC_64</code></td>
+<td style="text-align: right">64</td>
+<td>Parse/diagnose only; archival interop build at most</td>
+</tr>
+</tbody>
+</table>
+<p>The specification itself warns that 40-bit ciphers are highly susceptible to exhaustive search
+and ideally should not be supported. All defined non-null ciphers use CBC with an eight-byte block
+size and separate MAC-then-encrypt processing. None is a modern AEAD construction.</p>
+<h3 id="mac-registry">MAC registry</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Assigned value</th>
+<th>WAP-261 name</th>
+<th style="text-align: right">Output used</th>
+<th>Modern product policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">0</td>
+<td><code>SHA_0</code></td>
+<td style="text-align: right">0 bytes</td>
+<td>Never accepted for a request requiring security</td>
+</tr>
+<tr>
+<td style="text-align: right">1</td>
+<td><code>SHA_40</code></td>
+<td style="text-align: right">5 bytes of HMAC-SHA-1</td>
+<td>Archival compatibility only</td>
+</tr>
+<tr>
+<td style="text-align: right">2</td>
+<td><code>SHA_80</code></td>
+<td style="text-align: right">10 bytes of HMAC-SHA-1</td>
+<td>Legacy compatibility only</td>
+</tr>
+<tr>
+<td style="text-align: right">3</td>
+<td><code>SHA</code></td>
+<td style="text-align: right">20 bytes of HMAC-SHA-1</td>
+<td>Legacy compatibility only</td>
+</tr>
+<tr>
+<td style="text-align: right">4</td>
+<td>Removed</td>
+<td style="text-align: right">N/A</td>
+<td>Reject deterministically</td>
+</tr>
+<tr>
+<td style="text-align: right">5</td>
+<td><code>MD5_40</code></td>
+<td style="text-align: right">5 bytes of HMAC-MD5</td>
+<td>Archival compatibility only</td>
+</tr>
+<tr>
+<td style="text-align: right">6</td>
+<td><code>MD5_80</code></td>
+<td style="text-align: right">10 bytes of HMAC-MD5</td>
+<td>Archival compatibility only</td>
+</tr>
+<tr>
+<td style="text-align: right">7</td>
+<td><code>MD5</code></td>
+<td style="text-align: right">16 bytes of HMAC-MD5</td>
+<td>Archival compatibility only</td>
+</tr>
+</tbody>
+</table>
+<p>WAP-261 makes <code>SHA</code> support mandatory in the client and server SCR tables and recommends
+<code>SHA_80</code> in preference to the full-length form. That historical interoperability rule must not be
+misrepresented as modern security advice.</p>
+<h3 id="minimum-conformance-work-is-larger-than-crypto">Minimum conformance work is larger than crypto</h3>
+<p>A useful WTLS client is not achieved by adding a cipher to the current record wrapper. The
+WAP-261 client SCR includes mandatory behavior across:</p>
+<ul>
+<li>full and abbreviated handshakes;</li>
+<li>record concatenation and reliable handshake behavior;</li>
+<li>explicit sequence numbering and duplicate removal;</li>
+<li>key refresh;</li>
+<li>critical and fatal alerts plus alert checksums;</li>
+<li>Change Cipher Spec and application data;</li>
+<li>at least one anonymous key-exchange option;</li>
+<li>at least one server-authenticated option and certificate verification;</li>
+<li>encryption and MAC behavior;</li>
+<li>non-null defaults and rejection of unsolicited null key exchange.</li>
+</ul>
+<p>The three SINs also alter certificate-selection and identifier behavior and must be applied before
+interop claims are made.</p>
+<h2 id="current-lowband-audit">Current Lowband audit</h2>
+<h3 id="what-is-already-suitable-for-the-modern-lane">What is already suitable for the modern lane</h3>
+<ul>
+<li><code>reqwest</code> is built with its Rustls TLS backend.</li>
+<li>Direct <code>https://</code> requests already use that maintained TLS stack.</li>
+<li>The current dependency graph includes Rustls, Ring, WebPKI, and secret-zeroization support.</li>
+<li>Modern TLS therefore does not require Lowband to implement AES, ChaCha20, certificate path
+validation, or the TLS handshake itself.</li>
+</ul>
+<p>The browser should continue to use the maintained TLS library and expose the negotiated result.
+Lowband must not create a home-grown TLS implementation.</p>
+<h3 id="what-the-current-wtls-modules-are">What the current WTLS modules are</h3>
+<p>The files under <code>transport-rust/src/network/wtls/</code> are useful prototype boundaries, but are not
+WAP-261 wire implementations:</p>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Current prototype</th>
+<th>WAP-261 requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Record content type</td>
+<td>TLS values 20-23</td>
+<td>WTLS values 1-4 in bits 4-7 of <code>record_type</code></td>
+</tr>
+<tr>
+<td>Record header</td>
+<td>Fixed type/version/sequence/length</td>
+<td>Bit-field type with optional sequence and length; no TLS-style version pair</td>
+</tr>
+<tr>
+<td>Handshake header</td>
+<td>Type, sequence, length</td>
+<td>Type and 16-bit length; sequencing belongs to the WTLS record</td>
+</tr>
+<tr>
+<td>Handshake messages</td>
+<td>Client Hello, Server Hello, Finished</td>
+<td>Ten defined handshake message types and their complete bodies</td>
+</tr>
+<tr>
+<td>Alert</td>
+<td>Two bytes and two levels</td>
+<td>Six bytes, warning/critical/fatal, full description registry, four-byte checksum</td>
+</tr>
+<tr>
+<td>Record protection</td>
+<td>Plain payload wrapper</td>
+<td>MAC, CBC protection, padding, key derivation, refresh, and replay handling</td>
+</tr>
+<tr>
+<td>Trust</td>
+<td>None</td>
+<td>WTLS/X.509 certificate parsing, trust selection, validation, and SIN overlays</td>
+</tr>
+</tbody>
+</table>
+<p>The fixtures prove deterministic behavior of this prototype envelope. They do not prove WTLS
+wire conformance.</p>
+<h3 id="what-the-live-waps-route-does">What the live <code>waps://</code> route does</h3>
+<p>The current native fetch path:</p>
+<ol>
+<li>selects UDP port 9202 for <code>waps://</code>;</li>
+<li>encodes the same connectionless WSP payload used by <code>wap://</code>;</li>
+<li>sends it directly through the WDP UDP adapter;</li>
+<li>never invokes the prototype WTLS modules.</li>
+</ol>
+<p>The current route is therefore unencrypted. During pre-alpha development and interoperability
+testing, it may remain available through an explicit non-production test posture, but every
+request must report that WTLS is unavailable and that authentication, confidentiality, and
+integrity protection are all absent. Credentials and sensitive submissions remain blocked.
+Release profiles must fail closed until a real security profile exists.</p>
+<h2 id="target-security-profiles">Target security profiles</h2>
+<h3 id="modernweb"><code>ModernWeb</code></h3>
+<p>Purpose:</p>
+<ul>
+<li>normal installed-browser access to <code>https://</code> WML/WMLC origins;</li>
+<li>secure default for user credentials and sensitive deck data.</li>
+</ul>
+<p>Policy:</p>
+<ul>
+<li>use Rustls through the existing HTTP client;</li>
+<li>prefer TLS 1.3;</li>
+<li>support only maintained modern TLS configurations;</li>
+<li>allow the TLS implementation to negotiate AES-128-GCM, AES-256-GCM, or
+ChaCha20-Poly1305;</li>
+<li>use the platform/product trust policy and normal authority verification;</li>
+<li>return the negotiated protocol, cipher suite, peer identity, and validation result.</li>
+</ul>
+<p>AES-128-GCM is the TLS 1.3 mandatory-to-implement baseline and is efficient on systems with AES
+acceleration. ChaCha20-Poly1305 provides an efficient independent option on systems without
+specialized AES hardware. Both should be available; Lowband should not hard-code AES-256 as the
+only or universally “best” choice.</p>
+<h3 id="wtlscompatibility"><code>WtlsCompatibility</code></h3>
+<p>Purpose:</p>
+<ul>
+<li>packet-accurate interoperability with historical WAP gateways;</li>
+<li>WAP-261 conformance and preservation of original behavior.</li>
+</ul>
+<p>Policy:</p>
+<ul>
+<li>separate Cargo capability such as <code>wtls-compat</code>;</li>
+<li>disabled by default at runtime;</li>
+<li>enabled only for an explicit gateway profile;</li>
+<li>no automatic activation after a TLS, DTLS, WSP, or HTTP failure;</li>
+<li>negotiated suite restricted by a per-profile allowlist;</li>
+<li>export, null, anonymous, and truncated-MAC options independently controllable;</li>
+<li>user-visible legacy-security state;</li>
+<li>credentials and sensitive submissions blocked unless the user or administrator explicitly
+permits them for that profile;</li>
+<li>independent security review before a production security claim.</li>
+</ul>
+<p>For near-complete historical coverage, Lowband should recognize every assigned algorithm and
+produce deterministic unsupported-policy errors. Executable crypto can be delivered in tiers:</p>
+<ol>
+<li><strong>Interop tier:</strong> the smallest strong-historical subset demonstrated by target gateways.</li>
+<li><strong>Extended compatibility tier:</strong> additional non-export suites required by captured devices.</li>
+<li><strong>Archival tier:</strong> export, null, anonymous, and other intentionally unsafe combinations,
+available only in a non-production interop tool build.</li>
+</ol>
+<p>This separates specification coverage from unsafe default negotiation.</p>
+<h3 id="plainwap"><code>PlainWap</code></h3>
+<p>Purpose:</p>
+<ul>
+<li>historically accurate unencrypted <code>wap://</code> traffic where explicitly selected.</li>
+</ul>
+<p>Policy:</p>
+<ul>
+<li>never presented as secure;</li>
+<li>no automatic fallback from either secure profile;</li>
+<li>prominent transport state;</li>
+<li>credentials disabled by default;</li>
+<li>destination and gateway still explicitly configured.</li>
+</ul>
+<h3 id="developmentinteroperability-exception">Development/interoperability exception</h3>
+<p>Purpose:</p>
+<ul>
+<li>keep current WAP transport and browser testing unblocked while WTLS is deferred.</li>
+</ul>
+<p>Policy:</p>
+<ul>
+<li>available only through an explicit development/interoperability setting;</li>
+<li>permits the current unprotected <code>waps://</code> exchange without representing it as WTLS;</li>
+<li>emits an unavoidable warning in the request result and browser security state;</li>
+<li>reports no established security protocol and sets authentication, confidentiality, and
+integrity protection to false;</li>
+<li>blocks credentials, cookies marked secure, and sensitive form submissions by default;</li>
+<li>never activates because a secure negotiation failed;</li>
+<li>is prohibited by release configuration and verified by a release-gate test.</li>
+</ul>
+<p>This is a temporary testing exception, not a compatibility mode or security implementation.</p>
+<h3 id="moderndatagram-future-option"><code>ModernDatagram</code> (future option)</h3>
+<p>Purpose:</p>
+<ul>
+<li>efficient authenticated datagram transport between endpoints controlled by this project or a
+cooperating integrator.</li>
+</ul>
+<p>Policy:</p>
+<ul>
+<li>evaluate DTLS 1.3 rather than inventing new WTLS record protection;</li>
+<li>give it a new route/profile identifier;</li>
+<li>do not use WAP secure service ports as if it were WTLS;</li>
+<li>require both endpoints to opt into the same protocol;</li>
+<li>preserve WSP payload semantics only if the product has a concrete WSP-over-DTLS use case.</li>
+</ul>
+<p>This is an enhancement lane, not a WAP-261 compliance lane.</p>
+<h2 id="contract-direction">Contract direction</h2>
+<p>The public contract should report the selected policy and the verified outcome separately:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> enum</span><span style="color:#B392F0"> SecurityProfile</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    ModernWeb</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    WtlsCompatibility</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        gateway_profile_id</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#B392F0">    PlainWap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    ModernDatagram</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> enum</span><span style="color:#B392F0"> LegacyWtlsPolicy</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    Deny</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    AllowListed</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        allowed_key_exchanges</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">WtlsKeyExchange</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">        allowed_bulk_ciphers</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">WtlsBulkCipher</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">        allowed_macs</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">WtlsMac</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">        allow_anonymous</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        allow_export_strength</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        allow_null_protection</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> SecurityOutcome</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> requested_profile</span><span style="color:#F97583">:</span><span style="color:#B392F0"> SecurityProfile</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> established_protocol</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> negotiated_suite</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> peer_identity</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">String</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> authenticated</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> confidential</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> integrity_protected</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> legacy</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> warnings</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">SecurityWarning</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>These are design shapes, not yet stable public API types. Contract changes must begin in exported
+Rust types and flow through the generated browser transport contract.</p>
+<p>Required invariants:</p>
+<ol>
+<li>A release profile cannot produce a successful response for a secure scheme unless
+<code>authenticated</code>, <code>confidential</code>, and <code>integrity_protected</code> match the selected policy.</li>
+<li>The development/interoperability exception is explicit, reports all three protections as
+false, displays an unavoidable warning, and never claims WTLS was established.</li>
+<li>A failed secure handshake is a terminal security error, not a route-selection hint.</li>
+<li>Changing from <code>ModernWeb</code> to <code>WtlsCompatibility</code>, <code>PlainWap</code>, or the testing exception
+requires explicit policy or a direct user action.</li>
+<li>Session resumption state and credentials cannot cross profiles or gateway identities.</li>
+<li>The browser displays the negotiated result, not merely the requested scheme.</li>
+<li>Security traces redact secrets, key material, credential values, and sensitive deck data.</li>
+</ol>
+<h2 id="crypto-implementation-boundary">Crypto implementation boundary</h2>
+<h3 id="modern-tls">Modern TLS</h3>
+<p>Use Rustls through a maintained HTTP/TLS integration. Let the library own:</p>
+<ul>
+<li>TLS negotiation and downgrade protection;</li>
+<li>AEAD implementation;</li>
+<li>key exchange and key schedule;</li>
+<li>certificate parsing and path validation;</li>
+<li>record limits and key update;</li>
+<li>constant-time and platform-specific cryptographic implementation details.</li>
+</ul>
+<p>Lowband owns route policy, destination validation, trust-store selection, reporting, and
+application limits.</p>
+<h3 id="legacy-wtls">Legacy WTLS</h3>
+<p>WTLS needs its own protocol implementation because its records, handshakes, certificates, key
+schedule, and algorithms are wire-incompatible with TLS.</p>
+<p>Separate the state machine from cryptographic primitives:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">trait</span><span style="color:#B392F0"> WtlsCryptoProvider</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> random_bytes</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, output</span><span style="color:#F97583">:</span><span style="color:#F97583"> &amp;mut</span><span style="color:#E1E4E8"> [</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">]) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;(), </span><span style="color:#B392F0">WtlsCryptoError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> prf</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, input</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WtlsPrfInput</span><span style="color:#E1E4E8">&lt;'</span><span style="color:#B392F0">_</span><span style="color:#E1E4E8">&gt;) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">SecretBytes</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">WtlsCryptoError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> mac</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, input</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WtlsMacInput</span><span style="color:#E1E4E8">&lt;'</span><span style="color:#B392F0">_</span><span style="color:#E1E4E8">&gt;) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;, </span><span style="color:#B392F0">WtlsCryptoError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> encrypt_record</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, input</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WtlsEncryptInput</span><span style="color:#E1E4E8">&lt;'</span><span style="color:#B392F0">_</span><span style="color:#E1E4E8">&gt;) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;, </span><span style="color:#B392F0">WtlsCryptoError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> decrypt_record</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, input</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WtlsDecryptInput</span><span style="color:#E1E4E8">&lt;'</span><span style="color:#B392F0">_</span><span style="color:#E1E4E8">&gt;) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">SecretBytes</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">WtlsCryptoError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> key_exchange</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, input</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WtlsKeyExchangeInput</span><span style="color:#E1E4E8">&lt;'</span><span style="color:#B392F0">_</span><span style="color:#E1E4E8">&gt;)</span></span>
+<span class="line"><span style="color:#F97583">        -&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">SecretBytes</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">WtlsCryptoError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The provider boundary must not make unsafe algorithms appear interchangeable with modern TLS.
+Legacy algorithms should be compiled and enabled only where the compatibility profile requires
+them.</p>
+<p>Implementation rules:</p>
+<ul>
+<li>use audited library primitives where a compatible implementation exists;</li>
+<li>do not hand-write AES, RC5, DES, IDEA, hash, or big-integer primitives;</li>
+<li>obtain entropy from the operating system;</li>
+<li>zeroize WTLS master secrets, pre-master secrets, traffic keys, MAC secrets, and decrypted secret
+buffers;</li>
+<li>use constant-time comparisons for MACs, Finished values, and key identifiers;</li>
+<li>authenticate before accepting a sequence number into the replay window;</li>
+<li>avoid distinguishable padding/MAC errors;</li>
+<li>bound every record, vector, certificate, chain, retransmission buffer, and session cache;</li>
+<li>keep protocol parsing free of secret-dependent control flow where practical;</li>
+<li>treat all WTLS input as hostile.</li>
+</ul>
+<h2 id="downgrade-and-fallback-rules">Downgrade and fallback rules</h2>
+<p>The product may offer compatibility, but it must not offer opportunistic downgrade.</p>
+<p>Forbidden:</p>
+<ul>
+<li>retrying failed HTTPS as WTLS;</li>
+<li>retrying failed WTLS as clear WAP;</li>
+<li>adding export or null suites after a handshake failure;</li>
+<li>accepting a server-selected suite that was not offered;</li>
+<li>accepting <code>NULL</code> key exchange unless the client explicitly requested it;</li>
+<li>preserving a session established under a different security profile;</li>
+<li>hiding a downgrade warning in diagnostics only.</li>
+</ul>
+<p>Allowed:</p>
+<ul>
+<li>the user selects a saved historical WAP gateway profile;</li>
+<li>an administrator provisions a gateway-specific WTLS suite allowlist;</li>
+<li>an interop tool enables an archival profile with an unavoidable warning and no credential
+storage;</li>
+<li>the user deliberately retries a resource over a different route after seeing the security
+consequence.</li>
+</ul>
+<h2 id="work-program">Work program</h2>
+<p>WTLS implementation remains deferred behind the native-browser and live WSP/WTP work, but the
+research produces the following ordered backlog.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Work item</th>
+<th>Output / exit condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WTLS-00</td>
+<td>Label insecure <code>waps://</code> testing and gate release</td>
+<td>Development/interoperability requests return an unavoidable no-WTLS warning and false protection state; release profiles fail closed</td>
+</tr>
+<tr>
+<td>WTLS-01</td>
+<td>Freeze WAP-261 + SIN requirement matrix</td>
+<td>Client SCR rows, section anchors, selected class/profile, and evidence targets</td>
+</tr>
+<tr>
+<td>WTLS-02</td>
+<td>Replace prototype record/alert codecs</td>
+<td>Exact bit-field record, concatenation, sequence, checksum, and full alert registry fixtures</td>
+</tr>
+<tr>
+<td>WTLS-03</td>
+<td>Implement complete handshake values and FSM</td>
+<td>Full/abbreviated flows, ordering, retransmission, duplicates, and negative transitions</td>
+</tr>
+<tr>
+<td>WTLS-04</td>
+<td>Define session and replay state</td>
+<td>Address/port association, explicit sequence window, key refresh, resume, and teardown</td>
+</tr>
+<tr>
+<td>WTLS-05</td>
+<td>Implement certificate and trust profile</td>
+<td>WTLS certificate plus selected X.509 behavior with all three SIN overlays</td>
+</tr>
+<tr>
+<td>WTLS-06</td>
+<td>Add isolated legacy crypto provider</td>
+<td>OS RNG, secret lifecycle, PRF/MAC/key schedule, selected non-export suites, known-answer tests</td>
+</tr>
+<tr>
+<td>WTLS-07</td>
+<td>Add archival algorithm registry</td>
+<td>Every assigned value recognized; unsupported and intentionally disabled outcomes tested</td>
+</tr>
+<tr>
+<td>WTLS-08</td>
+<td>Integrate live secure routes</td>
+<td>Port 9202/9203 paths call the same conformance-tested WTLS codecs and return <code>SecurityOutcome</code></td>
+</tr>
+<tr>
+<td>WTLS-09</td>
+<td>Build interop corpus</td>
+<td>Kannel plus an independent implementation/capture set; packet loss, replay, malformed, and resume cases</td>
+</tr>
+<tr>
+<td>WTLS-10</td>
+<td>Independent review and product gate</td>
+<td>Cryptographic review, fuzzing, side-channel review, security UX, and release decision</td>
+</tr>
+<tr>
+<td>WTLS-X1</td>
+<td>Evaluate DTLS 1.3 separately</td>
+<td>Library maturity, footprint, WSP mapping, endpoint use case, and explicit non-WTLS naming</td>
+</tr>
+</tbody>
+</table>
+<p>Do not start <code>WTLS-06</code> by choosing algorithms first. <code>WTLS-01</code> through <code>WTLS-05</code> determine the
+actual wire, trust, and interoperability requirements the provider must satisfy.</p>
+<h2 id="verification-strategy">Verification strategy</h2>
+<p>Historical conformance evidence should include:</p>
+<ul>
+<li>byte-exact record, alert, and handshake golden fixtures;</li>
+<li>all assigned algorithm and alert values, including deterministic rejection;</li>
+<li>WAP-261 PRF, MAC, key-block, IV, key-refresh, and CBC known-answer vectors;</li>
+<li>full and abbreviated handshake transcript fixtures;</li>
+<li>certificate and public-key identifier vectors incorporating all SIN corrections;</li>
+<li>explicit sequence, replay-window, duplicate, wrap, loss, and reordering tests;</li>
+<li>null, anonymous, export, weak-MAC, bad-padding, bad-MAC, and invalid-certificate negatives;</li>
+<li>differential packet captures against at least two independent oracles where possible;</li>
+<li>parser/state-machine fuzzing and resource-exhaustion tests;</li>
+<li>redaction tests proving secrets never enter traces or serialized errors.</li>
+</ul>
+<p>Modern security evidence should include:</p>
+<ul>
+<li>TLS version and negotiated-suite reporting;</li>
+<li>normal certificate, hostname, expiry, unknown-anchor, and revocation-policy cases;</li>
+<li>proof that secure failure does not select WTLS or clear WAP;</li>
+<li>clean-machine trust-store and installer tests;</li>
+<li>current dependency, vulnerability, and cryptographic-policy review at release time.</li>
+</ul>
+<h2 id="alternatives-considered">Alternatives considered</h2>
+<h3 id="add-aes-gcm-to-wtls-and-call-it-compliant">Add AES-GCM to WTLS and call it compliant</h3>
+<p>Rejected. WAP-261 does not assign an AES suite and its record protection is not an AEAD
+construction. A private cipher assignment would require both endpoints, would not interoperate
+with historical gateways, and would not be WAP-261 compliance.</p>
+<h3 id="wrap-the-existing-wtls-api-around-tls">Wrap the existing WTLS API around TLS</h3>
+<p>Rejected for the classic WAP route. TLS requires a reliable ordered stream and has a different
+wire protocol. It is valid for direct HTTPS, not as WTLS on ports 9202/9203.</p>
+<h3 id="create-a-proprietary-wtls-2">Create a proprietary “WTLS 2”</h3>
+<p>Not selected. If a modern datagram protocol is needed, a standardized DTLS 1.3 profile should be
+evaluated before inventing a new security protocol.</p>
+<h3 id="make-wtls-the-default-because-it-is-historically-authentic">Make WTLS the default because it is historically authentic</h3>
+<p>Rejected. Historical authenticity is an interoperability mode, not an acceptable default
+security posture for credentials or user data.</p>
+<h3 id="automatically-try-modern-legacy-then-clear">Automatically try modern, legacy, then clear</h3>
+<p>Rejected. Network interference could turn ordinary handshake failure into a security downgrade.</p>
+<h2 id="external-references">External references</h2>
+<ul>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/wap/wap-261-wtls-20010406-a.pdf">WTLS, WAP-261</a></li>
+<li><a href="https://csrc.nist.gov/pubs/fips/197/final">AES, FIPS 197-upd1</a></li>
+<li><a href="https://www.rfc-editor.org/info/rfc9846/">TLS 1.3, RFC 9846</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9325.html">Recommendations for TLS and DTLS, RFC 9325</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc8439.html">ChaCha20 and Poly1305, RFC 8439</a></li>
+<li><a href="https://www.rfc-editor.org/info/rfc9147/">DTLS 1.3, RFC 9147</a></li>
+<li><a href="https://www.rfc-editor.org/info/rfc9853/">DTLS Return Routability Check, RFC 9853</a></li>
+<li><a href="https://csrc.nist.gov/pubs/sp/800/52/r2/final">NIST TLS Guidance, SP 800-52 Rev. 2</a></li>
+<li><a href="https://csrc.nist.gov/pubs/sp/800/131/a/r2/final">NIST Algorithm Transition Guidance, SP 800-131A Rev. 2</a></li>
+<li><a href="https://docs.rs/rustls/latest/rustls/crypto/ring/cipher_suite/">Rustls cipher-suite providers</a></li>
+</ul>
+<h2 id="related-repository-evidence">Related repository evidence</h2>
+<ul>
+<li><a href="../../transport-rust/Cargo.toml"><code>transport-rust/Cargo.toml</code></a></li>
+<li><a href="../../transport-rust/src/native_fetch.rs"><code>transport-rust/src/native_fetch.rs</code></a></li>
+<li><a href="../../transport-rust/src/network/wtls/record.rs"><code>transport-rust/src/network/wtls/record.rs</code></a></li>
+<li><a href="../../transport-rust/src/network/wtls/handshake.rs"><code>transport-rust/src/network/wtls/handshake.rs</code></a></li>
+<li><a href="../../transport-rust/src/network/wtls/alerts.rs"><code>transport-rust/src/network/wtls/alerts.rs</code></a></li>
+<li><a href="../waves/wtls-record-structure.md"><code>docs/waves/wtls-record-structure.md</code></a></li>
+<li><a href="../waves/SECURITY_BOUNDARY_TRACEABILITY.md"><code>docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md</code></a></li>
+<li><a href="native-wap-browser-product-architecture.md"><code>docs/architecture/native-wap-browser-product-architecture.md</code></a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wtls-compatibility-and-modern-transport-security-research">WTLS Compatibility and Modern Transport Security Research</a></li><li class="depth-2"><a href="#executive-decision">Executive decision</a></li><li class="depth-2"><a href="#the-aes-correction">The AES correction</a></li><li class="depth-2"><a href="#source-authority-and-review-ledger">Source authority and review ledger</a></li><li class="depth-2"><a href="#what-wap-261-actually-specifies">What WAP-261 actually specifies</a></li><li class="depth-3"><a href="#protocol-shape">Protocol shape</a></li><li class="depth-3"><a href="#key-exchange-registry">Key-exchange registry</a></li><li class="depth-3"><a href="#bulk-encryption-registry">Bulk-encryption registry</a></li><li class="depth-3"><a href="#mac-registry">MAC registry</a></li><li class="depth-3"><a href="#minimum-conformance-work-is-larger-than-crypto">Minimum conformance work is larger than crypto</a></li><li class="depth-2"><a href="#current-lowband-audit">Current Lowband audit</a></li><li class="depth-3"><a href="#what-is-already-suitable-for-the-modern-lane">What is already suitable for the modern lane</a></li><li class="depth-3"><a href="#what-the-current-wtls-modules-are">What the current WTLS modules are</a></li><li class="depth-3"><a href="#what-the-live-waps-route-does">What the live waps:// route does</a></li><li class="depth-2"><a href="#target-security-profiles">Target security profiles</a></li><li class="depth-3"><a href="#modernweb">ModernWeb</a></li><li class="depth-3"><a href="#wtlscompatibility">WtlsCompatibility</a></li><li class="depth-3"><a href="#plainwap">PlainWap</a></li><li class="depth-3"><a href="#developmentinteroperability-exception">Development/interoperability exception</a></li><li class="depth-3"><a href="#moderndatagram-future-option">ModernDatagram (future option)</a></li><li class="depth-2"><a href="#contract-direction">Contract direction</a></li><li class="depth-2"><a href="#crypto-implementation-boundary">Crypto implementation boundary</a></li><li class="depth-3"><a href="#modern-tls">Modern TLS</a></li><li class="depth-3"><a href="#legacy-wtls">Legacy WTLS</a></li><li class="depth-2"><a href="#downgrade-and-fallback-rules">Downgrade and fallback rules</a></li><li class="depth-2"><a href="#work-program">Work program</a></li><li class="depth-2"><a href="#verification-strategy">Verification strategy</a></li><li class="depth-2"><a href="#alternatives-considered">Alternatives considered</a></li><li class="depth-3"><a href="#add-aes-gcm-to-wtls-and-call-it-compliant">Add AES-GCM to WTLS and call it compliant</a></li><li class="depth-3"><a href="#wrap-the-existing-wtls-api-around-tls">Wrap the existing WTLS API around TLS</a></li><li class="depth-3"><a href="#create-a-proprietary-wtls-2">Create a proprietary “WTLS 2”</a></li><li class="depth-3"><a href="#make-wtls-the-default-because-it-is-historically-authentic">Make WTLS the default because it is historically authentic</a></li><li class="depth-3"><a href="#automatically-try-modern-legacy-then-clear">Automatically try modern, legacy, then clear</a></li><li class="depth-2"><a href="#external-references">External references</a></li><li class="depth-2"><a href="#related-repository-evidence">Related repository evidence</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/architecture/wtls-modernization-research.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

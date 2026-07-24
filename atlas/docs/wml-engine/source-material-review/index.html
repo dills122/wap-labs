@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Source Material Review (Canonical Local PDFs) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/source-material-review"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/source-material-review.md</p><div class="markdown-body"><h1 id="source-material-review-canonical-local-pdfs">Source Material Review (Canonical Local PDFs)</h1>
+<p>Reviewed directly from canonical local files under <code>spec-processing/source-material/</code>.</p>
+<h2 id="files-reviewed-for-wasm-engine">Files Reviewed for WASM Engine</h2>
+<ul>
+<li><code>WAP-191-WML-20000219-a.pdf</code></li>
+<li><code>WAP-191_102-WML-20001213-a.pdf</code> (SIN)</li>
+<li><code>WAP-191_104-WML-20010718-a.pdf</code></li>
+<li><code>WAP-191_105-WML-20020212-a.pdf</code> (SIN)</li>
+<li><code>WAP-192-WBXML-20010725-a.pdf</code></li>
+<li><code>WAP-192_105-WBXML-20011015-a.pdf</code> (SIN)</li>
+</ul>
+<p>Ignored for engine scope:</p>
+<ul>
+<li><code>WAP-196-ClientID-20010409-a.pdf</code></li>
+</ul>
+<h2 id="normalized-conclusions-for-engine-team">Normalized Conclusions for Engine Team</h2>
+<h2 id="1-core-deckcard-grammar-to-implement-first">1) Core deck/card grammar to implement first</h2>
+<p>From WML DTD lineage (<code>WAP-191</code> and retained in <code>WAP-191_104</code>):</p>
+<ul>
+<li>Deck root: <code>&lt;wml (head?, template?, card+)&gt;</code></li>
+<li>Card model: <code>&lt;card (onevent*, timer?, (do | p | pre)*)&gt;</code></li>
+<li>Task model: <code>%task = go | prev | noop | refresh</code></li>
+<li><code>do</code> and <code>onevent</code> both contain <code>%task</code></li>
+</ul>
+<h2 id="2-card-level-semantics-that-affect-renderingruntime">2) Card-level semantics that affect rendering/runtime</h2>
+<ul>
+<li><code>card@newcontext</code> default <code>false</code>.</li>
+<li><code>card@ordered</code> default <code>true</code>.</li>
+<li><code>card@ordered="false"</code> is only a layout/navigation hint, not strict rendering law.</li>
+<li>Card <code>id</code> is fragment-addressable (<code>#cardId</code>).</li>
+</ul>
+<h2 id="3-navigationtask-semantics-that-affect-runtime-state-machine">3) Navigation/task semantics that affect runtime state machine</h2>
+<p><code>go</code>:</p>
+<ul>
+<li>Supports <code>href</code>, <code>method=(post|get)</code>, <code>enctype</code>, <code>accept-charset</code>, <code>cache-control</code>, <code>sendreferer</code>.</li>
+<li>Performs history push semantics.</li>
+<li>Postfields may be ignored for same-deck target unless <code>cache-control="no-cache"</code>.</li>
+</ul>
+<p><code>prev</code>:</p>
+<ul>
+<li>History pop semantics with optional <code>setvar</code> side effects.</li>
+</ul>
+<p><code>refresh</code>:</p>
+<ul>
+<li>Applies setvar/state updates and re-renders current card context.</li>
+</ul>
+<p><code>noop</code>:</p>
+<ul>
+<li>Valid task with no action.</li>
+</ul>
+<h2 id="4-eventtimer-model-to-phase-in-after-mvp">4) Event/timer model to phase in after MVP</h2>
+<p>Intrinsic events include at least:</p>
+<ul>
+<li><code>onenterforward</code></li>
+<li><code>onenterbackward</code></li>
+<li><code>ontimer</code></li>
+</ul>
+<p>Timer semantics (<code>timer</code> element):</p>
+<ul>
+<li>One timer per card.</li>
+<li>Starts on card entry, stops on exit.</li>
+<li><code>value</code> units: tenths of a second.</li>
+<li>Non-positive/non-integral behavior has explicit ignore/disable rules.</li>
+<li>Timer expiration triggers <code>ontimer</code>.</li>
+</ul>
+<h2 id="5-variable-substitution-rules-critical-for-correctness">5) Variable substitution rules (critical for correctness)</h2>
+<ul>
+<li>Variables allowed in <code>#PCDATA</code>, <code>%vdata</code>, <code>%HREF</code> contexts.</li>
+<li>Undefined variable -&gt; empty string substitution.</li>
+<li>Substitution occurs after XML parsing.</li>
+<li>Conversion modes exist and must be applied by context.</li>
+</ul>
+<h2 id="6-a-semantics-for-mvp-link-handling">6) <code>&lt;a&gt;</code> semantics for MVP link handling</h2>
+<ul>
+<li><code>&lt;a&gt;</code> is shorthand for <code>&lt;anchor&gt;&lt;go href="..."&gt;&lt;/go&gt;&lt;/anchor&gt;</code> without setvar.</li>
+<li>Nested <code>&lt;a&gt;</code> is invalid.</li>
+</ul>
+<h2 id="7-wbxml-relevance-for-current-architecture-boundary">7) WBXML relevance for current architecture boundary</h2>
+<p>From WBXML docs (<code>WAP-192*</code>):</p>
+<ul>
+<li>WBXML is binary XML token stream with headers (version/publicid/charset/string-table).</li>
+<li>Uses code pages and global tokens (<code>SWITCH_PAGE</code>, <code>END</code>, <code>STR_I</code>, <code>STR_T</code>, <code>OPAQUE</code>, etc.).</li>
+<li>External typing system associates XML document types with token values.</li>
+</ul>
+<p>Engine implication for current architecture:</p>
+<ul>
+<li>Keep WBXML decode outside WASM runtime for now (transport layer), then feed textual WML into engine.</li>
+</ul>
+<h2 id="8-sin-impact-observed-in-reviewed-corpus">8) SIN impact observed in reviewed corpus</h2>
+<ul>
+<li><code>WAP-191_105</code> clarifies <code>go</code> post + <code>enctype</code> + charset behavior, including multipart guidance.</li>
+<li><code>WAP-192_105</code> primarily corrects/consolidates WBXML conformance references.</li>
+</ul>
+<h2 id="9-practical-rule-for-implementation-decisions">9) Practical rule for implementation decisions</h2>
+<p>When older and newer WML docs differ:</p>
+<ol>
+<li>Prefer <code>WAP-191_105</code> clarifications when present.</li>
+<li>Use <code>WAP-191_104</code> as broad baseline structure/semantics text.</li>
+<li>Fall back to <code>WAP-191</code> for historical wording only when needed.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#source-material-review-canonical-local-pdfs">Source Material Review (Canonical Local PDFs)</a></li><li class="depth-2"><a href="#files-reviewed-for-wasm-engine">Files Reviewed for WASM Engine</a></li><li class="depth-2"><a href="#normalized-conclusions-for-engine-team">Normalized Conclusions for Engine Team</a></li><li class="depth-2"><a href="#1-core-deckcard-grammar-to-implement-first">1) Core deck/card grammar to implement first</a></li><li class="depth-2"><a href="#2-card-level-semantics-that-affect-renderingruntime">2) Card-level semantics that affect rendering/runtime</a></li><li class="depth-2"><a href="#3-navigationtask-semantics-that-affect-runtime-state-machine">3) Navigation/task semantics that affect runtime state machine</a></li><li class="depth-2"><a href="#4-eventtimer-model-to-phase-in-after-mvp">4) Event/timer model to phase in after MVP</a></li><li class="depth-2"><a href="#5-variable-substitution-rules-critical-for-correctness">5) Variable substitution rules (critical for correctness)</a></li><li class="depth-2"><a href="#6-a-semantics-for-mvp-link-handling">6) &lt;a&gt; semantics for MVP link handling</a></li><li class="depth-2"><a href="#7-wbxml-relevance-for-current-architecture-boundary">7) WBXML relevance for current architecture boundary</a></li><li class="depth-2"><a href="#8-sin-impact-observed-in-reviewed-corpus">8) SIN impact observed in reviewed corpus</a></li><li class="depth-2"><a href="#9-practical-rule-for-implementation-decisions">9) Practical rule for implementation decisions</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/source-material-review.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

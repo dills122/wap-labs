@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>C4 Container View: Runtime and Delivery Units · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="architecture/c4-containers"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>architecture</span></nav><p class="doc-path">docs/architecture/c4-containers.md</p><div class="markdown-body"><h1 id="c4-container-view-runtime-and-delivery-units">C4 Container View: Runtime and Delivery Units</h1>
+<p>Date: 2026-07-24
+Status: target architecture</p>
+<p>This diagram shows independently running or deployed units. Lowband and WaveNav libraries are
+shown in the component view because embedded libraries are not C4 containers.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">C4Container</span></span>
+<span class="line"><span style="color:#E1E4E8">  title Container Diagram - WAP/WML Runtime and Delivery Units</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  Person(wmlUser, "WML Browser User", "Browses WML resources")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Person(sdkOperator, "SDK Operator", "Runs standalone network tooling")</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  System_Boundary(wavesSystem, "Waves Browser") {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Container(wavesUi, "Waves UI", "TypeScript in Tauri WebView", "Navigation, settings, rendering surface, and diagnostics")</span></span>
+<span class="line"><span style="color:#E1E4E8">    Container(wavesHost, "Waves Host", "Rust and Tauri 2 executable", "Orchestrates embedded transport and engine libraries")</span></span>
+<span class="line"><span style="color:#E1E4E8">    ContainerDb(localState, "Browser State", "Versioned local files and OS keychain", "Profiles, cookies, cache, history, and credentials")</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  System_Boundary(lowbandTools, "Optional Lowband Delivery Adapters") {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Container(lowbandCli, "Lowband CLI", "Rust executable", "Fetch, trace, replay, and conformance tool")</span></span>
+<span class="line"><span style="color:#E1E4E8">    Container(lowbandService, "Lowband Service", "Rust service executable", "Optional process API for non-embedding customers")</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  System_Ext(wmlOrigin, "WML Origin Server", "HTTP server hosting WML content")</span></span>
+<span class="line"><span style="color:#E1E4E8">  System_Ext(wapGateway, "WAP Proxy or Gateway", "Classic WAP protocol peer")</span></span>
+<span class="line"><span style="color:#E1E4E8">  System_Ext(osPlatform, "Desktop OS Platform", "Network stack, trust store, keychain, and filesystem")</span></span>
+<span class="line"><span style="color:#E1E4E8">  System_Ext(consumerApp, "Customer Application", "Embeds Lowband and/or WaveNav SDK libraries")</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(wmlUser, wavesUi, "Navigates and interacts through")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(wavesUi, wavesHost, "Invokes browser commands", "Tauri IPC")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(wavesHost, localState, "Reads and writes profiles and state")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(wavesHost, osPlatform, "Uses platform capabilities through", "Native APIs")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(wavesHost, wmlOrigin, "Fetches direct-route WML from", "HTTP/HTTPS")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(wavesHost, wapGateway, "Fetches classic-route WML through", "WSP/WTP/WTLS over UDP")</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(sdkOperator, lowbandCli, "Runs diagnostics with")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(lowbandCli, wmlOrigin, "Fetches direct-route resources from", "HTTP/HTTPS")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(lowbandCli, wapGateway, "Exercises classic WAP against", "WSP/WTP/WTLS over UDP")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(lowbandService, wmlOrigin, "Fetches direct-route resources from", "HTTP/HTTPS")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(lowbandService, wapGateway, "Exercises classic WAP against", "WSP/WTP/WTLS over UDP")</span></span>
+<span class="line"><span style="color:#E1E4E8">  Rel(consumerApp, lowbandService, "Optionally requests transport through", "Versioned IPC or HTTP API")</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")</span></span></code></pre>
+<h2 id="container-responsibilities">Container responsibilities</h2>
+<h3 id="waves-ui">Waves UI</h3>
+<ul>
+<li>address and navigation controls;</li>
+<li>profile/settings management;</li>
+<li>render surface and input events;</li>
+<li>user-visible transport, content, and security state;</li>
+<li>diagnostic and trace export.</li>
+</ul>
+<p>It does not parse WBXML or construct WAP packets.</p>
+<h3 id="waves-host">Waves Host</h3>
+<ul>
+<li>owns Lowband and WaveNav instances in-process;</li>
+<li>applies authoritative host policy;</li>
+<li>schedules blocking transport work off the UI loop;</li>
+<li>maps Lowband deck payloads into WaveNav load calls;</li>
+<li>mediates local state and OS capabilities.</li>
+</ul>
+<p>The browser remains one installable application even though its core libraries are separately
+releasable products.</p>
+<h3 id="browser-state">Browser State</h3>
+<p>The state store is logically one container but uses fit-for-purpose platform storage:</p>
+<ul>
+<li>non-secret versioned data for history, bookmarks, gateway profiles, and cache metadata;</li>
+<li>OS keychain for proxy/origin credentials and sensitive tokens;</li>
+<li>bounded cache files for response bodies and decoded decks.</li>
+</ul>
+<h3 id="lowband-cli-and-service">Lowband CLI and Service</h3>
+<p>Both are thin delivery adapters over the Lowband public API:</p>
+<ul>
+<li>the CLI is the primary diagnostics and conformance surface;</li>
+<li>the service is optional for customers who need a process boundary or non-Rust integration;</li>
+<li>neither owns a separate codec or state-machine implementation.</li>
+</ul>
+<p>The service is not part of the default desktop deployment.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#c4-container-view-runtime-and-delivery-units">C4 Container View: Runtime and Delivery Units</a></li><li class="depth-2"><a href="#container-responsibilities">Container responsibilities</a></li><li class="depth-3"><a href="#waves-ui">Waves UI</a></li><li class="depth-3"><a href="#waves-host">Waves Host</a></li><li class="depth-3"><a href="#browser-state">Browser State</a></li><li class="depth-3"><a href="#lowband-cli-and-service">Lowband CLI and Service</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/architecture/c4-containers.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

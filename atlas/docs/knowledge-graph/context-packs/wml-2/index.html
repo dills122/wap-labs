@@ -1,0 +1,658 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WML-2 AI Context Pack · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/context-packs/wml-2"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/context-packs/wml-2.md</p><div class="markdown-body"><h1 id="wml-2-ai-context-pack">WML-2 AI Context Pack</h1>
+<blockquote>
+<p>Generated from the WAP 1.2.1 knowledge graph pilot. Canonical manifests remain authoritative.</p>
+</blockquote>
+<h2 id="retrieval-contract">Retrieval contract</h2>
+<ul>
+<li>Target: <code>WML-2</code></li>
+<li>Release/profile: WAP 1.2.1, WML 1.3, <code>CCR-CLASSC-C-001</code></li>
+<li>Compatibility floor: <code>strict-historical-observable-behavior</code></li>
+<li>Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.</li>
+<li>Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.</li>
+<li>Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.</li>
+</ul>
+<h2 id="graph-summary">Graph summary</h2>
+<ul>
+<li>Nodes: 154</li>
+<li>Edges: 395</li>
+<li>Selected work items: 5</li>
+<li>Direct normative clauses: 51</li>
+<li>Work items without direct clause mappings: 3</li>
+<li>Work items with unmapped declared normative families: 5</li>
+</ul>
+<h2 id="execution-target">Execution target</h2>
+<h3 id="wml-2-wml-parser-deck-model-and-validation-baseline">WML-2: WML parser, deck model, and validation baseline</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Goal: Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.</li>
+<li>Depends on: <code>CONF-1</code></li>
+<li>Direct downstream sprints: <code>REN-4</code>, <code>WML-3</code></li>
+</ul>
+<p>Exit gates:</p>
+<ul>
+<li>All strict WML structures parse or fail deterministically.</li>
+<li>Text and WBXML input parity is fixture-backed.</li>
+<li>The 76-item SCR matrix has no unmapped mandatory parser obligation.</li>
+</ul>
+<h2 id="work-items">Work items</h2>
+<h3 id="wml-201-effective-76-item-wml-scr-matrix">WML-201: Effective 76-item WML SCR matrix</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>engine-wasm</code>, <code>qa</code></li>
+<li>Source families: <code>wml</code></li>
+<li>Existing tickets: <code>R0-01</code></li>
+<li>Direct normative clauses: 3</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Effective 76-item WML SCR matrix</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path engine-wasm/engine/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-conformance-ledger.mjs</code></li>
+</ul>
+<h3 id="wml-202-complete-deckheadtemplatecardaccessmeta-parser-model">WML-202: Complete deck/head/template/card/access/meta parser model</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>engine-wasm</code>, <code>qa</code></li>
+<li>Source families: <code>wml</code></li>
+<li>Existing tickets: <code>R0-04</code>, <code>C5-03</code></li>
+<li>Direct normative clauses: 0</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Complete deck/head/template/card/access/meta parser model</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path engine-wasm/engine/Cargo.toml</code></li>
+</ul>
+<h3 id="wml-203-wml-13-dtd-validation-policy">WML-203: WML 1.3 DTD validation policy</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>engine-wasm</code>, <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wml</code>, <code>wbxml</code>, <code>associated-assets</code></li>
+<li>Existing tickets: <code>R0-08</code>, <code>T0-07</code></li>
+<li>Direct normative clauses: 48</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WML 1.3 DTD validation policy</li>
+<li>Text/WBXML structural parity fixtures</li>
+<li>Direct conformance evidence for the three WBXML:MCF client rows</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Text WML and WBXML-derived WML reach equivalent deck models; strict DTD identity and unknown-DTD behavior are explicit.</li>
+<li>WBXML-C-001, WBXML-C-010, and WBXML-C-011 are fixture-backed against a pinned decoder; fake fixed-output and either-result fixtures do not satisfy this gate.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path engine-wasm/engine/Cargo.toml</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-wbxml-conformance-ledger.mjs</code></li>
+</ul>
+<h3 id="wml-204-complete-fieldcontrol-syntax-and-attribute-validation">WML-204: Complete field/control syntax and attribute validation</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>engine-wasm</code>, <code>qa</code></li>
+<li>Source families: <code>wml</code></li>
+<li>Existing tickets: <code>R0-04</code>, <code>B5-01</code>, <code>C5-05</code></li>
+<li>Direct normative clauses: 0</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Complete field/control syntax and attribute validation</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Input/select/option/optgroup/fieldset constraints, masks, defaults, and validation failures are deterministic.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path engine-wasm/engine/Cargo.toml</code></li>
+</ul>
+<h3 id="wml-205-wml-parseerror-taxonomy">WML-205: WML parse/error taxonomy</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>engine-wasm</code>, <code>qa</code></li>
+<li>Source families: <code>wml</code></li>
+<li>Existing tickets: <code>R0-07</code></li>
+<li>Direct normative clauses: 0</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WML parse/error taxonomy</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path engine-wasm/engine/Cargo.toml</code></li>
+</ul>
+<h2 id="direct-normative-obligations">Direct normative obligations</h2>
+<h3 id="wml-201">WML-201</h3>
+<ul>
+<li><strong>WAE-CL-WML-LANGUAGE-DELEGATE</strong> — Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements.
+<ul>
+<li>Family: <code>wae</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-190-WAESpec</code> §5.1.5 (5.1.5 Wireless Markup Language)</li>
+<li>Parents: <code>WAESpec-C-015</code>, <code>WAESpec-C-017</code></li>
+<li>Requirements: <code>RQ-RMK-001</code>, <code>RQ-WAE-002</code>, <code>RQ-WAE-016</code>, <code>RQ-WAE-017</code></li>
+<li>Fixture: <code>WAE-FX-WML-LANGUAGE-DELEGATE</code> (<code>runtime</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WAE-CL-WML-USER-AGENT-COMPOSITION</strong> — Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime.
+<ul>
+<li>Family: <code>wae</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-190-WAESpec</code> §5.1.7.2 (5.1.7.2 WML User Agent)</li>
+<li>Parents: <code>WAESpec-C-017</code></li>
+<li>Requirements: <code>RQ-WAE-002</code>, <code>RQ-WAE-016</code>, <code>RQ-WAE-017</code></li>
+<li>Fixture: <code>WAE-FX-WML-USER-AGENT-COMPOSITION</code> (<code>runtime</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE</strong> — Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.
+<ul>
+<li>Family: <code>wae</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-190-WAESpec</code> §5.1.6 (5.1.6 WMLScript)</li>
+<li>Parents: <code>WAESpec-C-016</code>, <code>WAESpec-C-017</code></li>
+<li>Requirements: <code>RQ-WAE-002</code>, <code>RQ-WAE-003</code>, <code>RQ-WAE-016</code>, <code>RQ-WAE-017</code>, <code>RQ-WMLS-001</code></li>
+<li>Fixture: <code>WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE</code> (<code>runtime</code>, <code>planned</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="wml-203">WML-203</h3>
+<ul>
+<li><strong>WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION</strong> — Do not interpret LITERAL as encoding any portion of an attribute value.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-ATTRIBUTE-LITERAL-VALUE-PROHIBITION</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-ATTRIBUTE-SEQUENCE</strong> — Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-ATTRIBUTE-SEQUENCE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-ATTRIBUTE-START-RANGE</strong> — Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-ATTRIBUTE-START-RANGE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-ATTRIBUTE-VALUE-RANGE</strong> — Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-ATTRIBUTE-VALUE-RANGE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-BINARY-LITERAL-EQUIVALENCE</strong> — Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §6.4 (6.4. Associating XML Documents with WBXML Token Values)</li>
+<li>Parents: <code>WBXML-C-011</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-BINARY-LITERAL-EQUIVALENCE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE</strong> — When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.2 (5.2. Character Encoding)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE</code> (<code>transport-boundary</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-CHARSET-INTERNAL-DEFAULT</strong> — Without external charset metadata, present strings using the encoding named by the WBXML charset field.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.2 (5.2. Character Encoding)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-CHARSET-INTERNAL-DEFAULT</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-CHARSET-MIBENUM</strong> — Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.6 (5.6. Charset)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-CHARSET-MIBENUM</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-CHARSET-STRING-TERMINATION</strong> — Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.2 (5.2. Character Encoding)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-CHARSET-STRING-TERMINATION</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-CHARSET-UNREPRESENTABLE-NAME</strong> — Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>error-condition</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.2 (5.2. Character Encoding)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-CHARSET-UNREPRESENTABLE-NAME</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED</strong> — Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-may</code>; level: <code>permitted</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §6.3 (6.3. Encoding Default Attribute Values)</li>
+<li>Parents: <code>WBXML-C-010</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED</strong> — Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §6.3 (6.3. Encoding Default Attribute Values)</li>
+<li>Parents: <code>WBXML-C-010</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-DOCUMENT-BODY-GRAMMAR</strong> — Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.3 (5.3. BNF for Document Structure)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-DOCUMENT-BODY-GRAMMAR</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-DOCUMENT-HEADER-ORDER</strong> — Decode each document in version, public identifier, charset, string-table, then body order.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.3 (5.3. BNF for Document Structure)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-DOCUMENT-HEADER-ORDER</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-EMPTY-ATTRIBUTE-STRING</strong> — Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.1 (5.8.4.1. Strings)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-EMPTY-ATTRIBUTE-STRING</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-END-TOKEN</strong> — Use END to terminate the current attribute list or element as determined by parser state.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.7.1 (5.8.4.7.1. END Token)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-END-TOKEN</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-ENTITY-UCS4</strong> — Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.3 (5.8.4.3. Character Entity)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-ENTITY-UCS4</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-EXTENSION-SWITCH-CONTEXT</strong> — Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.2 (5.8.4.2. Global Extension Tokens)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-EXTENSION-SWITCH-CONTEXT</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-EXTENSION-TOKEN-FORMS</strong> — Decode single-byte, inline-string, and inline-integer extension token forms.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.2 (5.8.4.2. Global Extension Tokens)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-EXTENSION-TOKEN-FORMS</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-EXTERNAL-TOKEN-TYPING</strong> — Use an external typing system to associate an XML document family with its WBXML token values.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §6.4 (6.4. Associating XML Documents with WBXML Token Values)</li>
+<li>Parents: <code>WBXML-C-011</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-EXTERNAL-TOKEN-TYPING</code> (<code>transport-boundary</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-GLOBAL-TOKEN-INVARIANCE</strong> — Give each global token the same structure and meaning in every code space and page.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4 (5.8.4. Global Tokens)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-GLOBAL-TOKEN-INVARIANCE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-INLINE-STRING</strong> — Decode STR_I as encoding-dependent terminated inline character data.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.1 (5.8.4.1. Strings)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-INLINE-STRING</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-LITERAL-NAME-STATE</strong> — Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.5 (5.8.4.5. Literal Tag or Attribute Name)</li>
+<li>Parents: <code>WBXML-C-001</code>, <code>WBXML-C-011</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-LITERAL-NAME-STATE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-LITERAL-TAG-FLAGS</strong> — Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.5 (5.8.4.5. Literal Tag or Attribute Name)</li>
+<li>Parents: <code>WBXML-C-001</code>, <code>WBXML-C-011</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-LITERAL-TAG-FLAGS</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-MIME-TOKEN-TYPING</strong> — For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §6.4 (6.4. Associating XML Documents with WBXML Token Values)</li>
+<li>Parents: <code>WBXML-C-011</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-MIME-TOKEN-TYPING</code> (<code>transport-boundary</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-MULTIBYTE-CONTINUATION</strong> — Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.1 (5.1. Multi-byte Integers)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-MULTIBYTE-CONTINUATION</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-MULTIBYTE-GROUP-ORDER</strong> — Combine multi-byte integer groups in most-significant-group-first order.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.1 (5.1. Multi-byte Integers)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-MULTIBYTE-GROUP-ORDER</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-MULTIBYTE-UNUSED-ZERO</strong> — Require unused value bits in the initial multi-byte integer octet to be zero.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.1 (5.1. Multi-byte Integers)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-MULTIBYTE-UNUSED-ZERO</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-NETWORK-BYTE-ORDER</strong> — Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5 (5. Binary XML Content Structure)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-NETWORK-BYTE-ORDER</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-OPAQUE-LENGTH</strong> — Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.6 (5.8.4.6. Opaque Data)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-OPAQUE-LENGTH</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-PARSER-STATE-PAGES</strong> — Maintain separate current code pages for tag and attribute parser states, each initialized to page zero.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.1 (5.8.1. Parser State Machine)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-PARSER-STATE-PAGES</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-PARSER-SWITCH-PERSISTENCE</strong> — Keep a selected code page active for its parser state until another switch in that state or document end.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.1 (5.8.1. Parser State Machine)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-PARSER-SWITCH-PERSISTENCE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-PROCESSING-INSTRUCTION</strong> — Decode PI target and optional value using attribute-start/value syntax terminated by END.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.4 (5.8.4.4. Processing Instruction)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-PROCESSING-INSTRUCTION</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-PUBLIC-ID-NUMERIC</strong> — Accept a positive multi-byte numeric public identifier for a known document type.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.5 (5.5. Document Public Identifier)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-PUBLIC-ID-NUMERIC</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-PUBLIC-ID-STRING-TABLE</strong> — When public identifier is zero, resolve its following index through the string table.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.5 (5.5. Document Public Identifier)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-PUBLIC-ID-STRING-TABLE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-STRING-TABLE-LENGTH</strong> — Treat string-table length as its byte count excluding the encoded length field.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.7 (5.7. String Table)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-STRING-TABLE-LENGTH</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-STRING-TABLE-OFFSETS</strong> — Resolve string-table references as byte offsets from the first table byte.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.7 (5.7. String Table)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-STRING-TABLE-OFFSETS</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-STRING-TABLE-REQUIRED</strong> — Read a string-table length immediately after charset even when the table is empty.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.7 (5.7. String Table)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-STRING-TABLE-REQUIRED</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-SWITCH-PAGE-TOKEN</strong> — Decode SWITCH_PAGE and its following page byte for the current parser state.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.7.2 (5.8.4.7.2. Code Page Switch Token)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-SWITCH-PAGE-TOKEN</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TABLE-STRING</strong> — Decode STR_T as a multi-byte byte offset into the string table.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.4.1 (5.8.4.1. Strings)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TABLE-STRING</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TAG-ATTRIBUTE-BIT</strong> — Use tag bit seven to determine whether an END-terminated attribute list follows.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.2 (5.8.2. Tag Code Space)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TAG-ATTRIBUTE-BIT</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT</strong> — When a tag has attributes and content, decode the complete attribute list before content.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.2 (5.8.2. Tag Code Space)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TAG-ATTRIBUTES-BEFORE-CONTENT</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TAG-CONTENT-BIT</strong> — Use tag bit six to determine whether content and its terminating END follow.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.2 (5.8.2. Tag Code Space)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TAG-CONTENT-BIT</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TAG-IDENTITY-BITS</strong> — Use tag bits zero through five as the application tag identity.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8.2 (5.8.2. Tag Code Space)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TAG-IDENTITY-BITS</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TOKEN-CODE-PAGES</strong> — Support 256 code pages per code space and reserve page 255 for implementation-specific use.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8 (5.8. Token Structure)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TOKEN-CODE-PAGES</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES</strong> — Distinguish fixed global tokens from context-dependent application tokens.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8 (5.8. Token Structure)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TOKEN-GLOBAL-APPLICATION-SPACES</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES</strong> — Interpret application token values in separate tag and attribute code spaces.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.8 (5.8. Token Structure)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-TOKEN-TAG-ATTRIBUTE-SPACES</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+<li><strong>WBXML-CL-VERSION-BYTE</strong> — Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.
+<ul>
+<li>Family: <code>wbxml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-192-WBXML</code> §5.4 (5.4. Version Number)</li>
+<li>Parents: <code>WBXML-C-001</code></li>
+<li>Requirements: <code>RQ-RMK-007</code>, <code>RQ-RMK-010</code></li>
+<li>Fixture: <code>WBXML-FX-VERSION-BYTE</code> (<code>binary-decoder</code>, <code>planned</code>)</li>
+</ul>
+</li>
+</ul>
+<h2 id="explicit-mapping-gaps">Explicit mapping gaps</h2>
+<ul>
+<li><code>WML-202</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+<li><code>WML-204</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+<li><code>WML-205</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+</ul>
+<p>Declared-family gaps:</p>
+<ul>
+<li><code>WML-201</code> declares <code>wml</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WML-202</code> declares <code>wml</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WML-203</code> declares <code>wml</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WML-204</code> declares <code>wml</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WML-205</code> declares <code>wml</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+</ul>
+<h2 id="source-documents">Source documents</h2>
+<ul>
+<li><code>WAP-190_101-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_101-WAESpec-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_101-WAESpec-20001213-a.pdf</a></li>
+<li><code>WAP-190_102-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_102-WAESpec-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_102-WAESpec-20001213-a.pdf</a></li>
+<li><code>WAP-190_103-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_103-WAESpec-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_103-WAESpec-20001213-a.pdf</a></li>
+<li><code>WAP-190_104-WAE-Spec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_104-WAE-Spec-20010731-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_104-WAE-Spec-20010731-a.pdf</a></li>
+<li><code>WAP-190-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190-WAESpec-20000329-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190-WAESpec-20000329-a.pdf</a></li>
+<li><code>WAP-191_102-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_102-WML-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_102-WML-20001213-a.pdf</a></li>
+<li><code>WAP-191_104-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_104-WML-20010718-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_104-WML-20010718-a.pdf</a></li>
+<li><code>WAP-191_105-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_105-WML-20020212-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_105-WML-20020212-a.pdf</a></li>
+<li><code>WAP-191-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191-WML-20000219-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191-WML-20000219-a.pdf</a></li>
+<li><code>WAP-192_105-WBXML</code>: Binary XML Content Format — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-192_105-WBXML-20011015-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-192_105-WBXML-20011015-a.pdf</a></li>
+<li><code>WAP-192-WBXML</code>: Binary XML Content Format — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-192-WBXML-20010725-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-192-WBXML-20010725-a.pdf</a></li>
+<li><code>WAP-215-ClassConform-20001213-a</code>: Class Conformance Requirements — <a href="https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf">https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf</a></li>
+<li><code>wml13-dtd</code>: WML 1.3 Document Type Definition — <a href="https://www.openmobilealliance.org/tech/dtd/wml13.dtd">https://www.openmobilealliance.org/tech/dtd/wml13.dtd</a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wml-2-ai-context-pack">WML-2 AI Context Pack</a></li><li class="depth-2"><a href="#retrieval-contract">Retrieval contract</a></li><li class="depth-2"><a href="#graph-summary">Graph summary</a></li><li class="depth-2"><a href="#execution-target">Execution target</a></li><li class="depth-3"><a href="#wml-2-wml-parser-deck-model-and-validation-baseline">WML-2: WML parser, deck model, and validation baseline</a></li><li class="depth-2"><a href="#work-items">Work items</a></li><li class="depth-3"><a href="#wml-201-effective-76-item-wml-scr-matrix">WML-201: Effective 76-item WML SCR matrix</a></li><li class="depth-3"><a href="#wml-202-complete-deckheadtemplatecardaccessmeta-parser-model">WML-202: Complete deck/head/template/card/access/meta parser model</a></li><li class="depth-3"><a href="#wml-203-wml-13-dtd-validation-policy">WML-203: WML 1.3 DTD validation policy</a></li><li class="depth-3"><a href="#wml-204-complete-fieldcontrol-syntax-and-attribute-validation">WML-204: Complete field/control syntax and attribute validation</a></li><li class="depth-3"><a href="#wml-205-wml-parseerror-taxonomy">WML-205: WML parse/error taxonomy</a></li><li class="depth-2"><a href="#direct-normative-obligations">Direct normative obligations</a></li><li class="depth-3"><a href="#wml-201">WML-201</a></li><li class="depth-3"><a href="#wml-203">WML-203</a></li><li class="depth-2"><a href="#explicit-mapping-gaps">Explicit mapping gaps</a></li><li class="depth-2"><a href="#source-documents">Source documents</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/context-packs/wml-2.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

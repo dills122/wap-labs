@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>ADR 0002: Separate Modern Transport Security from WTLS Compatibility · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="architecture/decisions/0002-separate-modern-security-from-wtls-compatibility"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>architecture</span></nav><p class="doc-path">docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md</p><div class="markdown-body"><h1 id="adr-0002-separate-modern-transport-security-from-wtls-compatibility">ADR 0002: Separate Modern Transport Security from WTLS Compatibility</h1>
+<p>Date: 2026-07-24
+Status: proposed</p>
+<h2 id="context">Context</h2>
+<p>Waves needs secure modern browser behavior and historically accurate WAP-261 interoperability.
+These goals cannot be satisfied by one automatically negotiated cipher list:</p>
+<ul>
+<li>WAP-261 defines RC5, DES/3DES, and IDEA CBC suites with SHA-1 or MD5 MAC variants;</li>
+<li>WAP-261 defines no AES suite;</li>
+<li>WTLS records, handshakes, alerts, certificates, and key derivation are wire-incompatible with
+TLS and DTLS;</li>
+<li>AES remains a current cipher, while TLS 1.3 uses modern AEAD modes such as AES-GCM and
+ChaCha20-Poly1305;</li>
+<li>the current <code>waps://</code> path selects port 9202 but sends unprotected WSP.</li>
+</ul>
+<h2 id="decision">Decision</h2>
+<p>Adopt explicit, non-downgrading security profiles.</p>
+<ol>
+<li>Direct <code>https://</code> uses the maintained Rustls-backed HTTP path and is the modern default.</li>
+<li>WAP-261 WTLS is implemented as a separate <code>WtlsCompatibility</code> profile.</li>
+<li>The WTLS profile is disabled by default and enabled only for an explicit gateway profile and
+suite allowlist.</li>
+<li>Secure failure never automatically selects WTLS, clear WAP, export crypto, anonymous key
+exchange, null protection, or a truncated MAC.</li>
+<li>An explicit development/interoperability setting may keep the current unprotected <code>waps://</code>
+path available while WTLS is deferred, but it reports no established security, emits an
+unavoidable warning, and blocks credentials and sensitive submissions by default.</li>
+<li>Release profiles fail closed for <code>waps://</code> until a verified live WTLS profile exists.</li>
+<li>A future modern datagram route evaluates DTLS 1.3 under a distinct name and route identifier.</li>
+<li>Every successful secure response reports a verified <code>SecurityOutcome</code>, including negotiated
+protocol, suite, peer identity, authentication, confidentiality, integrity, and legacy state.</li>
+<li>WTLS conformance coverage distinguishes assigned-value recognition from algorithms permitted
+to execute in a shipping browser.</li>
+</ol>
+<h2 id="why">Why</h2>
+<ul>
+<li>It preserves exact WAP-261 behavior where interoperability requires it.</li>
+<li>It keeps obsolete algorithms out of the default product security posture.</li>
+<li>It avoids inventing a private “modern WTLS” that historical gateways cannot understand.</li>
+<li>It reuses maintained TLS cryptography instead of implementing TLS primitives in Lowband.</li>
+<li>It prevents network-triggered downgrade.</li>
+<li>It keeps pre-alpha WAP testing available without confusing test transport with real security.</li>
+<li>It allows the browser, SDK, CLI, and interop tooling to apply different explicit policies over
+the same protocol implementation.</li>
+</ul>
+<h2 id="consequences">Consequences</h2>
+<p>Positive:</p>
+<ul>
+<li>modern users receive modern TLS without losing historical WTLS coverage;</li>
+<li>WTLS can be packet-accurate without being misrepresented as current-grade security;</li>
+<li>export/null/anonymous behavior can be tested without being generally enabled;</li>
+<li>future DTLS work cannot accidentally claim WAP-261 interoperability;</li>
+<li>security state becomes visible and testable at the host contract.</li>
+</ul>
+<p>Costs:</p>
+<ul>
+<li>the product maintains separate modern-TLS and legacy-WTLS policy paths;</li>
+<li>WTLS still requires substantial wire, state-machine, certificate, and cryptographic work;</li>
+<li>compatibility configuration and warning UX become required product surfaces;</li>
+<li>independent cryptographic review is required before enabling WTLS for real user traffic.</li>
+</ul>
+<h2 id="rejected-alternatives">Rejected alternatives</h2>
+<h3 id="add-aes-gcm-or-chacha20-poly1305-to-the-wap-261-cipher-registry">Add AES-GCM or ChaCha20-Poly1305 to the WAP-261 cipher registry</h3>
+<p>Rejected because it is a private extension, not historical WTLS compliance, and requires both
+endpoints to implement the new assignment and record-protection semantics.</p>
+<h3 id="treat-tls-or-dtls-as-a-transparent-wtls-implementation">Treat TLS or DTLS as a transparent WTLS implementation</h3>
+<p>Rejected because the protocols are wire-incompatible. TLS remains the direct HTTPS solution;
+DTLS may become a new controlled datagram solution.</p>
+<h3 id="automatically-fall-back-to-legacy-security">Automatically fall back to legacy security</h3>
+<p>Rejected because an attacker or network fault could force weaker security.</p>
+<h3 id="enable-all-wtls-algorithms-to-maximize-compatibility">Enable all WTLS algorithms to maximize compatibility</h3>
+<p>Rejected for the shipping browser. Lowband may recognize all assigned values and provide an
+explicit archival interop build, while the runtime compatibility profile remains allowlisted.</p>
+<h2 id="acceptance-conditions">Acceptance conditions</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Development/interoperability <code>waps://</code> emits an unavoidable no-WTLS warning, reports no
+protection, and blocks credentials and sensitive submissions by default.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Release profiles cannot send plaintext for <code>waps://</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Direct HTTPS uses the maintained TLS implementation and exposes negotiated security state.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WTLS uses exact WAP-261 records, handshakes, alerts, and SIN overlays.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Legacy WTLS activation is explicit and gateway-scoped.</li>
+<li class="task-list-item"><input type="checkbox" disabled> No failed secure request changes security profile automatically.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Assigned-but-disabled algorithms produce deterministic policy errors.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Credentials default to blocked on plain and legacy routes.</li>
+<li class="task-list-item"><input type="checkbox" disabled> DTLS, if added, has a distinct profile and makes no WTLS compliance claim.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Independent review approves any production WTLS release.</li>
+</ul>
+<h2 id="detailed-research">Detailed research</h2>
+<p>See
+<a href="../wtls-modernization-research.md"><code>docs/architecture/wtls-modernization-research.md</code></a>.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#adr-0002-separate-modern-transport-security-from-wtls-compatibility">ADR 0002: Separate Modern Transport Security from WTLS Compatibility</a></li><li class="depth-2"><a href="#context">Context</a></li><li class="depth-2"><a href="#decision">Decision</a></li><li class="depth-2"><a href="#why">Why</a></li><li class="depth-2"><a href="#consequences">Consequences</a></li><li class="depth-2"><a href="#rejected-alternatives">Rejected alternatives</a></li><li class="depth-3"><a href="#add-aes-gcm-or-chacha20-poly1305-to-the-wap-261-cipher-registry">Add AES-GCM or ChaCha20-Poly1305 to the WAP-261 cipher registry</a></li><li class="depth-3"><a href="#treat-tls-or-dtls-as-a-transparent-wtls-implementation">Treat TLS or DTLS as a transparent WTLS implementation</a></li><li class="depth-3"><a href="#automatically-fall-back-to-legacy-security">Automatically fall back to legacy security</a></li><li class="depth-3"><a href="#enable-all-wtls-algorithms-to-maximize-compatibility">Enable all WTLS algorithms to maximize compatibility</a></li><li class="depth-2"><a href="#acceptance-conditions">Acceptance conditions</a></li><li class="depth-2"><a href="#detailed-research">Detailed research</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

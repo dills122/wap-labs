@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Network Profile Decision Record · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/network_profile_decision_record"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/network_profile_decision_record.md</p><div class="markdown-body"><h1 id="network-profile-decision-record">Network Profile Decision Record</h1>
+<p>Status: active<br>
+Owner: transport-rust + browser + engine<br>
+Ticket: <code>T0-14</code></p>
+<h2 id="canonical-decision">Canonical decision</h2>
+<ol>
+<li>Active implementation target profile: <code>wap-net-core</code>.</li>
+<li>Live desktop/browser ingress posture: legacy <code>gateway-bridged</code> fetch path remains in use until native fetch activation tickets land.</li>
+<li>Target runtime profile after desktop activation: <code>wap-net-core</code>.</li>
+<li>Promotion beyond <code>wap-net-core</code> remains gated by future extension-lane decisions.</li>
+</ol>
+<h2 id="profile-definitions">Profile definitions</h2>
+<h3 id="gateway-bridged-legacy-baseline"><code>gateway-bridged</code> (legacy baseline)</h3>
+<ul>
+<li>Transport uses configured gateway HTTP/WBXML path.</li>
+<li>Native WDP/connectionless-WSP protocol stack is not the active ingress path.</li>
+<li>Host/runtime contracts remain stable and deterministic under this mode.</li>
+</ul>
+<p>Fixture lane:</p>
+<ul>
+<li><code>transport-rust/tests/kannel_smoke.rs</code></li>
+<li><code>transport-rust/tests/fixture_harness.rs</code></li>
+<li><code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code></li>
+</ul>
+<h3 id="wap-net-core-active"><code>wap-net-core</code> (active)</h3>
+<ul>
+<li>Transport ingress is native WDP/UDP -&gt; connectionless WSP.</li>
+<li>The strict WAP 1.2.1 Class C path does not activate WTP.</li>
+<li>Profile activation requires protocol-core fixture evidence and replay-gate evidence.</li>
+<li>Activation must not alter browser/engine contracts without explicit contract update tickets.</li>
+</ul>
+<p>Current caveat:</p>
+<ul>
+<li>Native GET/POST ingress and smoke slices are landed, but exact
+WAP-200/WAP-202/WAP-203 conformance remains open under <code>TRN-701</code>,
+<code>TRN-703</code>, and <code>WSP-801</code>/<code>802</code>/<code>804</code>/<code>805</code>.</li>
+</ul>
+<p>Fixture lane:</p>
+<ul>
+<li><code>transport-rust/src/wsp_registry.rs</code> (assigned-number policy fixtures)</li>
+<li><code>transport-rust/src/wsp_capability.rs</code> (capability-bound fixtures)</li>
+<li><code>transport-rust/tests/network/interop/</code> (promotion replay lane; tracked by <code>T0-22</code> and <code>T0-24</code>)</li>
+</ul>
+<h3 id="wap-net-ext-target-gated"><code>wap-net-ext</code> (target, gated)</h3>
+<ul>
+<li>Future extension profile for additional bearers, connection-oriented
+WSP/WTP, Push, and advanced session features.</li>
+<li>Promotion requires explicit additional gates beyond the protocol-core baseline.</li>
+<li>Activation must remain contract-compatible or ship with explicit contract changes.</li>
+</ul>
+<h2 id="promotion-gates">Promotion gates</h2>
+<p>Promotion from <code>gateway-bridged</code> to <code>wap-net-core</code> required all of:</p>
+<ol>
+<li><code>T0-17</code> scope lock is <code>done</code>.</li>
+<li><code>T0-18</code>, <code>T0-19</code>, <code>T0-20</code>, <code>T0-22</code>, and <code>T0-24</code> are <code>done</code> with fixture evidence.</li>
+<li><code>T0-21</code> security boundary posture is explicit and default-safe.</li>
+<li>Contract stability checks stay green for:
+<ul>
+<li><code>browser/contracts/transport.ts</code></li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+</ul>
+</li>
+<li>Local Kannel E2E readiness remains explicit and tracked in:
+<ul>
+<li><code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code></li>
+</ul>
+</li>
+</ol>
+<p>This gate set and the browser/native activation slices are satisfied for
+protocol-core readiness. They do not substitute for the exact 22-row strict
+transport conformance program.</p>
+<h2 id="rollback-criteria">Rollback criteria</h2>
+<p>If profile activation introduces deterministic regressions or contract drift, rollback from <code>wap-net-core</code> to <code>gateway-bridged</code> is mandatory when any of the following occur:</p>
+<ol>
+<li>Replay harness (<code>T0-22</code>/<code>T0-24</code>) fails for the selected <code>GET</code>/<code>POST</code>/<code>REPLY</code>
+lane or for an explicitly enabled extension lane.</li>
+<li>Contract checks fail for browser/engine boundary payloads.</li>
+<li>Cross-layer fixture regressions appear in transport/runtime hostflow evidence.</li>
+</ol>
+<p>Rollback action:</p>
+<ol>
+<li>Revert active profile selection to <code>gateway-bridged</code>.</li>
+<li>Preserve failing fixture artifacts in the associated <code>T0-*</code> ticket notes.</li>
+<li>Re-open promotion only with new explicit remediation tickets.</li>
+</ol>
+<h2 id="operational-tracking">Operational tracking</h2>
+<p>Use <a href="/Users/dsteele/repos/wap-labs/docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md">docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</a> to track how close Waves is to:</p>
+<ol>
+<li><code>transport-rust</code> -&gt; local Kannel -&gt; local WML server E2E smoke</li>
+<li>browser/host -&gt; transport -&gt; local Kannel -&gt; local WML server E2E smoke</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#network-profile-decision-record">Network Profile Decision Record</a></li><li class="depth-2"><a href="#canonical-decision">Canonical decision</a></li><li class="depth-2"><a href="#profile-definitions">Profile definitions</a></li><li class="depth-3"><a href="#gateway-bridged-legacy-baseline">gateway-bridged (legacy baseline)</a></li><li class="depth-3"><a href="#wap-net-core-active">wap-net-core (active)</a></li><li class="depth-3"><a href="#wap-net-ext-target-gated">wap-net-ext (target, gated)</a></li><li class="depth-2"><a href="#promotion-gates">Promotion gates</a></li><li class="depth-2"><a href="#rollback-criteria">Rollback criteria</a></li><li class="depth-2"><a href="#operational-tracking">Operational tracking</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/network_profile_decision_record.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,813 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Maintenance Work Items · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/maintenance_work_items"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/maintenance_work_items.md</p><div class="markdown-body"><h1 id="waves-maintenance-work-items">Waves Maintenance Work Items</h1>
+<p>Purpose: track maintenance, quality, and technical-debt work that should be folded into normal delivery.</p>
+<p>Status keys:</p>
+<ul>
+<li><code>todo</code></li>
+<li><code>in-progress</code></li>
+<li><code>blocked</code></li>
+<li><code>done</code></li>
+</ul>
+<h2 id="how-to-use">How To Use</h2>
+<ol>
+<li>Keep items scoped and testable.</li>
+<li>Link each item to concrete files and acceptance checks.</li>
+<li>Prefer pairing one maintenance item with each feature/contract ticket when feasible.</li>
+</ol>
+<h2 id="current-queue">Current Queue</h2>
+<p>Completed maintenance tickets are archived in:</p>
+<ul>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS_ARCHIVE.md</code></li>
+</ul>
+<h3 id="m1-00-architecture-hardening-sprint-next-in-line">M1-00 Architecture hardening sprint (next in line)</h3>
+<ol>
+<li><code>Status</code>: <code>in-progress</code></li>
+<li><code>Scope</code>:</li>
+</ol>
+<ul>
+<li><code>browser/</code></li>
+<li><code>engine-wasm/</code></li>
+<li><code>transport-rust/</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Execute remaining <code>M1-*</code> items as the active maintenance sprint before new feature expansion.</li>
+</ul>
+<ol start="4">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Sprint checklist and status are reflected in:</li>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>browser/README.md</code></li>
+<li><code>engine-wasm/README.md</code></li>
+<li><code>transport-rust/README.md</code></li>
+</ul>
+<ol start="5">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Active execution is currently anchored to <code>docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md</code>.</li>
+<li><code>M1-14</code>, <code>M1-15</code>, and the first <code>M1-16</code>/browser responsiveness slices landed in <code>#109</code> and <code>#110</code>.</li>
+<li>Keep residual <code>M1-08</code> cleanup opportunistic while committed compliance tickets execute.</li>
+</ul>
+<h3 id="m1-14-browser-host-boundary-hardening-csp--dom-injection-sinks">M1-14 Browser host boundary hardening (CSP + DOM injection sinks)</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P0</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/src-tauri/tauri.conf.json</code></li>
+<li><code>browser/frontend/src/app/browser-shell-template.ts</code></li>
+<li><code>browser/frontend/src/app/defaults.ts</code></li>
+<li><code>browser/frontend/src/main.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Replace permissive renderer hardening posture (<code>csp: null</code>) with explicit CSP suitable for the Tauri-hosted app shell.</li>
+<li>Remove/contain HTML string interpolation paths for boot URL rendering (<code>innerHTML</code> bootstrap template path).</li>
+<li>Keep startup URL normalization deterministic and safe for attribute/DOM insertion.</li>
+</ul>
+<ol start="5">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>pnpm --dir browser/frontend test</code></li>
+<li><code>pnpm --dir browser/frontend build</code></li>
+<li><code>cd browser/src-tauri &amp;&amp; cargo test</code></li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Renderer does not rely on disabled CSP.</li>
+<li>Boot URL flow does not allow unescaped HTML insertion surfaces in shell bootstrap.</li>
+<li>Existing browser shell behavior remains intact in local and network modes.</li>
+</ul>
+<ol start="7">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Security audit follow-up for high-severity host boundary risk.</li>
+<li>Landed explicit production and development CSP policies in Tauri config (<code>csp</code> + <code>devCsp</code>) instead of permissive/null posture.</li>
+<li>Boot URL assignment path is contained to post-mount input property assignment (no runtime URL interpolation into shell HTML template strings).</li>
+</ul>
+<h3 id="m1-15-engine-parser-recursion-guardrails-untrusted-deck-dos-hardening">M1-15 Engine parser recursion guardrails (untrusted deck DoS hardening)</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P0</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>engine-wasm/engine/src/parser/wml_parser/actions.rs</code></li>
+<li><code>engine-wasm/engine/src/parser/wml_parser/nodes.rs</code></li>
+<li><code>engine-wasm/engine/src/parser/wml_parser/mod.rs</code></li>
+<li><code>engine-wasm/engine/src/engine_tests.rs</code></li>
+</ul>
+<ol start="4">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Add bounded recursion/depth and node-count guardrails in parser tree walks for card/action/node traversal.</li>
+<li>Ensure maliciously deep nested markup fails deterministically with recoverable parse errors (no runtime crash/stack overflow).</li>
+</ul>
+<ol start="5">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>cd engine-wasm/engine &amp;&amp; cargo test</code></li>
+<li>Add regression fixtures/tests for deeply nested WML payload rejection behavior.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Engine rejects pathological nesting with deterministic error surface.</li>
+<li>No process crash or panic path from crafted deep deck structures.</li>
+</ul>
+<ol start="7">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Security audit follow-up for high-severity parser crash/DoS risk.</li>
+<li>Parser traversal now enforces explicit nesting-depth and visited-node budgets with deterministic
+error surfaces (<code>Parse limit exceeded: ...</code>) across action, card-node, inline-node, and text-extraction walks.</li>
+<li>Added parser-level and engine-level regression tests for depth and node-budget exhaustion paths.</li>
+</ul>
+<h3 id="m1-16-transportengine-payload-size-guardrails-memory-pressure-hardening">M1-16 Transport/engine payload size guardrails (memory pressure hardening)</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P1</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/lib.rs</code></li>
+<li><code>transport-rust/src/responses.rs</code></li>
+<li><code>engine-wasm/engine/src/engine_public_api.rs</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+</ul>
+<ol start="4">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Enforce explicit response-body/deck-size limits before decode/parse.</li>
+<li>Keep error mapping deterministic when payload limits are exceeded.</li>
+<li>Avoid unnecessary memory amplification for oversized payload paths.</li>
+</ul>
+<ol start="5">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>make test-rust-transport</code></li>
+<li><code>cd engine-wasm/engine &amp;&amp; cargo test</code></li>
+<li>Add fixture coverage for over-limit payload rejection.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Oversized responses/decks are rejected with stable transport/engine error surfaces.</li>
+<li>Normal-size WML/WBXML paths remain unchanged.</li>
+</ul>
+<ol start="7">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Security audit follow-up for medium-severity resource exhaustion risk.</li>
+<li>Landed transport-side explicit <code>PAYLOAD_TOO_LARGE</code> classification and host contract regeneration in <code>#109</code>.</li>
+<li>Added host/engine oversized deck boundary coverage in Tauri and WASM tests in <code>#109</code>.</li>
+<li>Current baseline rejects oversized payloads deterministically before decode/parse escalation in the active transport/engine/browser handoff path.</li>
+</ul>
+<h3 id="m1-17-network-fetch-destination-policy-guardrails-ssrfprobing-reduction">M1-17 Network fetch destination policy guardrails (SSRF/probing reduction)</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P1</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/lib.rs</code></li>
+<li><code>browser/src-tauri/src/lib.rs</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+<li><code>docs/waves/TECHNICAL_ARCHITECTURE.md</code></li>
+</ul>
+<ol start="4">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Define explicit destination policy for <code>fetch_deck</code> host command (default-safe behavior + documented override for developer workflows).</li>
+<li>Keep policy consistent with WAP/WML navigation expectations and existing transport contract boundaries.</li>
+</ul>
+<ol start="5">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>make test-rust-transport</code></li>
+<li><code>cd browser/src-tauri &amp;&amp; cargo test</code></li>
+<li>Add policy-path tests for blocked/allowed destination classes.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Host fetch path has documented/tested destination constraints appropriate for desktop host threat model.</li>
+<li>External-intent navigation remains deterministic under policy decisions.</li>
+</ul>
+<ol start="7">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Security audit follow-up for medium-severity SSRF/internal probing exposure if renderer compromise occurs.</li>
+</ul>
+<h3 id="m1-18-networkwsp-codec-is-dead-code-relative-to-the-live-native-fetch-path-2026-07-23">M1-18 <code>network::wsp</code> codec is dead code relative to the live native fetch path (2026-07-23)</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Priority</code>: <code>P2</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/network/wsp/pdu.rs</code></li>
+<li><code>transport-rust/src/network/wsp/header_block.rs</code></li>
+<li><code>transport-rust/src/network/wsp/header_registry.rs</code></li>
+<li><code>transport-rust/src/network/wsp/encoding_version.rs</code></li>
+<li><code>transport-rust/src/network/wsp/session.rs</code></li>
+<li><code>transport-rust/src/network/wsp/decoder.rs</code></li>
+<li><code>transport-rust/src/network/wsp/encoder.rs</code></li>
+<li><code>transport-rust/src/wsp_registry.rs</code></li>
+<li><code>transport-rust/src/wsp_capability.rs</code></li>
+<li><code>transport-rust/src/native_fetch.rs</code></li>
+<li><code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code></li>
+<li><code>docs/waves/TRANSPORT_RUST_PHASE_PLAN.md</code></li>
+<li><code>docs/waves/WORK_ITEMS.md</code> (<code>T0-20</code>, <code>T0-27</code>)</li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/network/wsp/*</code> (~2,700 lines across <code>pdu.rs</code>, <code>header_block.rs</code>, <code>header_registry.rs</code>, <code>encoding_version.rs</code>, <code>session.rs</code>, <code>decoder.rs</code>, <code>encoder.rs</code>) is a well-structured, bounds-checked, fixture-tested WSP/PDU codec. It is <strong>dead code on the live fetch path</strong>: <code>grep</code> confirms nothing outside its own <code>#[cfg(test)]</code> modules calls into it except <code>wsp_registry.rs</code> (thin re-export wrapper) and <code>wsp_capability.rs</code> (consumed by <code>network::wsp::session</code>/<code>pdu</code>, not the reverse) — and neither <code>wsp_registry::*</code> nor <code>wsp_capability::*</code> has any caller outside their own test modules either. The chain is self-contained and never reaches production code.</li>
+<li>The actual production native-transport fetch path (<code>transport-rust/src/native_fetch.rs</code>, <code>encode_connectionless_request</code> / <code>decode_connectionless_wsp_reply</code> / <code>decode_content_type_value</code> / <code>decode_text_string</code> / <code>decode_uintvar</code> / <code>encode_uintvar</code>, roughly lines 335-600) hand-rolls its own minimal uintvar/content-type/header/PDU parsing from scratch and does not import <code>crate::network::wsp</code> at all.</li>
+</ul>
+<ol start="5">
+<li><code>Why the split exists</code> (evidence, not guesswork):</li>
+</ol>
+<ul>
+<li><code>network::wsp::*</code> landed 2026-03-06 in <code>#77</code> (<code>feat(wsp): add header registry and code-page policy baseline</code>, closing ticket <code>T0-20</code>) and <code>#78</code> (<code>test(transport): add get reply interop replay baseline</code>).</li>
+<li><code>native_fetch.rs</code> landed the very next day, 2026-03-07, in <code>#89</code> (“Native WSP Fetch”, closing ticket <code>T0-27</code>, “Native connectionless WSP GET fetch path”).</li>
+<li><code>T0-27</code>’s own written plan in <code>docs/waves/WORK_ITEMS.md</code> explicitly directs: <em>“Reuse existing WDP adapter and WSP codec/session modules rather than introducing browser-side protocol logic”</em>, and lists the new file’s intended path as <code>transport-rust/src/network/native_fetch.rs</code> (nested under <code>network/</code>, alongside <code>wdp/</code> and <code>wsp/</code>).</li>
+<li>What actually shipped is <code>transport-rust/src/native_fetch.rs</code> (top level, <strong>not</strong> nested under <code>network/</code>). It does reuse <code>crate::network::wdp</code> as directed, but it never imports <code>crate::network::wsp</code> and instead reimplements the WSP wire codec from scratch. <code>T0-27</code> was nonetheless marked <code>done</code>.</li>
+<li>No commit message, PR description, or doc found anywhere in <code>docs/waves/</code> explains or acknowledges this divergence from the ticket’s own stated plan. This reads as <strong>unplanned implementation drift</strong> (the WSP codec module and the fetch executor were built one day apart by the same author but never actually wired together), not a deliberate “reference implementation for later” design — there is no ADR-style note asserting that as intent. Say so plainly rather than inventing a rationale.</li>
+<li>Compounding the confusion: <code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> names <code>wap-net-core</code> (which the doc defines as the <code>network::wsp</code>-based in-process <code>WDP -&gt; WTP -&gt; WSP</code> stack) the “active implementation target profile” and lists <code>wsp_registry.rs</code>/<code>wsp_capability.rs</code> as its fixture lane; <code>docs/waves/TRANSPORT_RUST_PHASE_PLAN.md</code> labels <code>wap-net-core</code> “(current)”. Both are accurate about profile <em>intent</em> but easy to misread as “this is what runs” — the byte-level codec actually executing on the native fetch path today is the hand-rolled one in <code>native_fetch.rs</code>, not <code>network::wsp</code>.</li>
+</ul>
+<ol start="6">
+<li><code>Decision</code> (repo owner, 2026-07-23):</li>
+</ol>
+<ul>
+<li>Do not delete <code>network::wsp::*</code> — it is wanted for future use and is the spec-conformant target implementation.</li>
+<li>Do not wire it into <code>native_fetch.rs</code> in the near term — too large a change to fold into an unrelated pass; treat as a dedicated follow-up.</li>
+<li>A short doc comment now sits above <code>native_fetch.rs</code>’s hand-rolled encode/decode section pointing back at this entry so the split isn’t a landmine for the next person who finds two WSP parsers and doesn’t know which one is real.</li>
+</ul>
+<ol start="7">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Open a dedicated follow-up ticket (“wire <code>network::wsp</code> into <code>native_fetch.rs</code>”) to replace the hand-rolled <code>encode_connectionless_request</code>/<code>decode_connectionless_wsp_reply</code>/<code>decode_content_type_value</code>/<code>decode_text_string</code>/<code>decode_uintvar</code> functions with calls into <code>network::wsp::{encoder,decoder,pdu,header_block}</code>, preserving the existing <code>FetchDeckResponse</code> mapping and <code>TRANSPORT_PROFILE_WAP_NET_CORE</code> gating behavior. This should close the gap between the documented <code>wap-net-core</code> profile and what the profile actually executes.</li>
+<li>Until that lands, treat <code>network::wsp::*</code> test coverage as spec-conformance regression coverage only, not evidence about the live fetch path’s correctness.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code> (for the follow-up ticket, not this entry):</li>
+</ol>
+<ul>
+<li><code>native_fetch.rs</code>’s WSP wire encode/decode calls into <code>network::wsp</code> instead of duplicating parsing logic.</li>
+<li><code>cargo test</code> stays green for <code>transport-rust</code>; native fetch behavior is unchanged for existing passing fixtures/smokes.</li>
+<li><code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> / <code>TRANSPORT_RUST_PHASE_PLAN.md</code> updated to reflect that <code>wap-net-core</code> is genuinely live end-to-end, not just profile-gated.</li>
+</ul>
+<h3 id="m1-19-fetch_policyrs-pre-flight-destination-check-is-shallow-relative-to-the-enforced-check-2026-07-24">M1-19 <code>fetch_policy.rs</code> pre-flight destination check is shallow relative to the enforced check (2026-07-24)</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/fetch_policy.rs</code> (<code>classify_destination_host</code>, <code>validate_fetch_destination</code>)</li>
+<li><code>transport-rust/src/fetch_runtime/execution.rs</code> (<code>PolicyDnsResolver</code>)</li>
+<li><code>transport-rust/src/native_fetch.rs</code> (<code>resolve_fetch_destination_addresses</code>)</li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li><code>classify_destination_host</code> treats every non-<code>localhost</code>/<code>*.localhost</code> hostname as <code>Public</code> — a fast pre-flight check only. The authoritative SSRF guard is the DNS-resolution-time check (<code>PolicyDnsResolver</code> in <code>execution.rs</code>, and <code>resolve_fetch_destination_addresses</code> for the native path), confirmed present, correctly ordered, and tested. Not a live hole today, but nothing stops a future refactor from trusting the shallow pre-flight check in isolation and quietly dropping the resolution-time enforcement.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Add a regression test (or an inline invariant comment referencing the resolution-time check) that fails loudly if <code>validate_fetch_destination</code> is ever called as the sole gate without the resolver-level check also running.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>A future refactor that removes the resolution-time check without also updating the pre-flight check fails a test, rather than silently reopening the class of bug.</li>
+</ul>
+<ol start="7">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Added <code>transport_resolution_time_check_blocks_private_answer_that_shallow_preflight_alone_would_allow</code> in <code>transport-rust/src/tests/fetch_mapping.rs</code>, which asserts the shallow pre-flight (<code>classify_destination_host</code>/<code>validate_fetch_destination</code>) passes a non-localhost domain, then asserts <code>validate_resolved_destination_addresses</code> (the shared function backing both <code>PolicyDnsResolver</code> and the native path) independently rejects a simulated private DNS answer for that same host. Combined with the pre-existing <code>http_client_rejects_private_dns_answer</code> (execution.rs) and <code>resolve_destination_socket_addr_rejects_private_peer_under_public_only</code> (native_fetch.rs) wiring tests, a removal of either resolution-time call site now fails a test. No enforcement logic changed.</li>
+</ul>
+<h3 id="m1-20-gateway-bridged-fetch-profile-force-sets-allowprivate-with-no-invariant-test">M1-20 Gateway-bridged fetch profile force-sets <code>AllowPrivate</code> with no invariant test</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/fetch_runtime/execution.rs</code> (<code>destination_policy</code> override for <code>wap://</code>/<code>waps://</code> traffic)</li>
+<li><code>transport-rust/src/gateway.rs</code> (<code>GATEWAY_HTTP_BASE</code>)</li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li>For the default <code>gateway-bridged</code> profile, <code>destination_policy</code> is force-set to <code>AllowPrivate</code> because the upstream target is the operator-configured <code>GATEWAY_HTTP_BASE</code>, not the original WAP URL. This is intentional and appears safe (the gateway base is env-configured, not attacker-influenced) but rests entirely on <code>GATEWAY_HTTP_BASE</code> never becoming attacker-settable — there’s no test pinning that invariant.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Add a test asserting <code>GATEWAY_HTTP_BASE</code> is read only from process environment/config, never from request-supplied data, so a future change can’t silently make it attacker-influenced without breaking a test.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>A regression test exists that would fail if <code>GATEWAY_HTTP_BASE</code> (or its equivalent) became derivable from untrusted input.</li>
+</ul>
+<ol start="7">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Added <code>transport_build_gateway_request_ignores_request_supplied_gateway_base_overrides</code> in <code>transport-rust/src/tests/request_gateway_policy.rs</code>. It calls <code>build_gateway_request</code> with headers and URL path/query attempting to smuggle an alternate base (<code>GATEWAY_HTTP_BASE</code>/<code>X-Gateway-Http-Base</code>/<code>X-Forwarded-Host</code>/<code>Host</code> headers, matching query key) and asserts the resolved gateway URL is unaffected — first against the default base, then against an operator-configured <code>GATEWAY_HTTP_BASE</code> env value, confirming the env value always wins over any request-supplied data. No enforcement logic changed.</li>
+</ul>
+<h3 id="m1-21-fetch_hostrs-gateway-transport-fallback-host-scope-unconfirmed">M1-21 <code>fetch_host.rs</code> gateway-transport-fallback host scope unconfirmed</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P3</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/src-tauri/src/fetch_host.rs</code> (<code>default_fetch_transport_fallback</code>)</li>
+<li><code>transport-rust/src/gateway.rs</code></li>
+</ul>
+<ol start="4">
+<li><code>Finding</code>:</li>
+</ol>
+<ul>
+<li><code>default_fetch_transport_fallback()</code> (the gateway-bridged fallback path for failed <code>wap</code>/<code>waps</code> GET requests) reads <code>WAVES_FETCH_TRANSPORT_FALLBACK</code> with no host/scope restriction visible in <code>fetch_host.rs</code> itself; enforcement of where the <code>GatewayBridged</code> profile can actually connect lives entirely in <code>transport-rust</code>/<code>gateway.rs</code>, outside this file’s audit scope when it was originally reviewed.</li>
+</ul>
+<ol start="5">
+<li><code>Recommendation</code>:</li>
+</ol>
+<ul>
+<li>Confirm (with a test, not just a read-through) that the gateway transport path is constrained the same way <code>native_fetch</code> is — i.e. it can’t be pointed at an arbitrary host via this fallback env var.</li>
+</ul>
+<ol start="6">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>A test demonstrates the gateway-fallback path cannot be redirected to an arbitrary non-configured host.</li>
+</ul>
+<ol start="7">
+<li><code>Resolution</code>: <strong>Invariant confirmed to hold — no gap found.</strong></li>
+</ol>
+<ul>
+<li><code>WAVES_FETCH_TRANSPORT_FALLBACK</code> is a strict two-value enum switch (<code>disabled</code> | <code>gateway-bridged</code>) parsed in <code>default_fetch_transport_fallback()</code>; it carries no host/URL value itself and cannot smuggle one. When it selects the fallback, <code>fetch_deck_with_transport_executor</code> always retries with the hardcoded <code>FetchTransportProfile::GatewayBridged</code>, which routes through the same <code>build_gateway_request</code>/<code>GATEWAY_HTTP_BASE</code> machinery pinned by the M1-20 test — never a value derived from the fallback env var, request headers, or the original <code>wap://</code> URL’s own host/port. Added <code>fetch_deck_command_gateway_fallback_cannot_be_redirected_by_fallback_env_value</code> in <code>browser/src-tauri/src/tests/fetch_commands.rs</code>, an end-to-end test using the real (unmocked) transport: a native attempt to an unreachable loopback port triggers the fallback, and the fallback is proven to land only on a local TCP listener bound to the test’s <code>GATEWAY_HTTP_BASE</code>, receiving the original wap path unchanged. No enforcement logic changed.</li>
+</ul>
+<h3 id="m1-03-engine-api-generator-design-and-bootstrap-non-priority">M1-03 Engine API generator design and bootstrap (non-priority)</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>browser/contracts/engine.ts</code></li>
+<li><code>scripts/</code> (new generator entrypoint)</li>
+<li><code>docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Add a generator path that can emit TypeScript engine API/types/facade scaffolding from engine-owned source metadata.</li>
+<li>Keep this item as non-priority within the sprint (design/prototype unless explicitly promoted).</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Generator dry-run in CI or local script check.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Manual engine API sync burden is reduced with a documented generate path and prototype output.</li>
+</ul>
+<h3 id="m1-08-split-high-churn-files-into-boundary-modules">M1-08 Split high-churn files into boundary modules</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>engine-wasm/engine/src/lib.rs</code> (done)</li>
+<li><code>engine-wasm/engine/src/engine_runtime_internal.rs</code> + <code>engine_runtime_internal/*</code> (done)</li>
+<li><code>engine-wasm/engine/src/parser/wml_parser/*</code> (done)</li>
+<li><code>browser/frontend/src/main.ts</code> (done)</li>
+<li><code>browser/src-tauri/src/lib.rs</code> + <code>browser/src-tauri/src/engine_bridge/*</code> + <code>browser/src-tauri/src/tests/*</code> (baseline split done)</li>
+<li><code>transport-rust/src/lib.rs</code> + <code>transport-rust/src/fetch_runtime/*</code> + <code>transport-rust/src/tests/*</code> (baseline split done)</li>
+<li><code>browser/frontend/src/app/browser-controller.ts</code> + <code>browser/frontend/src/app/shell-event-bindings.ts</code> + <code>browser/frontend/src/app/keyboard-intent-router.ts</code> (residual split done)</li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Move code into boundary modules (<code>api</code>, <code>state</code>, <code>actions</code>, <code>mapping</code>, <code>ui</code>) without broad behavior changes.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Existing project test/build commands remain green.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>High-churn files are reduced and responsibilities are easier to review.</li>
+</ul>
+<ol start="6">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Engine-side decomposition has landed and merged.</li>
+<li>Browser and transport boundary decomposition baselines have landed.</li>
+<li>Browser-side follow-up landed additional probe/timer/focused-edit coordinators in <code>#109</code>.</li>
+<li>Residual cleanup landed: <code>browser-controller.ts</code> (1021 lines) still mixed shell/DOM
+event-listener binding, run-mode orchestration, keyboard-intent routing/queueing, and
+transport-URL loading. Extracted two more boundary modules following the existing
+constructor-injected coordinator pattern: <code>ShellEventBindings</code> (DOM listener wiring –
+binds/unbinds all shell button/input/window event listeners against a caller-supplied
+action map, owns the <code>#btn-back</code> element directly) and <code>KeyboardIntentRouter</code>
+(keyboard-intent resolution/routing plus the serialized keyboard action queue that
+guards against interleaving with a concurrent engine timer tick). BrowserController
+still defines what each routed action does and owns run-mode orchestration and
+transport-URL loading directly; it is now 764 lines. Both new modules have their own
+isolated unit tests (<code>shell-event-bindings.test.ts</code>, <code>keyboard-intent-router.test.ts</code>).
+No behavior changes; this was a pure structural extraction.</li>
+<li>Remaining scope is residual opportunistic cleanup only if new hot files emerge or a boundary proves unstable under feature work; do not let this preempt active compliance/runtime tickets.</li>
+</ul>
+<h3 id="m1-09-engine-host-frame-interface-migration-execution">M1-09 Engine-host frame interface migration execution</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md</code></li>
+<li><code>docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md</code></li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>browser/src-tauri/src/contract_types.rs</code></li>
+<li><code>browser/contracts/generated/engine-host.ts</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Execute the <code>F0-F4</code> migration program to move active hosts onto structured frame/input contracts.</li>
+<li>Keep migration additive and parity-gated until legacy path retirement.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>cd engine-wasm/engine &amp;&amp; cargo test</code></li>
+<li><code>cd browser/src-tauri &amp;&amp; cargo test</code></li>
+<li><code>pnpm --dir browser/frontend test</code></li>
+<li><code>pnpm --dir browser/frontend build</code></li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Active host paths use <code>EngineFrame</code> + <code>EngineInputEvent</code>.</li>
+<li>Contract and coverage docs are updated in the same migration PRs.</li>
+</ul>
+<h3 id="m1-10-engine-contract-parity-guardrail-hardening">M1-10 Engine contract parity guardrail hardening</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/scripts/generate-contract-wrappers.mjs</code></li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>browser/contracts/engine.ts</code></li>
+<li><code>browser/contracts/generated/engine-host.ts</code></li>
+<li><code>.github/workflows/ci.yml</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Keep engine contract wrappers generated from generated host-contract exports, not manual sync.</li>
+<li>Enforce drift through deterministic codegen checks in CI (<code>contracts:check</code>) and keep wrapper alias surfaces explicit.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>pnpm --dir browser run contracts:check</code></li>
+<li>repo-hygiene CI lane remains green.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Contract-surface drift across engine canonical, generated host contract, and browser wrapper aliases is blocked for covered contract types.</li>
+</ul>
+<ol start="6">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Parity-script lane retired in favor of generator-owned wrappers plus codegen drift checks.</li>
+<li>Guardrail now enforced through <code>contracts:check</code> in repo hygiene and browser-shell CI lanes.</li>
+</ul>
+<h3 id="m1-11-browser-contract-wrapper-codegen-alignment">M1-11 Browser contract-wrapper codegen alignment</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/contracts/engine.ts</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+<li><code>browser/contracts/generated/*</code></li>
+<li><code>browser/src-tauri/src/bin/generate_contracts.rs</code></li>
+<li><code>browser/scripts/generate-contract-wrappers.mjs</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Make browser wrapper contracts thin generated aliases/adapters with no duplicate hand-authored shape definitions.</li>
+<li>Ensure wrapper drift checks fail if wrapper outputs diverge from generated source contracts.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>pnpm --dir browser/frontend exec tsc --noEmit</code></li>
+<li><code>pnpm --dir browser run contracts:check</code> in repo hygiene lane.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Browser contract wrappers no longer require manual shape synchronization beyond intentional adapter aliases.</li>
+</ul>
+<ol start="6">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Contract wrapper generation now emits <code>browser/contracts/engine.ts</code> and <code>browser/contracts/transport.ts</code> from <code>browser/scripts/generate-contract-wrappers.mjs</code>.</li>
+<li>App-specific transport session/history types moved to <code>browser/contracts/transport-app.ts</code> to keep generated wrappers contract-focused.</li>
+<li>Wrapper generation now runs through <code>browser/scripts/generate-contract-wrappers.mjs</code> with AST-derived export sets from generated contract files (no static wrapper blobs in Rust).</li>
+<li>CI drift enforcement for wrappers/contracts uses <code>pnpm --dir browser run contracts:check</code>.</li>
+</ul>
+<h3 id="m1-12-enginetransport-error-taxonomy-artifact-generation">M1-12 Engine/transport error taxonomy artifact generation</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/contracts/generated/engine-host.ts</code></li>
+<li><code>browser/contracts/generated/transport-host.ts</code></li>
+<li><code>browser/contracts/engine.ts</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+<li><code>browser/scripts/generate-contract-wrappers.mjs</code></li>
+<li><code>docs/waves/SPEC_TEST_COVERAGE.md</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Keep transport and engine error-taxonomy surfaces sourced from generated contracts and wrapper aliases.</li>
+<li>Avoid parallel manual error-union definitions outside generated/wrapper contract modules.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>pnpm --dir browser run contracts:check</code></li>
+<li>Browser/frontend typecheck validates alias consumer compatibility.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Error-code/class/category surfaces are generated and parity-checked instead of manually synchronized.</li>
+</ul>
+<ol start="6">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>Standalone taxonomy fixture/check lane retired.</li>
+<li>Taxonomy drift control now relies on generated contract source + wrapper codegen drift checks.</li>
+<li>Transport and engine consumer surfaces use generated contract exports/aliases rather than duplicated manual unions.</li>
+</ul>
+<h3 id="m1-13-contract-schema-fixture-generation-and-validation-lane">M1-13 Contract schema fixture generation and validation lane</h3>
+<ol>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/contracts/generated/*</code></li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>browser/contracts/engine.ts</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+<li><code>browser/scripts/generate-contract-wrappers.mjs</code></li>
+<li><code>.github/workflows/ci.yml</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Keep wrapper contract generation deterministic and derived from generated contract modules.</li>
+<li>Keep CI focused on codegen drift checks and compile-time consumer validation rather than additional parallel parity scripts.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>pnpm --dir browser run contracts:check</code></li>
+<li><code>pnpm --dir browser/frontend exec tsc --noEmit</code></li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Contract drift checks are codegen-driven and resilient to formatting/ordering changes.</li>
+</ul>
+<ol start="6">
+<li><code>Notes</code>:</li>
+</ol>
+<ul>
+<li>AST-driven wrapper generation landed in <code>browser/scripts/generate-contract-wrappers.mjs</code>.</li>
+<li>Standalone parity-schema fixtures/scripts retired in favor of codegen-first drift checks.</li>
+</ul>
+<h3 id="m0-07-historical-backlog-pruning-pass">M0-07 Historical backlog pruning pass</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/WORK_ITEMS_ARCHIVE.md</code> (new)</li>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></li>
+<li><code>README.md</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Move pre-implementation kickoff/planning-only ticket groups that are no longer actionable into a dedicated archive file (<code>docs/waves/WORK_ITEMS_ARCHIVE.md</code>), not inline in active boards.</li>
+<li>Keep active queues focused on executable work items only.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Manual consistency pass for active-vs-archive file boundaries, status markers, and README references.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Active boards only contain actionable work; historical tickets remain preserved in archive file with traceable IDs.</li>
+</ul>
+<h3 id="m0-08-cross-board-status-sync-cadence">M0-08 Cross-board status sync cadence</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/WORK_ITEMS_ARCHIVE.md</code></li>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></li>
+<li><code>browser/README.md</code></li>
+<li><code>engine-wasm/README.md</code></li>
+<li><code>transport-rust/README.md</code></li>
+<li><code>README.md</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Define and document a standing rule: when a ticket status changes, update corresponding board and README “next slice/checklist/snapshot” pointers in the same PR.</li>
+<li>Keep updates additive and deterministic across layers.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Manual PR checklist verification against one representative ticket transition.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Status transitions no longer leave board/readme mismatches after merge.</li>
+</ul>
+<h3 id="m0-09-board-file-reference-hygiene-sweep">M0-09 Board file-reference hygiene sweep</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/WORK_ITEMS_ARCHIVE.md</code></li>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></li>
+<li><code>docs/wml-engine/work-items.md</code></li>
+<li><code>engine-wasm/README.md</code></li>
+<li><code>browser/README.md</code></li>
+<li><code>transport-rust/README.md</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Run a docs reference sweep to replace stale file paths and module names after refactors (for example parser/module splits).</li>
+<li>Ensure file references in tickets remain specific enough to guide implementation but avoid dead-path drift.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Manual path-existence pass for referenced file paths in active and archive boards.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Board/readme file references resolve to existing paths or clearly intentional globs; no known dead file paths remain.</li>
+</ul>
+<h3 id="m0-10-archive-index-and-movement-policy">M0-10 Archive index and movement policy</h3>
+<ol>
+<li><code>Status</code>: <code>todo</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>docs/README.md</code></li>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/WORK_ITEMS_ARCHIVE.md</code></li>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></li>
+</ul>
+<ol start="3">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Add a short “active vs archive” index entry in docs navigation and define when tickets move into archive files.</li>
+<li>Document that archived tickets are historical and reactivation requires new follow-up IDs on active boards.</li>
+</ul>
+<ol start="4">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Manual docs navigation pass from <code>docs/README.md</code> to active and archive boards.</li>
+</ul>
+<ol start="5">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Contributors can quickly locate active vs archived work boards and follow one consistent archival rule.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-maintenance-work-items">Waves Maintenance Work Items</a></li><li class="depth-2"><a href="#how-to-use">How To Use</a></li><li class="depth-2"><a href="#current-queue">Current Queue</a></li><li class="depth-3"><a href="#m1-00-architecture-hardening-sprint-next-in-line">M1-00 Architecture hardening sprint (next in line)</a></li><li class="depth-3"><a href="#m1-14-browser-host-boundary-hardening-csp--dom-injection-sinks">M1-14 Browser host boundary hardening (CSP + DOM injection sinks)</a></li><li class="depth-3"><a href="#m1-15-engine-parser-recursion-guardrails-untrusted-deck-dos-hardening">M1-15 Engine parser recursion guardrails (untrusted deck DoS hardening)</a></li><li class="depth-3"><a href="#m1-16-transportengine-payload-size-guardrails-memory-pressure-hardening">M1-16 Transport/engine payload size guardrails (memory pressure hardening)</a></li><li class="depth-3"><a href="#m1-17-network-fetch-destination-policy-guardrails-ssrfprobing-reduction">M1-17 Network fetch destination policy guardrails (SSRF/probing reduction)</a></li><li class="depth-3"><a href="#m1-18-networkwsp-codec-is-dead-code-relative-to-the-live-native-fetch-path-2026-07-23">M1-18 network::wsp codec is dead code relative to the live native fetch path (2026-07-23)</a></li><li class="depth-3"><a href="#m1-19-fetch_policyrs-pre-flight-destination-check-is-shallow-relative-to-the-enforced-check-2026-07-24">M1-19 fetch_policy.rs pre-flight destination check is shallow relative to the enforced check (2026-07-24)</a></li><li class="depth-3"><a href="#m1-20-gateway-bridged-fetch-profile-force-sets-allowprivate-with-no-invariant-test">M1-20 Gateway-bridged fetch profile force-sets AllowPrivate with no invariant test</a></li><li class="depth-3"><a href="#m1-21-fetch_hostrs-gateway-transport-fallback-host-scope-unconfirmed">M1-21 fetch_host.rs gateway-transport-fallback host scope unconfirmed</a></li><li class="depth-3"><a href="#m1-03-engine-api-generator-design-and-bootstrap-non-priority">M1-03 Engine API generator design and bootstrap (non-priority)</a></li><li class="depth-3"><a href="#m1-08-split-high-churn-files-into-boundary-modules">M1-08 Split high-churn files into boundary modules</a></li><li class="depth-3"><a href="#m1-09-engine-host-frame-interface-migration-execution">M1-09 Engine-host frame interface migration execution</a></li><li class="depth-3"><a href="#m1-10-engine-contract-parity-guardrail-hardening">M1-10 Engine contract parity guardrail hardening</a></li><li class="depth-3"><a href="#m1-11-browser-contract-wrapper-codegen-alignment">M1-11 Browser contract-wrapper codegen alignment</a></li><li class="depth-3"><a href="#m1-12-enginetransport-error-taxonomy-artifact-generation">M1-12 Engine/transport error taxonomy artifact generation</a></li><li class="depth-3"><a href="#m1-13-contract-schema-fixture-generation-and-validation-lane">M1-13 Contract schema fixture generation and validation lane</a></li><li class="depth-3"><a href="#m0-07-historical-backlog-pruning-pass">M0-07 Historical backlog pruning pass</a></li><li class="depth-3"><a href="#m0-08-cross-board-status-sync-cadence">M0-08 Cross-board status sync cadence</a></li><li class="depth-3"><a href="#m0-09-board-file-reference-hygiene-sweep">M0-09 Board file-reference hygiene sweep</a></li><li class="depth-3"><a href="#m0-10-archive-index-and-movement-policy">M0-10 Archive index and movement policy</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/maintenance_work_items.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

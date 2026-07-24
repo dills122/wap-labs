@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Wiley Book PDF: Extracted Code Examples · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wiley_book_code_examples"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wiley_book_code_examples.md</p><div class="markdown-body"><h1 id="wiley-book-pdf-extracted-code-examples">Wiley Book PDF: Extracted Code Examples</h1>
+<p>Source PDF:</p>
+<ul>
+<li><code>spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf</code></li>
+</ul>
+<p>Extraction artifact used:</p>
+<ul>
+<li><code>tmp/pdfs/wiley-tech-brief.layout.txt</code> (generated via <code>pdftotext -layout</code>)</li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li>These examples were re-checked against the actual PDF pages.</li>
+<li>Page numbers below are PDF page indices (1-based).</li>
+<li>This book includes many usable WML and WBXML examples, but very little executable WMLScript code.</li>
+</ul>
+<h2 id="high-value-examples">High-value examples</h2>
+<h2 id="fixture-candidate-index">Fixture Candidate Index</h2>
+<table>
+<thead>
+<tr>
+<th>Fixture ID</th>
+<th>Source Example</th>
+<th>Primary Ticket Mapping</th>
+<th>Requirement Mapping</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WBK-FX-001</code></td>
+<td>Minimal deck/card</td>
+<td><code>R0-01</code></td>
+<td><code>RQ-RMK-001</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-002</code></td>
+<td><code>do</code> + <code>go</code> task wiring</td>
+<td><code>R0-02</code></td>
+<td><code>RQ-RMK-002</code>, <code>RQ-RMK-003</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-003</code></td>
+<td>Template shadowing</td>
+<td><code>R0-02</code></td>
+<td><code>RQ-RMK-002</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-004</code></td>
+<td>Intrinsic event shorthand vs expanded</td>
+<td><code>R0-02</code></td>
+<td><code>RQ-RMK-004</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-005</code></td>
+<td><code>setvar</code> side-effect</td>
+<td><code>R0-03</code></td>
+<td><code>RQ-RMK-005</code>, <code>RQ-RMK-008</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-006</code></td>
+<td>Prologue + DTD validation</td>
+<td><code>R0-07</code></td>
+<td><code>RQ-RMK-001</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-007</code></td>
+<td>Timer-driven navigation</td>
+<td><code>R0-02</code></td>
+<td><code>RQ-RMK-004</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-008</code></td>
+<td>Table edge-case rendering</td>
+<td><code>B5-03</code></td>
+<td><code>RQ-RMK-009</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-009</code></td>
+<td>WBXML tokenized source deck</td>
+<td><code>T0-20</code></td>
+<td><code>RQ-TRN-014</code>, <code>RQ-TRN-018</code></td>
+</tr>
+<tr>
+<td><code>WBK-FX-010</code></td>
+<td>WBXML token stream table</td>
+<td><code>T0-20</code></td>
+<td><code>RQ-TRN-018</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-minimal-wml-deckcard-structure-pdf-page-57">1) Minimal WML deck/card structure (PDF page 57)</h3>
+<p>Fixture ID: <code>WBK-FX-001</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"first"</span><span style="color:#B392F0"> title</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"Empyrean Design Works"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;Empyrean Design Works is a full service software design and</span></span>
+<span class="line"><span style="color:#E1E4E8">    strategy firm for mobile, wireless, and handheld technologies.&lt;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>parser baseline fixture (<code>wml</code> root + single card + paragraph)</li>
+<li>render baseline snapshot fixture</li>
+</ul>
+<h3 id="2-do--go-task-wiring-pdf-page-68">2) <code>do</code> + <code>go</code> task wiring (PDF page 68)</h3>
+<p>Fixture ID: <code>WBK-FX-002</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"LoadURL"</span><span style="color:#B392F0"> title</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"URL Demo"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">do</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"accept"</span><span style="color:#B392F0"> label</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"Load URL"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">go</span><span style="color:#B392F0"> href</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"sample.wml"</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;/</span><span style="color:#85E89D">do</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;Press 'Load URL' to retrieve the next deck.&lt;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>accept softkey/task dispatch</li>
+<li>internal deck navigation intent handling</li>
+</ul>
+<h3 id="3-template-shadowing-across-cards-pdf-page-147">3) Template shadowing across cards (PDF page 147)</h3>
+<p>Fixture ID: <code>WBK-FX-003</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">template</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">do</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"options"</span><span style="color:#B392F0"> name</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"do1"</span><span style="color:#B392F0"> label</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"default"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">      &lt;</span><span style="color:#85E89D">prev</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;/</span><span style="color:#85E89D">do</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;/</span><span style="color:#85E89D">template</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"first"</span><span style="color:#E1E4E8">&gt;...&lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"second"</span><span style="color:#E1E4E8">&gt;...&lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"third"</span><span style="color:#E1E4E8">&gt;...&lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>card/deck task shadowing precedence tests</li>
+<li><code>do</code> inheritance and override behavior</li>
+</ul>
+<h3 id="4-intrinsic-event-shorthand-vs-expanded-form-pdf-page-153">4) Intrinsic event shorthand vs expanded form (PDF page 153)</h3>
+<p>Fixture ID: <code>WBK-FX-004</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> onenterforward</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"/url"</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;Hello&lt;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;&lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">onevent</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"onenterforward"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">go</span><span style="color:#B392F0"> href</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"/url"</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;/</span><span style="color:#85E89D">onevent</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;Hello&lt;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>parser/runtime equivalence tests between attribute shorthand and <code>onevent</code></li>
+<li>event-trigger navigation conformance</li>
+</ul>
+<h3 id="5-setvar-navigation-side-effect-pdf-page-157">5) <code>setvar</code> navigation side-effect (PDF page 157)</h3>
+<p>Fixture ID: <code>WBK-FX-005</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">setvar</span><span style="color:#B392F0"> name</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"location"</span><span style="color:#B392F0"> value</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"$(X)"</span><span style="color:#E1E4E8">/&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>variable substitution and context mutation checks during task execution</li>
+</ul>
+<h3 id="6-required-prologue-and-dtd-pdf-page-159">6) Required prologue and DTD (PDF page 159)</h3>
+<p>Fixture ID: <code>WBK-FX-006</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;?</span><span style="color:#85E89D">xml</span><span style="color:#B392F0"> version</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"1.0"</span><span style="color:#E1E4E8">?&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;!</span><span style="color:#F97583">DOCTYPE</span><span style="color:#79B8FF"> wml</span><span style="color:#E1E4E8"> PUBLIC "-//WAPFORUM//DTD WML 1.2//EN"</span></span>
+<span class="line"><span style="color:#E1E4E8">  "http://www.wapforum.org/DTD/wml_1.2.xml"&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>prologue/DTD validation policy tests</li>
+<li>strict-vs-lenient parsing mode documentation</li>
+</ul>
+<h3 id="7-timer-driven-navigation-pdf-pages-176-177">7) Timer-driven navigation (PDF pages 176-177)</h3>
+<p>Fixture ID: <code>WBK-FX-007</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> ontimer</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"/next"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">timer</span><span style="color:#B392F0"> value</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"100"</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;Hello World!&lt;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>timer lifecycle tests (<code>ontimer</code>, expiration-driven <code>go</code>)</li>
+<li>deterministic timing event dispatch fixtures</li>
+</ul>
+<h3 id="8-table-rendering-edge-case-pdf-page-183">8) Table rendering edge case (PDF page 183)</h3>
+<p>Fixture ID: <code>WBK-FX-008</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">table</span><span style="color:#B392F0"> columns</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"2"</span><span style="color:#B392F0"> align</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"LL"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;One&lt;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;Two&lt;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;&lt;/</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;1&lt;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;&lt;/</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">/&gt;&lt;</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;B&lt;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;C&lt;</span><span style="color:#85E89D">br</span><span style="color:#E1E4E8">/&gt;D&lt;/</span><span style="color:#85E89D">td</span><span style="color:#E1E4E8">&gt;&lt;/</span><span style="color:#85E89D">tr</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">table</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>table normalization/render fallback tests</li>
+<li>mismatched cell-count behavior</li>
+</ul>
+<h3 id="9-wbxml-tokenized-source-deck-example-pdf-page-200">9) WBXML tokenized source-deck example (PDF page 200)</h3>
+<p>Fixture ID: <code>WBK-FX-009</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#85E89D">card</span><span style="color:#B392F0"> id</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"abc"</span><span style="color:#B392F0"> ordered</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"true"</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">      &lt;</span><span style="color:#85E89D">do</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"accept"</span><span style="color:#E1E4E8">&gt;&lt;</span><span style="color:#85E89D">go</span><span style="color:#B392F0"> href</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"http://xyz.org/s"</span><span style="color:#E1E4E8">/&gt;&lt;/</span><span style="color:#85E89D">do</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">      X: $(X)&lt;</span><span style="color:#85E89D">br</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">      Y: $(</span><span style="color:#79B8FF">&amp;#x59;</span><span style="color:#E1E4E8">)&lt;</span><span style="color:#85E89D">br</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">      Enter name: &lt;</span><span style="color:#85E89D">input</span><span style="color:#B392F0"> type</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"text"</span><span style="color:#B392F0"> name</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"N"</span><span style="color:#E1E4E8">/&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">    &lt;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;/</span><span style="color:#85E89D">card</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#85E89D">wml</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>WBXML encode/decode roundtrip fixtures</li>
+<li>variable-token and string-table interaction tests</li>
+</ul>
+<h3 id="10-wbxml-token-stream-annotation-table-pdf-pages-200-201">10) WBXML token stream annotation table (PDF pages 200-201)</h3>
+<p>Fixture ID: <code>WBK-FX-010</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>02 -&gt; WBXML Version 1.2</span></span>
+<span class="line"><span>08 -&gt; WML 1.2 Public ID</span></span>
+<span class="line"><span>6A -&gt; Charset=UTF-8</span></span>
+<span class="line"><span>7F -&gt; wml</span></span>
+<span class="line"><span>E7 -&gt; card</span></span>
+<span class="line"><span>33 -&gt; ordered="true"</span></span></code></pre>
+<p>Use for:</p>
+<ul>
+<li>deterministic token-map fixtures in transport codec tests</li>
+<li>assigned-token regression assertions</li>
+</ul>
+<h2 id="gaps-in-book-examples">Gaps in book examples</h2>
+<ul>
+<li>The book has descriptive WMLScript sections but does not provide substantial WMLScript function-level code samples suitable for direct VM fixtures.</li>
+<li>Best direct fixture source for executable semantics remains canonical specs already in traceability docs (<code>WAP-191*</code>, <code>WAP-193*</code>, <code>WAP-194*</code>, <code>WAP-230</code>, <code>WAP-224</code>, <code>WAP-259</code>).</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wiley-book-pdf-extracted-code-examples">Wiley Book PDF: Extracted Code Examples</a></li><li class="depth-2"><a href="#high-value-examples">High-value examples</a></li><li class="depth-2"><a href="#fixture-candidate-index">Fixture Candidate Index</a></li><li class="depth-3"><a href="#1-minimal-wml-deckcard-structure-pdf-page-57">1) Minimal WML deck/card structure (PDF page 57)</a></li><li class="depth-3"><a href="#2-do--go-task-wiring-pdf-page-68">2) do + go task wiring (PDF page 68)</a></li><li class="depth-3"><a href="#3-template-shadowing-across-cards-pdf-page-147">3) Template shadowing across cards (PDF page 147)</a></li><li class="depth-3"><a href="#4-intrinsic-event-shorthand-vs-expanded-form-pdf-page-153">4) Intrinsic event shorthand vs expanded form (PDF page 153)</a></li><li class="depth-3"><a href="#5-setvar-navigation-side-effect-pdf-page-157">5) setvar navigation side-effect (PDF page 157)</a></li><li class="depth-3"><a href="#6-required-prologue-and-dtd-pdf-page-159">6) Required prologue and DTD (PDF page 159)</a></li><li class="depth-3"><a href="#7-timer-driven-navigation-pdf-pages-176-177">7) Timer-driven navigation (PDF pages 176-177)</a></li><li class="depth-3"><a href="#8-table-rendering-edge-case-pdf-page-183">8) Table rendering edge case (PDF page 183)</a></li><li class="depth-3"><a href="#9-wbxml-tokenized-source-deck-example-pdf-page-200">9) WBXML tokenized source-deck example (PDF page 200)</a></li><li class="depth-3"><a href="#10-wbxml-token-stream-annotation-table-pdf-pages-200-201">10) WBXML token stream annotation table (PDF pages 200-201)</a></li><li class="depth-2"><a href="#gaps-in-book-examples">Gaps in book examples</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wiley_book_code_examples.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Implementation Tickets (Step-by-Step) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/implementation-tickets"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/implementation-tickets.md</p><div class="markdown-body"><h1 id="implementation-tickets-step-by-step">Implementation Tickets (Step-by-Step)</h1>
+<p>Status: historical draft. Use <code>ticket-plan.md</code> as the active implementation backlog.</p>
+<p>This backlog is ordered for shipping value early while preserving future expansion.</p>
+<h2 id="phase-0-stabilize-current-mvp">Phase 0: Stabilize Current MVP</h2>
+<h3 id="t0-1-contract-hardening">T0-1 Contract hardening</h3>
+<ul>
+<li>Goal: freeze input/output types used by host.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Keep <code>loadDeckContext</code> as primary ingestion API.</li>
+<li>Document compatibility with <code>loadDeck</code>.</li>
+<li>Add contract tests in TS host sample.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Host can load decks through both APIs.</li>
+<li><code>baseUrl()</code> and <code>contentType()</code> return expected values.</li>
+</ol>
+<h3 id="t0-2-parser-robustness-for-current-tags">T0-2 Parser robustness for current tags</h3>
+<ul>
+<li>Goal: prevent crashes on malformed but common decks.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Improve tag scanning for nested inline links in paragraphs.</li>
+<li>Preserve text order around inline anchors.</li>
+<li>Treat unknown tags as ignorable nodes.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>No panic on unknown tags.</li>
+<li>Snapshot tests stable across malformed inputs.</li>
+</ol>
+<h3 id="t0-3-renderfocus-determinism">T0-3 Render/focus determinism</h3>
+<ul>
+<li>Goal: deterministic focus and draw output.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Ensure each logical link maps to one focus index even when wrapped.</li>
+<li>Lock y-coordinate and wrap behavior in tests.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Golden tests pass for multiple viewport widths.</li>
+</ol>
+<h2 id="phase-1-spec-driven-card-metadata">Phase 1: Spec-Driven Card Metadata</h2>
+<h3 id="t1-1-card-metadata-parsing">T1-1 Card metadata parsing</h3>
+<ul>
+<li>Goal: parse card attributes needed for semantics.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Add title/newcontext/ordered parsing.</li>
+<li>Add access metadata parsing (<code>domain</code>, <code>path</code>).</li>
+<li>Expose metadata through debug getters.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Parsed card metadata is visible and unit-tested.</li>
+</ol>
+<h3 id="t1-2-navigation-history-policy">T1-2 Navigation history policy</h3>
+<ul>
+<li>Goal: align history transitions with WML context intent.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Introduce runtime transition mode (push/replace/new context).</li>
+<li>Persist card+url state in history entries.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Back navigation behaves per transition mode tests.</li>
+</ol>
+<h2 id="phase-2-task-model-do--goprevnooprefresh">Phase 2: Task Model (<code>do</code> + <code>go/prev/noop/refresh</code>)</h2>
+<h3 id="t2-1-parse-and-store-do-blocks">T2-1 Parse and store <code>do</code> blocks</h3>
+<ul>
+<li>Goal: establish task bindings.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Parse <code>do</code> position/name/type/label metadata.</li>
+<li>Parse task child (<code>go|prev|noop|refresh</code>).</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Task map available per card.</li>
+</ol>
+<h3 id="t2-2-host-visible-softkey-model">T2-2 Host-visible softkey model</h3>
+<ul>
+<li>Goal: surface usable softkeys to renderer host.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Add softkey labels to render state.</li>
+<li>Add key mapping for softkey activation.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Host can display and invoke task bindings.</li>
+</ol>
+<h3 id="t2-3-implement-task-execution">T2-3 Implement task execution</h3>
+<ul>
+<li>Goal: execute task semantics.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li><code>go</code>: URL resolution + method + postfield payload event.</li>
+<li><code>prev</code>: history pop.</li>
+<li><code>noop</code>: no-op state update.</li>
+<li><code>refresh</code>: rerender with current state.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Integration tests cover each task path.</li>
+</ol>
+<h2 id="phase-3-variables--substitution">Phase 3: Variables + Substitution</h2>
+<h3 id="t3-1-variablestore-core">T3-1 VariableStore core</h3>
+<ul>
+<li>Goal: runtime variable persistence.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Add variable store to runtime state.</li>
+<li>Parse/update from setvar locations as supported.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Variables survive card transitions in same deck context.</li>
+</ol>
+<h3 id="t3-2-substitution-engine">T3-2 Substitution engine</h3>
+<ul>
+<li>Goal: replace variable references in text/attributes.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Add substitution for text nodes.</li>
+<li>Add substitution for href and task labels/targets.</li>
+<li>Guard against recursive expansion loops.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Deterministic substitution tests pass.</li>
+</ol>
+<h2 id="phase-4-forms-and-request-payloads">Phase 4: Forms and Request Payloads</h2>
+<h3 id="t4-1-form-controls-model">T4-1 Form controls model</h3>
+<ul>
+<li>Goal: parse and render input/select/option structures.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Add form node types.</li>
+<li>Add focus/edit behavior.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Form controls render and can be edited.</li>
+</ol>
+<h3 id="t4-2-submit-pipeline">T4-2 Submit pipeline</h3>
+<ul>
+<li>Goal: build request payloads for host transport.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Serialize GET query and POST fields.</li>
+<li>Emit structured navigation request event.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Host receives expected payload structure.</li>
+</ol>
+<h2 id="phase-5-events-and-timers-controlled-scope">Phase 5: Events and Timers (Controlled Scope)</h2>
+<h3 id="t5-1-onevent-dispatch">T5-1 onevent dispatch</h3>
+<ul>
+<li>Goal: support deterministic event handlers.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Parse onevent bindings.</li>
+<li>Dispatch supported event types through task executor.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Event-trigger tests pass for supported types.</li>
+</ol>
+<h3 id="t5-2-timer-baseline">T5-2 timer baseline</h3>
+<ul>
+<li>Goal: safe timer support.</li>
+<li>Tasks:</li>
+</ul>
+<ol>
+<li>Parse timer metadata/value.</li>
+<li>Add host tick hook or monotonic timer callback.</li>
+</ol>
+<ul>
+<li>Acceptance:</li>
+</ul>
+<ol>
+<li>Timer action triggers at expected intervals in tests.</li>
+</ol>
+<h2 id="cross-cutting-tickets">Cross-Cutting Tickets</h2>
+<h3 id="tx-1-error-taxonomy">TX-1 Error taxonomy</h3>
+<ul>
+<li>Define stable error codes for parse/nav/task/runtime failures.</li>
+</ul>
+<h3 id="tx-2-observability">TX-2 Observability</h3>
+<ul>
+<li>Add debug snapshot dump (<code>active card</code>, <code>focus index</code>, <code>links</code>, <code>metadata</code>).</li>
+</ul>
+<h3 id="tx-3-compatibility-fixtures">TX-3 Compatibility fixtures</h3>
+<ul>
+<li>Build fixture corpus from spec-like decks and real-world samples.</li>
+</ul>
+<h3 id="tx-4-performance-guardrails">TX-4 Performance guardrails</h3>
+<ul>
+<li>Add benchmark test for large decks and deep history.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#implementation-tickets-step-by-step">Implementation Tickets (Step-by-Step)</a></li><li class="depth-2"><a href="#phase-0-stabilize-current-mvp">Phase 0: Stabilize Current MVP</a></li><li class="depth-3"><a href="#t0-1-contract-hardening">T0-1 Contract hardening</a></li><li class="depth-3"><a href="#t0-2-parser-robustness-for-current-tags">T0-2 Parser robustness for current tags</a></li><li class="depth-3"><a href="#t0-3-renderfocus-determinism">T0-3 Render/focus determinism</a></li><li class="depth-2"><a href="#phase-1-spec-driven-card-metadata">Phase 1: Spec-Driven Card Metadata</a></li><li class="depth-3"><a href="#t1-1-card-metadata-parsing">T1-1 Card metadata parsing</a></li><li class="depth-3"><a href="#t1-2-navigation-history-policy">T1-2 Navigation history policy</a></li><li class="depth-2"><a href="#phase-2-task-model-do--goprevnooprefresh">Phase 2: Task Model (do + go/prev/noop/refresh)</a></li><li class="depth-3"><a href="#t2-1-parse-and-store-do-blocks">T2-1 Parse and store do blocks</a></li><li class="depth-3"><a href="#t2-2-host-visible-softkey-model">T2-2 Host-visible softkey model</a></li><li class="depth-3"><a href="#t2-3-implement-task-execution">T2-3 Implement task execution</a></li><li class="depth-2"><a href="#phase-3-variables--substitution">Phase 3: Variables + Substitution</a></li><li class="depth-3"><a href="#t3-1-variablestore-core">T3-1 VariableStore core</a></li><li class="depth-3"><a href="#t3-2-substitution-engine">T3-2 Substitution engine</a></li><li class="depth-2"><a href="#phase-4-forms-and-request-payloads">Phase 4: Forms and Request Payloads</a></li><li class="depth-3"><a href="#t4-1-form-controls-model">T4-1 Form controls model</a></li><li class="depth-3"><a href="#t4-2-submit-pipeline">T4-2 Submit pipeline</a></li><li class="depth-2"><a href="#phase-5-events-and-timers-controlled-scope">Phase 5: Events and Timers (Controlled Scope)</a></li><li class="depth-3"><a href="#t5-1-onevent-dispatch">T5-1 onevent dispatch</a></li><li class="depth-3"><a href="#t5-2-timer-baseline">T5-2 timer baseline</a></li><li class="depth-2"><a href="#cross-cutting-tickets">Cross-Cutting Tickets</a></li><li class="depth-3"><a href="#tx-1-error-taxonomy">TX-1 Error taxonomy</a></li><li class="depth-3"><a href="#tx-2-observability">TX-2 Observability</a></li><li class="depth-3"><a href="#tx-3-compatibility-fixtures">TX-3 Compatibility fixtures</a></li><li class="depth-3"><a href="#tx-4-performance-guardrails">TX-4 Performance guardrails</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/implementation-tickets.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

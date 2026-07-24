@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WASM Engine Architecture (Maintainable, MVP-First) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/architecture"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/architecture.md</p><div class="markdown-body"><h1 id="wasm-engine-architecture-maintainable-mvp-first">WASM Engine Architecture (Maintainable, MVP-First)</h1>
+<h2 id="1-design-constraints">1. Design Constraints</h2>
+<ul>
+<li>Keep module boundaries explicit.</li>
+<li>Avoid over-modeling unsupported spec areas in MVP.</li>
+<li>Keep public API stable while internal parser/runtime evolve.</li>
+</ul>
+<h2 id="2-runtime-components">2. Runtime Components</h2>
+<ol>
+<li><code>parser/</code></li>
+</ol>
+<ul>
+<li>Converts WML XML to AST/runtime nodes.</li>
+<li>Stores unknown/unsupported nodes for debug only.</li>
+</ul>
+<ol start="2">
+<li><code>runtime/</code></li>
+</ol>
+<ul>
+<li>Holds deck/card graph, active card, history, variable store (later), and task bindings.</li>
+</ul>
+<ol start="3">
+<li><code>nav/</code></li>
+</ol>
+<ul>
+<li>Focus traversal, link activation, URL resolution, and navigation intents.</li>
+</ul>
+<ol start="4">
+<li><code>layout/</code></li>
+</ol>
+<ul>
+<li>Converts active card nodes to flow lines and draw commands.</li>
+</ul>
+<ol start="5">
+<li><code>render/</code></li>
+</ol>
+<ul>
+<li>Defines serializable output model consumed by host canvas renderer.</li>
+</ul>
+<ol start="6">
+<li><code>api (lib.rs core + adapters)</code></li>
+</ol>
+<ul>
+<li>Stable runtime methods in native Rust (<code>load_deck</code>, <code>load_deck_context</code>, <code>render</code>, <code>handle_key</code>, <code>navigate_to_card</code>, metadata getters).</li>
+<li>WASM adapter exports JS-compatible names (<code>loadDeck</code>, <code>loadDeckContext</code>, <code>render</code>, <code>handleKey</code>, <code>navigateToCard</code>, metadata getters).</li>
+<li>Target-specific serialization/binding logic must remain adapter-only.</li>
+</ul>
+<h2 id="3-data-model-incremental">3. Data Model (Incremental)</h2>
+<p>MVP core:</p>
+<ul>
+<li><code>Deck { cards: Vec&lt;Card&gt; }</code></li>
+<li><code>Card { id, nodes }</code></li>
+<li><code>Node::Paragraph(Vec&lt;InlineNode&gt;) | Node::Break</code></li>
+<li><code>InlineNode::Text | InlineNode::Link { text, href }</code></li>
+</ul>
+<p>Phase 2 additions:</p>
+<ul>
+<li><code>CardMeta { title, access_domain, access_path, ordered, newcontext }</code></li>
+<li><code>TaskBinding { kind, label, target, method, postfields }</code></li>
+<li><code>VariableStore</code></li>
+</ul>
+<p>Phase 3 additions:</p>
+<ul>
+<li><code>EventBinding</code></li>
+<li>timer runtime state</li>
+<li>form controls model</li>
+</ul>
+<h2 id="4-api-boundary">4. API Boundary</h2>
+<p>Input boundary:</p>
+<ul>
+<li><code>loadDeckContext(wmlXml, baseUrl, contentType, rawBytesBase64?)</code></li>
+</ul>
+<p>Output boundary:</p>
+<ul>
+<li><code>render() -&gt; RenderList</code></li>
+<li>future: <code>drainEvents() -&gt; EngineEvent[]</code> for nav/error/task events</li>
+</ul>
+<p>Compatibility policy:</p>
+<ul>
+<li>Existing methods remain available.</li>
+<li>New methods/fields are additive.</li>
+</ul>
+<h2 id="5-navigation-pipeline">5. Navigation Pipeline</h2>
+<ol>
+<li>key input -&gt; focus/action intent</li>
+<li>resolve active interactable</li>
+<li>if <code>#fragment</code>: transition card</li>
+<li>else: emit host navigation request (future explicit event queue)</li>
+<li>refresh render state</li>
+</ol>
+<h2 id="6-performance-and-safety">6. Performance and Safety</h2>
+<ul>
+<li>No heap-heavy DOM mirrors; keep compact node model.</li>
+<li>Cache parsed deck and precomputed interactables per card.</li>
+<li>Deterministic rendering for snapshot tests.</li>
+<li>Never panic across wasm boundary; convert to structured error.</li>
+</ul>
+<h2 id="7-future-proofing-without-overengineering">7. Future-Proofing Without Overengineering</h2>
+<p>Do now:</p>
+<ul>
+<li>keep clear module seams</li>
+<li>preserve source metadata (<code>baseUrl</code>, <code>contentType</code>)</li>
+<li>define stable event/error enums</li>
+</ul>
+<p>Defer now:</p>
+<ul>
+<li>full DTD validation</li>
+<li>full WMLScript execution</li>
+<li>full event/timer matrix</li>
+<li>pixel-perfect vendor quirks</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wasm-engine-architecture-maintainable-mvp-first">WASM Engine Architecture (Maintainable, MVP-First)</a></li><li class="depth-2"><a href="#1-design-constraints">1. Design Constraints</a></li><li class="depth-2"><a href="#2-runtime-components">2. Runtime Components</a></li><li class="depth-2"><a href="#3-data-model-incremental">3. Data Model (Incremental)</a></li><li class="depth-2"><a href="#4-api-boundary">4. API Boundary</a></li><li class="depth-2"><a href="#5-navigation-pipeline">5. Navigation Pipeline</a></li><li class="depth-2"><a href="#6-performance-and-safety">6. Performance and Safety</a></li><li class="depth-2"><a href="#7-future-proofing-without-overengineering">7. Future-Proofing Without Overengineering</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/architecture.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

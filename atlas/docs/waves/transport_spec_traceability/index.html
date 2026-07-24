@@ -1,0 +1,535 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Transport Spec Traceability · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/transport_spec_traceability"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/transport_spec_traceability.md</p><div class="markdown-body"><h1 id="waves-transport-spec-traceability">Waves Transport Spec Traceability</h1>
+<p>Version: v0.3
+Status: active (target-era SCR extraction and selected-path audit complete)</p>
+<h2 id="purpose">Purpose</h2>
+<p>Capture normative transport-layer requirements for the Waves protocol rewrite track and map them to implementation-ready acceptance criteria.</p>
+<h2 id="source-authority-policy">Source Authority Policy</h2>
+<ul>
+<li>See <code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code> for normative vs supplemental source precedence and citation rules.</li>
+<li>External vector adoption guidance is tracked separately in:
+<ul>
+<li><code>docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md</code></li>
+<li><code>docs/waves/networking-vector-adoption.json</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="strict-target-source-set">Strict target source set</h2>
+<ul>
+<li>WDP: <code>WAP-200</code> plus approved SINs <code>001</code>, <code>002</code>, <code>003</code>, <code>004</code>, and <code>005</code></li>
+<li>WCMP: <code>WAP-202</code></li>
+<li>WSP: <code>WAP-203</code> plus approved SINs <code>001</code>, <code>003</code>, and <code>005</code></li>
+<li>WTP, conditional only: <code>WAP-201</code> plus approved SINs, if a
+connection-oriented WSP capability is claimed</li>
+</ul>
+<p>The exact WDP/WCMP/WSP source rows and selected Class C dependency closure are
+recorded in:</p>
+<ul>
+<li><code>docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wdp-scr.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wsp-scr.json</code></li>
+</ul>
+<p>The target release source identities are governed by
+<code>docs/waves/WAP_1_2_1_SOURCE_BASELINE.md</code>. Private recovered payloads remain
+outside Git until redistribution is permitted.</p>
+<p>Successor-era <code>WAP-259</code>, <code>WAP-224</code>, <code>WAP-230</code>, and OMA corrections remain
+useful delta/context evidence. They cannot replace target-era authority.</p>
+<h2 id="normative-precedence">Normative precedence</h2>
+<ol>
+<li>WAP-215 selects <code>WDP:MCF</code>, <code>WCMP:MCF</code>, and <code>WSP:MCF</code> for the Class C
+client target.</li>
+<li>The effective WAP-200 sequence governs WDP.</li>
+<li>WAP-202 governs WCMP.</li>
+<li>The effective WAP-203 sequence governs WSP; SIN 005 corrects the
+<code>WSP-CO-C-012</code> dependency expression.</li>
+<li>WAP-201/WTP becomes normative only for a separately claimed
+connection-oriented WSP capability. The initial strict profile selects
+connectionless WSP over WDP and does not activate WTP.</li>
+<li>Successor documents are delta/context evidence only.</li>
+</ol>
+<p>The <code>RQ-TRN-*</code> groups below are implementation-oriented themes. Exact
+conformance is decided by the three machine ledgers: 317 total source rows,
+22 selected rows, a selected audit of 0 implemented / 17 partial / 5 missing,
+and 0/22 direct normative tests.</p>
+<h2 id="requirements-matrix">Requirements matrix</h2>
+<p>Legend:</p>
+<ul>
+<li><code>M</code> = mandatory</li>
+<li><code>O</code> = optional</li>
+</ul>
+<h3 id="rq-trn-001-wdp-core-datagram-service">RQ-TRN-001 WDP core datagram service</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Provide WDP abstract datagram service primitives and behavior to upper layers.</li>
+<li>Core client/server WDP functionality must be present.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-200</code> sequence, sections 3.1, 6.1, 6.3.1.1, Appendix E</li>
+<li>selected SCRs: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-001</code>,
+<code>WDP-PF-C-002</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code>,
+<code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>T-DUnitdata</code> path works for send/receive between transport and upper layers.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Error indication path is defined for transport failures (<code>T-DError</code> behavior where applicable).</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-002-wdp-over-ip-must-use-udp">RQ-TRN-002 WDP over IP must use UDP</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>For bearers using IP routing, WDP datagram service is UDP (not a custom datagram protocol).</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-200</code> sequence, selected CDPD-over-UDP/IP alternative
+<code>WDP-CT-C-002</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> IP-backed bearer profile uses UDP socket/datagram semantics.</li>
+<li class="task-list-item"><input type="checkbox" disabled> No alternate custom datagram framing used on IP bearers.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-003-wdp-addressing-and-ports">RQ-TRN-003 WDP addressing and ports</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WDP must support port-based upper-layer addressing.</li>
+<li>WAP registered service ports must be honored for protocol roles.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-200</code> sequence, sections 3.1 and 6.1</li>
+<li>selected rows <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, and <code>WDP-NA-C-007</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Port mapping table includes WSP/WTP secure/non-secure service ports (<code>9200</code>-<code>9203</code>) and related service ports as needed.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Session binding uses address/port tuple consistently.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-004-wdp-payload-protection-and-error-handling">RQ-TRN-004 WDP payload protection and error handling</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>If bearer does not provide corruption protection, WDP adaptation must provide payload protection.</li>
+<li>WCMP is recommended for WDP error signaling.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-200</code> sequence and <code>WAP-202</code></li>
+<li>selected WCMP rows are tracked in the exact WCMP ledger</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Corruption-handling policy is explicit per bearer profile.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WCMP support state is declared (implemented, deferred, or bridged externally).</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-005-wtp-underlying-datagram-assumptions">RQ-TRN-005 WTP underlying datagram assumptions</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WTP requires underlying datagram service to provide at least port routing and SDU length.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>conditional target authority: effective <code>WAP-201</code> sequence</li>
+<li>successor evidence: <code>WAP-224</code> 5.2</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WTP adapter contract requires source/destination addressing + SDU length metadata.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-006-wtp-transaction-classes-baseline">RQ-TRN-006 WTP transaction classes baseline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support transaction classes and their semantics:
+<ul>
+<li>Class 0 unreliable invoke/no result</li>
+<li>Class 1 reliable invoke/no result</li>
+<li>Class 2 reliable invoke + one reliable result</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>conditional target authority: effective <code>WAP-201</code> sequence</li>
+<li>successor evidence: <code>WAP-224</code> 4.2.1, 4.2.2, 4.2.3; 6.1/6.2/6.3</li>
+<li>SCRs: <code>WTP-C-001..006</code>, <code>WTP-S-001..006</code> (profile-dependent mandatory set)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Class behavior fixtures validate expected ACK/result/termination rules.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unsupported class behavior is deterministic and standards-aligned.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-007-wtp-reliability-and-control-functions">RQ-TRN-007 WTP reliability and control functions</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Reliable transaction support includes retransmission-until-ack, abort handling, duplicate/TID handling, and timer/counter behavior.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>conditional target authority: effective <code>WAP-201</code> sequence</li>
+<li>successor evidence: <code>WAP-224</code> 7.1..7.12, 10</li>
+<li>SCR anchors: <code>WTP-C-010</code>, <code>WTP-C-011</code>, <code>WTP-C-015</code>, <code>WTP-C-016</code>, <code>WTP-C-022</code> (+ server counterparts)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Retransmission and abort conditions are bounded and observable in traces.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Duplicate invoke and TID verification behavior is test-covered.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-008-wtp-saresar-support-model">RQ-TRN-008 WTP SAR/ESAR support model</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>SAR and ESAR are optional but must interoperate correctly when present.</li>
+<li>Selective retransmission and packet groups follow section 7.14/7.15 semantics.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>conditional target authority: effective <code>WAP-201</code> sequence</li>
+<li>successor evidence: <code>WAP-224</code> 4.6, 7.14, 7.15, 10.6</li>
+<li>SCR anchors: <code>WTP-C-020</code>, <code>WTP-C-023..026</code> (+ server counterparts)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> SAR capability negotiation/behavior is explicit per peer role.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Packet-group/NACK flows pass conformance fixtures for missing-segment recovery.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-009-wtp-sin-clarification-overlay">RQ-TRN-009 WTP SIN clarification overlay</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>If the successor WTP capability is offered, apply <code>OMA-WAP-224_002</code>
+clarifications:
+<ul>
+<li>SAR/non-SAR interaction behavior and flag semantics when SAR capability exists but is not used.</li>
+<li>Class field encoding correction in PDU header table.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>successor-only evidence: <code>OMA-WAP-224_002</code> section 3 and section 4</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> SAR-capable vs non-SAR-capable interoperability cases are fixture-tested (both directions).</li>
+<li class="task-list-item"><input type="checkbox" disabled> Class field encoding uses corrected SIN value (verify against source PDF table during implementation).</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-010-wsp-mode-profile-and-stack-dependency">RQ-TRN-010 WSP mode profile and stack dependency</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WSP implementation must declare connectionless vs connection-oriented mode support and satisfy mode-specific dependencies.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, sections 6, 7, and 8; Appendix D</li>
+<li>SCRs: <code>WSP-C-001</code>, <code>WSP-CL-*</code>, <code>WSP-CO-*</code> root mode requirements</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: <code>transport-rust/src/network/wsp/session.rs</code>, <code>transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code></li>
+<li class="task-list-item"><input type="checkbox" disabled> Waves transport profile explicitly states active WSP mode(s).</li>
+<li class="task-list-item"><input type="checkbox" disabled> Mode selection is consistent with available WDP/WTP capabilities.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-011-wsp-connection-oriented-session-lifecycle">RQ-TRN-011 WSP connection-oriented session lifecycle</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Connection-oriented session must support connect/disconnect and optional suspend/resume behavior where profile includes it.</li>
+<li>Pending method/push transactions must be aborted on disconnect/suspend transitions.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 6.3, 7.1.2, 8.2.2/8.2.5</li>
+<li>SCR anchors: <code>WSP-CO-C-002..010</code>, <code>WSP-CO-S-002..010</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Session lifecycle state machine has deterministic connect/disconnect/suspend/resume transitions.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Outstanding transactions are aborted and surfaced consistently on session teardown/suspend.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-012-wsp-method-invocationresult-behavior">RQ-TRN-012 WSP method invocation/result behavior</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support method invoke/result data flow and abort signaling semantics in active mode profile.</li>
+<li>Transaction identifiers must correlate pending operations.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 6.3.3, 6.4.2, 7.1.3/7.2, 8.2.3</li>
+<li>SCR anchors: <code>WSP-CO-C-017..022</code>, <code>WSP-CL-C-004..020</code> (+ server-side counterparts)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: <code>transport-rust/src/network/wsp/pdu.rs</code>, <code>transport-rust/src/network/wsp/session.rs</code>, <code>transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json</code>, <code>transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code></li>
+<li class="task-list-item"><input type="checkbox" disabled> Invoke/result/abort primitive sequencing is covered by integration tests.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Multi-transaction overlap does not corrupt transaction identity mapping.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-013-wsp-capability-negotiation">RQ-TRN-013 WSP capability negotiation</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Capability negotiation controls enabled facilities and defaults for session behavior.</li>
+<li>Unknown capabilities are ignored safely.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 6.3.2 and 8.3</li>
+<li>SCR anchors: <code>WSP-CO-C-005</code>, <code>WSP-CO-C-006</code> (+ server equivalents)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Capability negotiation results are stored in session state and applied to subsequent operations.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unknown capability identifiers do not crash or desynchronize sessions.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-014-wsp-encoding-version-and-header-encoding-rules">RQ-TRN-014 WSP encoding version and header encoding rules</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Encoding-version header behavior and header code-page rules must be followed for interoperability.</li>
+<li>Unsupported binary encoding should produce standards-aligned error behavior.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 8.4.1 and related 8.4 header-encoding
+sections</li>
+<li>SCR anchors: <code>WSP-CO-C-014</code>, <code>WSP-CO-C-020</code>, <code>WSP-CL-C-020</code> (+ server equivalents)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: <code>transport-rust/src/network/wsp/encoding_version.rs</code>, <code>transport-rust/src/network/wsp/header_block.rs</code>, <code>transport-rust/src/network/wsp/pdu.rs</code>, <code>transport-rust/src/network/wsp/session.rs</code>, <code>transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json</code>, <code>transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code></li>
+<li class="task-list-item"><input type="checkbox" disabled> Encoding-version negotiation and fallback behavior is deterministic.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unsupported encoding path yields error/status behavior defined by spec.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-015-wsp-push-semantics-in-selected-profile">RQ-TRN-015 WSP push semantics in selected profile</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>If push is enabled for profile, implement push/confirmed-push and related acknowledgement rules per mode.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 6.3 Push facility, 8.2.4, Appendix D</li>
+<li>SCR anchors: <code>WSP-CO-C-010</code>, <code>WSP-CO-C-011</code>, <code>WSP-CL-C-002</code> (+ server counterparts)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Push paths are explicitly enabled/disabled by profile.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Confirmed push round-trip behavior is test-covered when enabled.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-016-wtp-tid-window-and-mpl-discipline">RQ-TRN-016 WTP TID window and MPL discipline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WTP responder-side TID acceptance/replay behavior must follow window-based validation and duplicate-handling rules.</li>
+<li>WTP initiator TID allocation rate must respect MPL-derived constraints.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>conditional target authority: effective <code>WAP-201</code> sequence</li>
+<li>successor evidence: <code>WAP-224</code> 7.8.2, 7.8.3.1</li>
+<li>tables: <code>Table 6</code>, <code>Table 7</code>, <code>Table 8</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Responder behavior is explicit for: no-cache, TID cache present, and transport duplicate-guarantee assumptions.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Initiator TID increment policy includes the <code>2**14 steps in 2*MPL</code> bound and deterministic behavior on restart/wrap windows.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-017-wsp-connectionless-primitive-profile-conformance">RQ-TRN-017 WSP connectionless primitive profile conformance</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>If connectionless mode is enabled, allowed client/server primitive occurrences must follow the WSP connectionless primitive matrix.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 6.4.3</li>
+<li>table: <code>Table 9</code> (connectionless service primitives)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Primitive occurrence matrix (<code>req</code>/<code>ind</code> only; no <code>res</code>/<code>cnf</code>) is encoded in transport profile tests.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invalid primitive usage paths fail deterministically and do not desynchronize session/transaction state.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-018-wsp-assigned-number-registry-fidelity">RQ-TRN-018 WSP assigned-number registry fidelity</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WSP parsing/encoding must use spec-defined assigned-number registries for PDU types, abort reasons, well-known parameters, and header field names.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, section 8.4</li>
+<li>tables: <code>Table 34</code>, <code>Table 35</code>, <code>Table 38</code>, <code>Table 39</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Registry token maps are fixture-backed for decode and encode paths.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unknown/unassigned values map to deterministic error or ignore behavior per profile policy.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-trn-019-wsp-capability-bounds-enforcement">RQ-TRN-019 WSP capability-bounds enforcement</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Negotiated capability values must follow capability semantics and enforce session limits for SDU/message size and outstanding-request counts.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>effective <code>WAP-203</code> sequence, 6.3.2 and 8.3</li>
+<li>tables: <code>Table 17</code>, <code>Table 18</code>, <code>Table 19</code>, <code>Table 20</code>, <code>Table 21</code>, <code>Table 22</code>, <code>Table 23</code>, <code>Table 24</code>, <code>Table 37</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Final negotiated values use deterministic min/intersection behavior for numeric/set capabilities.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Exceeded capability limits are handled with deterministic abort/error behavior and trace output.</li>
+</ul>
+</li>
+</ul>
+<h2 id="migration-phase-mapping">Migration phase mapping</h2>
+<ul>
+<li>Phase 1 (Transport profile baseline + ports/wrap): <code>RQ-TRN-001</code>..<code>RQ-TRN-004</code>, <code>RQ-TRN-010</code>, <code>RQ-TRN-017</code></li>
+<li>Phase 2 (conditional WTP capability only): <code>RQ-TRN-005</code>..<code>RQ-TRN-009</code>,
+<code>RQ-TRN-016</code></li>
+<li>Phase 3 (WSP method semantics and optional session breadth):
+<code>RQ-TRN-010</code>..<code>RQ-TRN-015</code>, <code>RQ-TRN-018</code>, <code>RQ-TRN-019</code></li>
+<li>Phase 4: post-phase integration alignment is blocked on profile gates (<code>T0-11</code>, <code>T0-14</code>) for any capability/security boundary that impacts runtime behavior.</li>
+<li>Migration dependency lock: <code>T0-08</code>..<code>T0-14</code> must be closed before production profile move in <code>TECHNICAL_ARCHITECTURE.md</code>.</li>
+<li>Profile-gate evidence reference (<code>T0-14</code>): <code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> + <code>node scripts/check-networking-profile-gates.mjs</code>.</li>
+</ul>
+<h2 id="adjacent-transport-context-watchlist">Adjacent transport-context watchlist</h2>
+<p>The transport stack will remain stable while adjacent networking specs are explicitly deferred:</p>
+<ol>
+<li><code>WAP-204</code> family (WAP over GSM/USSD) is deferred because bearer-adapter semantics are profile- and carrier-specific; scope and requirements are maintained in <code>OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md</code>.</li>
+<li><code>WAP-120-WAPCachingMod</code> is outside transport ownership but active under
+<code>WAE-603</code>; <code>WAP-175*</code> cache-operation breadth remains deferred from the
+core protocol rewrite milestone.</li>
+<li><code>WAP-213*</code> (pictogram/display adjuncts) is not required for protocol-layer correctness and is deferred to rendering-adjacent tracks.</li>
+<li><code>WAP-227</code> and <code>WAP-231</code> are deferred because persistent state/EFI integrations are not needed for transport-layer milestone behavior.</li>
+<li>Any future revival must open a dedicated scope ticket, update this traceability mapping, and pass <code>T0-14</code>+<code>T0-17</code> lock checks.</li>
+</ol>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The exact ledgers, not this thematic matrix, are the selected-profile
+completion authority.</li>
+<li>The initial strict bearer decision is CDPD WDP over UDP/IP with IPv4. Its
+<code>TIAEIA-732</code> family citation is normalized under <code>SRC-005</code> as an informative,
+licensed-payload metadata-only dependency.</li>
+<li>Additional bearers and connection-oriented WSP/WTP are modular enhancements;
+they cannot replace or waive the 22-row strict connectionless path.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-transport-spec-traceability">Waves Transport Spec Traceability</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-authority-policy">Source Authority Policy</a></li><li class="depth-2"><a href="#strict-target-source-set">Strict target source set</a></li><li class="depth-2"><a href="#normative-precedence">Normative precedence</a></li><li class="depth-2"><a href="#requirements-matrix">Requirements matrix</a></li><li class="depth-3"><a href="#rq-trn-001-wdp-core-datagram-service">RQ-TRN-001 WDP core datagram service</a></li><li class="depth-3"><a href="#rq-trn-002-wdp-over-ip-must-use-udp">RQ-TRN-002 WDP over IP must use UDP</a></li><li class="depth-3"><a href="#rq-trn-003-wdp-addressing-and-ports">RQ-TRN-003 WDP addressing and ports</a></li><li class="depth-3"><a href="#rq-trn-004-wdp-payload-protection-and-error-handling">RQ-TRN-004 WDP payload protection and error handling</a></li><li class="depth-3"><a href="#rq-trn-005-wtp-underlying-datagram-assumptions">RQ-TRN-005 WTP underlying datagram assumptions</a></li><li class="depth-3"><a href="#rq-trn-006-wtp-transaction-classes-baseline">RQ-TRN-006 WTP transaction classes baseline</a></li><li class="depth-3"><a href="#rq-trn-007-wtp-reliability-and-control-functions">RQ-TRN-007 WTP reliability and control functions</a></li><li class="depth-3"><a href="#rq-trn-008-wtp-saresar-support-model">RQ-TRN-008 WTP SAR/ESAR support model</a></li><li class="depth-3"><a href="#rq-trn-009-wtp-sin-clarification-overlay">RQ-TRN-009 WTP SIN clarification overlay</a></li><li class="depth-3"><a href="#rq-trn-010-wsp-mode-profile-and-stack-dependency">RQ-TRN-010 WSP mode profile and stack dependency</a></li><li class="depth-3"><a href="#rq-trn-011-wsp-connection-oriented-session-lifecycle">RQ-TRN-011 WSP connection-oriented session lifecycle</a></li><li class="depth-3"><a href="#rq-trn-012-wsp-method-invocationresult-behavior">RQ-TRN-012 WSP method invocation/result behavior</a></li><li class="depth-3"><a href="#rq-trn-013-wsp-capability-negotiation">RQ-TRN-013 WSP capability negotiation</a></li><li class="depth-3"><a href="#rq-trn-014-wsp-encoding-version-and-header-encoding-rules">RQ-TRN-014 WSP encoding version and header encoding rules</a></li><li class="depth-3"><a href="#rq-trn-015-wsp-push-semantics-in-selected-profile">RQ-TRN-015 WSP push semantics in selected profile</a></li><li class="depth-3"><a href="#rq-trn-016-wtp-tid-window-and-mpl-discipline">RQ-TRN-016 WTP TID window and MPL discipline</a></li><li class="depth-3"><a href="#rq-trn-017-wsp-connectionless-primitive-profile-conformance">RQ-TRN-017 WSP connectionless primitive profile conformance</a></li><li class="depth-3"><a href="#rq-trn-018-wsp-assigned-number-registry-fidelity">RQ-TRN-018 WSP assigned-number registry fidelity</a></li><li class="depth-3"><a href="#rq-trn-019-wsp-capability-bounds-enforcement">RQ-TRN-019 WSP capability-bounds enforcement</a></li><li class="depth-2"><a href="#migration-phase-mapping">Migration phase mapping</a></li><li class="depth-2"><a href="#adjacent-transport-context-watchlist">Adjacent transport-context watchlist</a></li><li class="depth-2"><a href="#notes">Notes</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/transport_spec_traceability.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

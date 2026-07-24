@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Native WSP POST Research Notes · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/native_wsp_post_research_notes"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/native_wsp_post_research_notes.md</p><div class="markdown-body"><h1 id="native-wsp-post-research-notes">Native WSP POST Research Notes</h1>
+<p>Date: 2026-03-07</p>
+<p>Scope:</p>
+<ul>
+<li>connectionless WSP <code>POST</code> behavior for native desktop/Kannel interop</li>
+<li>WML <code>go</code>/<code>postfield</code> submission semantics relevant to <code>T0-30</code></li>
+<li>implementation guidance for the current pre-alpha MVP slice</li>
+</ul>
+<h2 id="why-this-note-exists">Why this note exists</h2>
+<p>The native desktop <code>GET</code> lane is already working against Kannel. The next feature, native form <code>POST</code>, exposed a wire-level interop gap. This note records the relevant source findings so the implementation is driven by spec text and observed gateway behavior instead of trial-and-error packet layout changes.</p>
+<h2 id="primary-source-findings">Primary source findings</h2>
+<h3 id="1-connectionless-wsp-post-pdu-layout">1. Connectionless WSP <code>Post</code> PDU layout</h3>
+<p>Canonical source:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md">OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md</a></li>
+</ul>
+<p>The key connectionless <code>Post</code> layout is:</p>
+<ul>
+<li><code>TID | PDU | UriLen | HeadersLen | Uri | ContentType | Headers | Data</code></li>
+</ul>
+<p>Important details from the source text:</p>
+<ul>
+<li><code>UriLen</code> is a <code>uintvar</code></li>
+<li><code>HeadersLen</code> is a <code>uintvar</code></li>
+<li><code>HeadersLen</code> covers <code>ContentType + Headers</code></li>
+<li><code>Uri</code> must not include a null terminator</li>
+<li><code>Data</code> starts immediately after the header block and runs to the end of the SDU</li>
+</ul>
+<p>Why this matters:</p>
+<ul>
+<li>earlier local encoder experiments assumed the wrong field ordering and boundary markers</li>
+<li>Kannel failures that looked like malformed URLs or shifted bodies are consistent with a bad split between <code>Uri</code>, <code>ContentType</code>, <code>Headers</code>, and <code>Data</code></li>
+</ul>
+<h3 id="2-connectionless-wsp-get-pdu-layout-remains-the-control-case">2. Connectionless WSP <code>Get</code> PDU layout remains the control case</h3>
+<p>Canonical source:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md">OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md</a></li>
+</ul>
+<p>The <code>Get</code> layout is:</p>
+<ul>
+<li><code>TID | PDU | URILen | URI | Headers</code></li>
+</ul>
+<p>This is already proven live in the native desktop path and should remain the comparison baseline while fixing <code>POST</code>.</p>
+<h3 id="3-wml-gopostfield-submission-behavior">3. WML <code>go</code>/<code>postfield</code> submission behavior</h3>
+<p>Canonical sources:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191_105-WML-20020212-a.cleaned.md">WAP-191_105-WML-20020212-a.cleaned.md</a></li>
+<li><a href="/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-238-WML-20010911-a.cleaned.md">WAP-238-WML-20010911-a.cleaned.md</a></li>
+</ul>
+<p>Relevant rules:</p>
+<ul>
+<li>substitute variables before submission</li>
+<li>choose submission charset from <code>accept-charset</code>, or fall back to document encoding</li>
+<li>preserve <code>postfield</code> order</li>
+<li>URI-escape names and values for <code>application/x-www-form-urlencoded</code></li>
+<li>for <code>method="post"</code>, send the payload in the HTTP POST body</li>
+<li><code>Content-Type</code> must include a <code>charset</code> parameter when required by the submitted content</li>
+<li>same-document/same-deck navigation must ignore <code>postfield</code> unless <code>cache-control="no-cache"</code></li>
+</ul>
+<p>For this MVP slice, the most important rules are:</p>
+<ul>
+<li>field ordering</li>
+<li>variable substitution timing</li>
+<li><code>application/x-www-form-urlencoded</code> body generation</li>
+<li>same-deck suppression semantics</li>
+</ul>
+<h3 id="4-wmlscript-is-not-the-transport-pivot-here">4. WMLScript is not the transport pivot here</h3>
+<p>Relevant source set:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193-WMLScript-20001025-a.cleaned.md">WAP-193-WMLScript-20001025-a.cleaned.md</a></li>
+<li><a href="/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193_101-WMLScript-20010928-a.cleaned.md">WAP-193_101-WMLScript-20010928-a.cleaned.md</a></li>
+</ul>
+<p>Conclusion:</p>
+<ul>
+<li>WMLScript may influence form values indirectly through variables</li>
+<li>the actual submission semantics still live in WML task execution plus transport encoding</li>
+<li><code>T0-30</code> should stay focused on <code>go</code>/<code>postfield</code> plumbing and WSP request shaping, not WMLScript-specific transport behavior</li>
+</ul>
+<h2 id="local-codebase-findings">Local codebase findings</h2>
+<h3 id="engineruntime-status">Engine/runtime status</h3>
+<p>Relevant path:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/engine-wasm/engine/src/engine_runtime_internal/navigation.rs">navigation.rs</a></li>
+</ul>
+<p>Current state:</p>
+<ul>
+<li>the engine now preserves <code>method="post"</code> and <code>postfield</code> metadata</li>
+<li>it serializes the body as <code>application/x-www-form-urlencoded</code></li>
+<li>it currently emits <code>postContext</code> with content type <code>application/x-www-form-urlencoded</code></li>
+</ul>
+<p>Gap still to keep in mind:</p>
+<ul>
+<li>charset handling is not yet surfaced in emitted content type</li>
+</ul>
+<h3 id="transportruntime-status">Transport/runtime status</h3>
+<p>Relevant paths:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/transport-rust/src/fetch_runtime.rs">fetch_runtime.rs</a></li>
+<li><a href="/Users/dsteele/repos/wap-labs/transport-rust/src/native_fetch.rs">native_fetch.rs</a></li>
+</ul>
+<p>Current state:</p>
+<ul>
+<li>transport selection already supports native handling for <code>wap://</code> <code>GET</code></li>
+<li>current <code>POST</code> work is additive and uses the same stable entrypoint</li>
+<li>the live blocker is wire framing, not the high-level request-policy contract</li>
+</ul>
+<h3 id="kannel-environment-assumptions">Kannel environment assumptions</h3>
+<p>Relevant path:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/docker/kannel/kannel.conf">kannel.conf</a></li>
+</ul>
+<p>Current lab mapping:</p>
+<ul>
+<li>gateway HTTP base resolves through Kannel on <code>localhost:13002</code></li>
+<li>Kannel rewrites gateway-facing URLs to <code>http://wml-server:3000/*</code></li>
+<li>the desktop native lane should continue targeting this stack via WSP/WDP, not by adding more direct HTTP shortcuts</li>
+</ul>
+<h2 id="observed-gateway-behavior">Observed gateway behavior</h2>
+<p>Observed from local Kannel logs during native <code>POST</code> debugging:</p>
+<ul>
+<li>Kannel recognized the request as a connectionless <code>Post</code> attempt</li>
+<li>malformed requests caused URI/header/body boundary corruption</li>
+<li>symptoms included:
+<ul>
+<li>malformed target URI</li>
+<li>truncated or shifted <code>Content-Type</code></li>
+<li>request body bytes being interpreted as part of the path</li>
+</ul>
+</li>
+</ul>
+<p>Interpretation:</p>
+<ul>
+<li>Kannel behavior strongly supports the spec reading that the problem is PDU layout, especially the ordering and sizing of <code>UriLen</code>, <code>HeadersLen</code>, and the <code>ContentType</code> block</li>
+</ul>
+<h2 id="external-source-cross-checks">External source cross-checks</h2>
+<p>Useful external references consulted:</p>
+<ul>
+<li><a href="https://www.openmobilealliance.org/release/WSP/">Open Mobile Alliance release directory</a></li>
+<li><a href="https://www.kannel.org/download/1.4.0/userguide-1.4.0/userguide.html">Kannel User Guide 1.4.0</a></li>
+<li><a href="https://www.kannel.org/">Kannel project site</a></li>
+<li><a href="https://wiki.wireshark.org/Wireless%20Session%20Protocol">Wireshark WSP wiki</a></li>
+</ul>
+<p>What these contributed:</p>
+<ul>
+<li>Kannel references confirmed the gateway role and expected HTTP-bridging behavior after WSP decode</li>
+<li>Wireshark references are useful for protocol naming and packet sanity checks</li>
+<li>the OMA corpus remains the authoritative source for exact PDU field order</li>
+</ul>
+<p>Limitations of this pass:</p>
+<ul>
+<li>exact Kannel and Wireshark source files were not reliably retrievable through the web tool in this pass</li>
+<li>implementation guidance therefore relies on:
+<ul>
+<li>canonical local OMA/WAP specs in the repo</li>
+<li>local repo code</li>
+<li>live Kannel behavior already observed in the dev environment</li>
+</ul>
+</li>
+</ul>
+<h2 id="implementation-guidance-for-t0-30">Implementation guidance for <code>T0-30</code></h2>
+<h3 id="immediate-next-step">Immediate next step</h3>
+<p>Fix the connectionless <code>POST</code> encoder to follow:</p>
+<ul>
+<li><code>TID | PDU | UriLen | HeadersLen | Uri | ContentType | Headers | Data</code></li>
+</ul>
+<p>before changing broader transport behavior.</p>
+<h3 id="scope-to-keep">Scope to keep</h3>
+<ul>
+<li><code>application/x-www-form-urlencoded</code> only</li>
+<li>ASCII-safe lab payloads first</li>
+<li>login/register training-environment flows only</li>
+<li>native connectionless mode only</li>
+</ul>
+<h3 id="scope-to-defer">Scope to defer</h3>
+<ul>
+<li><code>multipart/form-data</code></li>
+<li>connection-oriented WSP session work</li>
+<li>broader WTP session/client state</li>
+<li>browser-side protocol logic</li>
+<li>non-ASCII charset edge cases beyond the first explicit charset plumbing pass</li>
+</ul>
+<h3 id="practical-implementation-order">Practical implementation order</h3>
+<ol>
+<li>Correct the wire layout for native connectionless <code>POST</code>.</li>
+<li>Re-run transport-level ignored Kannel smoke until register/login succeed.</li>
+<li>Add charset-aware <code>Content-Type</code> plumbing once the ASCII baseline is stable.</li>
+<li>Expand host/browser smokes on top of the validated transport path.</li>
+</ol>
+<h2 id="decisions-reinforced-by-this-research">Decisions reinforced by this research</h2>
+<ul>
+<li>do not add another HTTP workaround for desktop <code>wap://</code> navigation</li>
+<li>keep native <code>POST</code> additive under the existing transport entrypoint</li>
+<li>treat Kannel interop logs as a validation aid, not as the source of truth over the OMA/WAP specs</li>
+<li>keep <code>T0-30</code> narrowly focused on form submission, not full session architecture</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#native-wsp-post-research-notes">Native WSP POST Research Notes</a></li><li class="depth-2"><a href="#why-this-note-exists">Why this note exists</a></li><li class="depth-2"><a href="#primary-source-findings">Primary source findings</a></li><li class="depth-3"><a href="#1-connectionless-wsp-post-pdu-layout">1. Connectionless WSP Post PDU layout</a></li><li class="depth-3"><a href="#2-connectionless-wsp-get-pdu-layout-remains-the-control-case">2. Connectionless WSP Get PDU layout remains the control case</a></li><li class="depth-3"><a href="#3-wml-gopostfield-submission-behavior">3. WML go/postfield submission behavior</a></li><li class="depth-3"><a href="#4-wmlscript-is-not-the-transport-pivot-here">4. WMLScript is not the transport pivot here</a></li><li class="depth-2"><a href="#local-codebase-findings">Local codebase findings</a></li><li class="depth-3"><a href="#engineruntime-status">Engine/runtime status</a></li><li class="depth-3"><a href="#transportruntime-status">Transport/runtime status</a></li><li class="depth-3"><a href="#kannel-environment-assumptions">Kannel environment assumptions</a></li><li class="depth-2"><a href="#observed-gateway-behavior">Observed gateway behavior</a></li><li class="depth-2"><a href="#external-source-cross-checks">External source cross-checks</a></li><li class="depth-2"><a href="#implementation-guidance-for-t0-30">Implementation guidance for T0-30</a></li><li class="depth-3"><a href="#immediate-next-step">Immediate next step</a></li><li class="depth-3"><a href="#scope-to-keep">Scope to keep</a></li><li class="depth-3"><a href="#scope-to-defer">Scope to defer</a></li><li class="depth-3"><a href="#practical-implementation-order">Practical implementation order</a></li><li class="depth-2"><a href="#decisions-reinforced-by-this-research">Decisions reinforced by this research</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/native_wsp_post_research_notes.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

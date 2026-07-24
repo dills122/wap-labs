@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Out-of-Scope Domain Spec Review · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/out_of_scope_domain_spec_review"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/out_of_scope_domain_spec_review.md</p><div class="markdown-body"><h1 id="waves-out-of-scope-domain-spec-review">Waves Out-of-Scope Domain Spec Review</h1>
+<p>Version: v0.1<br>
+Status: S0-12 complete (initial extraction)</p>
+<h2 id="purpose">Purpose</h2>
+<p>Document reviewed requirements for currently out-of-scope domains so deferrals are explicit, traceable, and reversible.</p>
+<h2 id="source-set-reviewed-s0-12">Source set reviewed (S0-12)</h2>
+<h3 id="push-family">Push family</h3>
+<ul>
+<li><code>spec-processing/source-material/WAP-235-PushOTA-20010425-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-235_100-PushOTA-20011008-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-235_101-PushOTA-20020612-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-247-PAP-20010429-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-247_100-PAP-20011010-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-249-PPGService-20010713-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-249_102-PPGService-20011009-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-250-PushArchOverview-20010703-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-251-PushMessage-20010322-a.pdf</code></li>
+</ul>
+<h3 id="provisioning-family">Provisioning family</h3>
+<ul>
+<li><code>spec-processing/source-material/WAP-182-PROVARCH-20010314-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-183-PROVCONT-20010724-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-183_003-PROVCONT-20010912-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-183_004-PROVCONT-20011025-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-183_005_PROVCONT-20020411-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-184-PROVBOOT-20010314-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-184_001-PROVBOOT-20011010-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-185-PROVUAB-20010314-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-186-PROVSC-20010710-a.pdf</code></li>
+</ul>
+<h3 id="messagingsync-family">Messaging/sync family</h3>
+<ul>
+<li><code>spec-processing/source-material/WAP-167-ServiceInd-20010731-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-167_103-ServiceInd-20010926-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-168-ServiceLoad-20010731-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-168_103-ServiceLoad-20010816-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-175-CacheOp-20010731-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-175_102-CacheOp-20010816-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-205-MMSArchOverview-20010425-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-206-MMSCTR-20020115-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-209-MMSEncapsulation-20020105-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-234-SYNC-20010530-a.pdf</code></li>
+</ul>
+<h3 id="wtaitelephony-family">WTAI/telephony family</h3>
+<ul>
+<li><code>spec-processing/source-material/WAP-266-WTA-20010908-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-268-WTAI-20010908-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-228-WTAIIS95-20010908-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-255-WTAIGSM-20010908-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-269-WTAIIS136-20010908-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-270-WTAIPDC-20010908-a.pdf</code></li>
+</ul>
+<h3 id="presentationxhtmlmp-family">Presentation/xhtmlmp family</h3>
+<ul>
+<li><code>spec-processing/source-material/WAP-239-WCSS-20011026-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-239-101-WCSS-20020430-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-244-WMLTR-20011106-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-277-XHTMLMP-20011029-a.pdf</code></li>
+</ul>
+<h3 id="misc-family">Misc family</h3>
+<ul>
+<li><code>spec-processing/source-material/WAP-120-WAPCachingMod-20010413-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-204-WAPOverGSMUSSD-20010730-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-204_103-WAPOverGSMUSSD-20010813-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-213-WAPInterPic-20010406-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-213_101-WAPInterPic-20011123-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-213_102-WAPInterPic-20011128-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-227-PSTOR-20011220-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-231-EFI-20011217-a.pdf</code></li>
+</ul>
+<h2 id="domain-requirement-extracts-and-current-scope-posture">Domain requirement extracts and current scope posture</h2>
+<h3 id="rq-oos-001-push-stack">RQ-OOS-001 Push stack</h3>
+<ul>
+<li>Requirements observed:
+<ul>
+<li>OTA push transport modes, confirmed/unconfirmed delivery semantics, and security requirements (WTLS on secure paths) are normative.</li>
+<li>PAP/PPG include strict request/notification/status handling and entity ordering rules.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-235*</code>, <code>WAP-247*</code>, <code>WAP-249*</code>, <code>WAP-250</code>, <code>WAP-251</code></li>
+</ul>
+</li>
+<li>Current posture:
+<ul>
+<li><code>deferred/out-of-scope</code> for Waves MVP.</li>
+</ul>
+</li>
+<li>AC for future enablement:
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Push session model and delivery-state machine defined before implementation.</li>
+<li class="task-list-item"><input type="checkbox" disabled> PAP and PPG contracts documented with error/result notification behavior.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-oos-002-provisioning-and-bootstrap">RQ-OOS-002 Provisioning and bootstrap</h3>
+<ul>
+<li>Requirements observed:
+<ul>
+<li>Provisioning content/security model, bootstrap trust mechanisms, and smart-card provisioning file rules are normative and substantial.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-182..186</code> and SIN overlays</li>
+</ul>
+</li>
+<li>Current posture:
+<ul>
+<li><code>deferred/out-of-scope</code> for Waves MVP.</li>
+</ul>
+</li>
+<li>AC for future enablement:
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Security method + MAC/PIN flow model specified end-to-end.</li>
+<li class="task-list-item"><input type="checkbox" disabled> SIM/WIM provisioning read/update policy explicitly documented.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-oos-003-messagingsync-services">RQ-OOS-003 Messaging/sync services</h3>
+<ul>
+<li>Requirements observed:
+<ul>
+<li>SI/SL/CO behavior, MMS transaction and encapsulation flows, and sync protocol requirements impose separate application frameworks.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-167*</code>, <code>WAP-168*</code>, <code>WAP-175*</code>, <code>WAP-205</code>, <code>WAP-206</code>, <code>WAP-209</code>, <code>WAP-234</code></li>
+</ul>
+</li>
+<li>Current posture:
+<ul>
+<li><code>deferred/out-of-scope</code> for Waves MVP.</li>
+</ul>
+</li>
+<li>AC for future enablement:
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Message lifecycle, queueing, and replacement semantics formalized in dedicated contracts.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Push/MMS/Sync dependency layering defined before feature development.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-oos-004-wtaitelephony-integration">RQ-OOS-004 WTAI/telephony integration</h3>
+<ul>
+<li>Requirements observed:
+<ul>
+<li>WTA session security, permission model, and telephony event/function bindings are strict and carrier/network dependent.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-266</code>, <code>WAP-268</code>, <code>WAP-228</code>, <code>WAP-255</code>, <code>WAP-269</code>, <code>WAP-270</code></li>
+</ul>
+</li>
+<li>Current posture:
+<ul>
+<li><code>deferred/out-of-scope</code> for Waves MVP.</li>
+</ul>
+</li>
+<li>AC for future enablement:
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Permission model and trusted-gateway constraints captured in host security policy.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Network-specific telephony adapters defined per target profile.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-oos-005-presentation-and-xhtml-mp">RQ-OOS-005 Presentation and XHTML MP</h3>
+<ul>
+<li>Requirements observed:
+<ul>
+<li>WAP CSS and XHTML MP user-agent conformance are extensive and represent a separate rendering track.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-239*</code>, <code>WAP-244</code>, <code>WAP-277</code></li>
+</ul>
+</li>
+<li>Current posture:
+<ul>
+<li><code>deferred/out-of-scope</code> for current WAP 1.x runtime-first milestone.</li>
+</ul>
+</li>
+<li>AC for future enablement:
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Rendering-mode decision (WML-centric vs XHTMLMP dual mode) made explicitly.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WCSS parser/cascade support matrix defined before coding.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-oos-006-miscellaneous-adjunct-capabilities">RQ-OOS-006 Miscellaneous adjunct capabilities</h3>
+<ul>
+<li>Requirements observed:
+<ul>
+<li>Caching model updates, USSD transport profile, pictogram semantics, persistent storage API, and EFI model each add significant independent scope.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-120</code>, <code>WAP-204*</code>, <code>WAP-213*</code>, <code>WAP-227</code>, <code>WAP-231</code></li>
+</ul>
+</li>
+<li>Current posture:
+<ul>
+<li>transport-specific adjuncts are <code>deferred/out-of-scope</code> unless promoted;
+WAP-120 caching is separately mandatory in the selected WAE user-agent
+profile.</li>
+</ul>
+</li>
+<li>Scope rationale:
+<ul>
+<li><code>WAP-120</code> is outside transport ownership, but its five selected
+user-agent rows are active compliance work under <code>WAE-603</code>.</li>
+<li><code>WAP-204</code> is deferred because GSM/USSD bearer behavior depends on carrier/tunnel-specific adaptation and is maintained as transport-adjacent context.</li>
+<li><code>WAP-213</code> is deferred because pictogram/render adjunct behavior is UX/display-specific and outside protocol-loop ownership.</li>
+<li><code>WAP-227</code>/<code>WAP-231</code> are deferred because persistence and EFI hooks create separate lifecycle and storage guarantees not yet in transport core scope.</li>
+</ul>
+</li>
+<li>AC for future enablement:
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Each capability activated only via explicit ticket with contract updates and test scope.</li>
+</ul>
+</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>This review closes source-material ambiguity for out-of-scope domains; deferral is explicit and documented.</li>
+<li>No implementation commitments are created by this document.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-out-of-scope-domain-spec-review">Waves Out-of-Scope Domain Spec Review</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-set-reviewed-s0-12">Source set reviewed (S0-12)</a></li><li class="depth-3"><a href="#push-family">Push family</a></li><li class="depth-3"><a href="#provisioning-family">Provisioning family</a></li><li class="depth-3"><a href="#messagingsync-family">Messaging/sync family</a></li><li class="depth-3"><a href="#wtaitelephony-family">WTAI/telephony family</a></li><li class="depth-3"><a href="#presentationxhtmlmp-family">Presentation/xhtmlmp family</a></li><li class="depth-3"><a href="#misc-family">Misc family</a></li><li class="depth-2"><a href="#domain-requirement-extracts-and-current-scope-posture">Domain requirement extracts and current scope posture</a></li><li class="depth-3"><a href="#rq-oos-001-push-stack">RQ-OOS-001 Push stack</a></li><li class="depth-3"><a href="#rq-oos-002-provisioning-and-bootstrap">RQ-OOS-002 Provisioning and bootstrap</a></li><li class="depth-3"><a href="#rq-oos-003-messagingsync-services">RQ-OOS-003 Messaging/sync services</a></li><li class="depth-3"><a href="#rq-oos-004-wtaitelephony-integration">RQ-OOS-004 WTAI/telephony integration</a></li><li class="depth-3"><a href="#rq-oos-005-presentation-and-xhtml-mp">RQ-OOS-005 Presentation and XHTML MP</a></li><li class="depth-3"><a href="#rq-oos-006-miscellaneous-adjunct-capabilities">RQ-OOS-006 Miscellaneous adjunct capabilities</a></li><li class="depth-2"><a href="#notes">Notes</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/out_of_scope_domain_spec_review.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

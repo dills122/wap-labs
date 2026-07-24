@@ -1,0 +1,472 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 / WML 1.3 Source Baseline · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_source_baseline"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_source_baseline.md</p><div class="markdown-body"><h1 id="wap-121--wml-13-source-baseline">WAP 1.2.1 / WML 1.3 Source Baseline</h1>
+<p>Version: v0.3
+Status: active target baseline; exact Class C client profile applied</p>
+<h2 id="compatibility-target">Compatibility target</h2>
+<p>Waves targets WAP 1.2.1 with WML 1.3 as its primary historical compatibility
+floor.</p>
+<p>Strict mode must reproduce observable behavior required by that release.
+Modern internals, performance improvements, diagnostics, user experience, and
+explicit Waves extensions are allowed when they preserve strict outcomes or
+are kept behind a clearly separate capability/mode.</p>
+<p>This document defines the source baseline. It does not claim implementation or
+certification conformance.</p>
+<h2 id="authority-and-source-lock">Authority and source lock</h2>
+<p>Primary authority:</p>
+<ul>
+<li>WAP Forum material preserved by the Open Mobile Alliance (OMA)</li>
+<li><a href="https://www.openmobilealliance.org/specifications/affiliates/wap-forum/">OMA WAP Forum release catalog</a></li>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/wap/">Official WAP affiliate archive directory</a></li>
+<li><a href="https://www.openmobilealliance.org/about/policies/use-agreement/">OMA use agreement</a></li>
+</ul>
+<p>Machine-readable release inventory:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-release.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-effective-spec.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-ingestion-status.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-external-dependencies.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wml-scr.json</code></li>
+</ul>
+<p>Recovery and permission runbook:</p>
+<ul>
+<li><code>docs/waves/WAP_SOURCE_RECOVERY_AND_PERMISSION.md</code></li>
+</ul>
+<p>Compliance execution program:</p>
+<ul>
+<li><code>docs/waves/WAP_1_2_1_PLANNING_BASELINE.md</code></li>
+<li><code>docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md</code></li>
+<li><code>docs/waves/wap-1.2.1-compliance-program.json</code></li>
+</ul>
+<p>Validation:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-release-manifest.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-class-conformance.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-effective-spec.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-ingestion-status.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-external-dependencies.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-external-ingestion-status.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-compliance-program.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-conformance-ledger.mjs</span></span></code></pre>
+<p>The manifest, not the incidental local PDF list, defines membership in the
+target release.</p>
+<h2 id="release-snapshot">Release snapshot</h2>
+<p>Official archive:</p>
+<ul>
+<li>Label: WAP 1.2.1 (June 2000)</li>
+<li>Archive snapshot: <code>Technical_June2000-20021106[1].zip</code></li>
+<li>Size: 7,817,993 bytes</li>
+<li>SHA-256: <code>382b7991701f99bc88e61c33aca740440044381788ba4b87591242a3a5e11cae</code></li>
+<li>Integrity: all 97 members pass ZIP validation</li>
+</ul>
+<p>Preliminary planning classification:</p>
+<table>
+<thead>
+<tr>
+<th>Source class</th>
+<th style="text-align: right">Members</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>core-mandatory</code></td>
+<td style="text-align: right">29</td>
+<td>Initial corpus-priority bucket; exact selected-profile status comes from WAP-215 and the effective SCR ledgers</td>
+</tr>
+<tr>
+<td><code>core-optional</code></td>
+<td style="text-align: right">7</td>
+<td>Initial corpus-priority bucket for conditional/optional review, not a conformance verdict</td>
+</tr>
+<tr>
+<td><code>dependency</code></td>
+<td style="text-align: right">6</td>
+<td>Architecture, overview, formats, caching, or adaptation material needed to interpret core behavior</td>
+</tr>
+<tr>
+<td><code>profile-optional</code></td>
+<td style="text-align: right">53</td>
+<td>Push, telephony, identity, bearer, and other optional profiles</td>
+</tr>
+<tr>
+<td><code>historical</code></td>
+<td style="text-align: right">2</td>
+<td>Proposed documents retained for release history, not approved normative behavior</td>
+</tr>
+</tbody>
+</table>
+<p>These classes are project planning labels. The completed WAP-215 selection and
+effective SCR graph supersede them for conformance: WCMP is mandatory in the
+selected Class C client path, while WTP is conditional on claiming
+connection-oriented WSP.</p>
+<h2 id="local-preservation-status">Local preservation status</h2>
+<p>The repository currently has 98 canonical root-level PDFs, primarily from the
+later WAP 2.0 technical bundle. Against the WAP 1.2.1 source lock:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th style="text-align: right">Members</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Byte-exact local copy</td>
+<td style="text-align: right">21</td>
+</tr>
+<tr>
+<td>Same filename, different bytes</td>
+<td style="text-align: right">4</td>
+</tr>
+<tr>
+<td>Missing from canonical corpus</td>
+<td style="text-align: right">72</td>
+</tr>
+</tbody>
+</table>
+<p>The four same-name variants are:</p>
+<ul>
+<li><code>WAP-120-WAPCachingMod-20010413-a.pdf</code></li>
+<li><code>WAP-161-WMLScriptCrypto-20010620-a.pdf</code></li>
+<li><code>WAP-188-WAPGenFormats-20010710-a.pdf</code></li>
+<li><code>WAP-202-WCMP-20010624-a.pdf</code></li>
+</ul>
+<p>The strict-core/dependency/conditional subset has 42 release members:</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th style="text-align: right">Release members</th>
+<th style="text-align: right">Exact</th>
+<th style="text-align: right">Different</th>
+<th style="text-align: right">Missing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architecture</td>
+<td style="text-align: right">1</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">1</td>
+</tr>
+<tr>
+<td>WAE specification and overview</td>
+<td style="text-align: right">7</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">7</td>
+</tr>
+<tr>
+<td>WML 1.3</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td>WBXML</td>
+<td style="text-align: right">2</td>
+<td style="text-align: right">2</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td>WMLScript and standard libraries</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td>WDP</td>
+<td style="text-align: right">6</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">6</td>
+</tr>
+<tr>
+<td>WTP</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">4</td>
+</tr>
+<tr>
+<td>WSP</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">4</td>
+</tr>
+<tr>
+<td>WTLS</td>
+<td style="text-align: right">6</td>
+<td style="text-align: right">1</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">5</td>
+</tr>
+<tr>
+<td>Caching, formats, WDP/WCMP adaptation, and WCMP</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">1</td>
+<td style="text-align: right">3</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right"><strong>42</strong></td>
+<td style="text-align: right"><strong>12</strong></td>
+<td style="text-align: right"><strong>3</strong></td>
+<td style="text-align: right"><strong>27</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Therefore source recovery has 30 high-value release corrections: 27 missing
+members and 3 same-name but non-release-exact dependencies. The fourth
+same-name difference is the optional WMLScript Crypto profile.</p>
+<p>The complete official archive has now also been processed in the private
+research cache:</p>
+<table>
+<thead>
+<tr>
+<th>Research-ingestion state</th>
+<th style="text-align: right">Members</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Release PDF hash/size verified</td>
+<td style="text-align: right">97</td>
+</tr>
+<tr>
+<td>Non-empty text extraction hash/size recorded</td>
+<td style="text-align: right">97</td>
+</tr>
+<tr>
+<td>PDF pages represented</td>
+<td style="text-align: right">2,270</td>
+</tr>
+<tr>
+<td>Already byte-exact in the canonical Git corpus</td>
+<td style="text-align: right">21</td>
+</tr>
+<tr>
+<td>Recovered or divergent member awaiting promotion review</td>
+<td style="text-align: right">76</td>
+</tr>
+</tbody>
+</table>
+<p>This closes the research-access gap for the 97 technical members. It does not
+close the public-repository promotion or formal requirement-extraction gaps.</p>
+<h2 id="effective-core-families">Effective core families</h2>
+<p>Base specifications and their release-carried SIN overlays must be interpreted
+together, in publication order:</p>
+<ul>
+<li>Architecture: <code>WAP-100</code></li>
+<li>WAE: <code>WAP-190</code> + SINs <code>101</code>, <code>102</code>, <code>103</code>, <code>104</code>; overview <code>WAP-195</code> + SIN <code>101</code></li>
+<li>WML 1.3: <code>WAP-191</code> + SINs <code>102</code>, <code>104</code>, <code>105</code></li>
+<li>WBXML: <code>WAP-192</code> + SIN <code>105</code></li>
+<li>WMLScript: <code>WAP-193</code> + SIN <code>101</code></li>
+<li>WMLScript libraries: <code>WAP-194</code> + SIN <code>103</code></li>
+<li>WDP: <code>WAP-200</code> + SINs <code>001</code> through <code>005</code></li>
+<li>WTP: <code>WAP-201</code> + SINs <code>001</code>, <code>002</code>, <code>003</code></li>
+<li>WSP: <code>WAP-203</code> + SINs <code>001</code>, <code>003</code>, <code>005</code></li>
+<li>WTLS: <code>WAP-199</code> + SINs <code>102</code> through <code>106</code></li>
+</ul>
+<p>All nine selected Class C family SCR ledgers are now complete at feature
+level:</p>
+<ul>
+<li>WML: 76 active rows; <code>WML:MCF</code> selects 39 mandatory user-agent rows.</li>
+<li>WAE: 86 active rows plus 22 SIN-removed history rows; <code>WAESpec:MCF</code>
+selects 11 mandatory client rows.</li>
+<li>WBXML: 15 active rows; <code>WBXML:MCF</code> selects all three mandatory client rows
+and leaves 12 server/document/encoder rows outside the client profile.</li>
+<li>WMLScript: 112 active rows; <code>WMLScript:MCF</code> selects 41 mandatory
+interpreter rows.</li>
+<li>WMLScript Libraries: 95 effective rows; <code>WMLScriptLibs:MCF</code> selects 80
+mandatory interpreter rows and keeps two optional interpreter rows
+separately declared.</li>
+<li>Caching: 11 active rows; <code>WAPCachingMod:MCF</code> selects five mandatory
+user-agent rows and keeps optional time synchronization plus all gateway
+rows outside the selected client profile.</li>
+<li>WDP: 146 active rows; the selected nine-row path resolves <code>WDP:MCF</code> through
+CDPD-shaped UDP/IPv4.</li>
+<li>WCMP: 62 active rows; the selected five-row path resolves <code>WCMP:MCF</code>
+through the general WCMP message structure.</li>
+<li>WSP: 109 active rows; the selected eight-row path resolves <code>WSP:MCF</code>
+through connectionless WSP.</li>
+</ul>
+<p>Nested normative-clause extraction is complete for all 201 selected parents
+across WML, WAE, WBXML, caching, WCMP, the selected connectionless WSP path,
+the selected CDPD/UDP/IPv4 WDP path, WMLScript, and WMLScript Libraries. WTP is
+additionally required
+only if connection-oriented WSP is claimed. The selected CDPD <code>TIAEIA-732</code> family
+citation is normalized as an informative, licensed-payload metadata-only
+dependency.</p>
+<p>The WAP 2.0-era WAE (<code>WAP-236</code>), WDP (<code>WAP-259</code>), WTP (<code>WAP-224</code>), WSP
+(<code>WAP-230</code>), WTLS (<code>WAP-261</code>), and architecture (<code>WAP-210</code>) documents are
+successor/delta evidence. They must not silently replace the WAP 1.2.1
+effective specification in strict-mode requirements.</p>
+<p>Selected-profile implementation deltas are classified at
+<code>spec-processing/source-manifests/wap-1.2.1-successor-delta.json</code>. The
+register covers all 201 selected rows and does not treat planning
+compatibility as direct conformance evidence.</p>
+<h2 id="associated-and-governing-sources">Associated and governing sources</h2>
+<p>The official WAP Forum June 2000 release page lists these supporting assets:</p>
+<table>
+<thead>
+<tr>
+<th>Asset</th>
+<th style="text-align: right">Bytes</th>
+<th>SHA-256</th>
+<th>Repository state</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>channel12.dtd</code></td>
+<td style="text-align: right">892</td>
+<td><code>00baa80d3be6a4558b3115ebb1d6b3a58eea9cfb6bba0fd1f4ad73b993cfc31d</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>wml13.dtd</code></td>
+<td style="text-align: right">9,015</td>
+<td><code>764fe546974f15b40c1e49a0f3e954219e78f518c53a6d7d3956cab62be72dfb</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>pap_1.0.dtd</code></td>
+<td style="text-align: right">8,080</td>
+<td><code>bfcec60e17f07ed87b772004dfe784cda2bd88aaf8f211c4eafc68b1cb7a319a</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>si.dtd</code></td>
+<td style="text-align: right">1,676</td>
+<td><code>f71e1c657b501a49ba98dde685d29fe2c88107031f01e7d14781a36a669cf50b</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>sl.dtd</code></td>
+<td style="text-align: right">1,025</td>
+<td><code>8393b66f4f9c30163613b553b765504d3f92dadd1eaca9775265b33d15c4f972</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>wta-wml12.dtd</code></td>
+<td style="text-align: right">539</td>
+<td><code>dccd67a26526098adfae881a7826a21be34d69bd66cccd005a265e71a292a84c</code></td>
+<td>metadata-only</td>
+</tr>
+</tbody>
+</table>
+<p>The release catalog and OMA catalog identify these conformance sources:</p>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Role</th>
+<th>Verified payload</th>
+<th>Repository state</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WAP-215-ClassConform-20001213-a</code></td>
+<td>WAP 1.2.1 class-level CCR</td>
+<td>47,936 bytes; <code>af578cd5...8e44f9d</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>WAP-221-CREQ-20010425-a</code></td>
+<td>SCR/CCR grammar</td>
+<td>38,934 bytes; <code>d8713c91...b8ac905</code></td>
+<td>metadata-only</td>
+</tr>
+<tr>
+<td><code>WAP-273-CertPolicy-20010831-a</code></td>
+<td>certification policy</td>
+<td>110,965 bytes; <code>61b22088...342e92</code></td>
+<td>metadata-only</td>
+</tr>
+</tbody>
+</table>
+<p>WAP-215 was recovered from the live official WAP Forum document directory and
+independently byte-, page-, and text-verified. The release page’s visible
+filename omits one zero (<code>2001213</code>); the underlying object and document
+identity correctly use <code>20001213</code>. All six Class A/B/C client/server
+dependency graphs are recorded in
+<code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code>.</p>
+<p>The selected initial target is the exact WAP-215 data-client profile
+<code>CCR-CLASSC-C-001</code>. It requires the mandatory client feature groups for WAE,
+WML, WBXML, WMLScript, WMLScript libraries, caching, WSP, WDP, and WCMP. WTP
+is mandatory only when the client supports connection-mode WSP. WTLS, WIM,
+Push, WTA/WTAI, UAProf, and WMLScript Crypto remain separately declared
+capabilities rather than requirements of this Class C profile.</p>
+<p>The effective WML 1.3 ledger contains 76 source rows (47 mandatory, 29
+optional) in
+<code>spec-processing/source-manifests/wap-1.2.1-wml-scr.json</code> and documented in
+<code>docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md</code>. Applying <code>WML:MCF</code> to the client
+actor selects 39 required user-agent rows; 27 client rows are optional and 10
+encoder/server rows are not applicable to this client profile.</p>
+<p>The external-dependency lock now contains 43 historical authority records and
+preserves 60 citation labels in three explicitly dispositioned residual
+groups. Its acquisition ledger contains 48 private artifacts: 36 dependencies
+have full primary artifacts, two have partial historical evidence, and five
+historical IEEE/ISO/TIA payloads remain metadata-only. The selected Class C
+profile has zero blocking open citation labels; each residual group names the
+optional/bearer activation condition that would reopen its source gate. See
+<code>docs/waves/WAP_1_2_1_EXTERNAL_DEPENDENCIES.md</code>. Being cited or acquired is not
+the same as being applicable to the selected profile or mapped to a product
+obligation or test.</p>
+<h2 id="redistribution-and-ingestion">Redistribution and ingestion</h2>
+<p>OMA’s current use agreement explicitly prohibits posting documents to a
+networked computer or publishing them without valid permission or license.
+The archived WAP Forum click-through was a royalty-free terms gate, not a
+purchase paywall, but does not override the current repository-distribution
+boundary.</p>
+<p>Until explicit redistribution approval is recorded:</p>
+<ul>
+<li>keep recovered binaries and generated derivatives outside Git;</li>
+<li>commit authoritative URLs, hashes, byte sizes, classification, and
+reproducible retrieval instructions;</li>
+<li>use temporary verified copies for research and requirement extraction;</li>
+<li>do not promote them through <code>spec-processing/new-source-material/</code>.</li>
+</ul>
+<p>After approval, use the existing staged parser, cleanup review, verified
+promotion, and append-only provenance workflow. Never place historical
+predecessors into a competing mirror tree.</p>
+<p>The exact OMA contact route, ready-to-send redistribution/preservation draft,
+WAP-215 recovery record, and Wayback procedure are in
+<code>docs/waves/WAP_SOURCE_RECOVERY_AND_PERMISSION.md</code>.</p>
+<h2 id="acceptance-gates">Acceptance gates</h2>
+<p>A WAP 1.2.1 domain can be called source-complete only when:</p>
+<ol>
+<li>every applicable base specification and SIN is locked;</li>
+<li>document status and supersession order are explicit;</li>
+<li>all normative external dependencies are inventoried;</li>
+<li>SCR/CCR applicability is mapped to the product profile;</li>
+<li>requirements have exact source anchors and strict/enhanced disposition;</li>
+<li>each mandatory obligation has executable evidence or an open work item.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121--wml-13-source-baseline">WAP 1.2.1 / WML 1.3 Source Baseline</a></li><li class="depth-2"><a href="#compatibility-target">Compatibility target</a></li><li class="depth-2"><a href="#authority-and-source-lock">Authority and source lock</a></li><li class="depth-2"><a href="#release-snapshot">Release snapshot</a></li><li class="depth-2"><a href="#local-preservation-status">Local preservation status</a></li><li class="depth-2"><a href="#effective-core-families">Effective core families</a></li><li class="depth-2"><a href="#associated-and-governing-sources">Associated and governing sources</a></li><li class="depth-2"><a href="#redistribution-and-ingestion">Redistribution and ingestion</a></li><li class="depth-2"><a href="#acceptance-gates">Acceptance gates</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_source_baseline.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

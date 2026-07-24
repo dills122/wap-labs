@@ -1,0 +1,515 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves WAE Spec Traceability · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wae_spec_traceability"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wae_spec_traceability.md</p><div class="markdown-body"><h1 id="waves-wae-spec-traceability">Waves WAE Spec Traceability</h1>
+<p>Version: v0.2
+Status: WAP 1.2.1 authority normalized; WAP-236 retained as delta evidence</p>
+<h2 id="purpose">Purpose</h2>
+<p>Capture WAE normative requirements relevant to Waves and map them to implementation-facing acceptance criteria.</p>
+<h2 id="source-authority-policy">Source Authority Policy</h2>
+<ul>
+<li>See <code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code> for normative vs supplemental source precedence and citation rules.</li>
+</ul>
+<h2 id="source-set-reviewed">Source set reviewed</h2>
+<ul>
+<li><code>WAP-190-WAESpec-20000329-a.pdf</code></li>
+<li><code>WAP-190_101-WAESpec-20001213-a.pdf</code></li>
+<li><code>WAP-190_102-WAESpec-20001213-a.pdf</code></li>
+<li><code>WAP-190_103-WAESpec-20001213-a.pdf</code></li>
+<li><code>WAP-190_104-WAE-Spec-20010731-a.pdf</code></li>
+<li><code>WAP-215-ClassConform-20001213-a.pdf</code></li>
+<li><code>WAP-221-CREQ-20010425-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-236-WAESpec-20020207-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-237-WAEMT-20010515-a.pdf</code></li>
+</ul>
+<h2 id="normative-precedence">Normative precedence</h2>
+<ol>
+<li>The effective WAP-190 chain, ending in the resulting SCR table supplied by
+<code>WAP-190_104</code>.</li>
+<li>WAP-221 for SCR dependency syntax and feature-group meaning.</li>
+<li>WAP-215 <code>CCR-CLASSC-C-001</code> for the selected <code>WAESpec:MCF</code> profile.</li>
+<li>WAP-236 and WAP-237 as successor delta evidence only.</li>
+</ol>
+<p>The exact 86-row target ledger, 11-row Class C selection, source hashes,
+implementation audit, and successor classifications are in:</p>
+<ul>
+<li><code>docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wae-scr.json</code></li>
+</ul>
+<h2 id="target-era-class-c-wae-baseline">Target-era Class C WAE baseline</h2>
+<p><code>WAESpec:MCF</code> selects exactly:</p>
+<ul>
+<li>Basic HTTP authentication and the <code>http:</code> URL scheme;</li>
+<li>charset, language, and media-type capability signaling;</li>
+<li>WML, WMLScript, and the WML user agent;</li>
+<li><code>application/vnd.wap.wbxml</code>, <code>application/vnd.wap.wmlc</code>, and
+<code>application/vnd.wap.wmlscriptc</code>.</li>
+</ul>
+<p>Five rows currently have implemented evidence, three are partial, and three
+are missing. Optional graphics/WBMP, vCard/vCalendar, Push, WTA, multipart,
+Channels, and Service Indication rows are not silently included in the first
+Class C claim.</p>
+<h2 id="wap-236-successor-supplement">WAP-236 successor supplement</h2>
+<p>The requirement groups below predate this target normalization and are still
+useful for implementation planning. They are not, by themselves, WAP 1.2.1
+requirements. Each must be confirmed against a target-era family, classified
+as a compatible clarification, or isolated behind a successor/extension
+profile.</p>
+<p>Legend:</p>
+<ul>
+<li><code>M</code> = mandatory</li>
+<li><code>O</code> = optional</li>
+</ul>
+<h3 id="rq-wae-001-media-type-determination">RQ-WAE-001 Media type determination</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>User Agent must use MIME media type as one component in content type determination.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 6.1.1</li>
+<li>SCR: <code>WAESpec-MT-C-001 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Content routing path uses MIME type in final type decision logic.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-002-markup-capability-baseline-and-context-continuity">RQ-WAE-002 Markup capability baseline and context continuity</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>User Agent must support either:
+<ul>
+<li>XHTML MP text + WML1 text and/or binary, or</li>
+<li>WML2 text.</li>
+</ul>
+</li>
+<li>WML context (history + vars) must persist across XHTMLMP/WML navigation as single UA semantics.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 6.2.4</li>
+<li>SCRs: <code>WAESpec-ML-C-001 (M)</code>, <code>WAESpec-ML-C-002 (M)</code>, <code>WAESpec-ML-C-003 (M)</code>, <code>WAESpec-ML-C-004 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Cross-language navigation preserves history and variable context.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Capability profile is explicit in host/runtime conformance mode docs.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-003-wmlscript-support-in-ua">RQ-WAE-003 WMLScript support in UA</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA must support WMLScript + standard libraries in text and/or bytecode form.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 6.4.2</li>
+<li>SCRs: <code>WAESpec-WMLS-C-001 (M)</code>, <code>WAESpec-WMLS-C-002 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Runtime accepts configured script form(s) and executes stdlib surface.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Script support mode is advertised in compatibility matrix.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-004-wmlscript-proxy-compile-behavior">RQ-WAE-004 WMLScript proxy compile behavior</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Proxy must transform WMLScript to bytecode when UA prefers binary.</li>
+<li>On compile error, proxy should report HTTP 502.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 6.4.2</li>
+<li>SCRs: <code>WAESpec-WMLS-S-001 (M)</code>, <code>WAESpec-WMLS-S-002 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Transport layer exposes compile path or equivalent behavior contract.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Compile errors map to deterministic error response (502 where HTTP semantics apply).</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-005-wbxml-role-and-boundary">RQ-WAE-005 WBXML role and boundary</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WBXML support requirements come through format-specific specs; no standalone WBXML conformance in WAE.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 6.5</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WBXML decode/encode stays in transport boundary; engine consumes decoded runtime inputs.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-006-graphical-imagewbmp-requirement-gating">RQ-WAE-006 Graphical image/WBMP requirement gating</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA may support graphical images.</li>
+<li>If it supports graphical images, WBMP support is required.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 6.6.2</li>
+<li>SCRs: <code>WAESpec-IMG-C-001 (O)</code>, <code>WAESpec-IMG-C-002 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> If image support flag is enabled, WBMP decode/render path exists and is tested.</li>
+<li class="task-list-item"><input type="checkbox" disabled> If disabled, behavior is documented as out-of-scope for current milestone.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-007-hypermedia-transfer-service-support">RQ-WAE-007 Hypermedia transfer service support</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA and proxy must support Hypermedia Transfer Service.</li>
+<li>UA/proxy must support WSP or Wireless Profiled HTTP.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.1.1.2</li>
+<li>SCRs: <code>WAESpec-HTS-C-001 (M)</code>, <code>WAESpec-HTS-S-001 (M)</code>, <code>WAESpec-HTS-C-002 (O)</code>, <code>WAESpec-HTS-C-003 (O)</code>, <code>WAESpec-HTS-S-002 (O)</code>, <code>WAESpec-HTS-S-003 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Waves transport profile declares active stack(s) (currently Rust transport-backed).</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unsupported stack path returns explicit capability error.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-008-cache-model-support">RQ-WAE-008 Cache model support</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA must support the WAP-120 caching model, including the permitted
+zero-byte-cache posture, history revalidation branches, intra-resource
+navigation, and cache-content protection.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li>strict target: <code>WAP-120</code> 4.1, 4.1.1, 4.1.2, 6, Appendix A</li>
+<li>selected SCRs: <code>UACache-C-001..004</code>, <code>UACache-C-006</code> (<code>M</code>)</li>
+<li>machine ledger:
+<code>spec-processing/source-manifests/wap-1.2.1-caching-scr.json</code></li>
+<li>successor evidence only: <code>WAP-236</code> 7.1.2.2 /
+<code>WAESpec-HTS-C-004</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Direct WAP-120 fixtures remain open in <code>WAE-603</code>; validate
+source/status/work mapping with
+<code>node scripts/check-wap-caching-conformance-ledger.mjs</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Zero-byte versus HTTP-cache capability is explicit and host caches
+cannot silently alter strict behavior.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Stale history replay covers both <code>must-revalidate</code> branches with the
+exact original request identity.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WML intra-deck and WMLScript intra-compilation-unit transitions do not
+revalidate.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Cached/retained sensitive data has an explicit protection and
+lifetime policy.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-009-wsp-client-header-caching-in-proxy">RQ-WAE-009 WSP client-header caching in proxy</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Proxy must implement cached request-header behavior for WSP connect/resume primitives.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.1.4</li>
+<li>SCRs: <code>WAESpec-HTS-S-004 (O)</code>, <code>WAESpec-HTS-S-005 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Sidecar/proxy contract includes connect/resume header cache semantics.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Accept/Accept-* override behavior matches section 7.1.4 examples.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-010-uri-handling-baseline">RQ-WAE-010 URI handling baseline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA/proxy must handle URIs at least 1024 octets.</li>
+<li>UA must retrieve <code>http:</code> resources via WSP and/or W-HTTP.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.2, 7.2.1</li>
+<li>SCRs: <code>WAESpec-URI-C-001 (M)</code>, <code>WAESpec-URI-S-001 (M)</code>, <code>WAESpec-URI-C-002 (M)</code>, <code>WAESpec-URI-S-002 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Long-URI parsing/forwarding tests pass at 1024-octet boundary.</li>
+<li class="task-list-item"><input type="checkbox" disabled> HTTP scheme routing aligns with supported transport profiles.</li>
+<li>Progress note: <code>transport-rust</code> now enforces deterministic reject behavior beyond 1024 octets and includes fixture coverage (<code>uri_too_long_1025</code>) plus boundary unit tests.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-011-https-secure-sessionerror-semantics">RQ-WAE-011 HTTPS secure-session/error semantics</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA/proxy must support HTTPS URI scheme and profile-specific secure-session behavior.</li>
+<li>On secure-session establishment failure: UA reports error; proxy reports HTTP 502.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.2.2</li>
+<li>SCRs: <code>WAESpec-URI-C-003 (M)</code>, <code>WAESpec-URI-S-003 (M)</code>, <code>WAESpec-URI-C-004 (O)</code>, <code>WAESpec-URI-S-004 (O)</code>, <code>WAESpec-URI-C-005 (O)</code>, <code>WAESpec-URI-S-005 (O)</code>, <code>WAESpec-URI-C-006 (M)</code>, <code>WAESpec-URI-S-006 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Secure-session failure path has deterministic user-visible error and proxy error mapping.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Profile-specific behavior is feature-gated/documented where not yet implemented.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-012-internationalization-baseline">RQ-WAE-012 Internationalization baseline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA/proxy must support UTF-8 and UTF-16.</li>
+<li>XML character encoding must be treated per RFC3023; unknown chars must produce user-visible error.</li>
+<li>Proxy may transform unsupported encodings.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.4.1</li>
+<li>SCRs: <code>WAESpec-I18N-C-001 (M)</code>, <code>WAESpec-I18N-C-002 (M)</code>, <code>WAESpec-I18N-C-003 (M)</code>, <code>WAESpec-I18N-S-001 (O)</code>, <code>WAESpec-I18N-S-002 (M)</code>, <code>WAESpec-I18N-S-003 (M)</code>, <code>WAESpec-I18N-S-004 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> UTF-8/UTF-16 deck/script decoding verified.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Encoding error paths return deterministic errors.</li>
+<li>Progress note: <code>transport-rust</code> textual WML decode path now handles UTF-16 BOM decode and maps malformed UTF-16 payloads to deterministic <code>PROTOCOL_ERROR</code>, with mapped fixtures covering UTF-16 success/error boundaries.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-013-user-agent-capability-advertising">RQ-WAE-013 User-agent capability advertising</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA advertising characteristics must at least use Accept, Accept-Charset, Accept-Encoding, Accept-Language.</li>
+<li>Proxy must interpret those headers per HTTP semantics.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.5.1</li>
+<li>SCRs: <code>WAESpec-UAC-C-001 (O)</code>, <code>WAESpec-UAC-C-002 (O)</code>, <code>WAESpec-UAC-C-003 (O)</code>, <code>WAESpec-UAC-C-004 (O)</code>, <code>WAESpec-UAC-S-001 (M)</code>, <code>WAESpec-UAC-S-002 (M)</code>, <code>WAESpec-UAC-S-003 (M)</code>, <code>WAESpec-UAC-S-004 (M)</code>, <code>WAESpec-UAC-S-005 (M)</code>, <code>WAESpec-UAC-S-006 (O)</code>, <code>WAESpec-UAC-S-007 (O)</code>, <code>WAESpec-UAC-S-008 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Sidecar/proxy negotiation path uses Accept headers consistently.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Media-type transformation obeys declared preference/quality behavior.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-014-basic-authentication-requirement">RQ-WAE-014 Basic authentication requirement</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA must implement HTTP/1.1 Basic authentication.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.10.1</li>
+<li>SCR: <code>WAESpec-SEC-C-001 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Authentication challenge flow is represented in host/transport behavior contract.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-015-wmlscript-crypto-compile-support-in-proxy">RQ-WAE-015 WMLScript crypto compile support in proxy</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Proxy supporting WMLScript compilation must compile units referring to Crypto library.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.10.3.2</li>
+<li>SCR: <code>WAESpec-SEC-S-001 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Sidecar compile behavior documents/handles crypto-library references.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-016-navigation-history-model">RQ-WAE-016 Navigation history model</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA must implement history stack model with at least push/pop operations.</li>
+<li>Entries should include absolute URL and method.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.11.1</li>
+<li>SCR: <code>WAESpec-UAB-C-001 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [x] Engine evidence in <code>engine-wasm/engine/src/engine_tests/actions_timers.rs</code> (<code>navigate_back_restores_previous_card</code>, <code>navigate_back_returns_false_when_history_empty</code>) and <code>engine-wasm/engine/src/engine_tests/traces_public_api.rs</code> (<code>m1_02_handle_key_render_and_navigate_back_public_api_flow</code>); browser request-shaped host-history evidence in <code>browser/frontend/src/session-history.test.ts</code>, <code>browser/frontend/src/app/navigation-state.load.test.ts</code>, and <code>browser/frontend/src/app/navigation-state.history.test.ts</code>. Commands: <code>cd engine-wasm/engine &amp;&amp; cargo test navigate_back_ &amp;&amp; cargo test m1_02_handle_key_render_and_navigate_back_public_api_flow</code> and <code>pnpm --dir browser/frontend test -- --runInBand session-history.test.ts navigation-state.load.test.ts navigation-state.history.test.ts</code></li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Forward navigation performs push, backward performs pop.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> History entry stores request identity fields required for deterministic back behavior.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-017-back-key-behavior">RQ-WAE-017 BACK key behavior</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>UA must provide end-user BACK access at all times.</li>
+<li>BACK triggers pop.</li>
+<li>In WML1 mode, BACK executes <code>prev</code>; <code>do type="prev"</code> override applies with first-in-document-order precedence.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-236</code> 7.11.2</li>
+<li>SCRs: <code>WAESpec-UAB-C-002 (M)</code>, <code>WAESpec-UAB-C-003 (M)</code>, <code>WAESpec-UAB-C-004 (O)</code>, <code>WAESpec-UAB-C-005 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [x] Engine back-pop semantics are covered in <code>engine-wasm/engine/src/engine_tests/actions_timers.rs</code> and <code>engine-wasm/engine/src/engine_tests/traces_public_api.rs</code>; browser fallback and deterministic restore behavior are covered in <code>browser/frontend/src/app/navigation-state.history.test.ts</code> and <code>browser/frontend/src/app/navigation-state.load.test.ts</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled> UI always exposes BACK action path.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> BACK-to-pop behavior verified in runtime integration tests.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WML1-specific prev/override semantics covered in fixture tests.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wae-018-wbmp-baseline-format-support">RQ-WAE-018 WBMP baseline format support</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Any WBMP-supporting system must support WBMP type 0.</li>
+<li>UA advertising WBMP support must report supported WBMP types via Accept header.</li>
+<li>WBMP multi-byte integers must use smallest encoding.</li>
+<li>Type 0 extension headers must not be present.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-237</code> 4.1, 4.3.1, 4.5.1, Appendix A</li>
+<li>SCRs: <code>WAEMT-WBMP-C-001 (M)</code>, <code>WAEMT-WBMP-C-002 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Type 0 decode/validation fixtures pass.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invalid multi-byte-integer encodings are rejected.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Accept header emission includes <code>image/vnd.wap.wbmp; level=0</code> when WBMP is advertised.</li>
+</ul>
+</li>
+</ul>
+<h2 id="waves-implementation-mapping">Waves implementation mapping</h2>
+<ul>
+<li><code>engine-wasm/</code>:
+<ul>
+<li><code>RQ-WAE-001</code>, <code>RQ-WAE-002</code>, <code>RQ-WAE-003</code>, <code>RQ-WAE-016</code>, <code>RQ-WAE-017</code></li>
+</ul>
+</li>
+<li><code>transport-rust/</code> (current proxy/transport role):
+<ul>
+<li><code>RQ-WAE-004</code>, <code>RQ-WAE-007</code>..<code>RQ-WAE-015</code>, <code>RQ-WAE-018</code> (as needed for image transformations/media handling)</li>
+</ul>
+</li>
+<li><code>browser/</code> host:
+<ul>
+<li>UI-level behavior for <code>BACK</code> access and error surfacing (<code>RQ-WAE-011</code>, <code>RQ-WAE-017</code>)</li>
+</ul>
+</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The target-era extraction is complete at SCR-feature level; nested normative
+clauses remain open.</li>
+<li>The WAP-236 supplement is scoped to requirements that directly affect Waves
+runtime/host/transport behavior and cannot replace WAP-190 authority.</li>
+<li>Deferred optional areas (Push/vCard/vCalendar/multipart variants beyond immediate roadmap) remain tracked but not yet scheduled for implementation.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-wae-spec-traceability">Waves WAE Spec Traceability</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-authority-policy">Source Authority Policy</a></li><li class="depth-2"><a href="#source-set-reviewed">Source set reviewed</a></li><li class="depth-2"><a href="#normative-precedence">Normative precedence</a></li><li class="depth-2"><a href="#target-era-class-c-wae-baseline">Target-era Class C WAE baseline</a></li><li class="depth-2"><a href="#wap-236-successor-supplement">WAP-236 successor supplement</a></li><li class="depth-3"><a href="#rq-wae-001-media-type-determination">RQ-WAE-001 Media type determination</a></li><li class="depth-3"><a href="#rq-wae-002-markup-capability-baseline-and-context-continuity">RQ-WAE-002 Markup capability baseline and context continuity</a></li><li class="depth-3"><a href="#rq-wae-003-wmlscript-support-in-ua">RQ-WAE-003 WMLScript support in UA</a></li><li class="depth-3"><a href="#rq-wae-004-wmlscript-proxy-compile-behavior">RQ-WAE-004 WMLScript proxy compile behavior</a></li><li class="depth-3"><a href="#rq-wae-005-wbxml-role-and-boundary">RQ-WAE-005 WBXML role and boundary</a></li><li class="depth-3"><a href="#rq-wae-006-graphical-imagewbmp-requirement-gating">RQ-WAE-006 Graphical image/WBMP requirement gating</a></li><li class="depth-3"><a href="#rq-wae-007-hypermedia-transfer-service-support">RQ-WAE-007 Hypermedia transfer service support</a></li><li class="depth-3"><a href="#rq-wae-008-cache-model-support">RQ-WAE-008 Cache model support</a></li><li class="depth-3"><a href="#rq-wae-009-wsp-client-header-caching-in-proxy">RQ-WAE-009 WSP client-header caching in proxy</a></li><li class="depth-3"><a href="#rq-wae-010-uri-handling-baseline">RQ-WAE-010 URI handling baseline</a></li><li class="depth-3"><a href="#rq-wae-011-https-secure-sessionerror-semantics">RQ-WAE-011 HTTPS secure-session/error semantics</a></li><li class="depth-3"><a href="#rq-wae-012-internationalization-baseline">RQ-WAE-012 Internationalization baseline</a></li><li class="depth-3"><a href="#rq-wae-013-user-agent-capability-advertising">RQ-WAE-013 User-agent capability advertising</a></li><li class="depth-3"><a href="#rq-wae-014-basic-authentication-requirement">RQ-WAE-014 Basic authentication requirement</a></li><li class="depth-3"><a href="#rq-wae-015-wmlscript-crypto-compile-support-in-proxy">RQ-WAE-015 WMLScript crypto compile support in proxy</a></li><li class="depth-3"><a href="#rq-wae-016-navigation-history-model">RQ-WAE-016 Navigation history model</a></li><li class="depth-3"><a href="#rq-wae-017-back-key-behavior">RQ-WAE-017 BACK key behavior</a></li><li class="depth-3"><a href="#rq-wae-018-wbmp-baseline-format-support">RQ-WAE-018 WBMP baseline format support</a></li><li class="depth-2"><a href="#waves-implementation-mapping">Waves implementation mapping</a></li><li class="depth-2"><a href="#notes">Notes</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wae_spec_traceability.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Review 2026-03-15 · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_review_2026-03-15"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_review_2026-03-15.md</p><div class="markdown-body"><h1 id="waves-review-2026-03-15">Waves Review 2026-03-15</h1>
+<p>Branch: <code>codex/waves-review-remediation-plan</code></p>
+<h2 id="scope-reviewed">Scope reviewed</h2>
+<ul>
+<li><code>browser/frontend/src/app/*</code></li>
+<li><code>browser/frontend/src/session-history.ts</code></li>
+<li><code>browser/frontend/src/components/primitives/wml-render-primitives.ts</code></li>
+<li><code>browser/src-tauri/src/*</code></li>
+<li><code>browser/contracts/*</code></li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li>active planning docs in <code>docs/waves/*</code></li>
+</ul>
+<p>Validation run during review:</p>
+<ul>
+<li><code>pnpm --dir browser/frontend test</code></li>
+<li><code>cargo test</code> in <code>browser/src-tauri</code></li>
+</ul>
+<p>Current result: reviewed browser-facing control flow is functionally green, but the main improvement opportunities are concentrated in responsiveness, hot-path churn, and boundary clarity rather than failing behavior.</p>
+<h2 id="findings">Findings</h2>
+<h3 id="1-p1-network-mode-startup-and-mode-switches-are-still-on-a-blocking-path">1. P1: network-mode startup and mode switches are still on a blocking path</h3>
+<p>Evidence:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-controller.ts#L106"><code>browser-controller.ts</code></a> awaits <code>setRunMode(...)</code> during init.</li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-controller.ts#L401"><code>browser-controller.ts</code></a> awaits <code>runStartupNetworkProbe()</code> whenever network mode is entered.</li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-controller.ts#L1064"><code>browser-controller.ts</code></a> retries fetches with delays before surfacing the unavailable state.</li>
+</ul>
+<p>Impact:</p>
+<ul>
+<li>shell readiness and mode-change completion are coupled to transport probe timing</li>
+<li>user-visible lag risk remains exactly where <code>A5-07</code> says it does</li>
+<li>this also makes follow-up cleanup harder because UI state and async probe state are interleaved</li>
+</ul>
+<p>Recommendation:</p>
+<ul>
+<li>execute <code>A5-07</code> first</li>
+<li>move probe execution behind an explicit backgroundable controller/service boundary</li>
+<li>keep mode state updates synchronous and deterministic, then feed probe results back as state events</li>
+</ul>
+<h3 id="2-p1-local-mode-timer-ticks-always-render-even-on-no-op-snapshots">2. P1: local-mode timer ticks always render, even on no-op snapshots</h3>
+<p>Evidence:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/navigation-state.ts#L280"><code>navigation-state.ts</code></a> already avoids render churn for no-op network timer ticks via <code>shouldRenderTimerSnapshot(...)</code>.</li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-controller.ts#L1009"><code>browser-controller.ts</code></a> always snapshots, renders, and syncs local mode on every timer interval.</li>
+</ul>
+<p>Impact:</p>
+<ul>
+<li>unnecessary engine render calls and DOM writes on every timer tick</li>
+<li>extra pressure on the same UI thread already called out by <code>A5-07</code></li>
+<li>local and network modes now have different performance behavior for the same timer semantics</li>
+</ul>
+<p>Recommendation:</p>
+<ul>
+<li>extract a shared timer-update policy and reuse it in both modes</li>
+<li>add targeted tests proving no-op ticks do not redraw in local mode</li>
+</ul>
+<h3 id="3-p2-browsercontroller-remains-the-dominant-hot-file-and-owns-too-many-responsibilities">3. P2: <code>BrowserController</code> remains the dominant hot file and owns too many responsibilities</h3>
+<p>Evidence:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-controller.ts"><code>browser-controller.ts</code></a> is 1131 lines and combines:
+<ul>
+<li>shell event binding</li>
+<li>run-mode orchestration</li>
+<li>startup probing</li>
+<li>transport navigation</li>
+<li>timer runtime</li>
+<li>focused input/select edit flows</li>
+</ul>
+</li>
+<li>existing controller coverage is narrow compared with the file’s surface area; current direct controller test coverage is mainly <a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-controller.select-edit.test.ts"><code>browser-controller.select-edit.test.ts</code></a></li>
+</ul>
+<p>Impact:</p>
+<ul>
+<li>small behavior changes will keep landing in one file</li>
+<li>startup/probe/timer bugs are harder to isolate and test</li>
+<li><code>M1-08</code> is still active in exactly the browser hotspot the repo already identified</li>
+</ul>
+<p>Recommendation:</p>
+<ul>
+<li>continue <code>M1-08</code> in small boundary-only slices</li>
+<li>first split candidates:
+<ul>
+<li>startup/run-mode coordinator</li>
+<li>timer runtime coordinator</li>
+<li>focused control-edit handler</li>
+<li>DOM listener wiring</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-p2-sessionpresenter-updates-rely-on-repeated-whole-object-serialization-and-full-debug-panel-rewrites">4. P2: session/presenter updates rely on repeated whole-object serialization and full debug-panel rewrites</h3>
+<p>Evidence:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/navigation-state.ts#L87"><code>navigation-state.ts</code></a> uses <code>JSON.stringify(a) === JSON.stringify(b)</code> to detect session changes.</li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-presenter.ts#L43"><code>browser-presenter.ts</code></a> rewrites full session JSON on every state update.</li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-presenter.ts#L64"><code>browser-presenter.ts</code></a> rewrites the full timeline JSON on every event.</li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/browser-presenter.ts#L134"><code>browser-presenter.ts</code></a> rewrites the full snapshot JSON on every snapshot update.</li>
+</ul>
+<p>Impact:</p>
+<ul>
+<li>O(n) serialization work grows with history and timeline size</li>
+<li>debug panels are doing more work than the user-facing shell</li>
+<li>this is not a correctness bug today, but it will amplify the responsiveness problems above</li>
+</ul>
+<p>Recommendation:</p>
+<ul>
+<li>treat debug-surface updates as secondary work, not part of the critical path</li>
+<li>replace stringified deep equality with an explicit session-state comparator once the controller split reduces coupling</li>
+</ul>
+<h3 id="5-p3-host-history-fallback-performs-an-avoidable-extra-render-before-deciding-whether-engine-back-actually-handled-the-action">5. P3: host-history fallback performs an avoidable extra render before deciding whether engine back actually handled the action</h3>
+<p>Evidence:</p>
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/navigation-state.ts#L290"><code>navigation-state.ts</code></a> calls <code>engineNavigateBack()</code></li>
+<li><a href="/Users/dsteele/repos/wap-labs/browser/frontend/src/app/navigation-state.ts#L293"><code>navigation-state.ts</code></a> renders that result immediately</li>
+<li>only after that does it determine whether to reload the previous host history entry</li>
+</ul>
+<p>Impact:</p>
+<ul>
+<li>extra render work on the host-back path</li>
+<li>potential transient flicker if engine back is a no-op and host-history reload follows immediately</li>
+</ul>
+<p>Recommendation:</p>
+<ul>
+<li>defer rendering until after <code>engineHandled</code> is known, or make the no-op path state-only</li>
+</ul>
+<h2 id="dependency-readout">Dependency readout</h2>
+<ul>
+<li><code>browser/src-tauri</code> command/adapter split is in better shape than the frontend controller split; tests are broad and green.</li>
+<li><code>browser/contracts/*</code> and <code>engine-wasm/contracts/wml-engine.ts</code> are reasonably aligned; I did not find immediate contract drift.</li>
+<li>the main deferred dependency hardening item still worth pulling forward after frontend responsiveness work is <a href="/Users/dsteele/repos/wap-labs/docs/waves/MAINTENANCE_WORK_ITEMS.md#L93"><code>M1-16</code></a>: payload-size guardrails across transport and engine boundaries.</li>
+</ul>
+<h2 id="recommended-execution-order">Recommended execution order</h2>
+<ol>
+<li><code>A5-07</code> spike to measure and background startup/network probe work.</li>
+<li>Browser timer-path cleanup so local and network modes share the same no-op render policy.</li>
+<li><code>M1-08</code> follow-up to split <code>BrowserController</code> into boundary modules without behavior changes.</li>
+<li>Browser debug-surface optimization once controller boundaries are stable.</li>
+<li><code>M1-16</code> transport/engine payload guardrails.</li>
+</ol>
+<h2 id="commit-cadence">Commit cadence</h2>
+<ol>
+<li><code>docs(waves): capture browser review findings and remediation order</code></li>
+<li><code>refactor(browser): isolate startup probe and run-mode coordination</code></li>
+<li><code>perf(browser): skip no-op local timer renders</code></li>
+<li><code>refactor(browser): split control-edit and timer runtime modules</code></li>
+<li><code>perf(browser): move debug panel serialization off hot paths</code></li>
+<li><code>fix(transport): enforce payload size guardrails before decode and parse</code></li>
+</ol>
+<h2 id="notes-for-implementation">Notes for implementation</h2>
+<ul>
+<li>keep changes additive and localized; do not fold frame-migration work into this series</li>
+<li>do not start <code>M1-09</code> from this branch</li>
+<li>when a slice changes behavior across host/runtime boundaries, update contracts/docs in the same change</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-review-2026-03-15">Waves Review 2026-03-15</a></li><li class="depth-2"><a href="#scope-reviewed">Scope reviewed</a></li><li class="depth-2"><a href="#findings">Findings</a></li><li class="depth-3"><a href="#1-p1-network-mode-startup-and-mode-switches-are-still-on-a-blocking-path">1. P1: network-mode startup and mode switches are still on a blocking path</a></li><li class="depth-3"><a href="#2-p1-local-mode-timer-ticks-always-render-even-on-no-op-snapshots">2. P1: local-mode timer ticks always render, even on no-op snapshots</a></li><li class="depth-3"><a href="#3-p2-browsercontroller-remains-the-dominant-hot-file-and-owns-too-many-responsibilities">3. P2: BrowserController remains the dominant hot file and owns too many responsibilities</a></li><li class="depth-3"><a href="#4-p2-sessionpresenter-updates-rely-on-repeated-whole-object-serialization-and-full-debug-panel-rewrites">4. P2: session/presenter updates rely on repeated whole-object serialization and full debug-panel rewrites</a></li><li class="depth-3"><a href="#5-p3-host-history-fallback-performs-an-avoidable-extra-render-before-deciding-whether-engine-back-actually-handled-the-action">5. P3: host-history fallback performs an avoidable extra render before deciding whether engine back actually handled the action</a></li><li class="depth-2"><a href="#dependency-readout">Dependency readout</a></li><li class="depth-2"><a href="#recommended-execution-order">Recommended execution order</a></li><li class="depth-2"><a href="#commit-cadence">Commit cadence</a></li><li class="depth-2"><a href="#notes-for-implementation">Notes for implementation</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_review_2026-03-15.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

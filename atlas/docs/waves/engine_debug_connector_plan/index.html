@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Engine Debug Connector Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/engine_debug_connector_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/engine_debug_connector_plan.md</p><div class="markdown-body"><h1 id="engine-debug-connector-plan">Engine Debug Connector Plan</h1>
+<p>Status: planning-ready
+Owner lane: <code>engine-wasm</code> + <code>browser</code></p>
+<p>Related reference:</p>
+<ul>
+<li><code>docs/waves/ENGINE_DEBUG_CONNECTOR_RESEARCH.md</code></li>
+</ul>
+<h2 id="purpose">Purpose</h2>
+<p>Define an attachable debug connector for the running WML engine so a host-integrated debugger or external tool can observe runtime state and event flow without mutating core engine behavior.</p>
+<p>This is a diagnostics surface, not a transport/runtime control plane.</p>
+<h2 id="goals">Goals</h2>
+<ol>
+<li>Provide a deterministic, structured event stream from engine runtime boundaries.</li>
+<li>Support attach/detach and cursor-based event polling from host or external tooling.</li>
+<li>Expose a stable debug snapshot surface for state inspection and replay triage.</li>
+<li>Preserve strict layer boundaries:</li>
+</ol>
+<ul>
+<li>engine runtime emits events and snapshots</li>
+<li>host brokers access and IPC</li>
+<li>debugger UI/tool remains out-of-process from engine runtime logic</li>
+</ul>
+<h2 id="non-goals-mvp">Non-Goals (MVP)</h2>
+<ol>
+<li>Remote code execution/control over engine internals.</li>
+<li>Live mutation commands that bypass normal host input/navigation APIs.</li>
+<li>Production telemetry pipeline replacement.</li>
+<li>Protocol/network introspection beyond existing host/transport logs.</li>
+</ol>
+<h2 id="boundary-and-ownership">Boundary and Ownership</h2>
+<ol>
+<li><code>engine-wasm/engine</code>:</li>
+</ol>
+<ul>
+<li>event emission points</li>
+<li>in-memory ring buffer</li>
+<li>snapshot generation</li>
+<li>redaction markers for sensitive fields</li>
+</ul>
+<ol start="2">
+<li><code>engine-wasm/contracts/wml-engine.ts</code>:</li>
+</ol>
+<ul>
+<li>canonical debug contract types</li>
+<li>additive APIs only</li>
+</ul>
+<ol start="3">
+<li><code>browser/src-tauri</code> and <code>browser/contracts/*</code>:</li>
+</ol>
+<ul>
+<li>command bridge for open/poll/close</li>
+<li>debugger consumer compatibility</li>
+</ul>
+<ol start="4">
+<li><code>browser/frontend</code>:</li>
+</ol>
+<ul>
+<li>optional first-party debug panel consumer</li>
+</ul>
+<h2 id="proposed-debug-contract-surface-additive">Proposed Debug Contract Surface (Additive)</h2>
+<p><code>openDebugSession(options) -&gt; { sessionId, cursor }</code></p>
+<p><code>pollDebugEvents({ sessionId, cursor, maxEvents }) -&gt; { events, nextCursor, droppedCount }</code></p>
+<p><code>getDebugSnapshot({ sessionId }) -&gt; EngineDebugSnapshot</code></p>
+<p><code>closeDebugSession({ sessionId }) -&gt; { closed: boolean }</code></p>
+<p>MVP posture is read-only.</p>
+<h2 id="event-model-mvp">Event Model (MVP)</h2>
+<p>All events should include:</p>
+<ol>
+<li><code>seq</code> (monotonic per engine process)</li>
+<li><code>kind</code> (stable string enum)</li>
+<li><code>tsMs</code> (runtime monotonic timestamp)</li>
+<li><code>cardId</code> (optional)</li>
+<li><code>payload</code> (small typed object)</li>
+</ol>
+<p>Initial event kinds:</p>
+<ol>
+<li><code>deck.load</code></li>
+<li><code>card.enter</code></li>
+<li><code>card.exit</code></li>
+<li><code>focus.change</code></li>
+<li><code>input.edit.start</code></li>
+<li><code>input.edit.draft</code></li>
+<li><code>input.edit.commit</code></li>
+<li><code>input.edit.cancel</code></li>
+<li><code>action.accept</code></li>
+<li><code>action.external</code></li>
+<li><code>nav.intent</code></li>
+<li><code>postfield.resolve</code></li>
+<li><code>script.invoke</code></li>
+<li><code>script.trap</code></li>
+<li><code>timer.schedule</code></li>
+<li><code>timer.fire</code></li>
+<li><code>timer.cancel</code></li>
+</ol>
+<h2 id="snapshot-model-mvp">Snapshot Model (MVP)</h2>
+<p><code>EngineDebugSnapshot</code> should include:</p>
+<ol>
+<li>active card id</li>
+<li>focused link index</li>
+<li>focused input edit name/value (redacted policy applied)</li>
+<li>runtime vars (redacted policy applied)</li>
+<li>pending external navigation intent/request policy</li>
+<li>timer state summary</li>
+<li>trace cursor metadata (<code>oldestSeq</code>, <code>latestSeq</code>, <code>droppedCount</code>)</li>
+</ol>
+<h2 id="safety-and-redaction">Safety and Redaction</h2>
+<ol>
+<li>Debug connector disabled by default outside development profiles.</li>
+<li>Sensitive fields (for example <code>pin</code>, password inputs) masked unless explicit local override is enabled.</li>
+<li>Events must not expose raw transport credentials or secrets.</li>
+<li>Session handles are process-local and non-persistent.</li>
+</ol>
+<h2 id="performance-constraints">Performance Constraints</h2>
+<ol>
+<li>Fixed-size ring buffer with drop-oldest semantics.</li>
+<li>No blocking I/O in engine event emission path.</li>
+<li>Event payloads must remain compact and deterministic.</li>
+<li>Debug path must be additive and must not alter runtime ordering or navigation semantics.</li>
+</ol>
+<h2 id="rollout-phases">Rollout Phases</h2>
+<ol>
+<li>Phase D0-01: contract and architecture definition.</li>
+<li>Phase D0-02: engine ring buffer + event/snapshot emission.</li>
+<li>Phase D0-03: tauri host bridge + contract generation wiring.</li>
+<li>Phase D0-04: first-party consumer panel and capture/export workflow.</li>
+</ol>
+<h2 id="acceptance-criteria-program">Acceptance Criteria (Program)</h2>
+<ol>
+<li>A running host can attach and poll events without runtime behavior change.</li>
+<li>Event stream captures input/edit/submit boundaries needed for form-debug triage.</li>
+<li>Snapshot + event cursor supports deterministic bug replay investigation.</li>
+<li>Sensitive values are masked by default and policy-tested.</li>
+</ol>
+<h2 id="open-questions">Open Questions</h2>
+<ol>
+<li>Should event timestamps be monotonic only, or include wall-clock projection?</li>
+<li>Should session model support multiple concurrent consumers in MVP?</li>
+<li>What is the default ring-buffer size cap for dev mode vs CI mode?</li>
+<li>Should <code>postfield.resolve</code> include resolution source (<code>var|draft|card|fallback</code>) for each field?</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#engine-debug-connector-plan">Engine Debug Connector Plan</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#goals">Goals</a></li><li class="depth-2"><a href="#non-goals-mvp">Non-Goals (MVP)</a></li><li class="depth-2"><a href="#boundary-and-ownership">Boundary and Ownership</a></li><li class="depth-2"><a href="#proposed-debug-contract-surface-additive">Proposed Debug Contract Surface (Additive)</a></li><li class="depth-2"><a href="#event-model-mvp">Event Model (MVP)</a></li><li class="depth-2"><a href="#snapshot-model-mvp">Snapshot Model (MVP)</a></li><li class="depth-2"><a href="#safety-and-redaction">Safety and Redaction</a></li><li class="depth-2"><a href="#performance-constraints">Performance Constraints</a></li><li class="depth-2"><a href="#rollout-phases">Rollout Phases</a></li><li class="depth-2"><a href="#acceptance-criteria-program">Acceptance Criteria (Program)</a></li><li class="depth-2"><a href="#open-questions">Open Questions</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/engine_debug_connector_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

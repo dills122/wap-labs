@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 External Dependency Baseline · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_external_dependencies"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_external_dependencies.md</p><div class="markdown-body"><h1 id="wap-121-external-dependency-baseline">WAP 1.2.1 External Dependency Baseline</h1>
+<p>Version: v0.3
+Status: active; selected Class C dependency classification complete, residual profile research in progress</p>
+<h2 id="purpose">Purpose</h2>
+<p>WAP 1.2.1 does not define its browser and protocol behavior in isolation. Its
+effective specifications cite historical IETF, W3C, Ecma, IEEE, ISO, IANA,
+Unicode, bearer, and cryptographic sources.</p>
+<p>The machine-readable lock is:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-external-dependencies.json</code></li>
+</ul>
+<p>Validate it with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-external-dependencies.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-external-ingestion-status.mjs</span></span></code></pre>
+<p>The selected <code>CCR-CLASSC-C-001</code> dependency classification is complete. The
+remaining source queue belongs to optional, bearer-conditional, successor, or
+informative context. This is not an implementation-conformance claim, and the
+residual queue must close before any affected profile is claimed.</p>
+<h2 id="current-lock">Current lock</h2>
+<p>The reviewed lock contains 43 authority-pinned dependencies:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Locked examples</th>
+<th>Primary role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IETF</td>
+<td>RFC 768/791/792, MIME, HTTP 1.1, HTTP authentication, URI, UTF-8, ABNF, TLS 1.0</td>
+<td>WDP/WCMP, WAE/WML/WSP, WMLScript, WBXML, optional WTLS</td>
+</tr>
+<tr>
+<td>W3C</td>
+<td>XML 1.0 Recommendation dated 10 February 1998</td>
+<td>WML/WBXML grammar and application formats</td>
+</tr>
+<tr>
+<td>Ecma</td>
+<td>ECMA-262 first edition, June 1997</td>
+<td>WMLScript language lineage</td>
+</tr>
+<tr>
+<td>IEEE</td>
+<td>IEEE 754-1985</td>
+<td>WMLScript numeric behavior</td>
+</tr>
+<tr>
+<td>ISO</td>
+<td>ISO/IEC 10646-1:1993 and ISO/TR 8509:1987</td>
+<td>characters and transport service conventions</td>
+</tr>
+<tr>
+<td>IANA</td>
+<td>historical WBXML MIBenum character-set dependency</td>
+<td>WBXML character-set identifiers</td>
+</tr>
+<tr>
+<td>Unicode</td>
+<td>Unicode 2.0.0</td>
+<td>character repertoire and string behavior</td>
+</tr>
+<tr>
+<td>TIA</td>
+<td>TIA/EIA/IS-732 multi-part CDPD system specification, December 1997</td>
+<td>Selected WDP CDPD bearer capability</td>
+</tr>
+</tbody>
+</table>
+<p>Nine formerly open labels are now exact historical records:</p>
+<ul>
+<li>RFC 1630, 1738, 1808, and 1864;</li>
+<li>W3C HTML 4.0, Recommendation 18 December 1997;</li>
+<li>ISO 8879:1986;</li>
+<li>the generic <code>TIAEIA-732</code> CDPD family citation, normalized to the historical
+December 1997 multi-part set with its licensed-payload boundary intact;</li>
+<li><code>MEDIATYPE</code>, pinned to archived IETF Internet-Draft
+<code>draft-murata-xml-02</code> rather than its later RFC successor;</li>
+<li><code>CCPPEx</code>, pinned to the W3C Note dated 27 July 1999. WAP-230’s label and
+warning-code usage remain semantically ambiguous, but its actual citation
+identity and informative status are now explicit.</li>
+</ul>
+<p>Later replacements are not substituted for the cited historical versions.
+For example, WML/WAE SINs move some HTTP references from RFC 2068 to RFC 2616,
+while the effective WMLScript publication still cites RFC 2068. Both identities
+must remain visible until feature-level applicability is resolved.</p>
+<p>WAP-190_103 changes WAE Basic authentication to RFC 2616. RFC 2616 section 11
+normatively delegates the Basic scheme to RFC 2617, so RFC 2617 is retained as
+an effective transitive dependency for the selected WAE client row rather than
+being hidden behind the top-level citation.</p>
+<p>Primary version evidence includes the dated
+<a href="https://www.w3.org/TR/1998/REC-xml-19980210">W3C XML 1.0 Recommendation</a>,
+<a href="https://ecma-international.org/wp-content/uploads/ECMA-262_1st_edition_june_1997.pdf">ECMA-262 first edition</a>,
+<a href="https://www.unicode.org/versions/components-2.0.0.html">Unicode 2.0 components</a>,
+and the <a href="https://www.rfc-editor.org/">RFC Editor archive</a>.</p>
+<h2 id="acquisition-status">Acquisition status</h2>
+<p>The machine-readable acquisition ledger is:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json</code></li>
+</ul>
+<p>It records 48 private research artifacts totaling 14,588,705 bytes:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th style="text-align: right">Dependencies</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full primary artifact</td>
+<td style="text-align: right">36</td>
+<td>31 RFC texts, dated W3C XML/HTML sources, ECMA-262 first edition, and the archived XML-media draft</td>
+</tr>
+<tr>
+<td>Partial primary artifact</td>
+<td style="text-align: right">2</td>
+<td>Current IANA character-set registry and Unicode 2.0 component/UCD set; historical/full cited form remains open</td>
+</tr>
+<tr>
+<td>Licensed-payload metadata only</td>
+<td style="text-align: right">5</td>
+<td>IEEE 754-1985, three historical ISO sources, and the historical TIA/EIA/IS-732 CDPD set</td>
+</tr>
+</tbody>
+</table>
+<p>The artifacts remain outside Git. The ledger stores logical cache references,
+hashes, sizes, source URLs, and acquisition limits.</p>
+<h2 id="residual-review-groups">Residual review groups</h2>
+<p>There are 60 unique citation labels in three explicitly dispositioned groups:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Labels</th>
+<th>Selected-profile disposition</th>
+<th>Activation/owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">3</td>
+<td>vCard/vCalendar are optional content formats; the JavaScript book is informative language lineage</td>
+<td>Activate with the affected optional media/history claim; <code>OPT-1106</code></td>
+</tr>
+<tr>
+<td style="text-align: right">45</td>
+<td>Bearer-conditional standards outside the selected CDPD/IPv4 path</td>
+<td>Activate per newly claimed bearer; <code>TRN-701</code>, <code>OPT-1106</code></td>
+</tr>
+<tr>
+<td style="text-align: right">12</td>
+<td>Cryptographic authorities for the deferred optional WTLS profile</td>
+<td>Activate with WTLS; <code>OPT-1101</code></td>
+</tr>
+</tbody>
+</table>
+<p>The selected profile therefore has zero blocking open labels. A residual label
+is not discarded: it remains machine-visible with an activation trigger,
+future owner, and next action until an authority record replaces it. Claiming
+the affected optional/bearer profile reactivates that source gate.</p>
+<h2 id="extraction-corrections">Extraction corrections</h2>
+<p>PDF text extraction merges struck and inserted SIN text in several places.
+The manifest preserves these known hazards:</p>
+<ul>
+<li><code>RFC2068616</code> is not an RFC; it is joined RFC 2068/RFC 2616 text.</li>
+<li><code>RFC2616068</code> is the inverse joined form of the same WAE change.</li>
+<li><code>IS07498</code> is a citation-label typo for ISO 7498.</li>
+</ul>
+<p>Validators reject these artifacts as dependency identities. Final resolution
+must use the PDF visual, SIN change instruction, and resulting effective text,
+not OCR shape alone.</p>
+<h2 id="selected-profile-closure-and-residual-gate">Selected-profile closure and residual gate</h2>
+<p><code>SRC-005</code> is complete for the selected Class C profile because:</p>
+<ol>
+<li>every selected-profile normative external reference has an authority and
+version record;</li>
+<li>every selected-profile dependency is classified as definition-only,
+implementation-relevant, test-relevant, bearer-conditional,
+profile-conditional, or superseded;</li>
+<li>each selected-profile implementation/test dependency is linked into the
+<code>CONF-1</code> obligation ledger.</li>
+</ol>
+<p>The broader historical archive is still incomplete. Live registries need
+historical snapshots or explicit compatibility policies, licensed standards
+remain metadata-only, and all residual labels must be pinned before their
+profiles are activated. Acquisition status supplies reproducible evidence; it
+does not create an implementation or release claim.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121-external-dependency-baseline">WAP 1.2.1 External Dependency Baseline</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#current-lock">Current lock</a></li><li class="depth-2"><a href="#acquisition-status">Acquisition status</a></li><li class="depth-2"><a href="#residual-review-groups">Residual review groups</a></li><li class="depth-2"><a href="#extraction-corrections">Extraction corrections</a></li><li class="depth-2"><a href="#selected-profile-closure-and-residual-gate">Selected-profile closure and residual gate</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_external_dependencies.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 / WML 1.3 Static Conformance Ledger · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_wml_scr_ledger"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_wml_scr_ledger.md</p><div class="markdown-body"><h1 id="wap-121--wml-13-static-conformance-ledger">WAP 1.2.1 / WML 1.3 Static Conformance Ledger</h1>
+<p>Version: v0.2
+Status: source extraction complete; mandatory implementation audit complete;
+WAP-215 Class C profile applied; selected nested clauses planned;
+optional-capability assessment pending</p>
+<h2 id="purpose">Purpose</h2>
+<p>This is the first line-item conformance increment for the WAP 1.2.1 / WML
+1.3 compatibility target. It converts the effective WML static conformance
+statement into a machine-checkable obligation ledger without claiming that
+the project already implements or tests those obligations.</p>
+<p>Machine-readable authority:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wml-scr.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code></li>
+</ul>
+<p>Validation:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-selected-normative-clauses.mjs</span></span></code></pre>
+<h2 id="effective-source-chain">Effective source chain</h2>
+<p>The ledger applies the locked WML family precedence:</p>
+<ol>
+<li><code>WAP-191-WML</code></li>
+<li><code>WAP-191_102-WML</code></li>
+<li><code>WAP-191_104-WML</code></li>
+<li><code>WAP-191_105-WML</code></li>
+</ol>
+<p><code>WAP-191_104</code> is the effective WML 1.3 publication containing the 75-row
+section 15 statement. <code>WAP-191_105</code> section 3.3 adds optional
+<code>WML-C-76</code> (<code>tabindex support</code>) to section 15.1.5.</p>
+<p>Both extraction-source hashes are checked against the release lock and
+effective-spec graph. Recovered PDFs and extracted text remain outside Git
+under the repository’s metadata-only redistribution policy.</p>
+<h2 id="result">Result</h2>
+<table>
+<thead>
+<tr>
+<th>Actor named by the SCR</th>
+<th style="text-align: right">Items</th>
+<th style="text-align: right">Mandatory</th>
+<th style="text-align: right">Optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WML user agent</td>
+<td style="text-align: right">61</td>
+<td style="text-align: right">39</td>
+<td style="text-align: right">22</td>
+</tr>
+<tr>
+<td>WML encoder</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">2</td>
+<td style="text-align: right">2</td>
+</tr>
+<tr>
+<td>WML document — server</td>
+<td style="text-align: right">6</td>
+<td style="text-align: right">6</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td>WML document — client</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">0</td>
+<td style="text-align: right">5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right"><strong>76</strong></td>
+<td style="text-align: right"><strong>47</strong></td>
+<td style="text-align: right"><strong>29</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The commonly used shorthand <code>WML-C-01..WML-C-76</code> is inaccurate. The effective
+identifier sequence is:</p>
+<ul>
+<li><code>WML-C-01..WML-C-59</code>;</li>
+<li><code>WML-S-60..WML-S-69</code>;</li>
+<li><code>WML-C-70..WML-C-76</code>.</li>
+</ul>
+<p>The <code>C</code> and <code>S</code> prefixes distinguish client and server-side conformance
+actors. They are not WAP device Class C/Class S labels.</p>
+<p>Applying WAP-215 <code>CCR-CLASSC-C-001</code> and its <code>WML:MCF</code> dependency produces the
+selected browser scope:</p>
+<table>
+<thead>
+<tr>
+<th>Selected Class C disposition</th>
+<th style="text-align: right">Rows</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Required</td>
+<td style="text-align: right">39</td>
+<td>Mandatory WML user-agent rows</td>
+</tr>
+<tr>
+<td>Optional, not required</td>
+<td style="text-align: right">27</td>
+<td>22 optional user-agent rows plus 5 optional client-document rows</td>
+</tr>
+<tr>
+<td>Not applicable to client</td>
+<td style="text-align: right">10</td>
+<td>4 encoder rows plus 6 server-document rows</td>
+</tr>
+</tbody>
+</table>
+<h2 id="accounted-fields">Accounted fields</h2>
+<p>Every obligation records:</p>
+<ul>
+<li>exact SCR identifier and ordinal;</li>
+<li>actor, feature, referenced clause, and mandatory/optional status;</li>
+<li>source document and static-conformance subsection;</li>
+<li>dependency expression;</li>
+<li>strict disposition and a separate Class C applicability state;</li>
+<li>implementation domain and owning project layers;</li>
+<li>existing <code>RQ-*</code> groups and additive Phase R work items;</li>
+<li>implementation status, code symbol, exact test/command, and evidence state.</li>
+</ul>
+<p>The source table contains one explicit SCR dependency:
+<code>WML-C-32</code> (<code>img</code>) depends on <code>WML-C-54</code> (display of the <code>alt</code> attribute).</p>
+<h2 id="current-disposition">Current disposition</h2>
+<ul>
+<li>Mandatory rows are <code>required-for-claimed-actor</code>.</li>
+<li>Optional rows must be explicitly declared implemented or deferred.</li>
+<li>Mandatory user-agent rows are <code>required-by-class-c-client-mcf</code>.</li>
+<li>Optional user-agent and client-document rows are
+<code>optional-not-required-by-class-c-client</code>.</li>
+<li>Encoder and server-document rows are
+<code>not-applicable-to-class-c-client</code>.</li>
+<li>Enhancements are never allowed to replace strict behavior.</li>
+<li>Every mandatory row maps to a substantive implementation work item in
+addition to <code>R0-01</code>.</li>
+<li>Direct executable evidence is linked for <code>25/76</code> rows. Existing thematic
+tests are counted only when their path, test name, command, code symbol, and
+limitation are reviewed against the exact SCR feature.</li>
+</ul>
+<h3 id="mandatory-implementation-audit">Mandatory implementation audit</h3>
+<table>
+<thead>
+<tr>
+<th>Assessment</th>
+<th style="text-align: right">Mandatory rows</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>implemented</code></td>
+<td style="text-align: right">2</td>
+<td>Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply</td>
+</tr>
+<tr>
+<td><code>partial</code></td>
+<td style="text-align: right">23</td>
+<td>Direct behavior exists, but the cited clause has known uncovered semantics</td>
+</tr>
+<tr>
+<td><code>missing</code></td>
+<td style="text-align: right">22</td>
+<td>No conforming implementation path exists; a substantive Phase R work item is attached</td>
+</tr>
+</tbody>
+</table>
+<p>The two implemented rows are <code>WML-C-35</code> (<code>noop</code>) and <code>WML-C-53</code> (<code>wml</code>
+root). Across the 39 required Class C client rows, the audit currently records
+2 implemented, 23 partial, and 14 missing. This is not a compliance
+percentage: nested normative clauses, optional capabilities, cross-target
+parity, and release evidence still have separate gates.</p>
+<p>The first <code>CONF-003</code> slice now expands all 39 selected WML rows into 174
+deduplicated, section-hash-anchored clauses. Every clause has an inherited
+owner/work mapping and a planned direct fixture. Clause implementation status
+remains <code>not-assessed</code>, so these records improve planning completeness without
+raising the implementation audit.</p>
+<p>The 14 missing required Class C client rows are:</p>
+<ul>
+<li>context/policy: <code>WML-C-11</code>, <code>WML-C-13</code>, <code>WML-C-14</code>;</li>
+<li>task/structure: <code>WML-C-08</code>, <code>WML-C-20</code>, <code>WML-C-21</code>, <code>WML-C-30</code>,
+<code>WML-C-47</code>, <code>WML-C-52</code>;</li>
+<li>rendering/media: <code>WML-C-32</code>, <code>WML-C-46</code>, <code>WML-C-49</code>, <code>WML-C-50</code>,
+<code>WML-C-54</code>;</li>
+</ul>
+<p>The source-wide mandatory audit additionally tracks eight missing
+encoder/server requirements (<code>WML-S-60</code>, <code>WML-S-61</code>, and <code>WML-S-64..69</code>).
+They remain in the ledger for complete WML source coverage but do not count
+toward the selected Class C client profile.</p>
+<p>This means source-level WML SCR coverage and the first mandatory code-evidence
+audit are complete, but implementation and release conformance are not.</p>
+<h2 id="next-pass">Next pass</h2>
+<ol>
+<li>Implement and review the 174 source-derived direct clause fixtures.</li>
+<li>Add cross-target and cross-layer strict-mode outcomes to the linked tests.</li>
+<li>Split broad Phase R work items only where a required clause lacks a
+deterministic acceptance lane.</li>
+<li>Assess the 27 optional client rows and publish the capability declaration.</li>
+<li>Carry the selected WAP-215 profile mapping into the remaining release
+families.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121--wml-13-static-conformance-ledger">WAP 1.2.1 / WML 1.3 Static Conformance Ledger</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#effective-source-chain">Effective source chain</a></li><li class="depth-2"><a href="#result">Result</a></li><li class="depth-2"><a href="#accounted-fields">Accounted fields</a></li><li class="depth-2"><a href="#current-disposition">Current disposition</a></li><li class="depth-3"><a href="#mandatory-implementation-audit">Mandatory implementation audit</a></li><li class="depth-2"><a href="#next-pass">Next pass</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_wml_scr_ledger.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

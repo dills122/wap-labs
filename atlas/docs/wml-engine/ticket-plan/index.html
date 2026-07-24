@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Ticket Plan (Spec-Referenced) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/ticket-plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/ticket-plan.md</p><div class="markdown-body"><h1 id="ticket-plan-spec-referenced">Ticket Plan (Spec-Referenced)</h1>
+<p>This is the actionable backlog for implementation without overengineering.</p>
+<p>Traceability linkage:</p>
+<ul>
+<li>Engine requirements map to Waves IDs in <code>docs/wml-engine/requirements-matrix.md</code>.</li>
+<li>Cross-project contract/test alignment is tracked in:
+<ul>
+<li><code>docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md</code></li>
+<li><code>docs/waves/SPEC_TEST_COVERAGE.md</code></li>
+</ul>
+</li>
+</ul>
+<p>Immediate cross-project next-in-line maintenance alignment (before Phase B promotion):</p>
+<ul>
+<li><code>M1-02</code> native/wasm parity-critical regression coverage.</li>
+<li><code>M1-07</code> parser robustness hardening without feature-scope expansion, using an existing XML parser backend with a WaveNav WML semantic mapper layer.</li>
+<li><code>M1-08</code> boundary-oriented decomposition of high-churn files.</li>
+<li><code>M1-03</code> engine API generator design/bootstrap as a non-priority track.</li>
+</ul>
+<p>Source board:</p>
+<ul>
+<li><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></li>
+</ul>
+<h2 id="phase-a-lock-mvp-runtime-p0">Phase A: Lock MVP Runtime (P0)</h2>
+<h3 id="a1-parser-baseline-hardening">A1. Parser baseline hardening</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Enforce <code>wml -&gt; card+</code> invariant.</li>
+<li>Preserve card order and ids.</li>
+<li>Support MVP nodes: <code>p</code>, <code>br</code>, <code>a[href]</code>.</li>
+<li>Ignore unsupported tags without panic.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191_104</code> DTD deck/card and <code>a</code> element sections.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Unit tests for malformed/unknown tags.</li>
+<li>Golden parse snapshots for two-card fixtures.</li>
+</ol>
+<h3 id="a2-navigation--history-baseline">A2. Navigation + history baseline</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Internal fragment nav (<code>#cardId</code>).</li>
+<li>External nav intent emission.</li>
+<li>History push/pop for card transitions.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191*</code> go/prev semantics and history descriptions.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Key-sequence integration tests.</li>
+<li>Deterministic state snapshots.</li>
+</ol>
+<h3 id="a3-render-determinism">A3. Render determinism</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Deterministic text wrapping by viewport cols.</li>
+<li>Deterministic focus indexing per logical link.</li>
+<li>Stable draw command order.</li>
+</ol>
+<ul>
+<li>Sources:
+WML card ordering guidance (<code>ordered</code> as hint, not strict layout algorithm).</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Snapshot tests at multiple viewport widths.</li>
+</ol>
+<h3 id="a4-boundary-metadata-stability">A4. Boundary metadata stability</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Keep <code>loadDeckContext(wmlXml, baseUrl, contentType, rawBytesBase64?)</code> primary.</li>
+<li>Preserve backwards-compatible <code>loadDeck(xml)</code>.</li>
+</ol>
+<ul>
+<li>Sources:
+WML/WBXML media-type and transport-normalization boundary.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Contract tests in host sample.</li>
+</ol>
+<h2 id="phase-b-spec-semantics-additions-p1">Phase B: Spec Semantics Additions (P1)</h2>
+<h3 id="b1-card-metadata-semantics">B1. Card metadata semantics</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Parse/store <code>newcontext</code>, <code>ordered</code>, <code>title</code>, card intrinsic event attrs.</li>
+<li>Parse/store <code>head/template/access/meta</code> minimally.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191_104</code> DTD and card/template/head/access definitions.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Metadata getter tests.</li>
+</ol>
+<h3 id="b2-task-model-do--task">B2. Task model (<code>do</code> + <code>%task</code>)</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Parse <code>do</code> and nested <code>go|prev|noop|refresh</code>.</li>
+<li>Softkey/task activation map.</li>
+<li>Task executor pipeline.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191_104</code> sections 9.5, 9.6 and DTD <code>%task</code>.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>One integration test per task type.</li>
+</ol>
+<h3 id="b3-variable-substitution">B3. Variable substitution</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Variable store.</li>
+<li>Substitution in text + <code>%vdata</code> + <code>%HREF</code>.</li>
+<li>Undefined variable -&gt; empty string.</li>
+<li>Correct substitution timing in action pipeline.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191_104</code> variable semantics and substitution processing order.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Substitution fixture matrix, including nested navigation + setvar.</li>
+</ol>
+<h3 id="b4-timer--intrinsic-events">B4. Timer + intrinsic events</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Parse timer element and attributes.</li>
+<li>Start/stop/expire behavior hooks.</li>
+<li><code>ontimer</code> dispatch via onevent/task path.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191_104</code> section 11.7 + intrinsic event table.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Deterministic simulated-clock tests.</li>
+</ol>
+<h2 id="phase-c-forms-and-request-semantics-p2">Phase C: Forms and Request Semantics (P2)</h2>
+<p>Active promotion note:</p>
+<ul>
+<li>The transport-side native submit baseline is now landed.</li>
+<li>The first interactive subset of this phase (<code>A5-04</code>, <code>A5-05</code>, <code>A5-06</code>) is now landed on <code>docs/wml-engine/work-items.md</code>.</li>
+<li>Keep the remainder of Phase C deferred unless it directly supports the current runtime-fidelity lane (<code>A5-01</code>, <code>W0-05</code>, <code>D0-01</code>).</li>
+</ul>
+<h3 id="c1-field-model">C1. Field model</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Add input/select/option/fieldset representations.</li>
+<li>Focus/edit semantics in constrained viewport.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191*</code> field and option/form sections.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Form navigation/edit snapshots.</li>
+</ol>
+<h3 id="c2-request-payload-semantics">C2. Request payload semantics</h3>
+<ul>
+<li>Build:</li>
+</ul>
+<ol>
+<li>Implement postfield serialization order and encoding pipeline.</li>
+<li>Implement go method/enctype/accept-charset behavior.</li>
+</ol>
+<ul>
+<li>Sources:
+<code>WAP-191_104</code> and <code>WAP-191_105</code> go/postfield clarifications.</li>
+<li>Accept:</li>
+</ul>
+<ol>
+<li>Payload generation fixture tests (GET + POST + multipart metadata behavior).</li>
+</ol>
+<h2 id="phase-d-deferred-advanced-features">Phase D: Deferred Advanced Features</h2>
+<ul>
+<li>WMLScript (<code>WAP-193*</code>, <code>WAP-194*</code>)</li>
+<li>Styling (<code>WAP-239*</code>)</li>
+<li>Transform features (<code>WAP-244</code>)</li>
+</ul>
+<p>These remain intentionally deferred to avoid overengineering early phases.</p>
+<h2 id="cross-cutting-quality-tickets">Cross-Cutting Quality Tickets</h2>
+<h3 id="q1-error-taxonomy">Q1. Error taxonomy</h3>
+<ul>
+<li>Add stable parse/runtime/nav error codes exposed to host.</li>
+</ul>
+<h3 id="q2-requirement-traceability">Q2. Requirement traceability</h3>
+<ul>
+<li>For each implemented requirement id from <code>requirements-matrix.md</code>, add test id mapping.</li>
+</ul>
+<h3 id="q3-conformance-fixtures">Q3. Conformance fixtures</h3>
+<ul>
+<li>Build fixture deck corpus from canonical reviewed specs and maintain expected outputs under version control.</li>
+</ul>
+<h3 id="q4-engine-api-generation-pipeline-non-priority">Q4. Engine API generation pipeline (non-priority)</h3>
+<ul>
+<li>Generate TypeScript API/types/facade scaffolding from engine-owned API metadata.</li>
+<li>Use generated outputs to reduce manual contract-sync churn across browser and host tooling.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#ticket-plan-spec-referenced">Ticket Plan (Spec-Referenced)</a></li><li class="depth-2"><a href="#phase-a-lock-mvp-runtime-p0">Phase A: Lock MVP Runtime (P0)</a></li><li class="depth-3"><a href="#a1-parser-baseline-hardening">A1. Parser baseline hardening</a></li><li class="depth-3"><a href="#a2-navigation--history-baseline">A2. Navigation + history baseline</a></li><li class="depth-3"><a href="#a3-render-determinism">A3. Render determinism</a></li><li class="depth-3"><a href="#a4-boundary-metadata-stability">A4. Boundary metadata stability</a></li><li class="depth-2"><a href="#phase-b-spec-semantics-additions-p1">Phase B: Spec Semantics Additions (P1)</a></li><li class="depth-3"><a href="#b1-card-metadata-semantics">B1. Card metadata semantics</a></li><li class="depth-3"><a href="#b2-task-model-do--task">B2. Task model (do + %task)</a></li><li class="depth-3"><a href="#b3-variable-substitution">B3. Variable substitution</a></li><li class="depth-3"><a href="#b4-timer--intrinsic-events">B4. Timer + intrinsic events</a></li><li class="depth-2"><a href="#phase-c-forms-and-request-semantics-p2">Phase C: Forms and Request Semantics (P2)</a></li><li class="depth-3"><a href="#c1-field-model">C1. Field model</a></li><li class="depth-3"><a href="#c2-request-payload-semantics">C2. Request payload semantics</a></li><li class="depth-2"><a href="#phase-d-deferred-advanced-features">Phase D: Deferred Advanced Features</a></li><li class="depth-2"><a href="#cross-cutting-quality-tickets">Cross-Cutting Quality Tickets</a></li><li class="depth-3"><a href="#q1-error-taxonomy">Q1. Error taxonomy</a></li><li class="depth-3"><a href="#q2-requirement-traceability">Q2. Requirement traceability</a></li><li class="depth-3"><a href="#q3-conformance-fixtures">Q3. Conformance fixtures</a></li><li class="depth-3"><a href="#q4-engine-api-generation-pipeline-non-priority">Q4. Engine API generation pipeline (non-priority)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/ticket-plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

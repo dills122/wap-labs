@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WDP Datagram Format and Transport Contract · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wdp-datagram-format"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wdp-datagram-format.md</p><div class="markdown-body"><h1 id="wdp-datagram-format-and-transport-contract">WDP Datagram Format and Transport Contract</h1>
+<p>Status: <code>ACTIVE</code>
+Date: <code>2026-03-04</code></p>
+<h2 id="1-what-wdp-provides">1) What WDP provides</h2>
+<p>In this project WDP is a constrained, testable datagram abstraction for upper protocol layers.
+It maps to one transport datagram in memory and to one UDP datagram in the MVP transport.</p>
+<p>From <code>WAP-259</code>:</p>
+<ul>
+<li>WDP is the standard datagram interface between bearer services and upper layers.</li>
+<li>over IP, WDP mapping is UDP.</li>
+<li>WSP/WTP/WTLS session identity is by address/port quadruplet (client/server address + ports).</li>
+</ul>
+<h2 id="2-mvp-datagram-model">2) MVP datagram model</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> WdpDatagram</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_addr</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WdpAddress</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_addr</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WdpAddress</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> src_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> dst_port</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> payload</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> WdpAddress</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> addr_type</span><span style="color:#F97583">:</span><span style="color:#B392F0"> AddressType</span><span style="color:#E1E4E8">, </span><span style="color:#6A737D">// IPv4, IPv6, or future GSM/USSD forms</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> value</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Minimal interface required by current transport:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> trait</span><span style="color:#B392F0"> DatagramTransport</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> send</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;mut</span><span style="color:#79B8FF"> self</span><span style="color:#E1E4E8">, datagram</span><span style="color:#F97583">:</span><span style="color:#F97583"> &amp;</span><span style="color:#B392F0">WdpDatagram</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;(), </span><span style="color:#B392F0">WdpError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> receive</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;mut</span><span style="color:#79B8FF"> self</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">WdpDatagram</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">WdpError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="3-wap-service-ports-in-profile">3) WAP service ports in profile</h2>
+<p>WAP registered datagram ports are part of service selection and must be preserved:</p>
+<ul>
+<li>WSP Connectionless Session Service (non-secure): <code>9200</code>.</li>
+<li>WSP Session Service (non-secure): <code>9201</code>.</li>
+<li>WSP Connectionless Session Service (secure): <code>9202</code>.</li>
+<li>WSP Session Service (secure): <code>9203</code>.</li>
+<li>Push services have additional legacy ports in WAP-259 Appendix B; only those required by enabled transport profile are part of MVP.</li>
+</ul>
+<p>Transport policy:</p>
+<ul>
+<li>server entities MUST bind well-known service ports.</li>
+<li>client entities may use ephemeral source ports.</li>
+<li>the profile must log/validate source/destination quadruplets for each session.</li>
+</ul>
+<h2 id="4-bearer-implementation-contracts">4) Bearer implementation contracts</h2>
+<h3 id="41-udp-wdp-over-ip--mvp">4.1 UDP (<code>wdp over IP</code>) — MVP</h3>
+<ul>
+<li>map WDP datagram <code>payload</code> 1:1 to UDP payload.</li>
+<li>use 16-bit port fields.</li>
+<li>map receive errors into typed <code>WdpError</code> values.</li>
+</ul>
+<h3 id="42-smsussdother-gsm-bearers--deferred">4.2 SMS/USSD/other GSM bearers — deferred</h3>
+<p>Implementation is deferred but reserved in model:</p>
+<ul>
+<li>optional UDH-style fragmentation and reassembly,</li>
+<li>bearer-specific maximum payload sizes,</li>
+<li>optional sequence numbers/retry semantics.</li>
+</ul>
+<h2 id="5-segmentation-policy">5) Segmentation policy</h2>
+<ul>
+<li>no automatic segmentation in core MVP service layer.</li>
+<li>higher layer may enforce MTU via capability/SDU checks.</li>
+<li>if bearer segmenting is enabled, use WTP SAR/ESAR policy where the WTP layer explicitly requests grouping and recovery.</li>
+</ul>
+<h2 id="6-error-taxonomy">6) Error taxonomy</h2>
+<p>Minimum errors expected by upper layers:</p>
+<ul>
+<li><code>WdpError::TransportUnavailable</code></li>
+<li><code>WdpError::AddressTypeUnsupported</code></li>
+<li><code>WdpError::AddressUnresolvable</code></li>
+<li><code>WdpError::PayloadOversize</code></li>
+<li><code>WdpError::Timeout</code></li>
+<li><code>WdpError::CorruptOrMalformed</code></li>
+</ul>
+<h2 id="7-implementation-notes-for-this-repo">7) Implementation notes for this repo</h2>
+<ul>
+<li>Keep WDP free of HTTP/WSP semantics.</li>
+<li>expose only transport-visible fields and typed errors.</li>
+<li>ensure all parse/codec methods stay stateless to keep replayability in tests.</li>
+</ul>
+<h2 id="8-pending-precision">8) Pending precision</h2>
+<ul>
+<li>WAP-259 bearer-specific checksum requirements are profile-dependent.</li>
+<li>keep a deferred issue for explicit bearer obligations per profile until bearer adapter is in-scope.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wdp-datagram-format-and-transport-contract">WDP Datagram Format and Transport Contract</a></li><li class="depth-2"><a href="#1-what-wdp-provides">1) What WDP provides</a></li><li class="depth-2"><a href="#2-mvp-datagram-model">2) MVP datagram model</a></li><li class="depth-2"><a href="#3-wap-service-ports-in-profile">3) WAP service ports in profile</a></li><li class="depth-2"><a href="#4-bearer-implementation-contracts">4) Bearer implementation contracts</a></li><li class="depth-3"><a href="#41-udp-wdp-over-ip--mvp">4.1 UDP (wdp over IP) — MVP</a></li><li class="depth-3"><a href="#42-smsussdother-gsm-bearers--deferred">4.2 SMS/USSD/other GSM bearers — deferred</a></li><li class="depth-2"><a href="#5-segmentation-policy">5) Segmentation policy</a></li><li class="depth-2"><a href="#6-error-taxonomy">6) Error taxonomy</a></li><li class="depth-2"><a href="#7-implementation-notes-for-this-repo">7) Implementation notes for this repo</a></li><li class="depth-2"><a href="#8-pending-precision">8) Pending precision</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wdp-datagram-format.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

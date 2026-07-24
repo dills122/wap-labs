@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP-191 (WML 1.3) Full-Stack Compliance Audit · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wml_191_full_stack_compliance_audit"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wml_191_full_stack_compliance_audit.md</p><div class="markdown-body"><h1 id="wap-191-wml-13-full-stack-compliance-audit">WAP-191 (WML 1.3) Full-Stack Compliance Audit</h1>
+<p>Version: v0.2
+Date: 2026-07-23</p>
+<p>Effective primary source chain:</p>
+<ul>
+<li><code>WAP-191-WML-20000219-a</code></li>
+<li><code>WAP-191_102-WML-20001213-a</code></li>
+<li><code>WAP-191_104-WML-20010718-a</code></li>
+<li><code>WAP-191_105-WML-20020212-a</code></li>
+<li>precedence lock:
+<code>spec-processing/source-manifests/wap-1.2.1-effective-spec.json</code></li>
+</ul>
+<h2 id="purpose">Purpose</h2>
+<p>Create a project-wide, implementation-facing audit of WAP-191 obligations across:</p>
+<ul>
+<li>transport ingestion/normalization</li>
+<li>engine parser/runtime/layout</li>
+<li>script/runtime integration boundaries</li>
+<li>browser host/session behavior</li>
+<li>encoder/validation tooling expectations</li>
+</ul>
+<p>This audit is scoped to effective WML 1.3 only. It does not replace WMLScript,
+WAE, WSP, WTP, WDP, or security-domain traceability docs.</p>
+<h2 id="method">Method</h2>
+<ol>
+<li>Sweep all normative chapters in effective WAP-191 sections 5-15 after
+applying the release-carried SINs.</li>
+<li>Cross-check current implementation shape in:</li>
+</ol>
+<ul>
+<li><code>transport-rust/</code></li>
+<li><code>engine-wasm/engine/</code></li>
+<li><code>engine-wasm/contracts/</code></li>
+<li><code>browser/contracts/</code></li>
+<li>existing boards and traceability docs.</li>
+</ul>
+<ol start="3">
+<li>Classify each obligation family as:</li>
+</ol>
+<ul>
+<li><code>covered</code></li>
+<li><code>partial</code></li>
+<li><code>missing</code></li>
+<li><code>deferred</code> (optional/profile-gated)</li>
+</ul>
+<h2 id="full-stack-obligation-matrix">Full-Stack Obligation Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>WAP-191 Sections</th>
+<th>Project Layer(s)</th>
+<th>Status</th>
+<th>Existing Coverage</th>
+<th>Required Follow-up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>URL semantics and fragment resolution</td>
+<td>5.1-5.3, 9.5.1, 12.5</td>
+<td>engine runtime + browser host</td>
+<td>partial</td>
+<td>Fragment/basic external intent implemented</td>
+<td>Complete process-order rules and request metadata propagation</td>
+</tr>
+<tr>
+<td>Character set + entity handling</td>
+<td>6.1-6.2, 10.3.3</td>
+<td>transport + parser + runtime</td>
+<td>partial</td>
+<td>Core entity decoding exists; WBXML decode exists</td>
+<td>Add strict substitution/escaping semantics (<code>$</code>, <code>escape/noesc/unesc</code>) and charset-path fixtures</td>
+</tr>
+<tr>
+<td>Syntax and variable placement validity</td>
+<td>7.1-7.9, 10.3.5, 15.3/15.4 (<code>WML-64/65/70</code>)</td>
+<td>parser + validator paths</td>
+<td>partial</td>
+<td>Basic parse + robustness baseline</td>
+<td>Add variable-reference context validation and deterministic error classes</td>
+</tr>
+<tr>
+<td>Core data-type semantics</td>
+<td>8.x</td>
+<td>parser/runtime</td>
+<td>partial</td>
+<td>Minimal subset implicit only</td>
+<td>Add <code>%length</code>, <code>%HREF</code>, boolean/number validation where behavior depends on them</td>
+</tr>
+<tr>
+<td>Task model (<code>go/prev/noop/refresh</code>)</td>
+<td>9.5, 12.5, 15.1.2</td>
+<td>parser + runtime + browser + transport</td>
+<td>partial</td>
+<td>Basic fragment/back/external flow</td>
+<td>Implement full inter-card task pipeline and failure rollback semantics</td>
+</tr>
+<tr>
+<td><code>postfield</code>/<code>setvar</code> behavior</td>
+<td>9.3-9.4</td>
+<td>parser + runtime + transport</td>
+<td>missing</td>
+<td>Not implemented end-to-end</td>
+<td>Add request-field generation, substitution order, and same-deck suppression rules</td>
+</tr>
+<tr>
+<td><code>do</code>/<code>onevent</code> model and conflict constraints</td>
+<td>9.6-9.10, 15.3/15.4 (<code>WML-66/67/68/69/71/72/73/74</code>)</td>
+<td>parser + runtime</td>
+<td>partial</td>
+<td>Limited accept/onenterforward support</td>
+<td>Add full element coverage, conflict validation, and deterministic handling</td>
+</tr>
+<tr>
+<td>Browser context/history fidelity</td>
+<td>9.2, 10.1-10.4, 12.2</td>
+<td>engine runtime + browser session</td>
+<td>partial</td>
+<td>Index-based back-stack baseline</td>
+<td>Expand history entries to spec-shaped request identity and context semantics</td>
+</tr>
+<tr>
+<td>Deck structure (<code>head/template/card/access/meta</code>)</td>
+<td>11.1-11.5</td>
+<td>parser + runtime + browser policy</td>
+<td>partial</td>
+<td><code>card</code> subset implemented</td>
+<td>Parse/retain/access metadata, template inheritance, and deck access-control policy hooks</td>
+</tr>
+<tr>
+<td>Control/form model (<code>select/option/optgroup/input/fieldset</code>)</td>
+<td>11.6, 15.1.5</td>
+<td>parser + runtime + renderer</td>
+<td>partial</td>
+<td>Early link/text-only subset</td>
+<td>Add initialization order, commit rules, mask validation, and variable update timing</td>
+</tr>
+<tr>
+<td>Timer lifecycle</td>
+<td>11.7, 9.10, 12.5, 15.1.2</td>
+<td>runtime + host timing adapter</td>
+<td>partial</td>
+<td>Script-side timer hostcall work in progress</td>
+<td>Add native WML timer semantics (start/stop/resume/ontimer ordering)</td>
+</tr>
+<tr>
+<td>Text layout semantics</td>
+<td>11.8.1-11.8.9</td>
+<td>parser + renderer</td>
+<td>partial</td>
+<td>Baseline wrap/focus implemented</td>
+<td>Complete inline flow, paragraph mode/alignment, table semantics, preformatted handling</td>
+</tr>
+<tr>
+<td>Image semantics</td>
+<td>11.9, 15.1.6</td>
+<td>parser + renderer + host media</td>
+<td>missing/partial</td>
+<td>Minimal/none in engine renderer</td>
+<td>Implement <code>img</code> element semantics and capability-gated hints</td>
+</tr>
+<tr>
+<td>UA semantics (access control, low-memory, errors, unknown DTD)</td>
+<td>12.1-12.4</td>
+<td>browser host + runtime</td>
+<td>partial</td>
+<td>Unknown-tag robustness exists</td>
+<td>Add access control enforcement path, low-memory policy behavior, deterministic unknown-DTD handling</td>
+</tr>
+<tr>
+<td>WML binary representation and token tables</td>
+<td>14.x, 15.2</td>
+<td>transport/encoder tooling</td>
+<td>partial</td>
+<td>WBXML decode boundary present</td>
+<td>Add encoder/validation tooling path and WBXML token/literal conformance fixtures</td>
+</tr>
+<tr>
+<td>Static conformance statement execution model</td>
+<td>15.x</td>
+<td>all layers + QA tooling</td>
+<td>partial (source + clause + mandatory audit)</td>
+<td>76-row source ledger; WAP-215 selects 39 required Class C client rows expanded into 174 clauses and assessed as 2 implemented / 23 partial / 14 missing; 25 exact test links across the full ledger</td>
+<td>Execute direct fixtures, assess optional capabilities, close gaps, and add release CI gate</td>
+</tr>
+</tbody>
+</table>
+<h2 id="major-gaps-not-fully-tracked-before-this-audit">Major Gaps Not Fully Tracked Before This Audit</h2>
+<ol>
+<li>The 76-row source ledger and first mandatory implementation audit now
+exist. Exact direct tests are linked for 25 rows; 22 mandatory rows are
+explicitly missing. The exact identifiers are <code>WML-C-01..59</code>,
+<code>WML-S-60..69</code>, and <code>WML-C-70..76</code>; SIN 105 adds optional <code>WML-C-76</code> for
+<code>tabindex</code>.</li>
+<li>Section 12.5 inter-card process ordering (including failure semantics) is only partially ticketed.</li>
+<li>Server/client conformance constraints in section 15.3/15.4 are not yet mapped to deterministic validation tooling.</li>
+<li>Table/pre/image semantics in section 11.8/11.9 were under-specified in backlog until this pass.</li>
+<li>Access-control semantics (<code>access</code> element + deck restrictions) are captured as metadata goals but not fully wired to host policy enforcement.</li>
+</ol>
+<h2 id="conformance-completion-plan-cross-board">Conformance Completion Plan (Cross-Board)</h2>
+<p>Use Phase R tickets in <code>docs/waves/WORK_ITEMS.md</code> as the single coordination lane for WAP-191 closure:</p>
+<ul>
+<li><code>R0-01</code> WML-191 conformance matrix + CI gate</li>
+<li><code>R0-02</code> inter-card navigation/process-order completion</li>
+<li><code>R0-03</code> history/context fidelity completion</li>
+<li><code>R0-04</code> parser semantic completeness for structure/task/form elements</li>
+<li><code>R0-05</code> renderer semantics completion (<code>11.8</code>/<code>11.9</code>)</li>
+<li><code>R0-06</code> transport/request-policy and postfield plumbing</li>
+<li><code>R0-07</code> browser access-control/low-memory/unknown-DTD policy path</li>
+<li><code>R0-08</code> encoder/validation tooling for section <code>14</code> + <code>15.2/15.3/15.4</code></li>
+</ul>
+<p>Engine-level additive tickets are tracked in <code>docs/wml-engine/work-items.md</code> (B5/C5 follow-up queue).</p>
+<h2 id="exit-criteria-for-wap-191-closure">Exit Criteria for WAP-191 Closure</h2>
+<ol>
+<li>All mandatory WML conformance IDs in section 15 are mapped to deterministic tests or explicit policy assertions.</li>
+<li>Optional (<code>O</code>) IDs are either:</li>
+</ol>
+<ul>
+<li>implemented and tested, or</li>
+<li>explicitly profile-gated/deferred with rationale.</li>
+</ul>
+<ol start="3">
+<li>Browser + engine + transport contract fields are traceable to WAP-191 requirement IDs without orphan behavior.</li>
+<li>CI includes a conformance status check that fails on unmapped mandatory IDs.</li>
+</ol>
+<p>Source-ledger evidence:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wml-scr.json</code></li>
+<li><code>docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md</code></li>
+<li><code>node scripts/check-wap-conformance-ledger.mjs</code></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-191-wml-13-full-stack-compliance-audit">WAP-191 (WML 1.3) Full-Stack Compliance Audit</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#method">Method</a></li><li class="depth-2"><a href="#full-stack-obligation-matrix">Full-Stack Obligation Matrix</a></li><li class="depth-2"><a href="#major-gaps-not-fully-tracked-before-this-audit">Major Gaps Not Fully Tracked Before This Audit</a></li><li class="depth-2"><a href="#conformance-completion-plan-cross-board">Conformance Completion Plan (Cross-Board)</a></li><li class="depth-2"><a href="#exit-criteria-for-wap-191-closure">Exit Criteria for WAP-191 Closure</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wml_191_full_stack_compliance_audit.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Rust Engine Steering (WaveNav) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="agents/rust_engine_steering"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>agents</span></nav><p class="doc-path">docs/agents/rust_engine_steering.md</p><div class="markdown-body"><h1 id="rust-engine-steering-wavenav">Rust Engine Steering (WaveNav)</h1>
+<p>Purpose: project-specific Rust rules for contributors and coding agents working on the WaveNav engine (<code>engine-wasm/engine</code>).</p>
+<p>This file is intentionally prescriptive. When there is a conflict between “clever” and “predictable”, choose predictable.</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>Applies to:</p>
+<ul>
+<li><code>engine-wasm/engine/**</code></li>
+<li>Rust-facing parts of <code>engine-wasm/pkg</code> generation flow</li>
+<li>Rust-related CI and quality gates</li>
+</ul>
+<p>Does not apply to:</p>
+<ul>
+<li>Tauri/TypeScript host logic (except contract alignment concerns)</li>
+</ul>
+<h2 id="2-canonical-external-standards">2. Canonical External Standards</h2>
+<p>Use these as normative references before introducing custom patterns:</p>
+<ol>
+<li>Rust Reference (<code>doc.rust-lang.org/reference/</code>)</li>
+<li>Rust API Guidelines checklist (<code>rust-lang.github.io/api-guidelines/checklist.html</code>)</li>
+<li>Rust Style Guide + style editions (<code>doc.rust-lang.org/style-guide/</code>)</li>
+<li>Clippy usage and lint groups (<code>doc.rust-lang.org/clippy/usage.html</code>)</li>
+<li>Cargo Book (commands, workspaces, resolver, profiles)</li>
+<li>Rustdoc Book (docs tests and lint behavior)</li>
+<li>Rust Book chapter on panic vs Result (<code>ch09-03</code>)</li>
+</ol>
+<p>Project rule: if an internal convention conflicts with these references, prefer the official Rust guidance unless it breaks explicit repository architecture constraints.</p>
+<h2 id="3-language-and-toolchain-policy">3. Language and Toolchain Policy</h2>
+<ol>
+<li>Edition:</li>
+</ol>
+<ul>
+<li>Keep crate edition explicit in <code>Cargo.toml</code>.</li>
+<li>Do not bump edition in incidental PRs.</li>
+</ul>
+<ol start="2">
+<li>Toolchain:</li>
+</ol>
+<ul>
+<li>CI uses stable Rust.</li>
+<li>Prefer <code>cargo</code> subcommands over ad-hoc scripts.</li>
+</ul>
+<ol start="3">
+<li>Formatting:</li>
+</ol>
+<ul>
+<li>Use <code>cargo fmt</code>.</li>
+<li>CI gate is <code>cargo fmt --check</code>.</li>
+<li>Avoid custom rustfmt style overrides unless there is a concrete readability or diff-stability reason.</li>
+</ul>
+<ol start="4">
+<li>Linting:</li>
+</ol>
+<ul>
+<li>Use <code>cargo clippy</code> for advisories, but avoid enabling broad deny-all lint policies without team agreement.</li>
+<li>If a lint is intentionally not followed, use narrow <code>#[allow(...)]</code> at the smallest scope with a short rationale comment.</li>
+</ul>
+<h2 id="4-architecture-rules-for-this-repo">4. Architecture Rules for This Repo</h2>
+<ol>
+<li>Rust engine owns:</li>
+</ol>
+<ul>
+<li>WML parse/runtime/layout/focus/navigation semantics.</li>
+</ul>
+<ol start="2">
+<li>Rust engine does not own:</li>
+</ol>
+<ul>
+<li>Network access</li>
+<li>WSP/WBXML decode</li>
+<li>Transport retries/session protocols</li>
+</ul>
+<ol start="3">
+<li>WASM boundary:</li>
+</ol>
+<ul>
+<li>Export only stable, host-oriented methods via <code>#[wasm_bindgen]</code>.</li>
+<li>Keep rich internal logic in non-exported helpers returning Rust-native types (<code>Result&lt;T, String&gt;</code> or typed errors).</li>
+<li>Convert to <code>JsValue</code> at boundary edges only.</li>
+</ul>
+<ol start="4">
+<li>Public contract alignment:</li>
+</ol>
+<ul>
+<li>Any boundary behavior change must update:</li>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li>related docs under <code>docs/wml-engine/</code></li>
+</ul>
+<h2 id="5-api-design-rules">5. API Design Rules</h2>
+<p>Follow Rust API Guidelines directly for naming, traits, docs, predictability:</p>
+<ol>
+<li>Naming:</li>
+</ol>
+<ul>
+<li>Types/traits: <code>UpperCamelCase</code></li>
+<li>functions/methods/modules: <code>snake_case</code></li>
+<li>constants/statics: <code>SCREAMING_SNAKE_CASE</code></li>
+</ul>
+<ol start="2">
+<li>Method naming:</li>
+</ol>
+<ul>
+<li>Use idiomatic names (<code>new</code>, <code>from_*</code>, <code>as_*</code>, <code>to_*</code>, <code>into_*</code>) consistently.</li>
+<li>Do not invent one-off naming patterns for conversions.</li>
+</ul>
+<ol start="3">
+<li>Predictability:</li>
+</ol>
+<ul>
+<li>Prefer methods when there is a clear receiver.</li>
+<li>Keep word order consistent across related methods/types.</li>
+</ul>
+<ol start="4">
+<li>Trait derivations:</li>
+</ol>
+<ul>
+<li>Derive common traits where semantically correct (<code>Debug</code>, <code>Clone</code>, <code>PartialEq</code>, <code>Eq</code>, etc.).</li>
+<li>Avoid deriving traits that can mislead semantics (example: <code>Copy</code> for large or stateful types).</li>
+</ul>
+<ol start="5">
+<li>Type exposure:</li>
+</ol>
+<ul>
+<li>Prefer private fields + constructor/helper methods over broad public mutable structs, unless the struct is intentionally a plain data model.</li>
+</ul>
+<h2 id="6-error-handling-policy">6. Error Handling Policy</h2>
+<ol>
+<li>Default:</li>
+</ol>
+<ul>
+<li>Return <code>Result</code> for recoverable failures.</li>
+</ul>
+<ol start="2">
+<li>Panic usage:</li>
+</ol>
+<ul>
+<li><code>panic!</code> is acceptable for impossible internal invariants and test scaffolding.</li>
+<li>Avoid panic paths in normal runtime/host input flows.</li>
+</ul>
+<ol start="3">
+<li>WASM edge:</li>
+</ol>
+<ul>
+<li>Internal functions should return Rust errors.</li>
+<li>Map to <code>JsValue</code> only in exported API methods.</li>
+</ul>
+<ol start="4">
+<li>Error messages:</li>
+</ol>
+<ul>
+<li>Keep messages stable and concise for integration tests.</li>
+<li>Prefer deterministic text to aid snapshot/contract checks.</li>
+</ul>
+<h2 id="7-state-and-mutability">7. State and Mutability</h2>
+<ol>
+<li>
+<p>Keep runtime state transitions explicit.</p>
+</li>
+<li>
+<p>For nav/focus/history:</p>
+</li>
+</ol>
+<ul>
+<li>Update one concern at a time.</li>
+<li>Preserve deterministic ordering.</li>
+<li>Write tests for state before and after each transition.</li>
+</ul>
+<ol start="3">
+<li>Avoid hidden side effects:</li>
+</ol>
+<ul>
+<li>Do not mutate unrelated state in parse/layout functions.</li>
+</ul>
+<h2 id="8-wasm-specific-guidance">8. WASM-Specific Guidance</h2>
+<ol>
+<li>
+<p>Minimize <code>wasm_bindgen</code> surface area.</p>
+</li>
+<li>
+<p>Keep data crossing boundary simple and serializable.</p>
+</li>
+<li>
+<p>Avoid passing complex internal structs directly to JS when a stable view model is sufficient.</p>
+</li>
+<li>
+<p>Keep host compatibility:</p>
+</li>
+</ol>
+<ul>
+<li>Do not break existing exported method names/signatures in incidental refactors.</li>
+<li>If breaking, do it intentionally with contract and docs updates in the same change.</li>
+</ul>
+<h2 id="9-testing-and-tdd-rules">9. Testing and TDD Rules</h2>
+<ol>
+<li>Mandatory workflow:</li>
+</ol>
+<ul>
+<li>Red (failing test) -&gt; Green (minimal fix) -&gt; Refactor.</li>
+</ul>
+<ol start="2">
+<li>Minimum tests for behavior changes:</li>
+</ol>
+<ul>
+<li>Unit tests for parser/runtime helper logic.</li>
+<li>Integration-style tests for key-sequence and state transitions.</li>
+</ul>
+<ol start="3">
+<li>Required validation commands for Rust-only PRs:</li>
+</ol>
+<ul>
+<li><code>cargo fmt --check</code></li>
+<li><code>cargo test</code></li>
+</ul>
+<ol start="4">
+<li>Preferred test qualities:</li>
+</ol>
+<ul>
+<li>Deterministic assertions on state (<code>active_card_idx</code>, focus index, nav stack behavior).</li>
+<li>Avoid brittle assertions on incidental formatting unless snapshot intent is explicit.</li>
+</ul>
+<ol start="5">
+<li>Documentation tests:</li>
+</ol>
+<ul>
+<li>Add doctests for public APIs where useful.</li>
+<li>Keep examples runnable when possible.</li>
+</ul>
+<h2 id="10-performance-and-allocation-guidance">10. Performance and Allocation Guidance</h2>
+<ol>
+<li>
+<p>Optimize for correctness first, but avoid obvious unnecessary allocations in hot paths (layout, key handling).</p>
+</li>
+<li>
+<p>Do not introduce complex caching until there is measured need.</p>
+</li>
+<li>
+<p>When optimizing:</p>
+</li>
+</ol>
+<ul>
+<li>Benchmark or at least compare before/after behavior and complexity.</li>
+<li>Keep readability unless perf gain is meaningful.</li>
+</ul>
+<h2 id="11-unsafe-and-ffi-policy">11. Unsafe and FFI Policy</h2>
+<ol>
+<li>
+<p><code>unsafe</code> is disallowed by default in this crate.</p>
+</li>
+<li>
+<p>If <code>unsafe</code> becomes necessary:</p>
+</li>
+</ol>
+<ul>
+<li>Isolate to minimal module/function.</li>
+<li>Document invariants and why safe alternatives are insufficient.</li>
+<li>Add targeted tests for boundary assumptions.</li>
+</ul>
+<ol start="3">
+<li>No direct FFI expansion without explicit design review.</li>
+</ol>
+<h2 id="12-ciquality-gates-rust-engine">12. CI/Quality Gates (Rust Engine)</h2>
+<p>Current required local gates:</p>
+<ol>
+<li><code>cargo fmt --check</code></li>
+<li><code>cargo test</code></li>
+</ol>
+<p>CI also enforces engine coverage through <code>cargo llvm-cov</code> with the current thresholds:</p>
+<ol>
+<li>90% line coverage</li>
+<li>85% function coverage</li>
+</ol>
+<p>Optional/disabled gate (enable intentionally later):</p>
+<ol>
+<li><code>cargo clippy --all-targets --all-features -- -D warnings</code></li>
+</ol>
+<p>Rustdoc lint escalation remains optional for later public-crate hardening.</p>
+<h2 id="13-pr-checklist-rust-changes">13. PR Checklist (Rust Changes)</h2>
+<p>Before merge, verify:</p>
+<ol>
+<li>Behavior change is covered by tests (preferably added first).</li>
+<li>No wasm boundary signature drift without contract/doc updates.</li>
+<li><code>cargo fmt --check</code> passes.</li>
+<li><code>cargo test</code> passes.</li>
+<li>Coverage remains above the current CI thresholds when behavior changes.</li>
+<li>Relevant <code>docs/wml-engine/*</code> updated when semantics changed.</li>
+<li>No generated artifacts committed unless intentionally required.</li>
+</ol>
+<h2 id="14-common-anti-patterns-to-avoid">14. Common Anti-Patterns to Avoid</h2>
+<ol>
+<li>Parsing shortcuts that accept invalid deck roots silently.</li>
+<li>Swallowing navigation errors at internal layers.</li>
+<li>Panicking on user-provided deck content.</li>
+<li>Coupling parser/runtime internals directly to JS error handling.</li>
+<li>Expanding scope into transport/network behavior from Rust engine code.</li>
+</ol>
+<h2 id="15-repo-specific-command-quick-reference">15. Repo-Specific Command Quick Reference</h2>
+<p>From repo root:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> engine-wasm/engine</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> fmt</span><span style="color:#79B8FF"> --check</span></span>
+<span class="line"><span style="color:#B392F0">cargo</span><span style="color:#9ECBFF"> test</span></span>
+<span class="line"><span style="color:#B392F0">wasm-pack</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --target</span><span style="color:#9ECBFF"> web</span><span style="color:#79B8FF"> --out-dir</span><span style="color:#9ECBFF"> ../pkg</span></span></code></pre>
+<p>Coverage gate (from repo root):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> coverage-rust-engine</span></span></code></pre>
+<p>Host sample sanity (requires built pkg):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> build</span></span></code></pre>
+<h2 id="16-source-references">16. Source References</h2>
+<ul>
+<li>Rust Reference: <a href="https://doc.rust-lang.org/reference/">https://doc.rust-lang.org/reference/</a></li>
+<li>Rust API Guidelines: <a href="https://rust-lang.github.io/api-guidelines/">https://rust-lang.github.io/api-guidelines/</a></li>
+<li>API Checklist: <a href="https://rust-lang.github.io/api-guidelines/checklist.html">https://rust-lang.github.io/api-guidelines/checklist.html</a></li>
+<li>Naming guidelines: <a href="https://rust-lang.github.io/api-guidelines/naming.html">https://rust-lang.github.io/api-guidelines/naming.html</a></li>
+<li>Rust Style Guide: <a href="https://doc.rust-lang.org/style-guide/">https://doc.rust-lang.org/style-guide/</a></li>
+<li>Style editions: <a href="https://doc.rust-lang.org/stable/style-guide/editions.html">https://doc.rust-lang.org/stable/style-guide/editions.html</a></li>
+<li>Clippy usage: <a href="https://doc.rust-lang.org/stable/clippy/usage.html">https://doc.rust-lang.org/stable/clippy/usage.html</a></li>
+<li>Cargo test: <a href="https://doc.rust-lang.org/cargo/commands/cargo-test.html">https://doc.rust-lang.org/cargo/commands/cargo-test.html</a></li>
+<li>Cargo resolver/workspaces: <a href="https://doc.rust-lang.org/nightly/cargo/reference/resolver.html">https://doc.rust-lang.org/nightly/cargo/reference/resolver.html</a></li>
+<li>Rustdoc doctests: <a href="https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html">https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html</a></li>
+<li>Rustdoc lints: <a href="https://doc.rust-lang.org/rustdoc/lints.html">https://doc.rust-lang.org/rustdoc/lints.html</a></li>
+<li>Panic vs Result (Rust Book): <a href="https://doc.rust-lang.org/book/ch09-03-to-panic-or-not-to-panic.html">https://doc.rust-lang.org/book/ch09-03-to-panic-or-not-to-panic.html</a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#rust-engine-steering-wavenav">Rust Engine Steering (WaveNav)</a></li><li class="depth-2"><a href="#1-scope">1. Scope</a></li><li class="depth-2"><a href="#2-canonical-external-standards">2. Canonical External Standards</a></li><li class="depth-2"><a href="#3-language-and-toolchain-policy">3. Language and Toolchain Policy</a></li><li class="depth-2"><a href="#4-architecture-rules-for-this-repo">4. Architecture Rules for This Repo</a></li><li class="depth-2"><a href="#5-api-design-rules">5. API Design Rules</a></li><li class="depth-2"><a href="#6-error-handling-policy">6. Error Handling Policy</a></li><li class="depth-2"><a href="#7-state-and-mutability">7. State and Mutability</a></li><li class="depth-2"><a href="#8-wasm-specific-guidance">8. WASM-Specific Guidance</a></li><li class="depth-2"><a href="#9-testing-and-tdd-rules">9. Testing and TDD Rules</a></li><li class="depth-2"><a href="#10-performance-and-allocation-guidance">10. Performance and Allocation Guidance</a></li><li class="depth-2"><a href="#11-unsafe-and-ffi-policy">11. Unsafe and FFI Policy</a></li><li class="depth-2"><a href="#12-ciquality-gates-rust-engine">12. CI/Quality Gates (Rust Engine)</a></li><li class="depth-2"><a href="#13-pr-checklist-rust-changes">13. PR Checklist (Rust Changes)</a></li><li class="depth-2"><a href="#14-common-anti-patterns-to-avoid">14. Common Anti-Patterns to Avoid</a></li><li class="depth-2"><a href="#15-repo-specific-command-quick-reference">15. Repo-Specific Command Quick Reference</a></li><li class="depth-2"><a href="#16-source-references">16. Source References</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/agents/rust_engine_steering.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

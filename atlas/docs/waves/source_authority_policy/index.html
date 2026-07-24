@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Source Authority Policy · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/source_authority_policy"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/source_authority_policy.md</p><div class="markdown-body"><h1 id="waves-source-authority-policy">Waves Source Authority Policy</h1>
+<p>Version: v0.2
+Status: active</p>
+<h2 id="purpose">Purpose</h2>
+<p>Define source precedence so requirement and implementation decisions remain grounded in canonical material.</p>
+<h2 id="source-classes">Source classes</h2>
+<ol>
+<li><code>normative</code></li>
+</ol>
+<ul>
+<li>Official WAP/OMA release members and governing documents locked by authority
+URL, publication identity, and SHA-256.</li>
+<li>The WAP 1.2.1 target inventory is
+<code>spec-processing/source-manifests/wap-1.2.1-release.json</code>.</li>
+<li>The exact WAP-215 Class A/B/C graphs and selected Class C client profile are
+<code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code>.</li>
+<li>Private acquisition evidence is recorded in
+<code>spec-processing/source-manifests/wap-1.2.1-ingestion-status.json</code> and
+<code>spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json</code>.</li>
+<li>Byte-exact root-level copies under <code>spec-processing/source-material/</code> are the
+preferred local cache, but the local directory does not define release
+membership.</li>
+<li>These are the only sources allowed to create or redefine <code>RQ-*</code> requirements.</li>
+</ul>
+<ol start="2">
+<li><code>interop-reference</code></li>
+</ol>
+<ul>
+<li>External implementation references (for example Kannel, Wireshark dissectors, captured interop traces).</li>
+<li>May inform fixture design and behavior interpretation, but cannot override normative specs.</li>
+</ul>
+<ol start="3">
+<li><code>heuristic</code></li>
+</ol>
+<ul>
+<li>Summaries, slide decks, tertiary books, LLM-parsed notes.</li>
+<li>Useful for context and candidate test ideas; not authoritative for requirement definition.</li>
+</ul>
+<h2 id="current-supplemental-source-classification">Current supplemental source classification</h2>
+<ul>
+<li><code>spec-processing/source-material/WAP.pdf</code>: <code>heuristic</code></li>
+<li><code>spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf</code>: <code>heuristic</code></li>
+<li><code>spec-processing/external-parsed/wap_emulator_spec_notes.md</code>: <code>heuristic</code></li>
+</ul>
+<h2 id="requirement-creationupdate-rule">Requirement creation/update rule</h2>
+<p>A new or changed <code>RQ-*</code> item must include:</p>
+<ol>
+<li>at least one canonical <code>normative</code> source anchor (document ID + exact
+section/SCR and source-lock identity), and</li>
+<li>an AC entry with concrete evidence targets (tests/fixtures/commands).</li>
+</ol>
+<p>If only supplemental evidence exists, create an open question or a candidate fixture note, not a new <code>RQ-*</code>.</p>
+<p>For a metadata-only normative source, the requirement must additionally record
+the official URL and locked SHA-256. A local parsed derivative is not required
+for authority and must not be committed without redistribution approval.</p>
+<p>Research-ingestion state is not repository-promotion state. A logical private
+cache reference and verified hash can prove availability for extraction
+without authorizing a recovered binary or derivative to enter Git.</p>
+<h2 id="target-release-precedence">Target release precedence</h2>
+<p>Strict compatibility requirements use WAP 1.2.1 with WML 1.3:</p>
+<ol>
+<li>approved WAP 1.2.1 base specification;</li>
+<li>approved release-carried SIN overlays in effective order;</li>
+<li>governing WAP conformance requirements;</li>
+<li>normatively cited W3C/IETF/ISO/Unicode dependencies;</li>
+<li>later WAP/OMA successor specifications only as delta or clarification
+evidence.</li>
+</ol>
+<p>The current local WAP 2.0-heavy corpus must not silently redefine the strict
+target. See <code>docs/waves/WAP_1_2_1_SOURCE_BASELINE.md</code>.</p>
+<h2 id="citation-rule">Citation rule</h2>
+<p>In traceability and work items:</p>
+<ol>
+<li>cite normative source first,</li>
+<li>cite interop-reference second (if used),</li>
+<li>cite heuristic source last as context only.</li>
+</ol>
+<h2 id="conflict-rule">Conflict rule</h2>
+<p>When sources disagree:</p>
+<ol>
+<li>canonical normative source wins,</li>
+<li>note discrepancy in <code>docs/waves/OPEN_SPEC_QUESTIONS.md</code>,</li>
+<li>create follow-up ticket only after normative anchor is confirmed.</li>
+</ol>
+<h2 id="enforcement-points">Enforcement points</h2>
+<ul>
+<li><code>docs/waves/*TRACEABILITY*.md</code>: per-requirement evidence lines and source policy link.</li>
+<li><code>docs/waves/WORK_ITEMS.md</code>: ticket <code>Spec</code> field must reference <code>RQ-*</code> and canonical source sections.</li>
+<li>Drift checks:
+<ul>
+<li><code>scripts/check-worklist-drift.mjs</code></li>
+<li><code>scripts/check-source-corpus-drift.mjs</code></li>
+<li><code>spec-processing/scripts/check-wap-release-manifest.mjs</code></li>
+<li><code>spec-processing/scripts/check-wap-class-conformance.mjs</code></li>
+<li><code>spec-processing/scripts/check-wap-ingestion-status.mjs</code></li>
+<li><code>spec-processing/scripts/check-wap-external-ingestion-status.mjs</code></li>
+</ul>
+</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-source-authority-policy">Waves Source Authority Policy</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-classes">Source classes</a></li><li class="depth-2"><a href="#current-supplemental-source-classification">Current supplemental source classification</a></li><li class="depth-2"><a href="#requirement-creationupdate-rule">Requirement creation/update rule</a></li><li class="depth-2"><a href="#target-release-precedence">Target release precedence</a></li><li class="depth-2"><a href="#citation-rule">Citation rule</a></li><li class="depth-2"><a href="#conflict-rule">Conflict rule</a></li><li class="depth-2"><a href="#enforcement-points">Enforcement points</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/source_authority_policy.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

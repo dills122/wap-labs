@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP Compliance Knowledge Graph · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/readme"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/readme.md</p><div class="markdown-body"><h1 id="wap-compliance-knowledge-graph">WAP Compliance Knowledge Graph</h1>
+<p>This directory contains the human and AI projections of the repository-derived WAP compliance
+knowledge graph.</p>
+<p>The graph is not a new source of truth. Canonical facts remain in:</p>
+<ul>
+<li><code>docs/waves/wap-1.2.1-compliance-program.json</code>;</li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-release.json</code>;</li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-effective-spec.json</code>;</li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code>;</li>
+<li>the family SCR ledgers;</li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code>.</li>
+</ul>
+<p>See
+<a href="../architecture/decisions/0003-generate-compliance-knowledge-graph.md"><code>docs/architecture/decisions/0003-generate-compliance-knowledge-graph.md</code></a>
+for the decision and boundaries.</p>
+<p>The operational expansion policy is
+<a href="SLICE_ADOPTION.md"><code>docs/knowledge-graph/SLICE_ADOPTION.md</code></a>: extend the graph when a compliance
+implementation slice begins, not through a separate bulk migration.</p>
+<h2 id="wml-2-pilot">WML-2 pilot</h2>
+<p>The pilot selects the <code>WML-2</code> compliance sprint and generates:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wml-2-knowledge-graph.json</code>:
+typed, machine-readable nodes and edges;</li>
+<li><code>docs/knowledge-graph/vault/</code>: an Obsidian-compatible Markdown vault;</li>
+<li><code>docs/knowledge-graph/context-packs/WML-2.md</code>: a bounded AI context bundle.</li>
+</ul>
+<p>The current graph contains the target sprint, its direct dependency/downstream sprints, five
+work items, source families/documents, directly mapped SCR rows and clauses, planned fixtures,
+requirements, owner layers, and legacy ticket links.</p>
+<p>The pilot intentionally reports two gap levels:</p>
+<ul>
+<li><code>WML-202</code>, <code>WML-204</code>, and <code>WML-205</code> do not yet have any direct nested-clause mappings;</li>
+<li>all five work items declare WML scope without directly mapped WML clauses, even though
+<code>WML-201</code> has WAE clauses and <code>WML-203</code> has WBXML clauses.</li>
+</ul>
+<p>Broad family ownership and cross-family clauses remain valid planning context, but neither is
+treated as direct clause coverage for a different family.</p>
+<h2 id="commands">Commands</h2>
+<p>Generate all committed projections:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/generate-wap-knowledge-graph.mjs</span></span></code></pre>
+<p>Validate graph integrity and generated drift:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-knowledge-graph.mjs</span></span></code></pre>
+<p>Print a fresh AI context pack to standard output:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/wap-context-pack.mjs</span><span style="color:#9ECBFF"> WML-2</span></span></code></pre>
+<p>For implementation or review of one pilot work item, request a focused pack:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/wap-context-pack.mjs</span><span style="color:#9ECBFF"> WML-203</span></span></code></pre>
+<p>The supported retrieval targets are <code>WML-2</code> and <code>WML-201</code> through <code>WML-205</code>. A work-item target
+keeps sprint dependencies and conformance governance in view while limiting work-item details,
+direct obligations, mapping gaps, and source documents to the selected slice. Other targets
+remain rejected until their implementation slice starts, so graph expansion is explicit and
+reviewable.</p>
+<h2 id="graph-contract">Graph contract</h2>
+<p>Every node has:</p>
+<ul>
+<li>a globally stable ID in <code>&lt;type&gt;:&lt;key&gt;</code> form;</li>
+<li>a stable domain key such as <code>WML-203</code> or <code>WBXML-C-001</code>;</li>
+<li>a controlled node type;</li>
+<li>a title and source-derived properties.</li>
+</ul>
+<p>Every edge has:</p>
+<ul>
+<li>an ID derived from its endpoints and relationship;</li>
+<li>an existing <code>from</code> node;</li>
+<li>a controlled relationship type;</li>
+<li>an existing <code>to</code> node;</li>
+<li>one or more canonical repository source references where applicable.</li>
+</ul>
+<p>The pilot relationships include:</p>
+<ul>
+<li><code>contains</code> and <code>depends-on</code> for execution order;</li>
+<li><code>covers-family</code>, <code>owned-by</code>, and <code>relates-to</code> for planning ownership;</li>
+<li><code>planned-by</code> and <code>refines</code> for normative work allocation;</li>
+<li><code>sourced-from</code> and <code>effective-document</code> for authority;</li>
+<li><code>verified-by</code> and <code>maps-to</code> for fixture/requirement traceability;</li>
+<li><code>selected-from</code>, <code>targets-profile</code>, and <code>requires-family</code> for WAP-215 profile governance.</li>
+</ul>
+<h2 id="obsidian-use">Obsidian use</h2>
+<p>Open <code>docs/knowledge-graph/vault/</code> as an Obsidian vault. Start at <code>_index.md</code>, then use local
+Graph view around <code>sprints/WML-2.md</code> or an individual work item.</p>
+<p>All notes in that directory are generated. Do not edit them directly. Obsidian configuration,
+personal layouts, and plugin state should remain local rather than being committed with the
+compliance projection.</p>
+<h2 id="ai-retrieval-rules">AI retrieval rules</h2>
+<p>The generated context pack follows four rules:</p>
+<ol>
+<li>include the target, its direct execution neighbors, and its work items;</li>
+<li>include only clauses with explicit work-item mappings;</li>
+<li>include the applicable profile, source documents, fixtures, requirements, and evidence
+commands;</li>
+<li>report both zero-clause and declared-family mapping gaps rather than inferring completion or
+non-applicability.</li>
+</ol>
+<p>This keeps the pack bounded while retaining the information needed to challenge compliance
+claims.</p>
+<p>Codex discovers this workflow through the repository <code>AGENTS.md</code>. Claude Code discovers the same
+rules through the root <code>CLAUDE.md</code>, which imports <code>AGENTS.md</code> and
+<code>docs/agents/COMPLIANCE_CONTEXT_RETRIEVAL.md</code>.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-compliance-knowledge-graph">WAP Compliance Knowledge Graph</a></li><li class="depth-2"><a href="#wml-2-pilot">WML-2 pilot</a></li><li class="depth-2"><a href="#commands">Commands</a></li><li class="depth-2"><a href="#graph-contract">Graph contract</a></li><li class="depth-2"><a href="#obsidian-use">Obsidian use</a></li><li class="depth-2"><a href="#ai-retrieval-rules">AI retrieval rules</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/readme.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

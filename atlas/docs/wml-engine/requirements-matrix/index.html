@@ -1,0 +1,347 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WaveNav Engine Requirements Matrix (From Canonical Local Source Material) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/requirements-matrix"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/requirements-matrix.md</p><div class="markdown-body"><h1 id="wavenav-engine-requirements-matrix-from-canonical-local-source-material">WaveNav Engine Requirements Matrix (From Canonical Local Source Material)</h1>
+<p>This matrix maps normative behavior to engine modules and tests.</p>
+<h2 id="legend">Legend</h2>
+<ul>
+<li>Priority: <code>P0</code> required for MVP, <code>P1</code> next phase, <code>P2</code> later</li>
+<li>Module: parser/runtime/nav/layout/api</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Req ID</th>
+<th>Requirement</th>
+<th>Priority</th>
+<th>Primary Source</th>
+<th>Engine Module</th>
+<th>Test Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WML-R-001</td>
+<td>Parse <code>&lt;wml&gt;</code> with <code>(head?, template?, card+)</code> and require at least one card</td>
+<td>P0</td>
+<td><code>WAP-191_104</code> DTD (<code>&lt;!ELEMENT wml ...&gt;</code>)</td>
+<td>parser</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-002</td>
+<td>Parse <code>&lt;card&gt;</code> with supported MVP children, preserve card order</td>
+<td>P0</td>
+<td><code>WAP-191_104</code> DTD (<code>&lt;!ELEMENT card ...&gt;</code>)</td>
+<td>parser/runtime</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-003</td>
+<td>Resolve <code>#cardId</code> against current deck ids</td>
+<td>P0</td>
+<td><code>WAP-191*</code> card/id semantics</td>
+<td>nav/runtime</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-004</td>
+<td>Render one active card at a time with deterministic flow order</td>
+<td>P0</td>
+<td><code>WAP-191*</code> card presentation model</td>
+<td>layout/runtime</td>
+<td>snapshot</td>
+</tr>
+<tr>
+<td>WML-R-005</td>
+<td>Build focus list from interactable anchors (<code>a</code>)</td>
+<td>P0</td>
+<td><code>WAP-191_104</code> section 9.9 (<code>a</code>)</td>
+<td>nav/layout</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-006</td>
+<td><code>Enter</code> on focused <code>a[href="#..."]</code> changes active card</td>
+<td>P0</td>
+<td><code>WAP-191*</code> task/nav model</td>
+<td>nav/runtime</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-007</td>
+<td><code>Enter</code> on focused external href emits host navigation intent</td>
+<td>P0</td>
+<td><code>WAP-191*</code> go href semantics</td>
+<td>nav/api</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-008</td>
+<td>Keep history stack for card/deck transitions</td>
+<td>P0</td>
+<td><code>WAP-191*</code> go push + prev semantics</td>
+<td>runtime/nav</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-009</td>
+<td>Preserve and expose source metadata (<code>baseUrl</code>, <code>contentType</code>) from load boundary</td>
+<td>P0</td>
+<td>architecture boundary + WML media handling</td>
+<td>api/runtime</td>
+<td>contract</td>
+</tr>
+<tr>
+<td>WML-R-010</td>
+<td>Parse and retain <code>card@ordered</code> and <code>card@newcontext</code> attributes</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> card attrs</td>
+<td>parser/runtime</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-011</td>
+<td>Implement <code>do</code> parsing with <code>type/label/name/optional</code> and contained task</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> DTD (<code>&lt;!ELEMENT do (%task;)&gt;</code>)</td>
+<td>parser/runtime</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-012</td>
+<td>Implement task execution for <code>go</code>, <code>prev</code>, <code>noop</code>, <code>refresh</code></td>
+<td>P1</td>
+<td><code>WAP-191*</code> section 9.5</td>
+<td>runtime/nav</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-013</td>
+<td>Parse <code>onevent</code> and bind to intrinsic event types</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> section 9.10 + DTD</td>
+<td>parser/runtime</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-014</td>
+<td>Parse/execute timer model (<code>timer</code> element, start/stop/expire rules)</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> section 11.7</td>
+<td>runtime</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-015</td>
+<td>Variable substitution in text and <code>%vdata/%HREF</code> contexts</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> variable sections</td>
+<td>runtime/parser</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-016</td>
+<td>Undefined variable substitution yields empty string</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> variable semantics</td>
+<td>runtime</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-017</td>
+<td>Apply substitution timing after XML parsing</td>
+<td>P1</td>
+<td><code>WAP-191_104</code> variable processing order</td>
+<td>runtime</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-018</td>
+<td>Parse/access <code>head/template/access/meta</code> and inherit template nav/event behavior</td>
+<td>P2</td>
+<td><code>WAP-191_104</code> DTD + template semantics</td>
+<td>parser/runtime</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-019</td>
+<td>Support form elements and postfield payload generation</td>
+<td>P2</td>
+<td><code>WAP-191*</code> fields/postfield/go</td>
+<td>parser/runtime/nav</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-020</td>
+<td>Ensure parser ignores unsupported tags gracefully (no panic)</td>
+<td>P0</td>
+<td>robustness requirement + broad WML model</td>
+<td>parser</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WML-R-021</td>
+<td>Preserve inline flow across mixed text/link runs within a paragraph (no forced line reset per segment)</td>
+<td>P1</td>
+<td><code>WAP-191</code> section 9.9 + 11.8.3</td>
+<td>layout/parser</td>
+<td>snapshot</td>
+</tr>
+<tr>
+<td>WML-R-022</td>
+<td>Implement paragraph wrap/alignment semantics (<code>mode</code>, <code>align</code>) with card-local default inheritance</td>
+<td>P1</td>
+<td><code>WAP-191</code> section 11.8.3</td>
+<td>layout/runtime</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-023</td>
+<td>Treat <code>&lt;br&gt;</code> as mandatory line break in inline flow and paragraph content</td>
+<td>P1</td>
+<td><code>WAP-191</code> section 11.8.4</td>
+<td>parser/layout</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-024</td>
+<td>Implement table structure semantics for <code>table</code>/<code>tr</code>/<code>td</code> with <code>columns</code> conformance rules (pad/aggregate)</td>
+<td>P2</td>
+<td><code>WAP-191</code> section 11.8.5-11.8.8</td>
+<td>parser/layout</td>
+<td>integration</td>
+</tr>
+<tr>
+<td>WML-R-025</td>
+<td>Implement <code>pre</code> best-effort semantics (<code>xml:space="preserve"</code>, optional wrap suppression)</td>
+<td>P2</td>
+<td><code>WAP-191</code> section 11.8.9</td>
+<td>parser/layout</td>
+<td>snapshot</td>
+</tr>
+<tr>
+<td>WML-R-026</td>
+<td>Apply line-break controls for <code>&amp;nbsp;</code> and optional soft-hyphen break behavior in wrap mode</td>
+<td>P2</td>
+<td><code>WAP-191</code> section 11.8.3</td>
+<td>layout</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>WBXML-R-001</td>
+<td>Keep WBXML decode outside engine MVP; accept textual WML</td>
+<td>P0</td>
+<td><code>WAP-192*</code> + architecture decision</td>
+<td>api</td>
+<td>contract</td>
+</tr>
+<tr>
+<td>WBXML-R-002</td>
+<td>Preserve optional raw bytes metadata for debug fidelity</td>
+<td>P1</td>
+<td><code>WAP-192*</code> token/binary handling context</td>
+<td>api</td>
+<td>contract</td>
+</tr>
+</tbody>
+</table>
+<h2 id="waves-traceability-mapping">Waves Traceability Mapping</h2>
+<p>This maps engine-local requirement IDs to Waves global traceability IDs.</p>
+<table>
+<thead>
+<tr>
+<th>Engine Req ID(s)</th>
+<th>Waves Requirement IDs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WML-R-001</code>, <code>WML-R-002</code></td>
+<td><code>RQ-RMK-001</code></td>
+</tr>
+<tr>
+<td><code>WML-R-003</code>, <code>WML-R-006</code>, <code>WML-R-008</code></td>
+<td><code>RQ-RMK-003</code>, <code>RQ-WAE-016</code>, <code>RQ-WAE-017</code></td>
+</tr>
+<tr>
+<td><code>WML-R-004</code></td>
+<td><code>RQ-RMK-001</code>, <code>RQ-RMK-009</code></td>
+</tr>
+<tr>
+<td><code>WML-R-005</code></td>
+<td><code>RQ-RMK-006</code></td>
+</tr>
+<tr>
+<td><code>WML-R-007</code></td>
+<td><code>RQ-RMK-003</code>, <code>RQ-WAE-010</code></td>
+</tr>
+<tr>
+<td><code>WML-R-009</code></td>
+<td><code>RQ-RMK-007</code>, <code>RQ-WAE-001</code></td>
+</tr>
+<tr>
+<td><code>WML-R-010</code></td>
+<td><code>RQ-RMK-003</code></td>
+</tr>
+<tr>
+<td><code>WML-R-011</code>, <code>WML-R-012</code></td>
+<td><code>RQ-RMK-002</code></td>
+</tr>
+<tr>
+<td><code>WML-R-013</code>, <code>WML-R-014</code></td>
+<td><code>RQ-RMK-004</code></td>
+</tr>
+<tr>
+<td><code>WML-R-015</code>, <code>WML-R-016</code>, <code>WML-R-017</code></td>
+<td><code>RQ-RMK-005</code></td>
+</tr>
+<tr>
+<td><code>WML-R-018</code></td>
+<td><code>RQ-RMK-001</code>, <code>RQ-RMK-009</code></td>
+</tr>
+<tr>
+<td><code>WML-R-019</code></td>
+<td><code>RQ-RMK-008</code></td>
+</tr>
+<tr>
+<td><code>WML-R-020</code></td>
+<td><code>RQ-RMK-009</code></td>
+</tr>
+<tr>
+<td><code>WML-R-021</code>, <code>WML-R-022</code>, <code>WML-R-023</code></td>
+<td><code>RQ-RMK-001</code>, <code>RQ-RMK-006</code>, <code>RQ-RMK-009</code></td>
+</tr>
+<tr>
+<td><code>WML-R-024</code>, <code>WML-R-025</code>, <code>WML-R-026</code></td>
+<td><code>RQ-RMK-001</code>, <code>RQ-RMK-009</code></td>
+</tr>
+<tr>
+<td><code>WBXML-R-001</code>, <code>WBXML-R-002</code></td>
+<td><code>RQ-RMK-007</code>, <code>RQ-WAE-005</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="explicit-non-goals-current-phase">Explicit Non-goals (Current Phase)</h2>
+<ul>
+<li>In-engine WBXML decoding</li>
+<li>Full WMLScript conformance closure in this matrix (tracked separately under <code>docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md</code> and <code>docs/waves/WORK_ITEMS.md</code> Phase W/W1)</li>
+<li>WCSS layout semantics</li>
+<li>Vendor-specific UI quirks outside spec text</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wavenav-engine-requirements-matrix-from-canonical-local-source-material">WaveNav Engine Requirements Matrix (From Canonical Local Source Material)</a></li><li class="depth-2"><a href="#legend">Legend</a></li><li class="depth-2"><a href="#waves-traceability-mapping">Waves Traceability Mapping</a></li><li class="depth-2"><a href="#explicit-non-goals-current-phase">Explicit Non-goals (Current Phase)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/requirements-matrix.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

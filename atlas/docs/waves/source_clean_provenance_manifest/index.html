@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Source-Clean Provenance Manifest · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/source_clean_provenance_manifest"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/source_clean_provenance_manifest.md</p><div class="markdown-body"><h1 id="source-clean-provenance-manifest">Source-Clean Provenance Manifest</h1>
+<p>Append-only log for spec extraction/cleanup provenance snapshots.
+Each run snapshot records source markdown path, canonical source PDF path,
+cleaned artifact paths, line deltas, table-caption outcomes, and parse profile.</p>
+<h2 id="run-snapshot-2026-03-02">Run Snapshot 2026-03-02</h2>
+<ul>
+<li>Profile: <code>docling:dlparse_v4,no-ocr,image-placeholder</code></li>
+<li>Source cleanup reports:
+<ul>
+<li><code>tmp/docling-rerun/cleanup-report.txt</code></li>
+<li><code>tmp/docling-rerun-remaining/cleanup-report.txt</code></li>
+</ul>
+</li>
+<li>Generated per-file provenance CSV:
+<ul>
+<li><code>docs/waves/provenance/docling-provenance-2026-03-02.csv</code></li>
+</ul>
+</li>
+<li>Snapshot totals:
+<ul>
+<li>Files: <code>48</code></li>
+<li>Raw lines: <code>55486</code></li>
+<li>Cleaned lines: <code>51442</code></li>
+<li>Removed artifact lines: <code>3926</code></li>
+<li>Table captions: <code>70</code></li>
+<li>Normalized tables (automated detector): <code>69</code></li>
+<li>Canonical cleaned corpus file count: <code>48</code></li>
+</ul>
+</li>
+<li>Notes:
+<ul>
+<li>Automated detector false-positive for <code>WAP-191_104</code> <code>Table 1</code> is manually resolved in <code>docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="run-snapshot-2026-03-02-1">Run Snapshot 2026-03-02</h2>
+<ul>
+<li>Profile: <code>docling:dlparse_v4,no-ocr,image-placeholder</code></li>
+<li>Source cleanup reports:
+<ul>
+<li><code>tmp/docling-rerun/cleanup-report.txt</code></li>
+<li><code>tmp/docling-rerun-remaining/cleanup-report.txt</code></li>
+</ul>
+</li>
+<li>Generated per-file provenance CSV:
+<ul>
+<li><code>docs/waves/provenance/docling-provenance-2026-03-02.csv</code></li>
+</ul>
+</li>
+<li>Snapshot totals:
+<ul>
+<li>Files: <code>48</code></li>
+<li>Raw lines: <code>55486</code></li>
+<li>Cleaned lines: <code>51442</code></li>
+<li>Removed artifact lines: <code>3926</code></li>
+<li>Table captions: <code>70</code></li>
+<li>Normalized tables (automated detector): <code>69</code></li>
+<li>Canonical cleaned corpus file count: <code>48</code></li>
+</ul>
+</li>
+<li>Notes:
+<ul>
+<li>Automated detector false-positive for <code>WAP-191_104</code> <code>Table 1</code> is manually resolved in <code>docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md</code>.</li>
+</ul>
+</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#source-clean-provenance-manifest">Source-Clean Provenance Manifest</a></li><li class="depth-2"><a href="#run-snapshot-2026-03-02">Run Snapshot 2026-03-02</a></li><li class="depth-2"><a href="#run-snapshot-2026-03-02-1">Run Snapshot 2026-03-02</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/source_clean_provenance_manifest.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Security PKI/WIM Spec Traceability · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/security_pki_spec_traceability"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/security_pki_spec_traceability.md</p><div class="markdown-body"><h1 id="waves-security-pkiwim-spec-traceability">Waves Security PKI/WIM Spec Traceability</h1>
+<p>Version: v0.1<br>
+Status: S0-08 complete (initial extraction + docling rerun validation pass)</p>
+<h2 id="purpose">Purpose</h2>
+<p>Capture certificate, trust-distribution, and WIM storage requirements that define the security-profile boundary for Waves.</p>
+<h2 id="source-authority-policy">Source Authority Policy</h2>
+<ul>
+<li>See <code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code> for normative vs supplemental source precedence and citation rules.</li>
+</ul>
+<h2 id="source-set-reviewed-s0-08">Source set reviewed (S0-08)</h2>
+<ul>
+<li><code>spec-processing/source-material/WAP-211-WAPCert-20010522-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-211_104-WAPCert-20010928-a.pdf</code></li>
+<li><code>spec-processing/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-217-WPKI-20010424-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-217_103-WPKI-20011102-a.pdf</code></li>
+<li><code>spec-processing/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-260-WIM-20010712-a.pdf</code></li>
+<li><code>spec-processing/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf</code></li>
+<li><code>spec-processing/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf</code></li>
+</ul>
+<h2 id="normative-precedence">Normative precedence</h2>
+<ol>
+<li><code>WAP-211</code>, <code>WAP-217</code>, <code>WAP-260</code> provide baseline requirements.</li>
+<li><code>WAP-211_104</code>, <code>WAP-217_103</code> apply SIN/SCR corrections.</li>
+<li><code>OMA-WAP-211_105</code>, <code>OMA-WAP-217_105</code>, <code>OMA-WAP-260_100</code>, <code>OMA-WAP-260_101</code> provide later correction overlays and precedence for conflicting wording.</li>
+</ol>
+<h2 id="requirements-matrix">Requirements matrix</h2>
+<h3 id="rq-spki-001-certificate-processing-capacity-baseline">RQ-SPKI-001 Certificate processing capacity baseline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Certificate-processing entities support baseline certificate sizes and chain depth constraints.</li>
+<li>Mandatory algorithm support and key-size processing constraints are met for supported certificate types.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-211</code> section 6/9</li>
+<li><code>OMA-WAP-211_105</code> section 3/4 changes</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Security profile states supported certificate sizes, chain depth, and algorithm set.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unsupported algorithms or oversized chains fail deterministically.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-spki-002-distinguished-name-and-extension-recognition">RQ-SPKI-002 Distinguished-name and extension recognition</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Required DN attributes and extension handling follow the certificate profile requirements for interoperable validation.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-211</code> certificate field and extension conformance clauses</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Validation path documents required-vs-optional attribute/extension handling.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unknown extension behavior is non-fatal unless explicitly required.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-spki-003-trusted-ca-information-distribution-and-acceptance-controls">RQ-SPKI-003 Trusted CA information distribution and acceptance controls</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>CA info acquisition and acceptance flow uses trusted channels or explicit user confirmation semantics.</li>
+<li>Client processing of CA info structures and hashes follows profile rules.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-217</code> section 7 and data-structure clauses</li>
+<li><code>WAP-217_103</code> and <code>OMA-WAP-217_105</code> SCR/SIN corrections</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Trust-anchor update policy is explicit (trusted channel, user-confirmed fallback, rejection path).</li>
+<li class="task-list-item"><input type="checkbox" disabled> CA info parsing/validation rules are listed with deterministic reject behavior.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-spki-004-wim-storage-model-and-pkcs15-object-constraints">RQ-SPKI-004 WIM storage model and PKCS#15 object constraints</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WIM object directories and mandatory records follow PKCS#15-oriented structure requirements.</li>
+<li>Access-condition enforcement and object mutability constraints are explicit for CA materials.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-260</code> section 9 and related object-directory clauses</li>
+<li><code>OMA-WAP-260_101</code> change set on CDF/access-condition clarifications</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Data model notes required WIM object sets and mandatory fields.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Access-control and mutability rules for trusted CA artifacts are documented.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-spki-005-cryptographic-primitive-and-interface-baseline-in-wim-profile">RQ-SPKI-005 Cryptographic primitive and interface baseline in WIM profile</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Required algorithm families and card/interface capability requirements are explicit where WIM is implemented.</li>
+<li>ECC-related obligations follow SIN-updated wording where applicable.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-260</code> core capability clauses</li>
+<li><code>OMA-WAP-260_100</code> SCR/algorithm support clarifications</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> If WIM is in scope, supported algorithm/profile matrix is frozen in one place.</li>
+<li class="task-list-item"><input type="checkbox" disabled> If WIM is out of scope, this is marked as explicitly deferred with no silent partial behavior.</li>
+</ul>
+</li>
+</ul>
+<h2 id="boundary-notes-for-waves">Boundary notes for Waves</h2>
+<ul>
+<li>Waves currently uses a simulated WTLS/security boundary and does not yet implement full WIM/PKI client stacks.</li>
+<li>These requirements are primarily for:
+<ul>
+<li>trust-model policy definition,</li>
+<li>future secure-session parity work,</li>
+<li>and avoiding accidental non-compliant partial PKI behavior.</li>
+</ul>
+</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-security-pkiwim-spec-traceability">Waves Security PKI/WIM Spec Traceability</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-authority-policy">Source Authority Policy</a></li><li class="depth-2"><a href="#source-set-reviewed-s0-08">Source set reviewed (S0-08)</a></li><li class="depth-2"><a href="#normative-precedence">Normative precedence</a></li><li class="depth-2"><a href="#requirements-matrix">Requirements matrix</a></li><li class="depth-3"><a href="#rq-spki-001-certificate-processing-capacity-baseline">RQ-SPKI-001 Certificate processing capacity baseline</a></li><li class="depth-3"><a href="#rq-spki-002-distinguished-name-and-extension-recognition">RQ-SPKI-002 Distinguished-name and extension recognition</a></li><li class="depth-3"><a href="#rq-spki-003-trusted-ca-information-distribution-and-acceptance-controls">RQ-SPKI-003 Trusted CA information distribution and acceptance controls</a></li><li class="depth-3"><a href="#rq-spki-004-wim-storage-model-and-pkcs15-object-constraints">RQ-SPKI-004 WIM storage model and PKCS#15 object constraints</a></li><li class="depth-3"><a href="#rq-spki-005-cryptographic-primitive-and-interface-baseline-in-wim-profile">RQ-SPKI-005 Cryptographic primitive and interface baseline in WIM profile</a></li><li class="depth-2"><a href="#boundary-notes-for-waves">Boundary notes for Waves</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/security_pki_spec_traceability.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

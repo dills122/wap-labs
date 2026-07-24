@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 / WML 1.3 Compliance Program · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_compliance_program"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_compliance_program.md</p><div class="markdown-body"><h1 id="wap-121--wml-13-compliance-program">WAP 1.2.1 / WML 1.3 Compliance Program</h1>
+<p>Version: v0.3
+Status: active pre-conformance program</p>
+<h2 id="outcome">Outcome</h2>
+<p>The primary target is a data-client implementation compatible with WAP 1.2.1
+and WML 1.3 observable behavior. This is a compatibility target, not a claim
+of historical WAP Forum certification.</p>
+<p>The first strict profile is the exact WAP-215 Class C data client
+<code>CCR-CLASSC-C-001</code>. Its mandatory client feature groups are WAE, WML, WBXML,
+WMLScript, WMLScript libraries, caching, WSP, WDP, and WCMP. WTP becomes
+mandatory only when connection-mode WSP is supported. WTLS, WIM, Push,
+WTA/WTAI, UAProf, and WMLScript Crypto remain separately declared
+capabilities.</p>
+<p>The machine-readable execution authority is:</p>
+<ul>
+<li><code>docs/waves/wap-1.2.1-compliance-program.json</code></li>
+</ul>
+<p>Validate it with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-compliance-program.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/check-wap-class-conformance.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-selected-normative-clauses.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-wae-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-wbxml-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-wmlscript-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-caching-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-transport-conformance-ledgers.mjs</span></span></code></pre>
+<p>All nine selected Class C family increments are complete at SCR level:</p>
+<ul>
+<li>together they contain 712 effective source rows and 201 selected strict
+rows;</li>
+<li>the selected implementation audit is 7 implemented, 84 partial, and 110
+missing;</li>
+<li>every selected row has an implementation owner and work-item mapping;</li>
+<li><code>CONF-003</code> is complete: all nine families and all 201 selected parent rows
+expand into 781 deduplicated, source-anchored clauses with planned direct
+fixtures;</li>
+<li><code>CONF-004</code>, <code>CONF-005</code>, and <code>CONF-006</code> are complete: strict dispositions,
+the SCR-to-requirement/work/evidence crosswalk, and active-document status
+rollups are now guarded by a deterministic drift check;</li>
+<li><code>CONF-007</code> is complete for all 201 selected rows: 17 implementation
+foundations are successor-derived or cross-checked, of which two are
+compatible and 15 require strict target correction;</li>
+<li>76 effective WML 1.3 SCR rows are extracted;</li>
+<li>47 are mandatory and 29 optional;</li>
+<li>the selected Class C client scope is 39 required, 27 optional, and 10
+server/encoder rows not applicable to the client;</li>
+<li>all four SCR actors and the <code>WML-C-32 -&gt; WML-C-54</code> dependency are preserved;</li>
+<li>every mandatory row has an implementation work-item lane;</li>
+<li>the source-wide mandatory code audit finds 2 implemented, 23 partial, and
+22 missing; the selected 39-row client subset is 2 implemented, 23 partial,
+and 14 missing;</li>
+<li>25 rows have direct code symbols and runnable test evidence.</li>
+<li>86 effective WAE SCR rows are extracted after applying the WAP-190 SIN
+chain, with another 22 removed rows retained as historical change records;</li>
+<li><code>WAESpec:MCF</code> selects 11 mandatory WAE client rows, while 40 optional client
+rows and 35 server rows remain explicitly separated;</li>
+<li>the selected WAE audit is 5 implemented, 3 partial, and 3 missing, with
+direct code/test evidence linked to 8 rows;</li>
+<li>all 11 selected WAE concepts are classified against WAP-236 as
+successor-delta evidence without changing the WAP 1.2.1 target.</li>
+<li>15 effective WBXML 1.3 SCR rows are extracted after applying
+<code>WAP-192_105</code>, with 11 mandatory and 4 optional rows;</li>
+<li><code>WBXML:MCF</code> selects exactly three mandatory client rows and leaves 12
+server/document/encoder rows outside the selected client profile;</li>
+<li>the selected WBXML audit is 0 implemented, 1 partial, and 2 missing; the
+single linked test proves the subprocess boundary rather than normative
+decode semantics, so direct normative evidence remains 0/3.</li>
+<li>112 effective WMLScript rows are extracted from the consolidated
+WAP-193_101 table; <code>WMLScript:MCF</code> selects 41 mandatory interpreter rows;</li>
+<li>the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,
+with zero direct normative WAP bytecode tests;</li>
+<li>all 41 selected WMLScript language rows expand into 107 anchored clauses,
+with 105 required and two recommended behaviors;</li>
+<li>95 effective WMLScript Libraries rows are extracted after adding optional
+<code>WMLSSL-C-095</code>; <code>WMLScriptLibs:MCF</code> selects 80 mandatory interpreter rows;</li>
+<li>the selected libraries audit is 0 implemented, 14 partial, and 66 missing,
+with zero direct normative library tests;</li>
+<li>all 80 selected WMLScript Libraries rows expand into 211 required anchored
+clauses covering shared rules, identifiers, signatures, outcomes, errors,
+and host-visible effects;</li>
+<li>source-exact <code>WMLSSL048</code> is preserved with normalized alias <code>WMLSSL-048</code>.</li>
+<li>11 WAP-120 caching SCR rows are extracted; <code>WAPCachingMod:MCF</code> selects
+exactly five mandatory user-agent rows and leaves optional time
+synchronization plus all gateway rows outside the selected client profile;</li>
+<li>the selected caching audit is 0 implemented, 3 partial, and 2 missing, with
+zero direct normative WAP-120 tests; the current no-storage behavior is
+treated only as a provisional zero-byte-cache profile.</li>
+<li>317 effective WDP/WCMP/WSP SCR rows are extracted with all actor, M/O,
+source-order, and dependency expressions preserved;</li>
+<li>the selected connectionless transport path resolves to 22 rows: 9 WDP
+using CDPD-shaped UDP/IPv4, 5 general-WCMP rows, and 8 connectionless WSP
+rows;</li>
+<li>the selected transport audit is 0 implemented, 17 partial, and 5 missing,
+with zero direct WAP-200/WAP-202/WAP-203 normative tests;</li>
+<li>connection-oriented WSP and WTP remain a separately activated capability;
+the selected CDPD <code>TIAEIA-732</code> family citation is authority-locked as a
+licensed-payload, metadata-only informative capability reference.</li>
+</ul>
+<p>See <code>docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md</code> and
+<code>docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md</code>, and
+<code>docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md</code>,
+<code>docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md</code>, and
+<code>docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md</code>, and
+<code>docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md</code>, and
+<code>docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md</code>.</p>
+<h2 id="compatibility-and-enhancement-policy">Compatibility and enhancement policy</h2>
+<p>Strict conformance is the floor, not a ceiling.</p>
+<ul>
+<li>Core mechanics must match the selected release and profile.</li>
+<li>Modern implementations, safer internals, improved performance, better
+diagnostics, and modern host UX are encouraged.</li>
+<li>A behavior-preserving improvement must pass strict differential tests.</li>
+<li>A behavior-changing feature must be an explicit Waves capability or
+enhanced mode.</li>
+<li>An enhancement cannot satisfy, replace, or waive a strict obligation.</li>
+<li>Optional WAP profiles remain capability-gated and do not silently expand the
+first release claim.</li>
+</ul>
+<h2 id="evidence-hierarchy">Evidence hierarchy</h2>
+<p>Compliance is accounted for from the source outward:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>release member -&gt; effective base/SIN family -&gt; CCR profile dependency</span></span>
+<span class="line"><span>-&gt; SCR feature -&gt; normative clause -&gt; implementation owner</span></span>
+<span class="line"><span>-&gt; ticket -&gt; executable test/evidence -&gt; release claim</span></span></code></pre>
+<p>Source-file counts, thematic requirement groups, completed ticket counts, or
+passing unit tests alone are not a compliance percentage. Every mandatory
+selected-profile obligation must ultimately have an exact source anchor and
+executable evidence.</p>
+<h2 id="dependency-ordered-program">Dependency-ordered program</h2>
+<p>The program contains 13 sprints and 78 unique work items. Existing completed
+tickets remain historical facts; the program maps to them where relevant and
+adds work only for uncovered obligations.</p>
+<table>
+<thead>
+<tr>
+<th>Sprint</th>
+<th>Scope</th>
+<th>Depends on</th>
+<th>Exit meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SRC-0</code></td>
+<td>Authoritative release, assets, class sources, and redistribution posture</td>
+<td>—</td>
+<td>Source control plane is reproducible</td>
+</tr>
+<tr>
+<td><code>CONF-1</code></td>
+<td>CCR, SCR, and normative-clause ledgers</td>
+<td><code>SRC-0</code></td>
+<td>Selected-profile obligations are one-to-one accountable</td>
+</tr>
+<tr>
+<td><code>WML-2</code></td>
+<td>Parser, deck model, validation, and WML/WBXML input</td>
+<td><code>CONF-1</code></td>
+<td>WML input and deck structure meet strict fixtures</td>
+</tr>
+<tr>
+<td><code>WML-3</code></td>
+<td>State, tasks, events, forms, and navigation</td>
+<td><code>WML-2</code></td>
+<td>Runtime mechanics are deterministic and source-backed</td>
+</tr>
+<tr>
+<td><code>REN-4</code></td>
+<td>Historical layout, focus, keypad, and softkeys</td>
+<td><code>WML-2</code>, <code>WML-3</code></td>
+<td>Observable device interaction is reproducible</td>
+</tr>
+<tr>
+<td><code>WMLS-5</code></td>
+<td>WMLScript language, bytecode, VM, and libraries</td>
+<td><code>CONF-1</code>, <code>WML-3</code></td>
+<td>Script execution and failure behavior are bounded and compliant</td>
+</tr>
+<tr>
+<td><code>WAE-6</code></td>
+<td>WAE integration, caching, formats, and content behavior</td>
+<td><code>CONF-1</code>, <code>WML-3</code>, <code>REN-4</code>, <code>WMLS-5</code></td>
+<td>Browser-environment behavior closes across engine features</td>
+</tr>
+<tr>
+<td><code>TRN-7</code></td>
+<td>WDP, WCMP, and conditional WTP core</td>
+<td><code>CONF-1</code></td>
+<td>Protocol PDUs, state, bounds, and errors meet vectors</td>
+</tr>
+<tr>
+<td><code>WSP-8</code></td>
+<td>WSP session/connectionless behavior and host fetch</td>
+<td><code>CONF-1</code>, <code>TRN-7</code>, <code>WAE-6</code></td>
+<td>Native transport reaches the browser contract correctly</td>
+</tr>
+<tr>
+<td><code>INT-9</code></td>
+<td>Native/WASM parity and end-to-end interoperability</td>
+<td>Runtime and transport sprints</td>
+<td>Cross-layer strict scenarios have auditable evidence</td>
+</tr>
+<tr>
+<td><code>REL-10</code></td>
+<td>Strict Class C-compatible release gate</td>
+<td><code>INT-9</code></td>
+<td>No mandatory obligation is unmapped and all build gates pass</td>
+</tr>
+<tr>
+<td><code>OPT-11</code></td>
+<td>Security, Push, telephony, identity, and other optional profiles</td>
+<td><code>CONF-1</code>, <code>REL-10</code></td>
+<td>Optional capabilities are independently declared and tested</td>
+</tr>
+<tr>
+<td><code>ENH-12</code></td>
+<td>Behavior-preserving improvements and Waves extensions</td>
+<td><code>REL-10</code></td>
+<td>Modern features cannot regress or obscure strict behavior</td>
+</tr>
+</tbody>
+</table>
+<h2 id="source-acquisition-status">Source acquisition status</h2>
+<p>Source Sprint <code>SRC-0</code> now has reproducible research-access evidence:</p>
+<ul>
+<li>97/97 technical release PDFs and 97/97 text extractions are hash/size
+recorded in <code>wap-1.2.1-ingestion-status.json</code>;</li>
+<li>43/43 locked external dependencies have acquisition records backed by 48
+artifacts;</li>
+<li>36 external dependencies have full primary artifacts, two have partial
+historical evidence, and five licensed IEEE/ISO/TIA payloads remain
+metadata-only;</li>
+<li>the external open-label queue is reduced from 69 to 60; all three residual
+groups have non-blocking selected-profile dispositions, activation
+triggers, and future work owners.</li>
+</ul>
+<p>WAP-215 has also been recovered from the official live WAP Forum directory,
+hash-locked, and extracted into exact Class A/B/C client/server graphs. This
+closes <code>SRC-004</code> without changing the redistribution boundary.</p>
+<h2 id="immediate-execution-order">Immediate execution order</h2>
+<ol>
+<li>Treat <code>SRC-005</code> external-dependency normalization as complete, including
+the selected <code>TIAEIA-732</code> metadata/license boundary. Keep <code>SRC-006</code>
+redistribution guidance as the remaining source-program blocker.</li>
+<li>Treat <code>CONF-002</code> family-level SCR extraction and <code>CONF-003</code> nested-clause
+planning plus <code>CONF-004..006</code> governance controls as complete. Add WTP only
+when connection-oriented WSP is claimed.</li>
+<li>Treat <code>CONF-007</code>, the unified selected-profile successor delta register, as
+complete. Keep optional-media and later OMA follow-on deltas separate.</li>
+<li>Continue the completed first-pass implementation audits into exact
+source-derived fixtures. Do not reopen completed tickets; add narrowly
+scoped gap work.</li>
+<li>Refresh the master priority plan from the reconciled obligation ledger.</li>
+<li>Execute the runtime and protocol sprints in dependency order, then close
+cross-layer and release evidence.</li>
+<li>Start optional profiles and Waves enhancements only after their declared
+strict gates.</li>
+</ol>
+<p>The program status now reflects those facts directly: <code>CONF-1</code> is complete;
+<code>SRC-0</code> is blocked only by <code>SRC-006</code>; runtime sprints are <code>todo</code> or
+<code>in-progress</code> according to their child work items. The validator derives and
+checks each sprint status so planning rollups cannot drift from work-item
+state.</p>
+<h2 id="source-blockers">Source blockers</h2>
+<p>One source action is intentionally blocked:</p>
+<ul>
+<li><code>SRC-006</code>: promote recovered WAP PDFs, DTDs, or parsed derivatives into Git
+only after explicit redistribution approval.</li>
+</ul>
+<p>This blocker does not prevent metadata locking, temporary internal extraction,
+effective-family modeling, dependency research, or conformance-ledger design.
+It prevents public-repository source promotion, not exact Class C profile
+selection.</p>
+<p>All 97 technical members are already available for private requirement
+extraction. <code>SRC-006</code> is now blocked only on public promotion/derivative
+permission and the subsequent canonical cleanup/provenance workflow, not on
+research access.</p>
+<p>The detailed WAP-215 recovery evidence, OMA contact route, permission draft,
+and Wayback procedure are in
+<code>docs/waves/WAP_SOURCE_RECOVERY_AND_PERMISSION.md</code>.</p>
+<h2 id="strict-release-gate">Strict release gate</h2>
+<p><code>REL-10</code> requires:</p>
+<ol>
+<li>zero unmapped mandatory selected-profile obligations;</li>
+<li>exact source, build, fixture, and test identity in the evidence bundle;</li>
+<li>native Rust and WASM parity for parity-critical engine behavior;</li>
+<li>passing engine, transport, host, frontend, contract, type, lint, WASM, and
+desktop production-build gates;</li>
+<li>explicit optional-feature support statements and known deviations;</li>
+<li>a compatibility statement that identifies <code>CCR-CLASSC-C-001</code>, discloses
+optional and conditional profiles, and does not imply formal certification.</li>
+</ol>
+<p>The currently known frontend CSS-minification defect is an explicit release
+work item (<code>REL-1004</code>), so a green unit-test count cannot conceal a red
+production build.</p>
+<h2 id="planning-relationship">Planning relationship</h2>
+<p>This program defines target completeness and compliance dependencies.
+<code>docs/waves/WAP_1_2_1_PLANNING_BASELINE.md</code> is the human closure checkpoint.
+<code>docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md</code> retains cross-lane
+ordering for work already in flight and has been rebased to this program’s
+dependency order. This program is authoritative for new WAP 1.2.1 work and
+completion claims.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121--wml-13-compliance-program">WAP 1.2.1 / WML 1.3 Compliance Program</a></li><li class="depth-2"><a href="#outcome">Outcome</a></li><li class="depth-2"><a href="#compatibility-and-enhancement-policy">Compatibility and enhancement policy</a></li><li class="depth-2"><a href="#evidence-hierarchy">Evidence hierarchy</a></li><li class="depth-2"><a href="#dependency-ordered-program">Dependency-ordered program</a></li><li class="depth-2"><a href="#source-acquisition-status">Source acquisition status</a></li><li class="depth-2"><a href="#immediate-execution-order">Immediate execution order</a></li><li class="depth-2"><a href="#source-blockers">Source blockers</a></li><li class="depth-2"><a href="#strict-release-gate">Strict release gate</a></li><li class="depth-2"><a href="#planning-relationship">Planning relationship</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_compliance_program.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

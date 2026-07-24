@@ -1,0 +1,641 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves WMLScript Spec Traceability · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wmlscript_spec_traceability"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wmlscript_spec_traceability.md</p><div class="markdown-body"><h1 id="waves-wmlscript-spec-traceability">Waves WMLScript Spec Traceability</h1>
+<p>Version: v0.4
+Status: Active thematic baseline; all selected SCR and nested clauses authoritative</p>
+<h2 id="purpose">Purpose</h2>
+<p>This document captures WMLScript requirements and acceptance criteria (AC) directly from the source specs so Waves can track implementation and test coverage against normative items.</p>
+<h2 id="source-authority-policy">Source Authority Policy</h2>
+<ul>
+<li>See <code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code> for normative vs supplemental source precedence and citation rules.</li>
+</ul>
+<h2 id="source-set-reviewed-full-pass">Source set reviewed (full pass)</h2>
+<ul>
+<li><code>spec-processing/source-material/WAP-193-WMLScript-20001025-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-193_101-WMLScript-20010928-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf</code></li>
+</ul>
+<h2 id="normative-precedence-for-waves">Normative precedence for Waves</h2>
+<ol>
+<li>Use <code>WAP-193_101</code> as the primary WMLScript core baseline (same core content, updated SCR formatting and split encoder/interpreter IDs).</li>
+<li>Use <code>WAP-194</code> as the standard library baseline.</li>
+<li>Apply <code>WAP-194_103</code> on top of <code>WAP-194</code> for immediate-refresh conformance clarification (section 11.7 / SCR addition).</li>
+</ol>
+<h2 id="compliance-target-and-prioritization">Compliance target and prioritization</h2>
+<ul>
+<li>Strict target: implement and prove all 121 mandatory WMLScript and
+WMLScript Libraries interpreter rows selected by the WAP 1.2.1 Class C
+profile. A percentage estimate is not a conformance claim.</li>
+<li>Optional capabilities are declared separately; enhancements may improve
+internals or UX but may not replace strict observable behavior.</li>
+<li>Strategy: close bedrock compliance gaps first, then broaden library/function coverage.</li>
+<li>Bedrock-first requirement groups:
+<ul>
+<li><code>RQ-WMLS-001</code>, <code>RQ-WMLS-002</code>, <code>RQ-WMLS-003</code> (external callable model, pragmas, URL/script invocation ownership)</li>
+<li><code>RQ-WMLS-004</code>, <code>RQ-WMLS-005</code>, <code>RQ-WMLS-006</code> (function semantics, locals/initialization, conversion/type behavior)</li>
+<li><code>RQ-WMLS-008</code>, <code>RQ-WMLS-009</code>, <code>RQ-WMLS-010</code> (bytecode structure verification and trap model)</li>
+<li><code>RQ-WMLS-011</code> (WMLScript content-type routing/handoff)</li>
+</ul>
+</li>
+<li>Full closure of optional/profile-gated items (<code>O</code>) remains explicitly staged behind mandatory (<code>M</code>) bedrock behavior.</li>
+</ul>
+<h2 id="current-implementation-posture">Current implementation posture</h2>
+<ul>
+<li>Waves has active WaveScript/WMLScript runtime implementation in <code>engine-wasm/engine/src/wavescript/*</code>.</li>
+<li>Existing implementation is a project-specific nine-opcode progression
+baseline, not a WAP-193 compilation-unit decoder.</li>
+<li>Exact machine-readable authority:
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json</code></li>
+</ul>
+</li>
+<li>Human audit:
+<ul>
+<li><code>docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md</code></li>
+<li><code>docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md</code></li>
+</ul>
+</li>
+<li>Selected-row audit:
+<ul>
+<li>WMLScript: 41 required, 23 partial / 18 missing / 0 implemented;</li>
+<li>Libraries: 80 required, 14 partial / 66 missing / 0 implemented;</li>
+<li>direct normative tests: 0.</li>
+</ul>
+</li>
+<li>Nested-clause plan:
+<ul>
+<li>WMLScript: all 41 selected parents / 107 deduplicated clauses;</li>
+<li>WMLScript Libraries: all 80 selected parents / 211 deduplicated clauses.</li>
+</ul>
+</li>
+<li>Work-plan source of truth for closure sequencing:
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code> (<code>Phase W</code>, <code>Phase W1</code>)</li>
+<li><code>docs/waves/SPEC_TEST_COVERAGE.md</code></li>
+</ul>
+</li>
+</ul>
+<p>The <code>RQ-WMLS-*</code> groups below organize work. They do not replace exact SCR
+status, and a checked thematic acceptance box must not be read as closing an
+SCR unless the machine ledger links direct normative evidence.</p>
+<h2 id="requirement-matrix">Requirement matrix</h2>
+<p>Legend:</p>
+<ul>
+<li><code>M</code> = mandatory in spec conformance tables</li>
+<li><code>O</code> = optional in spec conformance tables</li>
+</ul>
+<h3 id="rq-wmls-001-external-callable-model">RQ-WMLS-001: External callable model</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Only <code>extern</code> functions are callable externally.</li>
+<li>Compilation units used from WML/external calls must resolve function by URL + fragment function name.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 6.4.1, 6.4.2.2, 8.3.2, 8.3.4, 8.5</li>
+<li>SCRs: <code>WMLS-S-031 (M)</code>, <code>WMLS-C-079 (M)</code>, <code>WMLS-C-080 (M)</code>, <code>WMLS-C-087 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> External call to non-<code>extern</code> function is rejected.</li>
+<li class="task-list-item"><input type="checkbox" disabled> URL fragment resolution selects target function deterministically.</li>
+<li class="task-list-item"><input type="checkbox" disabled> External call path enforces access control before execution.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-002-pragma-handling-and-unit-metadata">RQ-WMLS-002: Pragma handling and unit metadata</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support <code>use url</code>, <code>use access</code>, and <code>use meta</code> pragma semantics per grammar and processing rules.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 6.7.1, 6.7.2, 6.7.3</li>
+<li>SCRs: <code>WMLS-S-043 (M)</code>, <code>WMLS-S-044 (M)</code>, <code>WMLS-S-045 (M)</code>, <code>WMLS-C-087 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>use url</code> name mapping works for external calls.</li>
+<li class="task-list-item"><input type="checkbox" disabled> More than one access pragma is rejected as error.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Access domain/path matching follows suffix/prefix element rules.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-003-url-handling-for-script-invocation">RQ-WMLS-003: URL handling for script invocation</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Implement WAE URL schemes, fragment anchor handling, relative URL resolution against current compilation unit base.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 8.3.1, 8.3.2, 8.3.6</li>
+<li>SCRs: <code>WMLS-C-078 (M)</code>, <code>WMLS-C-079 (M)</code>, <code>WMLS-C-082 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Relative URL unit references resolve to expected absolute URL.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invalid URL references fail with deterministic non-fatal error mapping.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-004-function-call-and-return-semantics">RQ-WMLS-004: Function call and return semantics</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Exact arity matching, pass-by-value arguments, automatic empty-string return when function ends without explicit return.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 6.4.1, 6.4.2.1, 6.4.3, 8.4.1, 8.4.3</li>
+<li>SCRs: <code>WMLS-S-030..033 (M)</code>, <code>WMLS-C-083..086 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Wrong-arity calls fail deterministically.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Implicit return value is <code>""</code> with no undefined behavior.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Arguments appear in callee locals in declared order.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-005-variable-indexing-and-initialization">RQ-WMLS-005: Variable indexing and initialization</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Allocate argument/local indexes exactly per spec and initialize locals to empty string when not explicitly initialized.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 8.4.2, 8.4.4</li>
+<li>SCRs: <code>WMLS-S-047 (M)</code>, <code>WMLS-S-049 (M)</code>, <code>WMLS-C-084 (M)</code>, <code>WMLS-C-086 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Index assignment for args/locals matches section 8.4.2 rules.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Uninitialized locals read as empty string.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-006-type-system-and-conversion-rules">RQ-WMLS-006: Type system and conversion rules</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Enforce <code>Boolean</code>, <code>Integer</code>, <code>Float</code>, <code>String</code>, <code>Invalid</code> semantics and automatic conversion rules.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 6.8, 6.9, 6.10</li>
+<li>SCRs: <code>WMLS-C-072 (M)</code>, <code>WMLS-C-073 (M)</code>, <code>WMLS-C-075 (M)</code>, <code>WMLS-C-076 (M)</code>, <code>WMLS-C-077 (M)</code>, <code>WMLS-C-071 (O)</code>, <code>WMLS-C-074 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Conversion behavior matches per-type legal conversions.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invalid-conversion cases return <code>invalid</code> consistently.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Floating-point optionality is configurable and testable.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-007-integer-only-mode-behavior">RQ-WMLS-007: Integer-only mode behavior</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support integer-only behavior profile when float operations are unsupported.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 13</li>
+<li><code>WAP-194</code> 6.4</li>
+<li>SCRs: <code>WMLS-C-112 (O)</code>, <code>WMLSSL-017 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Float-related conversions/operations follow integer-only rules.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Float library calls return <code>invalid</code> in integer-only mode.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>Lang.float()</code> and <code>Lang.parseFloat()</code> behavior matches spec for integer-only mode.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-008-bytecode-binary-format-support">RQ-WMLS-008: Bytecode binary format support</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Decode and validate header, constant pool, pragma pool, function pool, and instruction stream structures.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 9.2..9.6, 10</li>
+<li>SCRs: <code>WMLS-C-088..094 (M)</code>, <code>WMLS-C-095..106 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Add source-derived WAP-193 <code>.wmlsc</code> fixtures and direct
+tests for the header, constant pool, pragma pool, function pool, and
+effective instruction encoding.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Known-good WAP <code>.wmlsc</code> fixtures decode to stable internal representation.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unsupported/reserved WAP types fail verification before execution.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WAP function and instruction boundaries are validated.</li>
+<li>Provisional evidence only: current decoder tests reject malformed input
+in the project-specific nine-opcode format. They do not parse WAP-193
+compilation units and therefore do not close <code>WMLS-C-088..108</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-009-bytecode-verification-gates">RQ-WMLS-009: Bytecode verification gates</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Perform integrity checks and runtime validity checks per chapter 11.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 11.1, 11.2</li>
+<li>SCRs: <code>WMLS-C-107 (M)</code>, <code>WMLS-C-108 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link direct WAP-193 integrity/runtime-validity fixtures;
+local decoder/VM bounds tests are provisional architecture evidence.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Version/size/pool-count checks enforced.</li>
+<li class="task-list-item"><input type="checkbox" disabled> WAP jump targets are verified to instruction boundaries within function bounds.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invalid WAP local/constant/library/function indexes trap deterministically.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-010-error-detection-and-handling-model">RQ-WMLS-010: Error detection and handling model</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Runtime must distinguish and handle fatal/non-fatal errors per chapter 12 without process crash.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 12</li>
+<li>SCRs: <code>WMLS-C-109 (M)</code>, <code>WMLS-C-110 (M)</code>, <code>WMLS-C-111 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Non-fatal errors return defined error/invalid results where applicable.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Fatal errors terminate current script invocation safely.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Host remains alive and recoverable after script failure.</li>
+<li>Note (<code>2026-03-02</code>): VM computational <code>TypeError</code> and <code>StackUnderflow</code> traps are now classified as non-fatal and returned as <code>invalid</code>; regression matrix tests now assert both fatal/non-fatal class and category mappings across all current <code>VmTrap</code> variants.</li>
+<li>Current implementation-class matrix:
+<ul>
+<li>Non-fatal: <code>TypeError</code>, <code>StackUnderflow</code> -&gt; <code>invalid</code>, invocation continues to boundary.</li>
+<li>Fatal: decode/integrity/resource/host-binding failures (<code>UnsupportedOpcode</code>, <code>TruncatedImmediate</code>, <code>Invalid*Index/Target</code>, <code>CallDepthExceeded</code>, <code>ExecutionLimitExceeded</code>, <code>HostCall*</code>, etc.) -&gt; invocation abort.</li>
+</ul>
+</li>
+<li>Current implementation-category matrix:
+<ul>
+<li><code>computational</code>: <code>TypeError</code>, <code>StackUnderflow</code></li>
+<li><code>integrity</code>: malformed decode/control-flow/local index/UTF-8/return-frame invariants</li>
+<li><code>resource</code>: stack/call-depth/step-limit exhaustion</li>
+<li><code>host-binding</code>: unavailable/failed host call bindings</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-011-content-type-handling">RQ-WMLS-011: Content-type handling</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Recognize textual and compiled WMLScript content types.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-193_101</code> 14</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>text/vnd.wap.wmlscript</code> and <code>application/vnd.wap.wmlscriptc</code> are routed to correct path.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-012-standard-library-compliance-baseline">RQ-WMLS-012: Standard library compliance baseline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Implement standard library behavior and error conventions from WMLSL.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> 6.1, 6.2, 6.3</li>
+<li>SCRs: <code>WMLSSL-014 (M)</code>, <code>WMLSSL-015 (M)</code>, <code>WMLSSL-016 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Invalid args return <code>invalid</code> with no side effects unless explicitly documented otherwise.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Argument coercions follow WMLScript conversion rules.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-013-lang-library-coverage">RQ-WMLS-013: Lang library coverage</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support Lang library function set and IDs.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> section 7, Appendix A/B</li>
+<li>SCRs: <code>WMLSSL-018 (M)</code>, <code>WMLSSL-031..045 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unit tests cover each Lang function behavior and edge cases.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-014-float-library-coverage">RQ-WMLS-014: Float library coverage</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support Float library function set where float mode is enabled.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> section 8, Appendix A/B</li>
+<li>SCRs: <code>WMLSSL-019 (M)</code>, <code>WMLSSL-046..054 (M)</code>, <code>WMLSSL-017 (O)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unit tests cover each Float function in float-capable mode.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Integer-only mode returns <code>invalid</code> per section 6.4.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-015-string-library-coverage">RQ-WMLS-015: String library coverage</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support String library function set and IDs.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> section 9, Appendix A/B</li>
+<li>SCRs: <code>WMLSSL-020 (M)</code>, <code>WMLSSL-055..070 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unit tests cover each String function including bounds and invalid inputs.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-016-url-library-coverage">RQ-WMLS-016: URL library coverage</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support URL library function set and IDs.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> section 10, Appendix A/B</li>
+<li>SCRs: <code>WMLSSL-021 (M)</code>, <code>WMLSSL-071..084 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Unit tests cover parse, resolve, escape/unescape, and load-string behavior.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-017-wmlbrowser-context-contract">RQ-WMLS-017: WMLBrowser context contract</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WMLBrowser functions operate only with valid WML browser context; otherwise return <code>invalid</code>.</li>
+<li>WMLBrowser accessors/mutators without required context must not mutate runtime state.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> chapter 11 preface and 11.1..11.7</li>
+<li>SCRs: <code>WMLSSL-022 (M)</code>, <code>WMLSSL-085..091 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Hostless/no-context invocation returns <code>invalid</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>getVar</code>/<code>setVar</code> validation follows WML naming/value constraints.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-018-deferred-navigation-semantics-goprev">RQ-WMLS-018: Deferred navigation semantics (<code>go</code>/<code>prev</code>)</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li><code>go</code>/<code>prev</code> requests are deferred until control returns to browser.</li>
+<li>Multiple calls override each other; last call wins.</li>
+<li><code>go("")</code> cancels pending go/prev requests.</li>
+<li>Fatal abort cancels pending navigation request.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> 11.3, 11.4</li>
+<li>SCRs: <code>WMLSSL-087 (M)</code>, <code>WMLSSL-088 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> In single invocation, <code>go/go</code>, <code>go/prev</code>, <code>prev/go</code>, <code>prev/prev</code> produce last-call behavior.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>go("")</code> yields no navigation.</li>
+<li class="task-list-item"><input type="checkbox" disabled> <code>Lang.abort()</code> clears pending navigation intent.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-019-newcontext-and-historyvars-reset-semantics">RQ-WMLS-019: <code>newContext</code> and history/vars reset semantics</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li><code>newContext</code> clears WML vars and navigation history except current card.</li>
+<li><code>newContext</code> does not override a go request; prev request has no effect.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> 11.5</li>
+<li>SCRs: <code>WMLSSL-089 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [x] <code>engine-wasm/engine/src/engine_tests.rs</code> (<code>wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect</code>), <code>engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs</code> (<code>new_context_requests_context_reset_when_context_is_valid</code>, <code>new_context_returns_invalid_without_active_card_context</code>), and host/browser fixture <code>engine-wasm/examples/source/wmlbrowser-context-fidelity.wml</code>; command: <code>cd engine-wasm/engine &amp;&amp; cargo test wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect &amp;&amp; cargo test new_context_requests_context_reset_when_context_is_valid &amp;&amp; cargo test new_context_returns_invalid_without_active_card_context</code></li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Post-<code>newContext</code>, previous vars/history are cleared per spec.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Interaction with pending go/prev follows section 11.5 semantics.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-020-getcurrentcard-semantics">RQ-WMLS-020: <code>getCurrentCard</code> semantics</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Return smallest relative URL when same base applies, otherwise absolute URL.</li>
+<li>Return <code>invalid</code> when no current card exists.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> 11.6</li>
+<li>SCRs: <code>WMLSSL-090 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [x] <code>engine-wasm/engine/src/engine_tests.rs</code> (<code>wmlbrowser_get_current_card_returns_fragment_when_context_exists</code>, <code>wmlbrowser_get_current_card_returns_invalid_without_context</code>) plus <code>engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs</code> (<code>get_current_card_returns_fragment_for_current_context</code>, <code>get_current_card_returns_invalid_without_context</code>) and fixture <code>engine-wasm/examples/source/wmlbrowser-context-fidelity.wml</code>; command: <code>cd engine-wasm/engine &amp;&amp; cargo test wmlbrowser_get_current_card_returns_fragment_when_context_exists &amp;&amp; cargo test wmlbrowser_get_current_card_returns_invalid_without_context &amp;&amp; cargo test get_current_card_returns_fragment_for_current_context &amp;&amp; cargo test get_current_card_returns_invalid_without_context</code></li>
+<li class="task-list-item"><input type="checkbox" disabled> Relative/absolute return mode covered by fixtures.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> No-current-card case returns <code>invalid</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-021-refresh-semantics-and-immediate-refresh-optionality">RQ-WMLS-021: <code>refresh</code> semantics and immediate-refresh optionality</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>If immediate refresh is supported, execute refresh steps without restarting suspended timer and block until completion.</li>
+<li>If immediate refresh unsupported, return <code>invalid</code>; browser still refreshes when control returns to UA.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> 11.7</li>
+<li><code>WAP-194_103</code> section 3.3 (<code>WMLBrowser.refresh</code> immediate refresh support SCR, status <code>O</code>)</li>
+<li>SCRs: <code>WMLSSL-091 (M)</code> and <code>WMLSSL-C-095 (O, SIN clarification)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Immediate-refresh-supported mode returns <code>""</code> or non-empty failure string and updates current card.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Immediate-refresh-unsupported mode returns <code>invalid</code> and deferred card refresh still occurs on return.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Suspended timer is not restarted by <code>refresh</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-wmls-022-dialogs-library-contract">RQ-WMLS-022: Dialogs library contract</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Support <code>prompt</code>, <code>confirm</code>, <code>alert</code> behavior and IDs.</li>
+</ul>
+</li>
+<li>Spec references:
+<ul>
+<li><code>WAP-194</code> chapter 12</li>
+<li>SCRs: <code>WMLSSL-023 (M)</code>, <code>WMLSSL-092..094 (M)</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Dialog calls are exposed through host boundary with deterministic return mapping.</li>
+<li class="task-list-item"><input type="checkbox" disabled> UI interaction paths covered by integration tests in host harness.</li>
+</ul>
+</li>
+</ul>
+<h2 id="scr-tracking-summary-for-waves-milestones">SCR tracking summary for Waves milestones</h2>
+<p>These groups should be tracked explicitly in tickets and tests:</p>
+<ol>
+<li>WaveScript VM mandatory SCRs:</li>
+</ol>
+<ul>
+<li><code>WMLS-C-069</code>, <code>WMLS-C-070</code>, <code>WMLS-C-072</code>, <code>WMLS-C-073</code>, and
+<code>WMLS-C-075..111</code> (41 <code>M</code> rows)</li>
+</ul>
+<ol start="2">
+<li>WMLScript optional SCRs to gate by feature flags:</li>
+</ol>
+<ul>
+<li><code>WMLS-C-071</code>, <code>WMLS-C-074</code>, <code>WMLS-C-112</code></li>
+</ul>
+<ol start="3">
+<li>WMLScript libraries mandatory SCRs:</li>
+</ol>
+<ul>
+<li><code>WMLSSL-014..016</code>, <code>WMLSSL-018..047</code>, source-exact <code>WMLSSL048</code>
+(normalized alias <code>WMLSSL-048</code>), and <code>WMLSSL-049..094</code> (80 <code>M</code> rows)</li>
+</ul>
+<ol start="4">
+<li>WMLScript libraries optional SCRs:</li>
+</ol>
+<ul>
+<li><code>WMLSSL-017 (O)</code></li>
+<li><code>WMLSSL-C-095 (O)</code> from <code>WAP-194_103</code></li>
+</ul>
+<h2 id="implementation-tracking-rule">Implementation tracking rule</h2>
+<p>For each implementation ticket in <code>docs/waves/WORK_ITEMS.md</code>, include:</p>
+<ul>
+<li><code>Spec</code>: list of section refs and SCR IDs touched</li>
+<li><code>AC</code>: checklist copied or derived from the relevant <code>RQ-WMLS-*</code> entries above</li>
+<li><code>Tests</code>: explicit fixture/test IDs mapped to the same spec refs</li>
+</ul>
+<p>Validate exact coverage with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-wmlscript-conformance-ledger.mjs</span></span></code></pre>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-wmlscript-spec-traceability">Waves WMLScript Spec Traceability</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-authority-policy">Source Authority Policy</a></li><li class="depth-2"><a href="#source-set-reviewed-full-pass">Source set reviewed (full pass)</a></li><li class="depth-2"><a href="#normative-precedence-for-waves">Normative precedence for Waves</a></li><li class="depth-2"><a href="#compliance-target-and-prioritization">Compliance target and prioritization</a></li><li class="depth-2"><a href="#current-implementation-posture">Current implementation posture</a></li><li class="depth-2"><a href="#requirement-matrix">Requirement matrix</a></li><li class="depth-3"><a href="#rq-wmls-001-external-callable-model">RQ-WMLS-001: External callable model</a></li><li class="depth-3"><a href="#rq-wmls-002-pragma-handling-and-unit-metadata">RQ-WMLS-002: Pragma handling and unit metadata</a></li><li class="depth-3"><a href="#rq-wmls-003-url-handling-for-script-invocation">RQ-WMLS-003: URL handling for script invocation</a></li><li class="depth-3"><a href="#rq-wmls-004-function-call-and-return-semantics">RQ-WMLS-004: Function call and return semantics</a></li><li class="depth-3"><a href="#rq-wmls-005-variable-indexing-and-initialization">RQ-WMLS-005: Variable indexing and initialization</a></li><li class="depth-3"><a href="#rq-wmls-006-type-system-and-conversion-rules">RQ-WMLS-006: Type system and conversion rules</a></li><li class="depth-3"><a href="#rq-wmls-007-integer-only-mode-behavior">RQ-WMLS-007: Integer-only mode behavior</a></li><li class="depth-3"><a href="#rq-wmls-008-bytecode-binary-format-support">RQ-WMLS-008: Bytecode binary format support</a></li><li class="depth-3"><a href="#rq-wmls-009-bytecode-verification-gates">RQ-WMLS-009: Bytecode verification gates</a></li><li class="depth-3"><a href="#rq-wmls-010-error-detection-and-handling-model">RQ-WMLS-010: Error detection and handling model</a></li><li class="depth-3"><a href="#rq-wmls-011-content-type-handling">RQ-WMLS-011: Content-type handling</a></li><li class="depth-3"><a href="#rq-wmls-012-standard-library-compliance-baseline">RQ-WMLS-012: Standard library compliance baseline</a></li><li class="depth-3"><a href="#rq-wmls-013-lang-library-coverage">RQ-WMLS-013: Lang library coverage</a></li><li class="depth-3"><a href="#rq-wmls-014-float-library-coverage">RQ-WMLS-014: Float library coverage</a></li><li class="depth-3"><a href="#rq-wmls-015-string-library-coverage">RQ-WMLS-015: String library coverage</a></li><li class="depth-3"><a href="#rq-wmls-016-url-library-coverage">RQ-WMLS-016: URL library coverage</a></li><li class="depth-3"><a href="#rq-wmls-017-wmlbrowser-context-contract">RQ-WMLS-017: WMLBrowser context contract</a></li><li class="depth-3"><a href="#rq-wmls-018-deferred-navigation-semantics-goprev">RQ-WMLS-018: Deferred navigation semantics (go/prev)</a></li><li class="depth-3"><a href="#rq-wmls-019-newcontext-and-historyvars-reset-semantics">RQ-WMLS-019: newContext and history/vars reset semantics</a></li><li class="depth-3"><a href="#rq-wmls-020-getcurrentcard-semantics">RQ-WMLS-020: getCurrentCard semantics</a></li><li class="depth-3"><a href="#rq-wmls-021-refresh-semantics-and-immediate-refresh-optionality">RQ-WMLS-021: refresh semantics and immediate-refresh optionality</a></li><li class="depth-3"><a href="#rq-wmls-022-dialogs-library-contract">RQ-WMLS-022: Dialogs library contract</a></li><li class="depth-2"><a href="#scr-tracking-summary-for-waves-milestones">SCR tracking summary for Waves milestones</a></li><li class="depth-2"><a href="#implementation-tracking-rule">Implementation tracking rule</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wmlscript_spec_traceability.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

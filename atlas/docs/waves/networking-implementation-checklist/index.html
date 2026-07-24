@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Networking Implementation Checklist (WAP 1.x Rewrite) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/networking-implementation-checklist"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/networking-implementation-checklist.md</p><div class="markdown-body"><h1 id="networking-implementation-checklist-wap-1x-rewrite">Networking Implementation Checklist (WAP 1.x Rewrite)</h1>
+<p>Date: 2026-03-04<br>
+Status: draft</p>
+<h2 id="1-scope-posture">1) Scope posture</h2>
+<p>For <code>transport-rust</code>, the current network goal is deterministic, in-process protocol behavior behind a stable contract boundary, while preserving browser/runtime ownership boundaries.</p>
+<p>Current implementation posture for now:</p>
+<ol>
+<li><code>profile_mode=wap-net-core</code> with the gateway bridge retained as explicit
+fallback and comparison lane.</li>
+<li><code>WDP</code> over UDP core implementation must be operational and deterministic.</li>
+<li>Connectionless <code>WSP</code> is the strict native method path; <code>WTP</code> and
+connection-oriented WSP remain separately gated capabilities.</li>
+<li><code>WTLS</code> remains phased with explicit feature flag and deterministic no-op path.</li>
+</ol>
+<p>Target implementation posture:</p>
+<ol>
+<li>full strict WDP/WCMP/connectionless-WSP operation from <code>transport-rust</code>
+without a mandatory external protocol dependency.</li>
+<li>Explicit transport profile declaration with migration gates in <code>docs/waves/WORK_ITEMS.md</code> and <code>docs/waves/TECHNICAL_ARCHITECTURE.md</code>.</li>
+<li>Optional connection-oriented WSP/WTP remains modular and cannot replace
+the strict connectionless path.</li>
+</ol>
+<h2 id="2-architecture-contract-gates">2) Architecture contract gates</h2>
+<p>All network paths must satisfy these invariant rules:</p>
+<ol>
+<li><code>transport-rust</code> owns protocol parsing, transaction/session state, and error-taxonomy emission.</li>
+<li>parsers and encoders are pure and stateless (<code>decode_* -&gt; struct</code>, <code>encode_* -&gt; bytes</code>).</li>
+<li><code>browser/contracts/transport.ts</code> and <code>engine-wasm/contracts/wml-engine.ts</code> are only transport/runtime contracts.</li>
+<li>All protocol behavior that can affect determinism is traced with event log fields: profile, peer tuple, transaction id/session id, sequence state, and timer state.</li>
+</ol>
+<p>Traceability requirement:</p>
+<ol>
+<li>each new transport behavior must map to an exact WDP/WCMP/WSP source row
+when it affects the strict profile, plus an existing thematic <code>RQ-TRN-*</code> or
+<code>RQ-TRX-*</code> owner.</li>
+<li>each mapping must include a test location in
+<code>docs/waves/SPEC_TEST_COVERAGE.md</code>; direct normative evidence must be
+distinguished from provisional project-authored tests.</li>
+</ol>
+<h2 id="3-immediate-implementation-checklist">3) Immediate implementation checklist</h2>
+<p>Execution priority override (<code>2026-03-08</code> refresh):</p>
+<ol>
+<li><code>T0-27</code> native connectionless desktop fetch path</li>
+<li><code>T0-28</code> browser host mode selection + fallback</li>
+<li><code>T0-29</code> native Kannel smoke evidence gate</li>
+<li><code>M1-16</code> payload guardrails</li>
+<li>after <code>T0-27..T0-29</code>, prioritize cross-lane runtime/compliance work over broader transport breadth</li>
+</ol>
+<h3 id="f0-foundation-and-policy">F0: Foundation and policy</h3>
+<ol>
+<li>confirm <code>spec-processing/source-material</code> has canonical transport corpus:
+<ul>
+<li>strict authority: effective <code>WAP-200</code>, <code>WAP-202</code>, and effective
+<code>WAP-203</code></li>
+<li>conditional WTP authority: effective <code>WAP-201</code></li>
+<li>successor context: <code>WAP-259</code>, <code>WAP-224</code>, <code>OMA-WAP-224_002</code>,
+<code>WAP-230</code>, and <code>OMA-WAP-TS-WSP</code></li>
+<li>exact WDP/WCMP/WSP manifests pass
+<code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+</ul>
+</li>
+<li>add/verify parser modules for deterministic PDU roundtrip:
+<ul>
+<li><code>wdp</code>, <code>wtp</code>, <code>wsp</code> codecs + validation stubs</li>
+</ul>
+</li>
+<li>lock transport profile constants:
+<ul>
+<li>service mode(s), UDP/WTLS default posture, bearer placeholders</li>
+</ul>
+</li>
+<li>acceptance gates:
+<ul>
+<li><code>T0-16</code> source-queue canonicalization remains clean</li>
+<li><code>T0-14</code> profile decision gates authored and reviewed</li>
+</ul>
+</li>
+<li>keep explicit source-pipeline mapping from queued raw input -&gt; parsed markdown -&gt; <code>source-material</code> promotion in README and ticket artifacts.</li>
+</ol>
+<h3 id="f1-wdp-bedrock">F1: WDP bedrock</h3>
+<ol>
+<li>finalize datagram trait (<code>DatagramTransport</code>, <code>WdpDatagram</code>, <code>WdpAddress</code>, <code>WdpError</code>).</li>
+<li>implement/lock UDP mapping and ports 9200-9203.</li>
+<li>map address/port source metadata in request/response trace context.</li>
+<li>test gates:
+<ul>
+<li>port mapping fixture set</li>
+<li>malformed header/body error mapping fixture set</li>
+</ul>
+</li>
+<li>acceptance:
+<ul>
+<li><code>RQ-TRN-001..004</code> fully traceable and no regressions in request-policy flow.</li>
+</ul>
+</li>
+</ol>
+<h3 id="f2-wcmp-selected-core">F2: WCMP selected core</h3>
+<ol>
+<li>implement the selected general-WCMP path.</li>
+<li>implement destination-unreachable, message-too-big, and echo-reply message
+structures.</li>
+<li>enforce deterministic error-generation and payload rules.</li>
+<li>test gates:
+<ul>
+<li>direct WAP-202 fixtures for all five selected rows</li>
+<li>malformed message and no-error-in-response-to-error assertions</li>
+</ul>
+</li>
+<li>acceptance:
+<ul>
+<li><code>TRN-703</code>, exact WCMP ledger, and thematic <code>RQ-TRX-006..008</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="f3-wsp-connectionless-service">F3: WSP connectionless service</h3>
+<ol>
+<li>make connectionless mode the explicit strict profile and keep
+connection-oriented mode capability-gated.</li>
+<li>implement method invoke/reply primitives and primitive transition validation.</li>
+<li>implement header/token registries and deterministic unknown-token policy.</li>
+<li>close all eight selected WAP-203 rows before extending optional breadth.</li>
+<li>test gates:
+<ul>
+<li>source-derived GET/POST/REPLY fixtures</li>
+<li>selected header-encoding and encoding-version fixtures</li>
+</ul>
+</li>
+<li>acceptance:
+<ul>
+<li><code>WSP-801</code>, <code>WSP-802</code>, <code>WSP-804</code>, <code>WSP-805</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="f3a-conditional-connection-oriented-wspwtp">F3a: Conditional connection-oriented WSP/WTP</h3>
+<ol>
+<li>activate only when the profile explicitly claims connection-oriented WSP.</li>
+<li>extract the exact effective WAP-201 ledger before making a conformance
+claim.</li>
+<li>reuse existing WTP transaction/replay evidence as provisional input.</li>
+<li>acceptance:
+<ul>
+<li>dependency-closed WAP-201/WAP-203 rows and direct normative fixtures</li>
+</ul>
+</li>
+</ol>
+<h3 id="f4-security-path-and-gateway-bridge-bridge">F4: Security path and gateway bridge bridge</h3>
+<ol>
+<li>stabilize WTLS shim contract and explicit disabled-by-default behavior.</li>
+<li>keep gateway bridge path deterministic for HTTP/WAP gateway behavior while protocol path is behind feature gate.</li>
+<li>test gates:
+<ul>
+<li>handshake-disabled path compatibility checks</li>
+<li>security-posture migration check fixture</li>
+</ul>
+</li>
+<li>acceptance:
+<ul>
+<li><code>RQ-SEC-004</code>, <code>RQ-SEC-005</code>, WAP networking profile gate from <code>T0-14</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="f5-migration-and-integration-hardening">F5: Migration and integration hardening</h3>
+<ol>
+<li>add protocol-profile gate assertions to CI-like fixture script path:
+<ul>
+<li>required tickets and minimum layer status checks before profile promotion.</li>
+</ul>
+</li>
+<li>run a cross-layer contract smoke map with <code>browser</code> + <code>engine-wasm</code> + <code>transport-rust</code>.</li>
+<li>publish explicit profile transition decision: current -&gt; target.
+<ul>
+<li>canonical record: <code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code></li>
+<li>gate check command: <code>node scripts/check-networking-profile-gates.mjs</code></li>
+</ul>
+</li>
+<li>maintain an explicit local gateway E2E readiness score for:
+<ul>
+<li><code>transport-rust -&gt; Kannel -&gt; WML server</code></li>
+<li><code>browser -&gt; host transport -&gt; Kannel -&gt; WML server</code></li>
+<li>canonical record: <code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code></li>
+</ul>
+</li>
+<li>acceptance:
+<ul>
+<li>implementation gates <code>T0-08..T0-26</code> retain explicit owners/artifacts</li>
+<li>exact closure gates <code>TRN-701</code>, <code>TRN-703</code>, and
+<code>WSP-801</code>/<code>802</code>/<code>804</code>/<code>805</code> pass</li>
+<li>no behavior drift in transport contracts (<code>browser/contracts/transport.ts</code>, <code>engine-wasm/contracts/wml-engine.ts</code>).</li>
+</ul>
+</li>
+</ol>
+<h3 id="f6-native-desktop-fetch-activation">F6: Native desktop fetch activation</h3>
+<ol>
+<li>add an internal transport-mode selector at the <code>fetch_deck_in_process</code> boundary.</li>
+<li>implement a narrow native executor for connectionless WSP <code>GET</code>/<code>REPLY</code> over WDP/UDP.</li>
+<li>keep legacy gateway bridge path available as additive fallback.</li>
+<li>prove browser-host integration without moving protocol logic into browser code.</li>
+<li>acceptance:
+<ul>
+<li>desktop/browser can load baseline Kannel-served decks through the native lane</li>
+<li>native mode and fallback mode are both explicit and test-backed</li>
+<li>no contract changes are required for the initial slice</li>
+</ul>
+</li>
+</ol>
+<h2 id="4-known-adjacent-but-deferred-transport-context">4) Known adjacent-but-deferred transport context</h2>
+<ol>
+<li><code>WAP-204-WAPOverGSMUSSD</code> and <code>WAP-204_103</code> are deferred: transport-rewrite scope is currently protocol-layer only and these docs are bearer-adaptation specific (<code>docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md</code> + <code>T0-14</code>).</li>
+<li><code>WAP-120-WAPCachingMod</code> is outside the transport layer but mandatory for
+the selected user-agent profile; exact closure is owned by <code>WAE-603</code>.</li>
+<li><code>WAP-213*</code> pictogram/display adjuncts are deferred: adjacent rendering/content behavior is UX-adjacent and intentionally excluded from core WSP/WTP/WDP path (<code>T0-16</code> canonicalization + <code>T0-17</code>).</li>
+<li><code>WAP-175</code>, <code>WAP-227</code>, <code>WAP-231</code>, and <code>WAP-204</code> messaging/cache-adjacent families stay out of scope for now because they add profile-adapter behavior not yet required by transport milestones (<code>T0-14</code> profile gates + <code>T0-17</code> scope lock).</li>
+<li>Bearer adaptation beyond UDP (<code>SMS</code>/<code>packet tunnel</code> variants) is deferred to gateway/adapter modules with explicit <code>deferred/out-of-scope</code> flags and not-implemented stubs.</li>
+</ol>
+<h2 id="5-execution-alignment-with-project-docs">5) Execution alignment with project docs</h2>
+<ol>
+<li><code>docs/waves/WORK_ITEMS.md</code> is the execution source of truth for sequencing (<code>T0-08..T0-26</code>).</li>
+<li><code>docs/waves/TRANSPORT_SPEC_TRACEABILITY.md</code> and <code>..._ADJACENT_...</code> are the requirement sources.</li>
+<li><code>docs/waves/SPEC_TEST_COVERAGE.md</code> hosts acceptance status and must remain synchronized on every migration gate.</li>
+<li><code>docs/waves/TECHNICAL_ARCHITECTURE.md</code> should describe transport profile states before each milestone gate.</li>
+<li><code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> is the single canonical profile decision record and rollback source.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#networking-implementation-checklist-wap-1x-rewrite">Networking Implementation Checklist (WAP 1.x Rewrite)</a></li><li class="depth-2"><a href="#1-scope-posture">1) Scope posture</a></li><li class="depth-2"><a href="#2-architecture-contract-gates">2) Architecture contract gates</a></li><li class="depth-2"><a href="#3-immediate-implementation-checklist">3) Immediate implementation checklist</a></li><li class="depth-3"><a href="#f0-foundation-and-policy">F0: Foundation and policy</a></li><li class="depth-3"><a href="#f1-wdp-bedrock">F1: WDP bedrock</a></li><li class="depth-3"><a href="#f2-wcmp-selected-core">F2: WCMP selected core</a></li><li class="depth-3"><a href="#f3-wsp-connectionless-service">F3: WSP connectionless service</a></li><li class="depth-3"><a href="#f3a-conditional-connection-oriented-wspwtp">F3a: Conditional connection-oriented WSP/WTP</a></li><li class="depth-3"><a href="#f4-security-path-and-gateway-bridge-bridge">F4: Security path and gateway bridge bridge</a></li><li class="depth-3"><a href="#f5-migration-and-integration-hardening">F5: Migration and integration hardening</a></li><li class="depth-3"><a href="#f6-native-desktop-fetch-activation">F6: Native desktop fetch activation</a></li><li class="depth-2"><a href="#4-known-adjacent-but-deferred-transport-context">4) Known adjacent-but-deferred transport context</a></li><li class="depth-2"><a href="#5-execution-alignment-with-project-docs">5) Execution alignment with project docs</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/networking-implementation-checklist.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

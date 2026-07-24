@@ -1,0 +1,455 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP Test Environment (Legacy Stack) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wap-test-environment/readme"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wap-test-environment</span></nav><p class="doc-path">docs/wap-test-environment/readme.md</p><div class="markdown-body"><h1 id="wap-test-environment-legacy-stack">WAP Test Environment (Legacy Stack)</h1>
+<p>This document covers the local test environment for classic WAP gateway/server validation.</p>
+<p>For the new browser emulator build, use:</p>
+<ul>
+<li><code>docs/browser-emulator/README.md</code></li>
+</ul>
+<p>Legacy stack path:</p>
+<p><code>WAP Client -&gt; WSP/WTP -&gt; Kannel Gateway -&gt; HTTP -&gt; WML Application Server</code></p>
+<p>This version includes a stateful demo app (register/login/session/portal), smoke tests, and teaching-oriented documentation.</p>
+<h2 id="architecture">Architecture</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">flowchart TD</span></span>
+<span class="line"><span style="color:#E1E4E8">    A["WAP Browser / Emulator"] --&gt;|"WSP/WTP"| B["Kannel bearerbox + wapbox"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    B --&gt;|"HTTP"| C["Node Express WML Server"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    C --&gt; D["WML Decks (cards/forms)"]</span></span></code></pre>
+<h2 id="project-layout">Project Layout</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>wap-labs/</span></span>
+<span class="line"><span>├── docker/</span></span>
+<span class="line"><span>│   └── kannel/</span></span>
+<span class="line"><span>│       ├── Dockerfile</span></span>
+<span class="line"><span>│       ├── kannel.conf</span></span>
+<span class="line"><span>│       └── start.sh</span></span>
+<span class="line"><span>├── scripts/</span></span>
+<span class="line"><span>│   └── smoke.sh</span></span>
+<span class="line"><span>├── wml-server/</span></span>
+<span class="line"><span>│   ├── package.json</span></span>
+<span class="line"><span>│   ├── server.js</span></span>
+<span class="line"><span>│   ├── viewer.html</span></span>
+<span class="line"><span>│   └── routes/</span></span>
+<span class="line"><span>│       ├── index.wml</span></span>
+<span class="line"><span>│       ├── login.wml</span></span>
+<span class="line"><span>│       └── register.wml</span></span>
+<span class="line"><span>├── docker-compose.yml</span></span>
+<span class="line"><span>├── Makefile</span></span>
+<span class="line"><span>└── README.md</span></span></code></pre>
+<h2 id="what-is-included">What Is Included</h2>
+<ul>
+<li>Kannel gateway with both <code>bearerbox</code> and <code>wapbox</code></li>
+<li>Admin endpoint on port <code>13000</code></li>
+<li>WAP gateway endpoint on port <code>13002</code></li>
+<li>Node/Express WML server on port <code>3000</code></li>
+<li>Dynamic WML auth flow:
+<ul>
+<li><code>/register</code> (POST form)</li>
+<li><code>/login</code> (POST form)</li>
+<li><code>/portal?sid=...</code></li>
+<li><code>/profile?sid=...</code></li>
+<li><code>/messages?sid=...&amp;page=...</code></li>
+<li><code>/logout?sid=...</code></li>
+</ul>
+</li>
+<li>Static WML examples:
+<ul>
+<li><code>/examples/index.wml</code></li>
+<li><code>/examples/login.wml</code></li>
+<li><code>/examples/register.wml</code></li>
+</ul>
+</li>
+<li>Basic observability:
+<ul>
+<li>request logs with request ID</li>
+<li><code>/metrics</code> plain text counters</li>
+<li><code>/health</code> JSON health check</li>
+</ul>
+</li>
+</ul>
+<h2 id="gateway-configuration-kannel">Gateway Configuration (Kannel)</h2>
+<p>Configured in <code>docker/kannel/kannel.conf</code>:</p>
+<ul>
+<li><code>admin-port = 13000</code></li>
+<li><code>wapbox-port = 13002</code></li>
+<li><code>box-allow-ip = 127.0.0.1</code></li>
+<li><code>wdp-interface-name = "*"</code></li>
+<li><code>group = wapbox</code>:
+<ul>
+<li><code>device-home = "http://wml-server:3000/"</code></li>
+</ul>
+</li>
+<li>HTTP translation/routing in <code>group = wap-url-map</code>:
+<ul>
+<li><code>url = "http://localhost:13002/*"</code> -&gt; <code>map-url = "http://wml-server:3000/*"</code></li>
+<li><code>url = "http://wap/*"</code> -&gt; <code>map-url = "http://wml-server:3000/*"</code></li>
+<li><code>url = "http://10.0.2.2/*"</code> -&gt; <code>map-url = "http://wml-server:3000/*"</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="quickstart-3-minutes">Quickstart (3 Minutes)</h2>
+<p>Run from the <code>wap-labs</code> directory:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> up</span></span></code></pre>
+<p>Check container state:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> ps</span></span></code></pre>
+<p>Check gateway status:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> status</span></span></code></pre>
+<p>Verify host endpoints in Chrome:</p>
+<ul>
+<li>Kannel admin: <code>http://localhost:13000/status?password=changeme</code></li>
+<li>WML app health: <code>http://localhost:3000/health</code></li>
+<li>WML app root deck over HTTP: <code>http://localhost:3000/</code></li>
+</ul>
+<p>Run smoke test:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> smoke</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> smoke-transport-wap</span></span></code></pre>
+<p>Stop everything:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> down</span></span></code></pre>
+<h2 id="direct-endpoints">Direct Endpoints</h2>
+<ul>
+<li>Kannel admin status:
+<ul>
+<li><code>http://localhost:13000/status?password=changeme</code></li>
+</ul>
+</li>
+<li>WAP gateway target (emulator/bridge):
+<ul>
+<li><code>http://localhost:13002</code></li>
+</ul>
+</li>
+<li>WML server direct HTTP:
+<ul>
+<li><code>http://localhost:3000</code></li>
+</ul>
+</li>
+<li>Native desktop/browser WAP target:
+<ul>
+<li><code>wap://localhost/</code></li>
+<li><code>wap://localhost/login</code></li>
+</ul>
+</li>
+<li>Browser WML card viewer:
+<ul>
+<li><code>http://localhost:3000/viewer</code></li>
+<li><code>http://localhost:3000/emulator</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="macos-arm-emulator-options">macOS ARM Emulator Options</h2>
+<h3 id="option-a-built-in-emulator-fast-httpwml-flow">Option A: Built-in Emulator (Fast HTTP/WML Flow)</h3>
+<p>Use the built-in emulator UI on Apple Silicon (no x86 tooling required):</p>
+<ol>
+<li>Start stack: <code>make up</code></li>
+<li>Open: <code>http://localhost:3000/emulator</code></li>
+<li>Keep URL as <code>/login</code> (default) for the full register/login/portal/logout flow</li>
+<li>Use <code>Back</code> and softkey buttons to navigate cards and submit WML form actions</li>
+</ol>
+<p>Notes:</p>
+<ul>
+<li>This emulator is HTTP/WML-focused and ideal for quick visual/flow testing.</li>
+<li>Optional gateway bridge path is available at <code>/gateway/*</code> if your environment exposes a reachable HTTP gateway endpoint.</li>
+</ul>
+<h3 id="option-b-real-wap-1x-microbrowser-utm--windows-xp--winwapopenwave">Option B: Real WAP 1.x Microbrowser (UTM + Windows XP + WinWAP/Openwave)</h3>
+<p>This path runs a legacy microbrowser and sends real WSP traffic through Kannel.</p>
+<p>Flow:</p>
+<p><code>WinWAP or Openwave Microbrowser -&gt; WSP/UDP -&gt; Kannel bearerbox (9200) -&gt; wapbox -&gt; HTTP translation -&gt; Node WML server</code></p>
+<h4 id="prerequisites">Prerequisites</h4>
+<p>Ensure these are running on your Mac:</p>
+<ul>
+<li>Node WML server</li>
+<li>Kannel bearerbox</li>
+<li>Kannel wapbox</li>
+</ul>
+<p>Start and verify:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> up</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> status</span></span></code></pre>
+<p>Admin status URL:</p>
+<ul>
+<li><code>http://localhost:13000/status?password=changeme</code></li>
+</ul>
+<h4 id="1-install-utm">1. Install UTM</h4>
+<p>Download and install UTM:</p>
+<ul>
+<li><a href="https://mac.getutm.app">UTM for macOS</a></li>
+</ul>
+<h4 id="2-create-windows-xp-vm">2. Create Windows XP VM</h4>
+<p>In UTM:</p>
+<ol>
+<li><code>Create New</code> -&gt; <code>Emulate</code> -&gt; <code>Windows</code></li>
+<li>Use Windows XP Professional SP3 (x86 ISO)</li>
+</ol>
+<p>Recommended VM settings:</p>
+<ul>
+<li>Memory: <code>512 MB</code></li>
+<li>CPU: <code>1</code></li>
+<li>Storage: <code>10 GB</code></li>
+<li>Graphics: <code>Default VGA</code></li>
+<li>Networking: <code>Shared Network (NAT)</code></li>
+</ul>
+<p>Important:</p>
+<ul>
+<li>Do not enable Metal</li>
+<li>Do not enable VirGL</li>
+<li>Do not use Virtualize mode</li>
+</ul>
+<p>XP must run under Emulation.</p>
+<h4 id="3-install-windows-xp">3. Install Windows XP</h4>
+<p>You can get the latest options to download:</p>
+<p><a href="https://mac.getutm.app/gallery/windows-xp">UTM Windows XP Config</a></p>
+<p><a href="https://archive.org/details/WinXPProSP3x86">Windows XP Pro ISO</a></p>
+<p>Boot the VM and complete normal XP installation:</p>
+<ol>
+<li>Boot from CD</li>
+<li>Format NTFS (Quick)</li>
+<li>Finish setup and reboot as requested</li>
+</ol>
+<h4 id="4-install-utm-guest-tools-required">4. Install UTM Guest Tools (Required)</h4>
+<p>Inside UTM VM window:</p>
+<ol>
+<li>CD icon -&gt; <code>Install Windows Guest Tools</code></li>
+<li>In XP, open <code>My Computer</code> -&gt; CD drive</li>
+<li>Run <code>setup.exe</code></li>
+<li>Restart VM</li>
+</ol>
+<h4 id="5-verify-vm---host-network-access">5. Verify VM -&gt; Host Network Access</h4>
+<p>Inside XP:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bat"><code><span class="line"><span style="color:#F97583">ipconfig</span></span></code></pre>
+<p>Find <code>Default Gateway</code> (typically <code>10.0.2.2</code> in UTM NAT mode). This should route to your Mac host.</p>
+<p>In XP Internet Explorer, test:</p>
+<ul>
+<li><code>http://10.0.2.2:13000/status?password=changeme</code></li>
+</ul>
+<p>If it loads, VM can reach your local Kannel gateway.</p>
+<h4 id="6-install-openwave-sdk-experimental">6. Install Openwave SDK (Experimental)</h4>
+<p>Openwave is legacy/discontinued software and is difficult to source. This community reference can help locate installers and plugin notes:</p>
+<ul>
+<li><a href="https://wapreview.com/3733/">Openwave SDK references</a></li>
+</ul>
+<p>Inside XP, install Openwave SDK 6.x and launch the Openwave Microbrowser.</p>
+<p>Current blocker: the required Openwave WAP browser plugin component is missing in our current setup. Until that plugin is found/installed, Openwave doesn’t properly run in WAP Gateway mode so cant connect from my testing.</p>
+<p>During install, enable the browser/plugin components required by the SDK. If the microbrowser opens but cannot render local test pages, rerun installer in <code>Modify</code> mode and add the missing plugin component.</p>
+<p>If Openwave does not render pages after install in your XP image, use WinWAP as primary (known good in this lab) and treat Openwave as optional.</p>
+<h4 id="6b-install-winwap-recommended">6b. Install WinWAP (Recommended)</h4>
+<p>Inside XP, install WinWAP and use it as your primary WAP browser for this lab.</p>
+<p>Download WinWAP <a href="https://www.winwap.com/downloads/downloads.php">HERE</a></p>
+<p>Note: WinWAP/Openwave installers are not committed to this repository because of third-party licensing.</p>
+<h4 id="7-configure-winwap-wap-gateway-recommended">7. Configure WinWAP WAP Gateway (Recommended)</h4>
+<p>Open WinWAP -&gt; <code>Browser Options</code>:</p>
+<ul>
+<li><code>General</code> tab:
+<ul>
+<li>Select <code>Gateway mode</code> (not HTTP mode)</li>
+</ul>
+</li>
+<li><code>HTTP</code> tab:
+<ul>
+<li>Disable <code>Use HTTP Proxy</code></li>
+<li>Disable <code>Use HTTP Proxy Authentication</code></li>
+</ul>
+</li>
+<li><code>Gateway</code> tab:
+<ul>
+<li><code>Gateway IP/Host</code>: <code>10.0.2.2</code></li>
+<li><code>Connectionless</code> port: <code>9200</code></li>
+<li>Home page: <code>http://wap/login</code> (or <code>http://10.0.2.2/login</code>)</li>
+</ul>
+</li>
+</ul>
+<p>Save and restart WinWAP.</p>
+<p>WinWAP setup screenshots were referenced here previously, but the image assets are not present in-repo. Use the tab-by-tab settings listed above as source of truth.</p>
+<h4 id="8-configure-openwave-wap-gateway-optional">8. Configure Openwave WAP Gateway (Optional)</h4>
+<p>Openwave -&gt; <code>Edit</code> -&gt; <code>Preferences</code> -&gt; <code>Network</code></p>
+<p>Set:</p>
+<ul>
+<li>Use WAP Gateway: Enabled</li>
+<li>Gateway IP: <code>10.0.2.2</code></li>
+<li>Port: <code>9200</code></li>
+<li>Bearer: <code>UDP</code></li>
+</ul>
+<p>Disable:</p>
+<ul>
+<li>HTTP Proxy</li>
+</ul>
+<h4 id="9-test-wsp-routing">9. Test WSP Routing</h4>
+<p>Inside WinWAP/Openwave browse to:</p>
+<ul>
+<li><code>http://wap/login</code></li>
+<li>fallback: <code>http://10.0.2.2/login</code></li>
+</ul>
+<p>Should see pages similar to this:</p>
+<ul>
+<li>A WML link-tree style card page</li>
+<li>A fake session portal card/view</li>
+</ul>
+<p>Watch logs on host:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> logs</span><span style="color:#79B8FF"> -f</span><span style="color:#9ECBFF"> kannel</span><span style="color:#9ECBFF"> wml-server</span></span></code></pre>
+<p>You should see WSP activity (not plain browser HTTP GET from a desktop browser).</p>
+<h4 id="10-host-file-server-for-xp-vm-installersartifacts">10. Host File Server for XP VM (Installers/Artifacts)</h4>
+<p>Run a temporary file host on your Mac:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> /Users/dsteele/repos/wap-labs/files</span></span>
+<span class="line"><span style="color:#B392F0">python3</span><span style="color:#79B8FF"> -m</span><span style="color:#9ECBFF"> http.server</span><span style="color:#79B8FF"> 8080</span></span></code></pre>
+<p>From XP browser, open:</p>
+<ul>
+<li><code>http://10.0.2.2:8080/</code></li>
+</ul>
+<p>Download what you need inside XP, for example:</p>
+<ul>
+<li><code>http://10.0.2.2:8080/winwap-win32.exe</code></li>
+<li><code>http://10.0.2.2:8080/Openwave_SDK_622.exe</code></li>
+</ul>
+<p>Stop file host with <code>Ctrl+C</code> when done.</p>
+<h4 id="11-debugging">11. Debugging</h4>
+<p>Cannot reach gateway from XP:</p>
+<ul>
+<li>Recheck XP URL: <code>http://10.0.2.2:13000/status?password=changeme</code></li>
+<li>Confirm VM network mode is Shared Network (NAT)</li>
+<li>Confirm stack is running: <code>make ps</code></li>
+<li>Check host firewall rules for local ports</li>
+</ul>
+<p>Openwave loads nothing:</p>
+<ul>
+<li>Confirm UDP ports <code>9200/9201</code> are published in <code>docker-compose.yml</code></li>
+<li>Confirm <code>wdp-interface-name = "*"</code> in <code>docker/kannel/kannel.conf</code></li>
+<li>Restart stack:</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> restart</span></span></code></pre>
+<p>HTTP desktop requests showing instead of WSP flow:</p>
+<ul>
+<li>Recheck WinWAP/Openwave proxy/gateway settings and ensure HTTP proxy is disabled.</li>
+</ul>
+<p>WinWAP returns HTTP 503 for <code>http://wap/*</code>:</p>
+<ul>
+<li>Check <code>docker compose logs kannel</code> for <code>map_url_max = -1</code></li>
+<li>If present, you are using deprecated mapping format; use <code>group = wap-url-map</code> entries in <code>docker/kannel/kannel.conf</code></li>
+<li>Restart gateway: <code>docker compose up -d --build kannel</code></li>
+</ul>
+<h4 id="success-criteria">Success Criteria</h4>
+<p>You have real WAP 1.x microbrowser emulation when:</p>
+<ul>
+<li>WinWAP or Openwave renders WML decks</li>
+<li><code>&lt;card&gt;</code> navigation works</li>
+<li><code>&lt;input&gt;</code> and <code>&lt;go&gt;</code> form flow works</li>
+<li>Kannel logs show WSP-side activity through wapbox</li>
+</ul>
+<h2 id="end-to-end-request-trace">End-to-End Request Trace</h2>
+<ol>
+<li>WAP client requests <code>http://localhost:13002/login</code></li>
+<li><code>wapbox</code> maps URL to <code>http://wml-server:3000/login</code></li>
+<li>Node app returns WML deck with <code>Content-Type: text/vnd.wap.wml</code></li>
+<li>Gateway translates WSP/WTP &lt;-&gt; HTTP and returns response to client</li>
+</ol>
+<h2 id="demo-flow">Demo Flow</h2>
+<ol>
+<li>Open <code>/register</code>, create user with 4-6 digit PIN</li>
+<li>Open <code>/login</code>, authenticate</li>
+<li>Follow portal link with generated <code>sid</code></li>
+<li>Browse profile and paged messages</li>
+<li>Logout and confirm session is invalidated</li>
+</ol>
+<h2 id="wml-concepts-demonstrated">WML Concepts Demonstrated</h2>
+<ul>
+<li><code>&lt;card&gt;</code> deck design</li>
+<li><code>&lt;input&gt;</code> form fields</li>
+<li><code>&lt;do&gt;</code> softkey actions</li>
+<li><code>&lt;go&gt;</code> GET/POST transitions</li>
+<li><code>&lt;postfield&gt;</code> form submission</li>
+<li>multi-card navigation and pagination style links</li>
+</ul>
+<h2 id="observability">Observability</h2>
+<p>Server logs include request metadata:</p>
+<ul>
+<li>request ID</li>
+<li>timestamp</li>
+<li>method/path</li>
+<li>client IP</li>
+<li>user-agent and accept headers</li>
+</ul>
+<p>Metrics endpoint (<code>/metrics</code>) exposes:</p>
+<ul>
+<li><code>requests_total</code></li>
+<li><code>users_total</code></li>
+<li><code>sessions_total</code></li>
+<li><code>register_success_total</code></li>
+<li><code>login_success_total</code></li>
+<li><code>login_failure_total</code></li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="group-wapbox-may-not-contain-field-wapbox-port"><code>Group 'wapbox' may not contain field 'wapbox-port'</code></h3>
+<p>Cause: <code>wapbox-port</code> was placed in the wrong group.</p>
+<p>Fix: keep <code>wapbox-port</code> under <code>group = core</code>.</p>
+<h3 id="group-wapbox-user-is-no-valid-group-identifier"><code>Group 'wapbox-user' is no valid group identifier</code></h3>
+<p>Cause: this Kannel package does not support that group.</p>
+<p>Fix: route with <code>group = wap-url-map</code> entries and <code>map-url</code> rules.</p>
+<h3 id="map_url_max---1-and-httpwap-fails-with-503"><code>map_url_max = -1</code> and <code>http://wap/*</code> fails with 503</h3>
+<p>Cause: deprecated URL mapping format was used, so rewrite rules were not loaded.</p>
+<p>Fix: define explicit <code>group = wap-url-map</code> blocks for:</p>
+<ul>
+<li><code>http://localhost:13002/*</code></li>
+<li><code>http://wap/*</code></li>
+<li><code>http://10.0.2.2/*</code></li>
+</ul>
+<p>and map each to <code>http://wml-server:3000/*</code>, then restart <code>kannel</code>.</p>
+<h3 id="curl-7-failed-to-connect-to-localhost-port-13000"><code>curl: (7) Failed to connect to localhost port 13000</code></h3>
+<p>Cause: gateway container failed to start or crashed.</p>
+<p>Fix:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> logs</span><span style="color:#9ECBFF"> kannel</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#9ECBFF"> up</span><span style="color:#79B8FF"> --build</span></span></code></pre>
+<h3 id="smoke-test-fails-on-gateway-endpoint">Smoke test fails on gateway endpoint</h3>
+<p>Cause: stack not up yet or mapping mismatch.</p>
+<p>Fix:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> ps</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> status</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -i</span><span style="color:#9ECBFF"> http://localhost:13002/</span></span></code></pre>
+<p>Note: in some environments <code>http://localhost:13002/</code> may not return a plain HTTP body promptly because the gateway endpoint primarily serves WSP device traffic. In that case, use emulator verification and rely on <code>13000/status</code> plus app logs.</p>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<ol>
+<li>Add a <code>settings</code> card to portal with user preference toggles.</li>
+<li>Add session timeout cleanup in <code>server.js</code>.</li>
+<li>Add another <code>map-url</code> rule that proxies <code>/legacy/*</code> to a separate service.</li>
+<li>Add request latency metric buckets to <code>/metrics</code>.</li>
+<li>Build a tiny WMLScript endpoint and call it from a card action.</li>
+</ol>
+<h2 id="useful-commands">Useful Commands</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> up</span><span style="color:#6A737D">        # build and start</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> ps</span><span style="color:#6A737D">        # container status</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> logs</span><span style="color:#6A737D">      # follow logs</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> status</span><span style="color:#6A737D">    # kannel admin status</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> smoke</span><span style="color:#6A737D">     # smoke test against running stack</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> smoke-transport-wap</span><span style="color:#6A737D">  # native WSP/WDP transport + browser-host smoke</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> clean</span><span style="color:#6A737D">     # remove containers, networks, volumes</span></span></code></pre>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>No SMS services configured (WAP-focused only).</li>
+<li>No TLS (local dev only).</li>
+<li>WML files use WAP 1.1 DOCTYPE.</li>
+<li>WBXML translation is handled by Kannel/wapbox.</li>
+</ul>
+<h2 id="related-docs">Related Docs</h2>
+<ul>
+<li>Central repo overview: <code>README.md</code></li>
+<li>Browser emulator build track: <code>docs/browser-emulator/README.md</code></li>
+<li>Full docs index: <code>docs/README.md</code></li>
+</ul>
+<h2 id="contributing">Contributing</h2>
+<ul>
+<li>Contributor guide: <code>CONTRIBUTING.md</code></li>
+<li>Codex steering: <code>AGENTS.md</code></li>
+<li>Repository formatting conventions: <code>.editorconfig</code></li>
+</ul>
+<h2 id="license">License</h2>
+<p>This project is licensed under the MIT License. See <code>LICENSE</code>.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-test-environment-legacy-stack">WAP Test Environment (Legacy Stack)</a></li><li class="depth-2"><a href="#architecture">Architecture</a></li><li class="depth-2"><a href="#project-layout">Project Layout</a></li><li class="depth-2"><a href="#what-is-included">What Is Included</a></li><li class="depth-2"><a href="#gateway-configuration-kannel">Gateway Configuration (Kannel)</a></li><li class="depth-2"><a href="#quickstart-3-minutes">Quickstart (3 Minutes)</a></li><li class="depth-2"><a href="#direct-endpoints">Direct Endpoints</a></li><li class="depth-2"><a href="#macos-arm-emulator-options">macOS ARM Emulator Options</a></li><li class="depth-3"><a href="#option-a-built-in-emulator-fast-httpwml-flow">Option A: Built-in Emulator (Fast HTTP/WML Flow)</a></li><li class="depth-3"><a href="#option-b-real-wap-1x-microbrowser-utm--windows-xp--winwapopenwave">Option B: Real WAP 1.x Microbrowser (UTM + Windows XP + WinWAP/Openwave)</a></li><li class="depth-2"><a href="#end-to-end-request-trace">End-to-End Request Trace</a></li><li class="depth-2"><a href="#demo-flow">Demo Flow</a></li><li class="depth-2"><a href="#wml-concepts-demonstrated">WML Concepts Demonstrated</a></li><li class="depth-2"><a href="#observability">Observability</a></li><li class="depth-2"><a href="#troubleshooting">Troubleshooting</a></li><li class="depth-3"><a href="#group-wapbox-may-not-contain-field-wapbox-port">Group &#39;wapbox&#39; may not contain field &#39;wapbox-port&#39;</a></li><li class="depth-3"><a href="#group-wapbox-user-is-no-valid-group-identifier">Group &#39;wapbox-user&#39; is no valid group identifier</a></li><li class="depth-3"><a href="#map_url_max---1-and-httpwap-fails-with-503">map_url_max = -1 and http://wap/* fails with 503</a></li><li class="depth-3"><a href="#curl-7-failed-to-connect-to-localhost-port-13000">curl: (7) Failed to connect to localhost port 13000</a></li><li class="depth-3"><a href="#smoke-test-fails-on-gateway-endpoint">Smoke test fails on gateway endpoint</a></li><li class="depth-2"><a href="#lab-exercises">Lab Exercises</a></li><li class="depth-2"><a href="#useful-commands">Useful Commands</a></li><li class="depth-2"><a href="#notes">Notes</a></li><li class="depth-2"><a href="#related-docs">Related Docs</a></li><li class="depth-2"><a href="#contributing">Contributing</a></li><li class="depth-2"><a href="#license">License</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wap-test-environment/readme.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

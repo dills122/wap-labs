@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Rust Transport Steering (Lowband) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="agents/rust_transport_steering"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>agents</span></nav><p class="doc-path">docs/agents/rust_transport_steering.md</p><div class="markdown-body"><h1 id="rust-transport-steering-lowband">Rust Transport Steering (Lowband)</h1>
+<p>Purpose: project-specific Rust rules for contributors and coding agents working on the Lowband
+transport library and its host contract boundary.</p>
+<p>This file is intentionally prescriptive. Transport code processes untrusted network and protocol
+input, so protocol fidelity, bounded resource use, deterministic behavior, and explicit failures
+take priority over convenience.</p>
+<h2 id="1-scope">1. Scope</h2>
+<p>Applies to:</p>
+<ul>
+<li><code>transport-rust/**</code></li>
+<li>transport-facing Rust integration under <code>browser/src-tauri/**</code></li>
+<li>Rust-to-TypeScript transport contract generation</li>
+<li>transport-specific CI, fixtures, replay gates, and smoke tests</li>
+</ul>
+<p>Does not apply to:</p>
+<ul>
+<li>WML parsing, runtime, layout, focus, or rendering behavior</li>
+<li>browser UI, input, or host-window state</li>
+<li>engine-native/WASM parity except at the normalized transport-to-engine handoff</li>
+</ul>
+<h2 id="2-canonical-references">2. Canonical references</h2>
+<p>Use these sources in order:</p>
+<ol>
+<li>Repository architecture and layer rules in <code>AGENTS.md</code> and
+<code>docs/agents/AGENT_STANDARDS.md</code>.</li>
+<li>Source precedence in <code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code>.</li>
+<li>Transport requirements in <code>docs/waves/TRANSPORT_SPEC_TRACEABILITY.md</code> and
+<code>docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code>.</li>
+<li>Active profile decisions in <code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> and
+<code>docs/waves/networking-layer-definition.md</code>.</li>
+<li>Official Rust guidance: Rust Reference, Rust API Guidelines, Rust Style Guide, Clippy, Cargo,
+and Rustdoc documentation.</li>
+</ol>
+<p>Do not infer protocol behavior from modern HTTP or browser conventions when a WAP/WSP/WTP/WDP
+requirement or fixture defines different behavior.</p>
+<h2 id="3-layer-ownership">3. Layer ownership</h2>
+<p>Transport owns:</p>
+<ul>
+<li>HTTP/HTTPS fetch behavior and <code>wap://</code>/<code>waps://</code> adaptation</li>
+<li>WDP, WTP, WSP, WTLS-profile, and gateway transport behavior</li>
+<li>WBXML decode/encode concerns and content-type normalization</li>
+<li>request policy, retries, timeouts, payload limits, and destination validation</li>
+<li>normalized <code>FetchDeckResponse</code> and engine handoff payload construction</li>
+<li>transport error taxonomy, request correlation, protocol traces, and timing metadata</li>
+</ul>
+<p>Transport must not:</p>
+<ul>
+<li>parse WML into runtime or render structures</li>
+<li>own deck/card navigation, focus, history, or browser session state</li>
+<li>move protocol parsing into TypeScript or Tauri adapter code</li>
+<li>add UI-facing behavior to compensate for malformed transport output</li>
+<li>bypass the contract generation and drift-check workflow</li>
+</ul>
+<h2 id="4-contract-source-of-truth">4. Contract source of truth</h2>
+<p>The exported Rust request/response types in <code>transport-rust/src/lib.rs</code> are the source of truth for
+the host transport contract.</p>
+<p>Generated artifacts include:</p>
+<ul>
+<li><code>browser/contracts/generated/transport-host.ts</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+<li>transport methods in <code>browser/contracts/generated/tauri-host-client.ts</code></li>
+</ul>
+<p>Rules:</p>
+<ol>
+<li>Never edit generated contract files directly.</li>
+<li>Keep <code>serde</code> and <code>ts-rs</code> names, casing, optionality, and numeric mappings deliberate.</li>
+<li>Preserve the existing <code>FetchDeckResponse</code> success/failure invariants.</li>
+<li>Treat new fields, error codes, enum values, and serialization changes as contract changes.</li>
+<li>Regenerate and commit generated artifacts when the Rust contract changes.</li>
+<li>Run <code>pnpm --dir browser run contracts:check</code> before landing contract changes.</li>
+<li>Update relevant transport docs and host tests in the same change.</li>
+</ol>
+<h2 id="5-protocol-fidelity-and-deterministic-state">5. Protocol fidelity and deterministic state</h2>
+<ol>
+<li>Model protocol states and decisions with explicit enums and value types.</li>
+<li>Keep codecs and parsers free of hidden global mutable state.</li>
+<li>Keep state transitions, retry counts, timer behavior, duplicate handling, and replay decisions
+deterministic and traceable.</li>
+<li>Preserve peer/session/transaction identity explicitly; do not infer identity from incidental
+collection order.</li>
+<li>Unknown, unsupported, truncated, or invalid protocol input must produce a defined result or
+error without desynchronizing subsequent parsing.</li>
+<li>Profile-dependent behavior must be explicit. Do not silently enable deferred <code>wap-net-ext</code>
+features or change the active/rollback posture.</li>
+<li>Do not silently fall back between <code>wap-net-core</code> and <code>gateway-bridged</code>; fallback behavior must
+be contract-visible, configured, and test-covered.</li>
+<li>Protocol behavior changes require fixture or replay evidence tied to the relevant requirement.</li>
+</ol>
+<h2 id="6-untrusted-input-and-resource-bounds">6. Untrusted input and resource bounds</h2>
+<p>Treat URLs, headers, response bodies, datagrams, WBXML, decoder output, and fixture bytes as
+untrusted.</p>
+<p>Rules:</p>
+<ol>
+<li>Validate lengths before slicing, indexing, allocation, conversion, or state mutation.</li>
+<li>Use checked or saturating arithmetic where lengths, offsets, counters, and timers can overflow.</li>
+<li>Bound response bodies, decoded output, URI sizes, redirects, retries, timers, replay windows,
+and protocol collections.</li>
+<li>Reject oversized or malformed input deterministically; never truncate silently when truncation
+changes protocol meaning.</li>
+<li>Avoid allocations derived directly from untrusted length fields until limits are validated.</li>
+<li>Do not panic on network, protocol, WBXML, or user-controlled input.</li>
+<li>Keep failure paths safe for partial reads, short packets, invalid UTF encodings, and unknown
+assigned numbers.</li>
+</ol>
+<h2 id="7-network-destination-policy">7. Network destination policy</h2>
+<ol>
+<li>Preserve <code>PublicOnly</code> as the default fetch destination policy.</li>
+<li>Validate the original URL, resolved addresses, and every redirect destination.</li>
+<li>Treat loopback, private, link-local, unspecified, multicast, and IPv4-mapped IPv6 addresses
+consistently.</li>
+<li>Do not weaken DNS-rebinding or redirect protections for test convenience.</li>
+<li>Private/local access must require the explicit policy path used by controlled development and
+smoke environments.</li>
+<li>Keep redirect limits and request timeouts finite.</li>
+<li>Never log secrets, credentials, session payloads, or unrestricted response bodies.</li>
+</ol>
+<h2 id="8-error-and-response-policy">8. Error and response policy</h2>
+<ol>
+<li>Recoverable failures return <code>Result</code> internally or a normalized <code>FetchDeckResponse</code> at the
+public fetch boundary.</li>
+<li>Preserve the stable public error codes:
+<ul>
+<li><code>INVALID_REQUEST</code></li>
+<li><code>GATEWAY_TIMEOUT</code></li>
+<li><code>UNSUPPORTED_CONTENT_TYPE</code></li>
+<li><code>WBXML_DECODE_FAILED</code></li>
+<li><code>PROTOCOL_ERROR</code></li>
+<li><code>PAYLOAD_TOO_LARGE</code></li>
+<li><code>TRANSPORT_UNAVAILABLE</code></li>
+</ul>
+</li>
+<li>Adding or changing an error code requires Rust/TypeScript contract, mapping tests, and transport
+documentation updates.</li>
+<li>Keep error classification deterministic; do not map the same failure differently by incidental
+call path.</li>
+<li>Preserve request IDs in structured details and transport events when present.</li>
+<li>Keep integration-visible error messages stable and concise.</li>
+<li>Do not expose sensitive internal paths, command arguments, or payload contents in public error
+details.</li>
+</ol>
+<h2 id="9-blocking-io-and-host-integration">9. Blocking I/O and host integration</h2>
+<p>The current library intentionally uses blocking HTTP, socket, filesystem, and child-process APIs.
+Do not introduce an async runtime or rewrite the transport execution model incidentally.</p>
+<p>Rules:</p>
+<ol>
+<li>Blocking transport work must stay off the Tauri async executor through the established
+<code>spawn_blocking</code> host boundary.</li>
+<li>Keep Tauri command adapters thin: apply host defaults, call transport, and map join failures.</li>
+<li>Do not duplicate fetch, retry, protocol, or WBXML logic in the host adapter.</li>
+<li>Any async migration requires an explicit cross-layer design, dependency review, contract-parity
+plan, and performance evidence.</li>
+</ol>
+<h2 id="10-external-wbxml-decoder">10. External WBXML decoder</h2>
+<ol>
+<li>Keep WBXML execution isolated in the transport layer.</li>
+<li>Resolve and canonicalize the executable before launch.</li>
+<li>Reject ambiguous relative paths containing path components.</li>
+<li>Invoke the executable directly with structured arguments; never through a shell.</li>
+<li>Null or tightly capture standard streams; do not inherit interactive input.</li>
+<li>Enforce execution timeout and decoded-output limits.</li>
+<li>Kill and reap timed-out or failed child processes.</li>
+<li>Use temporary directories/files with automatic cleanup.</li>
+<li>Treat missing tools, non-zero exits, invalid UTF-8, empty output, and oversized output as
+deterministic decode failures.</li>
+</ol>
+<h2 id="11-api-dependencies-and-unsafe-code">11. API, dependencies, and unsafe code</h2>
+<ol>
+<li>Keep fields private unless they are intentionally part of the library or generated contract.</li>
+<li>Prefer <code>pub(crate)</code> for internal cross-module access and narrow public exports.</li>
+<li>Use explicit enums for state machines and closed policy sets.</li>
+<li>Prefer typed internal errors for new multi-variant APIs; avoid broad incidental error refactors.</li>
+<li>New network, codec, crypto, async, or process dependencies require narrow justification,
+feature review, and maintenance/security consideration.</li>
+<li>Keep dependency default features disabled when the required surface is intentionally smaller,
+as with the current <code>reqwest</code> configuration.</li>
+<li><code>unsafe</code> is disallowed by default. Any exception requires explicit design review, minimal scope,
+documented invariants with a <code>SAFETY</code> comment, and targeted tests.</li>
+</ol>
+<h2 id="12-testing-policy">12. Testing policy</h2>
+<p>Behavior changes require tests at the narrowest useful layer:</p>
+<ol>
+<li>Codec/parser unit tests for valid, invalid, truncated, boundary, and round-trip cases.</li>
+<li>State-machine tests for transitions, timers, retries, aborts, duplicates, and replay windows.</li>
+<li>Fixture/replay tests for normative protocol behavior and assigned-number mappings.</li>
+<li>Fetch-mapping tests for content type, payload limits, error codes, request IDs, and engine handoff
+invariants.</li>
+<li>Contract generation/drift checks for public request or response changes.</li>
+<li>Host integration tests when Tauri defaults or boundary mapping changes.</li>
+<li>Kannel smoke tests when real gateway, native transport, WBXML, or cross-layer behavior changes.</li>
+</ol>
+<p>Additional rules:</p>
+<ul>
+<li>Default tests must not depend on external network availability.</li>
+<li>Keep live Kannel tests ignored/manual unless their execution environment is explicitly provisioned.</li>
+<li>Tests that mutate process environment must use the shared lock, restore prior values, and run
+serialized where required.</li>
+<li>Keep fixtures deterministic and review fixture changes as behavior changes, not mechanical data
+refreshes.</li>
+<li>Add property-based or fuzz coverage for new byte parsers when it materially improves malformed
+input coverage.</li>
+</ul>
+<h2 id="13-required-quality-gates">13. Required quality gates</h2>
+<p>For transport Rust changes, run from the repository root:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> lint-rust-transport</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> test-rust-transport</span></span></code></pre>
+<p>These enforce or wrap:</p>
+<ul>
+<li><code>cargo fmt --check</code></li>
+<li><code>cargo clippy --all-targets --all-features -- -D warnings</code></li>
+<li>serialized transport tests (<code>--test-threads=1</code>)</li>
+</ul>
+<p>For coverage-sensitive changes:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> coverage-rust-transport</span></span></code></pre>
+<p>Current CI thresholds are 85% line coverage and 84% function coverage.</p>
+<p>For contract changes:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> browser</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> contracts:check</span></span></code></pre>
+<p>For real gateway/native integration changes:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> smoke-transport-wap</span></span></code></pre>
+<h2 id="14-pr-checklist">14. PR checklist</h2>
+<p>Before merge, verify:</p>
+<ol>
+<li>Layer ownership remains intact.</li>
+<li>Untrusted input paths are bounded and panic-free.</li>
+<li>Protocol behavior has requirement-linked fixture or replay evidence.</li>
+<li>Error and response invariants remain deterministic.</li>
+<li>Destination policy and redirect/DNS checks remain default-safe.</li>
+<li>Contract artifacts were regenerated rather than hand-edited when public types changed.</li>
+<li>Relevant transport, host, and documentation tests pass.</li>
+<li>Profile posture and rollback behavior remain explicit.</li>
+<li>No generated or live-smoke artifacts are committed unintentionally.</li>
+</ol>
+<h2 id="15-common-anti-patterns">15. Common anti-patterns</h2>
+<p>Avoid:</p>
+<ol>
+<li>Parsing with unchecked indexes or trusting length fields.</li>
+<li>Using <code>unwrap</code>, <code>expect</code>, or <code>panic!</code> on production input paths.</li>
+<li>Converting protocol/state errors into ambiguous generic failures too early.</li>
+<li>Adding rendering, WML runtime, or browser state logic to transport modules.</li>
+<li>Duplicating transport behavior in Tauri or TypeScript adapters.</li>
+<li>Editing generated TypeScript contracts directly.</li>
+<li>Adding implicit protocol-profile fallbacks.</li>
+<li>Running blocking transport work directly on the Tauri async executor.</li>
+<li>Spawning WBXML tools through a shell or without time/output bounds.</li>
+<li>Updating completed backlog tickets instead of creating scoped follow-up work.</li>
+</ol>
+<h2 id="16-source-references">16. Source references</h2>
+<ul>
+<li>Rust Reference: <a href="https://doc.rust-lang.org/reference/">https://doc.rust-lang.org/reference/</a></li>
+<li>Rust API Guidelines: <a href="https://rust-lang.github.io/api-guidelines/">https://rust-lang.github.io/api-guidelines/</a></li>
+<li>Rust Style Guide: <a href="https://doc.rust-lang.org/style-guide/">https://doc.rust-lang.org/style-guide/</a></li>
+<li>Clippy usage: <a href="https://doc.rust-lang.org/stable/clippy/usage.html">https://doc.rust-lang.org/stable/clippy/usage.html</a></li>
+<li>Cargo Book: <a href="https://doc.rust-lang.org/cargo/">https://doc.rust-lang.org/cargo/</a></li>
+<li>Rustdoc Book: <a href="https://doc.rust-lang.org/rustdoc/">https://doc.rust-lang.org/rustdoc/</a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#rust-transport-steering-lowband">Rust Transport Steering (Lowband)</a></li><li class="depth-2"><a href="#1-scope">1. Scope</a></li><li class="depth-2"><a href="#2-canonical-references">2. Canonical references</a></li><li class="depth-2"><a href="#3-layer-ownership">3. Layer ownership</a></li><li class="depth-2"><a href="#4-contract-source-of-truth">4. Contract source of truth</a></li><li class="depth-2"><a href="#5-protocol-fidelity-and-deterministic-state">5. Protocol fidelity and deterministic state</a></li><li class="depth-2"><a href="#6-untrusted-input-and-resource-bounds">6. Untrusted input and resource bounds</a></li><li class="depth-2"><a href="#7-network-destination-policy">7. Network destination policy</a></li><li class="depth-2"><a href="#8-error-and-response-policy">8. Error and response policy</a></li><li class="depth-2"><a href="#9-blocking-io-and-host-integration">9. Blocking I/O and host integration</a></li><li class="depth-2"><a href="#10-external-wbxml-decoder">10. External WBXML decoder</a></li><li class="depth-2"><a href="#11-api-dependencies-and-unsafe-code">11. API, dependencies, and unsafe code</a></li><li class="depth-2"><a href="#12-testing-policy">12. Testing policy</a></li><li class="depth-2"><a href="#13-required-quality-gates">13. Required quality gates</a></li><li class="depth-2"><a href="#14-pr-checklist">14. PR checklist</a></li><li class="depth-2"><a href="#15-common-anti-patterns">15. Common anti-patterns</a></li><li class="depth-2"><a href="#16-source-references">16. Source references</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/agents/rust_transport_steering.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

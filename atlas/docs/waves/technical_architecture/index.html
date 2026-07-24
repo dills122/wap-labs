@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Technical Architecture · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/technical_architecture"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/technical_architecture.md</p><div class="markdown-body"><h1 id="waves-technical-architecture">Waves Technical Architecture</h1>
+<p>Version: v0.2
+Status: Canonical direction document</p>
+<h2 id="project-overview">Project Overview</h2>
+<p>Waves is a modern desktop WAP 1.0 browser emulator designed to execute WML decks with a native Rust runtime.</p>
+<p>Core goals:</p>
+<ul>
+<li>deterministic WML runtime behavior</li>
+<li>host/runtime separation</li>
+<li>protocol fidelity through an in-process Rust transport stack</li>
+<li>fidelity with historical WAP browser behavior</li>
+</ul>
+<h2 id="design-philosophy">Design Philosophy</h2>
+<p>Waves is an embeddable WAP runtime, not a DOM renderer.</p>
+<p>Execution correctness is independent from:</p>
+<ul>
+<li>network transport</li>
+<li>latency/retries</li>
+<li>session negotiation</li>
+</ul>
+<h2 id="external-architecture-alignment">External Architecture Alignment</h2>
+<p>Waves architecture is intentionally aligned with modern browser engine split patterns:</p>
+<ul>
+<li>content/runtime semantics live in the engine runtime layer</li>
+<li>host/browser shell brokers external capabilities and UI side effects</li>
+<li>execution isolates failures via runtime error boundaries</li>
+</ul>
+<p>Guidance references:</p>
+<ul>
+<li>Chromium process model and site isolation:
+<ul>
+<li><a href="https://chromium.googlesource.com/chromium/src/+/main/docs/process_model_and_site_isolation.md">https://chromium.googlesource.com/chromium/src/+/main/docs/process_model_and_site_isolation.md</a></li>
+<li><a href="https://www.chromium.org/developers/design-documents/site-isolation/">https://www.chromium.org/developers/design-documents/site-isolation/</a></li>
+</ul>
+</li>
+<li>WebKit2 architecture:
+<ul>
+<li><a href="https://docs.webkit.org/Deep%20Dive/Architecture/WebKit2.html">https://docs.webkit.org/Deep%20Dive/Architecture/WebKit2.html</a></li>
+</ul>
+</li>
+<li>WHATWG event loop + navigation model:
+<ul>
+<li><a href="https://html.spec.whatwg.org/multipage/webappapis.html#event-loops">https://html.spec.whatwg.org/multipage/webappapis.html#event-loops</a></li>
+<li><a href="https://html.spec.whatwg.org/multipage/browsing-the-web.html">https://html.spec.whatwg.org/multipage/browsing-the-web.html</a></li>
+</ul>
+</li>
+<li>WebAssembly security model:
+<ul>
+<li><a href="https://webassembly.org/docs/security/">https://webassembly.org/docs/security/</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="system-architecture">System Architecture</h2>
+<h3 id="1-runtime-core-rust">1) Runtime Core (Rust)</h3>
+<p>Responsibilities:</p>
+<ul>
+<li>WML parsing</li>
+<li>deck/card model</li>
+<li>navigation stack</li>
+<li>softkey bindings</li>
+<li>variable context</li>
+<li>event dispatch (<code>onenter</code>, <code>ontimer</code>)</li>
+<li>layout model</li>
+<li>runtime lifecycle</li>
+</ul>
+<p>Representative boundary:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> load_deck</span><span style="color:#E1E4E8">(input</span><span style="color:#F97583">:</span><span style="color:#F97583"> &amp;</span><span style="color:#E1E4E8">[</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">]) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> DeckHandle</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> navigate</span><span style="color:#E1E4E8">(handle</span><span style="color:#F97583">:</span><span style="color:#B392F0"> DeckHandle</span><span style="color:#E1E4E8">, action</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NavAction</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">fn</span><span style="color:#B392F0"> render</span><span style="color:#E1E4E8">(handle</span><span style="color:#F97583">:</span><span style="color:#B392F0"> DeckHandle</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> RenderTree</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<h3 id="2-runtime-targets">2) Runtime Targets</h3>
+<p>Built as a shared Rust runtime with target-specific adapters.</p>
+<p>Targets:</p>
+<ul>
+<li>native Rust embedding (preferred for Tauri backend integration)</li>
+<li>WASM (<code>wasm-bindgen</code> / <code>wasm-pack</code>) for browser/webview hosts</li>
+<li>local browser harness (<code>engine-wasm/host-sample</code>)</li>
+</ul>
+<p>Responsibilities:</p>
+<ul>
+<li>runtime deck/card execution</li>
+<li>deterministic layout and focus behavior</li>
+<li>render tree/list generation</li>
+</ul>
+<h3 id="3-host-shell-tauri">3) Host Shell (Tauri)</h3>
+<p>Repository path: <code>browser/</code></p>
+<p>Responsibilities:</p>
+<ul>
+<li>windowing and input</li>
+<li>host process lifecycle</li>
+<li>transport request lifecycle management</li>
+<li>IPC bridge from UI to transport/runtime boundaries</li>
+<li>native runtime embedding path (when host chooses direct Rust integration)</li>
+</ul>
+<h2 id="transport-strategy">Transport Strategy</h2>
+<h3 id="current-state">Current state</h3>
+<p>Transport is handled by Rust (<code>transport-rust/</code>) as an in-process library invoked by Tauri commands.</p>
+<p>Current transport responsibilities:</p>
+<ul>
+<li>HTTP and WAP fetch orchestration</li>
+<li>WSP/session framing and transport-protocol state</li>
+<li>WBXML decode/normalization</li>
+<li>gateway adaptation and error taxonomy mapping</li>
+<li>deterministic request correlation/logging metadata</li>
+<li>fetch destination policy enforcement for host-command requests (<code>fetch_deck</code>)</li>
+</ul>
+<p>Fetch destination policy posture (<code>M1-17</code>):</p>
+<ol>
+<li>default mode is <code>public-only</code> for <code>fetch_deck</code> destinations to reduce SSRF/internal probing exposure if renderer/UI code is compromised.</li>
+<li>the host policy is authoritative: renderer-supplied request policy may tighten it but cannot enable private destinations.</li>
+<li><code>public-only</code> normalizes IPv4-mapped IPv6 addresses, rejects non-public literal targets, validates every DNS answer used by the HTTP connector, revalidates every redirect hop, and validates native WAP peer addresses.</li>
+<li>developer override is explicit via <code>WAVES_FETCH_DESTINATION_POLICY=allow-private</code> in host environment; this is intended for local integration workflows only. Operator-configured gateway endpoints remain governed by host configuration after the original WAP destination is validated.</li>
+<li>policy behavior is deterministic in transport error mapping (<code>INVALID_REQUEST</code> for blocked destinations) and does not alter engine navigation semantics.</li>
+</ol>
+<p>Current protocol stack posture:</p>
+<ol>
+<li>default profile: <code>wap-net-core</code> (native WDP/UDP -&gt; connectionless WSP
+transport ingress)</li>
+<li>extension profile: <code>wap-net-ext</code> remains future-gated for additional
+bearers, connection-oriented WSP/WTP, Push, and advanced session features</li>
+<li>security profile: <code>wtls=disabled|active-minimal</code> in current codepath, with transition decision tracked by <code>T0-14</code> and <code>T0-21</code></li>
+</ol>
+<p>Supported profile classes:</p>
+<ol>
+<li><code>gateway-bridged</code>: legacy gateway path retained as rollback posture and local smoke comparison lane.</li>
+<li><code>wap-net-core</code>: active native WDP/UDP -&gt; connectionless WSP path with
+mandatory selected-profile method support (<code>Get</code>/<code>Post</code>/<code>Reply</code>) and
+deterministic request state; WTP is not activated by this profile.</li>
+<li><code>wap-net-ext</code>: future extension mode enabling additional bearers,
+connection-oriented WSP/WTP, Push, and optional advanced sessions after
+explicit gate decisions.</li>
+</ol>
+<p>Transport profile decision rules:</p>
+<ol>
+<li>all transport behavior must be deterministic under a named profile</li>
+<li>all profile promotions are gated by completed protocol fixtures and ticket chain</li>
+<li>request/response contract to browser and engine must remain stable across profile changes</li>
+<li>profile moves require <code>docs/waves/networking-migration-readiness-checklist.md</code> gate completion for the relevant <code>T0-08..T0-17</code> items</li>
+<li>protocol-native readiness uses <code>T0-18..T0-24</code> implementation evidence,
+while exact WDP/WCMP/connectionless-WSP conformance remains gated by
+<code>TRN-701</code>, <code>TRN-703</code>, and <code>WSP-801</code>/<code>802</code>/<code>804</code>/<code>805</code>; WTP evidence becomes
+release-gating only when the extension profile claims connection-oriented
+WSP</li>
+<li>transport-adjacent TCP posture for <code>RQ-TRX-009</code> is declaration-gated in <code>docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code> and tracked by <code>T0-12</code></li>
+<li>SMPP adaptation (<code>RQ-TRX-010</code>, <code>WAP-159</code>) is currently deferred by <code>T0-13</code>; no transport-rust SMPP mapping path is active in MVP profile</li>
+<li>canonical profile-state and rollback criteria are defined in <code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> and validated by <code>node scripts/check-networking-profile-gates.mjs</code></li>
+</ol>
+<p>Request example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "action"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"fetchDeck"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wap://example.com/login.wml"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Response example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "status"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "contentType"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text/vnd.wap.wml"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "body"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"&lt;wml&gt;...&lt;/wml&gt;"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="protocol-evolution-plan">Protocol Evolution Plan</h2>
+<ul>
+<li>Keep transport-rust as the single transport implementation.</li>
+<li>Expand protocol coverage incrementally behind tests and fixture-based checks.</li>
+<li>Preserve strict boundary ownership: transport handles network/protocol/decode, engine handles runtime/rendering.</li>
+<li>Current networking-lane regroup priority order is <code>T0-19 -&gt; T0-18 -&gt; T0-20 -&gt; T0-22 -&gt; T0-21</code>, with migration dependencies tracked in <code>T0-08..T0-17</code>.</li>
+<li>Future transport profiles should update both this plan and <code>docs/waves/networking-implementation-checklist.md</code> before feature introduction.</li>
+</ul>
+<h2 id="source-handling-path-for-transport-specs">Source handling path for transport specs</h2>
+<p>Spec-processing flow used by networking work:</p>
+<ol>
+<li>New files are staged in <code>spec-processing/new-source-material/</code>.</li>
+<li>Parsed markdown output for review appears in <code>tmp/docling-new-source-material/</code>.</li>
+<li><code>T0-16</code>/<code>T0-17</code> enforce canonicalization, conflict resolution, and deferment policy.</li>
+<li>Canonical PDFs for implementation are then sourced from <code>spec-processing/source-material/</code>.</li>
+</ol>
+<h2 id="renderer-correctness-gate">Renderer Correctness Gate</h2>
+<p>Do not expand protocol complexity until deterministic runtime execution is proven with fixtures.</p>
+<p>Minimum gate:</p>
+<ul>
+<li>20+ offline fixture decks</li>
+<li>multi-card navigation</li>
+<li><code>&lt;do&gt;</code> softkey behavior</li>
+<li>timer-driven <code>&lt;onevent&gt;</code></li>
+<li><code>&lt;setvar&gt;</code> behavior</li>
+<li>forward/back stack behavior</li>
+</ul>
+<p>Execution targets for gate:</p>
+<ul>
+<li>Tauri host (native runtime or WASM adapter)</li>
+<li>browser harness (<code>engine-wasm/host-sample</code>)</li>
+</ul>
+<h2 id="wtls-strategy">WTLS Strategy</h2>
+<p>Initial plan:</p>
+<ul>
+<li>simulate handshake semantics internally</li>
+<li>pass decrypted WSP payloads to runtime</li>
+<li>use modern TLS at bridge boundaries where needed</li>
+</ul>
+<p>WTLS modernization is deferred until transport parity is achieved.</p>
+<h2 id="future-targets">Future Targets</h2>
+<p>Because runtime is Rust-native, future host targets may include:</p>
+<ul>
+<li>Android (JNI)</li>
+<li>iOS (UniFFI/Swift interop)</li>
+<li>CLI runtime</li>
+<li>WASM PWA host</li>
+<li>headless simulation/test harnesses</li>
+</ul>
+<h2 id="initial-roadmap-planning">Initial Roadmap (Planning)</h2>
+<ul>
+<li>Tauri bootstrap: ~1 day</li>
+<li>WASM runtime MVP: ~2–3 weeks</li>
+<li>fixture suite expansion: ~3–5 days</li>
+<li>Rust WBXML decode: ~1 week</li>
+<li>Rust WSP parse: ~1–2 weeks</li>
+</ul>
+<h2 id="repository-mapping">Repository Mapping</h2>
+<ul>
+<li>Runtime/WASM: <code>engine-wasm/</code></li>
+<li>Host shell (Tauri): <code>browser/</code></li>
+<li>Transport library: <code>transport-rust/</code></li>
+<li>Architecture docs: <code>docs/</code></li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>Waves is runtime-first.</p>
+<ul>
+<li>deterministic WML execution comes before protocol rewrite</li>
+<li>host shell remains replaceable</li>
+<li>transport capability expansion proceeds in bounded phases</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-technical-architecture">Waves Technical Architecture</a></li><li class="depth-2"><a href="#project-overview">Project Overview</a></li><li class="depth-2"><a href="#design-philosophy">Design Philosophy</a></li><li class="depth-2"><a href="#external-architecture-alignment">External Architecture Alignment</a></li><li class="depth-2"><a href="#system-architecture">System Architecture</a></li><li class="depth-3"><a href="#1-runtime-core-rust">1) Runtime Core (Rust)</a></li><li class="depth-3"><a href="#2-runtime-targets">2) Runtime Targets</a></li><li class="depth-3"><a href="#3-host-shell-tauri">3) Host Shell (Tauri)</a></li><li class="depth-2"><a href="#transport-strategy">Transport Strategy</a></li><li class="depth-3"><a href="#current-state">Current state</a></li><li class="depth-2"><a href="#protocol-evolution-plan">Protocol Evolution Plan</a></li><li class="depth-2"><a href="#source-handling-path-for-transport-specs">Source handling path for transport specs</a></li><li class="depth-2"><a href="#renderer-correctness-gate">Renderer Correctness Gate</a></li><li class="depth-2"><a href="#wtls-strategy">WTLS Strategy</a></li><li class="depth-2"><a href="#future-targets">Future Targets</a></li><li class="depth-2"><a href="#initial-roadmap-planning">Initial Roadmap (Planning)</a></li><li class="depth-2"><a href="#repository-mapping">Repository Mapping</a></li><li class="depth-2"><a href="#summary">Summary</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/technical_architecture.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

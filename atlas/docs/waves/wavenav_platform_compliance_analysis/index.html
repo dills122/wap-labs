@@ -1,0 +1,730 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WaveNav Platform Compliance Analysis (WAP UA Runtime) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wavenav_platform_compliance_analysis"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wavenav_platform_compliance_analysis.md</p><div class="markdown-body"><h1 id="wavenav-platform-compliance-analysis-wap-ua-runtime">WaveNav Platform Compliance Analysis (WAP UA Runtime)</h1>
+<p>Date: 2026-03-02<br>
+Scope: canonical root-level <code>spec-processing/source-material/</code> corpus plus in-repo backlog/work tracking.</p>
+<h2 id="implementation-requirements-matrix">Implementation Requirements Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>Req ID</th>
+<th>Domain</th>
+<th>Requirement Description</th>
+<th>Source Document</th>
+<th style="text-align: right">Page</th>
+<th>Normative Language</th>
+<th>Plain-English Runtime Obligation</th>
+<th>Suggested Engine Module Responsible</th>
+<th>Complexity</th>
+<th>Existing Work Item Mapping</th>
+<th>Implementation Status</th>
+<th>Spec Accuracy Check</th>
+<th>Backlog Correction Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UA-RQ-001</td>
+<td>A</td>
+<td>Deck/card model must include navigable card set (<code>wml -&gt; card+</code>) with deterministic reference processing behavior.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">67, 70</td>
+<td>MUST</td>
+<td>Parser/runtime must reject deck without cards and execute inter-card traversal in spec-equivalent order.</td>
+<td><code>engine-wasm/parser</code>, <code>engine-wasm/runtime</code></td>
+<td>Medium</td>
+<td><code>A1-01</code> (<code>done</code>), <code>WML-R-001</code></td>
+<td>Partially Implemented</td>
+<td>Backlog captures parse invariant, but under-specifies full traversal algorithm.</td>
+<td>Extend <code>A1</code> acceptance to include 12.5 step-order parity fixtures (newcontext/timer/event order).</td>
+</tr>
+<tr>
+<td>UA-RQ-002</td>
+<td>B/H</td>
+<td>UA must implement history stack; each entry must record absolute URL, method, postfields, and request headers.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">21</td>
+<td>MUST</td>
+<td>History entries cannot be only card indices; they need request identity/state to support spec-correct back behavior.</td>
+<td><code>engine-wasm/runtime</code>, <code>browser/session-history</code></td>
+<td>High</td>
+<td><code>A2-03</code> (<code>done</code>), <code>WML-R-008</code>, <code>RQ-WAE-016</code></td>
+<td>Incorrect Implementation Suspected</td>
+<td>Existing item says baseline done but implementation stores only card index stack.</td>
+<td>Re-open <code>A2-03</code> scope or add P0 fix ticket for history-entry schema expansion.</td>
+</tr>
+<tr>
+<td>UA-RQ-003</td>
+<td>B/L</td>
+<td><code>prev</code> must pop history and return user to previous card; pop semantics apply deterministically.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">21, 25, 68</td>
+<td>MUST</td>
+<td>Back navigation must be true <code>prev</code> semantics, not generic host back fallback only.</td>
+<td><code>engine-wasm/runtime/nav</code>, <code>browser</code></td>
+<td>Medium</td>
+<td><code>A2-03</code> (<code>done</code>), <code>RQ-WAE-017</code> (<code>partial</code>)</td>
+<td>Partially Implemented</td>
+<td>Current behavior pops internal stack but lacks full request-context restore semantics.</td>
+<td>Add parity AC for method/postfield/header restoration on back.</td>
+</tr>
+<tr>
+<td>UA-RQ-004</td>
+<td>D/J</td>
+<td>For same-deck targets, UA must ignore <code>postfield</code> unless <code>cache-control="no-cache"</code>.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">23</td>
+<td>MUST</td>
+<td>Intra-deck <code>go</code> must not submit fields unless explicit no-cache reload path is requested.</td>
+<td><code>engine-wasm/task executor</code>, <code>transport-rust</code></td>
+<td>Medium</td>
+<td><code>WML-R-019</code> (<code>P2 planned</code>)</td>
+<td>Not Implemented</td>
+<td>Backlog defers forms; no guard for this mandatory behavior path.</td>
+<td>Promote minimal <code>go/postfield</code> suppression semantics to P1.</td>
+</tr>
+<tr>
+<td>UA-RQ-005</td>
+<td>J/F</td>
+<td><code>cache-control=no-cache</code> on <code>go</code> requires origin reload and corresponding HTTP header propagation.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">23</td>
+<td>MUST</td>
+<td>Task execution must force network reload and preserve cache-control intent in outbound request.</td>
+<td><code>engine-wasm</code> + <code>browser/contracts/transport.ts</code> + <code>transport-rust</code></td>
+<td>High</td>
+<td>No direct work item</td>
+<td>Not Implemented</td>
+<td>Gap: no runtime field for <code>cache-control</code> task intent.</td>
+<td>Add cross-layer contract ticket (engine task metadata -&gt; transport request policy).</td>
+</tr>
+<tr>
+<td>UA-RQ-006</td>
+<td>F/E</td>
+<td><code>sendreferer=true</code> requires referring deck URI; smallest relative URI when possible.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">23</td>
+<td>MUST / SHALL</td>
+<td>Runtime must emit referer policy metadata; transport/host must serialize it.</td>
+<td><code>engine-wasm</code>, <code>transport-rust</code></td>
+<td>Medium</td>
+<td>No direct work item</td>
+<td>Not Implemented</td>
+<td>Not represented in active queue.</td>
+<td>Add P1 request-metadata work item (<code>go</code> referer semantics).</td>
+</tr>
+<tr>
+<td>UA-RQ-007</td>
+<td>L</td>
+<td>UA must ignore illegal <code>onevent</code> type for enclosing element.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">33</td>
+<td>MUST</td>
+<td>Invalid intrinsic-event bindings cannot crash or execute; must be ignored deterministically.</td>
+<td><code>engine-wasm/parser/runtime</code></td>
+<td>Low</td>
+<td><code>WML-R-013</code> (planned), parser partial behavior</td>
+<td>Partially Implemented</td>
+<td>Parser currently only extracts <code>onenterforward</code>; behavior for full intrinsic set not covered.</td>
+<td>Expand parser event matrix and illegal-event ignore tests.</td>
+</tr>
+<tr>
+<td>UA-RQ-008</td>
+<td>L/H</td>
+<td>Inter-card traversal process is normative and must be indistinguishable from reference model.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">67-68</td>
+<td>MUST</td>
+<td>Execute <code>go</code>/<code>prev</code>/<code>refresh</code> in mandated step order (setvar substitution, access, destination, history, events, timer, render).</td>
+<td><code>engine-wasm/task runtime</code></td>
+<td>High</td>
+<td><code>B2</code>, <code>B3</code>, <code>B4</code> (<code>planned</code>)</td>
+<td>Not Implemented</td>
+<td>Existing phased plan defers core mandatory process edges.</td>
+<td>Introduce P0 conformance fixture harness for 12.5 step pipeline.</td>
+</tr>
+<tr>
+<td>UA-RQ-009</td>
+<td>I</td>
+<td>On task execution failure, UA must notify user and preserve invoking card/context (no partial state mutation).</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">68</td>
+<td>MUST</td>
+<td>Failures must be surfaced to UI and rollback pending state/event effects.</td>
+<td><code>engine-wasm/error model</code>, <code>browser UI</code></td>
+<td>Medium</td>
+<td><code>Q1</code> error taxonomy (<code>planned</code>)</td>
+<td>Partially Implemented</td>
+<td>Errors bubble as strings; no explicit rollback/error class contract to host.</td>
+<td>Add structured task-failure error code + rollback assertion tests.</td>
+</tr>
+<tr>
+<td>UA-RQ-010</td>
+<td>D/H</td>
+<td>Input commit must enforce mask validity; invalid input must not commit and must notify user.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">52</td>
+<td>MUST</td>
+<td>Form editor must validate and block invalid commit without mutating backing variable.</td>
+<td><code>engine-wasm/forms/input</code></td>
+<td>High</td>
+<td><code>C1</code> (<code>planned</code>)</td>
+<td>Not Implemented</td>
+<td>Correctly planned but currently out of active scope despite mandatory UA behavior in WML mode.</td>
+<td>Split minimal <code>input</code> conformance subset into earlier phase.</td>
+</tr>
+<tr>
+<td>UA-RQ-011</td>
+<td>D/G</td>
+<td>Invalid masks ignored; UA must support ASCII graphic chars at minimum.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">53</td>
+<td>MUST</td>
+<td>Validation engine must tolerate bad masks and enforce baseline char support.</td>
+<td><code>engine-wasm/forms</code></td>
+<td>Medium</td>
+<td><code>C1</code> (<code>planned</code>)</td>
+<td>Not Implemented</td>
+<td>Edge-case behavior absent from backlog AC text.</td>
+<td>Add explicit mask-failure + ASCII baseline AC to C1.</td>
+</tr>
+<tr>
+<td>UA-RQ-012</td>
+<td>L/J</td>
+<td>Timer lifecycle: start on entry, stop on exit, ontimer dispatch; invalid timeout ignored.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">56-57</td>
+<td>MUST</td>
+<td>Card timer must be runtime-owned with deterministic scheduling semantics tied to card lifecycle.</td>
+<td><code>engine-wasm/runtime/events</code> + host timer adapter</td>
+<td>High</td>
+<td><code>B4</code> (<code>planned</code>), <code>W0-05</code> (<code>in-progress</code>, script timers only)</td>
+<td>Partially Implemented</td>
+<td>Current timer plumbing is script-hostcall effects, not WML <code>&lt;timer&gt;</code> lifecycle semantics.</td>
+<td>Add dedicated WML timer execution ticket separate from script timer hostcalls.</td>
+</tr>
+<tr>
+<td>UA-RQ-013</td>
+<td>A/I</td>
+<td>Unknown/alternate DTD handling: render as if unknown tags absent; content inside unknown elements should render.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">67</td>
+<td>SHOULD / SHOULD</td>
+<td>Parser must degrade gracefully and preserve textual content through unknown wrappers.</td>
+<td><code>engine-wasm/parser</code></td>
+<td>Medium</td>
+<td><code>A1-01</code>, <code>WML-R-020</code></td>
+<td>Partially Implemented</td>
+<td>Unknown tags are skipped; content-preservation guarantees are not comprehensively tested.</td>
+<td>Add unknown-wrapper content-preservation regression fixtures.</td>
+</tr>
+<tr>
+<td>UA-RQ-014</td>
+<td>G</td>
+<td>Tokenisation must validate variable reference syntax in <code>%vdata</code>/<code>%HREF</code>.</td>
+<td><code>WAP-191_104-WML-20010718-a.pdf</code></td>
+<td style="text-align: right">78</td>
+<td>MUST</td>
+<td>Encoding pipeline (gateway/tooling) must reject malformed variable references before runtime.</td>
+<td><code>transport-rust</code> / gateway boundary</td>
+<td>Medium</td>
+<td><code>RQ-RMK-007</code> docs only</td>
+<td>Planned</td>
+<td>Requirement exists in docs but not mapped to executable checks.</td>
+<td>Add transport-side tokenisation validation tests or explicit delegated-gateway contract AC.</td>
+</tr>
+<tr>
+<td>UA-RQ-015</td>
+<td>E/F</td>
+<td>UA must use MIME media type as component of content data-type determination.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">21</td>
+<td>MUST</td>
+<td>Load path must route by content type, not URL extension heuristics.</td>
+<td><code>transport-rust</code>, <code>browser host</code></td>
+<td>Low</td>
+<td><code>T0-02</code> (<code>done</code>), <code>RQ-WAE-001</code></td>
+<td>Implemented</td>
+<td>Mapping is accurate and implemented in normalization contract.</td>
+<td>None.</td>
+</tr>
+<tr>
+<td>UA-RQ-016</td>
+<td>H/E</td>
+<td>WML context (history + vars) must be maintained across XHTMLMP/WML navigation as single UA semantics.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">23</td>
+<td>MUST</td>
+<td>If mixed-language mode exists, state continuity must remain intact.</td>
+<td><code>browser/session-state</code>, <code>engine-wasm</code></td>
+<td>High</td>
+<td><code>RQ-WAE-002</code> traceability only</td>
+<td>Not Implemented</td>
+<td>No active item establishes cross-language state continuity policy/tests.</td>
+<td>Add explicit deferred/disabled mode flag or implement continuity contract.</td>
+</tr>
+<tr>
+<td>UA-RQ-017</td>
+<td>C/G</td>
+<td>UA must support WMLScript + standard libs (text and/or bytecode forms).</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">25, 44</td>
+<td>MUST</td>
+<td>Engine must expose conformant WMLScript execution mode and stdlib surface (or declare non-conformant mode).</td>
+<td><code>engine-wasm/wavescript</code></td>
+<td>High</td>
+<td><code>W0-01..W0-05</code></td>
+<td>Partially Implemented</td>
+<td>Work exists; backlog status overstates conformance for verification/stdlib breadth.</td>
+<td>Reclassify current WaveScript as subset profile until full RQ-WMLS coverage lands.</td>
+</tr>
+<tr>
+<td>UA-RQ-018</td>
+<td>J/F</td>
+<td>UA must support WAP caching model.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">46</td>
+<td>MUST</td>
+<td>Fetch path needs deterministic cache policy/invalidation semantics for decks/scripts/media.</td>
+<td><code>transport-rust</code>, <code>browser</code></td>
+<td>High</td>
+<td>No concrete active ticket</td>
+<td>Not Implemented</td>
+<td>Identified in traceability but no executable backlog item.</td>
+<td>Add P0/P1 cache policy ticket with invalidation triggers.</td>
+</tr>
+<tr>
+<td>UA-RQ-019</td>
+<td>F</td>
+<td>Minimum URI length handling (1024 octets) and HTTP/HTTPS routing profile requirements.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">46</td>
+<td>MUST</td>
+<td>Parser/transport must accept and forward 1024-octet URIs with deterministic failure beyond bounds.</td>
+<td><code>transport-rust</code></td>
+<td>Medium</td>
+<td><code>RQ-WAE-010</code> in docs; no explicit test item</td>
+<td>Partially Implemented</td>
+<td>Not explicitly asserted in tests/backlog acceptance.</td>
+<td>Add boundary URI fixture tests and explicit error mapping.</td>
+</tr>
+<tr>
+<td>UA-RQ-020</td>
+<td>G/F</td>
+<td>UA/proxy must support UTF-8 and UTF-16 and RFC3023 character-encoding treatment for XML content.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">36, 47, 50</td>
+<td>MUST</td>
+<td>Decode path must correctly process UTF-8/UTF-16 and emit deterministic encoding errors.</td>
+<td><code>transport-rust</code>, <code>engine-wasm input boundary</code></td>
+<td>Medium</td>
+<td><code>RQ-WAE-012</code> traced; tests marked planned</td>
+<td>Partially Implemented</td>
+<td>Coverage matrix still shows missing deterministic encoding-path tests.</td>
+<td>Add encoding conformance fixture pack (UTF-16, invalid BOM, mismatched charset).</td>
+</tr>
+<tr>
+<td>UA-RQ-021</td>
+<td>E/F</td>
+<td>UA capability advertising must use Accept/Accept-Charset/Accept-Encoding/Accept-Language headers.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">37</td>
+<td>MUST</td>
+<td>Transport requests from UA profile must include capability headers when advertising enabled.</td>
+<td><code>transport-rust</code>, <code>browser host</code></td>
+<td>Medium</td>
+<td><code>RQ-WAE-013</code> traced only</td>
+<td>Not Implemented</td>
+<td>No evidence of outbound capability header policy in active implementation tickets.</td>
+<td>Add feature-gated UA header emission policy and tests.</td>
+</tr>
+<tr>
+<td>UA-RQ-022</td>
+<td>E/B/L</td>
+<td>BACK key must always be available; BACK pop; WML1 BACK executes <code>prev</code>; <code>do type=prev</code> first in doc-order overrides.</td>
+<td><code>WAP-236-WAESpec-20020207-a.pdf</code></td>
+<td style="text-align: right">42, 48</td>
+<td>MUST / MUST / MUST</td>
+<td>Host UI + runtime action resolution must preserve hard BACK semantics and WML override precedence.</td>
+<td><code>browser frontend</code>, <code>engine-wasm parser/task resolver</code></td>
+<td>High</td>
+<td><code>M0-03</code> (<code>done</code>), <code>RQ-WAE-017</code> partial</td>
+<td>Partially Implemented</td>
+<td>Hybrid back exists, but <code>do type=prev</code> override precedence across full task model is not complete.</td>
+<td>Add explicit <code>BACK</code> precedence conformance tests in browser + engine.</td>
+</tr>
+<tr>
+<td>UA-RQ-023</td>
+<td>C/G</td>
+<td>Textual WMLScript must be compiled to bytecode before interpreter execution.</td>
+<td><code>WAP-193_101-WMLScript-20010928-a.pdf</code></td>
+<td style="text-align: right">69</td>
+<td>MUST</td>
+<td>Script ingestion path must either compile text-&gt;bytecode or reject unsupported text form deterministically.</td>
+<td><code>transport/gateway</code> + <code>engine-wasm</code></td>
+<td>Medium</td>
+<td><code>W0-02</code> (<code>done</code>, skeleton only)</td>
+<td>Partially Implemented</td>
+<td>Bytecode execution exists; text compilation path and mode negotiation not implemented.</td>
+<td>Add explicit text-form policy and compile/delegate behavior ticket.</td>
+</tr>
+<tr>
+<td>UA-RQ-024</td>
+<td>C/L</td>
+<td>External-call semantics: only <code>extern</code> functions externally callable; access checks before call; URL fragment parsing rules apply.</td>
+<td><code>WAP-193_101-WMLScript-20010928-a.pdf</code></td>
+<td style="text-align: right">32-33, 41, 73, 75</td>
+<td>MUST</td>
+<td>Invocation resolver must enforce external visibility, access-control pragma, and strict call syntax/arity.</td>
+<td><code>engine-wasm/wavescript loader+resolver</code></td>
+<td>High</td>
+<td><code>W0-01</code>, <code>W0-04</code></td>
+<td>Partially Implemented</td>
+<td>Existing script href parsing is simplified and does not enforce pragma/access model.</td>
+<td>Add call-resolution gate with <code>use url/access</code> metadata validation.</td>
+</tr>
+<tr>
+<td>UA-RQ-025</td>
+<td>G</td>
+<td>Bytecode verification and structural validity checks must run before execution.</td>
+<td><code>WAP-193_101-WMLScript-20010928-a.pdf</code></td>
+<td style="text-align: right">121, 136</td>
+<td>MUST</td>
+<td>Decoder must verify header/pools/index bounds/jump targets prior to VM run.</td>
+<td><code>engine-wasm/wavescript/decoder</code></td>
+<td>High</td>
+<td><code>W0-02</code> (<code>done</code>)</td>
+<td>Incorrect Implementation Suspected</td>
+<td><code>W0-02</code> marked done but currently checks only empty/size bounds.</td>
+<td>Re-open <code>W0-02</code> as baseline-only; add <code>W0-02b</code> verification-gates implementation.</td>
+</tr>
+<tr>
+<td>UA-RQ-026</td>
+<td>I</td>
+<td>Fatal errors abort current invocation and signal caller; non-fatal computational errors yield <code>invalid</code> value semantics.</td>
+<td><code>WAP-193_101-WMLScript-20010928-a.pdf</code></td>
+<td style="text-align: right">121-124, 136</td>
+<td>MUST</td>
+<td>VM must map fatal/non-fatal taxonomy deterministically and preserve host liveness.</td>
+<td><code>engine-wasm/wavescript/vm</code></td>
+<td>High</td>
+<td><code>W0-03</code> (<code>done</code>)</td>
+<td>Partially Implemented</td>
+<td>Trap model exists but spec-complete fatal/non-fatal categories are not implemented.</td>
+<td>Add explicit error-class matrix and conformance tests per chapter 12.</td>
+</tr>
+<tr>
+<td>UA-RQ-027</td>
+<td>C/H/J</td>
+<td>WMLBrowser <code>go/prev</code> deferred semantics: last call wins; <code>go("")</code> cancels pending nav; fatal abort cancels pending nav.</td>
+<td><code>WAP-194-WMLScriptLibraries-20000925-a.pdf</code></td>
+<td style="text-align: right">45-46</td>
+<td>MUST</td>
+<td>Runtime must queue nav intent until script return and enforce cancellation rules.</td>
+<td><code>engine-wasm/runtime/events</code>, <code>wavescript stdlib</code></td>
+<td>Medium</td>
+<td><code>W0-04</code> (<code>done</code>)</td>
+<td>Implemented</td>
+<td>This specific subset is well reflected and tested.</td>
+<td>None.</td>
+</tr>
+<tr>
+<td>UA-RQ-028</td>
+<td>C/H</td>
+<td><code>newContext()</code> must clear vars/history except current card; prev has no effect; go unaffected.</td>
+<td><code>WAP-194-WMLScriptLibraries-20000925-a.pdf</code></td>
+<td style="text-align: right">47</td>
+<td>MUST</td>
+<td>WMLBrowser stdlib must expose and execute context-reset semantics exactly.</td>
+<td><code>wavescript/stdlib/wmlbrowser</code> + runtime context</td>
+<td>High</td>
+<td><code>W0-04</code> (<code>done</code>, mapped to <code>RQ-WMLS-019</code>)</td>
+<td>Incorrect Implementation Suspected</td>
+<td><code>W0-04</code> status says done, but <code>newContext</code> API/behavior is absent in implementation.</td>
+<td>Correct <code>W0-04</code> status to partial and add explicit <code>newContext</code> implementation item.</td>
+</tr>
+<tr>
+<td>UA-RQ-029</td>
+<td>C/B</td>
+<td><code>getCurrentCard()</code> must return smallest relative URL when same base; absolute otherwise; invalid if no current card.</td>
+<td><code>WAP-194-WMLScriptLibraries-20000925-a.pdf</code></td>
+<td style="text-align: right">47</td>
+<td>MUST</td>
+<td>Script stdlib must expose current-card URI with base-aware formatting.</td>
+<td><code>wavescript/stdlib/wmlbrowser</code>, runtime URL model</td>
+<td>Medium</td>
+<td><code>W0-04</code> (<code>done</code>, mapped to <code>RQ-WMLS-020</code>)</td>
+<td>Incorrect Implementation Suspected</td>
+<td>API not present in hostcall function table.</td>
+<td>Add <code>getCurrentCard</code> hostcall and fixture tests; adjust backlog status.</td>
+</tr>
+<tr>
+<td>UA-RQ-030</td>
+<td>C/J</td>
+<td>Immediate <code>WMLBrowser.refresh</code> support is optional and must be feature-gated.</td>
+<td><code>WAP-194_103-WMLScriptLibraries-20020318-a.pdf</code></td>
+<td style="text-align: right">5</td>
+<td>OPTIONAL (O)</td>
+<td>Refresh immediate mode should be explicit capability flag; deferred baseline is acceptable.</td>
+<td><code>wavescript stdlib</code>, runtime capabilities</td>
+<td>Low</td>
+<td><code>W0-01</code> policy note, <code>W0-05</code> in progress</td>
+<td>Planned</td>
+<td>Backlog stance matches spec optionality.</td>
+<td>Keep as feature gate with explicit capability reporting.</td>
+</tr>
+<tr>
+<td>UA-RQ-031</td>
+<td>G</td>
+<td>WBXML tokenisation must convert XML markup to tokens; remove comments/XML declaration/doctype; preserve non-tokenizer PI; treat text tokens as CDATA.</td>
+<td><code>WAP-192-WBXML-20010725-a.pdf</code></td>
+<td style="text-align: right">19</td>
+<td>MUST</td>
+<td>Decode/encode boundary must preserve WBXML semantics exactly before handing XML/WML upward.</td>
+<td><code>transport-rust</code> / gateway decoder</td>
+<td>High</td>
+<td><code>T0-02</code> boundary ticket</td>
+<td>Partially Implemented</td>
+<td>Current boundary owns decode, but conformance-to-tokenisation semantics is not fully asserted.</td>
+<td>Add WBXML conformance fixtures targeting section 6.1 rules.</td>
+</tr>
+<tr>
+<td>UA-RQ-032</td>
+<td>G/F</td>
+<td>MIME type must associate WBXML token values; decoder must support both binary token and literal forms for tags/attrs/values.</td>
+<td><code>WAP-192-WBXML-20010725-a.pdf</code></td>
+<td style="text-align: right">20-21, 30</td>
+<td>MUST</td>
+<td>Content negotiation and decoder must handle mixed token/literal streams across versions.</td>
+<td><code>transport-rust</code> decoder integration</td>
+<td>Medium</td>
+<td><code>RQ-RMK-007</code>, <code>T0-02</code></td>
+<td>Planned</td>
+<td>Requirement is documented but test inventory incomplete.</td>
+<td>Add decoder compatibility tests for binary vs literal token paths.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="runtime-compliance-gap-report">Runtime Compliance GAP Report</h2>
+<h3 id="critical-p0-compliance-gaps">Critical P0 compliance gaps</h3>
+<ol>
+<li>History model is structurally non-compliant with WML/WAE requirements (<code>UA-RQ-002</code>, <code>UA-RQ-003</code>).</li>
+<li>WML task execution semantics (go/prev/refresh pipeline, failure rollback, cache-control) are incomplete (<code>UA-RQ-004</code>, <code>UA-RQ-005</code>, <code>UA-RQ-008</code>, <code>UA-RQ-009</code>).</li>
+<li>WMLScript backlog marks verification/context APIs as done while implementation is subset only (<code>UA-RQ-025</code>, <code>UA-RQ-028</code>, <code>UA-RQ-029</code>).</li>
+<li>WAP caching model and invalidation behavior is not implemented (<code>UA-RQ-018</code>).</li>
+</ol>
+<h3 id="high-impact-p1-gaps">High-impact P1 gaps</h3>
+<ol>
+<li>Form/input constraints and mask semantics are absent (<code>UA-RQ-010</code>, <code>UA-RQ-011</code>).</li>
+<li>WML timer lifecycle (<code>&lt;timer&gt;</code>) is distinct from script timer hostcalls and is missing (<code>UA-RQ-012</code>).</li>
+<li>Capability headers and URI boundary/charset conformance lack strong tests (<code>UA-RQ-019</code>, <code>UA-RQ-020</code>, <code>UA-RQ-021</code>).</li>
+<li>WMLScript external-call and access-control semantics are incomplete (<code>UA-RQ-024</code>).</li>
+</ol>
+<h3 id="already-stronglow-gap-areas">Already strong/low-gap areas</h3>
+<ol>
+<li>MIME-based content routing boundary is in place (<code>UA-RQ-015</code>).</li>
+<li>Deferred script navigation intent (<code>go/prev</code> last-call-wins) is implemented (<code>UA-RQ-027</code>).</li>
+<li>Unknown-tag non-crash robustness exists as baseline, but content-preservation coverage should expand (<code>UA-RQ-013</code>).</li>
+</ol>
+<h2 id="backlog-validation--accuracy-report">Backlog Validation + Accuracy Report</h2>
+<h3 id="accurate-backlog-mappings">Accurate backlog mappings</h3>
+<ol>
+<li><code>A1-01/A2-01/A2-02/A3-*</code> correctly capture parser/navigation/render determinism baseline.</li>
+<li><code>T0-02</code> correctly models WBXML decode ownership boundary (<code>engine</code> should not decode WBXML).</li>
+<li><code>W0-01</code> architecture constraints (VM in engine, host side-effects only) are aligned with spec intent.</li>
+</ol>
+<h3 id="inaccurate-or-over-claimed-backlog-items">Inaccurate or over-claimed backlog items</h3>
+<ol>
+<li><code>W0-02</code> marked <code>done</code> against <code>RQ-WMLS-009</code> (verification gates), but decoder performs only empty/size checks.</li>
+<li><code>W0-04</code> marked <code>done</code> against <code>RQ-WMLS-019</code> (<code>newContext</code>) and <code>RQ-WMLS-020</code> (<code>getCurrentCard</code>), but these functions are absent.</li>
+<li><code>W0-03</code> claims broad <code>RQ-WMLS-006</code> type/conversion semantics done; VM is still a minimal opcode subset and does not implement full conversion/error rules.</li>
+<li><code>docs/wml-engine/ticket-plan.md</code> still frames WMLScript as deferred Phase D, while <code>docs/waves/WORK_ITEMS.md</code> and code have active W0 execution.</li>
+<li><code>A2-03</code> “history baseline done” is accurate only for MVP UX, not for standards-compliant history entry semantics.</li>
+</ol>
+<h2 id="required-work-items-backlog-missing-only">Required Work Items Backlog (Missing Only)</h2>
+<ol>
+<li><strong>P0 - Spec-Complete History Entry Model</strong></li>
+</ol>
+<ul>
+<li>Description: Replace index-only history with entry records containing absolute URL, method, postfields snapshot, request headers, and variable-substitution-resolved fields.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/runtime</code>, <code>browser/frontend/session-history</code>, <code>browser/contracts/transport.ts</code></li>
+<li>Spec Source Reference: <code>WAP-191_104</code> p21; <code>WAP-236</code> p41-42</li>
+<li>Priority: <code>P0</code></li>
+</ul>
+<ol start="2">
+<li><strong>P0 - WML Inter-card Task Pipeline Conformance (12.5)</strong></li>
+</ol>
+<ul>
+<li>Description: Implement spec-ordered <code>go/prev/refresh</code> execution pipeline including setvar substitution timing, newcontext processing, intrinsic-event hooks, timer start, and deterministic rollback on failure.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/task runtime</code>, parser action model</li>
+<li>Spec Source Reference: <code>WAP-191_104</code> p67-68</li>
+<li>Priority: <code>P0</code></li>
+</ul>
+<ol start="3">
+<li><strong>P0 - WMLScript Verification Gates</strong></li>
+</ol>
+<ul>
+<li>Description: Add bytecode structural verification (header, pools, bounds, jump targets, indexes) before VM execution.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/engine/src/wavescript/decoder.rs</code></li>
+<li>Spec Source Reference: <code>WAP-193_101</code> p121, p136 (<code>WMLS-C-107</code>, <code>WMLS-C-108</code>)</li>
+<li>Priority: <code>P0</code></li>
+</ul>
+<ol start="4">
+<li><strong>P0 - Correct WMLBrowser Context APIs (<code>newContext</code>, <code>getCurrentCard</code>)</strong></li>
+</ol>
+<ul>
+<li>Description: Implement missing stdlib functions and exact behavior for context reset and current-card URL derivation.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs</code>, runtime URL/context state</li>
+<li>Spec Source Reference: <code>WAP-194</code> p47</li>
+<li>Priority: <code>P0</code></li>
+</ul>
+<ol start="5">
+<li><strong>P1 - Cache-Control and Deck Reload Semantics</strong></li>
+</ol>
+<ul>
+<li>Description: Support <code>cache-control=no-cache</code> task metadata propagation and origin reload behavior, including intra-deck postfield suppression rules.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm</code> action model + <code>transport-rust</code> request pipeline</li>
+<li>Spec Source Reference: <code>WAP-191_104</code> p23; <code>WAP-236</code> p46 (<code>WAESpec-HTS-C-004</code>)</li>
+<li>Priority: <code>P1</code></li>
+</ul>
+<ol start="6">
+<li><strong>P1 - WML Input/Form Constraint Engine (Minimum Conformance Subset)</strong></li>
+</ol>
+<ul>
+<li>Description: Add input mask enforcement, commit blocking, initialization order, and invalid-mask ignore behavior.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/forms</code></li>
+<li>Spec Source Reference: <code>WAP-191_104</code> p52-53</li>
+<li>Priority: <code>P1</code></li>
+</ul>
+<ol start="7">
+<li><strong>P1 - WML <code>&lt;timer&gt;</code> Lifecycle Runtime</strong></li>
+</ol>
+<ul>
+<li>Description: Implement card timer initialization/start/stop/resume and ontimer dispatch independent of script-host timer calls.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/runtime/events</code></li>
+<li>Spec Source Reference: <code>WAP-191_104</code> p56-57</li>
+<li>Priority: <code>P1</code></li>
+</ul>
+<ol start="8">
+<li><strong>P1 - WMLScript External Access-Control Semantics</strong></li>
+</ol>
+<ul>
+<li>Description: Enforce <code>extern</code> visibility and <code>use access</code> domain/path checks for external function invocation.</li>
+<li>Affected Engine Subsystem: <code>engine-wasm/wavescript invocation resolver</code></li>
+<li>Spec Source Reference: <code>WAP-193_101</code> p32-33, p41, p75</li>
+<li>Priority: <code>P1</code></li>
+</ul>
+<ol start="9">
+<li><strong>P1 - UA Capability Header Emission + Validation</strong></li>
+</ol>
+<ul>
+<li>Description: Add profile-driven Accept header emission (<code>Accept</code>, <code>Accept-Charset</code>, <code>Accept-Encoding</code>, <code>Accept-Language</code>) and negotiation tests.</li>
+<li>Affected Engine Subsystem: <code>browser host</code>, <code>transport-rust</code></li>
+<li>Spec Source Reference: <code>WAP-236</code> p37</li>
+<li>Priority: <code>P1</code></li>
+</ul>
+<ol start="10">
+<li><strong>P2 - WBXML Token/Literal Compatibility Fixture Suite</strong></li>
+</ol>
+<ul>
+<li>Description: Add decoder conformance tests for literal-vs-token paths and section 6.1 tokenization semantics.</li>
+<li>Affected Engine Subsystem: <code>transport-rust</code></li>
+<li>Spec Source Reference: <code>WAP-192</code> p19-21, p30</li>
+<li>Priority: <code>P2</code></li>
+</ul>
+<h2 id="backlog-correction-recommendations">Backlog Correction Recommendations</h2>
+<ol>
+<li>Keep <code>W0-02</code> as historical <code>done</code> and track verification scope via additive follow-up ticket <code>W0-06</code>.</li>
+<li>Keep <code>W0-04</code> as historical <code>done</code> and close missing <code>newContext</code>/<code>getCurrentCard</code> semantics via additive follow-up ticket <code>W0-07</code>.</li>
+<li>Keep <code>W0-03</code> as historical <code>done</code> and track broader conversion/access-control completeness via additive follow-up tickets (<code>W0-08</code> and subsequent conformance tickets).</li>
+<li>Update <code>docs/wml-engine/ticket-plan.md</code> to remove stale “WMLScript deferred” statement or explicitly scope it to non-W0 engine plan only.</li>
+<li>Reclassify <code>A2-03</code> as “MVP history baseline done” and add standards-compliance follow-up for mandatory entry fields.</li>
+<li>Add explicit AC in <code>C1/C2</code> for page-52/53 mask/commit semantics and page-23 postfield/cache-control behavior.</li>
+</ol>
+<h2 id="spec-coverage-confidence-summary">Spec Coverage Confidence Summary</h2>
+<ul>
+<li><strong>High confidence</strong>: WML navigation/history core obligations, WAE BACK/history obligations, WMLScript deferred-nav semantics (<code>go/prev</code>), and decoder/VM status mismatch findings.</li>
+<li><strong>Medium confidence</strong>: Transport-adjacent capability header and caching assertions (traceability exists, implementation evidence is partial and distributed).</li>
+<li><strong>Residual risk</strong>: Some normative obligations are represented through conformance tables/SCR references rather than complete algorithm text in current backlog; additional fixture-level verification is still required for full conformance evidence.</li>
+</ul>
+<h2 id="current-status-snapshot-2026-03-02">Current Status Snapshot (2026-03-02)</h2>
+<h3 id="overall-project-posture">Overall project posture</h3>
+<ul>
+<li>Platform is in a strong pre-alpha foundation state: deterministic deck loading/navigation loop exists, WBXML decode boundary ownership is explicit, and WaveScript runtime lane is active.</li>
+<li>Compliance work is now concentrated in defined closure lanes instead of broad unknowns:
+<ul>
+<li>WML full-stack closure (<code>R0-*</code>)</li>
+<li>WMLScript bedrock closure (<code>W0-06..08</code>, <code>W1-01..05</code>)</li>
+<li>Transport bedrock closure (<code>T0-08..11</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="near-sprint-feasibility-few-working-days">Near-sprint feasibility (few working days)</h3>
+<ul>
+<li>Achievable in one focused sprint:
+<ul>
+<li>move WMLScript and transport lanes from broad <code>partial/planned</code> to materially improved conformance posture by landing early bedrock tickets and fixture packs.</li>
+</ul>
+</li>
+<li>Not achievable in one sprint:
+<ul>
+<li>full protocol-complete WAP transport replacement with broad bearer/profile parity.</li>
+</ul>
+</li>
+</ul>
+<h3 id="sprint-ready-bedrock-slice-implementation-ticket-cut">Sprint-ready bedrock slice (implementation ticket cut)</h3>
+<ul>
+<li><code>W1-02</code>: bytecode structural verification gates.</li>
+<li><code>W1-06</code>: fatal/non-fatal script error taxonomy and <code>invalid</code> semantics.</li>
+<li><code>R0-03</code>: history entry schema + context fidelity closure.</li>
+<li><code>R0-06</code>: runtime-to-transport request-policy plumbing (<code>cache-control</code>, <code>sendreferer</code>, postfield context).</li>
+<li><code>T0-15</code>: WAP caching baseline and invalidation semantics.</li>
+<li><code>R0-09</code>: BACK hard-availability + <code>do type=prev</code> precedence behavior.</li>
+</ul>
+<p>Expected sprint outcome:</p>
+<ul>
+<li>High-priority misses for <code>UA-RQ-002/003/005/018/026</code> materially reduced with test-backed acceptance criteria.</li>
+</ul>
+<h3 id="architecture-level-transport-decision">Architecture-level transport decision</h3>
+<ul>
+<li><code>T0-14</code> resolved the profile boundary and later native slices activated
+<code>wap-net-core</code>.</li>
+<li>The strict profile is native WDP/UDP -&gt; connectionless WSP with selected
+WCMP behavior; connection-oriented WSP/WTP is conditional extension scope.</li>
+<li>Exact source-row closure remains open under <code>TRN-701</code>, <code>TRN-703</code>, and
+<code>WSP-801</code>/<code>802</code>/<code>804</code>/<code>805</code>.</li>
+</ul>
+<h3 id="rerun-delta-check-remaining-35-file-wave">Rerun delta check (remaining 35-file wave)</h3>
+<ul>
+<li>Net-new high-impact compliance misses discovered: none beyond currently tracked closure lanes.</li>
+<li>Outcome of this pass is confidence uplift and source-validation tightening across:
+<ul>
+<li>runtime-markup lineage (<code>WAP-191*</code>, <code>WAP-192*</code>, <code>WAP-238</code>, <code>spec-wml-19990616</code>)</li>
+<li>WMLScript lineage (<code>WAP-193</code>, <code>WAP-194</code>, <code>WAP-194_103</code>)</li>
+<li>WAE lineage (<code>WAP-236</code>, <code>WAP-237</code>)</li>
+<li>security/security-PKI/architecture/deferred families</li>
+</ul>
+</li>
+</ul>
+<h3 id="rerun-delta-check-base-13-file-wave">Rerun delta check (base 13-file wave)</h3>
+<ul>
+<li>Net-new high-impact compliance misses discovered: none beyond currently tracked closure lanes.</li>
+<li>Table-normalization check for this wave reported no unresolved table-caption ambiguities (<code>38/38</code> normalized in <code>tmp/docling-rerun/cleanup-report.txt</code>).</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wavenav-platform-compliance-analysis-wap-ua-runtime">WaveNav Platform Compliance Analysis (WAP UA Runtime)</a></li><li class="depth-2"><a href="#implementation-requirements-matrix">Implementation Requirements Matrix</a></li><li class="depth-2"><a href="#runtime-compliance-gap-report">Runtime Compliance GAP Report</a></li><li class="depth-3"><a href="#critical-p0-compliance-gaps">Critical P0 compliance gaps</a></li><li class="depth-3"><a href="#high-impact-p1-gaps">High-impact P1 gaps</a></li><li class="depth-3"><a href="#already-stronglow-gap-areas">Already strong/low-gap areas</a></li><li class="depth-2"><a href="#backlog-validation--accuracy-report">Backlog Validation + Accuracy Report</a></li><li class="depth-3"><a href="#accurate-backlog-mappings">Accurate backlog mappings</a></li><li class="depth-3"><a href="#inaccurate-or-over-claimed-backlog-items">Inaccurate or over-claimed backlog items</a></li><li class="depth-2"><a href="#required-work-items-backlog-missing-only">Required Work Items Backlog (Missing Only)</a></li><li class="depth-2"><a href="#backlog-correction-recommendations">Backlog Correction Recommendations</a></li><li class="depth-2"><a href="#spec-coverage-confidence-summary">Spec Coverage Confidence Summary</a></li><li class="depth-2"><a href="#current-status-snapshot-2026-03-02">Current Status Snapshot (2026-03-02)</a></li><li class="depth-3"><a href="#overall-project-posture">Overall project posture</a></li><li class="depth-3"><a href="#near-sprint-feasibility-few-working-days">Near-sprint feasibility (few working days)</a></li><li class="depth-3"><a href="#sprint-ready-bedrock-slice-implementation-ticket-cut">Sprint-ready bedrock slice (implementation ticket cut)</a></li><li class="depth-3"><a href="#architecture-level-transport-decision">Architecture-level transport decision</a></li><li class="depth-3"><a href="#rerun-delta-check-remaining-35-file-wave">Rerun delta check (remaining 35-file wave)</a></li><li class="depth-3"><a href="#rerun-delta-check-base-13-file-wave">Rerun delta check (base 13-file wave)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wavenav_platform_compliance_analysis.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

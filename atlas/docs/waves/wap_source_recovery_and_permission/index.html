@@ -1,0 +1,298 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 Source Recovery and Permission Runbook · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_source_recovery_and_permission"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_source_recovery_and_permission.md</p><div class="markdown-body"><h1 id="wap-121-source-recovery-and-permission-runbook">WAP 1.2.1 Source Recovery and Permission Runbook</h1>
+<p>Version: v0.4
+Status: active; WAP-215 and private research ingestion complete, public
+promotion pending</p>
+<h2 id="purpose">Purpose</h2>
+<p>This runbook separates four questions that must not be collapsed:</p>
+<ol>
+<li>Is the source identity authoritative?</li>
+<li>Has an exact research copy been recovered and hash-verified?</li>
+<li>Is the recovered copy sufficient for the selected conformance profile?</li>
+<li>May the source binary or a parsed derivative be republished in this
+repository?</li>
+</ol>
+<p>It is an operational source-recovery record, not legal advice or a
+certification claim.</p>
+<h2 id="current-result">Current result</h2>
+<table>
+<thead>
+<tr>
+<th>Source set</th>
+<th style="text-align: right">Authority lock</th>
+<th style="text-align: right">Private research acquisition</th>
+<th>Public repository state</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAP 1.2.1 technical release</td>
+<td style="text-align: right">97/97 members</td>
+<td style="text-align: right">97/97 exact PDFs and 97/97 text extractions</td>
+<td>21 exact members already canonical; 76 recovered/different members held</td>
+</tr>
+<tr>
+<td>Associated release DTDs</td>
+<td style="text-align: right">6/6</td>
+<td style="text-align: right">6/6 hash-verified</td>
+<td>Metadata-only</td>
+</tr>
+<tr>
+<td>General conformance sources</td>
+<td style="text-align: right">WAP-215, WAP-221, and WAP-273</td>
+<td style="text-align: right">3/3 hash-verified</td>
+<td>Metadata-only</td>
+</tr>
+<tr>
+<td>WAP-215 class requirements</td>
+<td style="text-align: right">Official live WAP Forum object</td>
+<td style="text-align: right">47,936-byte approved PDF and text extraction verified</td>
+<td>Exact six-profile ledger recorded; source/derivative held</td>
+</tr>
+<tr>
+<td>Locked external dependencies</td>
+<td style="text-align: right">43/43 acquisition records</td>
+<td style="text-align: right">36 full, 2 partial, 5 licensed-payload metadata-only</td>
+<td>Metadata-only</td>
+</tr>
+<tr>
+<td>Remaining external citation labels</td>
+<td style="text-align: right">60 labels in three groups</td>
+<td style="text-align: right">Selected Class C non-blocking; affected profiles remain gated</td>
+<td>Explicit owned queue</td>
+</tr>
+</tbody>
+</table>
+<p>Machine-readable evidence:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-ingestion-status.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-release.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-external-dependencies.json</code></li>
+</ul>
+<p>The WAP release ingestion covers 2,270 PDF pages, 9,988,119 PDF bytes, and
+5,703,023 extracted-text bytes. The external acquisition ledger covers 48
+artifacts totaling 14,588,705 bytes.</p>
+<h2 id="why-some-wap-documents-look-locked">Why some WAP documents look locked</h2>
+<p>This was not a document purchase paywall.</p>
+<p>The archived WAP 1.2.1 release page contains a maintainer note saying
+specification links had to route through:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>http://www1.wapforum.org/tech/terms.asp?doc=&lt;document&gt;</span></span></code></pre>
+<p>It also says documents were stored in the technical folder and mirrored on a
+WDS web site. The recovered 2000 gate page calls itself the WAP Copyright
+Licence and offered a royalty-free license after accepting its terms.</p>
+<p>The present access gap is therefore a combination of:</p>
+<ul>
+<li>obsolete click-through/authentication infrastructure;</li>
+<li>URL and host decay;</li>
+<li>incomplete WAP Forum-to-OMA migration;</li>
+<li>archive crawlers recording the gate instead of the protected payload.</li>
+</ul>
+<p>This differs from separately governed IEEE and ISO payloads, which may require
+licensed standards access.</p>
+<h2 id="redistribution-boundary">Redistribution boundary</h2>
+<p>The current
+<a href="https://www.openmobilealliance.org/about/policies/use-agreement/">OMA use agreement</a>
+allows document download and use subject to its terms, but prohibits network
+posting or publication without valid permission or license. It also prohibits
+modification.</p>
+<p>Until OMA confirms the intended repository use:</p>
+<ul>
+<li>recovered PDFs, DTDs, and parsed text stay outside Git;</li>
+<li>hashes, sizes, official URLs, retrieval dates, and logical cache references
+may be committed;</li>
+<li>temporary copies may be used to extract requirements and tests;</li>
+<li>a Wayback capture proves provenance, not redistribution permission;</li>
+<li>no live authentication control should be bypassed.</li>
+</ul>
+<p>After permission is recorded, use the existing staged
+<code>spec-processing/new-source-material/</code> workflow and preserve every original
+notice.</p>
+<h2 id="wap-215-recovery-record">WAP-215 recovery record</h2>
+<p>Target identity:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>WAP-215-ClassConform-20001213-a.pdf</span></span>
+<span class="line"><span>WAP June 2000 Class Conformance Requirements</span></span></code></pre>
+<p>Verified official routes:</p>
+<ul>
+<li>release page:
+<code>https://www.wapforum.org/what/technical_1_2_1.htm</code></li>
+<li>live official payload:
+<code>https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf</code></li>
+<li>historical click-through:
+<code>http://www1.wapforum.org/tech/terms.asp?doc=WAP-215-ClassConform-20001213-a.pdf</code></li>
+</ul>
+<p>The release page’s visible link text omits one zero (<code>2001213</code>), but its
+original query parameter and the WAP technical FAQ use the correct
+<code>20001213</code> identity.</p>
+<p>Successful recovery recorded on 2026-07-24:</p>
+<table>
+<thead>
+<tr>
+<th>Evidence</th>
+<th>Verified value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP result</td>
+<td><code>200 OK</code>, <code>application/pdf</code></td>
+</tr>
+<tr>
+<td>PDF size</td>
+<td>47,936 bytes</td>
+</tr>
+<tr>
+<td>PDF SHA-256</td>
+<td><code>af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d</code></td>
+</tr>
+<tr>
+<td>PDF structure</td>
+<td>PDF 1.2, 16 pages, unencrypted</td>
+</tr>
+<tr>
+<td>Document identity</td>
+<td><code>WAP-215-ClassConform-20001213-a</code>, approved 13 December 2000</td>
+</tr>
+<tr>
+<td>Extracted text</td>
+<td>35,121 bytes; <code>d0b4cb2e7e1cb1340320845655176233f53b817bf29f93b102db6f49c030d00f</code></td>
+</tr>
+<tr>
+<td>Extracted profiles</td>
+<td>Client A/B/C: 50/15/9 expressions; server A/B/C: 54/18/10</td>
+</tr>
+</tbody>
+</table>
+<p>The metadata-only extraction and selected target are in
+<code>spec-processing/source-manifests/wap-1.2.1-class-conformance.json</code>. The
+selected target is client Class C (<code>CCR-CLASSC-C-001</code>) with nine mandatory
+client feature groups. The PDF and full text remain outside Git pending
+redistribution review.</p>
+<p>Earlier searches of guessed OMA paths and Wayback payload variants returned
+404, 401, or no capture. Those are retained as historical search evidence, but
+they no longer describe the source’s availability.</p>
+<p>Useful lineage recovered into the private cache:</p>
+<ul>
+<li><code>PROTO-ClassConform-19990701.pdf</code></li>
+<li>WAP 1.1 prototype; not WAP 1.2.1 authority</li>
+<li>31,825 bytes</li>
+<li>SHA-256:
+<code>8404b0686177616233755ce55cc4859efa8ae66cd6cd414ea2d809794eb478ad</code></li>
+</ul>
+<p>The prototype remains historical lineage only. The recovered approved WAP-215
+tables, rather than the FAQ summary or prototype, now govern profile
+selection.</p>
+<h2 id="wayback-recovery-procedure">Wayback recovery procedure</h2>
+<p>For any remaining WAP source:</p>
+<ol>
+<li>Start with the official WAP/OMA catalog and record the exact document
+identity.</li>
+<li>Recover an early release-page snapshot and inspect the original link,
+including the case-sensitive <code>doc=</code> parameter.</li>
+<li>Search Wayback CDX for:
+<ul>
+<li>the click-through URL;</li>
+<li><code>/tech/documents/&lt;filename&gt;</code>;</li>
+<li><code>/what/technical/&lt;filename&gt;</code>;</li>
+<li>case and date variants;</li>
+<li>the filename across the complete WAP Forum domain.</li>
+</ul>
+</li>
+<li>Search Archive.org items and primary-organization mirrors.</li>
+<li>Download only a payload whose media type and file signature agree.</li>
+<li>Record byte size, SHA-256, retrieval date, source URL, archive timestamp,
+status, and relationship to the target release.</li>
+<li>Treat prototypes, proposals, later successors, and third-party copies as
+lineage until byte identity and publication status are proven.</li>
+<li>Keep the payload outside Git until its redistribution status is resolved.</li>
+</ol>
+<p>Repeated empty queries should be logged and not retried without a new path or
+filename hypothesis.</p>
+<h2 id="oma-recovery-and-permission-route">OMA recovery and permission route</h2>
+<p>OMA’s current <a href="https://www.openmobilealliance.org/about/contact/">contact page</a>
+directs general and protocol questions to <code>helpdesk@omaorg.org</code>. Its
+<a href="https://www.openmobilealliance.org/about/ipr/">IPR page</a> directs IPR-policy
+questions to the same helpdesk.</p>
+<p>No request has been sent. Sending external correspondence requires explicit
+maintainer approval.</p>
+<h3 id="draft-request">Draft request</h3>
+<p>Subject: Historical WAP specification preservation and redistribution guidance</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Hello OMA Helpdesk,</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>We are building an open-source compatibility implementation of the historical</span></span>
+<span class="line"><span>WAP 1.2.1 stack with WML 1.3. We use the WAP Forum material preserved in OMA's</span></span>
+<span class="line"><span>affiliate catalog as the normative source.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>We recovered the approved WAP-215 Class Conformance Requirements from the live</span></span>
+<span class="line"><span>official WAP Forum document directory and recorded its URL and SHA-256. The</span></span>
+<span class="line"><span>WAP 1.2.1 release page still displays a one-zero filename typo even though the</span></span>
+<span class="line"><span>underlying document identity is correct. Could OMA confirm that this public</span></span>
+<span class="line"><span>directory is the intended long-term archival location, and consider adding it</span></span>
+<span class="line"><span>to the affiliate catalog or correcting the visible link?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>We also request repository guidance.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>May this project publish the following historical WAP Forum materials in a</span></span>
+<span class="line"><span>public source repository, with the original files unmodified and all</span></span>
+<span class="line"><span>copyright/notices retained?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- WAP 1.2.1 technical-release PDFs;</span></span>
+<span class="line"><span>- the DTDs associated with that release;</span></span>
+<span class="line"><span>- WAP-215, WAP-221, and WAP-273;</span></span>
+<span class="line"><span>- text or Markdown derivatives used for requirement traceability.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>If the permissions differ for original binaries, parsed derivatives, excerpts,</span></span>
+<span class="line"><span>or automated test fixtures, please clarify the permitted scope and required</span></span>
+<span class="line"><span>attribution. If public mirroring is not allowed, is a metadata-only index plus</span></span>
+<span class="line"><span>a user-invoked downloader from OMA's official URLs acceptable?</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>We would be happy to provide the exact document inventory, hashes, repository</span></span>
+<span class="line"><span>location, intended notices, and non-commercial archival/research description.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Thank you.</span></span></code></pre>
+<p>Before sending, add:</p>
+<ul>
+<li>the repository URL and visibility;</li>
+<li>project owner/legal entity;</li>
+<li>the exact 97-member and six-DTD inventory;</li>
+<li>whether commercial use is anticipated;</li>
+<li>a contact name and reply address.</li>
+</ul>
+<p>Record any reply verbatim in a non-secret project decision record, including
+the sender, date, scope, restrictions, and whether it covers derivatives.</p>
+<h2 id="remaining-acquisition-gaps">Remaining acquisition gaps</h2>
+<ol>
+<li>Resolve the remaining 60 external labels before claiming their affected
+profiles:
+<ul>
+<li>vCard/vCalendar and JavaScript-book context (three labels);</li>
+<li>45 bearer/radio labels;</li>
+<li>12 optional WTLS cryptographic labels.</li>
+</ul>
+</li>
+<li>Acquire or formally waive the historical IEEE 754-1985, ISO/IEC
+10646-1:1993, ISO 8879:1986, ISO/TR 8509:1987, and selected TIA/EIA/IS-732
+payloads.</li>
+<li>Recover a WBXML-era IANA character-set registry snapshot.</li>
+<li>Decide whether the official Unicode 2.0 UCD component set is sufficient
+implementation evidence where the cited paper standard is unavailable.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121-source-recovery-and-permission-runbook">WAP 1.2.1 Source Recovery and Permission Runbook</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#current-result">Current result</a></li><li class="depth-2"><a href="#why-some-wap-documents-look-locked">Why some WAP documents look locked</a></li><li class="depth-2"><a href="#redistribution-boundary">Redistribution boundary</a></li><li class="depth-2"><a href="#wap-215-recovery-record">WAP-215 recovery record</a></li><li class="depth-2"><a href="#wayback-recovery-procedure">Wayback recovery procedure</a></li><li class="depth-2"><a href="#oma-recovery-and-permission-route">OMA recovery and permission route</a></li><li class="depth-3"><a href="#draft-request">Draft request</a></li><li class="depth-2"><a href="#remaining-acquisition-gaps">Remaining acquisition gaps</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_source_recovery_and_permission.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

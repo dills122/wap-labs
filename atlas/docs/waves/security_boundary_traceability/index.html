@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Security Boundary Traceability · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/security_boundary_traceability"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/security_boundary_traceability.md</p><div class="markdown-body"><h1 id="waves-security-boundary-traceability">Waves Security Boundary Traceability</h1>
+<p>Version: v0.2
+Status: S0-04 complete; WTLS wire/security audit refreshed 2026-07-24</p>
+<h2 id="purpose">Purpose</h2>
+<p>Capture security-related requirements from WAP transport security specs and map them to the Waves policy boundary:</p>
+<ul>
+<li>where we simulate legacy behavior</li>
+<li>where we rely on modern secure transport in host/network layers</li>
+<li>what remains for full protocol-parity implementation</li>
+</ul>
+<h2 id="source-authority-policy">Source Authority Policy</h2>
+<ul>
+<li>See <code>docs/waves/SOURCE_AUTHORITY_POLICY.md</code> for normative vs supplemental source precedence and citation rules.</li>
+</ul>
+<h2 id="source-set-reviewed-s0-04">Source set reviewed (S0-04)</h2>
+<ul>
+<li><code>spec-processing/source-material/WAP-199-WTLS-20000218-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-261-WTLS-20010406-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-261_100-WTLS-20010926-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-261_101-WTLS-20011027-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-261_102-WTLS-20011027-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-219-TLS-20010411-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-219_100-TLS-20011029-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-187-TransportE2ESec-20010628-a.pdf</code></li>
+<li><code>spec-processing/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf</code></li>
+</ul>
+<h2 id="normative-precedence">Normative precedence</h2>
+<ol>
+<li><code>WAP-199</code> as legacy WTLS baseline reference for the pre-<code>WAP-261</code> profile lineage.</li>
+<li><code>WAP-261</code> as WTLS baseline, overlaid by <code>WAP-261_100/_101/_102</code> SIN updates.</li>
+<li><code>WAP-219</code> as TLS profile baseline, overlaid by <code>WAP-219_100</code> (SCR-table format update).</li>
+<li><code>WAP-187</code> as transport end-to-end security operational model, overlaid by <code>WAP-187_101</code> typo correction in SCR linkage.</li>
+</ol>
+<h2 id="requirements-matrix">Requirements matrix</h2>
+<p>Legend:</p>
+<ul>
+<li><code>M</code> = mandatory</li>
+<li><code>O</code> = optional</li>
+</ul>
+<h3 id="rq-sec-001-tls-profile-baseline-for-secure-http-transport">RQ-SEC-001 TLS profile baseline for secure HTTP transport</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Conform to TLS 1.0 profile baseline and implement required cipher/auth/session behavior in profiled contexts.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-219</code> section 6, Appendix A</li>
+<li>SCR anchors: <code>TLS-001</code>, <code>TLS-C-*</code>, <code>TLS-S-*</code></li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Host/proxy secure transport profile explicitly lists supported TLS features and negotiated constraints.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Session resume behavior and server-authentication behavior are defined in implementation policy.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-sec-002-tls-certificate-handling-profile">RQ-SEC-002 TLS certificate handling profile</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Client/server certificate processing follows profiled X.509 rules and associated validation expectations.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-219</code> 6.3 and Appendix A SCR groups (<code>TLS-C-03x</code>, <code>TLS-C-10x</code>, <code>TLS-S-03x</code>, <code>TLS-S-10x</code>)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Certificate validation policy is explicit (trusted anchors, hostname/authority checks, failure handling).</li>
+<li class="task-list-item"><input type="checkbox" disabled> Client-cert behavior is feature-gated/documented if not implemented in current milestone.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-sec-003-tls-sin-overlay-application">RQ-SEC-003 TLS SIN overlay application</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Apply <code>WAP-219_100</code> SCR table replacement (naming/format alignment) when mapping compliance.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-219_100</code> section 3</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Traceability uses updated SCR naming format from SIN.</li>
+</ul>
+</li>
+</ul>
+<h3 id="rq-sec-004-wtls-protocol-feature-baseline">RQ-SEC-004 WTLS protocol feature baseline</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>WTLS handshake/record/alert/cipher/MAC/key-exchange feature families are tracked and mapped to supported profile.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-199</code> (legacy WTLS baseline context)</li>
+<li><code>WAP-261</code> core + Appendix A static conformance groups (<code>WTLS-C-*</code>, <code>WTLS-S-*</code>)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link WAP-261-wire-correct tests/fixtures and commands proving this requirement.</li>
+<li>Prototype evidence only: <code>transport-rust/src/network/wtls/record.rs</code>, <code>transport-rust/src/network/wtls/alerts.rs</code>, <code>transport-rust/src/network/wtls/handshake.rs</code>; fixtures <code>transport-rust/tests/fixtures/transport/wtls_record_boundary_mapped/record_fixture.json</code> and <code>transport-rust/tests/fixtures/transport/wtls_handshake_reliability_mapped/handshake_fixture.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code></li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Security implementation matrix states which WTLS feature families are:
+<ul>
+<li>simulated</li>
+<li>implemented as exact WTLS</li>
+<li>deferred for parity</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Implementation note:</p>
+<ul>
+<li>Current baseline is explicit:
+<ul>
+<li>simulated: a stable record envelope, two-byte alert, and narrow handshake envelope</li>
+<li>delegated/reused: retransmission and duplicate-message reliability policy via existing WTP logic</li>
+<li>deferred: WAP-261 wire codecs, cipher/MAC/key-exchange/session crypto, certificate/trust, live secure route, and full conformance matrices</li>
+</ul>
+</li>
+<li>The simulation is not a WAP-261 wire subset:
+<ul>
+<li>record content types and header structure are TLS-shaped rather than WTLS bit fields;</li>
+<li>handshake framing inserts a non-spec sequence field and omits most message types;</li>
+<li>alerts omit the critical level, full registry, and four-byte checksum.</li>
+</ul>
+</li>
+<li><code>waps://</code> currently selects port 9202 but sends unprotected WSP without invoking these modules.</li>
+<li>Pre-alpha development/interoperability profiles may retain that route only with an unavoidable
+no-WTLS warning and false authentication, confidentiality, and integrity state; release
+profiles must fail closed.</li>
+<li>Modern TLS is a separate direct-HTTPS security profile, not delegated WTLS behavior.</li>
+<li>Detailed evidence and the ordered replacement plan are in
+<code>docs/architecture/wtls-modernization-research.md</code>.</li>
+</ul>
+<h3 id="rq-sec-005-wtls-server-certificate-constraints-from-sin">RQ-SEC-005 WTLS server certificate constraints from SIN</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>Server certificate returned during handshake must align with trusted authorities indicated by client hello, except explicit SIN-defined exception when trusted authority list is empty and non-anonymous handshake is suggested.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-261_100</code> section 3.3 updates to 10.5.1.2 and 10.5.2</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link certificate-selection, trust, and negative tests implementing the SIN rule.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Certificate-selection logic (or simulation logic) follows SIN rule and exception handling.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Mismatch path yields deterministic WAP-261 handshake failure behavior.</li>
+</ul>
+</li>
+</ul>
+<p>Implementation note:</p>
+<ul>
+<li>The current <code>T0-21</code> baseline does not implement Client Hello certificate identifiers,
+certificate parsing, certificate selection, or trust evaluation.</li>
+<li>Its generic invalid-type/shape failures are not evidence for the SIN certificate rule.</li>
+<li>SIN-driven certificate constraints remain deferred to the full active security lane, but the boundary and failure posture are now deterministic and test-backed.</li>
+</ul>
+<h3 id="rq-sec-006-end-to-end-secure-proxy-model-behavior">RQ-SEC-006 End-to-end secure proxy model behavior</h3>
+<ul>
+<li>Requirement:
+<ul>
+<li>End-to-end security flow includes secure session establishment to subordinate pull proxy and certificate validation/user indication requirements.</li>
+</ul>
+</li>
+<li>Spec:
+<ul>
+<li><code>WAP-187</code> sections 7/8 and Appendix A SCRs (<code>E2E-*</code>, plus referenced <code>WTLS-*</code>)</li>
+<li><code>WAP-187_101</code> SCR typo correction (reference to <code>WTLS-C-191</code>)</li>
+</ul>
+</li>
+<li>AC:
+<ul class="contains-task-list">
+<li>Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Security session establishment and certificate validation steps are represented in host/transport flow.</li>
+<li class="task-list-item"><input type="checkbox" disabled> User-visible secure-session indication policy is defined.</li>
+<li class="task-list-item"><input type="checkbox" disabled> SCR reference uses corrected item naming from SIN (<code>WTLS-C-191</code>).</li>
+</ul>
+</li>
+</ul>
+<h2 id="waves-boundary-decisions-current">Waves boundary decisions (current)</h2>
+<ol>
+<li>Runtime correctness first:</li>
+</ol>
+<ul>
+<li>Engine/runtime determinism is prioritized before full historical crypto stack parity.</li>
+</ul>
+<ol start="2">
+<li>Secure transport bridging:</li>
+</ol>
+<ul>
+<li>Direct HTTPS delegates secure channel establishment to a maintained modern TLS stack.</li>
+<li>Historical WTLS requires its own exact WAP-261 implementation and cannot be delegated to TLS.</li>
+</ul>
+<ol start="3">
+<li>Compatibility obligations:</li>
+</ol>
+<ul>
+<li>Any simulated/delegated behavior must still preserve user-agent observable outcomes defined by security-related specs (error/reporting/session semantics).</li>
+</ul>
+<ol start="4">
+<li>Security profile separation:</li>
+</ol>
+<ul>
+<li>Modern TLS is the default secure web route.</li>
+<li>WTLS is an opt-in, allowlisted compatibility profile.</li>
+<li>Clear WAP is never an automatic fallback.</li>
+<li>A future DTLS route is a separately named enhancement and makes no WTLS claim.</li>
+<li>See <code>docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md</code>.</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>WTLS Appendix A contains a large SCR matrix. <code>WTLS-01</code> in the modernization research freezes a
+row-level client profile before implementation resumes.</li>
+<li>WAP-261 defines no AES bulk cipher. Its historical registry uses RC5, DES/3DES, and IDEA CBC;
+AES-GCM and ChaCha20-Poly1305 belong to the separate modern TLS/DTLS profile.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-security-boundary-traceability">Waves Security Boundary Traceability</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#source-authority-policy">Source Authority Policy</a></li><li class="depth-2"><a href="#source-set-reviewed-s0-04">Source set reviewed (S0-04)</a></li><li class="depth-2"><a href="#normative-precedence">Normative precedence</a></li><li class="depth-2"><a href="#requirements-matrix">Requirements matrix</a></li><li class="depth-3"><a href="#rq-sec-001-tls-profile-baseline-for-secure-http-transport">RQ-SEC-001 TLS profile baseline for secure HTTP transport</a></li><li class="depth-3"><a href="#rq-sec-002-tls-certificate-handling-profile">RQ-SEC-002 TLS certificate handling profile</a></li><li class="depth-3"><a href="#rq-sec-003-tls-sin-overlay-application">RQ-SEC-003 TLS SIN overlay application</a></li><li class="depth-3"><a href="#rq-sec-004-wtls-protocol-feature-baseline">RQ-SEC-004 WTLS protocol feature baseline</a></li><li class="depth-3"><a href="#rq-sec-005-wtls-server-certificate-constraints-from-sin">RQ-SEC-005 WTLS server certificate constraints from SIN</a></li><li class="depth-3"><a href="#rq-sec-006-end-to-end-secure-proxy-model-behavior">RQ-SEC-006 End-to-end secure proxy model behavior</a></li><li class="depth-2"><a href="#waves-boundary-decisions-current">Waves boundary decisions (current)</a></li><li class="depth-2"><a href="#notes">Notes</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/security_boundary_traceability.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

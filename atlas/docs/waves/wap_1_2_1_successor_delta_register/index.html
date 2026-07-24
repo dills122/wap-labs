@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 Selected-Profile Successor Delta Register · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_successor_delta_register"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_successor_delta_register.md</p><div class="markdown-body"><h1 id="wap-121-selected-profile-successor-delta-register">WAP 1.2.1 Selected-Profile Successor Delta Register</h1>
+<p>Version: v0.1
+Status: <code>CONF-007</code> complete for the selected Class C profile</p>
+<h2 id="purpose">Purpose</h2>
+<p>Keep successor-era specifications useful without allowing them to redefine the
+WAP 1.2.1 / WML 1.3 compatibility floor. The register classifies all
+201/201 selected rows and distinguishes actual successor-derived implementation
+foundations from target-era, version-neutral, missing, and successor-only
+behavior.</p>
+<p>Machine-readable authority:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-successor-delta.json</code></li>
+</ul>
+<p>Validation:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-delta-register.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-requirement-status-drift.mjs</span></span></code></pre>
+<p>Regeneration uses the selected family and clause ledgers plus the four local,
+hash-locked successor authorities:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> spec-processing/scripts/generate-wap-delta-register.mjs</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --recorded-on</span><span style="color:#9ECBFF"> YYYY-MM-DD</span></span></code></pre>
+<h2 id="result">Result</h2>
+<p>The register identifies 17 successor-derived implementation foundations:</p>
+<table>
+<thead>
+<tr>
+<th>Disposition</th>
+<th style="text-align: right">Selected rows</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compatible</td>
+<td style="text-align: right">2</td>
+<td>Successor mapping preserves the target behavior, subject to direct target-fixture proof</td>
+</tr>
+<tr>
+<td>Strict correction required</td>
+<td style="text-align: right">15</td>
+<td>Current successor-oriented behavior cannot close the target row without target-era correction and fixtures</td>
+</tr>
+<tr>
+<td>Not successor-derived</td>
+<td style="text-align: right">184</td>
+<td>Missing, target-era, or version-neutral behavior; no successor substitution is claimed</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right"><strong>201</strong></td>
+<td><strong>Every selected Class C row</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Of the 17 successor-derived foundations, 15 require strict correction and two
+are compatible planning classifications.</p>
+<p>This is a planning classification, not conformance evidence. Clause
+implementation remains <code>not-assessed</code> until direct target-era fixtures and
+code/test review establish the strict outcome.</p>
+<h2 id="family-posture">Family posture</h2>
+<ul>
+<li>WAE: 8 implemented/partial foundations are cross-checked against the
+existing WAP-236 delta. Two preserved/subsumed mappings are compatible; six
+expanded, split, relaxed, or decomposed mappings require strict correction.</li>
+<li>WML: <code>WML-C-17</code> uses WML2 compatibility behavior and requires WML 1.3
+correction/proof. The other selected rows have no identified
+successor-derived implementation basis.</li>
+<li>WSP: all eight selected partial rows use successor-oriented tables or
+synthetic cases and require correction against effective WAP-203/SIN
+clauses.</li>
+<li>WDP and WCMP: WAP-259 remains family delta context. Existing WDP UDP/IP
+foundations are target-version-neutral; selected WCMP behavior is missing.</li>
+<li>WBXML, WMLScript, WMLScript Libraries, and caching: no selected-row
+successor-derived implementation basis is currently identified.</li>
+</ul>
+<h2 id="successor-only-boundary">Successor-only boundary</h2>
+<p>The register separately records five successor-only capability examples. They
+cannot satisfy strict rows and require an explicit successor or extension
+capability. This includes WAP-236-only WAE capabilities, WSP assigned numbers
+or defaults absent from WAP-203, and WML2-only markup/processing behavior.</p>
+<h2 id="authority-and-enhancement-policy">Authority and enhancement policy</h2>
+<p>WAP-236, WAP-238, WAP-259, and WAP-230 are cryptographically locked as
+delta-evidence-only sources. Target-era specifications and SIN precedence
+remain normative.</p>
+<p>Modern internals, richer behavior, and successor capabilities are welcome
+when they preserve strict observable behavior or are isolated behind an
+explicit capability. They may not replace a strict requirement merely because
+the later design is safer, broader, or more convenient.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121-selected-profile-successor-delta-register">WAP 1.2.1 Selected-Profile Successor Delta Register</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#result">Result</a></li><li class="depth-2"><a href="#family-posture">Family posture</a></li><li class="depth-2"><a href="#successor-only-boundary">Successor-only boundary</a></li><li class="depth-2"><a href="#authority-and-enhancement-policy">Authority and enhancement policy</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_successor_delta_register.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

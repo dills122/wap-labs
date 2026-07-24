@@ -1,0 +1,809 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Native WAP Browser and Modular Product Architecture · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="architecture/native-wap-browser-product-architecture"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>architecture</span></nav><p class="doc-path">docs/architecture/native-wap-browser-product-architecture.md</p><div class="markdown-body"><h1 id="native-wap-browser-and-modular-product-architecture">Native WAP Browser and Modular Product Architecture</h1>
+<p>Date: 2026-07-24
+Status: research recommendation
+Compatibility target: WAP 1.2.1 with WML 1.3
+Scope: Kannel-independent desktop operation plus separately distributable transport and engine products</p>
+<h2 id="executive-answer">Executive answer</h2>
+<p>Yes, Waves can become an all-in-one WML browser without requiring a locally running Kannel process, while preserving Lowband and WaveNav as independently usable products.</p>
+<p>The important correction is that this is not a greenfield transport integration:</p>
+<ol>
+<li>The Tauri host already embeds <code>transport-rust</code> and <code>engine-wasm/engine</code> as Rust dependencies.</li>
+<li>Direct HTTP/HTTPS WML <code>GET</code> requests already bypass Kannel.</li>
+<li><code>wap://</code> and <code>waps://</code> requests already select an in-process UDP/WSP connectionless path in the browser’s default <code>auto</code> profile.</li>
+<li>Kannel remains the repository’s reference WAP proxy/gateway, local WML test route, interoperability peer, and legacy fallback. It is not the only possible runtime peer.</li>
+</ol>
+<p>The existing native path is a constrained proof of the right architecture, not yet a complete WAP browser transport:</p>
+<ul>
+<li>it implements a narrow connectionless WSP <code>GET</code>/<code>POST</code> exchange over WDP/UDP;</li>
+<li>it does not run the fixture-tested <code>network::wsp</code> implementation on the live path;</li>
+<li>it does not run connection-mode WSP over WTP;</li>
+<li>it does not establish WTLS for <code>waps://</code>;</li>
+<li>it treats the URL host as the UDP WAP peer instead of separating the resource URL from the configured proxy/gateway endpoint;</li>
+<li>direct HTTP currently accepts <code>GET</code>, but not WML form <code>POST</code>;</li>
+<li>WBXML/WMLC decoding requires an external <code>wbxml2xml</code> executable at application startup;</li>
+<li>the Tauri bundle is disabled and no platform decoder binaries are present.</li>
+</ul>
+<p>The recommended target is a <strong>library-first modular monolith</strong>:</p>
+<ul>
+<li>the full desktop product links Lowband and WaveNav in-process;</li>
+<li>Lowband is released as a transport/client SDK;</li>
+<li>WaveNav is released as a network-free WML engine SDK;</li>
+<li>optional Lowband CLI and service wrappers reuse the exact same client library;</li>
+<li>Kannel stays outside the product as an interoperability oracle and development fixture.</li>
+</ul>
+<p>This preserves historical protocol fidelity without forcing desktop users to operate a local server.</p>
+<h2 id="what-kannel-is-doing-today">What Kannel is doing today</h2>
+<p>Kannel currently fills three distinct roles that should not be confused:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Required for the installed browser?</th>
+<th>Target disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local reference WAP proxy/gateway and WML test environment</td>
+<td>Yes for the repository’s current real-WAP smoke path</td>
+<td>Keep as a test/interop dependency</td>
+</tr>
+<tr>
+<td>Legacy <code>gateway-bridged</code> HTTP adapter</td>
+<td>Only when that explicit profile or fallback is enabled</td>
+<td>Keep as rollback/compatibility mode</td>
+</tr>
+<tr>
+<td>Native <code>wap-net-core</code> peer used by local smoke tests</td>
+<td>The client needs a WAP peer; the checked-in peer happens to be Kannel</td>
+<td>Support any compatible configured WAP gateway</td>
+</tr>
+</tbody>
+</table>
+<p>The browser host already chooses native transport automatically for WAP schemes in
+<a href="../../browser/src-tauri/src/fetch_host.rs"><code>fetch_host.rs</code></a>. Direct HTTP/HTTPS is handled by
+Lowband’s <code>reqwest</code> path in
+<a href="../../transport-rust/src/fetch_runtime/execution.rs"><code>fetch_runtime/execution.rs</code></a>.</p>
+<p>The repository’s real native smoke test still points that client at Kannel. That proves a narrow
+client-to-gateway flow; it does not mean Kannel must be installed beside a production browser.</p>
+<h2 id="current-implementation-baseline">Current implementation baseline</h2>
+<p>All three primary Rust packages are currently version <code>0.3.0</code>:</p>
+<ul>
+<li>Lowband uses Rust 2021, blocking <code>reqwest 0.12</code>, Rustls-backed HTTPS, and emits an <code>rlib</code>.</li>
+<li>WaveNav uses Rust 2021 and emits <code>rlib</code> plus <code>cdylib</code>, with optional WASM bindings.</li>
+<li>Waves uses Tauri 2 and links both packages in-process.</li>
+<li>The repository does not yet define a root Cargo workspace.</li>
+</ul>
+<h3 id="capability-matrix">Capability matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Current state</th>
+<th>Evidence and consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Host-to-transport integration</td>
+<td>Implemented in-process</td>
+<td>Tauri calls Lowband with <code>spawn_blocking</code>; no local transport HTTP server is required</td>
+</tr>
+<tr>
+<td>Host-to-engine integration</td>
+<td>Implemented in-process</td>
+<td>Tauri owns a native WaveNav engine instance</td>
+</tr>
+<tr>
+<td>HTTP/HTTPS WML <code>GET</code></td>
+<td>Implemented</td>
+<td>Direct resource fetch, redirect bound of 10, Rustls HTTPS</td>
+</tr>
+<tr>
+<td>HTTP/HTTPS WML <code>POST</code></td>
+<td>Missing</td>
+<td>Non-WAP methods other than <code>GET</code> are rejected before HTTP execution</td>
+</tr>
+<tr>
+<td>WSP connectionless <code>GET</code>/<code>POST</code> over UDP</td>
+<td>Implemented, constrained</td>
+<td>Live native path in <code>native_fetch.rs</code>; Kannel smoke coverage exists</td>
+</tr>
+<tr>
+<td>Full WSP header/PDU codec</td>
+<td>Implemented as fixture-tested modules, not live</td>
+<td><code>network::wsp</code> is currently dead relative to native fetch; tracked by <code>M1-18</code></td>
+</tr>
+<tr>
+<td>Connection-mode WSP</td>
+<td>Fixture/prototype logic only</td>
+<td>No production session lifecycle or method execution path</td>
+</tr>
+<tr>
+<td>WTP Classes 0/1/2</td>
+<td>Policy/state-machine fixtures only</td>
+<td>No production WSP connection-mode composition</td>
+</tr>
+<tr>
+<td>WTLS</td>
+<td>Prototype boundary only</td>
+<td>Current record/alert/handshake envelopes are not WAP-261 wire codecs and are not live</td>
+</tr>
+<tr>
+<td><code>waps://</code></td>
+<td>Unsafe test placeholder</td>
+<td>Selects UDP port 9202 and sends unprotected WSP; warn in development and fail in release</td>
+</tr>
+<tr>
+<td>WMLC/WBXML decode</td>
+<td>Functional only with external tool</td>
+<td>Browser startup fails if <code>wbxml2xml</code> is unavailable</td>
+</tr>
+<tr>
+<td>Cookie jar and HTTP state</td>
+<td>Missing</td>
+<td>A new <code>reqwest::Client</code> is built for each fetch; no persistent cookie state</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>Request directives only</td>
+<td><code>no-cache</code> headers exist, but there is no browser cache store</td>
+</tr>
+<tr>
+<td>Authentication and credential storage</td>
+<td>Missing</td>
+<td>No origin/proxy authentication lifecycle</td>
+</tr>
+<tr>
+<td>Bearer support</td>
+<td>IP/UDP only</td>
+<td>No SMS, USSD, SMPP, or carrier-specific client bearer adapters</td>
+</tr>
+<tr>
+<td>Installable all-in-one bundle</td>
+<td>Missing</td>
+<td>Tauri <code>bundle.active</code> is false; decoder resource folders contain only a README</td>
+</tr>
+</tbody>
+</table>
+<h3 id="documentation-accuracy-warning">Documentation accuracy warning</h3>
+<p>Several active planning documents describe <code>wap-net-core</code> as a live
+<code>WDP -&gt; WTP -&gt; WSP</code> path. The actual native fetch path is connectionless WSP directly over
+WDP/UDP, which is a valid WSP mode, but it does not call the richer WSP or WTP modules. The
+maintenance board correctly records this implementation drift in <code>M1-18</code>.</p>
+<p>Until that work is closed, fixture coverage for <code>network::wsp</code> and <code>network::wtp</code> is evidence for
+protocol design and regression intent, not end-to-end evidence for bytes sent by the browser.</p>
+<h2 id="the-target-browser-needs-two-network-routes">The target browser needs two network routes</h2>
+<p>WAP architecture permits the hypermedia transfer service to be provided by either HTTP or WSP.
+It also describes WAP clients selecting a proxy or connecting directly to a service. A WAP proxy
+translates the WAP 1.x stack to HTTP/TCP and resolves origin hosts on the client’s behalf.</p>
+<p>That leads to two first-class routes rather than one overloaded URL scheme.</p>
+<h3 id="route-a-direct-web-access">Route A: direct Web access</h3>
+<p>Use for <code>http://</code> and <code>https://</code> WML resources:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Waves -&gt; Lowband HTTP client -&gt; WML origin</span></span></code></pre>
+<p>Requirements:</p>
+<ul>
+<li><code>GET</code> and <code>POST</code>;</li>
+<li>HTTP redirects;</li>
+<li>HTTP state/cookies;</li>
+<li>authentication;</li>
+<li>HTTPS certificate validation;</li>
+<li>WML and WMLC content negotiation;</li>
+<li>WML-only content admission;</li>
+<li>cache and reload semantics;</li>
+<li>charset-aware request and response handling.</li>
+</ul>
+<p>This route provides the most browser-like access to WML content hosted on ordinary web servers.
+It is both historically valid and the practical default for reachable WML sites.</p>
+<h3 id="route-b-classic-wap-access">Route B: classic WAP access</h3>
+<p>Use when a WAP gateway profile is selected:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Waves -&gt; Lowband WSP/WTP/WTLS client -&gt; configured WAP gateway -&gt; WML origin</span></span></code></pre>
+<p>A request needs two independent identities:</p>
+<ol>
+<li><code>resource_uri</code>: the WML resource requested by the user, normally an absolute HTTP/HTTPS URI
+carried in WSP;</li>
+<li><code>gateway_endpoint</code>: the address and well-known WAP service port of the proxy/gateway peer.</li>
+</ol>
+<p>The current native path derives both from the <code>wap://</code> URL. That works for the local Kannel
+fixture but is not a sufficient proxy-selection model. The route contract must separate them.</p>
+<p>Recommended route types:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> enum</span><span style="color:#B392F0"> FetchRoute</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    Auto</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    DirectHttp</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#B392F0">    WapGateway</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        endpoint</span><span style="color:#F97583">:</span><span style="color:#B392F0"> GatewayEndpoint</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        mode</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WspMode</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        security</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WapSecurityMode</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">        bearer</span><span style="color:#F97583">:</span><span style="color:#B392F0"> BearerProfile</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>Auto</code> should resolve as follows:</p>
+<ul>
+<li><code>http</code>/<code>https</code>: direct HTTP route;</li>
+<li>a saved WAP profile: WAP gateway route carrying the resource URI;</li>
+<li>the project-specific <code>wap</code>/<code>waps</code> schemes: compatibility aliases that require an explicit
+gateway profile, or an explicitly enabled direct-peer diagnostic mode;</li>
+<li>local deck/file mode: no network route.</li>
+</ul>
+<p>Transport choice must not be inferred from content parsing inside the engine.</p>
+<h2 id="recommended-product-boundaries">Recommended product boundaries</h2>
+<h3 id="1-lowband-client-sdk">1. Lowband Client SDK</h3>
+<p>Product form:</p>
+<ul>
+<li>Rust library as the canonical product;</li>
+<li>optional C-compatible or UniFFI facade after the Rust API stabilizes;</li>
+<li>optional CLI and service wrappers.</li>
+</ul>
+<p>Owns:</p>
+<ul>
+<li>route selection and proxy/gateway profiles;</li>
+<li>HTTP/HTTPS;</li>
+<li>WDP and bearer adapters;</li>
+<li>WTP transactions;</li>
+<li>WSP connectionless and connection-mode sessions;</li>
+<li>WTLS compatibility profile;</li>
+<li>WBXML/WMLC decode and encode;</li>
+<li>content negotiation and normalization;</li>
+<li>cookies, authentication, cache, retries, timeouts, and destination policy;</li>
+<li>protocol/security traces and normalized errors.</li>
+</ul>
+<p>Does not own:</p>
+<ul>
+<li>WML deck/card execution;</li>
+<li>rendering or focus;</li>
+<li>browser window/input behavior.</li>
+</ul>
+<h3 id="2-wavenav-engine-sdk">2. WaveNav Engine SDK</h3>
+<p>Product form:</p>
+<ul>
+<li>native Rust library;</li>
+<li>WASM package;</li>
+<li>optional UniFFI facade for mobile/native consumers.</li>
+</ul>
+<p>Owns:</p>
+<ul>
+<li>textual WML parsing;</li>
+<li>deck/card/task/event/variable semantics;</li>
+<li>layout, focus, input, and render output;</li>
+<li>WMLScript execution and deterministic trace behavior.</li>
+</ul>
+<p>Does not own:</p>
+<ul>
+<li>network access;</li>
+<li>HTTP/WSP/WBXML;</li>
+<li>credential, cookie, or proxy state;</li>
+<li>desktop UI.</li>
+</ul>
+<p>The existing <code>WmlDeckInput</code>/<code>EngineDeckInputPayload</code> handoff is the correct architectural seam.</p>
+<h3 id="3-waves-browser">3. Waves Browser</h3>
+<p>Product form:</p>
+<ul>
+<li>signed Tauri desktop bundle for macOS, Windows, and Linux.</li>
+</ul>
+<p>Owns:</p>
+<ul>
+<li>address field, tabs/windows if introduced, navigation controls, and settings;</li>
+<li>WAP gateway/profile management;</li>
+<li>history, bookmarks, downloads, and user-visible error/security state;</li>
+<li>OS keychain integration and local application state;</li>
+<li>orchestration of Lowband fetch results into WaveNav deck loads;</li>
+<li>updates, signing, crash diagnostics, and support tooling.</li>
+</ul>
+<p>Does not own:</p>
+<ul>
+<li>protocol codecs;</li>
+<li>WBXML parsing;</li>
+<li>WML runtime semantics.</li>
+</ul>
+<h3 id="4-optional-lowband-tools">4. Optional Lowband tools</h3>
+<p>These are delivery adapters, not separate protocol implementations:</p>
+<ul>
+<li><code>lowband-cli</code>: fetch/probe/trace and conformance diagnostics;</li>
+<li><code>lowband-service</code>: optional HTTP/gRPC/IPC wrapper for customers that cannot embed Rust;</li>
+<li><code>lowband-interop-kit</code>: Kannel configuration, fixtures, packet captures, and smoke tooling.</li>
+</ul>
+<p>The CLI, service, and browser must call the same Lowband client facade. No wrapper may duplicate
+WSP/WTP/WBXML behavior.</p>
+<h2 id="repository-and-package-shape">Repository and package shape</h2>
+<p>Do not immediately split every WAP layer into a public crate. First make the existing Lowband
+crate internally coherent and define the public client contract. Premature per-protocol crates
+would freeze unstable internal seams and make coordinated protocol changes harder.</p>
+<h3 id="step-1-one-workspace-stable-product-crates">Step 1: one workspace, stable product crates</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Cargo workspace</span></span>
+<span class="line"><span>├── lowband-client          # current transport-rust evolved into public SDK</span></span>
+<span class="line"><span>├── wavenav-engine          # current engine-wasm/engine</span></span>
+<span class="line"><span>├── waves-browser-host      # current browser/src-tauri</span></span>
+<span class="line"><span>├── lowband-cli             # optional executable</span></span>
+<span class="line"><span>└── lowband-service         # optional executable, later</span></span></code></pre>
+<p>The existing paths can remain during the first migration. A root workspace can reference them
+without a directory rename.</p>
+<h3 id="step-2-extract-only-proven-internal-seams">Step 2: extract only proven internal seams</h3>
+<p>Candidates, after the live path uses them:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>lowband-client</span></span>
+<span class="line"><span>├── lowband-protocol        # WDP/WTP/WSP/WTLS value types and state machines</span></span>
+<span class="line"><span>├── lowband-wbxml           # bounded WML/WBXML codec</span></span>
+<span class="line"><span>├── lowband-bearer-udp      # IP/UDP WDP adapter</span></span>
+<span class="line"><span>└── lowband-http            # direct HTTP route</span></span></code></pre>
+<p>These can initially be private workspace crates. Publish them only if external users need those
+lower-level APIs independently.</p>
+<h3 id="feature-policy">Feature policy</h3>
+<p>Cargo features should be additive build capabilities:</p>
+<ul>
+<li><code>http</code>;</li>
+<li><code>wap-connectionless</code>;</li>
+<li><code>wap-connection-mode</code>;</li>
+<li><code>wtls-compat</code>;</li>
+<li><code>wbxml-native</code>;</li>
+<li><code>wbxml-sidecar</code>;</li>
+<li><code>ffi</code>.</li>
+</ul>
+<p>Runtime route and security choice should remain runtime configuration. Mutually exclusive
+profiles implemented only as Cargo features become difficult to compose and test. Cargo’s
+feature guidance explicitly recommends additive features and runtime selection when feature
+choices can coexist.</p>
+<h2 id="public-contract-direction">Public contract direction</h2>
+<p>The current <code>fetch_deck</code> contract is browser-specific. Preserve it for compatibility, but build
+the product API around a content-neutral transport request with a WML convenience facade.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> trait</span><span style="color:#B392F0"> TransportClient</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    fn</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">, request</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ResourceRequest</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">-&gt;</span><span style="color:#B392F0"> Result</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">ResourceResponse</span><span style="color:#E1E4E8">, </span><span style="color:#B392F0">TransportError</span><span style="color:#E1E4E8">&gt;;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> ResourceRequest</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> resource_uri</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Url</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> method</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Method</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> headers</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HeaderMap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> body</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> route</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FetchRoute</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> policy</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RequestPolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> ResourceResponse</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> final_uri</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Url</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> status</span><span style="color:#F97583">:</span><span style="color:#B392F0"> u16</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> headers</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HeaderMap</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> raw_body</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> route_trace</span><span style="color:#F97583">:</span><span style="color:#B392F0"> RouteTrace</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> security</span><span style="color:#F97583">:</span><span style="color:#B392F0"> SecurityOutcome</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> DeckPayload</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> wml_xml</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> base_url</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> content_type</span><span style="color:#F97583">:</span><span style="color:#B392F0"> String</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> raw_bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Vec</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">u8</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Rules:</p>
+<ol>
+<li><code>TransportClient</code> owns bytes and protocol state.</li>
+<li>A Lowband deck-normalization adapter converts <code>ResourceResponse</code> to <code>DeckPayload</code>.</li>
+<li>WaveNav consumes only <code>DeckPayload</code> values.</li>
+<li>Host adapters translate <code>DeckPayload</code> to the existing generated TypeScript/native contract.</li>
+<li>Protocol and security traces are optional diagnostic metadata, never engine input.</li>
+<li>Public APIs use explicit versioning and do not expose internal state-machine structs until
+those structs are deliberately supported as an SDK surface.</li>
+</ol>
+<p>Rust’s native ABI has no stability guarantee, so a commercial binary SDK must use a deliberate
+foreign ABI or generated binding layer rather than exposing arbitrary Rust symbols. UniFFI is a
+reasonable later option for Kotlin, Swift, and Python; a C ABI remains the broadest low-level
+integration surface.</p>
+<h2 id="wbxml-decision">WBXML decision</h2>
+<p>The installed browser must not require users to install <code>wbxml2xml</code>.</p>
+<h3 id="near-term-release-bridge">Near-term release bridge</h3>
+<p>Bundle a version-pinned <code>wbxml2xml</code> sidecar per target architecture:</p>
+<ul>
+<li>checksum and provenance every binary;</li>
+<li>retain the current timeout and output limits;</li>
+<li>include required LGPL notices and satisfy redistribution obligations;</li>
+<li>make the Tauri bundle active;</li>
+<li>add clean-machine installer tests;</li>
+<li>do not fail application startup for textual-WML-only use if the optional decoder is missing.</li>
+</ul>
+<p>Tauri 2 officially supports architecture-specific embedded sidecars. This is the shortest path
+to a single installer, but it leaves the standalone Rust SDK with a native tool dependency.</p>
+<h3 id="long-term-sdk-path">Long-term SDK path</h3>
+<p>Implement a bounded WML 1.3 WBXML codec in Rust from <code>WAP-192</code> and the WML token tables:</p>
+<ul>
+<li>decode and encode global tokens, literals, string tables, code pages, entities, opaque data,
+extensions, tags, and attributes;</li>
+<li>enforce byte, nesting, string-table, token-count, and decoded-output limits;</li>
+<li>preserve unknown-token behavior according to an explicit conformance policy;</li>
+<li>use differential tests against libwbxml and captured WMLC fixtures;</li>
+<li>fuzz the decoder as an untrusted-input boundary;</li>
+<li>keep the sidecar backend temporarily available as a differential oracle.</li>
+</ul>
+<p>Do not link libwbxml directly into the browser process merely to remove the subprocess. That
+would trade an operational dependency for a larger unsafe native parsing boundary and still
+carry licensing/packaging work.</p>
+<h2 id="historical-compliance-and-improved-behavior">Historical compliance and improved behavior</h2>
+<p>The core policy remains:</p>
+<ul>
+<li>protocol-visible behavior must meet the selected WAP/WML conformance profile;</li>
+<li>modern improvements may exist outside or above the compatibility boundary;</li>
+<li>improvements must not silently change WML/WAP semantics.</li>
+</ul>
+<p>Examples:</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Compatibility behavior</th>
+<th>Modern improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direct secure origin access</td>
+<td>WAP-profiled HTTP/TLS semantics where selected</td>
+<td>Modern TLS defaults and current trust store</td>
+</tr>
+<tr>
+<td>WTLS</td>
+<td>Exact WAP-261 compatibility profile, opt-in</td>
+<td>Separate modern TLS/DTLS routes; no silent security downgrade</td>
+</tr>
+<tr>
+<td>Timeouts/retries</td>
+<td>Spec/profile timer behavior</td>
+<td>User cancellation and better diagnostics</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td>WML deck/card semantics</td>
+<td>Scaling, accessibility, inspect/debug tools</td>
+</tr>
+<tr>
+<td>Cache/history</td>
+<td>WAP-observable rules</td>
+<td>Persistence, privacy controls, export/clear UI</td>
+</tr>
+<tr>
+<td>Gateway selection</td>
+<td>Historical proxy profile behavior</td>
+<td>Auto profiles, health checks, and actionable setup errors</td>
+</tr>
+</tbody>
+</table>
+<p><code>waps://</code> must not claim a secure state until live WTLS or a separately identified secure route
+has authenticated the peer and protected the payload. Pre-alpha testing may continue through an
+explicit insecure test posture that displays an unavoidable no-WTLS warning and reports all
+protection flags as false. Release profiles must reject that posture.</p>
+<p>AES is not the obsolete WTLS cipher: WAP-261 does not define AES. Historical WTLS uses RC5,
+DES/3DES, and IDEA CBC suites with SHA-1 or MD5 MAC variants. AES remains a current standard and
+is used in modern TLS through AEAD modes such as AES-GCM. The detailed inventory, security
+profiles, and downgrade policy are in
+<a href="wtls-modernization-research.md"><code>wtls-modernization-research.md</code></a> and
+<a href="decisions/0002-separate-modern-security-from-wtls-compatibility.md"><code>ADR 0002</code></a>.</p>
+<h2 id="phased-work-program">Phased work program</h2>
+<p>The phases below are ordered by dependency. Calendar time can overlap where contracts are stable.
+Estimates are engineering ranges, not delivery commitments.</p>
+<h3 id="phase-nb0-truth-route-and-contract-foundation">Phase NB0: truth, route, and contract foundation</h3>
+<p>Estimate: 2-4 engineer-weeks</p>
+<p>Work:</p>
+<ul>
+<li>create an explicit conformance profile for direct HTTP, WSP connectionless, WSP
+connection-mode, WTLS, and optional bearer features;</li>
+<li>correct active docs so they distinguish the live connectionless path from fixture-only
+WSP/WTP modules;</li>
+<li>define <code>resource_uri</code> separately from <code>gateway_endpoint</code>;</li>
+<li>define route/security outcomes and profile configuration;</li>
+<li>preserve the current generated browser contract behind an adapter;</li>
+<li>create golden route-selection and no-fallback tests.</li>
+</ul>
+<p>Exit gate:</p>
+<ul>
+<li>the browser never chooses a gateway peer solely because it is the resource host unless an
+explicit direct-peer diagnostic profile says to do so.</li>
+</ul>
+<h3 id="phase-nb1-kannel-free-early-access-desktop">Phase NB1: Kannel-free early-access desktop</h3>
+<p>Estimate: 6-10 engineer-weeks</p>
+<p>Work:</p>
+<ul>
+<li>implement direct HTTP <code>POST</code> and WML form submission;</li>
+<li>add session-scoped cookie storage and the minimum WAP HTTP state profile;</li>
+<li>bundle the WBXML sidecar or finish a native WML/WBXML decoder;</li>
+<li>enable and validate Tauri bundles for target platforms;</li>
+<li>make decoder degradation request-scoped rather than an unconditional startup failure;</li>
+<li>add profile/settings UI and direct HTTP/HTTPS/WMLC clean-machine E2E tests;</li>
+<li>add user-visible certificate, content-type, and navigation errors.</li>
+</ul>
+<p>Exit gate:</p>
+<ul>
+<li>a user installs Waves on a clean machine and browses HTTP/HTTPS WML/WMLC sites without
+Kannel or separately installed tools.</li>
+</ul>
+<p>This is the first commercially demonstrable all-in-one build. It is not yet full native WAP 1.x
+transport conformance.</p>
+<h3 id="phase-nb2-live-protocol-core-convergence">Phase NB2: live protocol-core convergence</h3>
+<p>Estimate: 8-14 engineer-weeks</p>
+<p>Work:</p>
+<ul>
+<li>replace the hand-written native WSP codec with <code>network::wsp</code>;</li>
+<li>expand the production connectionless header/method/reply matrix;</li>
+<li>compose WSP connection-mode with live WTP Classes 0 and 2;</li>
+<li>implement session connect/disconnect and capability negotiation;</li>
+<li>implement production TID, retransmission, duplicate, abort, and timer behavior;</li>
+<li>keep Class 1 and push behind their declared profile gates;</li>
+<li>add configured WAP gateway endpoint and bearer abstraction;</li>
+<li>run packet-level interop against Kannel plus at least one independent oracle or capture set.</li>
+</ul>
+<p>Exit gate:</p>
+<ul>
+<li>the bytes exercised by conformance fixtures and the bytes sent by the browser use the same
+codecs and state machines.</li>
+</ul>
+<h3 id="phase-nb3-secure-classic-wap">Phase NB3: secure classic WAP</h3>
+<p>Estimate: 12-20 engineer-weeks</p>
+<p>Work:</p>
+<ul>
+<li>apply the separate modern-default and historical-compatibility profile decision from
+<a href="decisions/0002-separate-modern-security-from-wtls-compatibility.md"><code>ADR 0002</code></a>;</li>
+<li>complete the WTLS record, handshake, cipher, MAC, key exchange, alerts, replay, and trust
+paths required by the selected client profile;</li>
+<li>apply <code>WAP-261</code> SIN overlays and WAP certificate/PKI requirements;</li>
+<li>model secure connection state per address/port quadruplet;</li>
+<li>add secure connectionless and connection-mode routes on the correct ports;</li>
+<li>define supported legacy algorithms and disabled-by-default policy;</li>
+<li>add user-visible security identity, warning, and failure states;</li>
+<li>obtain independent cryptographic review before production claims.</li>
+</ul>
+<p>Exit gate:</p>
+<ul>
+<li>release profiles cannot complete <code>waps://</code> without a verified protected <code>SecurityOutcome</code>;</li>
+<li>known-answer, negative, replay, packet-loss, and interoperability tests pass.</li>
+</ul>
+<p>WTLS is the highest-risk and least predictable phase. Modern TLS is not a wire-compatible
+substitute for WTLS over datagrams.</p>
+<h3 id="phase-nb4-independently-releasable-sdks">Phase NB4: independently releasable SDKs</h3>
+<p>Estimate: 6-12 engineer-weeks</p>
+<p>Work:</p>
+<ul>
+<li>establish a root Cargo workspace and product package boundaries;</li>
+<li>audit every public Rust type and error;</li>
+<li>add crate-level examples, changelogs, release notes, compatibility policy, and API tests;</li>
+<li>add <code>cargo package</code>/publish dry-run gates;</li>
+<li>version the engine and transport independently after the first stable contract;</li>
+<li>build a Lowband CLI using only public SDK APIs;</li>
+<li>add UniFFI or C ABI only after the Rust contract is stable;</li>
+<li>generate SBOM, license notices, provenance, and signed checksums for artifacts.</li>
+</ul>
+<p>Exit gate:</p>
+<ul>
+<li>a sample external Rust application can consume Lowband without WaveNav or Waves;</li>
+<li>another sample can consume WaveNav without Lowband or Waves;</li>
+<li>Waves consumes the same published APIs without privileged internal access.</li>
+</ul>
+<h3 id="phase-nb5-product-hardening">Phase NB5: product hardening</h3>
+<p>Estimate: 8-16 engineer-weeks, partly parallel</p>
+<p>Work:</p>
+<ul>
+<li>updater, signing/notarization, installer, rollback, and release channels;</li>
+<li>persistent cache/history/bookmarks and privacy controls;</li>
+<li>proxy/origin credentials via OS keychain;</li>
+<li>cancellation, offline mode, recovery, and diagnostic export;</li>
+<li>protocol and parser fuzzing;</li>
+<li>multi-platform performance and resource budgets;</li>
+<li>long-running session, packet-loss, DNS, redirect, and malformed-content campaigns;</li>
+<li>support matrix and conformance evidence bundle.</li>
+</ul>
+<p>Exit gate:</p>
+<ul>
+<li>production release checklist and support runbooks pass on clean machines for all supported
+platforms.</li>
+</ul>
+<h2 id="delivery-ranges">Delivery ranges</h2>
+<p>Assuming senior Rust/protocol engineers and the current codebase:</p>
+<table>
+<thead>
+<tr>
+<th>Outcome</th>
+<th>Likely effort</th>
+<th>What it does not claim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kannel-free installable WML browser</td>
+<td>8-14 engineer-weeks</td>
+<td>Full connection-mode WAP or WTLS</td>
+</tr>
+<tr>
+<td>Credible WAP 1.2.1 client over IP/UDP, excluding production WTLS</td>
+<td>6-10 engineer-months total</td>
+<td>Secure classic-WAP parity, non-IP bearers</td>
+</tr>
+<tr>
+<td>Product-ready browser plus Lowband and WaveNav SDKs with WTLS profile</td>
+<td>12-20 engineer-months total</td>
+<td>Every optional carrier/bearer adaptation</td>
+</tr>
+</tbody>
+</table>
+<p>A practical team is two protocol/Rust engineers plus part-time desktop/QA/security support.
+Two to three senior engineers could plausibly reach the full product range in roughly 6-10
+calendar months, subject to WTLS interoperability and source/conformance ambiguity.</p>
+<h2 id="recommended-first-epic">Recommended first epic</h2>
+<p>Create <code>NB0 Native Browser Foundation</code> before adding more protocol features.</p>
+<p>Suggested work items:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Work item</th>
+<th>Primary output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NB0-01</td>
+<td>Declare truthful route/profile capability matrix</td>
+<td>Active architecture and machine-readable profile</td>
+</tr>
+<tr>
+<td>NB0-02</td>
+<td>Separate resource URI from WAP gateway endpoint</td>
+<td>Contract-first route types and tests</td>
+</tr>
+<tr>
+<td>NB0-03</td>
+<td>Wire live native fetch to <code>network::wsp</code></td>
+<td>One WSP codec on production and fixture paths</td>
+</tr>
+<tr>
+<td>NB0-04</td>
+<td>Choose WBXML release bridge and native end-state</td>
+<td>Decision record, packaging spike, conformance plan</td>
+</tr>
+<tr>
+<td>NB0-05</td>
+<td>Add direct HTTP WML <code>POST</code></td>
+<td>Working form submission without Kannel</td>
+</tr>
+<tr>
+<td>NB0-06</td>
+<td>Define state services</td>
+<td>Cookie, cache, credential, and profile ownership contracts</td>
+</tr>
+<tr>
+<td>NB0-07</td>
+<td>Establish clean-machine E2E</td>
+<td>Text WML, WMLC, HTTP POST, and connectionless WSP lanes</td>
+</tr>
+<tr>
+<td>NB0-08</td>
+<td>Build SDK public-surface inventory</td>
+<td>Public/private API and package-release map</td>
+</tr>
+<tr>
+<td>NB0-09</td>
+<td>Label test-only <code>waps://</code> and gate release</td>
+<td>Development warns/reports unprotected state; release fails</td>
+</tr>
+</tbody>
+</table>
+<p>Do not start WTLS implementation until <code>NB0-02</code>, <code>NB0-03</code>, and the WTP/WSP connection-mode
+composition design are accepted.</p>
+<h2 id="key-risks-and-controls">Key risks and controls</h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fixture-only modules mistaken for live conformance</td>
+<td>Require production-path coverage in every conformance claim</td>
+</tr>
+<tr>
+<td><code>waps://</code> implies security that is not present</td>
+<td>Unavoidable test warning and false protection state; reject in release profiles</td>
+</tr>
+<tr>
+<td>WAP URL and gateway identity remain conflated</td>
+<td>Make route/profile explicit in the public contract</td>
+</tr>
+<tr>
+<td>Unsafe/malformed WBXML compromises the host</td>
+<td>Keep strict limits, isolation fallback, differential tests, and fuzzing</td>
+</tr>
+<tr>
+<td>Obsolete WTLS crypto creates modern security exposure</td>
+<td>Separate opt-in compatibility profile, suite allowlist, warning UX, review</td>
+</tr>
+<tr>
+<td>Automatic fallback permits downgrade</td>
+<td>Secure failures are terminal; profile changes require explicit policy or action</td>
+</tr>
+<tr>
+<td>One Kannel interop peer hides implementation bugs</td>
+<td>Use independent captures/oracles and byte-level golden suites</td>
+</tr>
+<tr>
+<td>Public SDKs freeze unstable internals</td>
+<td>Publish one facade first; extract protocol crates only after live use</td>
+</tr>
+<tr>
+<td>Spec PDFs are redistributed with commercial binaries</td>
+<td>Ship implementation and notices, not the source corpus; obtain legal review</td>
+</tr>
+<tr>
+<td>Rust ABI is exposed as a commercial binary contract</td>
+<td>Use versioned C ABI or generated language bindings</td>
+</tr>
+<tr>
+<td>Optional bearer scope expands without limit</td>
+<td>Define IP/UDP as the first conformance profile; add bearer adapters separately</td>
+</tr>
+</tbody>
+</table>
+<h2 id="legal-and-source-material-note">Legal and source-material note</h2>
+<p>This is engineering guidance, not legal advice.</p>
+<p>OMA’s use agreement permits commercial use of information in clearly designated final approved
+specifications, while placing separate restrictions on copying and publishing the documents.
+The product build should therefore:</p>
+<ul>
+<li>implement from approved specifications and retained provenance;</li>
+<li>avoid bundling the specification PDFs in customer artifacts;</li>
+<li>preserve required notices for redistributed dependencies;</li>
+<li>review WAP/OMA essential-IPR disclosures and commercial distribution plans with counsel;</li>
+<li>review libwbxml’s LGPL obligations before shipping its executable or library.</li>
+</ul>
+<h2 id="authoritative-external-references">Authoritative external references</h2>
+<ul>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/wap/wap-210-waparch-20010712-a.pdf">WAP Architecture, WAP-210</a></li>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/wap/wap-191_104-wml-20010718-a.pdf">WML 1.3 SIN roll-up, WAP-191_104</a></li>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/wap/wap-192-wbxml-20010725-a.pdf">WBXML 1.3, WAP-192</a></li>
+<li><a href="https://www.openmobilealliance.org/release/Browser_Protocol_Stack/V2_1-20050204-C/OMA-WAP-TS-WSP-V1_0-20020920-C.pdf">WSP, OMA-WAP-TS-WSP</a></li>
+<li><a href="https://www.openmobilealliance.org/release/Browser_Protocol_Stack/V2_1-20050204-C/WAP-224-WTP-20020827-a.pdf">WTP, WAP-224</a></li>
+<li><a href="https://www.openmobilealliance.org/release/Browser_Protocol_Stack/V2_1-20050204-C/WAP-259-WDP-20010614-a.pdf">WDP, WAP-259</a></li>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/wap/wap-261-wtls-20010406-a.pdf">WTLS, WAP-261</a></li>
+<li><a href="https://csrc.nist.gov/pubs/fips/197/final">AES, FIPS 197-upd1</a></li>
+<li><a href="https://www.rfc-editor.org/info/rfc9846/">TLS 1.3, RFC 9846</a></li>
+<li><a href="https://www.rfc-editor.org/info/rfc9147/">DTLS 1.3, RFC 9147</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9325.html">Secure TLS/DTLS recommendations, RFC 9325</a></li>
+<li><a href="https://www.openmobilealliance.org/specifications/affiliates/wap-forum/">OMA WAP Forum specification archive</a></li>
+<li><a href="https://www.openmobilealliance.org/tech/affiliates/LicenseAgreement.asp">OMA document use agreement</a></li>
+<li><a href="https://v2.tauri.app/develop/sidecar/">Tauri 2 external binary bundling</a></li>
+<li><a href="https://doc.rust-lang.org/cargo/reference/workspaces.html">Cargo workspaces</a></li>
+<li><a href="https://doc.rust-lang.org/stable/cargo/reference/features.html">Cargo features</a></li>
+<li><a href="https://doc.rust-lang.org/cargo/reference/publishing.html">Cargo publishing</a></li>
+<li><a href="https://rust-lang.github.io/api-guidelines/">Rust API Guidelines</a></li>
+<li><a href="https://doc.rust-lang.org/reference/items/external-blocks.html">Rust foreign ABI reference</a></li>
+<li><a href="https://mozilla.github.io/uniffi-rs/latest/">UniFFI user guide</a></li>
+<li><a href="https://github.com/libwbxml/libwbxml">libwbxml project</a></li>
+</ul>
+<h2 id="related-repository-evidence">Related repository evidence</h2>
+<ul>
+<li><a href="../../transport-rust/src/native_fetch.rs"><code>transport-rust/src/native_fetch.rs</code></a></li>
+<li><a href="../../transport-rust/src/network"><code>transport-rust/src/network</code></a></li>
+<li><a href="../../transport-rust/src/wbxml.rs"><code>transport-rust/src/wbxml.rs</code></a></li>
+<li><a href="../../browser/src-tauri/src/fetch_host.rs"><code>browser/src-tauri/src/fetch_host.rs</code></a></li>
+<li><a href="../../browser/src-tauri/src/bootstrap.rs"><code>browser/src-tauri/src/bootstrap.rs</code></a></li>
+<li><a href="../../browser/src-tauri/tauri.conf.json"><code>browser/src-tauri/tauri.conf.json</code></a></li>
+<li><a href="../waves/MAINTENANCE_WORK_ITEMS.md"><code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code></a></li>
+<li><a href="../waves/TRANSPORT_SPEC_TRACEABILITY.md"><code>docs/waves/TRANSPORT_SPEC_TRACEABILITY.md</code></a></li>
+<li><a href="../waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md"><code>docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></a></li>
+<li><a href="../waves/SECURITY_BOUNDARY_TRACEABILITY.md"><code>docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md</code></a></li>
+<li><a href="wtls-modernization-research.md"><code>docs/architecture/wtls-modernization-research.md</code></a></li>
+<li><a href="decisions/0002-separate-modern-security-from-wtls-compatibility.md"><code>docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md</code></a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#native-wap-browser-and-modular-product-architecture">Native WAP Browser and Modular Product Architecture</a></li><li class="depth-2"><a href="#executive-answer">Executive answer</a></li><li class="depth-2"><a href="#what-kannel-is-doing-today">What Kannel is doing today</a></li><li class="depth-2"><a href="#current-implementation-baseline">Current implementation baseline</a></li><li class="depth-3"><a href="#capability-matrix">Capability matrix</a></li><li class="depth-3"><a href="#documentation-accuracy-warning">Documentation accuracy warning</a></li><li class="depth-2"><a href="#the-target-browser-needs-two-network-routes">The target browser needs two network routes</a></li><li class="depth-3"><a href="#route-a-direct-web-access">Route A: direct Web access</a></li><li class="depth-3"><a href="#route-b-classic-wap-access">Route B: classic WAP access</a></li><li class="depth-2"><a href="#recommended-product-boundaries">Recommended product boundaries</a></li><li class="depth-3"><a href="#1-lowband-client-sdk">1. Lowband Client SDK</a></li><li class="depth-3"><a href="#2-wavenav-engine-sdk">2. WaveNav Engine SDK</a></li><li class="depth-3"><a href="#3-waves-browser">3. Waves Browser</a></li><li class="depth-3"><a href="#4-optional-lowband-tools">4. Optional Lowband tools</a></li><li class="depth-2"><a href="#repository-and-package-shape">Repository and package shape</a></li><li class="depth-3"><a href="#step-1-one-workspace-stable-product-crates">Step 1: one workspace, stable product crates</a></li><li class="depth-3"><a href="#step-2-extract-only-proven-internal-seams">Step 2: extract only proven internal seams</a></li><li class="depth-3"><a href="#feature-policy">Feature policy</a></li><li class="depth-2"><a href="#public-contract-direction">Public contract direction</a></li><li class="depth-2"><a href="#wbxml-decision">WBXML decision</a></li><li class="depth-3"><a href="#near-term-release-bridge">Near-term release bridge</a></li><li class="depth-3"><a href="#long-term-sdk-path">Long-term SDK path</a></li><li class="depth-2"><a href="#historical-compliance-and-improved-behavior">Historical compliance and improved behavior</a></li><li class="depth-2"><a href="#phased-work-program">Phased work program</a></li><li class="depth-3"><a href="#phase-nb0-truth-route-and-contract-foundation">Phase NB0: truth, route, and contract foundation</a></li><li class="depth-3"><a href="#phase-nb1-kannel-free-early-access-desktop">Phase NB1: Kannel-free early-access desktop</a></li><li class="depth-3"><a href="#phase-nb2-live-protocol-core-convergence">Phase NB2: live protocol-core convergence</a></li><li class="depth-3"><a href="#phase-nb3-secure-classic-wap">Phase NB3: secure classic WAP</a></li><li class="depth-3"><a href="#phase-nb4-independently-releasable-sdks">Phase NB4: independently releasable SDKs</a></li><li class="depth-3"><a href="#phase-nb5-product-hardening">Phase NB5: product hardening</a></li><li class="depth-2"><a href="#delivery-ranges">Delivery ranges</a></li><li class="depth-2"><a href="#recommended-first-epic">Recommended first epic</a></li><li class="depth-2"><a href="#key-risks-and-controls">Key risks and controls</a></li><li class="depth-2"><a href="#legal-and-source-material-note">Legal and source-material note</a></li><li class="depth-2"><a href="#authoritative-external-references">Authoritative external references</a></li><li class="depth-2"><a href="#related-repository-evidence">Related repository evidence</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/architecture/native-wap-browser-product-architecture.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

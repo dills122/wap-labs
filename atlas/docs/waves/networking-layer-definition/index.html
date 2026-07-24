@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Networking Layer Definition (WAP 1.x) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/networking-layer-definition"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/networking-layer-definition.md</p><div class="markdown-body"><h1 id="networking-layer-definition-wap-1x">Networking Layer Definition (WAP 1.x)</h1>
+<p>Date: <code>2026-03-04</code>
+Owner: <code>transport-rust / browser / engine-wasm integration</code></p>
+<p>This is the practical build definition for networking layer work in Waves.</p>
+<h2 id="1-what-to-build">1) What to build</h2>
+<p>Build in explicit layers with profile-gated behavior:</p>
+<ul>
+<li><code>WDP</code>: address/port-capable datagram transport and adaptor profile.</li>
+<li><code>WCMP</code>: selected error and diagnostic message structures.</li>
+<li><code>WSP</code>: connectionless methods and headers for the strict profile; session,
+capability negotiation, and Push only when explicitly claimed.</li>
+<li><code>WTP</code>: conditional transaction semantics for connection-oriented WSP.</li>
+<li><code>WTLS</code>: security façade with explicit phase plan (phase A shim, phase B full implementation).</li>
+</ul>
+<p>Transport profile scope for this document is the strict
+WDP/WCMP/connectionless-WSP path plus explicit gates for optional modules.</p>
+<h2 id="2-what-must-not-be-built-here">2) What must not be built here</h2>
+<ul>
+<li>WML parsing and rendering.</li>
+<li>Browser input handling and host-window semantics.</li>
+<li>Runtime rendering state ownership.</li>
+</ul>
+<p>Those remain in <code>engine-wasm</code> and <code>browser</code> as per contract boundaries.</p>
+<h2 id="3-contract-alignment-checklist">3) Contract alignment checklist</h2>
+<ul>
+<li>Parser outputs are pure value types (<code>WspPdu</code>, <code>WtpPdu</code>, <code>WdpDatagram</code>, <code>WtlsRecord</code>).</li>
+<li>No global mutable parser state.</li>
+<li>Deterministic traces for state transitions and timers.</li>
+<li>Feature flags must preserve API compatibility.</li>
+</ul>
+<h2 id="4-protocol-definitions-in-priority-order">4) Protocol definitions in priority order</h2>
+<ol>
+<li>Effective <code>WAP-200</code> sequence: strict WDP source and SCR authority.</li>
+<li><code>WAP-202</code>: strict WCMP source and SCR authority.</li>
+<li>Effective <code>WAP-203</code> sequence: strict WSP source and SCR authority.</li>
+<li>Effective <code>WAP-201</code> sequence: conditional WTP authority only when
+connection-oriented WSP is claimed.</li>
+<li><code>WAP-259</code>, <code>WAP-224</code>, <code>WAP-230</code>, and OMA corrections: successor
+delta/context evidence only.</li>
+<li><code>WAP-261/WAP-199</code>: WTLS placeholder and roadmap (security path).</li>
+</ol>
+<h2 id="5-build-order-with-acceptance-gates">5) Build order with acceptance gates</h2>
+<ul>
+<li>The three exact transport ledgers must stay valid before parser or profile
+contract shifts.</li>
+<li><code>WDP</code> transport abstractions and UDP implementation with validated port mapping.</li>
+<li><code>WCMP</code> selected message structures and deterministic error rules.</li>
+<li><code>WSP</code> connectionless GET/POST/REPLY codec and selected header baseline.</li>
+<li>Browser integration surface contract verification (<code>transport.ts</code>).</li>
+<li>Conditional WTP and connection-oriented WSP only after an extension-profile
+claim activates them.</li>
+<li>Optional WTLS shim enablement.</li>
+</ul>
+<h2 id="6-open-questions-closed-by-design">6) Open questions closed by design</h2>
+<ul>
+<li>WSP mode profile should be explicit and persisted in runtime profile config.</li>
+<li>WSP session is tied to peer quadruplet and aborted on disconnect/suspend.</li>
+<li>Push is allowed only when profile advertises facility.</li>
+<li>SAR/ESAR remain optional and disabled unless explicitly enabled.</li>
+</ul>
+<h2 id="7-mapping-to-existing-work-items">7) Mapping to existing work-items</h2>
+<ul>
+<li><code>T0-08</code> WTP retransmission/TID/window.</li>
+<li><code>T0-09</code> WSP connectionless matrix.</li>
+<li><code>T0-10</code> assigned-number registry fixtures.</li>
+<li><code>T0-11</code> capability bounds enforcement.</li>
+<li><code>T0-14</code> profile decision gates.</li>
+</ul>
+<h2 id="8-recommended-next-step">8) Recommended next step</h2>
+<p>Create golden fixtures for:</p>
+<ul>
+<li>the eight selected WSP connectionless rows and source-derived
+GET/POST/REPLY encodings,</li>
+<li>the five selected WCMP message rows,</li>
+<li><code>WDP</code> UDP receive/send roundtrip with <code>9200</code>/<code>9201</code>/<code>9202</code>/<code>9203</code> mapping,</li>
+<li>transport profile gating for <code>connectionless_only</code>, conditional
+<code>connection_mode</code>, <code>wtls_optional</code>, and <code>push_enabled</code>.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#networking-layer-definition-wap-1x">Networking Layer Definition (WAP 1.x)</a></li><li class="depth-2"><a href="#1-what-to-build">1) What to build</a></li><li class="depth-2"><a href="#2-what-must-not-be-built-here">2) What must not be built here</a></li><li class="depth-2"><a href="#3-contract-alignment-checklist">3) Contract alignment checklist</a></li><li class="depth-2"><a href="#4-protocol-definitions-in-priority-order">4) Protocol definitions in priority order</a></li><li class="depth-2"><a href="#5-build-order-with-acceptance-gates">5) Build order with acceptance gates</a></li><li class="depth-2"><a href="#6-open-questions-closed-by-design">6) Open questions closed by design</a></li><li class="depth-2"><a href="#7-mapping-to-existing-work-items">7) Mapping to existing work-items</a></li><li class="depth-2"><a href="#8-recommended-next-step">8) Recommended next step</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/networking-layer-definition.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

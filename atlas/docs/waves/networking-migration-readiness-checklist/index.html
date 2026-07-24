@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Networking Migration Readiness Checklist (T0-08..T0-24) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/networking-migration-readiness-checklist"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/networking-migration-readiness-checklist.md</p><div class="markdown-body"><h1 id="networking-migration-readiness-checklist-t0-08t0-24">Networking Migration Readiness Checklist (T0-08..T0-24)</h1>
+<p>Status: draft
+Owner: transport docs + protocol stack alignment</p>
+<p>This checklist translates protocol rewrite gates into a deterministic promotion plan.</p>
+<p>Execution mapping:</p>
+<ul>
+<li>Ticket-level gate states are recorded in <code>docs/waves/WORK_ITEMS.md</code> (<code>T0-08</code> through <code>T0-24</code>) in the <code>Migration gates</code> fields.</li>
+</ul>
+<h2 id="gate-policy">Gate policy</h2>
+<p>Promotion from <code>bridge-first</code> to stronger protocol layers requires:</p>
+<ol>
+<li>ticket owner signoff,</li>
+<li>fixture coverage marked in <code>docs/waves/SPEC_TEST_COVERAGE.md</code>,</li>
+<li>explicit profile gate annotation in <code>docs/waves/WORK_ITEMS.md</code>,</li>
+<li>no contract drift in <code>browser/contracts/transport.ts</code> and <code>engine-wasm/contracts/wml-engine.ts</code>.</li>
+</ol>
+<h2 id="ticket-level-done-done-gates">Ticket-level done-done gates</h2>
+<h3 id="t0-08-owner-transport-rust">T0-08 (<code>Owner</code>: transport-rust)</h3>
+<ul>
+<li><code>Done-1</code>: replay-window/TID policy tables are implemented and deterministic under both duplicate/no-cache assumptions.</li>
+<li><code>Done-2</code>: out-of-order invoke and timeout transitions are logged with deterministic terminal state.</li>
+<li><code>Done-3</code>: fixtures in <code>transport-rust/tests/fixtures/transport/</code> cover at least one each of table-6/7/8-like decisions.</li>
+</ul>
+<h3 id="t0-09-owner-transport-rust">T0-09 (<code>Owner</code>: transport-rust)</h3>
+<ul>
+<li><code>Done-1</code>: WSP mode is machine-enforced as CO-only/CL-only/both profile artifact.</li>
+<li><code>Done-2</code>: connectionless matrix fixture rejects invalid req/ind primitive transitions.</li>
+<li><code>Done-3</code>: profile test matrix updates gate any unsupported primitive behavior in CI-like check.</li>
+</ul>
+<h3 id="t0-10-owner-transport-rust">T0-10 (<code>Owner</code>: transport-rust)</h3>
+<ul>
+<li><code>Done-1</code>: assigned-number registry fixture set includes PDU types, headers, and abort reasons.</li>
+<li><code>Done-2</code>: unknown/unassigned token handling path is explicit and tested for both encode/decode.</li>
+<li><code>Done-3</code>: regression fixture proves stable profile-dependent behavior.</li>
+</ul>
+<h3 id="t0-11-owner-transport-rust">T0-11 (<code>Owner</code>: transport-rust)</h3>
+<ul>
+<li><code>Done-1</code>: negotiation-capability merge/intersection implemented as deterministic min-policy.</li>
+<li><code>Done-2</code>: negotiated limit violations emit deterministic abort/error and are fixture-asserted.</li>
+<li><code>Done-3</code>: cap-overrun fixture proves blocked request paths and trace tags.</li>
+</ul>
+<h3 id="t0-12-owner-transport-rust-docs">T0-12 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: <code>RQ-TRX-009</code> posture is declared with a fixed implemented/delegated/deferred split.</li>
+<li><code>Done-2</code>: compatibility-check artifact is versioned in docs and does not conflict with <code>T0-14</code> profile rules.</li>
+<li><code>Done-3</code>: no uncoded TCP-optimization requirement enters transport implementation silently.</li>
+</ul>
+<h3 id="t0-13-owner-transport-rust-docs">T0-13 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: one explicit decision is made (<code>in-scope</code> or <code>deferred</code>) for <code>WAP-159</code>.</li>
+<li><code>Done-2</code>: if deferred, scope-guardrails are written into transport-adjacent docs with no code requirement.</li>
+<li><code>Done-3</code>: if in-scope, <code>data_sm</code> mapping and WCMP payload validation fixtures exist.</li>
+</ul>
+<h3 id="t0-14-owner-transport-rust-browser">T0-14 (<code>Owner</code>: transport-rust, browser)</h3>
+<ul>
+<li><code>Done-1</code>: profile contract now includes near-term and target-state transport modes.</li>
+<li><code>Done-2</code>: hard gate rules for profile promotion are linked to ticket IDs and fixture coverage.</li>
+<li><code>Done-3</code>: migration lane order is mirrored in <code>docs/waves/networking-implementation-checklist.md</code> and <code>WORK_ITEMS.md</code>.</li>
+</ul>
+<h3 id="t0-15-owner-transport-rust-browser">T0-15 (<code>Owner</code>: transport-rust, browser)</h3>
+<ul>
+<li><code>Done-1</code>: cache policy includes shared request-policy path and deterministic override precedence.</li>
+<li><code>Done-2</code>: fixture lane proves hit/miss/reload/invalidation behavior under <code>cache-control</code>.</li>
+<li><code>Done-3</code>: profile transition tests show cache policy parity between profiles.</li>
+</ul>
+<h3 id="t0-16-owner-spec-processing">T0-16 (<code>Owner</code>: spec-processing)</h3>
+<ul>
+<li><code>Done-1</code>: one canonical <code>WAP-259</code> variant exists in <code>spec-processing/source-material</code>.</li>
+<li><code>Done-2</code>: <code>finalize-new-source-material.fish --dry-run</code> returns zero unresolved transport conflicts.</li>
+<li><code>Done-3</code>: review ledger includes one current row per transport/security canonical ID.</li>
+</ul>
+<h3 id="t0-17-owner-docs--transport">T0-17 (<code>Owner</code>: docs + transport)</h3>
+<ul>
+<li><code>Done-1</code>: non-core transport adjacencies (<code>WAP-204*</code>, <code>WAP-213*</code>) remain
+explicitly deferred; WAP-120 stays outside transport ownership but active
+under the WAE compliance lane.</li>
+<li><code>Done-2</code>: <code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code> and <code>OUT_OF_SCOPE...</code> are aligned on transport-adjacent deferrals.</li>
+<li><code>Done-3</code>: migration profile promotion criteria references <code>T0-17</code> as scope-lock check.</li>
+</ul>
+<h3 id="t0-18-owner-transport-rust-docs">T0-18 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: retransmission timer/counter behavior is explicit and fixture-backed.</li>
+<li><code>Done-2</code>: duplicate invoke/result handling includes deterministic cache-retention policy.</li>
+<li><code>Done-3</code>: NACK delay and retransmission hold-off policy is explicitly profile-gated for SAR lanes.</li>
+</ul>
+<h3 id="t0-19-owner-transport-rust">T0-19 (<code>Owner</code>: transport-rust)</h3>
+<ul>
+<li><code>Done-1</code>: WDP datagram trait is the protocol-native ingress to
+connectionless WSP in <code>wap-net-core</code> and to WTP only in a separately
+activated connection-oriented extension.</li>
+<li><code>Done-2</code>: UDP mapping for <code>9200..9203</code> is deterministic and fixture-covered.</li>
+<li><code>Done-3</code>: SAR behavior is documented and profile-gated (<code>off</code> default unless explicitly enabled).</li>
+</ul>
+<h3 id="t0-20-owner-transport-rust-docs">T0-20 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: WSP assigned-number/header registry coverage is table-driven and versioned.</li>
+<li><code>Done-2</code>: unknown token/code-page behavior is explicit and tested for active profiles.</li>
+<li><code>Done-3</code>: code-page shift, unsupported encoding paths, and method request/result classification over minimal <code>Get</code>/<code>Post</code>/<code>Reply</code> PDUs have deterministic outcomes.</li>
+</ul>
+<h3 id="t0-21-owner-transport-rust-docs">T0-21 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: WTLS phase boundary is explicit (<code>no-op</code> vs <code>active minimal</code>) and default-safe.</li>
+<li><code>Done-2</code>: active-mode record parsing and handshake retransmission/duplicate behavior is fixture-covered.</li>
+<li><code>Done-3</code>: security path cannot activate without profile-gate enablement artifacts.</li>
+</ul>
+<h3 id="t0-22-owner-transport-rust-docs">T0-22 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: replay harness baseline exists and <code>CONNECT</code> / <code>GET</code> / <code>REPLY</code> protocol paths are runnable from <code>transport-rust/tests/interop_replay.rs</code>.</li>
+<li><code>Done-2</code>: retransmission and duplicate-TID replay paths are runnable in the same corpus.</li>
+<li><code>Done-3</code>: migration profile gates can now reference replay results as mandatory promotion evidence.</li>
+</ul>
+<h3 id="t0-24-owner-transport-rust-docs">T0-24 (<code>Owner</code>: transport-rust, docs)</h3>
+<ul>
+<li><code>Done-1</code>: schema-versioned seed corpus exists with committed metadata, provenance, and legal-reuse posture for <code>Connect</code>, <code>Get/Reply</code>, retransmission, and duplicate-TID flows.</li>
+<li><code>Done-2</code>: replay harness validates both deterministic event order and transaction-level outcomes from those seed fixtures.</li>
+<li><code>Done-3</code>: <code>T0-22</code> references the seed corpus as required replay baseline input rather than ad hoc replay JSON.</li>
+</ul>
+<h2 id="cross-tile-closure-rule">Cross-tile closure rule</h2>
+<p><code>T0-17</code> had to stay true before promotion in <code>T0-14</code>, and <code>T0-18..T0-24</code> had to be green before moving from <code>gateway-bridged</code> to <code>wap-net-core</code>. That promotion baseline is now satisfied; future gates apply to <code>wap-net-ext</code> or rollback decisions.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#networking-migration-readiness-checklist-t0-08t0-24">Networking Migration Readiness Checklist (T0-08..T0-24)</a></li><li class="depth-2"><a href="#gate-policy">Gate policy</a></li><li class="depth-2"><a href="#ticket-level-done-done-gates">Ticket-level done-done gates</a></li><li class="depth-3"><a href="#t0-08-owner-transport-rust">T0-08 (Owner: transport-rust)</a></li><li class="depth-3"><a href="#t0-09-owner-transport-rust">T0-09 (Owner: transport-rust)</a></li><li class="depth-3"><a href="#t0-10-owner-transport-rust">T0-10 (Owner: transport-rust)</a></li><li class="depth-3"><a href="#t0-11-owner-transport-rust">T0-11 (Owner: transport-rust)</a></li><li class="depth-3"><a href="#t0-12-owner-transport-rust-docs">T0-12 (Owner: transport-rust, docs)</a></li><li class="depth-3"><a href="#t0-13-owner-transport-rust-docs">T0-13 (Owner: transport-rust, docs)</a></li><li class="depth-3"><a href="#t0-14-owner-transport-rust-browser">T0-14 (Owner: transport-rust, browser)</a></li><li class="depth-3"><a href="#t0-15-owner-transport-rust-browser">T0-15 (Owner: transport-rust, browser)</a></li><li class="depth-3"><a href="#t0-16-owner-spec-processing">T0-16 (Owner: spec-processing)</a></li><li class="depth-3"><a href="#t0-17-owner-docs--transport">T0-17 (Owner: docs + transport)</a></li><li class="depth-3"><a href="#t0-18-owner-transport-rust-docs">T0-18 (Owner: transport-rust, docs)</a></li><li class="depth-3"><a href="#t0-19-owner-transport-rust">T0-19 (Owner: transport-rust)</a></li><li class="depth-3"><a href="#t0-20-owner-transport-rust-docs">T0-20 (Owner: transport-rust, docs)</a></li><li class="depth-3"><a href="#t0-21-owner-transport-rust-docs">T0-21 (Owner: transport-rust, docs)</a></li><li class="depth-3"><a href="#t0-22-owner-transport-rust-docs">T0-22 (Owner: transport-rust, docs)</a></li><li class="depth-3"><a href="#t0-24-owner-transport-rust-docs">T0-24 (Owner: transport-rust, docs)</a></li><li class="depth-2"><a href="#cross-tile-closure-rule">Cross-tile closure rule</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/networking-migration-readiness-checklist.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

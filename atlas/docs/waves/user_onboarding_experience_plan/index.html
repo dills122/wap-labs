@@ -1,0 +1,327 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves User Onboarding Experience Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/user_onboarding_experience_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/user_onboarding_experience_plan.md</p><div class="markdown-body"><h1 id="waves-user-onboarding-experience-plan">Waves User Onboarding Experience Plan</h1>
+<p>Status: planning-ready
+Owner lane: <code>browser</code> + <code>docs</code></p>
+<h2 id="purpose">Purpose</h2>
+<p>Define a first-run and returning-user help experience for Waves that explains what the product is, how to use it, and how to learn progressively without sending users out to external documentation first.</p>
+<p>Waves is niche. The onboarding problem is not only control discoverability; it is mental-model adoption:</p>
+<ol>
+<li>what Waves is</li>
+<li>what <code>Local</code> vs <code>Network</code> mode means</li>
+<li>how WAP/WML navigation differs from modern browser assumptions</li>
+<li>how to explore examples, forms, and debugging surfaces without getting lost</li>
+</ol>
+<h2 id="goals">Goals</h2>
+<ol>
+<li>Give a new user a clear answer to “what is this?” within the first screen.</li>
+<li>Reduce abandonment caused by immediate network errors or unfamiliar terminology.</li>
+<li>Teach the core Waves mental model through a mix of overview, guided interaction, and built-in examples.</li>
+<li>Keep help accessible after first launch, not only during onboarding.</li>
+<li>Reuse product-native content surfaces where possible so documentation is testable and ships with the app.</li>
+</ol>
+<h2 id="non-goals-mvp">Non-Goals (MVP)</h2>
+<ol>
+<li>Full product documentation site replacement.</li>
+<li>Remote account or cloud-synced onboarding state.</li>
+<li>Heavy analytics/telemetry dependency for onboarding success.</li>
+<li>Interactive walkthroughs that mutate runtime state outside normal browser/engine boundaries.</li>
+</ol>
+<h2 id="user-segments">User Segments</h2>
+<h3 id="1-curious-newcomer">1. Curious newcomer</h3>
+<p>Characteristics:</p>
+<ol>
+<li>knows little or nothing about WAP/WML</li>
+<li>launches Waves out of curiosity</li>
+<li>needs orientation before exploring</li>
+</ol>
+<p>Needs:</p>
+<ol>
+<li>plain-language intro</li>
+<li>a safe “try it now” path</li>
+<li>fast explanation of <code>Local</code> vs <code>Network</code></li>
+</ol>
+<h3 id="2-technical-evaluator">2. Technical evaluator</h3>
+<p>Characteristics:</p>
+<ol>
+<li>understands historical mobile-web concepts or emulator tooling</li>
+<li>wants to inspect behavior quickly</li>
+<li>may care about debug state and protocol/runtime fidelity</li>
+</ol>
+<p>Needs:</p>
+<ol>
+<li>quick path to examples and diagnostics</li>
+<li>concise architecture/feature overview</li>
+<li>in-app access to troubleshooting and reference material</li>
+</ol>
+<h3 id="3-returning-operator">3. Returning operator</h3>
+<p>Characteristics:</p>
+<ol>
+<li>already launched Waves before</li>
+<li>may not remember exact controls or mode behavior</li>
+</ol>
+<p>Needs:</p>
+<ol>
+<li>replayable help entry point</li>
+<li>quick links to examples and troubleshooting</li>
+<li>optional hints, not forced tutorial repetition</li>
+</ol>
+<h2 id="experience-principles">Experience Principles</h2>
+<ol>
+<li>Start with orientation, not configuration.</li>
+<li>Teach by doing inside Waves where possible.</li>
+<li>Explain mode and constraint differences explicitly.</li>
+<li>Keep the first-run path skippable and replayable.</li>
+<li>Treat help content as product content: versioned, testable, local-first.</li>
+</ol>
+<h2 id="proposed-experience-model">Proposed Experience Model</h2>
+<h3 id="1-welcome-home">1. Welcome Home</h3>
+<p>Default first-run landing view shown before users are dropped into ordinary browsing.</p>
+<p>Core actions:</p>
+<ol>
+<li><code>Take the tour</code></li>
+<li><code>Try local examples</code></li>
+<li><code>Connect to a WAP server</code></li>
+<li><code>Open help</code></li>
+</ol>
+<p>Core content:</p>
+<ol>
+<li>short explanation of Waves</li>
+<li>short explanation of <code>Local</code> and <code>Network</code></li>
+<li>“what you can do here” examples:</li>
+</ol>
+<ul>
+<li>browse WML decks</li>
+<li>edit and submit forms</li>
+<li>inspect runtime/debug state</li>
+</ul>
+<h3 id="2-guided-tour">2. Guided Tour</h3>
+<p>Replayable, step-based product tour focused on core concepts rather than generic control labels.</p>
+<p>Recommended MVP steps:</p>
+<ol>
+<li>Browser shell overview</li>
+<li><code>Local</code> vs <code>Network</code> mode</li>
+<li>Loading a local example</li>
+<li>Navigating cards and forms</li>
+<li>Opening developer tools and runtime state</li>
+</ol>
+<p>Rules:</p>
+<ol>
+<li>skippable at any step</li>
+<li>replayable from Help</li>
+<li>stateful enough to resume within a session, but no account dependency</li>
+</ol>
+<h3 id="3-help-hub">3. Help Hub</h3>
+<p>Persistent in-app help surface available from the start page and app chrome.</p>
+<p>Proposed sections:</p>
+<ol>
+<li><code>Start Here</code></li>
+<li><code>Quickstart</code></li>
+<li><code>Core Concepts</code></li>
+<li><code>Tutorials</code></li>
+<li><code>Troubleshooting</code></li>
+<li><code>Developer Guide</code></li>
+<li><code>Reference</code></li>
+</ol>
+<h3 id="4-tutorial-decks">4. Tutorial Decks</h3>
+<p>Built-in interactive lessons that use local content/examples and teach through the viewport itself.</p>
+<p>Initial tutorial set:</p>
+<ol>
+<li><code>Your first deck</code></li>
+<li><code>Edit and submit a form</code></li>
+<li><code>Understand local vs network mode</code></li>
+<li><code>Inspect a runtime snapshot</code></li>
+</ol>
+<p>Why this matters:</p>
+<ol>
+<li>users learn inside the same interaction model Waves is built around</li>
+<li>examples can be versioned, reviewed, and tested like other shipped content</li>
+</ol>
+<h3 id="5-contextual-hints">5. Contextual Hints</h3>
+<p>Lightweight, dismissible hints shown only when relevant.</p>
+<p>Suggested triggers:</p>
+<ol>
+<li>first switch into <code>Network</code> mode</li>
+<li>first failed network fetch</li>
+<li>first local example load</li>
+<li>first focused form edit</li>
+<li>first developer-tools open</li>
+</ol>
+<p>Rules:</p>
+<ol>
+<li>hints are optional and suppressible</li>
+<li>hints should not block primary interaction</li>
+<li>hints should point back to Help Hub when deeper reading is needed</li>
+</ol>
+<h2 id="information-architecture">Information Architecture</h2>
+<h3 id="start-here">Start Here</h3>
+<p>Purpose:</p>
+<ol>
+<li>orient new users in under one minute</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>what Waves is</li>
+<li>what it is not</li>
+<li>first recommended actions</li>
+</ol>
+<h3 id="quickstart">Quickstart</h3>
+<p>Purpose:</p>
+<ol>
+<li>help users do something real immediately</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>run local examples</li>
+<li>connect to a server</li>
+<li>navigate, edit, submit</li>
+</ol>
+<h3 id="core-concepts">Core Concepts</h3>
+<p>Purpose:</p>
+<ol>
+<li>explain the product model</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>decks and cards</li>
+<li>focus and softkey-style interaction</li>
+<li>local vs network mode</li>
+<li>external intents and captured submits</li>
+</ol>
+<h3 id="tutorials">Tutorials</h3>
+<p>Purpose:</p>
+<ol>
+<li>task-oriented learning</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>tutorial decks with explicit goals and acceptance steps</li>
+</ol>
+<h3 id="troubleshooting">Troubleshooting</h3>
+<p>Purpose:</p>
+<ol>
+<li>reduce confusion when things fail</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>no network available</li>
+<li>local mode does not fetch</li>
+<li>why a submit is captured instead of followed</li>
+<li>where to look in dev tools</li>
+</ol>
+<h3 id="developer-guide">Developer Guide</h3>
+<p>Purpose:</p>
+<ol>
+<li>help technical users inspect and understand runtime behavior</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>session state</li>
+<li>transport response</li>
+<li>runtime snapshot</li>
+<li>event timeline</li>
+</ol>
+<h3 id="reference">Reference</h3>
+<p>Purpose:</p>
+<ol>
+<li>quick recall</li>
+</ol>
+<p>Content:</p>
+<ol>
+<li>keyboard shortcuts</li>
+<li>mode behaviors</li>
+<li>current limitations</li>
+</ol>
+<h2 id="ux-and-technical-approach">UX and Technical Approach</h2>
+<h3 id="content-source-strategy">Content Source Strategy</h3>
+<p>Use product-owned local content instead of external-only documentation for the first experience.</p>
+<p>Recommended source types:</p>
+<ol>
+<li>browser-native intro/help page content for the shell-level overview</li>
+<li>local tutorial decks/examples for viewport-driven learning</li>
+<li>versioned markdown or typed content modules for help sections</li>
+</ol>
+<h3 id="state-model">State Model</h3>
+<p>Suggested local onboarding state:</p>
+<ol>
+<li><code>hasSeenWelcome</code></li>
+<li><code>hasCompletedTour</code></li>
+<li><code>dismissedHints</code></li>
+<li><code>completedTutorialIds</code></li>
+</ol>
+<p>Storage posture:</p>
+<ol>
+<li>local only</li>
+<li>resettable from Help/Settings/dev path</li>
+</ol>
+<h3 id="ui-surface-options">UI Surface Options</h3>
+<p>Preferred MVP split:</p>
+<ol>
+<li>intro/help hub as browser-shell UI pages</li>
+<li>tutorial lessons as local product content/examples</li>
+<li>guided tour as browser-shell overlay/coaching layer</li>
+</ol>
+<p>This avoids forcing all onboarding into either:</p>
+<ol>
+<li>a pure webview page disconnected from the product, or</li>
+<li>a pure tooltip system with no conceptual overview</li>
+</ol>
+<h2 id="rollout-phases">Rollout Phases</h2>
+<h3 id="phase-u0-01-welcome-home">Phase U0-01 Welcome Home</h3>
+<ol>
+<li>add first-run intro/start page</li>
+<li>expose entry points for examples, network connect, tour, and help</li>
+</ol>
+<h3 id="phase-u0-02-guided-tour">Phase U0-02 Guided Tour</h3>
+<ol>
+<li>add replayable step-based tour</li>
+<li>cover core shell and mode concepts</li>
+</ol>
+<h3 id="phase-u0-03-help-hub">Phase U0-03 Help Hub</h3>
+<ol>
+<li>add durable in-app help center</li>
+<li>ship overview, quickstart, troubleshooting, and reference sections</li>
+</ol>
+<h3 id="phase-u0-04-tutorial-decks">Phase U0-04 Tutorial Decks</h3>
+<ol>
+<li>add local tutorial examples/lessons</li>
+<li>tie them into help and onboarding flows</li>
+</ol>
+<h3 id="phase-u0-05-contextual-hints-and-onboarding-state">Phase U0-05 Contextual Hints and Onboarding State</h3>
+<ol>
+<li>add just-in-time hints</li>
+<li>persist dismissal/completion state locally</li>
+</ol>
+<h2 id="acceptance-criteria-program">Acceptance Criteria (Program)</h2>
+<ol>
+<li>a first-time user can understand what Waves is and choose a path within the first screen</li>
+<li>a user can learn the product entirely inside the app without external docs</li>
+<li>onboarding is replayable and does not trap returning users</li>
+<li>help/tutorial content is versioned and maintainable inside the repo</li>
+<li>onboarding/help features do not bypass engine/host boundaries or introduce browser-owned runtime state</li>
+</ol>
+<h2 id="open-questions">Open Questions</h2>
+<ol>
+<li>Should the intro page replace the current default start URL only on first run, or become the permanent home screen?</li>
+<li>Should tutorial content be modeled as local examples metadata, dedicated help content, or both?</li>
+<li>Where should “Help” live in the shell chrome for persistent discoverability?</li>
+<li>How much onboarding state should be remembered across app restarts by default?</li>
+<li>Do we want a future docs-export path from the in-app help content to external site docs?</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-user-onboarding-experience-plan">Waves User Onboarding Experience Plan</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#goals">Goals</a></li><li class="depth-2"><a href="#non-goals-mvp">Non-Goals (MVP)</a></li><li class="depth-2"><a href="#user-segments">User Segments</a></li><li class="depth-3"><a href="#1-curious-newcomer">1. Curious newcomer</a></li><li class="depth-3"><a href="#2-technical-evaluator">2. Technical evaluator</a></li><li class="depth-3"><a href="#3-returning-operator">3. Returning operator</a></li><li class="depth-2"><a href="#experience-principles">Experience Principles</a></li><li class="depth-2"><a href="#proposed-experience-model">Proposed Experience Model</a></li><li class="depth-3"><a href="#1-welcome-home">1. Welcome Home</a></li><li class="depth-3"><a href="#2-guided-tour">2. Guided Tour</a></li><li class="depth-3"><a href="#3-help-hub">3. Help Hub</a></li><li class="depth-3"><a href="#4-tutorial-decks">4. Tutorial Decks</a></li><li class="depth-3"><a href="#5-contextual-hints">5. Contextual Hints</a></li><li class="depth-2"><a href="#information-architecture">Information Architecture</a></li><li class="depth-3"><a href="#start-here">Start Here</a></li><li class="depth-3"><a href="#quickstart">Quickstart</a></li><li class="depth-3"><a href="#core-concepts">Core Concepts</a></li><li class="depth-3"><a href="#tutorials">Tutorials</a></li><li class="depth-3"><a href="#troubleshooting">Troubleshooting</a></li><li class="depth-3"><a href="#developer-guide">Developer Guide</a></li><li class="depth-3"><a href="#reference">Reference</a></li><li class="depth-2"><a href="#ux-and-technical-approach">UX and Technical Approach</a></li><li class="depth-3"><a href="#content-source-strategy">Content Source Strategy</a></li><li class="depth-3"><a href="#state-model">State Model</a></li><li class="depth-3"><a href="#ui-surface-options">UI Surface Options</a></li><li class="depth-2"><a href="#rollout-phases">Rollout Phases</a></li><li class="depth-3"><a href="#phase-u0-01-welcome-home">Phase U0-01 Welcome Home</a></li><li class="depth-3"><a href="#phase-u0-02-guided-tour">Phase U0-02 Guided Tour</a></li><li class="depth-3"><a href="#phase-u0-03-help-hub">Phase U0-03 Help Hub</a></li><li class="depth-3"><a href="#phase-u0-04-tutorial-decks">Phase U0-04 Tutorial Decks</a></li><li class="depth-3"><a href="#phase-u0-05-contextual-hints-and-onboarding-state">Phase U0-05 Contextual Hints and Onboarding State</a></li><li class="depth-2"><a href="#acceptance-criteria-program">Acceptance Criteria (Program)</a></li><li class="depth-2"><a href="#open-questions">Open Questions</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/user_onboarding_experience_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 User-Agent Caching SCR Ledger · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_caching_scr_ledger"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_caching_scr_ledger.md</p><div class="markdown-body"><h1 id="wap-121-user-agent-caching-scr-ledger">WAP 1.2.1 User-Agent Caching SCR Ledger</h1>
+<p>Version: v0.2
+Status: effective SCR extracted; Class C applied; nested HTTP audit complete</p>
+<h2 id="purpose">Purpose</h2>
+<p>Define the exact WAP-120 caching behavior required by the selected WAP 1.2.1
+Class C data client, including the valid zero-byte-cache posture, history
+interaction, intra-resource navigation, and cache security.</p>
+<p>The machine-readable authority is:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-caching-scr.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code></li>
+</ul>
+<p>Validate it with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-caching-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-conformance-ledger.mjs</span></span></code></pre>
+<h2 id="effective-authority">Effective authority</h2>
+<p>The family has one effective release member:</p>
+<ul>
+<li><code>WAP-120-WAPCachingMod-20010413-a</code></li>
+</ul>
+<p>Its Appendix A supplies the 11 actor-specific SCR rows. The selected profile
+is:</p>
+<ul>
+<li>WAP-215 target: <code>CCR-CLASSC-C-001</code></li>
+<li>selected feature group: <code>WAPCachingMod:MCF</code></li>
+<li>WAP-221 meaning: every mandatory client feature in the SCR</li>
+</ul>
+<p>WAP-120 incorporates the HTTP/1.1 caching model from RFC 2616. Optional
+time-of-day behavior also references RFC 1305. Both primary RFC text artifacts
+are hash-locked in the private external-source ledger.</p>
+<h2 id="effective-totals">Effective totals</h2>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th style="text-align: right">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All caching SCR rows</td>
+<td style="text-align: right">11</td>
+</tr>
+<tr>
+<td>Mandatory rows, all actors</td>
+<td style="text-align: right">9</td>
+</tr>
+<tr>
+<td>Optional rows, all actors</td>
+<td style="text-align: right">2</td>
+</tr>
+<tr>
+<td>User-agent/client rows</td>
+<td style="text-align: right">6</td>
+</tr>
+<tr>
+<td>Gateway/server rows</td>
+<td style="text-align: right">5</td>
+</tr>
+<tr>
+<td>Class C-required client rows</td>
+<td style="text-align: right">5</td>
+</tr>
+<tr>
+<td>Optional client rows</td>
+<td style="text-align: right">1</td>
+</tr>
+</tbody>
+</table>
+<p><code>UACache-C-005</code> (gateway time-base synchronization) is the optional client
+row. <code>UACache-S-007..011</code> remain source-complete gateway requirements outside
+the selected client profile.</p>
+<h2 id="selected-class-c-requirements">Selected Class C requirements</h2>
+<table>
+<thead>
+<tr>
+<th>SCR</th>
+<th>Required behavior</th>
+<th>Current status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UACache-C-001</code></td>
+<td>HTTP/1.1 user-agent caching model</td>
+<td>partial</td>
+</tr>
+<tr>
+<td><code>UACache-C-002</code></td>
+<td>stale + must-revalidate history replay</td>
+<td>missing</td>
+</tr>
+<tr>
+<td><code>UACache-C-003</code></td>
+<td>stale without must-revalidate preserves cached view</td>
+<td>missing</td>
+</tr>
+<tr>
+<td><code>UACache-C-004</code></td>
+<td>no revalidation for intra-deck/intra-script navigation</td>
+<td>partial</td>
+</tr>
+<tr>
+<td><code>UACache-C-006</code></td>
+<td>protect cached contents</td>
+<td>partial</td>
+</tr>
+</tbody>
+</table>
+<p>The selected audit is:</p>
+<ul>
+<li>implemented: 0</li>
+<li>partial: 3</li>
+<li>missing: 2</li>
+<li>direct normative tests: 0</li>
+<li>provisional local-test links: 3</li>
+</ul>
+<h2 id="zero-byte-cache-is-valid-but-must-be-explicit">Zero-byte cache is valid, but must be explicit</h2>
+<p>WAP-120 states that the model applies to all WAP user agents, including a
+user agent with a zero-byte cache. Therefore an all-in-one browser does not
+need to ship a storage cache merely to claim the selected profile.</p>
+<p>That does not make the requirements disappear:</p>
+<ul>
+<li>the runtime must declare and prove that no repository or host layer silently
+caches resources;</li>
+<li>history and task behavior must remain deterministic under the zero-byte
+policy;</li>
+<li>intra-resource transitions must not cause network revalidation;</li>
+<li>active deck/script/history data must have an explicit lifetime and
+confidentiality policy;</li>
+<li>adding a real cache later must activate the complete freshness,
+<code>must-revalidate</code>, original-request replay, and security rules.</li>
+</ul>
+<p>The current code behaves approximately like an undeclared zero-byte cache:</p>
+<ul>
+<li>transport requests are issued through the host for external loads;</li>
+<li>explicit reload maps to <code>Cache-Control: no-cache</code> and <code>Pragma: no-cache</code>;</li>
+<li>history entries preserve URL, method, headers, and request-policy identity;</li>
+<li>external history back currently refetches the earlier request;</li>
+<li>intra-deck fragment navigation stays inside the loaded engine deck;</li>
+<li>registered script calls stay inside the engine runtime;</li>
+<li>there is no repository-owned HTTP response cache or freshness metadata.</li>
+</ul>
+<p>This is not enough for full credit. In particular, no code parses response
+freshness or <code>must-revalidate</code>, and external history back cannot choose between
+the two mandatory stale-resource branches.</p>
+<h2 id="selected-nested-clause-slice">Selected nested-clause slice</h2>
+<p><code>CONF-003</code> now expands all five selected caching rows into 68 deduplicated
+clauses. Fifty-seven clauses map to the imported HTTP/1.1 cache model, while
+the WAP-120 additions preserve zero-byte applicability, exact history replay,
+both stale-back branches, intra-resource no-fetch behavior, and local cache
+protection.</p>
+<p>All clauses have source anchors and planned direct fixtures. Their
+implementation status remains <code>not-assessed</code> until the fixtures and direct
+code/test evidence are reviewed.</p>
+<h2 id="work-closure">Work closure</h2>
+<p>Existing open program item <code>WAE-603</code> is the canonical corrective lane.
+Completed transport baseline <code>T0-15</code> remains historical evidence and is not
+reopened.</p>
+<p><code>WAE-603</code> must close:</p>
+<ol>
+<li>a machine-readable <code>zero-byte</code> versus <code>http-cache</code> capability declaration;</li>
+<li>proof that strict zero-byte mode bypasses any hidden host/platform cache;</li>
+<li>source-derived history fixtures for both <code>must-revalidate</code> branches,
+preserving the exact original method, entity, headers, and request policy;</li>
+<li>WML intra-deck and WMLScript intra-compilation-unit no-fetch fixtures;</li>
+<li>cache/data-retention threat modeling and tests;</li>
+<li>migration gates for a future bounded cache implementation.</li>
+</ol>
+<h2 id="enhancement-policy">Enhancement policy</h2>
+<p>A bounded cache, offline mode, prefetching, encrypted storage, diagnostics,
+and modern eviction strategies are valid improvements. Strict mode must retain
+the WAP-120 history, revalidation, intra-resource, and security outcomes.
+Prefetch/offline behavior must be capability-declared and cannot replace the
+zero-byte or compliant HTTP-cache paths.</p>
+<h2 id="source-handling">Source handling</h2>
+<p>The recovered WAP-120 PDF, private text extraction, and private RFC text
+artifacts remain outside Git. The repository stores source identities, hashes,
+normalized obligations, and audit mappings only.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121-user-agent-caching-scr-ledger">WAP 1.2.1 User-Agent Caching SCR Ledger</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#effective-authority">Effective authority</a></li><li class="depth-2"><a href="#effective-totals">Effective totals</a></li><li class="depth-2"><a href="#selected-class-c-requirements">Selected Class C requirements</a></li><li class="depth-2"><a href="#zero-byte-cache-is-valid-but-must-be-explicit">Zero-byte cache is valid, but must be explicit</a></li><li class="depth-2"><a href="#selected-nested-clause-slice">Selected nested-clause slice</a></li><li class="depth-2"><a href="#work-closure">Work closure</a></li><li class="depth-2"><a href="#enhancement-policy">Enhancement policy</a></li><li class="depth-2"><a href="#source-handling">Source handling</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_caching_scr_ledger.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WaveScript VM Security &amp; Sandbox Guardrails · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/wavescript-security"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/wavescript-security.md</p><div class="markdown-body"><h1 id="wavescript-vm-security--sandbox-guardrails">WaveScript VM Security &amp; Sandbox Guardrails</h1>
+<p>Purpose: define mandatory safety controls for executing WaveScript bytecode in <code>engine-wasm/engine</code>.</p>
+<h2 id="threat-model-current-scope">Threat Model (Current Scope)</h2>
+<ol>
+<li>Untrusted deck/script input tries to crash host/runtime.</li>
+<li>Script execution attempts unbounded CPU or memory growth.</li>
+<li>Script attempts to escape engine ownership boundaries (network/filesystem/host logic).</li>
+<li>Malformed bytecode attempts undefined behavior.</li>
+<li>Untrusted deck navigation graph (<code>onenterforward</code>/<code>onenterbackward</code>/<code>&lt;go&gt;</code>/<code>&lt;prev&gt;</code>,
+including cycles re-entered via <code>WMLBrowser.go()</code>) attempts unbounded recursion.</li>
+</ol>
+<h2 id="mandatory-guardrails">Mandatory Guardrails</h2>
+<ol>
+<li>Verification before execution</li>
+</ol>
+<ul>
+<li>Bytecode decode gate runs before VM execute.</li>
+<li>Empty/oversized units fail deterministically.</li>
+</ul>
+<ol start="2">
+<li>Bounded execution</li>
+</ol>
+<ul>
+<li>Instruction step limit.</li>
+<li>Operand stack limit.</li>
+<li>Call-depth limit (<code>max_call_depth</code> is the true maximum total call-frame
+count, including the root frame; the boundary check traps at
+<code>frames.len() &gt;= max_call_depth</code>, not one frame later).</li>
+<li>Navigation dispatch-depth limit (<code>MAX_NAV_DISPATCH_DEPTH</code> in
+<code>engine-wasm/engine/src/lib.rs</code>): bounds recursive re-entry into
+navigation via <code>onenterforward</code>/<code>onenterbackward</code> actions and
+<code>WMLBrowser.go()</code>/<code>prev()</code> script effects, so a cyclic deck (e.g. two
+cards whose <code>onenterforward</code> actions target each other) traps with a
+typed error instead of recursing until the stack overflows. Mirrors the
+existing <code>MAX_TIMER_DISPATCH_DEPTH</code> guard for <code>&lt;timer&gt;</code>/<code>ontimer</code>
+re-entry.</li>
+<li>Deterministic traps on overflow/underflow.</li>
+</ul>
+<ol start="3">
+<li>Panic containment at public entrypoints</li>
+</ol>
+<ul>
+<li>The engine crate does not set <code>[profile.release] panic = "abort"</code>, so
+the public entrypoints most exposed to untrusted deck/script content
+(<code>loadDeckContext</code>, <code>render</code>, <code>handleKey</code>, <code>navigateToCard</code>,
+<code>navigateBack</code>, <code>advanceTimeMs</code>, focused-edit session methods, and the
+<code>executeScriptRef*</code>/<code>invokeScriptRef*</code> family) run under
+<code>std::panic::catch_unwind</code> and convert an unwinding panic into the
+engine’s existing typed <code>Result&lt;_, String&gt;</code> (or, for the two methods
+with no <code>Result</code> in their public signature, a trace entry plus the
+existing “no-op” return value/outcome shape). This exists as a
+last-resort net so a future defensive-programming bug degrades to a
+recoverable error instead of trapping the whole WASM instance
+uncatchably from JS.</li>
+</ul>
+<ol start="4">
+<li>Runtime-owned side effects only</li>
+</ol>
+<ul>
+<li><code>WMLBrowser</code> mutations happen only in engine runtime state.</li>
+<li>Host never decides script semantics.</li>
+<li>Navigation/refresh effects apply only at post-invocation boundary.</li>
+</ul>
+<ol start="5">
+<li>Host binding hard limits</li>
+</ol>
+<ul>
+<li>Variable name validation + max name length.</li>
+<li>Variable value max length.</li>
+<li><code>go()</code> href max length.</li>
+<li>Unknown host functions trap deterministically.</li>
+</ul>
+<ol start="6">
+<li>No capability escalation</li>
+</ol>
+<ul>
+<li>No network fetch in WaveScript VM/runtime core.</li>
+<li>No filesystem access from script runtime.</li>
+<li>No WBXML parsing in script/host adapter layers.</li>
+</ul>
+<h2 id="test-expectations">Test Expectations</h2>
+<p>Required recurring checks:</p>
+<ol>
+<li>Decode/VM trap matrix</li>
+</ol>
+<ul>
+<li>empty unit</li>
+<li>unsupported opcode</li>
+<li>truncated immediates</li>
+<li>execution limit exceeded</li>
+</ul>
+<ol start="2">
+<li>Host binding safety matrix</li>
+</ol>
+<ul>
+<li>invalid variable name rejected</li>
+<li>oversized variable value rejected without mutation</li>
+<li>unknown host function traps</li>
+</ul>
+<ol start="3">
+<li>Invocation boundary matrix</li>
+</ol>
+<ul>
+<li><code>executeScriptRef*</code> is raw (no deferred nav apply)</li>
+<li><code>invokeScriptRef*</code> applies deferred nav/refresh at boundary</li>
+<li>trap during invoke does not apply deferred navigation side effects</li>
+</ul>
+<ol start="4">
+<li>Recursion/panic-containment matrix</li>
+</ol>
+<ul>
+<li>cyclic <code>onenterforward</code>/<code>onenterbackward</code> deck navigation traps with a
+typed error (nav dispatch-depth guard) instead of overflowing the stack</li>
+<li>deeply-nested-but-well-formed WML tag trees are rejected during parse
+(parse-tree depth budget), not only in the later semantic walkers</li>
+<li><code>catch_engine_panic</code> converts an unwinding panic into the engine’s
+typed error path</li>
+</ul>
+<h2 id="operational-commands">Operational Commands</h2>
+<p>Run from repo root:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> test-rust</span></span></code></pre>
+<p>Optional coverage gate:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> coverage-rust</span></span>
+<span class="line"><span style="color:#6A737D"># requires: cargo install cargo-llvm-cov</span></span></code></pre>
+<p>Optional pre-push coverage hook:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#E1E4E8">WAP_ENABLE_RUST_COVERAGE_HOOKS</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">1</span><span style="color:#B392F0"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">WAP_RUST_COVERAGE_MIN=90 </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#E1E4E8">WAP_RUST_FUNCTION_COVERAGE_MIN=85 </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#E1E4E8">git </span><span style="color:#9ECBFF">push</span></span></code></pre>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wavescript-vm-security--sandbox-guardrails">WaveScript VM Security &amp; Sandbox Guardrails</a></li><li class="depth-2"><a href="#threat-model-current-scope">Threat Model (Current Scope)</a></li><li class="depth-2"><a href="#mandatory-guardrails">Mandatory Guardrails</a></li><li class="depth-2"><a href="#test-expectations">Test Expectations</a></li><li class="depth-2"><a href="#operational-commands">Operational Commands</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/wavescript-security.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

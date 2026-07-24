@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Decode PI target and optional value using attribute-start/value syntax terminated by END. · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/vault/fixtures/wbxml-fx-processing-instruction"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/vault/fixtures/wbxml-fx-processing-instruction.md</p><div class="markdown-body"><h1 id="decode-pi-target-and-optional-value-using-attribute-startvalue-syntax-terminated-by-end">Decode PI target and optional value using attribute-start/value syntax terminated by END.</h1>
+<blockquote>
+<p>Generated from canonical repository manifests. Do not edit this note directly.</p>
+</blockquote>
+<h2 id="relationships">Relationships</h2>
+<ul>
+<li><code>verified-by</code> ← [[clauses/WBXML-CL-PROCESSING-INSTRUCTION|WBXML-CL-PROCESSING-INSTRUCTION]]</li>
+</ul>
+<h2 id="data">Data</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "kind"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"binary-decoder"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "status"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"planned"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "assertion"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Decode PI target and optional value using attribute-start/value syntax terminated by END."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "source"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#decode-pi-target-and-optional-value-using-attribute-startvalue-syntax-terminated-by-end">Decode PI target and optional value using attribute-start/value syntax terminated by END.</a></li><li class="depth-2"><a href="#relationships">Relationships</a></li><li class="depth-2"><a href="#data">Data</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/vault/fixtures/wbxml-fx-processing-instruction.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

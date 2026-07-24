@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Transport E2E Readiness Scorecard · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/transport_e2e_readiness_scorecard"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/transport_e2e_readiness_scorecard.md</p><div class="markdown-body"><h1 id="transport-e2e-readiness-scorecard">Transport E2E Readiness Scorecard</h1>
+<p>Status: active tracking metric<br>
+Date: 2026-03-06<br>
+Owner: transport-rust + browser + gateway docs</p>
+<h2 id="purpose">Purpose</h2>
+<p>Track how close Waves is to a reliable end-to-end test path against:</p>
+<ol>
+<li>local Kannel gateway</li>
+<li>local WML/WAP server behind Kannel</li>
+<li>either:
+<ul>
+<li><code>transport-rust</code> directly, or</li>
+<li>browser host flow through <code>fetchDeck</code></li>
+</ul>
+</li>
+</ol>
+<p>This scorecard is not a protocol-conformance replacement. It is a practical execution-readiness metric for local and CI-like E2E validation.</p>
+<h2 id="scoring-model">Scoring model</h2>
+<p>Each gate is scored as:</p>
+<ul>
+<li><code>1.0</code>: implemented and usable as a repeatable signal</li>
+<li><code>0.5</code>: partially present, but not yet strong enough to rely on as a gate</li>
+<li><code>0.0</code>: absent</li>
+</ul>
+<p>Two roll-up scores are tracked:</p>
+<ol>
+<li><code>transport-to-kannel</code>: <code>transport-rust</code> -&gt; local Kannel -&gt; local WML server</li>
+<li><code>browser-to-kannel</code>: browser/host -&gt; transport -&gt; local Kannel -&gt; local WML server</li>
+</ol>
+<p>Applicable gates:</p>
+<ol>
+<li><code>transport-to-kannel</code>: <code>G1..G6</code> (<code>6.0</code> max)</li>
+<li><code>browser-to-kannel</code>: <code>G1..G8</code> (<code>8.0</code> max)</li>
+</ol>
+<h2 id="current-score">Current score</h2>
+<h3 id="transport-to-kannel">Transport-to-Kannel</h3>
+<p>Score: <code>6.0 / 6.0</code> (<code>100%</code>)</p>
+<h3 id="browser-to-kannel">Browser-to-Kannel</h3>
+<p>Score: <code>8.0 / 8.0</code> (<code>100%</code>)</p>
+<h2 id="gate-table">Gate table</h2>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Description</th>
+<th>Transport-to-Kannel</th>
+<th>Browser-to-Kannel</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>G1</code></td>
+<td>Local Kannel + WML stack boots reliably with one command</td>
+<td><code>1.0</code></td>
+<td><code>1.0</code></td>
+<td><code>make up</code>, <code>make status</code>, <a href="/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md">docs/wap-test-environment/README.md</a></td>
+</tr>
+<tr>
+<td><code>G2</code></td>
+<td>Real transport request can fetch through local Kannel</td>
+<td><code>1.0</code></td>
+<td><code>1.0</code></td>
+<td><a href="/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs">transport-rust/tests/kannel_smoke.rs</a>, <a href="/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs">browser/src-tauri/src/tests/fetch_commands.rs</a>, <code>make smoke-transport-wap</code>; native-mode smoke now forces <code>wap-net-core</code> rather than relying on ambient bridge defaults</td>
+</tr>
+<tr>
+<td><code>G3</code></td>
+<td>Assertions validate deck identity and normalized engine input, not just HTTP success</td>
+<td><code>1.0</code></td>
+<td><code>1.0</code></td>
+<td>transport smoke asserts deck/card markers for root + login decks; browser host smokes assert engine load, card identity, render markers, and navigation outcome</td>
+</tr>
+<tr>
+<td><code>G4</code></td>
+<td>At least one multi-step real gateway scenario exists (redirect/login/session/navigation)</td>
+<td><code>1.0</code></td>
+<td><code>1.0</code></td>
+<td>native Kannel smoke now covers register -&gt; login success flow at transport, host, and browser-engine levels</td>
+</tr>
+<tr>
+<td><code>G5</code></td>
+<td>One-command runnable smoke exists for local and CI-like use</td>
+<td><code>1.0</code></td>
+<td><code>1.0</code></td>
+<td><code>make smoke-transport-wap</code> now runs native-only transport, host, and browser-render smoke checks</td>
+</tr>
+<tr>
+<td><code>G6</code></td>
+<td>Failure diagnostics are preserved automatically (gateway/server/test logs)</td>
+<td><code>1.0</code></td>
+<td><code>1.0</code></td>
+<td><a href="/Users/dsteele/repos/wap-labs/scripts/transport-wap-smoke.sh">scripts/transport-wap-smoke.sh</a> now writes status/log artifacts into a temp directory and prints the path on success/failure</td>
+</tr>
+<tr>
+<td><code>G7</code></td>
+<td>Browser path runs against real Kannel via host transport rather than mocks</td>
+<td><code>n/a</code></td>
+<td><code>1.0</code></td>
+<td>ignored host-native smoke in <a href="/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs">browser/src-tauri/src/tests/fetch_commands.rs</a> forces <code>wap-net-core</code> and disabled fallback</td>
+</tr>
+<tr>
+<td><code>G8</code></td>
+<td>Browser/render assertions validate visible WML outcome from real gateway-served deck</td>
+<td><code>n/a</code></td>
+<td><code>1.0</code></td>
+<td>browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in <a href="/Users/dsteele/repos/wap-labs/browser/src-tauri/tests/kannel_smoke.rs">browser/src-tauri/tests/kannel_smoke.rs</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="interpretation">Interpretation</h2>
+<h3 id="what-the-score-means-now">What the score means now</h3>
+<ol>
+<li><code>transport-rust</code> now has a credible native Kannel smoke gate for both baseline <code>GET</code> decks and constrained WML form <code>POST</code>.</li>
+<li>browser-level real-gateway E2E is credible at the host/engine layer for root/menu navigation and register/login form submission.</li>
+<li>protocol-core replay readiness (<code>T0-22</code>) still exceeds end-user browser realism, but live ingress evidence now matches the active profile posture for the constrained MVP lane.</li>
+</ol>
+<h3 id="what-this-score-does-not-mean">What this score does not mean</h3>
+<ol>
+<li>it does not prove <code>wap-net-core</code> is ready for full browser/UI parity or future <code>wap-net-ext</code> promotion</li>
+<li>it does not prove full WSP/WTP/WDP conformance</li>
+<li>it does not guarantee emulator/browser UX correctness</li>
+<li>it proves constrained connectionless form <code>POST</code>, but it does not prove full connection-oriented WSP/WTP session support</li>
+</ol>
+<h2 id="current-evidence-base">Current evidence base</h2>
+<h3 id="existing-strengths">Existing strengths</h3>
+<ol>
+<li>active profile is explicitly <code>wap-net-core</code>, with <code>gateway-bridged</code> retained as rollback posture, in <a href="/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md">docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</a></li>
+<li>local Kannel + WML stack is documented and runnable in <a href="/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md">docs/wap-test-environment/README.md</a></li>
+<li>transport-specific native smoke path exists:
+<ul>
+<li><a href="/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs">transport-rust/tests/kannel_smoke.rs</a></li>
+<li><code>make smoke-transport-wap</code></li>
+</ul>
+</li>
+<li>on-demand CI smoke workflow exists in <a href="/Users/dsteele/repos/wap-labs/docs/ci/CI_SETUP.md">docs/ci/CI_SETUP.md</a></li>
+<li>protocol-native replay harness exists in <a href="/Users/dsteele/repos/wap-labs/transport-rust/tests/interop_replay.rs">transport-rust/tests/interop_replay.rs</a></li>
+</ol>
+<h3 id="main-gaps">Main gaps</h3>
+<ol>
+<li>the Kannel smoke lane is still ignored/manual rather than part of default local Rust test execution</li>
+<li>browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation</li>
+<li>smoke artifacts are temp-dir based rather than checked into a durable report format</li>
+<li>non-ASCII charset-sensitive form submission is still not a proven smoke path</li>
+</ol>
+<h2 id="recommended-next-threshold-targets">Recommended next threshold targets</h2>
+<h3 id="threshold-a-credible-transport-e2e-smoke--50--60">Threshold A: credible transport E2E smoke (<code>&gt;= 5.0 / 6.0</code>)</h3>
+<p>Required moves:</p>
+<ol>
+<li>met</li>
+</ol>
+<h3 id="threshold-b-credible-browser-e2e-smoke--65--80">Threshold B: credible browser E2E smoke (<code>&gt;= 6.5 / 8.0</code>)</h3>
+<p>Current status: <code>met</code></p>
+<p>Required moves:</p>
+<ol>
+<li>met</li>
+</ol>
+<h2 id="suggested-follow-up-ticket">Suggested follow-up ticket</h2>
+<p>Suggested ticket:</p>
+<ul>
+<li><code>A5-01</code> history entry fidelity follow-up</li>
+</ul>
+<p>Suggested scope:</p>
+<ol>
+<li>preserve current native Kannel/browser smoke credibility while tightening history/session fidelity after network navigation</li>
+<li>verify browser-visible back/reload behavior stays aligned with engine/runtime history semantics</li>
+<li>update this scorecard only if the browser-to-kannel execution posture or signal quality changes materially</li>
+</ol>
+<h2 id="update-policy">Update policy</h2>
+<p>When transport/gateway/browser integration changes materially, update:</p>
+<ol>
+<li>this scorecard</li>
+<li><a href="/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md">docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</a></li>
+<li><a href="/Users/dsteele/repos/wap-labs/docs/waves/networking-implementation-checklist.md">docs/waves/networking-implementation-checklist.md</a> if promotion gates or execution posture change</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#transport-e2e-readiness-scorecard">Transport E2E Readiness Scorecard</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#scoring-model">Scoring model</a></li><li class="depth-2"><a href="#current-score">Current score</a></li><li class="depth-3"><a href="#transport-to-kannel">Transport-to-Kannel</a></li><li class="depth-3"><a href="#browser-to-kannel">Browser-to-Kannel</a></li><li class="depth-2"><a href="#gate-table">Gate table</a></li><li class="depth-2"><a href="#interpretation">Interpretation</a></li><li class="depth-3"><a href="#what-the-score-means-now">What the score means now</a></li><li class="depth-3"><a href="#what-this-score-does-not-mean">What this score does not mean</a></li><li class="depth-2"><a href="#current-evidence-base">Current evidence base</a></li><li class="depth-3"><a href="#existing-strengths">Existing strengths</a></li><li class="depth-3"><a href="#main-gaps">Main gaps</a></li><li class="depth-2"><a href="#recommended-next-threshold-targets">Recommended next threshold targets</a></li><li class="depth-3"><a href="#threshold-a-credible-transport-e2e-smoke--50--60">Threshold A: credible transport E2E smoke (&gt;= 5.0 / 6.0)</a></li><li class="depth-3"><a href="#threshold-b-credible-browser-e2e-smoke--65--80">Threshold B: credible browser E2E smoke (&gt;= 6.5 / 8.0)</a></li><li class="depth-2"><a href="#suggested-follow-up-ticket">Suggested follow-up ticket</a></li><li class="depth-2"><a href="#update-policy">Update policy</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/transport_e2e_readiness_scorecard.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

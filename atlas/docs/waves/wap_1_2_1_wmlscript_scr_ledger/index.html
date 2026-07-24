@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 WMLScript SCR Ledger · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_wmlscript_scr_ledger"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_wmlscript_scr_ledger.md</p><div class="markdown-body"><h1 id="wap-121-wmlscript-scr-ledger">WAP 1.2.1 WMLScript SCR Ledger</h1>
+<p>Version: v0.2
+Status: effective SCR extracted; Class C applied; 107 nested clauses planned</p>
+<h2 id="purpose">Purpose</h2>
+<p>Define the exact WMLScript interpreter obligations selected by the WAP 1.2.1
+Class C data-client profile and prevent the current WaveScript skeleton from
+being mistaken for WAP-193 bytecode compliance.</p>
+<p>The machine-readable authority is:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json</code></li>
+</ul>
+<p>Validate it with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-wmlscript-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-conformance-ledger.mjs</span></span></code></pre>
+<h2 id="effective-authority">Effective authority</h2>
+<p>The normative sequence is:</p>
+<ol>
+<li><code>WAP-193-WMLScript-20001025-a</code></li>
+<li><code>WAP-193_101-WMLScript-20010928-a</code>, applied afterward</li>
+</ol>
+<p>WAP-193_101 is a consolidated effective specification. Its section 15 adds
+explicit <code>-S-</code> and <code>-C-</code> actor delimiters and separates floating-point SCRs.
+It supplies the effective 112-row table used by the ledger.</p>
+<p>The selected profile is:</p>
+<ul>
+<li>WAP-215 target: <code>CCR-CLASSC-C-001</code></li>
+<li>selected feature group: <code>WMLScript:MCF</code></li>
+<li>WAP-221 meaning: every mandatory client/interpreter feature in the SCR</li>
+</ul>
+<h2 id="effective-totals">Effective totals</h2>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th style="text-align: right">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All WMLScript SCR rows</td>
+<td style="text-align: right">112</td>
+</tr>
+<tr>
+<td>Mandatory rows, all actors</td>
+<td style="text-align: right">108</td>
+</tr>
+<tr>
+<td>Optional rows, all actors</td>
+<td style="text-align: right">4</td>
+</tr>
+<tr>
+<td>Encoder rows</td>
+<td style="text-align: right">68</td>
+</tr>
+<tr>
+<td>Interpreter rows</td>
+<td style="text-align: right">44</td>
+</tr>
+<tr>
+<td>Class C-required interpreter rows</td>
+<td style="text-align: right">41</td>
+</tr>
+<tr>
+<td>Optional interpreter rows</td>
+<td style="text-align: right">3</td>
+</tr>
+</tbody>
+</table>
+<p>The optional interpreter rows are <code>WMLS-C-071</code> (floating-point size),
+<code>WMLS-C-074</code> (conversion to floating point), and <code>WMLS-C-112</code>
+(floating-point operations). The earlier active-doc claim that
+<code>WMLS-C-069..111</code> are all mandatory is incorrect.</p>
+<h2 id="selected-implementation-audit">Selected implementation audit</h2>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th style="text-align: right">Rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Implemented</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td>Partial</td>
+<td style="text-align: right">23</td>
+</tr>
+<tr>
+<td>Missing</td>
+<td style="text-align: right">18</td>
+</tr>
+<tr>
+<td>Direct normative tests</td>
+<td style="text-align: right">0</td>
+</tr>
+<tr>
+<td>Provisional local-test links</td>
+<td style="text-align: right">23</td>
+</tr>
+</tbody>
+</table>
+<p>These counts describe exact selected SCR rows, not a compliance percentage.
+“Partial” means related behavior exists but the repository has not proved the
+complete WAP-193 requirement. No selected row is marked implemented while the
+binary format and direct source-derived fixtures remain unverified. All 41
+selected rows now map to 107 deduplicated normative clauses: 105 required and
+two recommended.</p>
+<h3 id="partial-foundations">Partial foundations</h3>
+<ul>
+<li>a bounded decoder rejects unknown/truncated project-specific instructions;</li>
+<li>a small VM supports local call/return frames, integer addition, strings,
+locals, a host-call boundary, and execution limits;</li>
+<li>scalar values and one string-coercion helper exist;</li>
+<li>fatal/non-fatal host-visible outcomes and recovery tests exist.</li>
+</ul>
+<p>This is useful architecture and safety evidence. It is not evidence for a
+WAP-193 compilation unit:</p>
+<ul>
+<li>the VM recognizes only nine project-specific opcodes;</li>
+<li>operands use fixed one-byte fields rather than the effective binary format;</li>
+<li>the WAP header, constant pool, pragma pool, and function pool are absent;</li>
+<li>most control-flow, arithmetic, bitwise, comparison, logical, stack, operand,
+and debug instructions are absent;</li>
+<li>URL-based external invocation, fragments, relative resolution, pragmas, and
+access control are absent;</li>
+<li>the complete conversion and chapter 12 error rules are not proven;</li>
+<li>there is no source-derived conforming <code>.wmlsc</code> fixture corpus.</li>
+</ul>
+<h2 id="work-closure">Work closure</h2>
+<p>The ledger maps every row to existing requirement and sprint lanes:</p>
+<ul>
+<li><code>WMLS-501</code> / <code>W1-02</code>: real compilation-unit decoder, pools, instruction
+set, integrity checks, and runtime validity;</li>
+<li><code>WMLS-502</code> / <code>W1-04</code>: types, conversions, calls, locals, returns, and
+operation semantics;</li>
+<li><code>WMLS-503</code> / <code>W1-03</code> / <code>W0-08</code>: extern functions, URL invocation, pragmas,
+and access control;</li>
+<li><code>WMLS-505</code> / <code>W1-06</code> / <code>W1-07</code>: exact fatal/non-fatal behavior;</li>
+<li><code>WMLS-506</code> / <code>W1-01</code>: WMLScript media types and cross-layer handoff;</li>
+<li><code>W1-05</code>: machine-ledger and CI closure.</li>
+</ul>
+<p>The next implementation pass must execute the planned source-derived binary fixtures
+and the actual WAP-193 data structures. Extending the current custom bytecode
+without a WAP compatibility boundary would deepen the gap.</p>
+<h2 id="enhancement-policy">Enhancement policy</h2>
+<p>Modern resource bounds, safer parsing, richer diagnostics, caching, debugging,
+and JIT/AOT internals may improve the runtime. They cannot change strict
+WAP-visible types, bytecode acceptance, instruction outcomes, URL/access
+rules, or error behavior. Project extensions require an explicit capability
+mode and must not replace the strict interpreter path.</p>
+<h2 id="source-handling">Source handling</h2>
+<p>The WAP-193 PDFs and private text extractions remain outside Git pending
+redistribution approval. The repository stores source identities, hashes,
+normalized requirements, and implementation/test mappings only.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121-wmlscript-scr-ledger">WAP 1.2.1 WMLScript SCR Ledger</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#effective-authority">Effective authority</a></li><li class="depth-2"><a href="#effective-totals">Effective totals</a></li><li class="depth-2"><a href="#selected-implementation-audit">Selected implementation audit</a></li><li class="depth-3"><a href="#partial-foundations">Partial foundations</a></li><li class="depth-2"><a href="#work-closure">Work closure</a></li><li class="depth-2"><a href="#enhancement-policy">Enhancement policy</a></li><li class="depth-2"><a href="#source-handling">Source handling</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_wmlscript_scr_ledger.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

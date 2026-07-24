@@ -1,0 +1,733 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Requirement Index · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/requirement_index"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/requirement_index.md</p><div class="markdown-body"><h1 id="waves-requirement-index">Waves Requirement Index</h1>
+<p>Status: active</p>
+<p>Purpose: single <code>RQ-*</code> inventory with owner lane, ticket lane, and current test posture.</p>
+<p>Primary references:</p>
+<ul>
+<li><code>docs/waves/*TRACEABILITY*.md</code></li>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/waves/SPEC_TEST_COVERAGE.md</code></li>
+</ul>
+<p>The thematic <code>RQ-WAE-*</code> IDs were originally extracted from WAP-236. For the
+strict WAP 1.2.1 target, use the exact WAP-190 row crosswalk in
+<code>spec-processing/source-manifests/wap-1.2.1-wae-scr.json</code>; WAP-236-only
+requirements remain successor planning until target-era authority is proven.
+For WBXML, use the exact corrected row crosswalk in
+<code>spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json</code>; boundary ownership
+under <code>RQ-RMK-007</code> does not establish decoder conformance under
+<code>RQ-RMK-010</code>.
+For WMLScript, the thematic <code>RQ-WMLS-*</code> groups do not establish exact
+conformance. Use
+<code>spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json</code> and
+<code>spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json</code>;
+the selected Class C audit currently has 121 mandatory rows, zero implemented
+rows, and zero direct normative tests.
+For caching, use the exact WAP-120 row crosswalk in
+<code>spec-processing/source-manifests/wap-1.2.1-caching-scr.json</code>. The selected
+<code>WAPCachingMod:MCF</code> audit has five mandatory user-agent rows, zero implemented
+rows, and zero direct normative tests; <code>RQ-WAE-008</code> remains a thematic owner,
+not a substitute for those five source obligations.
+For transport, <code>RQ-TRN-*</code> and <code>RQ-TRX-*</code> are thematic groupings rather than
+exact conformance rows. Use
+<code>spec-processing/source-manifests/wap-1.2.1-wdp-scr.json</code>,
+<code>spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json</code>, and
+<code>spec-processing/source-manifests/wap-1.2.1-wsp-scr.json</code>. Their selected
+connectionless Class C path contains 22 rows with an audit of zero
+implemented, 17 partial, five missing, and zero direct normative tests. WTP
+remains conditional unless connection-oriented WSP is claimed.</p>
+<table>
+<thead>
+<tr>
+<th>Requirement ID</th>
+<th>Owner Layer</th>
+<th>Primary Ticket Lane</th>
+<th>Test Status</th>
+<th>Traceability Doc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RQ-DEF-001</code></td>
+<td>deferred (docs gate)</td>
+<td>deferred capability lane</td>
+<td><code>planned/deferred</code></td>
+<td><code>DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-DEF-002</code></td>
+<td>deferred (docs gate)</td>
+<td>deferred capability lane</td>
+<td><code>planned/deferred</code></td>
+<td><code>DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-DEF-003</code></td>
+<td>deferred (docs gate)</td>
+<td>deferred capability lane</td>
+<td><code>planned/deferred</code></td>
+<td><code>DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-001</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>covered</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-002</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-003</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>covered</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-004</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-005</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-006</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-007</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>covered</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-008</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-009</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>R0-*</code> (plus <code>T0-04</code> for <code>RQ-RMK-008</code>)</td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-010</code></td>
+<td>transport-rust</td>
+<td><code>WML-203</code>, <code>R0-08</code></td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-011</code></td>
+<td>engine-wasm + browser policy</td>
+<td><code>R0-07</code></td>
+<td><code>missing/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-012</code></td>
+<td>engine-wasm + browser policy</td>
+<td><code>R0-07</code></td>
+<td><code>partial/planned</code></td>
+<td><code>RUNTIME_MARKUP_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-001</code></td>
+<td>transport-rust + security policy/docs</td>
+<td><code>T0-21</code> (+ policy docs)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_BOUNDARY_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-002</code></td>
+<td>transport-rust + security policy/docs</td>
+<td><code>T0-21</code> (+ policy docs)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_BOUNDARY_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-003</code></td>
+<td>transport-rust + security policy/docs</td>
+<td><code>T0-21</code> (+ policy docs)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_BOUNDARY_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-004</code></td>
+<td>transport-rust + security policy/docs</td>
+<td><code>T0-21</code> (+ policy docs)</td>
+<td><code>partial</code></td>
+<td><code>SECURITY_BOUNDARY_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-005</code></td>
+<td>transport-rust + security policy/docs</td>
+<td><code>T0-21</code> (+ policy docs)</td>
+<td><code>partial</code></td>
+<td><code>SECURITY_BOUNDARY_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-006</code></td>
+<td>transport-rust + security policy/docs</td>
+<td><code>T0-21</code> (+ policy docs)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_BOUNDARY_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SPKI-001</code></td>
+<td>transport-rust + security policy/docs</td>
+<td>deferred security lane (policy-only now)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_PKI_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SPKI-002</code></td>
+<td>transport-rust + security policy/docs</td>
+<td>deferred security lane (policy-only now)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_PKI_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SPKI-003</code></td>
+<td>transport-rust + security policy/docs</td>
+<td>deferred security lane (policy-only now)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_PKI_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SPKI-004</code></td>
+<td>transport-rust + security policy/docs</td>
+<td>deferred security lane (policy-only now)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_PKI_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-SPKI-005</code></td>
+<td>transport-rust + security policy/docs</td>
+<td>deferred security lane (policy-only now)</td>
+<td><code>planned/deferred</code></td>
+<td><code>SECURITY_PKI_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-001</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-19</code> (+ <code>T0-14</code> profile gate)</td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-002</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-19</code> (+ <code>T0-14</code> profile gate)</td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-003</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-19</code> (+ <code>T0-14</code> profile gate)</td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-004</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-19</code> (+ <code>T0-14</code> profile gate)</td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-005</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-006</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-007</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-008</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-009</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-010</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-11</code>, <code>T0-20</code></td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-011</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-11</code>, <code>T0-20</code></td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-012</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-11</code>, <code>T0-20</code></td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-013</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-11</code>, <code>T0-20</code></td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-014</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-11</code>, <code>T0-20</code></td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-015</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-11</code>, <code>T0-20</code></td>
+<td><code>partial</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-016</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code>, <code>T0-20</code>, <code>T0-22</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-017</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code>, <code>T0-20</code>, <code>T0-22</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-018</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code>, <code>T0-20</code>, <code>T0-22</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-019</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-18</code>, <code>T0-20</code>, <code>T0-22</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-001</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-002</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-003</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-004</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-005</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-006</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-007</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-008</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-009</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-010</code></td>
+<td>transport-rust (+ browser contract)</td>
+<td><code>T0-12</code>, <code>T0-13</code>, <code>T0-23</code></td>
+<td><code>planned</code></td>
+<td><code>TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-001</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-002</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-003</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-004</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-005</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-006</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-007</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-008</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-009</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-010</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-011</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-012</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-013</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-014</code></td>
+<td>transport-rust + browser</td>
+<td><code>WAE-607</code></td>
+<td><code>missing/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-015</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-016</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-017</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-018</code></td>
+<td>engine-wasm + transport-rust + browser</td>
+<td><code>T0-04</code>, <code>R0-*</code>, transport <code>T0-*</code> as mapped</td>
+<td><code>partial/planned</code></td>
+<td><code>WAE_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-001</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-002</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-003</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-004</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-005</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-006</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-007</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-008</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-009</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-010</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-011</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-012</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-013</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-014</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-015</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-016</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-017</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-018</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-019</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-020</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-021</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-022</code></td>
+<td>engine-wasm (+ browser integration)</td>
+<td><code>W0-*</code>/<code>W1-*</code></td>
+<td><code>partial/planned</code></td>
+<td><code>WMLSCRIPT_SPEC_TRACEABILITY.md</code></td>
+</tr>
+</tbody>
+</table>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-requirement-index">Waves Requirement Index</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/requirement_index.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

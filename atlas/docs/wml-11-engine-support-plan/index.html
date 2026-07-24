@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.0"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WML 1.1 Engine Support Plan (MVP) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.BVbAyome.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-11-engine-support-plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-11-engine-support-plan</span></nav><p class="doc-path">docs/wml-11-engine-support-plan.md</p><div class="markdown-body"><h1 id="wml-11-engine-support-plan-mvp">WML 1.1 Engine Support Plan (MVP)</h1>
+<p>Status: earlier draft. Superseded by <code>docs/wml-engine/source-material-review.md</code>, <code>docs/wml-engine/requirements-matrix.md</code>, and <code>docs/wml-engine/ticket-plan.md</code>.</p>
+<h2 id="purpose">Purpose</h2>
+<p>Implement a WML 1.1 runtime that parses decks/cards and renders constrained viewport output with deck/card navigation semantics.</p>
+<h2 id="transport---wasm-normalized-handoff">Transport -&gt; WASM normalized handoff</h2>
+<p>The transport layer must normalize either WML media type:</p>
+<ul>
+<li><code>text/vnd.wap.wml</code></li>
+<li><code>application/vnd.wap.wmlc</code> (WBXML tokenized form)</li>
+</ul>
+<p>into a single engine input shape:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "wmlXml"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"&lt;wml&gt;...&lt;/wml&gt;"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "baseUrl"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http://example.com/index.wml"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "contentType"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text/vnd.wap.wml"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "rawBytesBase64"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"..."</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Required fields:</p>
+<ul>
+<li><code>wmlXml</code></li>
+<li><code>baseUrl</code></li>
+<li><code>contentType</code></li>
+</ul>
+<p>Optional field:</p>
+<ul>
+<li><code>rawBytesBase64</code> (debug/fidelity path)</li>
+</ul>
+<h2 id="dtd-aligned-parser-target">DTD-aligned parser target</h2>
+<p>WML 1.1 root model to target:</p>
+<ul>
+<li><code>&lt;wml&gt;</code> with <code>(head?, template?, card+)</code></li>
+</ul>
+<p>Card model baseline for runtime evolution:</p>
+<ul>
+<li><code>&lt;card&gt;</code> containing paragraph/task/event structures</li>
+</ul>
+<p>MVP parser accepts:</p>
+<ul>
+<li><code>&lt;wml&gt;</code></li>
+<li><code>&lt;card id="..."&gt;</code></li>
+<li><code>&lt;p&gt;</code></li>
+<li><code>&lt;br/&gt;</code></li>
+<li><code>&lt;a href="..."&gt;</code></li>
+</ul>
+<h2 id="runtime-model">Runtime model</h2>
+<p>Maintain:</p>
+<ul>
+<li>Deck (cards keyed by <code>id</code>)</li>
+<li>Active card</li>
+<li>Focusable links and focused index</li>
+<li>Navigation history stack</li>
+</ul>
+<h2 id="navigation-rules">Navigation rules</h2>
+<p>MVP:</p>
+<ul>
+<li><code>href="#cardId"</code> -&gt; in-deck card switch</li>
+<li>external/relative <code>href</code> -&gt; host-handled navigation request (current Rust MVP keeps this as host responsibility)</li>
+</ul>
+<p>v2+:</p>
+<ul>
+<li><code>&lt;do&gt;</code> tasks: <code>go | prev | noop | refresh</code></li>
+<li><code>&lt;go href="..."&gt;</code> with <code>postfield|setvar</code></li>
+<li>variable substitution across text/attributes</li>
+</ul>
+<h2 id="layout-rules-mvp">Layout rules (MVP)</h2>
+<ul>
+<li>fixed viewport columns</li>
+<li>vertical flow</li>
+<li>text wrapping</li>
+<li>focused link highlight</li>
+<li>one card rendered at a time</li>
+</ul>
+<h2 id="success-criteria">Success criteria</h2>
+<ul>
+<li>wasm module loads in host</li>
+<li>first card renders</li>
+<li>focused link changes with up/down</li>
+<li>enter navigates <code>#cardId</code></li>
+<li>render list updates deterministically</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wml-11-engine-support-plan-mvp">WML 1.1 Engine Support Plan (MVP)</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#transport---wasm-normalized-handoff">Transport -&gt; WASM normalized handoff</a></li><li class="depth-2"><a href="#dtd-aligned-parser-target">DTD-aligned parser target</a></li><li class="depth-2"><a href="#runtime-model">Runtime model</a></li><li class="depth-2"><a href="#navigation-rules">Navigation rules</a></li><li class="depth-2"><a href="#layout-rules-mvp">Layout rules (MVP)</a></li><li class="depth-2"><a href="#success-criteria">Success criteria</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-11-engine-support-plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is generated from the repository’s active manifests and documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>
