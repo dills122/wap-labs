@@ -50,7 +50,7 @@
       "family": "wml",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "d0ddb01bd3ec083b1a486652cc3a96888b8fc359897eae153d0de3bf1ea9f2ea",
+      "parentLedgerSha256": "d4933b7f72b0244fe30a6f02da5adb32265d05de425375e5312c3e1d61304200",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -3042,7 +3042,8 @@
               "R0-07"
             ],
             "requirementIds": [
-              "RQ-RMK-001"
+              "RQ-RMK-001",
+              "RQ-RMK-011"
             ],
             "parentImplementationSnapshot": {
               "WML-C-14": "missing",
@@ -3355,7 +3356,9 @@
               "R0-01",
               "R0-07"
             ],
-            "requirementIds": [],
+            "requirementIds": [
+              "RQ-RMK-012"
+            ],
             "parentImplementationSnapshot": {
               "WML-C-16": "partial"
             },
@@ -3393,7 +3396,9 @@
               "R0-01",
               "R0-07"
             ],
-            "requirementIds": [],
+            "requirementIds": [
+              "RQ-RMK-012"
+            ],
             "parentImplementationSnapshot": {
               "WML-C-16": "partial"
             },
@@ -3645,7 +3650,8 @@
             ],
             "requirementIds": [
               "RQ-RMK-002",
-              "RQ-RMK-003"
+              "RQ-RMK-003",
+              "RQ-RMK-011"
             ],
             "parentImplementationSnapshot": {
               "WML-C-14": "missing",
@@ -4231,7 +4237,8 @@
             ],
             "requirementIds": [
               "RQ-RMK-002",
-              "RQ-RMK-003"
+              "RQ-RMK-003",
+              "RQ-RMK-012"
             ],
             "parentImplementationSnapshot": {
               "WML-C-16": "partial",
@@ -4566,7 +4573,8 @@
               "R0-07"
             ],
             "requirementIds": [
-              "RQ-RMK-002"
+              "RQ-RMK-002",
+              "RQ-RMK-011"
             ],
             "parentImplementationSnapshot": {
               "WML-C-14": "missing",

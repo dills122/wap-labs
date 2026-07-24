@@ -838,6 +838,8 @@ function mappingFor(row) {
     implementationDomain = 'user-agent-policy-and-navigation';
     ownerLayers = ['engine-wasm', 'browser'];
     workItems.push(number === 18 ? 'R0-02' : 'R0-07');
+    if (number === 14) requirementIds.push('RQ-RMK-011');
+    if (number === 16) requirementIds.push('RQ-RMK-012');
     if (number === 17) requirementIds.push('RQ-RMK-009');
     if (number === 18) requirementIds.push('RQ-RMK-003');
   } else if (renderIds.has(number) || (number >= 54 && number <= 59)) {

@@ -251,6 +251,21 @@ if (
     'CONF-003 must retain its complete clause ledger and closed all-201 gate'
   );
 }
+for (const workItemId of ['CONF-004', 'CONF-005', 'CONF-006']) {
+  const governanceItem = conformanceSprint?.workItems.find(
+    (workItem) => workItem.id === workItemId
+  );
+  if (
+    governanceItem?.status !== 'done' ||
+    !governanceItem.evidence?.includes(
+      'node scripts/check-requirement-status-drift.mjs'
+    )
+  ) {
+    failures.push(
+      `${workItemId} must retain completed requirement/status drift evidence`
+    );
+  }
+}
 const conf002 = conformanceSprint?.workItems.find(
   (workItem) => workItem.id === 'CONF-002'
 );

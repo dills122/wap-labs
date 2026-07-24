@@ -271,28 +271,32 @@
         },
         {
           "id": "CONF-004",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["documentation", "qa"],
           "sourceFamilies": ["conformance-governance"],
           "existingTickets": [],
           "outputs": [
-            "Strict, conditional, deferred, and Waves-extension disposition registry"
+            "Strict, conditional, deferred, and Waves-extension disposition registry",
+            "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+            "Nine family SCR ledgers with strict and Class C dispositions"
           ],
           "acceptance": [
             "No optional feature is silently treated as mandatory or vice versa; extensions cannot satisfy strict obligations."
           ],
           "evidence": [
-            "node scripts/check-wap-conformance-ledger.mjs"
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-requirement-status-drift.mjs"
           ]
         },
         {
           "id": "CONF-005",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["documentation", "qa", "cross-layer"],
           "sourceFamilies": ["conformance-governance"],
           "existingTickets": [],
           "outputs": [
-            "SCR-to-RQ-to-ticket-to-test crosswalk"
+            "SCR-to-RQ-to-ticket-to-test crosswalk",
+            "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
           ],
           "acceptance": [
             "Every mandatory Class C SCR line maps to implemented evidence or one additive open work item; thematic RQ groups may map many-to-many but cannot hide an unmapped SCR."
@@ -301,12 +305,13 @@
         "node scripts/check-wap-conformance-ledger.mjs",
         "node scripts/check-wap-wae-conformance-ledger.mjs",
         "node scripts/check-wap-wbxml-conformance-ledger.mjs",
-        "node scripts/check-worklist-drift.mjs"
+        "node scripts/check-worklist-drift.mjs",
+        "node scripts/check-requirement-status-drift.mjs"
       ]
         },
         {
           "id": "CONF-006",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["documentation", "qa"],
           "sourceFamilies": ["conformance-governance"],
           "existingTickets": [],

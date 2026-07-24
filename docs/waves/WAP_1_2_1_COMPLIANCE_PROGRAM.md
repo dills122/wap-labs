@@ -44,6 +44,9 @@ All nine selected Class C family increments are complete at SCR level:
 - `CONF-003` is complete: all nine families and all 201 selected parent rows
   expand into 781 deduplicated, source-anchored clauses with planned direct
   fixtures;
+- `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
+  the SCR-to-requirement/work/evidence crosswalk, and active-document status
+  rollups are now guarded by a deterministic drift check;
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
 - the selected Class C client scope is 39 required, 27 optional, and 10
@@ -182,7 +185,8 @@ closes `SRC-004` without changing the redistribution boundary.
    the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`
    redistribution guidance as the remaining source-program blocker.
 2. Treat `CONF-002` family-level SCR extraction and `CONF-003` nested-clause
-   planning as complete. Add WTP only when connection-oriented WSP is claimed.
+   planning plus `CONF-004..006` governance controls as complete. Add WTP only
+   when connection-oriented WSP is claimed.
 3. Complete `CONF-007`, the unified WAP 1.2.1-to-successor implementation
    delta register, using the family-specific WAE/transport registers as inputs.
 4. Continue the completed first-pass implementation audits into exact

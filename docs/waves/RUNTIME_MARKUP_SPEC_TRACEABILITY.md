@@ -178,6 +178,37 @@ Legend:
   - [ ] Strict decode remains in `transport-rust`; `engine-wasm` receives
     normalized textual WML.
 
+### RQ-RMK-011 Deck access-control enforcement
+
+- Requirement:
+  - Enforce effective WML 1.3 deck access-domain, access-path, and
+    `sendreferer` rules before exposing protected deck content.
+- Spec:
+  - `WAP-191_104` sections 11.4 and 12.1
+  - SCR: `WML-C-14`
+- AC:
+  - Evidence: [ ] Link source-derived allow/deny fixtures and host-policy
+    integration tests.
+  - [ ] Domain and path comparisons use the strict WML rules.
+  - [ ] Denied access cannot mutate card, history, variable, or render state.
+  - [ ] Referrer disclosure follows the deck access policy.
+
+### RQ-RMK-012 User-agent error handling
+
+- Requirement:
+  - Apply effective WML 1.3 user-agent error outcomes consistently across
+    parsing, task execution, navigation, rendering, and resource handling.
+- Spec:
+  - `WAP-191_104` section 12.3
+  - SCR: `WML-C-16`
+- AC:
+  - Evidence: [ ] Link source-derived error fixtures and deterministic
+    rollback/outcome tests.
+  - [ ] Each specified error class maps to a stable host-visible outcome.
+  - [ ] Failed operations preserve required card, history, and context state.
+  - [ ] Strict failures remain distinct from optional diagnostics and
+    extension recovery behavior.
+
 ## Notes
 
 - This traceability pass is derived from direct local-spec review plus existing deep extraction notes in `docs/wml-engine/source-material-review.md`.
