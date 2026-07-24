@@ -1336,3 +1336,124 @@ fn navigate_back_returns_false_when_history_empty() {
     assert!(!handled, "back should report false with empty history");
     assert_eq!(engine.active_card_id().expect("active card"), "home");
 }
+
+#[test]
+fn onenterforward_cycle_is_bounded_instead_of_overflowing_the_stack() {
+    // Regression test for the unbounded navigation recursion bug: a 2-card
+    // deck whose onenterforward actions target each other must trap with a
+    // typed error at the nav-dispatch-depth guard, not recurse until the
+    // native or WASM stack overflows.
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#a">Start</a>
+          </card>
+          <card id="a">
+            <onevent type="onenterforward"><go href="#b"/></onevent>
+            <p>A</p>
+          </card>
+          <card id="b">
+            <onevent type="onenterforward"><go href="#a"/></onevent>
+            <p>B</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+
+    let err = engine
+        .handle_key("enter".to_string())
+        .expect_err("cyclic onenterforward navigation must be bounded, not overflow the stack");
+    assert!(
+        err.contains("dispatch depth exceeded"),
+        "unexpected error message: {err}"
+    );
+
+    // Deterministic failure semantics: every recursive frame rolled back its
+    // own state, so the engine ends up back on the last successfully-entered
+    // card (the pre-navigation state), not stuck mid-cycle.
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(engine.nav_stack.is_empty());
+
+    let traces = engine.trace_entries();
+    assert!(
+        traces
+            .iter()
+            .any(|entry| entry.kind == "NAV_DEPTH_EXCEEDED"),
+        "expected a NAV_DEPTH_EXCEEDED trace entry, got: {traces:?}"
+    );
+
+    // The engine must remain usable after the bounded failure.
+    engine
+        .render()
+        .expect("engine should remain usable after a bounded navigation cycle");
+}
+
+#[test]
+fn onenterbackward_prev_cascade_is_bounded_instead_of_overflowing_the_stack() {
+    // Regression test for the same unbounded-recursion class reached via
+    // navigate_back_internal: a card whose onenterbackward is <prev/> can
+    // recursively trigger further backward navigation. Build a deep forward
+    // history where every card's onenterbackward is <prev/>, then trigger a
+    // single navigate_back() and confirm the shared nav-dispatch-depth guard
+    // bounds the cascade instead of recursing through the whole history.
+    let mut engine = WmlEngine::new();
+    let card_count = 12usize;
+    let mut xml = String::from("<wml><card id=\"card0\"><a href=\"#card1\">Next</a></card>");
+    for i in 1..card_count {
+        let next = i + 1;
+        if next < card_count {
+            xml.push_str(&format!(
+                "<card id=\"card{i}\"><onevent type=\"onenterbackward\"><prev/></onevent><a href=\"#card{next}\">Next</a></card>"
+            ));
+        } else {
+            xml.push_str(&format!(
+                "<card id=\"card{i}\"><onevent type=\"onenterbackward\"><prev/></onevent><p>Last</p></card>"
+            ));
+        }
+    }
+    xml.push_str("</wml>");
+    engine.load_deck(&xml).expect("deck should load");
+
+    for step in 0..card_count - 1 {
+        engine
+            .handle_key("enter".to_string())
+            .unwrap_or_else(|err| panic!("enter should navigate forward at step {step}: {err}"));
+    }
+    assert_eq!(
+        engine.active_card_id().expect("active card"),
+        format!("card{}", card_count - 1)
+    );
+    let stack_len_before = engine.nav_stack.len();
+
+    let handled = engine.navigate_back();
+    assert!(
+        handled,
+        "back should still report handled once the cascade is bounded"
+    );
+
+    // The guard must have stopped the cascade before it unwound the whole
+    // history stack: some entries remain unpopped.
+    assert!(
+        engine.nav_stack.len() < stack_len_before,
+        "at least one back-navigation must have happened before the guard tripped"
+    );
+    assert_ne!(
+        engine.active_card_id().expect("active card"),
+        "card0",
+        "the cascade must not have fully unwound to the start of history"
+    );
+
+    let traces = engine.trace_entries();
+    assert!(
+        traces
+            .iter()
+            .any(|entry| entry.kind == "NAV_DEPTH_EXCEEDED"),
+        "expected the cascading prev chain to trip the nav-dispatch-depth guard"
+    );
+
+    // The engine must remain usable after the bounded cascade.
+    engine
+        .render()
+        .expect("engine should remain usable after a bounded back-navigation cascade");
+}

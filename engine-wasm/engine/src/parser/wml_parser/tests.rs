@@ -1,6 +1,7 @@
 use super::{
     extract_wml_body, parse_card_nodes, parse_do_accept_action, parse_first_task_action,
-    parse_inline_nodes, parse_onevent_action, parse_timer_value_ds, parse_wml,
+    parse_inline_nodes, parse_onevent_action, parse_timer_value_ds, parse_wml, parse_xml_root,
+    MAX_PARSE_TREE_DEPTH,
 };
 use crate::runtime::card::{CardPostField, CardTaskAction};
 use crate::runtime::node::{InlineNode, Node};
@@ -660,5 +661,64 @@ fn rejects_excessive_node_budget() {
     assert!(
         err.contains("Parse limit exceeded: node budget"),
         "unexpected error: {err}"
+    );
+}
+
+// Regression coverage for the recursive-Drop stack overflow bug: `parse_xml_root`
+// builds the raw `XmlElement`/`XmlNode` tree with an iterative, `Vec`-based stack
+// (no recursion in the parse loop itself), but previously enforced no nesting-depth
+// limit while doing so. A deeply-nested-but-well-formed tag tree would be fully
+// built before the later semantic-walker depth check (`parse_card_actions`,
+// `parse_card_nodes_xml`) ever ran, and dropping that tree via the
+// compiler-derived recursive `Drop` impl would overflow the stack regardless of
+// that later error path. These tests exercise `parse_xml_root` directly to prove
+// the budget is now enforced *during* tree construction, so a tree deeper than
+// `MAX_PARSE_TREE_DEPTH` is never fully built (or dropped) in the first place.
+
+#[test]
+fn xml_tree_build_bails_out_well_past_the_parse_tree_depth_budget() {
+    // Nested far past MAX_PARSE_TREE_DEPTH (128). If the depth budget were
+    // only enforced after the full tree was built (the pre-fix behavior),
+    // this would build (and then recursively drop) a tree ~40x deeper than
+    // the budget instead of failing fast.
+    let depth = MAX_PARSE_TREE_DEPTH * 40;
+    let mut xml = String::from("<wml>");
+    xml.push_str(&"<a>".repeat(depth));
+    xml.push_str("deep");
+    xml.push_str(&"</a>".repeat(depth));
+    xml.push_str("</wml>");
+
+    let err = parse_xml_root(&xml)
+        .expect_err("nesting well past the depth budget must fail, not build the full tree");
+    assert!(
+        err.contains("Parse limit exceeded: nesting depth"),
+        "unexpected error message: {err}"
+    );
+}
+
+#[test]
+fn xml_tree_build_allows_depth_at_the_budget_and_rejects_one_level_more() {
+    // Total open-element stack depth includes the `<wml>` root itself, so
+    // `at_limit` nested `<a>` wrappers under `<wml>` reach exactly
+    // `MAX_PARSE_TREE_DEPTH` simultaneously-open elements.
+    let at_limit = MAX_PARSE_TREE_DEPTH - 1;
+
+    let mut ok_xml = String::from("<wml>");
+    ok_xml.push_str(&"<a>".repeat(at_limit));
+    ok_xml.push('x');
+    ok_xml.push_str(&"</a>".repeat(at_limit));
+    ok_xml.push_str("</wml>");
+    parse_xml_root(&ok_xml).expect("nesting exactly at the depth budget must still be accepted");
+
+    let mut over_xml = String::from("<wml>");
+    over_xml.push_str(&"<a>".repeat(at_limit + 1));
+    over_xml.push('x');
+    over_xml.push_str(&"</a>".repeat(at_limit + 1));
+    over_xml.push_str("</wml>");
+    let err = parse_xml_root(&over_xml)
+        .expect_err("nesting one level past the depth budget must be rejected");
+    assert!(
+        err.contains("Parse limit exceeded: nesting depth"),
+        "unexpected error message: {err}"
     );
 }

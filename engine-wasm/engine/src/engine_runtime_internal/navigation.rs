@@ -3,7 +3,27 @@ use crate::*;
 use url::Url;
 
 impl WmlEngine {
+    /// Navigate to `id`, guarded against unbounded recursion.
+    ///
+    /// `onenterforward`/`onenterbackward` actions and `WMLBrowser.go()` from
+    /// WMLScript can re-enter navigation (directly, or via
+    /// [`Self::apply_pending_script_effects`]), so a cyclic deck (card A's
+    /// `onenterforward` targets card B and B's targets A) would otherwise
+    /// recurse until the native or WASM stack overflows. `nav_dispatch_depth`
+    /// bounds that recursion, mirroring the `timer_dispatch_depth` guard in
+    /// `engine_runtime_internal/timers.rs`.
     pub(crate) fn navigate_to_card_internal(&mut self, id: &str) -> Result<(), String> {
+        if self.nav_dispatch_depth >= MAX_NAV_DISPATCH_DEPTH {
+            self.push_trace("NAV_DEPTH_EXCEEDED", format!("target={id}"));
+            return Err("navigation: dispatch depth exceeded".to_string());
+        }
+        self.nav_dispatch_depth += 1;
+        let result = self.navigate_to_card_internal_bounded(id);
+        self.nav_dispatch_depth -= 1;
+        result
+    }
+
+    fn navigate_to_card_internal_bounded(&mut self, id: &str) -> Result<(), String> {
         let deck = self
             .deck
             .as_ref()
@@ -25,6 +45,10 @@ impl WmlEngine {
         self.focused_link_idx = 0;
         if let Err(err) = self.run_onenterforward_for_active_card() {
             // Roll back all state for deterministic failure behavior on entry-task failures.
+            // This also unwinds cleanly when a deeper recursive navigation trips the
+            // dispatch-depth guard above: each frame rolls back to its own prior state,
+            // so the engine ends up back on the last card that was fully, successfully
+            // entered before the cycle was detected.
             self.active_card_idx = previous_idx;
             self.focused_link_idx = previous_focus;
             self.nav_stack.truncate(previous_stack_len);
@@ -41,7 +65,20 @@ impl WmlEngine {
         Ok(())
     }
 
+    /// Navigate back in history, guarded against unbounded recursion. See
+    /// [`Self::navigate_to_card_internal`] for why the guard is needed.
     pub(crate) fn navigate_back_internal(&mut self) -> bool {
+        if self.nav_dispatch_depth >= MAX_NAV_DISPATCH_DEPTH {
+            self.push_trace("NAV_DEPTH_EXCEEDED", "target=<back>".to_string());
+            return false;
+        }
+        self.nav_dispatch_depth += 1;
+        let result = self.navigate_back_internal_bounded();
+        self.nav_dispatch_depth -= 1;
+        result
+    }
+
+    fn navigate_back_internal_bounded(&mut self) -> bool {
         let rollback_active_idx = self.active_card_idx;
         let rollback_focus = self.focused_link_idx;
         let rollback_stack = self.nav_stack.clone();

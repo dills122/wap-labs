@@ -139,6 +139,46 @@ Completed maintenance tickets are archived in:
 7. `Notes`:
 - Security audit follow-up for medium-severity SSRF/internal probing exposure if renderer compromise occurs.
 
+### M1-18 `network::wsp` codec is dead code relative to the live native fetch path (2026-07-23)
+
+1. `Status`: `todo`
+2. `Priority`: `P2`
+3. `Files`:
+- `transport-rust/src/network/wsp/pdu.rs`
+- `transport-rust/src/network/wsp/header_block.rs`
+- `transport-rust/src/network/wsp/header_registry.rs`
+- `transport-rust/src/network/wsp/encoding_version.rs`
+- `transport-rust/src/network/wsp/session.rs`
+- `transport-rust/src/network/wsp/decoder.rs`
+- `transport-rust/src/network/wsp/encoder.rs`
+- `transport-rust/src/wsp_registry.rs`
+- `transport-rust/src/wsp_capability.rs`
+- `transport-rust/src/native_fetch.rs`
+- `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
+- `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md`
+- `docs/waves/WORK_ITEMS.md` (`T0-20`, `T0-27`)
+4. `Finding`:
+- `transport-rust/src/network/wsp/*` (~2,700 lines across `pdu.rs`, `header_block.rs`, `header_registry.rs`, `encoding_version.rs`, `session.rs`, `decoder.rs`, `encoder.rs`) is a well-structured, bounds-checked, fixture-tested WSP/PDU codec. It is **dead code on the live fetch path**: `grep` confirms nothing outside its own `#[cfg(test)]` modules calls into it except `wsp_registry.rs` (thin re-export wrapper) and `wsp_capability.rs` (consumed by `network::wsp::session`/`pdu`, not the reverse) — and neither `wsp_registry::*` nor `wsp_capability::*` has any caller outside their own test modules either. The chain is self-contained and never reaches production code.
+- The actual production native-transport fetch path (`transport-rust/src/native_fetch.rs`, `encode_connectionless_request` / `decode_connectionless_wsp_reply` / `decode_content_type_value` / `decode_text_string` / `decode_uintvar` / `encode_uintvar`, roughly lines 335-600) hand-rolls its own minimal uintvar/content-type/header/PDU parsing from scratch and does not import `crate::network::wsp` at all.
+5. `Why the split exists` (evidence, not guesswork):
+- `network::wsp::*` landed 2026-03-06 in `#77` (`feat(wsp): add header registry and code-page policy baseline`, closing ticket `T0-20`) and `#78` (`test(transport): add get reply interop replay baseline`).
+- `native_fetch.rs` landed the very next day, 2026-03-07, in `#89` ("Native WSP Fetch", closing ticket `T0-27`, "Native connectionless WSP GET fetch path").
+- `T0-27`'s own written plan in `docs/waves/WORK_ITEMS.md` explicitly directs: *"Reuse existing WDP adapter and WSP codec/session modules rather than introducing browser-side protocol logic"*, and lists the new file's intended path as `transport-rust/src/network/native_fetch.rs` (nested under `network/`, alongside `wdp/` and `wsp/`).
+- What actually shipped is `transport-rust/src/native_fetch.rs` (top level, **not** nested under `network/`). It does reuse `crate::network::wdp` as directed, but it never imports `crate::network::wsp` and instead reimplements the WSP wire codec from scratch. `T0-27` was nonetheless marked `done`.
+- No commit message, PR description, or doc found anywhere in `docs/waves/` explains or acknowledges this divergence from the ticket's own stated plan. This reads as **unplanned implementation drift** (the WSP codec module and the fetch executor were built one day apart by the same author but never actually wired together), not a deliberate "reference implementation for later" design — there is no ADR-style note asserting that as intent. Say so plainly rather than inventing a rationale.
+- Compounding the confusion: `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` names `wap-net-core` (which the doc defines as the `network::wsp`-based in-process `WDP -> WTP -> WSP` stack) the "active implementation target profile" and lists `wsp_registry.rs`/`wsp_capability.rs` as its fixture lane; `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md` labels `wap-net-core` "(current)". Both are accurate about profile *intent* but easy to misread as "this is what runs" — the byte-level codec actually executing on the native fetch path today is the hand-rolled one in `native_fetch.rs`, not `network::wsp`.
+6. `Decision` (repo owner, 2026-07-23):
+- Do not delete `network::wsp::*` — it is wanted for future use and is the spec-conformant target implementation.
+- Do not wire it into `native_fetch.rs` in the near term — too large a change to fold into an unrelated pass; treat as a dedicated follow-up.
+- A short doc comment now sits above `native_fetch.rs`'s hand-rolled encode/decode section pointing back at this entry so the split isn't a landmine for the next person who finds two WSP parsers and doesn't know which one is real.
+7. `Recommendation`:
+- Open a dedicated follow-up ticket ("wire `network::wsp` into `native_fetch.rs`") to replace the hand-rolled `encode_connectionless_request`/`decode_connectionless_wsp_reply`/`decode_content_type_value`/`decode_text_string`/`decode_uintvar` functions with calls into `network::wsp::{encoder,decoder,pdu,header_block}`, preserving the existing `FetchDeckResponse` mapping and `TRANSPORT_PROFILE_WAP_NET_CORE` gating behavior. This should close the gap between the documented `wap-net-core` profile and what the profile actually executes.
+- Until that lands, treat `network::wsp::*` test coverage as spec-conformance regression coverage only, not evidence about the live fetch path's correctness.
+8. `Accept` (for the follow-up ticket, not this entry):
+- `native_fetch.rs`'s WSP wire encode/decode calls into `network::wsp` instead of duplicating parsing logic.
+- `cargo test` stays green for `transport-rust`; native fetch behavior is unchanged for existing passing fixtures/smokes.
+- `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` / `TRANSPORT_RUST_PHASE_PLAN.md` updated to reflect that `wap-net-core` is genuinely live end-to-end, not just profile-gated.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`

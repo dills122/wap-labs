@@ -12,7 +12,13 @@ on:
       max_len:
         description: "Maximum input length"
         required: false
-        default: "4096"
+        # MAX_DECK_WML_XML_BYTES (engine-wasm/engine/src/lib.rs) is 512 KiB.
+        # The previous 4096-byte default could never reach the ~74k nesting
+        # depth needed to exercise the parse-tree recursive-drop crash
+        # class, since a well-formed nested tag tree needs several bytes
+        # per level. Default comfortably above the 512 KiB deck-size limit
+        # so inputs near/over that boundary are reachable too.
+        default: "600000"
       timeout:
         description: "Per-test execution timeout (libFuzzer seconds)"
         required: false

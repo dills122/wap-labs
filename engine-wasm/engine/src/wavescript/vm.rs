@@ -217,7 +217,7 @@ impl Vm {
                     if !unit.is_instruction_boundary(target) {
                         return Err(VmTrap::InvalidCallTarget { target });
                     }
-                    if frames.len() > self.limits.max_call_depth {
+                    if frames.len() >= self.limits.max_call_depth {
                         return Err(VmTrap::CallDepthExceeded {
                             limit: self.limits.max_call_depth,
                         });

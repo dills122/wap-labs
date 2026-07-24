@@ -1,26 +1,42 @@
+#[cfg(not(test))]
 use crate::engine_bridge::AppState;
+#[cfg(not(test))]
 use crate::waves_config;
+#[cfg(not(test))]
 use lowband_transport_rust::preflight_wbxml_decoder;
+#[cfg(not(test))]
 use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
+#[cfg(not(test))]
 use tauri::path::BaseDirectory;
+#[cfg(not(test))]
 use tauri::Emitter;
+#[cfg(not(test))]
 use tauri::Manager;
 
-fn bundled_wbxml_resource_relpath() -> &'static str {
-    #[cfg(target_os = "macos")]
-    {
-        "wbxml/macos/wbxml2xml"
-    }
-    #[cfg(target_os = "linux")]
-    {
-        "wbxml/linux/wbxml2xml"
-    }
-    #[cfg(target_os = "windows")]
-    {
-        "wbxml/windows/wbxml2xml.exe"
+/// Pure path-resolution logic for the bundled wbxml2xml decoder binary,
+/// parameterized on the target OS name (as reported by
+/// `std::env::consts::OS`) so it can be exercised for every supported
+/// platform from a single test run, regardless of which platform the tests
+/// themselves execute on.
+///
+/// This function does no I/O; it only maps a platform name to the
+/// resource-relative path Tauri should resolve. It is intentionally kept
+/// out of the `#[cfg(not(test))]` boundary below so it stays covered by
+/// `cargo test`.
+pub(crate) fn bundled_wbxml_resource_relpath_for_os(os: &str) -> &'static str {
+    match os {
+        "macos" => "wbxml/macos/wbxml2xml",
+        "linux" => "wbxml/linux/wbxml2xml",
+        "windows" => "wbxml/windows/wbxml2xml.exe",
+        other => panic!("unsupported target OS for bundled wbxml decoder: {other}"),
     }
 }
 
+pub(crate) fn bundled_wbxml_resource_relpath() -> &'static str {
+    bundled_wbxml_resource_relpath_for_os(std::env::consts::OS)
+}
+
+#[cfg(not(test))]
 fn configure_bundled_wbxml_decoder(app: &tauri::AppHandle) -> Result<(), String> {
     let resource_path = app
         .path()
@@ -45,12 +61,14 @@ fn configure_bundled_wbxml_decoder(app: &tauri::AppHandle) -> Result<(), String>
     Ok(())
 }
 
+#[cfg(not(test))]
 fn preflight_wbxml_decoder_available() -> Result<(), String> {
     let backend = preflight_wbxml_decoder()?;
     println!("WBXML decoder backend: {backend}");
     Ok(())
 }
 
+#[cfg(not(test))]
 fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
     if let Err(error) = app.emit(
         waves_config::EVENT_UPDATER_CHECK_REQUESTED,
@@ -64,6 +82,7 @@ fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
     println!("{}", waves_config::LOG_UPDATER_CHECK_REQUESTED);
 }
 
+#[cfg(not(test))]
 fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>> {
     let about_metadata = AboutMetadataBuilder::new()
         .name(Some(waves_config::APP_NAME))
@@ -144,6 +163,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
     menu.build()
 }
 
+#[cfg(not(test))]
 pub fn run() {
     tauri::Builder::default()
         .manage(AppState::default())

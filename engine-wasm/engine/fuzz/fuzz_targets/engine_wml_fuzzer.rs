@@ -4,12 +4,20 @@ use libfuzzer_sys::fuzz_target;
 use wavenav_engine::WmlEngine;
 
 fn map_key(op: u8) -> &'static str {
+    // "enter" must be reachable: it is the only key that drives link/accept
+    // navigation (`execute_action_href` / `navigate_to_card_internal`), so
+    // without it the fuzzer can never exercise `onenterforward`/
+    // `onenterbackward` cycles or any other navigation path at all. The
+    // other three engine-recognized keys ("up"/"down" for focus movement)
+    // and a couple of unrecognized values (exercised as a deliberate no-op
+    // path through `handle_key_internal`'s `_ => {}` arm) round out the
+    // input space.
     match op % 6 {
         0 => "up",
         1 => "down",
-        2 => "left",
-        3 => "right",
-        4 => "select",
+        2 => "enter",
+        3 => "enter",
+        4 => "unknown-key",
         _ => "clear",
     }
 }
@@ -25,6 +33,12 @@ fuzz_target!(|data: &[u8]| {
     for (idx, op) in data.iter().copied().take(128).enumerate() {
         let key = map_key(op);
         let _ = engine.handle_key(key.to_string());
+        if idx % 5 == 0 {
+            // Exercise `navigate_back`/`onenterbackward` re-entrancy
+            // directly, in addition to whatever `<prev/>` actions the
+            // deck itself may trigger via "enter".
+            let _ = engine.navigate_back();
+        }
         if idx % 7 == 0 {
             let _ = engine.render();
         }
