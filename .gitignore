@@ -153,6 +153,7 @@ files
 tmp
 
 _site
+_site-preview
 
 **/fuzz/corpus/**
 # Curated regression seeds are tracked deliberately (unlike ad-hoc/mutated

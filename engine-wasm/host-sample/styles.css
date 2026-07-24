@@ -1,10 +1,15 @@
 :root {
-  --bg: #f4f2ea;
-  --panel: #fffdf6;
-  --ink: #1b1b1b;
-  --muted: #4f4f4f;
-  --accent: #1552a1;
-  --edge: #d8d2c3;
+  --bg: #f0ead8;
+  --panel: #faf6e9;
+  --surface: #ffffff;
+  --surface-soft: #f6f2e6;
+  --ink: #171914;
+  --muted: #515348;
+  --accent: #1538a1;
+  --accent-hover: #102c80;
+  --signal: #e84f25;
+  --edge: #b8b29e;
+  --focus-ring: #e84f25;
 }
 
 * {
@@ -15,7 +20,7 @@ body {
   margin: 0;
   font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at top left, #efe8d2, var(--bg));
+  background: var(--bg);
 }
 
 .page {
@@ -30,8 +35,16 @@ body {
 .screen-wrap {
   background: var(--panel);
   border: 1px solid var(--edge);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 16px;
+}
+
+.controls {
+  border-top: 5px solid var(--accent);
+}
+
+.screen-wrap {
+  border-top: 5px solid var(--signal);
 }
 
 .controls h1 {
@@ -56,8 +69,8 @@ body {
   margin: 0 0 12px;
   padding: 10px 12px;
   border: 1px solid var(--edge);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: var(--surface);
 }
 
 .example-meta h2 {
@@ -105,8 +118,8 @@ body {
 .editor-wrap {
   margin: 0 0 12px;
   border: 1px solid var(--edge);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: var(--surface);
   padding: 10px 12px;
 }
 
@@ -136,10 +149,10 @@ body {
   flex: 1;
   min-width: 120px;
   border: 1px solid var(--edge);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 8px 10px;
   font-size: 0.85rem;
-  background: #fff;
+  background: var(--surface);
 }
 
 .checkbox-row {
@@ -154,7 +167,7 @@ textarea {
   height: 360px;
   resize: vertical;
   border: 1px solid var(--edge);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 12px;
   font-family: 'IBM Plex Mono', Consolas, monospace;
   font-size: 0.85rem;
@@ -172,13 +185,25 @@ button {
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 3px;
   padding: 10px 14px;
   cursor: pointer;
 }
 
 button:hover {
-  opacity: 0.92;
+  background: var(--accent-hover);
+}
+
+button:active {
+  transform: translate(1px, 1px);
+}
+
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .status {
@@ -199,10 +224,12 @@ button:hover {
 
 .runtime-state {
   margin: 10px 0 0;
+  max-width: 100%;
+  overflow: auto;
   padding: 10px;
   border: 1px solid var(--edge);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: var(--surface);
   font-size: 0.8rem;
   line-height: 1.45;
   font-family: 'IBM Plex Mono', Consolas, monospace;
@@ -211,8 +238,8 @@ button:hover {
 .event-log-wrap {
   margin-top: 10px;
   border: 1px solid var(--edge);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: var(--surface);
   padding: 10px;
 }
 
@@ -235,8 +262,8 @@ button:hover {
 
 #event-log-export-format {
   border: 1px solid var(--edge);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: var(--surface);
   font-size: 0.78rem;
   padding: 6px 8px;
 }
@@ -251,9 +278,9 @@ button:hover {
   max-height: 220px;
   overflow: auto;
   border: 1px solid var(--edge);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 10px;
-  background: #fcfcfc;
+  background: var(--surface-soft);
   font-size: 0.77rem;
   line-height: 1.45;
   font-family: 'IBM Plex Mono', Consolas, monospace;
@@ -262,8 +289,8 @@ button:hover {
 .trace-wrap {
   margin-top: 10px;
   border: 1px solid var(--edge);
-  border-radius: 8px;
-  background: #fff;
+  border-radius: 4px;
+  background: var(--surface);
   padding: 10px;
 }
 
@@ -274,13 +301,43 @@ button:hover {
 #wap-screen {
   width: 100%;
   height: auto;
-  background: #fdfdfd;
-  border: 2px solid #303030;
-  border-radius: 8px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 3px;
 }
 
 @media (max-width: 900px) {
   .page {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 30rem) {
+  .page {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .controls,
+  .screen-wrap {
+    min-width: 0;
+    padding: 12px;
+  }
+
+  .row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .row label,
+  .row select {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:active {
+    transform: none;
   }
 }

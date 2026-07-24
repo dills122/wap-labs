@@ -29,7 +29,7 @@ const nav = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#111814" />
+    <meta name="theme-color" content="#171914" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href={route('favicon.svg')} />
     <title>{title} · WAP Labs Atlas</title>
@@ -41,14 +41,18 @@ const nav = [
         <span class="wordmark-mark" aria-hidden="true">WA</span>
         <span><strong>WAP Labs</strong><small>Project atlas</small></span>
       </a>
-      <nav aria-label="Primary">
+      <nav class="primary-nav" aria-label="Primary">
         {
           nav.map(([label, href, id]) => (
             <a href={route(href)} aria-current={section === id ? 'page' : undefined}>{label}</a>
           ))
         }
       </nav>
-      <a class="repo-link" href="https://github.com/dills122/wap-labs">Repository ↗</a>
+      <nav class="utility-nav" aria-label="WAP Labs products">
+        <a href="/wap-labs/">Waves</a>
+        <a href="/wap-labs/simulator/">Simulator</a>
+        <a href="https://github.com/dills122/wap-labs">Repository ↗</a>
+      </nav>
     </header>
     <main id="main-content">
       <slot />

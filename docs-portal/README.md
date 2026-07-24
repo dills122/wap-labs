@@ -20,3 +20,11 @@ pnpm build
 ```
 
 The static production build is emitted under `dist/` with the configured `/wap-labs/atlas` base.
+
+The Pages workflow packages the three independent static applications together:
+
+- marketing site at `/wap-labs/`;
+- WaveNav simulator at `/wap-labs/simulator/`;
+- project Atlas at `/wap-labs/atlas/`.
+
+Run `make preview-pages-local` from the repository root to build and serve that complete layout.

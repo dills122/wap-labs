@@ -14,6 +14,7 @@
     <a href="#why" data-section-link>Why Waves</a>
     <a href="#stack" data-section-link>The Stack</a>
     <a href="#shipping" data-section-link>Shipping</a>
+    <a class="nav-product-link" href="./atlas/">Project Atlas <span aria-hidden="true">↗</span></a>
   </nav>
 
   <p class="build-label"><span aria-hidden="true"></span> Experimental build</p>
@@ -66,6 +67,23 @@
   .site-nav a.is-active::after {
     transform: scaleX(1);
     transform-origin: left;
+  }
+
+  .site-nav .nav-product-link {
+    padding: 0.7rem 0.75rem;
+    color: var(--color-paper);
+    background: var(--color-terminal);
+    border: 1px solid var(--color-rule);
+    box-shadow: 2px 2px 0 var(--color-rule);
+  }
+
+  .site-nav .nav-product-link::after {
+    display: none;
+  }
+
+  .site-nav .nav-product-link:hover {
+    color: var(--color-paper);
+    background: var(--color-signal-dark);
   }
 
   .build-label {

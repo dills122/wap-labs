@@ -35,10 +35,10 @@ export class RuntimeInspectorPanel extends LitElement {
     .trace-actions button {
       font-size: 0.75rem;
       padding: 6px 10px;
-      background: #1552a1;
+      background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 3px;
       cursor: pointer;
     }
 
@@ -48,9 +48,9 @@ export class RuntimeInspectorPanel extends LitElement {
     }
 
     #trace-export-format {
-      border: 1px solid #d8d2c3;
-      border-radius: 8px;
-      background: #fff;
+      border: 1px solid var(--edge);
+      border-radius: 4px;
+      background: var(--surface);
       font-size: 0.78rem;
       padding: 6px 8px;
     }
@@ -71,17 +71,17 @@ export class RuntimeInspectorPanel extends LitElement {
     .trace-filters button {
       font-size: 0.72rem;
       padding: 5px 8px;
-      background: #1552a1;
+      background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 3px;
       cursor: pointer;
     }
 
     .trace-filters input[type='text'] {
-      border: 1px solid #d8d2c3;
-      border-radius: 8px;
-      background: #fff;
+      border: 1px solid var(--edge);
+      border-radius: 4px;
+      background: var(--surface);
       font-size: 0.78rem;
       padding: 6px 8px;
       min-width: 120px;
@@ -103,10 +103,10 @@ export class RuntimeInspectorPanel extends LitElement {
       min-height: 120px;
       max-height: 220px;
       overflow: auto;
-      border: 1px solid #d8d2c3;
-      border-radius: 8px;
+      border: 1px solid var(--edge);
+      border-radius: 4px;
       padding: 10px;
-      background: #fcfcfc;
+      background: var(--surface-soft);
       font-size: 0.74rem;
       line-height: 1.45;
       font-family: 'IBM Plex Mono', Consolas, monospace;

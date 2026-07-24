@@ -14,6 +14,7 @@ RUST_FUNCTION_COVERAGE_MIN ?= 85
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
 	install-marketing-site dev-marketing-site build-marketing-site \
+	dev-docs-portal build-docs-portal \
 	preview-pages-local
 
 up:
@@ -187,6 +188,12 @@ test-node:
 		else \
 			echo "skip: marketing-site package missing (node test/build)"; \
 		fi; \
+		if [ -f docs-portal/package.json ]; then \
+			echo "==> project Atlas build sanity"; \
+			pnpm --dir docs-portal run build; \
+		else \
+			echo "skip: docs-portal package missing (node test/build)"; \
+		fi; \
 	else \
 		echo "skip: pnpm or host-sample package missing (node test/build)"; \
 	fi
@@ -248,6 +255,24 @@ build-marketing-site:
 		pnpm --dir marketing-site --ignore-workspace run build; \
 	else \
 		echo "skip: pnpm or marketing-site package missing"; \
+		exit 1; \
+	fi
+
+dev-docs-portal:
+	@if [ -f docs-portal/package.json ] && command -v pnpm >/dev/null 2>&1; then \
+		echo "==> start project Atlas dev server"; \
+		pnpm --dir docs-portal run dev; \
+	else \
+		echo "skip: pnpm or docs-portal package missing"; \
+		exit 1; \
+	fi
+
+build-docs-portal:
+	@if [ -f docs-portal/package.json ] && command -v pnpm >/dev/null 2>&1; then \
+		echo "==> build project Atlas"; \
+		pnpm --dir docs-portal run build; \
+	else \
+		echo "skip: pnpm or docs-portal package missing"; \
 		exit 1; \
 	fi
 

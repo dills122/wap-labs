@@ -16,8 +16,8 @@
       <a class="button button-primary" href="./simulator/">
         <span>Open simulator</span><span aria-hidden="true">→</span>
       </a>
-      <a class="button button-secondary" href="https://github.com/dills122/wap-labs/tree/main/browser">
-        <span>View browser source</span><span aria-hidden="true">↗</span>
+      <a class="button button-secondary" href="./atlas/">
+        <span>Explore project Atlas</span><span aria-hidden="true">→</span>
       </a>
     </div>
 
@@ -315,6 +315,7 @@
 
     .hero-copy {
       max-width: 47rem;
+      min-width: 0;
     }
 
     .hero-figure {
@@ -338,12 +339,25 @@
       flex-direction: column;
     }
 
+    .eyebrow {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.045em;
+    }
+
+    .eyebrow::before {
+      width: 2rem;
+      flex: 0 0 2rem;
+    }
+
     .hero-facts {
       grid-template-columns: 1fr;
     }
 
     .hero-figure {
       box-shadow: 0.4rem 0.4rem 0 var(--color-rule);
+      animation-name: tune-in;
     }
 
     .figure-header {

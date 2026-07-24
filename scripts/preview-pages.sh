@@ -10,7 +10,7 @@ usage() {
   cat <<USAGE
 Usage: $(basename "$0") [--port <port>] [--no-serve] [--install|--skip-install]
 
-Builds marketing-site and simulator, assembles a local GitHub Pages-style
+Builds marketing-site, simulator, and project Atlas, assembles a local GitHub Pages-style
 artifact in ./_site, and optionally serves it.
 
 Options:
@@ -104,24 +104,43 @@ fi
 echo "==> Building simulator"
 pnpm --dir "$ROOT_DIR/engine-wasm/host-sample" run build
 
+if should_install "$ROOT_DIR/docs-portal"; then
+  echo "==> Installing project Atlas dependencies"
+  pnpm --dir "$ROOT_DIR" install --frozen-lockfile --ignore-scripts
+else
+  echo "==> Skipping project Atlas install (dependencies already present)"
+fi
+
+echo "==> Building project Atlas"
+pnpm --dir "$ROOT_DIR/docs-portal" run build
+
 echo "==> Assembling _site artifact"
 rm -rf "$ROOT_DIR/_site"
-mkdir -p "$ROOT_DIR/_site/simulator"
+mkdir -p "$ROOT_DIR/_site/simulator" "$ROOT_DIR/_site/atlas"
 cp -R "$ROOT_DIR/marketing-site/dist/." "$ROOT_DIR/_site/"
 cp -R "$ROOT_DIR/engine-wasm/host-sample/dist/." "$ROOT_DIR/_site/simulator/"
+cp -R "$ROOT_DIR/docs-portal/dist/." "$ROOT_DIR/_site/atlas/"
 touch "$ROOT_DIR/_site/.nojekyll"
 
 echo "==> Artifact ready"
 echo "    Root:      $ROOT_DIR/_site/index.html"
 echo "    Simulator: $ROOT_DIR/_site/simulator/index.html"
+echo "    Atlas:     $ROOT_DIR/_site/atlas/index.html"
+
+PREVIEW_ROOT="$ROOT_DIR/_site-preview"
+rm -rf "$PREVIEW_ROOT"
+mkdir -p "$PREVIEW_ROOT/wap-labs"
+cp -R "$ROOT_DIR/_site/." "$PREVIEW_ROOT/wap-labs/"
 
 if [[ "$SERVE" == "0" ]]; then
+  echo "    Preview:   $PREVIEW_ROOT/wap-labs/index.html"
   echo "==> Done (no server started)"
   exit 0
 fi
 
-echo "==> Serving _site at http://localhost:${PORT}/"
-echo "    Marketing: http://localhost:${PORT}/"
-echo "    Simulator: http://localhost:${PORT}/simulator/"
+echo "==> Serving Pages-style bundle at http://localhost:${PORT}/wap-labs/"
+echo "    Marketing: http://localhost:${PORT}/wap-labs/"
+echo "    Simulator: http://localhost:${PORT}/wap-labs/simulator/"
+echo "    Atlas:     http://localhost:${PORT}/wap-labs/atlas/"
 echo "    Press Ctrl+C to stop"
-python3 -m http.server "$PORT" -d "$ROOT_DIR/_site"
+python3 -m http.server "$PORT" -d "$PREVIEW_ROOT"

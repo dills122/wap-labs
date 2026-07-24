@@ -100,18 +100,18 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       const y = cmd.y * lineHeight;
 
       if (cmd.type === 'text') {
-        ctx.fillStyle = '#111';
+        ctx.fillStyle = '#171914';
         ctx.fillText(cmd.text, x, y);
         continue;
       }
 
       if (cmd.type === 'link') {
         if (cmd.focused) {
-          ctx.fillStyle = '#c8ddff';
+          ctx.fillStyle = '#d8dcef';
           ctx.fillRect(0, y - 1, canvas.width, lineHeight + 2);
         }
 
-        ctx.fillStyle = cmd.focused ? '#10274d' : '#0b3d91';
+        ctx.fillStyle = cmd.focused ? '#171914' : '#1538a1';
         ctx.fillText(cmd.text, x, y);
       }
     }

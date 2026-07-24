@@ -30,6 +30,7 @@ jobs:
       rust_transport: ${{ steps.filter.outputs.rust_transport }}
       host_sample: ${{ steps.filter.outputs.host_sample }}
       marketing_site: ${{ steps.filter.outputs.marketing_site }}
+      docs_portal: ${{ steps.filter.outputs.docs_portal }}
       browser_shell: ${{ steps.filter.outputs.browser_shell }}
       wml_server: ${{ steps.filter.outputs.wml_server }}
     steps:
@@ -66,6 +67,12 @@ jobs:
               - "engine-wasm/pkg/**"
             marketing_site:
               - "marketing-site/**"
+            docs_portal:
+              - "docs-portal/**"
+              - "docs/**"
+              - "spec-processing/source-manifests/**"
+              - "pnpm-lock.yaml"
+              - "pnpm-workspace.yaml"
             browser_shell:
               - "browser/**"
               - "engine-wasm/engine/**"
@@ -317,6 +324,31 @@ jobs:
 
       - name: Build marketing-site
         run: pnpm --dir marketing-site --ignore-workspace run build
+
+  docs-portal:
+    name: Project Atlas Build
+    needs: [changes]
+    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.docs_portal == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build project Atlas
+        run: pnpm --dir docs-portal run build
 
   browser-shell:
     name: Browser Shell Skeleton Checks
