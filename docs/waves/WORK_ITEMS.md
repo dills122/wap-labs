@@ -130,8 +130,9 @@ Source-ledger reconciliation:
 3. Exact closure is owned by compliance-program work items `TRN-701`,
    `TRN-703`, `WSP-801`, `WSP-802`, `WSP-804`, and `WSP-805`.
 4. `SRC-005` has normalized the selected CDPD bearer citation `TIAEIA-732`
-   with an explicit licensed-payload boundary; `CONF-003` owns nested clause
-   extraction and direct normative fixture expansion.
+   with an explicit licensed-payload boundary; `CONF-003` has completed all
+   201 selected nested-clause plans, while implementation work items own
+   direct normative fixture execution.
 5. WTP remains a conditional capability and does not gate the initial
    connectionless Class C path.
 

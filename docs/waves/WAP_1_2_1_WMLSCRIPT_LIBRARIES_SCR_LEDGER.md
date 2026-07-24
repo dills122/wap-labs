@@ -1,7 +1,7 @@
 # WAP 1.2.1 WMLScript Libraries SCR Ledger
 
-Version: v0.1
-Status: effective SCR extracted; Class C applied; nested-clause audit pending
+Version: v0.2
+Status: effective SCR extracted; Class C applied; 211 nested clauses planned
 
 ## Purpose
 
@@ -82,8 +82,9 @@ Related behavior exists for:
 - placeholder Dialogs request recording for `prompt`, `confirm`, and `alert`.
 
 Those rows remain partial because exact argument conversion, error semantics,
-context rules, identifiers, side effects, and nested clauses are not fully
-proven.
+context rules, identifiers, side effects, and direct fixtures are not fully
+proven. All 80 selected rows now map to 211 required, deduplicated normative
+clauses.
 
 The principal missing areas are:
 
@@ -110,8 +111,8 @@ remain linked where applicable:
 - historical `W0-07`: provisional `newContext` and `getCurrentCard` evidence.
 
 `W1-05` is no longer merely an instruction to create a matrix: the exact
-matrix and validator now exist. It remains open for implementation, nested
-clause extraction, direct fixtures, CI wiring, and release-grade evidence.
+parent matrix, nested clauses, and validators now exist. It remains open for
+implementation, direct fixtures, CI wiring, and release-grade evidence.
 
 ## Enhancement policy
 

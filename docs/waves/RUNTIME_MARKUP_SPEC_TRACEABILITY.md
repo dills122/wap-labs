@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
-Version: v0.2
-Status: WML/WBXML feature ledgers extracted; nested-clause audit pending
+Version: v0.3
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence pending
 
 ## Purpose
 

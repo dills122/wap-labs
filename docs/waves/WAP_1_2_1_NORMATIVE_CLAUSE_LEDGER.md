@@ -1,7 +1,7 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.7
-Status: `CONF-003` in progress; all selected slices except WMLScript Libraries complete
+Version: v0.8
+Status: `CONF-003` complete; all 201 selected Class C parents planned
 
 ## Purpose
 
@@ -38,6 +38,7 @@ node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
   --wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt \
   --wdp-text /absolute/path/WAP-200-WDP-20000219-a.txt \
   --wmlscript-text /absolute/path/WAP-193_101-WMLScript-20010928-a.txt \
+  --wmlscript-libraries-text /absolute/path/WAP-194-WMLScriptLibraries-20000925-a.txt \
   --rfc-768-text /absolute/path/rfc768.txt \
   --rfc-791-text /absolute/path/rfc791.txt \
   --rfc-2396-text /absolute/path/rfc2396.txt \
@@ -51,7 +52,7 @@ ingestion lock.
 
 ## Current slices
 
-The current artifact covers 121 of the 201 selected Class C parent rows:
+The current artifact covers all 201 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
@@ -63,9 +64,10 @@ The current artifact covers 121 of the 201 selected Class C parent rows:
 | WSP | 8 | 57 |
 | WDP | 9 | 49 |
 | WMLScript | 41 | 107 |
-| **Total** | **121** | **570** |
+| WMLScript Libraries | 80 | 211 |
+| **Total** | **201** | **781** |
 
-The 570 clauses are classified as 527 required, 31 recommended, and 12
+The 781 clauses are classified as 738 required, 31 recommended, and 12
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,
@@ -97,12 +99,9 @@ and project-authored summaries. The recovered corpus remains outside Git.
 The validator limits synopsis size and rejects fields intended to carry
 verbatim source text.
 
-## Remaining `CONF-003` slices
+## `CONF-003` closure
 
-The remaining 80 selected parents are:
-
-- WMLScript Libraries: 80.
-
-`CONF-003` remains open until all nine selected families and all 201 parent
-rows are represented. WTP is added only if connection-oriented WSP becomes a
-claimed profile.
+No selected family or parent row remains unexpanded. `CONF-003` is complete at
+the planning level; every clause still remains `not-assessed` until its
+source-derived fixture and direct code/test evidence are reviewed. WTP is
+added only if connection-oriented WSP becomes a claimed profile.

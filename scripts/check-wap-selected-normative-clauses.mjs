@@ -51,9 +51,10 @@ const coveredFamilies = [
   'wcmp',
   'wsp',
   'wdp',
-  'wmlscript'
+  'wmlscript',
+  'wmlscript-libraries'
 ];
-const remainingFamilies = ['wmlscript-libraries'];
+const remainingFamilies = [];
 const familyDefinitions = new Map([
   [
     'wml',
@@ -125,6 +126,15 @@ const familyDefinitions = new Map([
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 41,
       expectedClauses: 107
+    }
+  ],
+  [
+    'wmlscript-libraries',
+    {
+      ledgerFile: 'wap-1.2.1-wmlscript-libraries-scr.json',
+      selectedDisposition: 'required-by-class-c-client-mcf',
+      expectedParents: 80,
+      expectedClauses: 211
     }
   ]
 ]);
@@ -199,15 +209,15 @@ if (
   failures.push('redistribution boundary is not explicit');
 }
 if (
-  ledger.scope?.status !== 'in-progress' ||
+  ledger.scope?.status !== 'complete' ||
   ledger.scope?.selectedProfileParentCount !== 201 ||
   JSON.stringify(ledger.scope?.coveredFamilies) !==
     JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !==
     JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 121 ||
-  ledger.scope?.remainingSelectedParentCount !== 80 ||
-  !ledger.scope?.completionRule?.includes('CONF-003 remains open')
+  ledger.scope?.coveredSelectedParentCount !== 201 ||
+  ledger.scope?.remainingSelectedParentCount !== 0 ||
+  !ledger.scope?.completionRule?.includes('CONF-003 is complete')
 ) {
   failures.push('partial nine-family scope accounting drift');
 }
@@ -503,8 +513,8 @@ const expectedSummary = {
   assessedClauseCount: 0
 };
 if (
-  selectedParentCount !== 121 ||
-  clauseCount !== 570 ||
+  selectedParentCount !== 201 ||
+  clauseCount !== 781 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(
@@ -545,7 +555,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, WCMP, WSP, WDP, and WMLScript`
+  `PASS CONF-003 complete: ${selectedParentCount}/201 selected parents across all nine mandatory Class C families`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`

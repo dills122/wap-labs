@@ -1,7 +1,7 @@
 # Waves Source Material Master Audit
 
-Version: v0.3
-Status: selected WAP 1.2.1 Class C source/SCR baseline complete; nested clauses and implementation evidence in progress
+Version: v0.4
+Status: selected WAP 1.2.1 Class C source, SCR, and nested-clause baseline complete; implementation evidence in progress
 
 ## Goal
 
@@ -141,15 +141,14 @@ Supplemental-source precedence:
 
 - explicit version/SIN precedence matrix for every spec family used by Waves
 
-### Partially converted into target requirements artifacts
+### Converted into target requirements artifacts
 
 - WAP-215 Class A/B/C profile mapping and WAP-221 family-level conformance
   grammar are complete for every selected Class C family
 - one-to-one mandatory/optional obligation ledgers for the WAP 1.2.1 target
   (WML 1.3, WAE, WBXML, WMLScript, WMLScript Libraries, caching, WDP, WCMP,
-  and WSP complete at SCR/source-work-item level;
-  WML/WAE/WBXML/caching/WCMP/WSP/WDP/WMLScript nested clauses planned;
-  WMLScript Libraries and direct test evidence pending)
+  and WSP complete at SCR/source-work-item and nested-clause planning level;
+  direct test evidence remains pending)
 - WAP 1.2.1-to-WAP 2.0 delta records for areas implemented from successor
   documents (selected WAE Class C concepts complete; broader/other-family
   deltas pending)
@@ -162,12 +161,10 @@ Cross-source selected-profile accounting is now executable:
 - 7 implemented, 84 partial, and 110 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
-- 121 selected WML/WAE/WBXML/caching/WCMP/WSP/WDP/WMLScript rows now expand
-  into 570 deduplicated nested clauses with source anchors and planned direct
-  fixtures;
-- the remaining 80 WMLScript Libraries rows plus direct conformance fixture
-  execution
-  remain the principal evidence gap.
+- all 201 selected rows now expand into 781 deduplicated nested clauses with
+  source anchors and planned direct fixtures;
+- direct conformance fixture implementation and execution remain the
+  principal evidence gap.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes
@@ -183,11 +180,10 @@ line-item SCR ledgers now exist at
 `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`,
 `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
 `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. All selected-family
-SCR ledgers are complete. The first nested normative-clause ledger covers WML
-and WBXML at
-`spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`;
-seven selected families remain. WTP is additionally conditional on
-connection-oriented WSP.
+SCR ledgers are complete. The cumulative nested normative-clause ledger covers
+all nine selected families and all 201 selected parents at
+`spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`.
+WTP is additionally conditional on connection-oriented WSP.
 
 ## Audit deliverables (what “done” looks like)
 

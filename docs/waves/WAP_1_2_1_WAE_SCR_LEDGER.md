@@ -1,7 +1,7 @@
 # WAP 1.2.1 WAE SCR Ledger
 
-Version: v0.1
-Status: effective SCR extracted; Class C applied; nested-clause audit pending
+Version: v0.2
+Status: effective SCR extracted; Class C applied; 39 selected nested clauses planned
 
 ## Purpose
 

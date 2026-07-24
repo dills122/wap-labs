@@ -239,7 +239,7 @@
         },
         {
           "id": "CONF-003",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["documentation", "qa"],
           "sourceFamilies": [
             "wae",
@@ -260,7 +260,7 @@
           "acceptance": [
             "All 201 selected rows across the nine mandatory Class C families have nested normative clauses anchored and deduplicated.",
             "Normative text is not reduced to keyword search: implicit MUST rules and clauses within each SCR feature are anchored and deduplicated.",
-            "Incremental family slices declare covered and remaining selected rows; CONF-003 stays open until the 201-row gate is complete."
+            "The completed ledger declares all nine covered families, zero remaining selected rows, and a closed 201-row gate."
           ],
           "evidence": [
             "node scripts/check-wap-selected-normative-clauses.mjs",

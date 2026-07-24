@@ -51,7 +51,8 @@ Status: Active
   - WSP: 8 selected parents / 57 clauses
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
-  - all 570 direct fixtures planned; clause implementation status not assessed
+  - WMLScript Libraries: 80 selected parents / 211 clauses
+  - all 781 direct fixtures planned; clause implementation status not assessed
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
@@ -167,8 +168,8 @@ Status: Active
 ## Open coverage gaps
 
 0. Effective WAP-191 full-stack conformance closure (76 actor-specific SCR IDs)
-- Status: in progress (source ledger + mandatory code audit complete; clause,
-  optional-capability, and release evidence pending)
+- Status: in progress (source and nested-clause ledgers plus mandatory code
+  audit complete; direct fixtures, optional-capability, and release evidence pending)
 - Selected-profile scope: 39 required Class C client rows, 27 optional client
   rows, and 10 server/encoder rows not applicable to the client
 - Deliverables:
@@ -179,7 +180,7 @@ Status: Active
 
 0a. Effective WAP-192 WBXML conformance closure (15 actor-specific SCR IDs)
 - Status: in progress (source ledger and selected-client code audit complete;
-  nested clauses and direct normative fixtures pending)
+  48 nested clauses planned; direct normative fixtures pending)
 - Selected-profile scope: 3 required Class C client rows and 12
   server/document/encoder rows outside the client profile
 - Deliverables:
@@ -203,7 +204,7 @@ Status: Active
 
 1. WMLScript bedrock conformance closure (`WAP-193_101` + `WAP-194/194_103`)
 - Status: in progress (exact source ledgers and implementation audit complete;
-  nested clauses, direct fixtures, implementation, and CI closure pending)
+  318 nested clauses planned; direct fixtures, implementation, and CI closure pending)
 - Deliverables:
   - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md` (active baseline + bedrock priority groups)
   - `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
@@ -220,7 +221,7 @@ Status: Active
 
 2. Transport bedrock conformance closure (`WAP-200`, `WAP-202`, `WAP-203`)
 - Status: in progress (exact SCR extraction, selected-path resolution, and
-  implementation audit complete; nested clauses, direct fixtures, and
+  implementation audit plus 134 nested clauses complete; direct fixtures and
   implementation closure pending)
 - Deliverables:
   - `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`

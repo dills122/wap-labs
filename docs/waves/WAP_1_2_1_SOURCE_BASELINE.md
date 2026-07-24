@@ -176,9 +176,10 @@ level:
 - WSP: 109 active rows; the selected eight-row path resolves `WSP:MCF`
   through connectionless WSP.
 
-Nested normative-clause extraction is complete for WML, WAE, WBXML, caching,
-WCMP, the selected connectionless WSP path, the selected CDPD/UDP/IPv4 WDP
-path, and WMLScript. WMLScript Libraries remains. WTP is additionally required
+Nested normative-clause extraction is complete for all 201 selected parents
+across WML, WAE, WBXML, caching, WCMP, the selected connectionless WSP path,
+the selected CDPD/UDP/IPv4 WDP path, WMLScript, and WMLScript Libraries. WTP is
+additionally required
 only if connection-oriented WSP is claimed. The selected CDPD `TIAEIA-732` family
 citation is normalized as an informative, licensed-payload metadata-only
 dependency.

@@ -24,6 +24,7 @@ const wspTextPath = option('--wsp-text');
 const wspSin001TextPath = option('--wsp-sin-001-text');
 const wdpTextPath = option('--wdp-text');
 const wmlscriptTextPath = option('--wmlscript-text');
+const wmlscriptLibrariesTextPath = option('--wmlscript-libraries-text');
 const rfc768TextPath = option('--rfc-768-text');
 const rfc791TextPath = option('--rfc-791-text');
 const rfc2396TextPath = option('--rfc-2396-text');
@@ -47,6 +48,7 @@ if (
   !wspSin001TextPath ||
   !wdpTextPath ||
   !wmlscriptTextPath ||
+  !wmlscriptLibrariesTextPath ||
   !rfc768TextPath ||
   !rfc791TextPath ||
   !rfc2396TextPath ||
@@ -68,6 +70,7 @@ if (
       '--wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt ' +
       '--wdp-text /absolute/path/WAP-200-WDP-20000219-a.txt ' +
       '--wmlscript-text /absolute/path/WAP-193_101-WMLScript-20010928-a.txt ' +
+      '--wmlscript-libraries-text /absolute/path/WAP-194-WMLScriptLibraries-20000925-a.txt ' +
       '--rfc-768-text /absolute/path/rfc768.txt ' +
       '--rfc-791-text /absolute/path/rfc791.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
@@ -196,6 +199,13 @@ const sourceInputs = new Map([
     {
       path: wmlscriptTextPath,
       text: fs.readFileSync(wmlscriptTextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-194-WMLScriptLibraries',
+    {
+      path: wmlscriptLibrariesTextPath,
+      text: fs.readFileSync(wmlscriptLibrariesTextPath, 'utf8')
     }
   ],
   [
@@ -620,6 +630,89 @@ const sectionDefinitions = {
       '12.4': ['12.4 Non-Fatal Errors', '12.5 Library Calls and Errors']
     }
   },
+  'wmlscript-libraries': {
+    sourceDocumentId: 'WAP-194-WMLScriptLibraries',
+    ranges: {
+      '6': ['6. WMLSCRIPT COMPLIANCE', '6.1 Supported Data Type'],
+      '6.1': ['6.1 Supported Data Type', '6.2   Data Type Conversions'],
+      '6.2': ['6.2   Data Type Conversions', '6.3   Error Handling'],
+      '6.3': ['6.3   Error Handling', '6.4   Support for Integer-Only Devices'],
+      '6.4': ['6.4   Support for Integer-Only Devices', '7.      LANG'],
+      '7': ['7.      LANG', '7.1     abs'],
+      '7.1': ['7.1     abs', '7.2     min'],
+      '7.2': ['7.2     min', '7.3   max'],
+      '7.3': ['7.3   max', '7.4   parseInt'],
+      '7.4': ['7.4   parseInt', '7.5   parseFloat'],
+      '7.5': ['7.5   parseFloat', '7.6   isInt'],
+      '7.6': ['7.6   isInt', '7.7   isFloat'],
+      '7.7': ['7.7   isFloat', '7.8   maxInt'],
+      '7.8': ['7.8   maxInt', '7.9   minInt'],
+      '7.9': ['7.9   minInt', '7.10 float'],
+      '7.10': ['7.10 float', '7.11 exit'],
+      '7.11': ['7.11 exit', '7.12 abort'],
+      '7.12': ['7.12 abort', '7.13 random'],
+      '7.13': ['7.13 random', '7.14 seed'],
+      '7.14': ['7.14 seed', '7.15 characterSet'],
+      '7.15': ['7.15 characterSet', '8.    FLOAT'],
+      '8': ['8.    FLOAT', '8.1   int'],
+      '8.1': ['8.1   int', '8.2   floor'],
+      '8.2': ['8.2   floor', '8.3   ceil'],
+      '8.3': ['8.3   ceil', '8.4   pow'],
+      '8.4': ['8.4   pow', '8.5   round'],
+      '8.5': ['8.5   round', '8.6   sqrt'],
+      '8.6': ['8.6   sqrt', '8.7   maxFloat'],
+      '8.7': ['8.7   maxFloat', '8.8   minFloat'],
+      '8.8': ['8.8   minFloat', '9. STRING'],
+      '9': ['9. STRING', '9.1   length'],
+      '9.1': ['9.1   length', '9.2   isEmpty'],
+      '9.2': ['9.2   isEmpty', '9.3   charAt'],
+      '9.3': ['9.3   charAt', '9.4   subString'],
+      '9.4': ['9.4   subString', '9.5   find'],
+      '9.5': ['9.5   find', '9.6   replace'],
+      '9.6': ['9.6   replace', '9.7   elements'],
+      '9.7': ['9.7   elements', '9.8   elementAt'],
+      '9.8': ['9.8   elementAt', '9.9   removeAt'],
+      '9.9': ['9.9   removeAt', '9.10 replaceAt'],
+      '9.10': ['9.10 replaceAt', '9.11 insertAt'],
+      '9.11': ['9.11 insertAt', '9.12 squeeze'],
+      '9.12': ['9.12 squeeze', '9.13 trim'],
+      '9.13': ['9.13 trim', '9.14 compare'],
+      '9.14': ['9.14 compare', '9.15 toString'],
+      '9.15': ['9.15 toString', '9.16 format'],
+      '9.16': ['9.16 format', '10.   URL'],
+      '10': ['10.   URL', '10.1 isValid'],
+      '10.1': ['10.1 isValid', '10.2 getScheme'],
+      '10.2': ['10.2 getScheme', '10.3 getHost'],
+      '10.3': ['10.3 getHost', '10.4 getPort'],
+      '10.4': ['10.4 getPort', '10.5 getPath'],
+      '10.5': ['10.5 getPath', '10.6 getParameters'],
+      '10.6': ['10.6 getParameters', '10.7 getQuery'],
+      '10.7': ['10.7 getQuery', '10.8 getFragment'],
+      '10.8': ['10.8 getFragment', '10.9 getBase'],
+      '10.9': ['10.9 getBase', '10.10   getReferer'],
+      '10.10': ['10.10   getReferer', '10.11   resolve'],
+      '10.11': ['10.11   resolve', '10.12   escapeString'],
+      '10.12': ['10.12   escapeString', '10.13   unescapeString'],
+      '10.13': ['10.13   unescapeString', '10.14   loadString'],
+      '10.14': ['10.14   loadString', '11.   WMLBROWSER'],
+      '11': ['11.   WMLBROWSER', '11.1 getVar'],
+      '11.1': ['11.1 getVar', '11.2 setVar'],
+      '11.2': ['11.2 setVar', '11.3 go'],
+      '11.3': ['11.3 go', '11.4 prev'],
+      '11.4': ['11.4 prev', '11.5 newContext'],
+      '11.5': ['11.5 newContext', '11.6 getCurrentCard'],
+      '11.6': ['11.6 getCurrentCard', '11.7 refresh'],
+      '11.7': ['11.7 refresh', '12.   DIALOGS'],
+      '12': ['12.   DIALOGS', '12.1 prompt'],
+      '12.1': ['12.1 prompt', '12.2 confirm'],
+      '12.2': ['12.2 confirm', '12.3 alert'],
+      '12.3': ['12.3 alert', 'Appendix A. Library Summary'],
+      'appendix-a': [
+        'Appendix A. Library Summary',
+        'Appendix B. Static Conformance Requirements'
+      ]
+    }
+  },
   'rfc-768': {
     sourceDocumentId: 'rfc-768',
     ranges: {
@@ -643,7 +736,11 @@ const sectionDefinitions = {
   'rfc-2396': {
     sourceDocumentId: 'rfc-2396',
     ranges: {
-      '3': ['3. URI Syntactic Components', '3.1. Scheme Component']
+      '3': ['3. URI Syntactic Components', '3.1. Scheme Component'],
+      '5.2': [
+        '5.2. Resolving Relative References to Absolute Form',
+        '6. URI Normalization and Equivalence'
+      ]
     }
   },
   'rfc-2616': {
@@ -1396,6 +1493,729 @@ clause('wmlscript', 'nonfatal_computation_matrix', ['WMLS-C-099', 'WMLS-C-111'],
 clause('wmlscript', 'nonfatal_constant_matrix', ['WMLS-C-098', 'WMLS-C-111'], '12.4', 'table', 'runtime', 'Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.');
 clause('wmlscript', 'nonfatal_conversion_matrix', ['WMLS-C-073', 'WMLS-C-077', 'WMLS-C-111'], '12.4', 'table', 'runtime', 'Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.');
 
+// WMLScript Standard Libraries selected Class C interpreter clauses.
+function libraryParentId(ordinal) {
+  return ordinal === 48
+    ? 'WMLSSL048'
+    : `WMLSSL-${String(ordinal).padStart(3, '0')}`;
+}
+
+const selectedLibraryFunctionParents = Array.from(
+  { length: 64 },
+  (_, index) => index + 31
+)
+  .filter((ordinal) => ordinal !== 46)
+  .map(libraryParentId);
+
+clause('wmlscript-libraries', 'supported_value_types', ['WMLSSL-014', ...selectedLibraryFunctionParents], '6.1', 'implicit-must', 'runtime', 'Accept Boolean, Integer, Float, String, and Invalid values wherever a standard-library signature names those WMLScript types.');
+clause('wmlscript-libraries', 'number_parameter_union', ['WMLSSL-014', ...selectedLibraryFunctionParents], '6.1', 'implicit-must', 'runtime', 'Interpret a Number parameter as accepting either an Integer or Float value.');
+clause('wmlscript-libraries', 'any_parameter_union', ['WMLSSL-014', ...selectedLibraryFunctionParents], '6.1', 'implicit-must', 'runtime', 'Interpret an Any parameter as accepting every supported WMLScript value type.');
+clause('wmlscript-libraries', 'automatic_argument_conversion', ['WMLSSL-015', ...selectedLibraryFunctionParents], '6.2', 'implicit-must', 'runtime', 'Apply WMLScript automatic data conversions when an argument does not already have the required parameter type.');
+clause('wmlscript-libraries', 'operator_conversion_default', ['WMLSSL-015', ...selectedLibraryFunctionParents], '6.2', 'implicit-must', 'runtime', 'Use WMLScript operator conversion rules unless an individual library function explicitly defines another conversion.');
+clause('wmlscript-libraries', 'invalid_argument_result', ['WMLSSL-016', ...selectedLibraryFunctionParents], '6.3', 'implicit-must', 'error-policy', 'Return invalid without other side effects when a function receives an invalid argument, except where its definition explicitly specifies another outcome.');
+clause('wmlscript-libraries', 'unconvertible_argument_result', ['WMLSSL-015', 'WMLSSL-016', ...selectedLibraryFunctionParents], '6.3', 'implicit-must', 'error-policy', 'Return invalid without side effects when an argument cannot be converted to its required parameter type.');
+clause('wmlscript-libraries', 'function_specific_error_result', ['WMLSSL-016', ...selectedLibraryFunctionParents], '6.3', 'implicit-must', 'error-policy', 'Represent each function-specific exception using the return value or error code declared by that function definition.');
+clause('wmlscript-libraries', 'integer_only_argument_types', ['WMLSSL-014', 'WMLSSL-015'], '6.4', 'table', 'runtime', 'On an integer-only device, accept only Boolean, Integer, String, and Invalid library arguments and ignore floating-point conversion rules.');
+
+const standardLibraryDefinitions = [
+  {
+    key: 'lang',
+    supportParent: 'WMLSSL-018',
+    identifierParent: 'WMLSSL-025',
+    section: '7',
+    libraryId: 0,
+    functions: 'abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14'
+  },
+  {
+    key: 'float',
+    supportParent: 'WMLSSL-019',
+    identifierParent: 'WMLSSL-026',
+    section: '8',
+    libraryId: 1,
+    functions: 'int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7'
+  },
+  {
+    key: 'string',
+    supportParent: 'WMLSSL-020',
+    identifierParent: 'WMLSSL-027',
+    section: '9',
+    libraryId: 2,
+    functions: 'length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15'
+  },
+  {
+    key: 'url',
+    supportParent: 'WMLSSL-021',
+    identifierParent: 'WMLSSL-028',
+    section: '10',
+    libraryId: 3,
+    functions: 'isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13'
+  },
+  {
+    key: 'wmlbrowser',
+    supportParent: 'WMLSSL-022',
+    identifierParent: 'WMLSSL-029',
+    section: '11',
+    libraryId: 4,
+    functions: 'getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6'
+  },
+  {
+    key: 'dialogs',
+    supportParent: 'WMLSSL-023',
+    identifierParent: 'WMLSSL-030',
+    section: '12',
+    libraryId: 5,
+    functions: 'prompt=0, confirm=1, alert=2'
+  }
+];
+
+for (const library of standardLibraryDefinitions) {
+  clause('wmlscript-libraries', `${library.key}_library_surface`, [library.supportParent], library.section, 'implicit-must', 'runtime', `Expose the complete ${library.key} standard-library namespace and its selected functions through the WMLScript library-call boundary.`);
+  clause('wmlscript-libraries', `${library.key}_library_identifier`, [library.supportParent, 'WMLSSL-024'], 'appendix-a', 'table', 'binary-decoder', `Map the ${library.key} standard library to encoded library identifier ${library.libraryId}.`);
+  clause('wmlscript-libraries', `${library.key}_function_identifiers`, [library.supportParent, library.identifierParent], 'appendix-a', 'table', 'binary-decoder', `Map ${library.key} function identifiers exactly as follows: ${library.functions}.`);
+}
+
+function standardLibraryFunction({
+  key,
+  parent,
+  section,
+  signature,
+  behavior,
+  details = []
+}) {
+  clause('wmlscript-libraries', `${key}_signature`, [parent], section, 'table', 'runtime', signature);
+  clause('wmlscript-libraries', `${key}_behavior`, [parent], section, 'implicit-must', 'runtime', behavior);
+  for (const detail of details) {
+    clause(
+      'wmlscript-libraries',
+      `${key}_${detail.key}`,
+      [parent],
+      detail.section ?? section,
+      detail.force ?? 'implicit-must',
+      detail.kind ?? 'runtime',
+      detail.synopsis,
+      detail.anchorFamily ?? 'wmlscript-libraries'
+    );
+  }
+}
+
+const langFunctions = [
+  {
+    key: 'lang_abs',
+    parent: 'WMLSSL-031',
+    section: '7.1',
+    signature: 'Implement Lang.abs(value) for a Number argument, returning Number or invalid.',
+    behavior: 'Return the absolute magnitude while preserving whether the input was Integer or Float.'
+  },
+  {
+    key: 'lang_min',
+    parent: 'WMLSSL-032',
+    section: '7.2',
+    signature: 'Implement Lang.min(value1, value2) for two Number arguments, returning Number or invalid.',
+    behavior: 'Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal.'
+  },
+  {
+    key: 'lang_max',
+    parent: 'WMLSSL-033',
+    section: '7.3',
+    signature: 'Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid.',
+    behavior: 'Apply numeric conversion rules, return the larger original value with its original type, and select the first argument when values compare equal.'
+  },
+  {
+    key: 'lang_parse_int',
+    parent: 'WMLSSL-034',
+    section: '7.4',
+    signature: 'Implement Lang.parseInt(value) for a String argument, returning Integer or invalid.',
+    behavior: 'Parse a leading signed decimal integer and stop before the first character that is neither the leading sign nor a decimal digit.',
+    details: [
+      { key: 'error', kind: 'error-policy', synopsis: 'Return invalid when the input has no legal leading decimal-integer representation.' }
+    ]
+  },
+  {
+    key: 'lang_parse_float',
+    parent: 'WMLSSL-035',
+    section: '7.5',
+    signature: 'Implement Lang.parseFloat(value) for a String argument, returning Float or invalid.',
+    behavior: 'Parse a legal leading decimal floating-point representation and stop at the first character that cannot continue it.',
+    details: [
+      { key: 'error', kind: 'error-policy', synopsis: 'Return invalid for malformed floating-point syntax or when floating-point operations are unavailable.' }
+    ]
+  },
+  {
+    key: 'lang_is_int',
+    parent: 'WMLSSL-036',
+    section: '7.6',
+    signature: 'Implement Lang.isInt(value) for an Any argument, returning Boolean or invalid.',
+    behavior: 'Return true exactly when Lang.parseInt can convert the value, false for a non-convertible non-invalid value, and invalid for invalid input.'
+  },
+  {
+    key: 'lang_is_float',
+    parent: 'WMLSSL-037',
+    section: '7.7',
+    signature: 'Implement Lang.isFloat(value) for an Any argument, returning Boolean or invalid.',
+    behavior: 'Return true exactly when Lang.parseFloat can convert the value, false for a non-convertible non-invalid value, and invalid for invalid input.',
+    details: [
+      { key: 'unsupported', kind: 'error-policy', synopsis: 'Return invalid when floating-point operations are unavailable.' }
+    ]
+  },
+  {
+    key: 'lang_max_int',
+    parent: 'WMLSSL-038',
+    section: '7.8',
+    signature: 'Implement zero-argument Lang.maxInt(), returning an Integer.',
+    behavior: 'Return the maximum WMLScript Integer value 2147483647.'
+  },
+  {
+    key: 'lang_min_int',
+    parent: 'WMLSSL-039',
+    section: '7.9',
+    signature: 'Implement zero-argument Lang.minInt(), returning an Integer.',
+    behavior: 'Return the minimum WMLScript Integer value -2147483648.'
+  },
+  {
+    key: 'lang_float',
+    parent: 'WMLSSL-040',
+    section: '7.10',
+    signature: 'Implement zero-argument Lang.float(), returning a Boolean.',
+    behavior: 'Return true when floating-point operations are supported and false on an integer-only device.'
+  },
+  {
+    key: 'lang_exit',
+    parent: 'WMLSSL-041',
+    section: '7.11',
+    signature: 'Implement Lang.exit(value) for an Any argument with no local return.',
+    behavior: 'End normal bytecode interpretation immediately and return the supplied value and control to the interpreter caller.'
+  },
+  {
+    key: 'lang_abort',
+    parent: 'WMLSSL-042',
+    section: '7.12',
+    signature: 'Implement Lang.abort(errorDescription) for a String argument with no local return.',
+    behavior: 'Abort bytecode interpretation as an abnormal exit and return the error description to the interpreter caller.',
+    details: [
+      { key: 'invalid_description', synopsis: 'Use the literal string invalid as the error description when the supplied description value is invalid.' }
+    ]
+  },
+  {
+    key: 'lang_random',
+    parent: 'WMLSSL-043',
+    section: '7.13',
+    signature: 'Implement Lang.random(value) for a Number argument, returning Integer or invalid.',
+    behavior: 'Return an approximately uniformly selected integer between zero and the nonnegative bound, inclusive, using an implementation-dependent random strategy.',
+    details: [
+      { key: 'float_bound', synopsis: 'Convert a Float bound through Float.int before selecting the random value.' },
+      { key: 'bounds', kind: 'error-policy', synopsis: 'Return zero for a zero bound and invalid for a negative bound.' }
+    ]
+  },
+  {
+    key: 'lang_seed',
+    parent: 'WMLSSL-044',
+    section: '7.14',
+    signature: 'Implement Lang.seed(value) for a Number argument, returning empty String or invalid.',
+    behavior: 'Use a nonnegative integer seed to create a repeatable pseudo-random sequence and a negative seed to request system-dependent non-repeatable initialization.',
+    details: [
+      { key: 'float_seed', synopsis: 'Convert a Float seed through Float.int before initializing the sequence.' },
+      { key: 'invalid_seed', kind: 'error-policy', synopsis: 'Return invalid and preserve the current seed when the argument is nonnumeric.' }
+    ]
+  },
+  {
+    key: 'lang_character_set',
+    parent: 'WMLSSL-045',
+    section: '7.15',
+    signature: 'Implement zero-argument Lang.characterSet(), returning an Integer.',
+    behavior: 'Return the IANA MIBenum identifier for the character set used by the WMLScript interpreter.'
+  }
+];
+
+for (const definition of langFunctions) standardLibraryFunction(definition);
+
+clause('wmlscript-libraries', 'float_library_integer_only_result', ['WMLSSL-046', 'WMLSSL-047', 'WMLSSL048', 'WMLSSL-049', 'WMLSSL-050', 'WMLSSL-051', 'WMLSSL-052', 'WMLSSL-053', 'WMLSSL-054'], '8', 'explicit-must', 'error-policy', 'Return invalid from every Float library function when floating-point operations are unavailable.');
+
+const floatFunctions = [
+  {
+    key: 'float_int',
+    parent: 'WMLSSL-047',
+    section: '8.1',
+    signature: 'Implement Float.int(value) for a Number argument, returning Integer or invalid.',
+    behavior: 'Return the integer part by truncating a Float toward zero, or return an Integer argument unchanged.'
+  },
+  {
+    key: 'float_floor',
+    parent: 'WMLSSL048',
+    section: '8.2',
+    signature: 'Implement Float.floor(value) for a Number argument, returning Integer or invalid.',
+    behavior: 'Return the greatest integer not greater than the argument, or return an Integer argument unchanged.'
+  },
+  {
+    key: 'float_ceil',
+    parent: 'WMLSSL-049',
+    section: '8.3',
+    signature: 'Implement Float.ceil(value) for a Number argument, returning Integer or invalid.',
+    behavior: 'Return the smallest integer not less than the argument, or return an Integer argument unchanged.'
+  },
+  {
+    key: 'float_pow',
+    parent: 'WMLSSL-050',
+    section: '8.4',
+    signature: 'Implement Float.pow(value1, value2) for two Number arguments, returning Float or invalid.',
+    behavior: 'Return an implementation-dependent approximation of the first argument raised to the power of the second.',
+    details: [
+      { key: 'domain', kind: 'error-policy', synopsis: 'Return invalid for zero raised to a negative power or a negative base raised to a non-integer power.' }
+    ]
+  },
+  {
+    key: 'float_round',
+    parent: 'WMLSSL-051',
+    section: '8.5',
+    signature: 'Implement Float.round(value) for a Number argument, returning Integer or invalid.',
+    behavior: 'Return the closest mathematical integer, choosing the larger integer on an exact tie, or return an Integer argument unchanged.'
+  },
+  {
+    key: 'float_sqrt',
+    parent: 'WMLSSL-052',
+    section: '8.6',
+    signature: 'Implement Float.sqrt(value) for a Float argument, returning Float or invalid.',
+    behavior: 'Return an implementation-dependent approximation of the square root.',
+    details: [
+      { key: 'negative', kind: 'error-policy', synopsis: 'Return invalid for a negative argument.' }
+    ]
+  },
+  {
+    key: 'float_max',
+    parent: 'WMLSSL-053',
+    section: '8.7',
+    signature: 'Implement zero-argument Float.maxFloat(), returning a Float.',
+    behavior: 'Return the IEEE 754 single-precision maximum value 3.40282347E+38.'
+  },
+  {
+    key: 'float_min',
+    parent: 'WMLSSL-054',
+    section: '8.8',
+    signature: 'Implement zero-argument Float.minFloat(), returning a Float.',
+    behavior: 'Return the smallest supported nonzero single-precision value, no greater than 1.17549435E-38.'
+  }
+];
+
+for (const definition of floatFunctions) standardLibraryFunction(definition);
+
+const stringFunctions = [
+  {
+    key: 'string_length',
+    parent: 'WMLSSL-055',
+    section: '9.1',
+    signature: 'Implement String.length(string) for a String argument, returning Integer or invalid.',
+    behavior: 'Return the number of characters in the converted string, with an empty string having length zero.'
+  },
+  {
+    key: 'string_is_empty',
+    parent: 'WMLSSL-056',
+    section: '9.2',
+    signature: 'Implement String.isEmpty(string) for a String argument, returning Boolean or invalid.',
+    behavior: 'Return true exactly when the converted string contains zero characters.'
+  },
+  {
+    key: 'string_char_at',
+    parent: 'WMLSSL-057',
+    section: '9.3',
+    signature: 'Implement String.charAt(string, index) for String and Number arguments, returning String or invalid.',
+    behavior: 'Convert a Float index through Float.int and return the one-character string at the resulting zero-based index.',
+    details: [
+      { key: 'out_of_range', synopsis: 'Return an empty string when the index is outside the string.' }
+    ]
+  },
+  {
+    key: 'string_sub_string',
+    parent: 'WMLSSL-058',
+    section: '9.4',
+    signature: 'Implement String.subString(string, startIndex, length) for String and Number arguments, returning String or invalid.',
+    behavior: 'Convert Float indexes through Float.int, clamp a negative start to zero, and clamp length to the available suffix.',
+    details: [
+      { key: 'empty_result', synopsis: 'Return an empty string when start is beyond the final character or requested length is nonpositive.' }
+    ]
+  },
+  {
+    key: 'string_find',
+    parent: 'WMLSSL-059',
+    section: '9.5',
+    signature: 'Implement String.find(string, subString) for two String arguments, returning Integer or invalid.',
+    behavior: 'Return the first exact representation-sensitive, case-sensitive match index, or -1 when no match exists.',
+    details: [
+      { key: 'empty_needle', kind: 'error-policy', synopsis: 'Return invalid when the requested substring is empty.' }
+    ]
+  },
+  {
+    key: 'string_replace',
+    parent: 'WMLSSL-060',
+    section: '9.6',
+    signature: 'Implement String.replace(string, oldSubString, newSubString) for three String arguments, returning String or invalid.',
+    behavior: 'Replace every exact representation-sensitive, case-sensitive occurrence of the old substring with the new substring.',
+    details: [
+      { key: 'empty_needle', kind: 'error-policy', synopsis: 'Return invalid when the old substring is empty.' }
+    ]
+  },
+  {
+    key: 'string_elements',
+    parent: 'WMLSSL-061',
+    section: '9.7',
+    signature: 'Implement String.elements(string, separator) for two String arguments, returning Integer or invalid.',
+    behavior: 'Use the separator first character and count every separated element, including empty elements, so the result is always positive.',
+    details: [
+      { key: 'empty_separator', kind: 'error-policy', synopsis: 'Return invalid when the separator string is empty.' }
+    ]
+  },
+  {
+    key: 'string_element_at',
+    parent: 'WMLSSL-062',
+    section: '9.8',
+    signature: 'Implement String.elementAt(string, index, separator) for String, Number, and String arguments, returning String or invalid.',
+    behavior: 'Use the separator first character, convert Float index through Float.int, and clamp indexes below or above range to the first or last element.',
+    details: [
+      { key: 'empty_inputs', kind: 'error-policy', synopsis: 'Return an empty string for empty input text and invalid for an empty separator.' }
+    ]
+  },
+  {
+    key: 'string_remove_at',
+    parent: 'WMLSSL-063',
+    section: '9.9',
+    signature: 'Implement String.removeAt(string, index, separator) for String, Number, and String arguments, returning String or invalid.',
+    behavior: 'Remove the selected element and its corresponding separator, converting Float index and clamping indexes to the first or last element.',
+    details: [
+      { key: 'empty_inputs', kind: 'error-policy', synopsis: 'Return an empty string for empty input text and invalid for an empty separator.' }
+    ]
+  },
+  {
+    key: 'string_replace_at',
+    parent: 'WMLSSL-064',
+    section: '9.10',
+    signature: 'Implement String.replaceAt(string, element, index, separator) for String, String, Number, and String arguments, returning String or invalid.',
+    behavior: 'Replace the selected element, converting Float index and clamping indexes outside range to the first or last element.',
+    details: [
+      { key: 'empty_inputs', kind: 'error-policy', synopsis: 'Return the replacement element for empty input text and invalid for an empty separator.' }
+    ]
+  },
+  {
+    key: 'string_insert_at',
+    parent: 'WMLSSL-065',
+    section: '9.11',
+    signature: 'Implement String.insertAt(string, element, index, separator) for String, String, Number, and String arguments, returning String or invalid.',
+    behavior: 'Insert the element and needed separator at the converted index, clamping negative index to zero and appending beyond the final element.',
+    details: [
+      { key: 'empty_inputs', kind: 'error-policy', synopsis: 'Return the inserted element for empty input text and invalid for an empty separator.' }
+    ]
+  },
+  {
+    key: 'string_squeeze',
+    parent: 'WMLSSL-066',
+    section: '9.12',
+    signature: 'Implement String.squeeze(string) for a String argument, returning String or invalid.',
+    behavior: 'Replace each consecutive run of TAB, VT, FF, space, LF, or CR characters with one space without trimming the string ends.'
+  },
+  {
+    key: 'string_trim',
+    parent: 'WMLSSL-067',
+    section: '9.13',
+    signature: 'Implement String.trim(string) for a String argument, returning String or invalid.',
+    behavior: 'Remove every leading and trailing TAB, VT, FF, space, LF, and CR while preserving internal whitespace.'
+  },
+  {
+    key: 'string_compare',
+    parent: 'WMLSSL-068',
+    section: '9.14',
+    signature: 'Implement String.compare(string1, string2) for two String arguments, returning Integer or invalid.',
+    behavior: 'Compare native character codes lexicographically and return -1, 0, or 1 for less-than, identical, or greater-than.'
+  },
+  {
+    key: 'string_to_string',
+    parent: 'WMLSSL-069',
+    section: '9.15',
+    signature: 'Implement String.toString(value) for an Any argument, always returning a String.',
+    behavior: 'Apply WMLScript Boolean, Integer, Float, and String conversions, but convert Invalid to the literal string invalid.'
+  },
+  {
+    key: 'string_format',
+    parent: 'WMLSSL-070',
+    section: '9.16',
+    signature: 'Implement String.format(format, value) for String and Any arguments, returning String or invalid.',
+    behavior: 'Parse percent, optional nonnegative width, optional precision, and required d, f, or s type fields, plus doubled-percent literals.',
+    details: [
+      { key: 'specifier_selection', synopsis: 'Use only the leftmost format specifier and replace every later specifier with an empty string.' },
+      { key: 'width', synopsis: 'Left-pad to minimum width without truncating; ignore string width when it exceeds string precision.' },
+      { key: 'integer_precision', synopsis: 'For d, zero-pad to precision, default precision to one, and produce empty output for zero with zero precision.' },
+      { key: 'float_precision', synopsis: 'For f, round to the requested fractional digits, default to six, and omit the decimal point at zero precision.' },
+      { key: 'string_precision', synopsis: 'For s, truncate to the maximum character count when precision is specified.' },
+      { key: 'conversion', synopsis: 'Convert the value to the selected type using WMLScript rules, with Float.int used for Float-to-d conversion.' },
+      { key: 'errors', kind: 'error-policy', synopsis: 'Return invalid for an illegal format or an f conversion when floating-point operations are unavailable.' }
+    ]
+  }
+];
+
+for (const definition of stringFunctions) standardLibraryFunction(definition);
+
+const urlFunctions = [
+  {
+    key: 'url_is_valid',
+    parent: 'WMLSSL-071',
+    section: '10.1',
+    signature: 'Implement URL.isValid(url) for a String argument, returning Boolean or invalid.',
+    behavior: 'Validate absolute or relative RFC 2396 syntax without resolving a relative reference, returning true only for valid syntax.'
+  },
+  {
+    key: 'url_get_scheme',
+    parent: 'WMLSSL-072',
+    section: '10.2',
+    signature: 'Implement URL.getScheme(url) for a String argument, returning String or invalid.',
+    behavior: 'Return the scheme from an absolute reference or empty string from a relative reference without resolving it.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when scheme extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_host',
+    parent: 'WMLSSL-073',
+    section: '10.3',
+    signature: 'Implement URL.getHost(url) for a String argument, returning String or invalid.',
+    behavior: 'Return the host without resolving a relative reference, or empty string when no host is present.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when host extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_port',
+    parent: 'WMLSSL-074',
+    section: '10.4',
+    signature: 'Implement URL.getPort(url) for a String argument, returning String or invalid.',
+    behavior: 'Return the explicit port text without applying a scheme default, or empty string when no port is present.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when port extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_path',
+    parent: 'WMLSSL-075',
+    section: '10.5',
+    signature: 'Implement URL.getPath(url) for a String argument, returning String or invalid.',
+    behavior: 'Return the absolute or unresolved-relative path while omitting parameters attached to its path segments.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when path extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_parameters',
+    parent: 'WMLSSL-076',
+    section: '10.6',
+    signature: 'Implement URL.getParameters(url) for a String argument, returning String or invalid.',
+    behavior: 'Return only the parameters attached to the final path segment, or empty string when none are present, without resolving relatives.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when parameter extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_query',
+    parent: 'WMLSSL-077',
+    section: '10.7',
+    signature: 'Implement URL.getQuery(url) for a String argument, returning String or invalid.',
+    behavior: 'Return the query text or empty string when absent, without resolving relative references.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when query extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_fragment',
+    parent: 'WMLSSL-078',
+    section: '10.8',
+    signature: 'Implement URL.getFragment(url) for a String argument, returning String or invalid.',
+    behavior: 'Return the fragment text or empty string when absent, without resolving relative references.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when fragment extraction encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_get_base',
+    parent: 'WMLSSL-079',
+    section: '10.9',
+    signature: 'Implement zero-argument URL.getBase(), returning a String.',
+    behavior: 'Return the absolute URL of the current compilation unit with its fragment removed.'
+  },
+  {
+    key: 'url_get_referer',
+    parent: 'WMLSSL-080',
+    section: '10.10',
+    signature: 'Implement zero-argument URL.getReferer(), returning a String.',
+    behavior: 'Return the shortest URL relative to the compilation-unit base for the resource that invoked the unit, or empty string when absent.',
+    details: [
+      { key: 'local_call', synopsis: 'Do not change the referer when execution crosses a local function call.' }
+    ]
+  },
+  {
+    key: 'url_resolve',
+    parent: 'WMLSSL-081',
+    section: '10.11',
+    signature: 'Implement URL.resolve(baseUrl, embeddedUrl) for two String arguments, returning String or invalid.',
+    behavior: 'Resolve a relative embedded URL against the base using RFC 2396, treating an empty base path as one slash and returning an absolute embedded URL unchanged.',
+    details: [
+      { key: 'rfc_algorithm', section: '5.2', anchorFamily: 'rfc-2396', synopsis: 'Apply the RFC 2396 section 5.2 component-inheritance, path merge, dot-segment, query, and fragment resolution algorithm.' },
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Return invalid when resolution encounters invalid URL syntax.' }
+    ]
+  },
+  {
+    key: 'url_escape_string',
+    parent: 'WMLSSL-082',
+    section: '10.12',
+    signature: 'Implement URL.escapeString(string) for a String argument, returning String or invalid.',
+    behavior: 'Percent-encode control, space, reserved, unwise, delimiter, and non-US-ASCII native-byte characters using two hexadecimal digits without parsing as a URL.',
+    details: [
+      { key: 'native_codes', synopsis: 'Use native character-set codes when escaping non-US-ASCII characters.' },
+      { key: 'range_error', kind: 'error-policy', synopsis: 'Return invalid when a character code exceeds hexadecimal FF.' }
+    ]
+  },
+  {
+    key: 'url_unescape_string',
+    parent: 'WMLSSL-083',
+    section: '10.13',
+    signature: 'Implement URL.unescapeString(string) for a String argument, returning String or invalid.',
+    behavior: 'Replace percent escape sequences with represented characters without parsing the value as a URL.',
+    details: [
+      { key: 'ascii_error', kind: 'error-policy', synopsis: 'Return invalid when the input contains a non-US-ASCII character.' }
+    ]
+  },
+  {
+    key: 'url_load_string',
+    parent: 'WMLSSL-084',
+    section: '10.14',
+    signature: 'Implement URL.loadString(url, contentType) for two String arguments, returning String, Integer, or invalid.',
+    behavior: 'Load the absolute URL with user-agent defaults and return decoded text only when the response content type matches the requested content type.',
+    details: [
+      { key: 'accept_header', force: 'explicit-must', kind: 'transport-boundary', synopsis: 'Send an Accept header containing only the supplied content type and expect text content regardless of other user-agent capabilities.' },
+      { key: 'content_type_grammar', kind: 'parser', synopsis: 'Require exactly one complete content type beginning with text/ and reject leading, trailing, or additional content-type text.' },
+      { key: 'load_error', kind: 'error-policy', synopsis: 'Return a scheme-specific integer error code for load failure or response-type mismatch, using HTTP status codes for HTTP or WSP.' },
+      { key: 'type_error', kind: 'error-policy', synopsis: 'Return invalid for an erroneous requested content type.' }
+    ]
+  }
+];
+
+for (const definition of urlFunctions) standardLibraryFunction(definition);
+
+const wmlBrowserParents = [
+  'WMLSSL-085',
+  'WMLSSL-086',
+  'WMLSSL-087',
+  'WMLSSL-088',
+  'WMLSSL-089',
+  'WMLSSL-090',
+  'WMLSSL-091'
+];
+clause('wmlscript-libraries', 'wmlbrowser_unavailable', wmlBrowserParents, '11', 'explicit-must', 'error-policy', 'When no WML browser is available or it did not invoke the interpreter, return invalid from every WMLBrowser function without WML-context side effects.');
+
+const wmlBrowserFunctions = [
+  {
+    key: 'wmlbrowser_get_var',
+    parent: 'WMLSSL-085',
+    section: '11.1',
+    signature: 'Implement WMLBrowser.getVar(name) for a String argument, returning String or invalid.',
+    behavior: 'Return the named current-context variable value, or empty string when the variable does not exist.',
+    details: [
+      { key: 'name_error', kind: 'error-policy', synopsis: 'Validate the WML variable-name grammar and return invalid for an illegal name.' }
+    ]
+  },
+  {
+    key: 'wmlbrowser_set_var',
+    parent: 'WMLSSL-086',
+    section: '11.2',
+    signature: 'Implement WMLBrowser.setVar(name, value) for two String arguments, returning Boolean or invalid.',
+    behavior: 'Set the current-context variable and return true on success or false when the legal assignment cannot be completed.',
+    details: [
+      { key: 'syntax_error', kind: 'error-policy', synopsis: 'Require a legal WML variable name and XML CDATA value, returning invalid when either syntax is illegal.' }
+    ]
+  },
+  {
+    key: 'wmlbrowser_go',
+    parent: 'WMLSSL-087',
+    section: '11.3',
+    signature: 'Implement WMLBrowser.go(url) for a String argument, returning empty String or invalid.',
+    behavior: 'Queue WML GO-equivalent navigation until script control returns, using the current card as referrer and as base for a relative URL.',
+    details: [
+      { key: 'last_request_wins', synopsis: 'Let the final go or prev call replace every earlier pending navigation request.' },
+      { key: 'empty_cancels', synopsis: 'Treat a final go with empty URL as canceling every pending go or prev request.' },
+      { key: 'fatal_cancels', kind: 'error-policy', synopsis: 'Cancel pending go navigation when Lang.abort or another fatal WMLScript error terminates the invocation.' }
+    ]
+  },
+  {
+    key: 'wmlbrowser_prev',
+    parent: 'WMLSSL-088',
+    section: '11.4',
+    signature: 'Implement zero-argument WMLBrowser.prev(), returning empty String or invalid.',
+    behavior: 'Queue WML PREV-equivalent navigation until script control returns to the WML browser.',
+    details: [
+      { key: 'last_request_wins', synopsis: 'Let the final prev or go call replace every earlier pending navigation request.' },
+      { key: 'fatal_cancels', kind: 'error-policy', synopsis: 'Cancel pending prev navigation when Lang.abort or another fatal WMLScript error terminates the invocation.' }
+    ]
+  },
+  {
+    key: 'wmlbrowser_new_context',
+    parent: 'WMLSSL-089',
+    section: '11.5',
+    signature: 'Implement zero-argument WMLBrowser.newContext(), returning empty String or invalid.',
+    behavior: 'Clear all WML context variables and history entries except the current card before returning to the caller.',
+    details: [
+      { key: 'navigation_interaction', synopsis: 'Preserve a pending go request while ensuring any previous or subsequent prev request has no effect.' }
+    ]
+  },
+  {
+    key: 'wmlbrowser_current_card',
+    parent: 'WMLSSL-090',
+    section: '11.6',
+    signature: 'Implement zero-argument WMLBrowser.getCurrentCard(), returning String or invalid.',
+    behavior: 'Return the shortest current-card URL relative to the compilation-unit base, using absolute form when the deck base differs.',
+    details: [
+      { key: 'missing_card', kind: 'error-policy', synopsis: 'Return invalid when there is no current WML card.' }
+    ]
+  },
+  {
+    key: 'wmlbrowser_refresh',
+    parent: 'WMLSSL-091',
+    section: '11.7',
+    signature: 'Implement zero-argument WMLBrowser.refresh(), returning String or invalid.',
+    behavior: 'For supported immediate refresh, synchronously apply WML refresh steps to the current card without restarting a suspended timer.',
+    details: [
+      { key: 'initial_render', force: 'explicit-must', kind: 'rendering', synopsis: 'Render the current card when it had not been rendered before refresh was invoked.' },
+      { key: 'result', synopsis: 'Return empty string on success, a non-empty implementation-dependent diagnostic on failure, or invalid when immediate refresh is unsupported.' },
+      { key: 'deferred_fallback', force: 'explicit-must', kind: 'rendering', synopsis: 'When immediate refresh is unsupported, still refresh the card after control returns to the WML user agent.' }
+    ]
+  }
+];
+
+for (const definition of wmlBrowserFunctions) {
+  standardLibraryFunction(definition);
+}
+
+const dialogFunctions = [
+  {
+    key: 'dialogs_prompt',
+    parent: 'WMLSSL-092',
+    section: '12.1',
+    signature: 'Implement Dialogs.prompt(message, defaultInput) for two String arguments, returning String or invalid.',
+    behavior: 'Display the message with the supplied initial input, wait for user input, and return the entered string.'
+  },
+  {
+    key: 'dialogs_confirm',
+    parent: 'WMLSSL-093',
+    section: '12.2',
+    signature: 'Implement Dialogs.confirm(message, ok, cancel) for three String arguments, returning Boolean or invalid.',
+    behavior: 'Display two alternatives, wait for selection, and return true for ok or false for cancel.',
+    details: [
+      { key: 'default_labels', synopsis: 'Use implementation-dependent default label text when either supplied alternative label is empty.' }
+    ]
+  },
+  {
+    key: 'dialogs_alert',
+    parent: 'WMLSSL-094',
+    section: '12.3',
+    signature: 'Implement Dialogs.alert(message) for a String argument, returning String or invalid.',
+    behavior: 'Display the message, block until user confirmation, and then return an empty string.'
+  }
+];
+
+for (const definition of dialogFunctions) standardLibraryFunction(definition);
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -1502,6 +2322,12 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wmlscript-scr.json`,
     selectedDisposition: 'required-by-class-c-client-mcf',
     clauseSources: ['WAP-193_101-WMLScript']
+  },
+  {
+    family: 'wmlscript-libraries',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-wmlscript-libraries-scr.json`,
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    clauseSources: ['WAP-194-WMLScriptLibraries', 'rfc-2396']
   }
 ];
 
@@ -1653,7 +2479,7 @@ const ledger = {
     classProfile: 'WAP-215 Class C client (CCR-CLASSC-C-001)'
   },
   scope: {
-    status: 'in-progress',
+    status: 'complete',
     selectedProfileParentCount: 201,
     coveredFamilies: [
       'wml',
@@ -1663,13 +2489,14 @@ const ledger = {
       'wcmp',
       'wsp',
       'wdp',
-      'wmlscript'
+      'wmlscript',
+      'wmlscript-libraries'
     ],
-    remainingFamilies: ['wmlscript-libraries'],
+    remainingFamilies: [],
     coveredSelectedParentCount: selectedParentCount,
     remainingSelectedParentCount: 201 - selectedParentCount,
     completionRule:
-      'CONF-003 remains open until every selected row in all nine mandatory Class C families has one or more anchored, deduplicated nested clauses.'
+      'CONF-003 is complete because every selected row in all nine mandatory Class C families has one or more anchored, deduplicated nested clauses.'
   },
   interpretation: {
     normativeForce:

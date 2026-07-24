@@ -230,7 +230,7 @@ const conf003 = conformanceSprint?.workItems.find(
   (workItem) => workItem.id === 'CONF-003'
 );
 if (
-  conf003?.status !== 'in-progress' ||
+  conf003?.status !== 'done' ||
   !conf003?.outputs?.includes(
     'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json'
   ) ||
@@ -238,7 +238,7 @@ if (
     line.includes('All 201 selected rows')
   ) ||
   !conf003?.acceptance?.some((line) =>
-    line.includes('CONF-003 stays open')
+    line.includes('closed 201-row gate')
   ) ||
   !conf003?.evidence?.includes(
     'node scripts/check-wap-selected-normative-clauses.mjs'
@@ -248,7 +248,7 @@ if (
   )
 ) {
   failures.push(
-    'CONF-003 must retain its partial clause ledger and all-201 closure gate'
+    'CONF-003 must retain its complete clause ledger and closed all-201 gate'
   );
 }
 const conf002 = conformanceSprint?.workItems.find(

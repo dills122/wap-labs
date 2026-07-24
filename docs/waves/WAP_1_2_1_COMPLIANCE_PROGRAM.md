@@ -41,10 +41,9 @@ All nine selected Class C family increments are complete at SCR level:
 - the selected implementation audit is 7 implemented, 84 partial, and 110
   missing;
 - every selected row has an implementation owner and work-item mapping;
-- `CONF-003` is now in progress: WML, WAE, WBXML, caching, WCMP, WSP, WDP,
-  and WMLScript account for 121 selected parent rows and 570 deduplicated,
-  source-anchored clauses with planned direct fixtures; the remaining
-  WMLScript Libraries family and 80 parents keep the gate open;
+- `CONF-003` is complete: all nine families and all 201 selected parent rows
+  expand into 781 deduplicated, source-anchored clauses with planned direct
+  fixtures;
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
 - the selected Class C client scope is 39 required, 27 optional, and 10
@@ -80,6 +79,9 @@ All nine selected Class C family increments are complete at SCR level:
   `WMLSSL-C-095`; `WMLScriptLibs:MCF` selects 80 mandatory interpreter rows;
 - the selected libraries audit is 0 implemented, 14 partial, and 66 missing,
   with zero direct normative library tests;
+- all 80 selected WMLScript Libraries rows expand into 211 required anchored
+  clauses covering shared rules, identifiers, signatures, outcomes, errors,
+  and host-visible effects;
 - source-exact `WMLSSL048` is preserved with normalized alias `WMLSSL-048`.
 - 11 WAP-120 caching SCR rows are extracted; `WAPCachingMod:MCF` selects
   exactly five mandatory user-agent rows and leaves optional time
@@ -179,9 +181,8 @@ closes `SRC-004` without changing the redistribution boundary.
 1. Treat `SRC-005` external-dependency normalization as complete, including
    the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`
    redistribution guidance as the remaining source-program blocker.
-2. Treat `CONF-002` family-level SCR extraction as complete. Continue
-   `CONF-003` nested-clause extraction across all nine selected families; add
-   WTP only when connection-oriented WSP is claimed.
+2. Treat `CONF-002` family-level SCR extraction and `CONF-003` nested-clause
+   planning as complete. Add WTP only when connection-oriented WSP is claimed.
 3. Complete `CONF-007`, the unified WAP 1.2.1-to-successor implementation
    delta register, using the family-specific WAE/transport registers as inputs.
 4. Continue the completed first-pass implementation audits into exact
