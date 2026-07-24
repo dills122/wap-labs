@@ -90,6 +90,12 @@ All nine selected rows remain partial. The code has no machine-declared CDPD
 strict profile, no source-derived `T-DUnitdata` vectors, and no proof that its
 address/port/error semantics cover the effective WAP-200 clauses.
 
+`CONF-003` now expands the nine rows into 49 source-anchored WAP-200,
+RFC 768, and RFC 791 clauses with planned fixtures. The slice covers the
+T-DUnitdata contract, port registries, UDP header/checksum/length rules, IPv4
+addressing and fragmentation boundaries, and the CDPD capability declaration.
+Clause implementation remains `not-assessed`; parent rows remain partial.
+
 ### WCMP
 
 WCMP is absent from `transport-rust`. There is no codec, message-type model,
@@ -179,8 +185,9 @@ adapter.
   ingress.
 - `SRC-005`: complete; preserve the normalized `TIAEIA-732` dependency and
   licensed-access boundary.
-- `CONF-003`: finish WDP nested clauses and promote direct normative fixtures;
-  the WCMP and connectionless WSP extractions are complete.
+- `CONF-003`: promote direct normative fixtures for the completed WDP, WCMP,
+  and connectionless WSP clause extractions; the two WMLScript families
+  remain to be extracted.
 
 ## Enhancement policy
 

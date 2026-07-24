@@ -1,7 +1,7 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.5
-Status: `CONF-003` in progress; WML, WAE, WBXML, caching, WCMP, and WSP slices complete
+Version: v0.6
+Status: `CONF-003` in progress; WML, WAE, WBXML, caching, WCMP, WSP, and WDP slices complete
 
 ## Purpose
 
@@ -21,8 +21,8 @@ node scripts/check-wap-selected-normative-clauses.mjs
 node scripts/check-wap-conformance-ledger.mjs
 ```
 
-Regeneration requires the hash-locked private WML, WAE, WBXML, and imported
-RFC text extractions:
+Regeneration requires the hash-locked private WAP and imported RFC text
+extractions:
 
 ```sh
 node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
@@ -36,6 +36,9 @@ node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
   --wcmp-text /absolute/path/WAP-202-WCMP-20010624-a.txt \
   --wsp-text /absolute/path/WAP-203-WSP-20000504-a.txt \
   --wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt \
+  --wdp-text /absolute/path/WAP-200-WDP-20000219-a.txt \
+  --rfc-768-text /absolute/path/rfc768.txt \
+  --rfc-791-text /absolute/path/rfc791.txt \
   --rfc-2396-text /absolute/path/rfc2396.txt \
   --rfc-2616-text /absolute/path/rfc2616.txt \
   --rfc-2617-text /absolute/path/rfc2617.txt \
@@ -47,7 +50,7 @@ ingestion lock.
 
 ## Current slices
 
-The current artifact covers 71 of the 201 selected Class C parent rows:
+The current artifact covers 80 of the 201 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
@@ -57,14 +60,16 @@ The current artifact covers 71 of the 201 selected Class C parent rows:
 | Caching | 5 | 68 |
 | WCMP | 5 | 28 |
 | WSP | 8 | 57 |
-| **Total** | **71** | **414** |
+| WDP | 9 | 49 |
+| **Total** | **80** | **463** |
 
-The 414 clauses are classified as 377 required, 26 recommended, and 11
+The 463 clauses are classified as 422 required, 29 recommended, and 12
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,
 capability negotiation, WAE media routing, cache age/validation/history
-behavior, image fallback, and WBXML literal-name processing.
+behavior, image fallback, WBXML literal-name processing, and WDP/UDP/IPv4
+datagram boundaries.
 
 Each clause records:
 
@@ -92,11 +97,10 @@ verbatim source text.
 
 ## Remaining `CONF-003` slices
 
-The remaining 130 selected parents are:
+The remaining 121 selected parents are:
 
 - WMLScript: 41;
-- WMLScript Libraries: 80;
-- WDP: 9.
+- WMLScript Libraries: 80.
 
 `CONF-003` remains open until all nine selected families and all 201 parent
 rows are represented. WTP is added only if connection-oriented WSP becomes a

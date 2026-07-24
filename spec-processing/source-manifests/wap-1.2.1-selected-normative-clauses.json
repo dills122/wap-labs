@@ -21,15 +21,15 @@
       "wbxml",
       "caching",
       "wcmp",
-      "wsp"
+      "wsp",
+      "wdp"
     ],
     "remainingFamilies": [
       "wmlscript",
-      "wmlscript-libraries",
-      "wdp"
+      "wmlscript-libraries"
     ],
-    "coveredSelectedParentCount": 71,
-    "remainingSelectedParentCount": 130,
+    "coveredSelectedParentCount": 80,
+    "remainingSelectedParentCount": 121,
     "completionRule": "CONF-003 remains open until every selected row in all nine mandatory Class C families has one or more anchored, deduplicated nested clauses."
   },
   "interpretation": {
@@ -38,12 +38,12 @@
     "implementationAssessment": "Parent implementation statuses are snapshots from the family SCR ledgers. Clause status remains not-assessed until direct source-derived fixture evidence is reviewed."
   },
   "summary": {
-    "selectedParentCount": 71,
-    "clauseCount": 414,
-    "requiredClauseCount": 377,
-    "recommendedClauseCount": 26,
-    "permittedClauseCount": 11,
-    "plannedFixtureCount": 414,
+    "selectedParentCount": 80,
+    "clauseCount": 463,
+    "requiredClauseCount": 422,
+    "recommendedClauseCount": 29,
+    "permittedClauseCount": 12,
+    "plannedFixtureCount": 463,
     "assessedClauseCount": 0
   },
   "families": [
@@ -19394,6 +19394,2416 @@
             ],
             "parentImplementationSnapshot": {
               "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        }
+      ]
+    },
+    {
+      "family": "wdp",
+      "status": "nested-clauses-anchored-fixtures-planned",
+      "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
+      "parentLedgerSha256": "438645d590712a6a2b65f798e7eee52526854d5bd86f12ba2ecc545c70df7226",
+      "effectiveSequence": [
+        "WAP-200-WDP",
+        "WAP-200_001-WDP",
+        "WAP-200_002-WDP",
+        "WAP-200_003-WDP",
+        "WAP-200_004-WDP",
+        "WAP-200_005-WDP"
+      ],
+      "selectedDisposition": "required-by-selected-class-c-transport-path",
+      "clauseSources": [
+        {
+          "documentId": "WAP-200-WDP",
+          "sourceKind": "release-member",
+          "filename": "WAP-200-WDP-20000219-a.pdf",
+          "pdfSha256": "e6279c8c3108ceeb8268b868211585fff7331feec5bda4ff90ce9be2df2d23b3",
+          "textExtractionSha256": "f2ecf22a755de511785dbc12d00c932c41e0801df111a88517d5f0ab328a7542"
+        },
+        {
+          "documentId": "rfc-768",
+          "sourceKind": "external-dependency",
+          "authority": "RFC Editor",
+          "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc768.html",
+          "artifactId": "rfc-768-text",
+          "artifactSha256": "7dc8880e1ecef9c3f9da0db4b876a16e96bfa4f0953cc9d977d414f8f680c2f0",
+          "artifactBytes": 5896
+        },
+        {
+          "documentId": "rfc-791",
+          "sourceKind": "external-dependency",
+          "authority": "RFC Editor",
+          "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc791.html",
+          "artifactId": "rfc-791-text",
+          "artifactSha256": "6cfb387fcecfc1b72f2f69343c5b6951b5d263d708162e2b5c66ab8f394f6265",
+          "artifactBytes": 94892
+        }
+      ],
+      "selectedParentCount": 9,
+      "clauseCount": 49,
+      "parents": [
+        {
+          "id": "WDP-C-001",
+          "feature": "WDP client functions",
+          "referencedSection": "Appendix E",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-ADAPTATION-LAYER-BOUNDARY",
+            "WDP-CL-BEARER-TRANSPARENCY",
+            "WDP-CL-CONSISTENT-TRANSPORT-SERVICE",
+            "WDP-CL-IP-BEARER-REQUIRES-UDP",
+            "WDP-CL-IP-MAPPING-FRAGMENTATION",
+            "WDP-CL-IP-MAPPING-IS-UDP",
+            "WDP-CL-IPV4-INDEPENDENT-DATAGRAMS",
+            "WDP-CL-IPV4-NO-RELIABILITY",
+            "WDP-CL-SELECTED-WSP-PORT",
+            "WDP-CL-SIMULTANEOUS-INSTANCES",
+            "WDP-CL-UDP-UNRELIABLE-DATAGRAMS"
+          ]
+        },
+        {
+          "id": "WDP-CORE-C-001",
+          "feature": "Basic WDP functions",
+          "referencedSection": "Appendix E",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-APPLICATION-PORT-ADDRESSING",
+            "WDP-CL-BEARER-TRANSPARENCY",
+            "WDP-CL-CONSISTENT-TRANSPORT-SERVICE",
+            "WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+            "WDP-CL-IPV4-DONT-FRAGMENT",
+            "WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+            "WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+            "WDP-CL-IPV4-INDEPENDENT-DATAGRAMS",
+            "WDP-CL-IPV4-LARGE-SEND-GUARD",
+            "WDP-CL-IPV4-NO-RELIABILITY",
+            "WDP-CL-IPV4-TOTAL-LENGTH",
+            "WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS",
+            "WDP-CL-SIMULTANEOUS-INSTANCES",
+            "WDP-CL-UDP-CHECKSUM-COVERAGE",
+            "WDP-CL-UDP-CHECKSUM-OMISSION",
+            "WDP-CL-UDP-CHECKSUM-PADDING",
+            "WDP-CL-UDP-CHECKSUM-ZERO-ENCODING",
+            "WDP-CL-UDP-HEADER-LAYOUT",
+            "WDP-CL-UDP-IP-INTERFACE-METADATA",
+            "WDP-CL-UDP-LENGTH-BOUNDS",
+            "WDP-CL-UDP-UNRELIABLE-DATAGRAMS",
+            "WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+            "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+            "WDP-CL-UNITDATA-REQUEST-PARAMETERS"
+          ]
+        },
+        {
+          "id": "WDP-PF-C-001",
+          "feature": "Abstract service primitive functions for",
+          "referencedSection": "6.3.1.1",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-DESTINATION-ADDRESS-SEMANTICS",
+            "WDP-CL-DESTINATION-PORT-SEMANTICS",
+            "WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
+            "WDP-CL-SOURCE-ADDRESS-SEMANTICS",
+            "WDP-CL-SOURCE-PORT-SEMANTICS",
+            "WDP-CL-UDP-SEND-INTERFACE",
+            "WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+            "WDP-CL-UNITDATA-REQUEST-ANYTIME",
+            "WDP-CL-UNITDATA-REQUEST-PARAMETERS"
+          ]
+        },
+        {
+          "id": "WDP-PF-C-002",
+          "feature": "Support the abstract service primitive",
+          "referencedSection": "6.3.1.1",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-DESTINATION-ADDRESS-SEMANTICS",
+            "WDP-CL-DESTINATION-PORT-SEMANTICS",
+            "WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
+            "WDP-CL-SOURCE-ADDRESS-SEMANTICS",
+            "WDP-CL-SOURCE-PORT-SEMANTICS",
+            "WDP-CL-UDP-RECEIVE-INTERFACE",
+            "WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+            "WDP-CL-UNITDATA-INDICATION-PARAMETERS"
+          ]
+        },
+        {
+          "id": "WDP-CT-C-002",
+          "feature": "CDPD technology",
+          "referencedSection": "[TIA/EIA/IS-732]",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-ADAPTATION-LAYER-BOUNDARY",
+            "WDP-CL-CDPD-UDP-IP-PROFILE",
+            "WDP-CL-IP-BEARER-REQUIRES-UDP",
+            "WDP-CL-IP-MAPPING-FRAGMENTATION",
+            "WDP-CL-IP-MAPPING-IS-UDP",
+            "WDP-CL-SELECTED-BEARER-ASSIGNMENT",
+            "WDP-CL-UDP-IP-PROTOCOL-NUMBER"
+          ]
+        },
+        {
+          "id": "WDP-NA-C-000",
+          "feature": "At least one network addressing",
+          "referencedSection": null,
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-DESTINATION-ADDRESS-SEMANTICS",
+            "WDP-CL-IPV4-FIXED-ADDRESS-SIZE",
+            "WDP-CL-SOURCE-ADDRESS-SEMANTICS",
+            "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+            "WDP-CL-UNITDATA-REQUEST-PARAMETERS"
+          ]
+        },
+        {
+          "id": "WDP-NA-C-003",
+          "feature": "Ipv4 addresses support",
+          "referencedSection": "[RFC 791]",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-CDPD-UDP-IP-PROFILE",
+            "WDP-CL-DESTINATION-ADDRESS-SEMANTICS",
+            "WDP-CL-IP-BEARER-REQUIRES-UDP",
+            "WDP-CL-IP-MAPPING-FRAGMENTATION",
+            "WDP-CL-IP-MAPPING-IS-UDP",
+            "WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+            "WDP-CL-IPV4-DONT-FRAGMENT",
+            "WDP-CL-IPV4-FIXED-ADDRESS-SIZE",
+            "WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+            "WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+            "WDP-CL-IPV4-HEADER-CHECKSUM",
+            "WDP-CL-IPV4-HEADER-LAYOUT",
+            "WDP-CL-IPV4-INDEPENDENT-DATAGRAMS",
+            "WDP-CL-IPV4-LARGE-SEND-GUARD",
+            "WDP-CL-IPV4-ROBUST-INTEROPERATION",
+            "WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
+            "WDP-CL-IPV4-TOTAL-LENGTH",
+            "WDP-CL-IPV4-TTL-ZERO",
+            "WDP-CL-IPV4-VERSION-AND-IHL",
+            "WDP-CL-SELECTED-BEARER-ASSIGNMENT",
+            "WDP-CL-SOURCE-ADDRESS-SEMANTICS",
+            "WDP-CL-UDP-CHECKSUM-COVERAGE",
+            "WDP-CL-UDP-DESTINATION-PORT-CONTEXT",
+            "WDP-CL-UDP-IP-INTERFACE-METADATA",
+            "WDP-CL-UDP-IP-PROTOCOL-NUMBER",
+            "WDP-CL-UDP-RECEIVE-INTERFACE",
+            "WDP-CL-UDP-SEND-INTERFACE",
+            "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+            "WDP-CL-UNITDATA-REQUEST-PARAMETERS"
+          ]
+        },
+        {
+          "id": "WDP-NA-C-006",
+          "feature": "Destination Port application",
+          "referencedSection": "3.1, 6.1",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-APPLICATION-PORT-ADDRESSING",
+            "WDP-CL-DESTINATION-PORT-SEMANTICS",
+            "WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS",
+            "WDP-CL-SELECTED-WSP-PORT",
+            "WDP-CL-SIMULTANEOUS-INSTANCES",
+            "WDP-CL-UDP-DESTINATION-PORT-CONTEXT",
+            "WDP-CL-UDP-HEADER-LAYOUT",
+            "WDP-CL-UDP-SEND-INTERFACE",
+            "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+            "WDP-CL-UNITDATA-REQUEST-PARAMETERS",
+            "WDP-CL-WAP-PORT-REGISTRY"
+          ]
+        },
+        {
+          "id": "WDP-NA-C-007",
+          "feature": "Source Port application",
+          "referencedSection": "3.1, 6.1",
+          "sourceAnchor": {
+            "documentId": "WAP-200_005-WDP",
+            "staticConformanceSection": "Appendix E"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-701",
+            "T0-19"
+          ],
+          "clauseIds": [
+            "WDP-CL-APPLICATION-PORT-ADDRESSING",
+            "WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS",
+            "WDP-CL-SIMULTANEOUS-INSTANCES",
+            "WDP-CL-SOURCE-PORT-SEMANTICS",
+            "WDP-CL-UDP-HEADER-LAYOUT",
+            "WDP-CL-UDP-RECEIVE-INTERFACE",
+            "WDP-CL-UDP-SEND-INTERFACE",
+            "WDP-CL-UDP-SOURCE-PORT-ZERO",
+            "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+            "WDP-CL-UNITDATA-REQUEST-PARAMETERS",
+            "WDP-CL-WAP-PORT-REGISTRY"
+          ]
+        }
+      ],
+      "clauses": [
+        {
+          "id": "WDP-CL-CONSISTENT-TRANSPORT-SERVICE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.1",
+            "heading": "5.1 Reference Model",
+            "normalizedTextSha256": "4f53b4240fd7dd73c0e6803c1bf5cec5e6ae7e94b6378f81f6ec691e904e8de6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.",
+          "fixturePlan": {
+            "id": "WDP-FX-CONSISTENT-TRANSPORT-SERVICE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-APPLICATION-PORT-ADDRESSING",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.1",
+            "heading": "5.1 Reference Model",
+            "normalizedTextSha256": "4f53b4240fd7dd73c0e6803c1bf5cec5e6ae7e94b6378f81f6ec691e904e8de6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Provide source and destination port addressing for the higher-layer protocol or application above WDP.",
+          "fixturePlan": {
+            "id": "WDP-FX-APPLICATION-PORT-ADDRESSING",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Provide source and destination port addressing for the higher-layer protocol or application above WDP."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-BEARER-TRANSPARENCY",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.1",
+            "heading": "5.1 Reference Model",
+            "normalizedTextSha256": "4f53b4240fd7dd73c0e6803c1bf5cec5e6ae7e94b6378f81f6ec691e904e8de6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently.",
+          "fixturePlan": {
+            "id": "WDP-FX-BEARER-TRANSPARENCY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-SIMULTANEOUS-INSTANCES",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CORE-C-001",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.2",
+            "heading": "5.2 General Description of the WDP Protocol",
+            "normalizedTextSha256": "14902abbfd7f1264fd59ecd5ee90d8c4910061e8475f7e44450e5eee08969899"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service.",
+          "fixturePlan": {
+            "id": "WDP-FX-SIMULTANEOUS-INSTANCES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-ADAPTATION-LAYER-BOUNDARY",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CT-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.2",
+            "heading": "5.2 General Description of the WDP Protocol",
+            "normalizedTextSha256": "14902abbfd7f1264fd59ecd5ee90d8c4910061e8475f7e44450e5eee08969899"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Terminate bearer-specific adaptation at the WDP boundary without changing the service presented to WSP or other upper layers.",
+          "fixturePlan": {
+            "id": "WDP-FX-ADAPTATION-LAYER-BOUNDARY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Terminate bearer-specific adaptation at the WDP boundary without changing the service presented to WSP or other upper layers."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-002"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CT-C-002": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IP-BEARER-REQUIRES-UDP",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CT-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.3",
+            "heading": "5.3 WDP Static Conformance Clause",
+            "normalizedTextSha256": "e7d1d717dda461baeb3dc8bc5692a2b672aa270ed1385e7946291857db16a4cf"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use UDP as the WDP protocol whenever the selected bearer provides IP.",
+          "fixturePlan": {
+            "id": "WDP-FX-IP-BEARER-REQUIRES-UDP",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Use UDP as the WDP protocol whenever the selected bearer provides IP."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-002",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CT-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-CDPD-UDP-IP-PROFILE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CT-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "5.4.3",
+            "heading": "5.4.3 WDP over CDPD",
+            "normalizedTextSha256": "6c8a7ed89a46acd6babdf888a40958818e1b26f3536f5989723d6538b9b0a33a"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.",
+          "fixturePlan": {
+            "id": "WDP-FX-CDPD-UDP-IP-PROFILE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-002",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CT-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UNITDATA-REQUEST-ANYTIME",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Allow T-DUnitdata.request without establishing a prior transport connection.",
+          "fixturePlan": {
+            "id": "WDP-FX-UNITDATA-REQUEST-ANYTIME",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Allow T-DUnitdata.request without establishing a prior transport connection."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UNITDATA-REQUEST-PARAMETERS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-PF-C-001",
+            "WDP-NA-C-000",
+            "WDP-NA-C-003",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request.",
+          "fixturePlan": {
+            "id": "WDP-FX-UNITDATA-REQUEST-PARAMETERS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-PF-C-001": "partial",
+              "WDP-NA-C-000": "partial",
+              "WDP-NA-C-003": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-PF-C-002",
+            "WDP-NA-C-000",
+            "WDP-NA-C-003",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available.",
+          "fixturePlan": {
+            "id": "WDP-FX-UNITDATA-INDICATION-PARAMETERS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-000": "partial",
+              "WDP-NA-C-003": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-DESTINATION-ADDRESS-SEMANTICS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001",
+            "WDP-PF-C-002",
+            "WDP-NA-C-000",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat the destination address as the network identity of the receiving device for the submitted user data.",
+          "fixturePlan": {
+            "id": "WDP-FX-DESTINATION-ADDRESS-SEMANTICS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Treat the destination address as the network identity of the receiving device for the submitted user data."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial",
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-000": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-SOURCE-ADDRESS-SEMANTICS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001",
+            "WDP-PF-C-002",
+            "WDP-NA-C-000",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat the source address as the unique network identity of the device issuing the transport request.",
+          "fixturePlan": {
+            "id": "WDP-FX-SOURCE-ADDRESS-SEMANTICS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Treat the source address as the unique network identity of the device issuing the transport request."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial",
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-000": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-DESTINATION-PORT-SEMANTICS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001",
+            "WDP-PF-C-002",
+            "WDP-NA-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Bind the destination port to the destination application or upper-layer protocol for that communication instance.",
+          "fixturePlan": {
+            "id": "WDP-FX-DESTINATION-PORT-SEMANTICS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Bind the destination port to the destination application or upper-layer protocol for that communication instance."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial",
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-SOURCE-PORT-SEMANTICS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001",
+            "WDP-PF-C-002",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Bind the source port to the requesting application or upper-layer protocol for that communication instance.",
+          "fixturePlan": {
+            "id": "WDP-FX-SOURCE-PORT-SEMANTICS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Bind the source port to the requesting application or upper-layer protocol for that communication instance."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial",
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-PF-C-001",
+            "WDP-PF-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "6.3.1.1",
+            "heading": "6.3.1.1 T-DUnitdata",
+            "normalizedTextSha256": "76d94ea7202df89c189f507b1521fd9abac2c9685d334aa0723fc4dc2a574793"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Transmit and deliver the complete service data unit without manipulating its content.",
+          "fixturePlan": {
+            "id": "WDP-FX-UNITDATA-CONTENT-TRANSPARENCY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Transmit and deliver the complete service data unit without manipulating its content."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-PF-C-001": "partial",
+              "WDP-PF-C-002": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "7.1",
+            "heading": "7.1 Introduction",
+            "normalizedTextSha256": "68c81ae574eaed15ac271251ecc849295f104c7cc48345709e42f02017b9ee2c"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Carry both destination and source port fields in the selected WDP protocol mapping.",
+          "fixturePlan": {
+            "id": "WDP-FX-PROTOCOL-REQUIRED-PORT-FIELDS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Carry both destination and source port fields in the selected WDP protocol mapping."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IP-MAPPING-IS-UDP",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CT-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "7.2",
+            "heading": "7.2 Mapping of WDP for IP",
+            "normalizedTextSha256": "4fb86371394022effc3e0a7a9881d64e7d03cc6bab673eb362db40b556d9cdbb"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Map WDP directly to UDP for every selected bearer on which IP routing is available.",
+          "fixturePlan": {
+            "id": "WDP-FX-IP-MAPPING-IS-UDP",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Map WDP directly to UDP for every selected bearer on which IP routing is available."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-002",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CT-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IP-MAPPING-FRAGMENTATION",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CT-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "7.2",
+            "heading": "7.2 Mapping of WDP for IP",
+            "normalizedTextSha256": "4fb86371394022effc3e0a7a9881d64e7d03cc6bab673eb362db40b556d9cdbb"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.",
+          "fixturePlan": {
+            "id": "WDP-FX-IP-MAPPING-FRAGMENTATION",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-002",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CT-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-WAP-PORT-REGISTRY",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "appendix-b",
+            "heading": "Appendix B: Port Number Definitions",
+            "normalizedTextSha256": "c7493f6d277782e0e338d05d1d1c451919c7198da4cff6e5217db0374a81be26"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.",
+          "fixturePlan": {
+            "id": "WDP-FX-WAP-PORT-REGISTRY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-SELECTED-WSP-PORT",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-NA-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "appendix-b",
+            "heading": "Appendix B: Port Number Definitions",
+            "normalizedTextSha256": "c7493f6d277782e0e338d05d1d1c451919c7198da4cff6e5217db0374a81be26"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.",
+          "fixturePlan": {
+            "id": "WDP-FX-SELECTED-WSP-PORT",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-NA-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-SELECTED-BEARER-ASSIGNMENT",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CT-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-200-WDP",
+            "section": "appendix-c",
+            "heading": "Appendix C: Bearer Type Assignments",
+            "normalizedTextSha256": "21ce525fc14b3d0a2832842c4205e652d3ee02ad3d7debedd80e1a639e93c5e1"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.",
+          "fixturePlan": {
+            "id": "WDP-FX-SELECTED-BEARER-ASSIGNMENT",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-002",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CT-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-UNRELIABLE-DATAGRAMS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "introduction",
+            "heading": "Introduction",
+            "normalizedTextSha256": "27059326d59c7337267f8d1749b5aed63e548378bc44c2d26a1e6484372c5849"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-UNRELIABLE-DATAGRAMS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-HEADER-LAYOUT",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "format",
+            "heading": "Format",
+            "normalizedTextSha256": "5270cf0b021501941478d27580553b3d1d662ddb89e4b291952263c0d9f0a471"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-HEADER-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-SOURCE-PORT-ZERO",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-SOURCE-PORT-ZERO",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-DESTINATION-PORT-CONTEXT",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-006",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret a UDP destination port within the context of its destination IPv4 address.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-DESTINATION-PORT-CONTEXT",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Interpret a UDP destination port within the context of its destination IPv4 address."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-LENGTH-BOUNDS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-LENGTH-BOUNDS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-CHECKSUM-COVERAGE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-CHECKSUM-COVERAGE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-CHECKSUM-PADDING",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-CHECKSUM-PADDING",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-CHECKSUM-ZERO-ENCODING",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Transmit an arithmetically computed zero UDP checksum as all one bits.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-CHECKSUM-ZERO-ENCODING",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Transmit an arithmetically computed zero UDP checksum as all one bits."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-CHECKSUM-OMISSION",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "fields",
+            "heading": "Fields",
+            "normalizedTextSha256": "bfed1df2e34a9e4b5f8cc0b80bf38ded0bbe519c09e3ab81e36d1804708f1f88"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-CHECKSUM-OMISSION",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-RECEIVE-INTERFACE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-002",
+            "WDP-NA-C-003",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "interface",
+            "heading": "User Interface",
+            "normalizedTextSha256": "3f1b6b11ad266897a5181051c95c28ae15f002efd808e87a06cda33b63e76a01"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Provide receive-port creation and return received data with its source IPv4 address and source port.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-RECEIVE-INTERFACE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Provide receive-port creation and return received data with its source IPv4 address and source port."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-003": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-SEND-INTERFACE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001",
+            "WDP-NA-C-003",
+            "WDP-NA-C-006",
+            "WDP-NA-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "interface",
+            "heading": "User Interface",
+            "normalizedTextSha256": "3f1b6b11ad266897a5181051c95c28ae15f002efd808e87a06cda33b63e76a01"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-SEND-INTERFACE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial",
+              "WDP-NA-C-003": "partial",
+              "WDP-NA-C-006": "partial",
+              "WDP-NA-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-IP-INTERFACE-METADATA",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "ip-interface",
+            "heading": "IP Interface",
+            "normalizedTextSha256": "28a8d77d91839dd69df125c53d6297bb0a03aa3481cea6de6f46f6b65ebb6d95"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-IP-INTERFACE-METADATA",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-UDP-IP-PROTOCOL-NUMBER",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CT-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-768",
+            "section": "protocol-number",
+            "heading": "Protocol Number",
+            "normalizedTextSha256": "69dfe158856a5a561553bbedf862c2e7bcf54395aa7603d54a61c6294b5e5141"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Identify UDP with IPv4 protocol number 17.",
+          "fixturePlan": {
+            "id": "WDP-FX-UDP-IP-PROTOCOL-NUMBER",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Identify UDP with IPv4 protocol number 17."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-002",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CT-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-INDEPENDENT-DATAGRAMS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "1.4",
+            "heading": "1.4.  Operation",
+            "normalizedTextSha256": "23c25ce2a0db18bef56df628369c133ca7e78b59df9ab32ff0c19c68b2651410"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat each IPv4 datagram independently without a transport connection or logical circuit.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-INDEPENDENT-DATAGRAMS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Treat each IPv4 datagram independently without a transport connection or logical circuit."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-FIXED-ADDRESS-SIZE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-000",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "2.3",
+            "heading": "2.3.  Function Description",
+            "normalizedTextSha256": "c49b5beb9925d741d2b57a5710fbebe5bae8a3d0197b4d6c649242eb138a8a0c"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Represent each selected IPv4 source or destination address as four octets.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-FIXED-ADDRESS-SIZE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Represent each selected IPv4 source or destination address as four octets."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-000": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-HEADER-LAYOUT",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-HEADER-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-VERSION-AND-IHL",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-VERSION-AND-IHL",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-TOTAL-LENGTH",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-TOTAL-LENGTH",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-BASELINE-RECEIVE-SIZE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-LARGE-SEND-GUARD",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-LARGE-SEND-GUARD",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.2",
+            "heading": "3.2.  Discussion",
+            "normalizedTextSha256": "b56c2040eaa3d2d2263a108063a3057a1c4291340111a3ad7b6e6b6928bb132e"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-FRAGMENTATION-LOCATION",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.2",
+            "heading": "3.2.  Discussion",
+            "normalizedTextSha256": "b56c2040eaa3d2d2263a108063a3057a1c4291340111a3ad7b6e6b6928bb132e"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-DONT-FRAGMENT",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-CORE-C-001",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.2",
+            "heading": "3.2.  Discussion",
+            "normalizedTextSha256": "b56c2040eaa3d2d2263a108063a3057a1c4291340111a3ad7b6e6b6928bb132e"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-DONT-FRAGMENT",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-CORE-C-001": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-TTL-ZERO",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Destroy an IPv4 datagram when its time-to-live value reaches zero.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-TTL-ZERO",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Destroy an IPv4 datagram when its time-to-live value reaches zero."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-HEADER-CHECKSUM",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-HEADER-CHECKSUM",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-PF-C-001",
+            "WDP-PF-C-002",
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.1",
+            "heading": "3.1.  Internet Header Format",
+            "normalizedTextSha256": "bfbaa2d15de8326deed598572191088a85a154b2441b641f68b923ebc022656c"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001",
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-PF-C-001": "partial",
+              "WDP-PF-C-002": "partial",
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-ROBUST-INTEROPERATION",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-NA-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "3.2",
+            "heading": "3.2.  Discussion",
+            "normalizedTextSha256": "b56c2040eaa3d2d2263a108063a3057a1c4291340111a3ad7b6e6b6928bb132e"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-ROBUST-INTEROPERATION",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-003"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-NA-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WDP-CL-IPV4-NO-RELIABILITY",
+          "family": "wdp",
+          "parentRows": [
+            "WDP-C-001",
+            "WDP-CORE-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-791",
+            "section": "1.4",
+            "heading": "1.4.  Operation",
+            "normalizedTextSha256": "23c25ce2a0db18bef56df628369c133ca7e78b59df9ab32ff0c19c68b2651410"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer.",
+          "fixturePlan": {
+            "id": "WDP-FX-IPV4-NO-RELIABILITY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-19",
+              "TRN-701"
+            ],
+            "requirementIds": [
+              "RQ-TRN-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WDP-C-001": "partial",
+              "WDP-CORE-C-001": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

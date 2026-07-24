@@ -22,6 +22,9 @@ const cachingTextPath = option('--caching-text');
 const wcmpTextPath = option('--wcmp-text');
 const wspTextPath = option('--wsp-text');
 const wspSin001TextPath = option('--wsp-sin-001-text');
+const wdpTextPath = option('--wdp-text');
+const rfc768TextPath = option('--rfc-768-text');
+const rfc791TextPath = option('--rfc-791-text');
 const rfc2396TextPath = option('--rfc-2396-text');
 const rfc2616TextPath = option('--rfc-2616-text');
 const rfc2617TextPath = option('--rfc-2617-text');
@@ -41,6 +44,9 @@ if (
   !wcmpTextPath ||
   !wspTextPath ||
   !wspSin001TextPath ||
+  !wdpTextPath ||
+  !rfc768TextPath ||
+  !rfc791TextPath ||
   !rfc2396TextPath ||
   !rfc2616TextPath ||
   !rfc2617TextPath ||
@@ -58,6 +64,9 @@ if (
       '--wcmp-text /absolute/path/WAP-202-WCMP-20010624-a.txt ' +
       '--wsp-text /absolute/path/WAP-203-WSP-20000504-a.txt ' +
       '--wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt ' +
+      '--wdp-text /absolute/path/WAP-200-WDP-20000219-a.txt ' +
+      '--rfc-768-text /absolute/path/rfc768.txt ' +
+      '--rfc-791-text /absolute/path/rfc791.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
       '--rfc-2616-text /absolute/path/rfc2616.txt ' +
       '--rfc-2617-text /absolute/path/rfc2617.txt ' +
@@ -170,6 +179,29 @@ const sourceInputs = new Map([
     {
       path: wspSin001TextPath,
       text: fs.readFileSync(wspSin001TextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-200-WDP',
+    {
+      path: wdpTextPath,
+      text: fs.readFileSync(wdpTextPath, 'utf8')
+    }
+  ],
+  [
+    'rfc-768',
+    {
+      path: rfc768TextPath,
+      text: fs.readFileSync(rfc768TextPath, 'utf8'),
+      externalDependencyId: 'rfc-768'
+    }
+  ],
+  [
+    'rfc-791',
+    {
+      path: rfc791TextPath,
+      text: fs.readFileSync(rfc791TextPath, 'utf8'),
+      externalDependencyId: 'rfc-791'
     }
   ],
   [
@@ -508,6 +540,40 @@ const sectionDefinitions = {
     sourceDocumentId: 'WAP-203_001-WSP',
     ranges: {
       '3.3': ['3.3 Change', null]
+    }
+  },
+  wdp: {
+    sourceDocumentId: 'WAP-200-WDP',
+    ranges: {
+      '5.1': ['5.1 Reference Model', '5.2 General Description of the WDP Protocol'],
+      '5.2': ['5.2 General Description of the WDP Protocol', '5.2.1 WDP Management Entity'],
+      '5.3': ['5.3 WDP Static Conformance Clause', '5.3.1 WDP Adaptation Layer Segmentation & Re-assembly'],
+      '5.4.3': ['5.4.3 WDP over CDPD', '5.4.4 WDP over CDMA'],
+      '6.3.1.1': ['6.3.1.1 T-DUnitdata', '6.3.1.2 T-DError'],
+      '7.1': ['7.1 Introduction', '7.2 Mapping of WDP for IP'],
+      '7.2': ['7.2 Mapping of WDP for IP', '7.3 Mapping of WDP for GSM SMS, ANSI-136 GHOST and'],
+      'appendix-b': ['Appendix B: Port Number Definitions', 'Appendix C: Bearer Type Assignments'],
+      'appendix-c': ['Appendix C: Bearer Type Assignments', 'Appendix D: Implementation Notes']
+    }
+  },
+  'rfc-768': {
+    sourceDocumentId: 'rfc-768',
+    ranges: {
+      introduction: ['Introduction', 'Format'],
+      format: ['Format', 'Fields'],
+      fields: ['Fields', 'User Interface'],
+      interface: ['User Interface', 'IP Interface'],
+      'ip-interface': ['IP Interface', 'Protocol Application'],
+      'protocol-number': ['Protocol Number', 'References']
+    }
+  },
+  'rfc-791': {
+    sourceDocumentId: 'rfc-791',
+    ranges: {
+      '1.4': ['1.4.  Operation', '2.1.  Relation to Other Protocols'],
+      '2.3': ['2.3.  Function Description', '2.4.  Gateways'],
+      '3.1': ['3.1.  Internet Header Format', '3.2.  Discussion'],
+      '3.2': ['3.2.  Discussion', 'APPENDIX A:  Examples & Scenarios']
     }
   },
   'rfc-2396': {
@@ -1098,6 +1164,59 @@ clause('wsp', 'unsupported_encoding_retry', ['WSP-CL-C-003', 'WSP-CL-C-020'], '8
 clause('wsp', 'encoding_version_text_form', ['WSP-CL-C-020'], '8.4.3.1', 'grammar', 'binary-decoder', 'Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.');
 clause('wsp', 'encoding_version_hop_by_hop', ['WSP-CL-C-020'], '8.4.4', 'implicit-must', 'transport-boundary', 'Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.');
 
+// WDP selected CDPD/UDP/IPv4 Class C transport clauses.
+clause('wdp', 'consistent_transport_service', ['WDP-C-001', 'WDP-CORE-C-001'], '5.1', 'implicit-must', 'transport-boundary', 'Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.');
+clause('wdp', 'application_port_addressing', ['WDP-CORE-C-001', 'WDP-NA-C-006', 'WDP-NA-C-007'], '5.1', 'implicit-must', 'transport-boundary', 'Provide source and destination port addressing for the higher-layer protocol or application above WDP.');
+clause('wdp', 'bearer_transparency', ['WDP-C-001', 'WDP-CORE-C-001'], '5.1', 'implicit-must', 'transport-boundary', 'Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently.');
+clause('wdp', 'simultaneous_instances', ['WDP-C-001', 'WDP-CORE-C-001', 'WDP-NA-C-006', 'WDP-NA-C-007'], '5.2', 'implicit-must', 'transport-boundary', 'Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service.');
+clause('wdp', 'adaptation_layer_boundary', ['WDP-C-001', 'WDP-CT-C-002'], '5.2', 'implicit-must', 'transport-boundary', 'Terminate bearer-specific adaptation at the WDP boundary without changing the service presented to WSP or other upper layers.');
+clause('wdp', 'ip_bearer_requires_udp', ['WDP-C-001', 'WDP-CT-C-002', 'WDP-NA-C-003'], '5.3', 'explicit-must', 'transport-boundary', 'Use UDP as the WDP protocol whenever the selected bearer provides IP.');
+clause('wdp', 'cdpd_udp_ip_profile', ['WDP-CT-C-002', 'WDP-NA-C-003'], '5.4.3', 'implicit-must', 'transport-boundary', 'Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.');
+clause('wdp', 'unitdata_request_anytime', ['WDP-PF-C-001'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Allow T-DUnitdata.request without establishing a prior transport connection.');
+clause('wdp', 'unitdata_request_parameters', ['WDP-CORE-C-001', 'WDP-PF-C-001', 'WDP-NA-C-000', 'WDP-NA-C-003', 'WDP-NA-C-006', 'WDP-NA-C-007'], '6.3.1.1', 'table', 'transport-boundary', 'Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request.');
+clause('wdp', 'unitdata_indication_parameters', ['WDP-CORE-C-001', 'WDP-PF-C-002', 'WDP-NA-C-000', 'WDP-NA-C-003', 'WDP-NA-C-006', 'WDP-NA-C-007'], '6.3.1.1', 'table', 'transport-boundary', 'Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available.');
+clause('wdp', 'destination_address_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-000', 'WDP-NA-C-003'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Treat the destination address as the network identity of the receiving device for the submitted user data.');
+clause('wdp', 'source_address_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-000', 'WDP-NA-C-003'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Treat the source address as the unique network identity of the device issuing the transport request.');
+clause('wdp', 'destination_port_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-006'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Bind the destination port to the destination application or upper-layer protocol for that communication instance.');
+clause('wdp', 'source_port_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-007'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Bind the source port to the requesting application or upper-layer protocol for that communication instance.');
+clause('wdp', 'unitdata_content_transparency', ['WDP-CORE-C-001', 'WDP-PF-C-001', 'WDP-PF-C-002'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Transmit and deliver the complete service data unit without manipulating its content.');
+clause('wdp', 'protocol_required_port_fields', ['WDP-CORE-C-001', 'WDP-NA-C-006', 'WDP-NA-C-007'], '7.1', 'implicit-must', 'binary-decoder', 'Carry both destination and source port fields in the selected WDP protocol mapping.');
+clause('wdp', 'ip_mapping_is_udp', ['WDP-C-001', 'WDP-CT-C-002', 'WDP-NA-C-003'], '7.2', 'implicit-must', 'transport-boundary', 'Map WDP directly to UDP for every selected bearer on which IP routing is available.');
+clause('wdp', 'ip_mapping_fragmentation', ['WDP-C-001', 'WDP-CT-C-002', 'WDP-NA-C-003'], '7.2', 'implicit-must', 'transport-boundary', 'Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.');
+clause('wdp', 'wap_port_registry', ['WDP-NA-C-006', 'WDP-NA-C-007'], 'appendix-b', 'table', 'transport-boundary', 'Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.');
+clause('wdp', 'selected_wsp_port', ['WDP-C-001', 'WDP-NA-C-006'], 'appendix-b', 'table', 'transport-boundary', 'Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.');
+clause('wdp', 'selected_bearer_assignment', ['WDP-CT-C-002', 'WDP-NA-C-003'], 'appendix-c', 'table', 'transport-boundary', 'Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.');
+
+clause('wdp', 'udp_unreliable_datagrams', ['WDP-C-001', 'WDP-CORE-C-001'], 'introduction', 'implicit-must', 'transport-boundary', 'Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression.', 'rfc-768');
+clause('wdp', 'udp_header_layout', ['WDP-CORE-C-001', 'WDP-NA-C-006', 'WDP-NA-C-007'], 'format', 'grammar', 'binary-decoder', 'Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.', 'rfc-768');
+clause('wdp', 'udp_source_port_zero', ['WDP-NA-C-007'], 'fields', 'table', 'binary-decoder', 'Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port.', 'rfc-768');
+clause('wdp', 'udp_destination_port_context', ['WDP-NA-C-006', 'WDP-NA-C-003'], 'fields', 'implicit-must', 'transport-boundary', 'Interpret a UDP destination port within the context of its destination IPv4 address.', 'rfc-768');
+clause('wdp', 'udp_length_bounds', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.', 'rfc-768');
+clause('wdp', 'udp_checksum_coverage', ['WDP-CORE-C-001', 'WDP-NA-C-003'], 'fields', 'implicit-must', 'binary-decoder', 'Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic.', 'rfc-768');
+clause('wdp', 'udp_checksum_padding', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.', 'rfc-768');
+clause('wdp', 'udp_checksum_zero_encoding', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Transmit an arithmetically computed zero UDP checksum as all one bits.', 'rfc-768');
+clause('wdp', 'udp_checksum_omission', ['WDP-CORE-C-001'], 'fields', 'explicit-may', 'binary-decoder', 'Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum.', 'rfc-768');
+clause('wdp', 'udp_receive_interface', ['WDP-PF-C-002', 'WDP-NA-C-003', 'WDP-NA-C-007'], 'interface', 'explicit-should', 'transport-boundary', 'Provide receive-port creation and return received data with its source IPv4 address and source port.', 'rfc-768');
+clause('wdp', 'udp_send_interface', ['WDP-PF-C-001', 'WDP-NA-C-003', 'WDP-NA-C-006', 'WDP-NA-C-007'], 'interface', 'explicit-should', 'transport-boundary', 'Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses.', 'rfc-768');
+clause('wdp', 'udp_ip_interface_metadata', ['WDP-CORE-C-001', 'WDP-NA-C-003'], 'ip-interface', 'explicit-must', 'transport-boundary', 'Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary.', 'rfc-768');
+clause('wdp', 'udp_ip_protocol_number', ['WDP-CT-C-002', 'WDP-NA-C-003'], 'protocol-number', 'table', 'binary-decoder', 'Identify UDP with IPv4 protocol number 17.', 'rfc-768');
+
+clause('wdp', 'ipv4_independent_datagrams', ['WDP-C-001', 'WDP-CORE-C-001', 'WDP-NA-C-003'], '1.4', 'implicit-must', 'transport-boundary', 'Treat each IPv4 datagram independently without a transport connection or logical circuit.', 'rfc-791');
+clause('wdp', 'ipv4_fixed_address_size', ['WDP-NA-C-000', 'WDP-NA-C-003'], '2.3', 'implicit-must', 'binary-decoder', 'Represent each selected IPv4 source or destination address as four octets.', 'rfc-791');
+clause('wdp', 'ipv4_header_layout', ['WDP-NA-C-003'], '3.1', 'grammar', 'binary-decoder', 'Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.', 'rfc-791');
+clause('wdp', 'ipv4_version_and_ihl', ['WDP-NA-C-003'], '3.1', 'table', 'binary-decoder', 'Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five.', 'rfc-791');
+clause('wdp', 'ipv4_total_length', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'implicit-must', 'binary-decoder', 'Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.', 'rfc-791');
+clause('wdp', 'ipv4_baseline_receive_size', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'explicit-must', 'transport-boundary', 'Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.', 'rfc-791');
+clause('wdp', 'ipv4_large_send_guard', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'explicit-should', 'transport-boundary', 'Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.', 'rfc-791');
+clause('wdp', 'ipv4_fragmentation_location', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'implicit-must', 'transport-boundary', 'Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.', 'rfc-791');
+clause('wdp', 'ipv4_fragment_reassembly_key', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'implicit-must', 'binary-decoder', 'Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.', 'rfc-791');
+clause('wdp', 'ipv4_dont_fragment', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'explicit-must', 'error-policy', 'Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.', 'rfc-791');
+clause('wdp', 'ipv4_ttl_zero', ['WDP-NA-C-003'], '3.1', 'explicit-must', 'error-policy', 'Destroy an IPv4 datagram when its time-to-live value reaches zero.', 'rfc-791');
+clause('wdp', 'ipv4_header_checksum', ['WDP-NA-C-003'], '3.1', 'explicit-must', 'binary-decoder', 'Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.', 'rfc-791');
+clause('wdp', 'ipv4_source_destination_fields', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-003'], '3.1', 'table', 'binary-decoder', 'Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.', 'rfc-791');
+clause('wdp', 'ipv4_robust_interoperation', ['WDP-NA-C-003'], '3.2', 'explicit-must', 'binary-decoder', 'Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely.', 'rfc-791');
+clause('wdp', 'ipv4_no_reliability', ['WDP-C-001', 'WDP-CORE-C-001'], '1.4', 'implicit-must', 'transport-boundary', 'Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer.', 'rfc-791');
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -1192,6 +1311,12 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wsp-scr.json`,
     selectedDisposition: 'required-by-selected-class-c-transport-path',
     clauseSources: ['WAP-203-WSP', 'WAP-203_001-WSP']
+  },
+  {
+    family: 'wdp',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-wdp-scr.json`,
+    selectedDisposition: 'required-by-selected-class-c-transport-path',
+    clauseSources: ['WAP-200-WDP', 'rfc-768', 'rfc-791']
   }
 ];
 
@@ -1345,12 +1470,8 @@ const ledger = {
   scope: {
     status: 'in-progress',
     selectedProfileParentCount: 201,
-    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching', 'wcmp', 'wsp'],
-    remainingFamilies: [
-      'wmlscript',
-      'wmlscript-libraries',
-      'wdp'
-    ],
+    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching', 'wcmp', 'wsp', 'wdp'],
+    remainingFamilies: ['wmlscript', 'wmlscript-libraries'],
     coveredSelectedParentCount: selectedParentCount,
     remainingSelectedParentCount: 201 - selectedParentCount,
     completionRule:

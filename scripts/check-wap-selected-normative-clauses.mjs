@@ -43,12 +43,16 @@ function sha256(value) {
 }
 
 const failures = [];
-const coveredFamilies = ['wml', 'wae', 'wbxml', 'caching', 'wcmp', 'wsp'];
-const remainingFamilies = [
-  'wmlscript',
-  'wmlscript-libraries',
+const coveredFamilies = [
+  'wml',
+  'wae',
+  'wbxml',
+  'caching',
+  'wcmp',
+  'wsp',
   'wdp'
 ];
+const remainingFamilies = ['wmlscript', 'wmlscript-libraries'];
 const familyDefinitions = new Map([
   [
     'wml',
@@ -102,6 +106,15 @@ const familyDefinitions = new Map([
       selectedDisposition: 'required-by-selected-class-c-transport-path',
       expectedParents: 8,
       expectedClauses: 57
+    }
+  ],
+  [
+    'wdp',
+    {
+      ledgerFile: 'wap-1.2.1-wdp-scr.json',
+      selectedDisposition: 'required-by-selected-class-c-transport-path',
+      expectedParents: 9,
+      expectedClauses: 49
     }
   ]
 ]);
@@ -182,8 +195,8 @@ if (
     JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !==
     JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 71 ||
-  ledger.scope?.remainingSelectedParentCount !== 130 ||
+  ledger.scope?.coveredSelectedParentCount !== 80 ||
+  ledger.scope?.remainingSelectedParentCount !== 121 ||
   !ledger.scope?.completionRule?.includes('CONF-003 remains open')
 ) {
   failures.push('partial nine-family scope accounting drift');
@@ -480,8 +493,8 @@ const expectedSummary = {
   assessedClauseCount: 0
 };
 if (
-  selectedParentCount !== 71 ||
-  clauseCount !== 414 ||
+  selectedParentCount !== 80 ||
+  clauseCount !== 463 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(
@@ -522,7 +535,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, WCMP, and WSP`
+  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, WCMP, WSP, and WDP`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`
