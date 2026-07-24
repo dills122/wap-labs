@@ -754,6 +754,48 @@ fn transport_destination_policy_accepts_public_resolved_addresses() {
 }
 
 #[test]
+fn transport_resolution_time_check_blocks_private_answer_that_shallow_preflight_alone_would_allow()
+{
+    // M1-19 regression: `classify_destination_host` / `validate_fetch_destination` are a
+    // fast, shallow pre-flight check -- any hostname that isn't literally "localhost"/
+    // "*.localhost" (or a private/loopback IP literal) is classified `Public`, regardless of
+    // what it actually resolves to. The authoritative SSRF guard runs at DNS-resolution time
+    // (`PolicyDnsResolver` in fetch_runtime/execution.rs, and
+    // `resolve_fetch_destination_addresses` for the native path in native_fetch.rs), and both
+    // of those call sites delegate to `validate_resolved_destination_addresses`. This test
+    // pins the two-layer invariant directly: it fails if `validate_resolved_destination_addresses`
+    // is ever weakened to also treat a private resolved answer as acceptable, which is exactly
+    // what would happen if a future refactor collapsed the resolution-time check into the
+    // shallow pre-flight check.
+    let attacker_domain =
+        Url::parse("http://attacker-controlled.invalid/deck.wml").expect("url should parse");
+
+    // Shallow pre-flight: passes, because it never looks past the hostname text.
+    assert_eq!(
+        classify_destination_host(&attacker_domain),
+        Some(DestinationHostClass::Public),
+        "pre-flight classifies any non-localhost domain as public regardless of its DNS answer"
+    );
+    validate_fetch_destination(&attacker_domain, &FetchDestinationPolicy::PublicOnly).expect(
+        "pre-flight alone must NOT block this domain -- that shallowness is exactly what \
+         resolution-time enforcement exists to cover",
+    );
+
+    // Resolution-time: simulate the DNS answer this hostname could return in a DNS-rebinding
+    // scenario (attacker-controlled DNS pointing the domain at an internal address). The
+    // resolution-time layer inspects the resolved socket address, not the hostname text, and
+    // must independently reject it even though the pre-flight check above passed.
+    let rebound_answer = [SocketAddr::from(([10, 0, 0, 5], 80))];
+    let error = validate_resolved_destination_addresses(
+        &rebound_answer,
+        &FetchDestinationPolicy::PublicOnly,
+    )
+    .expect_err("resolution-time layer must block the private resolved address");
+    assert!(error.contains("public-only"));
+    assert!(error.contains("private"));
+}
+
+#[test]
 fn transport_fetch_blocks_loopback_when_policy_not_overridden() {
     let response = fetch_deck_in_process(FetchDeckRequest {
         request_id: Some("req-loopback-blocked".to_string()),
