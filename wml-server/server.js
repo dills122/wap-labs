@@ -11,6 +11,8 @@ const gatewayBaseUrls = process.env.GATEWAY_BASE_URL
 
 const users = new Map();
 const sessions = new Map();
+const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes of inactivity
+const SESSION_SWEEP_INTERVAL_MS = 5 * 60 * 1000;
 const counters = {
   requests: 0,
   registered: 0,
@@ -87,8 +89,18 @@ function createSession(username) {
   sessions.set(sid, {
     username,
     createdAt: new Date().toISOString(),
+    lastAccess: Date.now(),
   });
   return sid;
+}
+
+function sweepExpiredSessions() {
+  const now = Date.now();
+  for (const [sid, session] of sessions) {
+    if (now - session.lastAccess > SESSION_TTL_MS) {
+      sessions.delete(sid);
+    }
+  }
 }
 
 function getSession(req) {
@@ -100,6 +112,11 @@ function getSession(req) {
   if (!session) {
     return null;
   }
+  if (Date.now() - session.lastAccess > SESSION_TTL_MS) {
+    sessions.delete(sid);
+    return null;
+  }
+  session.lastAccess = Date.now();
   return { sid, ...session };
 }
 
@@ -511,6 +528,9 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+const sessionSweepTimer = setInterval(sweepExpiredSessions, SESSION_SWEEP_INTERVAL_MS);
+sessionSweepTimer.unref();
 
 app.listen(port, () => {
   console.log(`WML server listening on port ${port}`);
