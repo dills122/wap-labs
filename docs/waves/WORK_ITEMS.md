@@ -705,7 +705,9 @@ Completed `B0` through `B3` tickets are archived in:
 9. `Spec`:
 - `RQ-SEC-004`, `RQ-SEC-005`
 10. `Notes`:
-- Closed on `codex/t0-21-wtls-boundary` with explicit disabled-vs-active-minimal WTLS boundary, record/alert/handshake module split, and fixture-backed record plus handshake reliability coverage. Full certificate and crypto parity remain deferred beyond this baseline.
+- Closed on `codex/t0-21-wtls-boundary` with an explicit disabled-vs-active-minimal prototype boundary, record/alert/handshake module split, and fixture-backed envelope plus reliability coverage.
+- The 2026-07-24 WAP-261 audit established that these envelopes are not WTLS wire encodings and are not used by live `waps://`. `T0-21` remains complete as a phase-boundary ticket, but provides no WAP-261 conformance evidence.
+- Insecure-test labeling, release gating, exact replacement, certificate/SIN behavior, crypto, and interop are tracked as `WTLS-00..WTLS-10` in `docs/architecture/wtls-modernization-research.md`.
 
 ### T0-22 Networking interop replay harness and golden event corpus
 

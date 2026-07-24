@@ -11,7 +11,13 @@ Transport boundary ends at normalized deck payload and optional XML event stream
 ## Current Baseline
 
 - `transport-rust` is integrated in browser host (`browser/src-tauri`).
-- `wap://`/`waps://` currently bridge through configured gateway HTTP endpoint.
+- The browser's default `auto` profile selects the in-process `wap-net-core` path for
+  `wap://`/`waps://`; an explicit `gateway-bridged` profile remains available.
+- The live native path is constrained connectionless WSP over WDP/UDP and does not yet call the
+  fixture-tested `network::wsp`/`network::wtp` modules.
+- `waps://` currently selects port 9202 but does not apply WTLS or any other protection.
+  Pre-alpha development/interoperability profiles may keep this path available with an
+  unavoidable no-WTLS warning and false protection state; release profiles must fail closed.
 - WBXML decode currently uses external `wbxml2xml` executable invocation.
 - Retry/timeout/error mapping and coverage gate are active in Rust CI.
 
@@ -85,9 +91,22 @@ Status: deferred until transport protocol gates close.
 
 Objective:
 
-- Add encrypted-session protocol support only after protocol parity gates close.
-- ASN.1/WTLS certificate handling (candidate: `rasn`, subject to design review).
-- Cipher/profile handling behind explicit feature flags.
+- Add exact historical encrypted-session support only after protocol parity gates close.
+- Keep direct modern TLS, WAP-261 WTLS compatibility, plain WAP, and any future DTLS route as
+  explicit profiles with no automatic downgrade.
+- ASN.1/WTLS certificate handling is subject to a dedicated design and dependency review.
+- Legacy cipher/profile handling remains behind an additive Cargo capability and an explicit
+  runtime gateway allowlist.
+- Follow
+  `docs/architecture/wtls-modernization-research.md` and
+  `docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`.
+
+Immediate safety prerequisite, outside the deferred crypto implementation:
+
+- report the current development/interoperability `waps://` route as unprotected and emit an
+  unavoidable no-WTLS warning;
+- block credentials and sensitive submissions on that route by default;
+- prohibit the insecure testing exception in release profiles.
 
 ## Migration lane for this repo: protocol-aligned execution stack
 
@@ -117,6 +136,8 @@ Objective:
 ## Notes
 
 - `Phase D` does not run forward until profile gates close and explicit security-profile scope is settled in `T0-14` and `T0-21`.
+- `WTLS-00` insecure-test labeling and release gating are not blocked on Phase D and should land
+  with the native browser foundation.
 
 ## Dependency Guidance
 
@@ -128,7 +149,9 @@ Recommended later by phase:
 
 - Phase B: streaming XML parser crate.
 - Phase C: binary parser/fsm crate(s), likely `nom`.
-- Phase D: ASN.1/WTLS stack, likely feature-gated.
+- Phase D: WTLS certificate/trust and legacy crypto providers, feature-gated and independently
+  reviewed. Dependency selection follows the frozen WAP-261 client profile; do not choose a
+  general crypto stack before that matrix exists.
 
 ## Guardrails
 
