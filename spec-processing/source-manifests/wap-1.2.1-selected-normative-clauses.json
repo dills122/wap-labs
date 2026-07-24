@@ -19,17 +19,17 @@
       "wml",
       "wae",
       "wbxml",
-      "caching"
+      "caching",
+      "wcmp"
     ],
     "remainingFamilies": [
       "wmlscript",
       "wmlscript-libraries",
       "wdp",
-      "wcmp",
       "wsp"
     ],
-    "coveredSelectedParentCount": 58,
-    "remainingSelectedParentCount": 143,
+    "coveredSelectedParentCount": 63,
+    "remainingSelectedParentCount": 138,
     "completionRule": "CONF-003 remains open until every selected row in all nine mandatory Class C families has one or more anchored, deduplicated nested clauses."
   },
   "interpretation": {
@@ -38,12 +38,12 @@
     "implementationAssessment": "Parent implementation statuses are snapshots from the family SCR ledgers. Clause status remains not-assessed until direct source-derived fixture evidence is reviewed."
   },
   "summary": {
-    "selectedParentCount": 58,
-    "clauseCount": 329,
-    "requiredClauseCount": 300,
-    "recommendedClauseCount": 21,
-    "permittedClauseCount": 8,
-    "plannedFixtureCount": 329,
+    "selectedParentCount": 63,
+    "clauseCount": 357,
+    "requiredClauseCount": 325,
+    "recommendedClauseCount": 23,
+    "permittedClauseCount": 9,
+    "plannedFixtureCount": 357,
     "assessedClauseCount": 0
   },
   "families": [
@@ -15419,6 +15419,1283 @@
             ],
             "parentImplementationSnapshot": {
               "UACache-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        }
+      ]
+    },
+    {
+      "family": "wcmp",
+      "status": "nested-clauses-anchored-fixtures-planned",
+      "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
+      "parentLedgerSha256": "d2795a8b4ce3b5aa415ea8342c9d15f575b904974bf0b4c4eb4948a740e45ce0",
+      "effectiveSequence": [
+        "WAP-202-WCMP"
+      ],
+      "selectedDisposition": "required-by-selected-class-c-transport-path",
+      "clauseSources": [
+        {
+          "documentId": "WAP-202-WCMP",
+          "sourceKind": "release-member",
+          "filename": "WAP-202-WCMP-20010624-a.pdf",
+          "pdfSha256": "231166eec1103a8729147db180efdefd894e4879205cef7891f55ac79f034fa9",
+          "textExtractionSha256": "b66ab9bdae87752b43e6607c273f2d9d37a6b933df3d59fb1ade663068d70db6"
+        }
+      ],
+      "selectedParentCount": 5,
+      "clauseCount": 28,
+      "parents": [
+        {
+          "id": "WCMP-C-001",
+          "feature": "WCMP in client",
+          "referencedSection": null,
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-CLIENT-GENERAL-PROFILE",
+            "WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES",
+            "WCMP-CL-FORGED-MESSAGE-CAUTION",
+            "WCMP-CL-NO-ERROR-TO-ERROR",
+            "WCMP-CL-ONE-FRAGMENT-ERROR",
+            "WCMP-CL-SINGLE-BEARER-FRAGMENT"
+          ]
+        },
+        {
+          "id": "WCMP-SP-C-002",
+          "feature": "Does the implementation conform to the",
+          "referencedSection": "5.4, 5.5.1",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-CLIENT-GENERAL-PROFILE",
+            "WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES",
+            "WCMP-CL-FORGED-MESSAGE-CAUTION",
+            "WCMP-CL-GENERAL-HEADER-ORDER",
+            "WCMP-CL-GENERAL-NETWORK-ORDER",
+            "WCMP-CL-GENERAL-TYPE-CLASSES",
+            "WCMP-CL-GENERAL-TYPE-DISPATCH",
+            "WCMP-CL-NO-ERROR-TO-ERROR",
+            "WCMP-CL-ONE-FRAGMENT-ERROR",
+            "WCMP-CL-SINGLE-BEARER-FRAGMENT"
+          ]
+        },
+        {
+          "id": "WCMP-GEN-C-001",
+          "feature": "WCMP message type Destination",
+          "referencedSection": "5.5.3.1",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-DESTINATION-UNREACHABLE-ADDRESS",
+            "WCMP-CL-DESTINATION-UNREACHABLE-CODES",
+            "WCMP-CL-DESTINATION-UNREACHABLE-GENERAL-GENERATION",
+            "WCMP-CL-DESTINATION-UNREACHABLE-LAYOUT",
+            "WCMP-CL-DESTINATION-UNREACHABLE-NO-CONGESTION",
+            "WCMP-CL-DESTINATION-UNREACHABLE-PORT-REQUIRED",
+            "WCMP-CL-GENERAL-TYPE-DISPATCH",
+            "WCMP-CL-SELECTED-TYPE-CODE-VALUES"
+          ]
+        },
+        {
+          "id": "WCMP-GEN-C-003",
+          "feature": "message type Message Too Big",
+          "referencedSection": "5.5.3.3",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-GENERAL-TYPE-DISPATCH",
+            "WCMP-CL-MESSAGE-TOO-BIG-ADDRESS",
+            "WCMP-CL-MESSAGE-TOO-BIG-BUFFER-NOTICE",
+            "WCMP-CL-MESSAGE-TOO-BIG-FIRST-SEGMENT",
+            "WCMP-CL-MESSAGE-TOO-BIG-LAYOUT",
+            "WCMP-CL-SELECTED-TYPE-CODE-VALUES"
+          ]
+        },
+        {
+          "id": "WCMP-GEN-C-006",
+          "feature": "message type Echo Reply",
+          "referencedSection": "5.5.3.5",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-ECHO-CORRELATION-FIELDS",
+            "WCMP-CL-ECHO-DATA-IDENTITY",
+            "WCMP-CL-ECHO-MESSAGE-LAYOUT",
+            "WCMP-CL-ECHO-MTU-TRUNCATION",
+            "WCMP-CL-ECHO-REPLY-FUNCTION",
+            "WCMP-CL-ECHO-REPLY-RATE-LIMIT",
+            "WCMP-CL-ECHO-REPLY-TYPE",
+            "WCMP-CL-GENERAL-TYPE-DISPATCH",
+            "WCMP-CL-SELECTED-TYPE-CODE-VALUES"
+          ]
+        }
+      ],
+      "clauses": [
+        {
+          "id": "WCMP-CL-CLIENT-GENERAL-PROFILE",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-C-001",
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.4",
+            "heading": "5.4. WCMP in Non-IP Networks",
+            "normalizedTextSha256": "889ac83ddb5aa32bddd6c3ba6b90297324af1c044d297a461883ff28565ba022"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.",
+          "fixturePlan": {
+            "id": "WCMP-FX-CLIENT-GENERAL-PROFILE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-C-001": "missing",
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-C-001",
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "c2cd925db8f2b2273f57296606cd9c43592a25924a80f6a6fe2b44d626d836c6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ERROR-AND-DIAGNOSTIC-ROLES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-C-001": "missing",
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-NO-ERROR-TO-ERROR",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-C-001",
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "c2cd925db8f2b2273f57296606cd9c43592a25924a80f6a6fe2b44d626d836c6"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Never generate a WCMP error message in response to another WCMP error message.",
+          "fixturePlan": {
+            "id": "WCMP-FX-NO-ERROR-TO-ERROR",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Never generate a WCMP error message in response to another WCMP error message."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-C-001": "missing",
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ONE-FRAGMENT-ERROR",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-C-001",
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "c2cd925db8f2b2273f57296606cd9c43592a25924a80f6a6fe2b44d626d836c6"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate no more than one WCMP error for a fragmented datagram.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ONE-FRAGMENT-ERROR",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Generate no more than one WCMP error for a fragmented datagram."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-C-001": "missing",
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-SINGLE-BEARER-FRAGMENT",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-C-001",
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "c2cd925db8f2b2273f57296606cd9c43592a25924a80f6a6fe2b44d626d836c6"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode each WCMP message so it fits in one bearer-level fragment.",
+          "fixturePlan": {
+            "id": "WCMP-FX-SINGLE-BEARER-FRAGMENT",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Encode each WCMP message so it fits in one bearer-level fragment."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-C-001": "missing",
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-FORGED-MESSAGE-CAUTION",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-C-001",
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "c2cd925db8f2b2273f57296606cd9c43592a25924a80f6a6fe2b44d626d836c6"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message.",
+          "fixturePlan": {
+            "id": "WCMP-FX-FORGED-MESSAGE-CAUTION",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-C-001": "missing",
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-NETWORK-ORDER",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "19eaab848ccc4d8296d1c3389e34294e656e7dbcb9a61bb69ab28a2f178912f2"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-NETWORK-ORDER",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-HEADER-ORDER",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "19eaab848ccc4d8296d1c3389e34294e656e7dbcb9a61bb69ab28a2f178912f2"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-HEADER-ORDER",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-TYPE-DISPATCH",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-SP-C-002",
+            "WCMP-GEN-C-001",
+            "WCMP-GEN-C-003",
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "19eaab848ccc4d8296d1c3389e34294e656e7dbcb9a61bb69ab28a2f178912f2"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use Type to select the message data format and Code to select the subtype-specific interpretation.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-TYPE-DISPATCH",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use Type to select the message data format and Code to select the subtype-specific interpretation."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006",
+              "RQ-TRX-007",
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "missing",
+              "WCMP-GEN-C-001": "missing",
+              "WCMP-GEN-C-003": "missing",
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-TYPE-CLASSES",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "19eaab848ccc4d8296d1c3389e34294e656e7dbcb9a61bb69ab28a2f178912f2"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-TYPE-CLASSES",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-SELECTED-TYPE-CODE-VALUES",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001",
+            "WCMP-GEN-C-003",
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "19eaab848ccc4d8296d1c3389e34294e656e7dbcb9a61bb69ab28a2f178912f2"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.",
+          "fixturePlan": {
+            "id": "WCMP-FX-SELECTED-TYPE-CODE-VALUES",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006",
+              "RQ-TRX-007",
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing",
+              "WCMP-GEN-C-003": "missing",
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-DESTINATION-UNREACHABLE-LAYOUT",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "16a71e4391d53b832f08dcde77b7f659ff61c392618175f8b3492894049efcf6"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information.",
+          "fixturePlan": {
+            "id": "WCMP-FX-DESTINATION-UNREACHABLE-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-DESTINATION-UNREACHABLE-GENERAL-GENERATION",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "16a71e4391d53b832f08dcde77b7f659ff61c392618175f8b3492894049efcf6"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion.",
+          "fixturePlan": {
+            "id": "WCMP-FX-DESTINATION-UNREACHABLE-GENERAL-GENERATION",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-DESTINATION-UNREACHABLE-PORT-REQUIRED",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "16a71e4391d53b832f08dcde77b7f659ff61c392618175f8b3492894049efcf6"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port.",
+          "fixturePlan": {
+            "id": "WCMP-FX-DESTINATION-UNREACHABLE-PORT-REQUIRED",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-DESTINATION-UNREACHABLE-NO-CONGESTION",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "16a71e4391d53b832f08dcde77b7f659ff61c392618175f8b3492894049efcf6"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not generate a Destination Unreachable message for a packet dropped because of congestion.",
+          "fixturePlan": {
+            "id": "WCMP-FX-DESTINATION-UNREACHABLE-NO-CONGESTION",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Do not generate a Destination Unreachable message for a packet dropped because of congestion."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-DESTINATION-UNREACHABLE-CODES",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "16a71e4391d53b832f08dcde77b7f659ff61c392618175f8b3492894049efcf6"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively.",
+          "fixturePlan": {
+            "id": "WCMP-FX-DESTINATION-UNREACHABLE-CODES",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-DESTINATION-UNREACHABLE-ADDRESS",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "16a71e4391d53b832f08dcde77b7f659ff61c392618175f8b3492894049efcf6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret the embedded address information as the destination address of the original datagram.",
+          "fixturePlan": {
+            "id": "WCMP-FX-DESTINATION-UNREACHABLE-ADDRESS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Interpret the embedded address information as the destination address of the original datagram."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-MESSAGE-TOO-BIG-LAYOUT",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "9f33eddb438a0a8a0a045dff96ca52fb0a00cb0970a7ce90e64c596588d6ee19"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size.",
+          "fixturePlan": {
+            "id": "WCMP-FX-MESSAGE-TOO-BIG-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-MESSAGE-TOO-BIG-BUFFER-NOTICE",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "9f33eddb438a0a8a0a045dff96ca52fb0a00cb0970a7ce90e64c596588d6ee19"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use Message Too Big to inform a sender of the receiving node buffer-size limit.",
+          "fixturePlan": {
+            "id": "WCMP-FX-MESSAGE-TOO-BIG-BUFFER-NOTICE",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Use Message Too Big to inform a sender of the receiving node buffer-size limit."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-MESSAGE-TOO-BIG-FIRST-SEGMENT",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "9f33eddb438a0a8a0a045dff96ca52fb0a00cb0970a7ce90e64c596588d6ee19"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer.",
+          "fixturePlan": {
+            "id": "WCMP-FX-MESSAGE-TOO-BIG-FIRST-SEGMENT",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-MESSAGE-TOO-BIG-ADDRESS",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "9f33eddb438a0a8a0a045dff96ca52fb0a00cb0970a7ce90e64c596588d6ee19"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret Message Too Big address information as the destination address of the original datagram.",
+          "fixturePlan": {
+            "id": "WCMP-FX-MESSAGE-TOO-BIG-ADDRESS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Interpret Message Too Big address information as the destination address of the original datagram."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-REPLY-FUNCTION",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "ca6566cbcb26aa763af02e6dd6732cd8a5c26910315e3a41d9a58219005b942b"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Receive WCMP Echo Requests and send corresponding Echo Replies.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-REPLY-FUNCTION",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "Receive WCMP Echo Requests and send corresponding Echo Replies."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-MESSAGE-LAYOUT",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "ca6566cbcb26aa763af02e6dd6732cd8a5c26910315e3a41d9a58219005b942b"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-MESSAGE-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-REPLY-TYPE",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "ca6566cbcb26aa763af02e6dd6732cd8a5c26910315e3a41d9a58219005b942b"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use type 178 for Echo Request and type 179 for Echo Reply.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-REPLY-TYPE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use type 178 for Echo Request and type 179 for Echo Reply."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-DATA-IDENTITY",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "ca6566cbcb26aa763af02e6dd6732cd8a5c26910315e3a41d9a58219005b942b"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-DATA-IDENTITY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-MTU-TRUNCATION",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "ca6566cbcb26aa763af02e6dd6732cd8a5c26910315e3a41d9a58219005b942b"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-MTU-TRUNCATION",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-CORRELATION-FIELDS",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "ca6566cbcb26aa763af02e6dd6732cd8a5c26910315e3a41d9a58219005b942b"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-CORRELATION-FIELDS",
+            "kind": "state-machine",
+            "status": "planned",
+            "assertion": "Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-ECHO-REPLY-RATE-LIMIT",
+          "family": "wcmp",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.2",
+            "heading": "5.2. WCMP Conformance",
+            "normalizedTextSha256": "97e69bbf594e5040a2a1cef6baa24e7215852b0a63161e7d418aff45e54ded9b"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic.",
+          "fixturePlan": {
+            "id": "WCMP-FX-ECHO-REPLY-RATE-LIMIT",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "missing"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

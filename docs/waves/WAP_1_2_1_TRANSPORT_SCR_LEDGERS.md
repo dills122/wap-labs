@@ -104,6 +104,11 @@ The selected general-WCMP path requires:
 - message-too-big structure (`WCMP-GEN-C-003`)
 - echo-reply structure (`WCMP-GEN-C-006`)
 
+`CONF-003` now expands these five rows into 28 source-anchored clauses with
+planned direct fixtures. Clause implementation remains `not-assessed`; all
+five parent rows remain missing until the codec, safety behavior, and message
+fixtures exist.
+
 Additional generation, processing, endpoint, and diagnostic rows remain
 optional capabilities until selected.
 
@@ -161,7 +166,8 @@ reason to over-credit the current UDP adapter.
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.
 - `SRC-005`: normalize the `TIAEIA-732` external dependency record.
-- `CONF-003`: extract nested clauses and promote direct normative fixtures.
+- `CONF-003`: finish WDP/WSP nested clauses and promote direct normative
+  fixtures; the WCMP extraction is complete.
 
 ## Enhancement policy
 

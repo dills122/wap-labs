@@ -19,6 +19,7 @@ const waeTextPath = option('--wae-text');
 const waeSin101TextPath = option('--wae-sin-101-text');
 const waeSin103TextPath = option('--wae-sin-103-text');
 const cachingTextPath = option('--caching-text');
+const wcmpTextPath = option('--wcmp-text');
 const rfc2396TextPath = option('--rfc-2396-text');
 const rfc2616TextPath = option('--rfc-2616-text');
 const rfc2617TextPath = option('--rfc-2617-text');
@@ -35,6 +36,7 @@ if (
   !waeSin101TextPath ||
   !waeSin103TextPath ||
   !cachingTextPath ||
+  !wcmpTextPath ||
   !rfc2396TextPath ||
   !rfc2616TextPath ||
   !rfc2617TextPath ||
@@ -49,6 +51,7 @@ if (
       '--wae-sin-101-text /absolute/path/WAP-190_101-WAESpec-20001213-a.txt ' +
       '--wae-sin-103-text /absolute/path/WAP-190_103-WAESpec-20001213-a.txt ' +
       '--caching-text /absolute/path/WAP-120-WAPCachingMod-20010413-a.txt ' +
+      '--wcmp-text /absolute/path/WAP-202-WCMP-20010624-a.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
       '--rfc-2616-text /absolute/path/rfc2616.txt ' +
       '--rfc-2617-text /absolute/path/rfc2617.txt ' +
@@ -140,6 +143,13 @@ const sourceInputs = new Map([
     {
       path: cachingTextPath,
       text: fs.readFileSync(cachingTextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-202-WCMP',
+    {
+      path: wcmpTextPath,
+      text: fs.readFileSync(wcmpTextPath, 'utf8')
     }
   ],
   [
@@ -404,6 +414,30 @@ const sectionDefinitions = {
       '6': [
         '6. Security Considerations',
         'Appendix A. Static Conformance Requirements'
+      ]
+    }
+  },
+  wcmp: {
+    sourceDocumentId: 'WAP-202-WCMP',
+    ranges: {
+      '5.1': ['5.1. General', '5.2. WCMP Conformance'],
+      '5.2': ['5.2. WCMP Conformance', '5.3. WCMP in IP Networks'],
+      '5.4': ['5.4. WCMP in Non-IP Networks', '5.4.1. WCMP in GSM SMS'],
+      '5.5.1': [
+        '5.5.1. General Message Structure',
+        '5.5.2. Address Information Formats'
+      ],
+      '5.5.3.1': [
+        '5.5.3.1. Destination Unreachable',
+        '5.5.3.2. Parameter Problem'
+      ],
+      '5.5.3.3': [
+        '5.5.3.3. Message Too Big',
+        '5.5.3.4. Reassembly Failure'
+      ],
+      '5.5.3.5': [
+        '5.5.3.5. WCMP Echo Request/Reply',
+        'Appendix A.               Static Conformance Requirements                                     (Normative)'
       ]
     }
   },
@@ -899,6 +933,39 @@ clause('caching', 'wml_intra_deck', ['UACache-C-004'], '4.1.2', 'implicit-must',
 clause('caching', 'cache_private_content', ['UACache-C-006'], '6', 'explicit-must', 'security-policy', 'Protect private information stored in the user-agent cache from unintended or malicious access.');
 clause('caching', 'cache_nonvolatile_boundary', ['UACache-C-006'], '6', 'implicit-must', 'security-policy', 'Apply access protection to sensitive cache data that survives in non-volatile storage, including data retained across browser restarts.');
 
+// WCMP general-encoding branch selected by the Class C connectionless path.
+clause('wcmp', 'client_general_profile', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.4', 'implicit-must', 'transport-boundary', 'Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.');
+clause('wcmp', 'error_and_diagnostic_roles', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'implicit-must', 'transport-boundary', 'Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol.');
+clause('wcmp', 'no_error_to_error', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-must', 'error-policy', 'Never generate a WCMP error message in response to another WCMP error message.');
+clause('wcmp', 'one_fragment_error', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-must', 'error-policy', 'Generate no more than one WCMP error for a fragmented datagram.');
+clause('wcmp', 'single_bearer_fragment', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-must', 'transport-boundary', 'Encode each WCMP message so it fits in one bearer-level fragment.');
+clause('wcmp', 'forged_message_caution', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-should', 'security-policy', 'Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message.');
+clause('wcmp', 'general_network_order', ['WCMP-SP-C-002'], '5.5.1', 'implicit-must', 'binary-decoder', 'Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first.');
+clause('wcmp', 'general_header_order', ['WCMP-SP-C-002'], '5.5.1', 'grammar', 'binary-decoder', 'Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets.');
+clause('wcmp', 'general_type_dispatch', ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'], '5.5.1', 'implicit-must', 'binary-decoder', 'Use Type to select the message data format and Code to select the subtype-specific interpretation.');
+clause('wcmp', 'general_type_classes', ['WCMP-SP-C-002'], '5.5.1', 'implicit-must', 'binary-decoder', 'Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.');
+clause('wcmp', 'selected_type_code_values', ['WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'], '5.5.1', 'table', 'binary-decoder', 'Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.');
+
+clause('wcmp', 'destination_unreachable_layout', ['WCMP-GEN-C-001'], '5.5.3.1', 'grammar', 'binary-decoder', 'Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information.');
+clause('wcmp', 'destination_unreachable_general_generation', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-should', 'error-policy', 'Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion.');
+clause('wcmp', 'destination_unreachable_port_required', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-must', 'error-policy', 'Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port.');
+clause('wcmp', 'destination_unreachable_no_congestion', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-must', 'error-policy', 'Do not generate a Destination Unreachable message for a packet dropped because of congestion.');
+clause('wcmp', 'destination_unreachable_codes', ['WCMP-GEN-C-001'], '5.5.3.1', 'table', 'binary-decoder', 'Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively.');
+clause('wcmp', 'destination_unreachable_address', ['WCMP-GEN-C-001'], '5.5.3.1', 'implicit-must', 'binary-decoder', 'Interpret the embedded address information as the destination address of the original datagram.');
+
+clause('wcmp', 'message_too_big_layout', ['WCMP-GEN-C-003'], '5.5.3.3', 'grammar', 'binary-decoder', 'Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size.');
+clause('wcmp', 'message_too_big_buffer_notice', ['WCMP-GEN-C-003'], '5.5.3.3', 'explicit-must', 'error-policy', 'Use Message Too Big to inform a sender of the receiving node buffer-size limit.');
+clause('wcmp', 'message_too_big_first_segment', ['WCMP-GEN-C-003'], '5.5.3.3', 'explicit-must', 'error-policy', 'Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer.');
+clause('wcmp', 'message_too_big_address', ['WCMP-GEN-C-003'], '5.5.3.3', 'implicit-must', 'binary-decoder', 'Interpret Message Too Big address information as the destination address of the original datagram.');
+
+clause('wcmp', 'echo_reply_function', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-must', 'runtime', 'Receive WCMP Echo Requests and send corresponding Echo Replies.');
+clause('wcmp', 'echo_message_layout', ['WCMP-GEN-C-006'], '5.5.3.5', 'grammar', 'binary-decoder', 'Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets.');
+clause('wcmp', 'echo_reply_type', ['WCMP-GEN-C-006'], '5.5.3.5', 'table', 'binary-decoder', 'Use type 178 for Echo Request and type 179 for Echo Reply.');
+clause('wcmp', 'echo_data_identity', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-must', 'transport-boundary', 'Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU.');
+clause('wcmp', 'echo_mtu_truncation', ['WCMP-GEN-C-006'], '5.5.3.5', 'implicit-must', 'transport-boundary', 'When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit.');
+clause('wcmp', 'echo_correlation_fields', ['WCMP-GEN-C-006'], '5.5.3.5', 'implicit-must', 'state-machine', 'Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request.');
+clause('wcmp', 'echo_reply_rate_limit', ['WCMP-GEN-C-006'], '5.2', 'explicit-may', 'security-policy', 'Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic.');
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -981,6 +1048,12 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-caching-scr.json`,
     selectedDisposition: 'required-by-class-c-client-mcf',
     clauseSources: ['WAP-120-WAPCachingMod', 'rfc-2616']
+  },
+  {
+    family: 'wcmp',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-wcmp-scr.json`,
+    selectedDisposition: 'required-by-selected-class-c-transport-path',
+    clauseSources: ['WAP-202-WCMP']
   }
 ];
 
@@ -1134,12 +1207,11 @@ const ledger = {
   scope: {
     status: 'in-progress',
     selectedProfileParentCount: 201,
-    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching'],
+    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching', 'wcmp'],
     remainingFamilies: [
       'wmlscript',
       'wmlscript-libraries',
       'wdp',
-      'wcmp',
       'wsp'
     ],
     coveredSelectedParentCount: selectedParentCount,

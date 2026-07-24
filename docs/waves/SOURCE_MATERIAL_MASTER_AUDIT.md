@@ -147,8 +147,8 @@ Supplemental-source precedence:
   grammar are complete for every selected Class C family
 - one-to-one mandatory/optional obligation ledgers for the WAP 1.2.1 target
   (WML 1.3, WAE, WBXML, WMLScript, WMLScript Libraries, caching, WDP, WCMP,
-  and WSP complete at SCR/source-work-item level; WML/WAE/WBXML/caching
-  nested clauses planned; the other five clause families and direct test
+  and WSP complete at SCR/source-work-item level; WML/WAE/WBXML/caching/WCMP
+  nested clauses planned; the other four clause families and direct test
   evidence pending)
 - WAP 1.2.1-to-WAP 2.0 delta records for areas implemented from successor
   documents (selected WAE Class C concepts complete; broader/other-family
@@ -162,9 +162,9 @@ Cross-source selected-profile accounting is now executable:
 - 7 implemented, 84 partial, and 110 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
-- 58 selected WML/WAE/WBXML/caching rows now expand into 329 deduplicated
-  nested clauses with source anchors and planned direct fixtures;
-- the remaining 143 selected rows plus direct conformance fixture execution
+- 63 selected WML/WAE/WBXML/caching/WCMP rows now expand into 357
+  deduplicated nested clauses with source anchors and planned direct fixtures;
+- the remaining 138 selected rows plus direct conformance fixture execution
   remain the principal evidence gap.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
