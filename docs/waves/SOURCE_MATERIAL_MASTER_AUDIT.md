@@ -1,7 +1,7 @@
 # Waves Source Material Master Audit
 
-Version: v0.2
-Status: WAP 2.0-era local corpus reviewed; WAP 1.2.1 target-source recovery and effective-spec remapping in progress
+Version: v0.3
+Status: selected WAP 1.2.1 Class C source/SCR baseline complete; nested clauses and implementation evidence in progress
 
 ## Goal
 
@@ -153,6 +153,17 @@ Supplemental-source precedence:
   documents (selected WAE Class C concepts complete; broader/other-family
   deltas pending)
 
+Cross-source selected-profile accounting is now executable:
+
+- 712 effective SCR/source rows across the nine mandatory feature families;
+- 201 rows selected by the exact Class C client profile and transport
+  dependency path;
+- 7 implemented, 84 partial, and 110 missing in the conservative
+  implementation audit;
+- every selected row has an owner and work-item mapping;
+- nested normative clauses and source-derived direct conformance fixtures
+  remain the principal evidence gap.
+
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes
 source order. The exact class graph exists at
@@ -210,15 +221,20 @@ is additionally conditional on connection-oriented WSP.
 
 ## Immediate next audit tasks
 
-1. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synced with contract changes.
-2. Finish metadata-locking unresolved external dependencies and obtain
-   redistribution guidance for recovered WAP sources and DTDs.
-3. Replace successor-spec assumptions with an explicit base + SIN + delta
-   graph.
-4. Generate additive strict-mode work items from uncovered WAP 1.2.1
-   obligations; do not rewrite completed ticket history.
-5. Promote `planned` entries in `docs/waves/SPEC_TEST_COVERAGE.md` into
-   implemented tests in each project backlog.
+1. Complete `SRC-005`: normalize the selected `TIAEIA-732` bearer citation
+   and retain explicit metadata-only status for licensed external payloads.
+2. Complete `CONF-003`: extract and deduplicate nested normative clauses
+   beneath all 201 selected rows.
+3. Promote direct, source-derived fixtures and executable evidence through
+   the mapped runtime, transport, integration, and release sprints.
+4. Complete `CONF-007`, the unified WAP 1.2.1-to-successor delta register,
+   including code built from later WMLScript, WDP, WSP, and related materials.
+5. Extract an effective WAP-201/WTP ledger only before claiming the optional
+   connection-oriented WSP/WTP module.
+6. Obtain redistribution guidance before promoting the 76 privately recovered
+   release members or parsed derivatives into Git.
+7. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synchronized with any
+   implementation-facing contract changes.
 
 ## Quality gates
 

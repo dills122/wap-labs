@@ -133,7 +133,8 @@
             "Dependency applicability and supersession review"
           ],
           "acceptance": [
-            "Every normative external reference in strict-target families has authority metadata and is classified as definition-only, implementation-relevant, or test-relevant."
+            "Every normative external reference in strict-target families has authority metadata and is classified as definition-only, implementation-relevant, or test-relevant.",
+            "The selected TIAEIA-732 bearer citation has normalized part/version metadata and an explicit licensed-access disposition."
           ],
           "evidence": [
             "node scripts/check-wap-external-dependencies.mjs",
@@ -256,13 +257,14 @@
             "Normative clause ledger nested under SCR features"
           ],
           "acceptance": [
+            "All 201 selected rows across the nine mandatory Class C families have nested normative clauses anchored and deduplicated.",
             "Normative text is not reduced to keyword search: implicit MUST rules and clauses within each SCR feature are anchored and deduplicated."
           ],
-      "evidence": [
-        "node scripts/check-wap-conformance-ledger.mjs",
-        "node scripts/check-wap-wae-conformance-ledger.mjs",
-        "node scripts/check-wap-wbxml-conformance-ledger.mjs"
-      ]
+          "evidence": [
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-wap-wae-conformance-ledger.mjs",
+            "node scripts/check-wap-wbxml-conformance-ledger.mjs"
+          ]
         },
         {
           "id": "CONF-004",
@@ -313,6 +315,37 @@
           ],
           "evidence": [
             "node scripts/check-requirement-status-drift.mjs"
+          ]
+        },
+        {
+          "id": "CONF-007",
+          "status": "todo",
+          "ownerLayers": [
+            "documentation",
+            "qa",
+            "cross-layer"
+          ],
+          "sourceFamilies": [
+            "wae",
+            "wml",
+            "wbxml",
+            "wmlscript",
+            "wmlscript-libraries",
+            "caching",
+            "wdp",
+            "wsp",
+            "wcmp"
+          ],
+          "existingTickets": [],
+          "outputs": [
+            "Unified WAP 1.2.1-to-successor implementation delta register"
+          ],
+          "acceptance": [
+            "Every selected-row behavior implemented from successor-era material is classified as compatible, strict correction required, or successor-only.",
+            "Family-specific WAE, WDP/WCMP, and WSP delta registers feed one machine-checkable cross-family view; WML, WBXML, WMLScript, libraries, and caching are not omitted."
+          ],
+          "evidence": [
+            "node scripts/check-wap-delta-register.mjs"
           ]
         }
       ],

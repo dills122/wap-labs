@@ -16,6 +16,12 @@ Status: Active
 - Private target-source status: all 97 release members plus WAP-215 are
   byte/hash verified outside Git; public promotion remains permission-gated
 - Selected profile: exact WAP-215 Class C client `CCR-CLASSC-C-001`
+- Selected-profile SCR accounting:
+  - nine mandatory feature families
+  - 712 effective source rows
+  - 201 selected strict rows
+  - implementation audit: 7 implemented, 84 partial, 110 missing
+  - all 201 selected rows have owner/work-item mappings
 - Important: `deep-extracted` describes review of the current WAP 2.0-heavy
   local corpus. It is not evidence that the WAP 1.2.1 target source set or
   implementation is complete.

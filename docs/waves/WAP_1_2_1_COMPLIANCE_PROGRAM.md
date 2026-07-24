@@ -35,6 +35,11 @@ node scripts/check-wap-transport-conformance-ledgers.mjs
 
 All nine selected Class C family increments are complete at SCR level:
 
+- together they contain 712 effective source rows and 201 selected strict
+  rows;
+- the selected implementation audit is 7 implemented, 84 partial, and 110
+  missing;
+- every selected row has an implementation owner and work-item mapping;
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
 - the selected Class C client scope is 39 required, 27 optional, and 10
@@ -125,7 +130,7 @@ executable evidence.
 
 ## Dependency-ordered program
 
-The program contains 13 sprints and 77 unique work items. Existing completed
+The program contains 13 sprints and 78 unique work items. Existing completed
 tickets remain historical facts; the program maps to them where relevant and
 adds work only for uncovered obligations.
 
@@ -170,13 +175,15 @@ closes `SRC-004` without changing the redistribution boundary.
 2. Treat `CONF-002` family-level SCR extraction as complete. Continue
    `CONF-003` nested-clause extraction across all nine selected families; add
    WTP only when connection-oriented WSP is claimed.
-3. Continue the completed first-pass implementation audits into exact
+3. Complete `CONF-007`, the unified WAP 1.2.1-to-successor implementation
+   delta register, using the family-specific WAE/transport registers as inputs.
+4. Continue the completed first-pass implementation audits into exact
    source-derived fixtures. Do not reopen completed tickets; add narrowly
    scoped gap work.
-4. Refresh the master priority plan from the reconciled obligation ledger.
-5. Execute the runtime and protocol sprints in dependency order, then close
+5. Refresh the master priority plan from the reconciled obligation ledger.
+6. Execute the runtime and protocol sprints in dependency order, then close
    cross-layer and release evidence.
-6. Start optional profiles and Waves enhancements only after their declared
+7. Start optional profiles and Waves enhancements only after their declared
    strict gates.
 
 ## Source blockers

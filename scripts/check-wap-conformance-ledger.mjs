@@ -471,3 +471,165 @@ const transportCheck = spawnSync(
 if (transportCheck.status !== 0) {
   process.exit(transportCheck.status ?? 1);
 }
+
+const selectedProfileLedgers = [
+  {
+    family: 'wml',
+    file: 'wap-1.2.1-wml-scr.json',
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    expectedRows: 76,
+    expectedSelected: 39
+  },
+  {
+    family: 'wae',
+    file: 'wap-1.2.1-wae-scr.json',
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    expectedRows: 86,
+    expectedSelected: 11
+  },
+  {
+    family: 'wbxml',
+    file: 'wap-1.2.1-wbxml-scr.json',
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    expectedRows: 15,
+    expectedSelected: 3
+  },
+  {
+    family: 'wmlscript',
+    file: 'wap-1.2.1-wmlscript-scr.json',
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    expectedRows: 112,
+    expectedSelected: 41
+  },
+  {
+    family: 'wmlscript-libraries',
+    file: 'wap-1.2.1-wmlscript-libraries-scr.json',
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    expectedRows: 95,
+    expectedSelected: 80
+  },
+  {
+    family: 'caching',
+    file: 'wap-1.2.1-caching-scr.json',
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    expectedRows: 11,
+    expectedSelected: 5
+  },
+  {
+    family: 'wdp',
+    file: 'wap-1.2.1-wdp-scr.json',
+    selectedDisposition: 'required-by-selected-class-c-transport-path',
+    expectedRows: 146,
+    expectedSelected: 9
+  },
+  {
+    family: 'wcmp',
+    file: 'wap-1.2.1-wcmp-scr.json',
+    selectedDisposition: 'required-by-selected-class-c-transport-path',
+    expectedRows: 62,
+    expectedSelected: 5
+  },
+  {
+    family: 'wsp',
+    file: 'wap-1.2.1-wsp-scr.json',
+    selectedDisposition: 'required-by-selected-class-c-transport-path',
+    expectedRows: 109,
+    expectedSelected: 8
+  }
+];
+const aggregateFailures = [];
+const aggregateStatusCounts = {
+  implemented: 0,
+  partial: 0,
+  missing: 0
+};
+let aggregateRowCount = 0;
+let aggregateSelectedCount = 0;
+
+for (const definition of selectedProfileLedgers) {
+  const familyLedger = JSON.parse(
+    fs.readFileSync(
+      path.join(
+        root,
+        'spec-processing/source-manifests',
+        definition.file
+      ),
+      'utf8'
+    )
+  );
+  const familyObligations = familyLedger.obligations ?? [];
+  const familySelected = familyObligations.filter(
+    (obligation) =>
+      obligation.disposition?.classCProfile ===
+      definition.selectedDisposition
+  );
+  aggregateRowCount += familyObligations.length;
+  aggregateSelectedCount += familySelected.length;
+
+  if (
+    familyLedger.family !== definition.family ||
+    familyObligations.length !== definition.expectedRows ||
+    familySelected.length !== definition.expectedSelected
+  ) {
+    aggregateFailures.push(
+      `${definition.family}: expected ${definition.expectedRows} rows / ${definition.expectedSelected} selected; found ${familyObligations.length} / ${familySelected.length}`
+    );
+  }
+
+  for (const obligation of familySelected) {
+    const status = obligation.mapping?.implementationStatus;
+    if (!(status in aggregateStatusCounts)) {
+      aggregateFailures.push(
+        `${definition.family}/${obligation.id}: invalid selected implementation status=${status}`
+      );
+      continue;
+    }
+    aggregateStatusCounts[status] += 1;
+    if (
+      !Array.isArray(obligation.mapping?.ownerLayers) ||
+      obligation.mapping.ownerLayers.length === 0 ||
+      !Array.isArray(obligation.mapping?.workItems) ||
+      obligation.mapping.workItems.length === 0
+    ) {
+      aggregateFailures.push(
+        `${definition.family}/${obligation.id}: selected row lacks an owner or work item`
+      );
+    }
+    if (obligation.disposition?.enhancementMayReplaceStrictBehavior !== false) {
+      aggregateFailures.push(
+        `${definition.family}/${obligation.id}: enhancement replacement guard drift`
+      );
+    }
+  }
+}
+
+if (aggregateRowCount !== 712 || aggregateSelectedCount !== 201) {
+  aggregateFailures.push(
+    `selected-profile aggregate expected 712 source rows / 201 selected; found ${aggregateRowCount} / ${aggregateSelectedCount}`
+  );
+}
+if (
+  JSON.stringify(aggregateStatusCounts) !==
+  JSON.stringify({ implemented: 7, partial: 84, missing: 110 })
+) {
+  aggregateFailures.push(
+    `selected-profile status aggregate drift: ${JSON.stringify(aggregateStatusCounts)}`
+  );
+}
+
+if (aggregateFailures.length > 0) {
+  console.error('WAP selected-profile aggregate check failed.');
+  for (const failure of aggregateFailures) {
+    console.error(`- ${failure}`);
+  }
+  process.exit(1);
+}
+
+console.log('==> WAP 1.2.1 selected Class C aggregate');
+console.log(
+  `PASS ${aggregateRowCount} source rows / ${aggregateSelectedCount} selected rows across nine mandatory families`
+);
+console.log(
+  `PASS selected audit: ${aggregateStatusCounts.implemented} implemented / ${aggregateStatusCounts.partial} partial / ${aggregateStatusCounts.missing} missing`
+);
+console.log('PASS every selected row has owner/work-item mapping and strict enhancement guard');

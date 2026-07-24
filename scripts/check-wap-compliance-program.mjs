@@ -182,7 +182,23 @@ if (!program.sprints.some((sprint) =>
 const conformanceSprint = program.sprints.find(
   (sprint) => sprint.id === 'CONF-1'
 );
-for (const itemId of ['CONF-002', 'CONF-003']) {
+const sourceSprint = program.sprints.find((sprint) => sprint.id === 'SRC-0');
+const src005 = sourceSprint?.workItems.find(
+  (workItem) => workItem.id === 'SRC-005'
+);
+if (
+  src005?.status !== 'in-progress' ||
+  !src005?.acceptance?.some(
+    (line) =>
+      line.includes('TIAEIA-732') &&
+      line.includes('licensed-access disposition')
+  )
+) {
+  failures.push(
+    'SRC-005 must retain the selected TIAEIA-732 normalization and license boundary'
+  );
+}
+for (const itemId of ['CONF-002', 'CONF-003', 'CONF-007']) {
   const item = conformanceSprint?.workItems.find(
     (workItem) => workItem.id === itemId
   );
@@ -192,6 +208,39 @@ for (const itemId of ['CONF-002', 'CONF-003']) {
   ) {
     failures.push(`${itemId} must cover the exact selected Class C families`);
   }
+}
+const conf007 = conformanceSprint?.workItems.find(
+  (workItem) => workItem.id === 'CONF-007'
+);
+if (
+  conf007?.status !== 'todo' ||
+  !conf007?.outputs?.includes(
+    'Unified WAP 1.2.1-to-successor implementation delta register'
+  ) ||
+  !conf007?.acceptance?.some((line) =>
+    line.includes('successor-era material')
+  ) ||
+  !conf007?.evidence?.includes('node scripts/check-wap-delta-register.mjs')
+) {
+  failures.push(
+    'CONF-007 must retain the cross-family successor delta-register plan'
+  );
+}
+const conf003 = conformanceSprint?.workItems.find(
+  (workItem) => workItem.id === 'CONF-003'
+);
+if (
+  conf003?.status !== 'todo' ||
+  !conf003?.acceptance?.some((line) =>
+    line.includes('All 201 selected rows')
+  ) ||
+  !conf003?.evidence?.includes(
+    'node scripts/check-wap-conformance-ledger.mjs'
+  )
+) {
+  failures.push(
+    'CONF-003 must retain nested-clause closure for all 201 selected rows'
+  );
 }
 const conf002 = conformanceSprint?.workItems.find(
   (workItem) => workItem.id === 'CONF-002'
