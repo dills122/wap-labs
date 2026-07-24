@@ -1,20 +1,35 @@
 use crate::runtime::card::Card;
 use std::collections::HashMap;
 
+/// Deck-level access control from a WML `<head><access domain=".." path=".."/></head>`
+/// element (WML-C-21, section 11.3.1). Values are stored exactly as authored; resolving
+/// the domain/path defaults against the deck's own URL and enforcing the suffix/prefix
+/// match against a referring URI is a host-boundary concern, not a parser concern.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DeckAccessControl {
+    pub domain: Option<String>,
+    pub path: Option<String>,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Deck {
     pub cards: Vec<Card>,
+    pub access_control: Option<DeckAccessControl>,
     id_index: HashMap<String, usize>,
 }
 
 impl Deck {
-    pub fn new(cards: Vec<Card>) -> Deck {
+    pub fn new(cards: Vec<Card>, access_control: Option<DeckAccessControl>) -> Deck {
         let mut id_index = HashMap::new();
         for (idx, card) in cards.iter().enumerate() {
             // First card wins for duplicate ids to keep navigation deterministic.
             id_index.entry(card.id.clone()).or_insert(idx);
         }
-        Deck { cards, id_index }
+        Deck {
+            cards,
+            access_control,
+            id_index,
+        }
     }
 
     pub fn card_index(&self, id: &str) -> Option<usize> {
@@ -29,41 +44,47 @@ mod tests {
 
     #[test]
     fn first_duplicate_card_id_wins_in_index() {
-        let deck = Deck::new(vec![
-            Card {
-                id: "dup".to_string(),
-                nodes: vec![],
-                accept_action: None,
-                onenterforward_action: None,
-                onenterbackward_action: None,
-                ontimer_action: None,
-                timer_value_ds: None,
-            },
-            Card {
-                id: "dup".to_string(),
-                nodes: vec![],
-                accept_action: None,
-                onenterforward_action: None,
-                onenterbackward_action: None,
-                ontimer_action: None,
-                timer_value_ds: None,
-            },
-        ]);
+        let deck = Deck::new(
+            vec![
+                Card {
+                    id: "dup".to_string(),
+                    nodes: vec![],
+                    accept_action: None,
+                    onenterforward_action: None,
+                    onenterbackward_action: None,
+                    ontimer_action: None,
+                    timer_value_ds: None,
+                },
+                Card {
+                    id: "dup".to_string(),
+                    nodes: vec![],
+                    accept_action: None,
+                    onenterforward_action: None,
+                    onenterbackward_action: None,
+                    ontimer_action: None,
+                    timer_value_ds: None,
+                },
+            ],
+            None,
+        );
 
         assert_eq!(deck.card_index("dup"), Some(0));
     }
 
     #[test]
     fn card_index_returns_none_for_unknown_id() {
-        let deck = Deck::new(vec![Card {
-            id: "home".to_string(),
-            nodes: vec![],
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
-            timer_value_ds: None,
-        }]);
+        let deck = Deck::new(
+            vec![Card {
+                id: "home".to_string(),
+                nodes: vec![],
+                accept_action: None,
+                onenterforward_action: None,
+                onenterbackward_action: None,
+                ontimer_action: None,
+                timer_value_ds: None,
+            }],
+            None,
+        );
 
         assert_eq!(deck.card_index("missing"), None);
     }

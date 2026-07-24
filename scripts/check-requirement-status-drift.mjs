@@ -26,7 +26,7 @@ const familyDefinitions = [
     expectedRows: 76,
     expectedSelected: 39,
     expectedClauses: 174,
-    expectedStatus: { implemented: 2, partial: 23, missing: 14 },
+    expectedStatus: { implemented: 3, partial: 24, missing: 12 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -320,7 +320,7 @@ if (
   aggregateSelected !== 201 ||
   aggregateClauses !== 781 ||
   JSON.stringify(aggregateStatus) !==
-    JSON.stringify({ implemented: 7, partial: 84, missing: 110 })
+    JSON.stringify({ implemented: 8, partial: 85, missing: 108 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }

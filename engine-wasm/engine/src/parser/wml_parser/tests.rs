@@ -722,3 +722,65 @@ fn xml_tree_build_allows_depth_at_the_budget_and_rejects_one_level_more() {
         "unexpected error message: {err}"
     );
 }
+
+#[test]
+fn parse_wml_populates_deck_access_control_from_head() {
+    let xml = r#"
+        <wml>
+          <head><access domain="wapforum.org" path="/cbb"/></head>
+          <card id="home"><p>Hi</p></card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("deck should parse");
+    let access_control = deck
+        .access_control
+        .expect("deck should carry parsed access control");
+    assert_eq!(access_control.domain.as_deref(), Some("wapforum.org"));
+    assert_eq!(access_control.path.as_deref(), Some("/cbb"));
+    assert_eq!(deck.cards.len(), 1, "head must not be mistaken for a card");
+}
+
+#[test]
+fn parse_wml_deck_without_head_has_no_access_control() {
+    let xml = r#"<wml><card id="home"><p>Hi</p></card></wml>"#;
+
+    let deck = parse_wml(xml).expect("deck should parse");
+    assert_eq!(deck.access_control, None);
+}
+
+#[test]
+fn parse_wml_propagates_duplicate_access_element_error() {
+    let xml = r#"
+        <wml>
+          <head>
+            <access domain="a.com"/>
+            <access domain="b.com"/>
+          </head>
+          <card id="home"><p>Hi</p></card>
+        </wml>
+        "#;
+
+    let err = parse_wml(xml).expect_err("duplicate <access> must be rejected");
+    assert!(
+        err.contains("more than one <access>"),
+        "unexpected error message: {err}"
+    );
+}
+
+#[test]
+fn parse_wml_honors_only_first_head_when_deck_has_more_than_one() {
+    let xml = r#"
+        <wml>
+          <head><access domain="first.com"/></head>
+          <head><access domain="second.com"/></head>
+          <card id="home"><p>Hi</p></card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("deck should parse");
+    let access_control = deck
+        .access_control
+        .expect("access control should be present");
+    assert_eq!(access_control.domain.as_deref(), Some("first.com"));
+}

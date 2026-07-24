@@ -2,10 +2,12 @@ use crate::runtime::card::Card;
 use crate::runtime::deck::Deck;
 
 mod actions;
+mod head;
 mod nodes;
 mod xml;
 
 use actions::parse_card_actions;
+use head::parse_deck_access_control;
 use nodes::parse_card_nodes_xml;
 use xml::{parse_xml_root, XmlNode};
 
@@ -54,14 +56,28 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     }
 
     let mut cards = Vec::new();
+    let mut access_control = None;
+    let mut seen_head = false;
     let mut budget = ParseBudget::default();
     for node in &root.children {
-        let XmlNode::Element(card) = node else {
+        let XmlNode::Element(element) = node else {
             continue;
         };
-        if card.name != "card" {
+        if element.name == "head" {
+            // The `wml` content model (`head?, template?, card+`) allows at most
+            // one `<head>`; a malformed deck with more than one is tolerated and
+            // only the first is honored, consistent with this parser's existing
+            // first-wins handling of other duplicate/invalid structures.
+            if !seen_head {
+                seen_head = true;
+                access_control = parse_deck_access_control(element)?;
+            }
             continue;
         }
+        if element.name != "card" {
+            continue;
+        }
+        let card = element;
 
         let id = card
             .attr("id")
@@ -90,7 +106,7 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
         return Err("No <card> elements found".to_string());
     }
 
-    Ok(Deck::new(cards))
+    Ok(Deck::new(cards, access_control))
 }
 
 fn map_xml_parse_error(err: String) -> String {

@@ -61,11 +61,11 @@
       "wbxml-encoding-and-validation": 4,
       "wml-document-validation": 11
     },
-    "testEvidenceLinkedCount": 25,
+    "testEvidenceLinkedCount": 27,
     "mandatoryImplementationStatus": {
-      "implemented": 2,
-      "missing": 22,
-      "partial": 23
+      "implemented": 3,
+      "missing": 20,
+      "partial": 24
     }
   },
   "obligations": [
@@ -1059,11 +1059,31 @@
           "R0-01",
           "R0-04"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "The access element is not retained and no deck access-control policy is enforced.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The access element's domain/path attributes are now parsed and retained on the deck model (engine-wasm). Enforcement of the access-control policy (suffix/prefix matching against a referring URI) is a host-boundary concern and remains R0-07's scope; this obligation is partial until that lands.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
+            "symbol": "parse_deck_access_control"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "DeckAccessControl"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "parse_wml_populates_deck_access_control_from_head",
+            "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
+            "test": "more_than_one_access_element_is_a_parse_error",
+            "command": "cd engine-wasm/engine && cargo test more_than_one_access_element_is_a_parse_error"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1479,11 +1499,27 @@
           "R0-01",
           "R0-04"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "The head element and its metadata/access contents are not retained in the runtime deck.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The head element is recognized at the deck level (not mistaken for a card) and its access child is extracted onto the deck model. The meta child (WML-C-34, optional) is not yet represented and is tolerated as an unimplemented-optional element, consistent with this parser's existing handling of other unsupported optional constructs.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
+            "symbol": "parse_wml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "parse_wml_populates_deck_access_control_from_head",
+            "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "parse_wml_honors_only_first_head_when_deck_has_more_than_one",
+            "command": "cd engine-wasm/engine && cargo test parse_wml_honors_only_first_head_when_deck_has_more_than_one"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
