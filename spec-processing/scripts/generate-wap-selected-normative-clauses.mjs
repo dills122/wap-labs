@@ -15,17 +15,40 @@ function option(name) {
 const wmlTextPath = option('--wml-text');
 const wbxmlTextPath = option('--wbxml-text');
 const wbxmlSinTextPath = option('--wbxml-sin-text');
+const waeTextPath = option('--wae-text');
+const waeSin101TextPath = option('--wae-sin-101-text');
+const waeSin103TextPath = option('--wae-sin-103-text');
+const rfc2396TextPath = option('--rfc-2396-text');
+const rfc2616TextPath = option('--rfc-2616-text');
+const rfc2617TextPath = option('--rfc-2617-text');
 const recordedOn = option('--recorded-on');
 const outputPath =
   option('--output') ??
   'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json';
 
-if (!wmlTextPath || !wbxmlTextPath || !wbxmlSinTextPath || !recordedOn) {
+if (
+  !wmlTextPath ||
+  !wbxmlTextPath ||
+  !wbxmlSinTextPath ||
+  !waeTextPath ||
+  !waeSin101TextPath ||
+  !waeSin103TextPath ||
+  !rfc2396TextPath ||
+  !rfc2616TextPath ||
+  !rfc2617TextPath ||
+  !recordedOn
+) {
   console.error(
     'Usage: node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs ' +
       '--wml-text /absolute/path/WAP-191_104-WML-20010718-a.txt ' +
       '--wbxml-text /absolute/path/WAP-192-WBXML-20010725-a.txt ' +
       '--wbxml-sin-text /absolute/path/WAP-192_105-WBXML-20011015-a.txt ' +
+      '--wae-text /absolute/path/WAP-190-WAESpec-20000329-a.txt ' +
+      '--wae-sin-101-text /absolute/path/WAP-190_101-WAESpec-20001213-a.txt ' +
+      '--wae-sin-103-text /absolute/path/WAP-190_103-WAESpec-20001213-a.txt ' +
+      '--rfc-2396-text /absolute/path/rfc2396.txt ' +
+      '--rfc-2616-text /absolute/path/rfc2616.txt ' +
+      '--rfc-2617-text /absolute/path/rfc2617.txt ' +
       '--recorded-on YYYY-MM-DD [--output path]'
   );
   process.exit(2);
@@ -35,6 +58,9 @@ const manifestDirectory = 'spec-processing/source-manifests';
 const release = readJson(`${manifestDirectory}/wap-1.2.1-release.json`);
 const ingestion = readJson(
   `${manifestDirectory}/wap-1.2.1-ingestion-status.json`
+);
+const externalIngestion = readJson(
+  `${manifestDirectory}/wap-1.2.1-external-ingestion-status.json`
 );
 const effectiveSpec = readJson(
   `${manifestDirectory}/wap-1.2.1-effective-spec.json`
@@ -84,6 +110,51 @@ const sourceInputs = new Map([
       path: wbxmlSinTextPath,
       text: fs.readFileSync(wbxmlSinTextPath, 'utf8')
     }
+  ],
+  [
+    'WAP-190-WAESpec',
+    {
+      path: waeTextPath,
+      text: fs.readFileSync(waeTextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-190_101-WAESpec',
+    {
+      path: waeSin101TextPath,
+      text: fs.readFileSync(waeSin101TextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-190_103-WAESpec',
+    {
+      path: waeSin103TextPath,
+      text: fs.readFileSync(waeSin103TextPath, 'utf8')
+    }
+  ],
+  [
+    'rfc-2396',
+    {
+      path: rfc2396TextPath,
+      text: fs.readFileSync(rfc2396TextPath, 'utf8'),
+      externalDependencyId: 'rfc-2396'
+    }
+  ],
+  [
+    'rfc-2616',
+    {
+      path: rfc2616TextPath,
+      text: fs.readFileSync(rfc2616TextPath, 'utf8'),
+      externalDependencyId: 'rfc-2616'
+    }
+  ],
+  [
+    'rfc-2617',
+    {
+      path: rfc2617TextPath,
+      text: fs.readFileSync(rfc2617TextPath, 'utf8'),
+      externalDependencyId: 'rfc-2617'
+    }
   ]
 ]);
 const ingestionById = new Map(
@@ -92,16 +163,30 @@ const ingestionById = new Map(
 const releaseById = new Map(
   release.members.map((member) => [member.documentId, member])
 );
+const externalIngestionById = new Map(
+  externalIngestion.dependencies.map((dependency) => [
+    dependency.dependencyId,
+    dependency
+  ])
+);
 
 for (const [documentId, source] of sourceInputs) {
-  const expectedTextHash = ingestionById.get(documentId)?.parsedText?.sha256;
+  const externalArtifact = source.externalDependencyId
+    ? externalIngestionById
+        .get(source.externalDependencyId)
+        ?.artifacts.find((artifact) => artifact.mediaType === 'text/plain')
+    : undefined;
+  const expectedTextHash = source.externalDependencyId
+    ? externalArtifact?.sha256
+    : ingestionById.get(documentId)?.parsedText?.sha256;
   const actualTextHash = sha256(source.text);
   if (!expectedTextHash || actualTextHash !== expectedTextHash) {
     throw new Error(
-      `${documentId}: text extraction SHA-256 ${actualTextHash} does not match ingestion lock ${expectedTextHash}`
+      `${documentId}: source-text SHA-256 ${actualTextHash} does not match ingestion lock ${expectedTextHash}`
     );
   }
   source.textSha256 = actualTextHash;
+  source.externalArtifact = externalArtifact;
 }
 
 if (
@@ -254,21 +339,85 @@ const sectionDefinitions = {
         '7. Numeric Constants'
       ]
     }
+  },
+  wae: {
+    sourceDocumentId: 'WAP-190-WAESpec',
+    ranges: {
+      '5.1.2': ['5.1.2 Basic Authentication Scheme', '5.1.3 URL Schemes'],
+      '5.1.3': ['5.1.3 URL Schemes', '5.1.4 User Agent Characteristics'],
+      '5.1.4': [
+        '5.1.4 User Agent Characteristics',
+        '5.1.5 Wireless Markup Language'
+      ],
+      '5.1.5': ['5.1.5 Wireless Markup Language', '5.1.6 WMLScript'],
+      '5.1.6': ['5.1.6 WMLScript', '5.1.7 WAE User Agents'],
+      '5.1.7.2': ['5.1.7.2 WML User Agent', '5.1.8 WAE Media Types'],
+      '5.1.8': ['5.1.8 WAE Media Types', '5.1.8.1 Encoded WML format'],
+      '5.1.8.1': [
+        '5.1.8.1 Encoded WML format',
+        '5.1.8.2 Encoded WMLScript format'
+      ],
+      '5.1.8.2': [
+        '5.1.8.2 Encoded WMLScript format',
+        '5.1.8.3 The Electronic Business Card Format (vCard 2.1)'
+      ]
+    }
+  },
+  'wae-sin-101': {
+    sourceDocumentId: 'WAP-190_101-WAESpec',
+    ranges: {
+      '3.3': ['3.3 Change Description', null]
+    }
+  },
+  'wae-sin-103': {
+    sourceDocumentId: 'WAP-190_103-WAESpec',
+    ranges: {
+      '3.3': ['3.3 Change Description', null]
+    }
+  },
+  'rfc-2396': {
+    sourceDocumentId: 'rfc-2396',
+    ranges: {
+      '3': ['3. URI Syntactic Components', '3.1. Scheme Component']
+    }
+  },
+  'rfc-2616': {
+    sourceDocumentId: 'rfc-2616',
+    ranges: {
+      '3.2.2': ['3.2.2 http URL', '3.2.3 URI Comparison'],
+      '3.2.3': ['3.2.3 URI Comparison', '3.3 Date/Time Formats'],
+      '14.1': ['14.1 Accept', '14.2 Accept-Charset'],
+      '14.2': ['14.2 Accept-Charset', '14.3 Accept-Encoding'],
+      '14.4': ['14.4 Accept-Language', '14.5 Accept-Ranges']
+    }
+  },
+  'rfc-2617': {
+    sourceDocumentId: 'rfc-2617',
+    ranges: {
+      '1.2': ['1.2 Access Authentication Framework', '2 Basic Authentication Scheme'],
+      '2': ['2 Basic Authentication Scheme', '3 Digest Access Authentication Scheme'],
+      '4.1': [
+        '4.1 Authentication of Clients using Basic Authentication',
+        '4.2 Authentication of Clients using Digest Authentication'
+      ]
+    }
   }
 };
 
-function extractSection(family, section) {
-  const definition = sectionDefinitions[family];
+function extractSection(anchorFamily, section) {
+  const definition = sectionDefinitions[anchorFamily];
   const [startHeading, endHeading] = definition?.ranges?.[section] ?? [];
-  if (!definition || !startHeading || !endHeading) {
-    throw new Error(`${family}/${section}: missing section range`);
+  if (!definition || !startHeading) {
+    throw new Error(`${anchorFamily}/${section}: missing section range`);
   }
   const source = sourceInputs.get(definition.sourceDocumentId);
   const start = source.text.indexOf(`\n${startHeading}\n`);
-  const end = source.text.indexOf(`\n${endHeading}\n`, start + 1);
+  const end = endHeading
+    ? source.text.indexOf(`\n${endHeading}\n`, start + 1)
+    : source.text.length;
   if (start === -1 || end === -1 || end <= start) {
     throw new Error(
-      `${family}/${section}: cannot resolve ${startHeading} -> ${endHeading}`
+      `${anchorFamily}/${section}: cannot resolve ${startHeading} -> ${endHeading ?? 'EOF'}`
     );
   }
   const normalized = normalizeSectionText(
@@ -283,9 +432,12 @@ function extractSection(family, section) {
 }
 
 const sectionAnchors = new Map();
-for (const [family, definition] of Object.entries(sectionDefinitions)) {
+for (const [anchorFamily, definition] of Object.entries(sectionDefinitions)) {
   for (const section of Object.keys(definition.ranges)) {
-    sectionAnchors.set(`${family}:${section}`, extractSection(family, section));
+    sectionAnchors.set(
+      `${anchorFamily}:${section}`,
+      extractSection(anchorFamily, section)
+    );
   }
 }
 
@@ -298,13 +450,14 @@ function clause(
   section,
   normativeForce,
   fixtureKind,
-  obligationSynopsis
+  obligationSynopsis,
+  anchorFamily = family
 ) {
   clauseRows.push({
     id: `${family.toUpperCase()}-CL-${key.toUpperCase().replaceAll('_', '-')}`,
     family,
     parentRows,
-    sourceAnchor: sectionAnchors.get(`${family}:${section}`),
+    sourceAnchor: sectionAnchors.get(`${anchorFamily}:${section}`),
     normativeForce,
     obligationLevel:
       normativeForce === 'explicit-should'
@@ -520,6 +673,53 @@ clause('wml', 'image_local_precedence', ['WML-C-32'], '11.9', 'implicit-must', '
 clause('wml', 'image_remote_fetch', ['WML-C-32'], '11.9', 'implicit-must', 'transport-boundary', 'When images are supported and no usable local representation exists, fetch the src URI for rendering.');
 clause('wml', 'image_alt_fallback', ['WML-C-32', 'WML-C-54'], '11.9', 'implicit-must', 'rendering', 'Render alt text when the image cannot be displayed because support, local data, or fetched content is unavailable.');
 
+// WAE selected Class C integration clauses. Imported RFC behavior is anchored
+// to the authority-locked external text while language behavior delegates to
+// the WML and WMLScript family ledgers.
+clause('wae', 'basic_auth_required', ['WAESpec-C-002'], '3.3', 'explicit-must', 'transport-boundary', 'Implement the HTTP Basic authentication scheme using the RFC 2616 authority selected by the effective WAE SIN chain.', 'wae-sin-103');
+clause('wae', 'auth_challenge_parsing', ['WAESpec-C-002'], '1.2', 'explicit-must', 'parser', 'Parse one or more case-insensitive authentication schemes and their challenge parameters from WWW-Authenticate and Proxy-Authenticate fields.', 'rfc-2617');
+clause('wae', 'auth_realm_required', ['WAESpec-C-002'], '1.2', 'explicit-must', 'parser', 'Require every accepted Basic challenge to contain a quoted realm parameter while treating the parameter name case-insensitively.', 'rfc-2617');
+clause('wae', 'auth_protection_space', ['WAESpec-C-002'], '1.2', 'implicit-must', 'security-policy', 'Identify an authentication protection space by the case-sensitive realm value together with the canonical root URL of its server.', 'rfc-2617');
+clause('wae', 'auth_challenge_selection', ['WAESpec-C-002'], '1.2', 'explicit-must', 'security-policy', 'When several challenges are offered, select the strongest authentication scheme the user agent understands and request credentials for that challenge.', 'rfc-2617');
+clause('wae', 'auth_origin_credentials', ['WAESpec-C-002'], '1.2', 'implicit-must', 'transport-boundary', 'Send origin-server Basic credentials in Authorization and associate them only with the realm and protection space of the requested resource.', 'rfc-2617');
+clause('wae', 'auth_proxy_credentials', ['WAESpec-C-002'], '1.2', 'implicit-must', 'transport-boundary', 'Handle a 407 proxy challenge with Proxy-Authorization while keeping proxy credentials distinct from end-to-end origin credentials.', 'rfc-2617');
+clause('wae', 'auth_basic_encoding', ['WAESpec-C-002'], '2', 'implicit-must', 'transport-boundary', 'Encode Basic credentials as Base64 over the user identifier, one colon separator, and the password, without MIME line-length wrapping.', 'rfc-2617');
+clause('wae', 'auth_userid_grammar', ['WAESpec-C-002'], '2', 'grammar', 'parser', 'Reject a Basic user identifier containing a colon while allowing the password field to contain text, including additional colons.', 'rfc-2617');
+clause('wae', 'auth_realm_opacity', ['WAESpec-C-002'], '2', 'implicit-must', 'security-policy', 'Treat a Basic realm value as an opaque, case-sensitive string that is comparable only with realms on the same server.', 'rfc-2617');
+clause('wae', 'auth_path_reuse_scope', ['WAESpec-C-002'], '2', 'explicit-should', 'security-policy', 'Assume Basic credentials apply at or below the challenged Request-URI path depth, but never extend automatic reuse beyond the protection space.', 'rfc-2617');
+clause('wae', 'auth_preemptive_reuse', ['WAESpec-C-002'], '2', 'explicit-may', 'transport-boundary', 'Permit preemptive Authorization only for a request already known to fall within the matching Basic protection space.', 'rfc-2617');
+clause('wae', 'auth_rechallenge', ['WAESpec-C-002'], '1.2', 'implicit-must', 'runtime', 'When credentials are rejected with a new 401 or 407 challenge, do not silently treat the response as authenticated; expose a retry decision.', 'rfc-2617');
+clause('wae', 'auth_secure_channel_warning', ['WAESpec-C-002'], '4.1', 'explicit-should', 'security-policy', 'Treat Basic credentials as cleartext-equivalent and use the scheme only with an external secure channel or an explicit unsafe-compatibility decision.', 'rfc-2617');
+
+clause('wae', 'http_scheme_support', ['WAESpec-C-003'], '5.1.3', 'implicit-must', 'transport-boundary', 'Recognize the http URL scheme for resources named on HTTP origin servers.');
+clause('wae', 'http_transport_independence', ['WAESpec-C-003'], '5.1.3', 'implicit-must', 'transport-boundary', 'Do not infer the client-to-gateway protocol from an http URL; preserve the same resource identity across direct and gateway-backed transport.');
+clause('wae', 'uri_hierarchical_components', ['WAESpec-C-003'], '3', 'grammar', 'parser', 'Parse hierarchical URI references into scheme, authority, path, and optional query components without treating the path as a filesystem path.', 'rfc-2396');
+clause('wae', 'http_url_grammar', ['WAESpec-C-003'], '3.2.2', 'grammar', 'parser', 'Parse an http URL as a required host plus optional port, absolute path, and query following the http scheme authority delimiter.', 'rfc-2616');
+clause('wae', 'http_url_defaults', ['WAESpec-C-003'], '3.2.2', 'explicit-must', 'transport-boundary', 'Use port 80 when the http URL omits a port and supply slash as the request path when its absolute path is empty.', 'rfc-2616');
+clause('wae', 'http_url_comparison', ['WAESpec-C-003'], '3.2.3', 'explicit-must', 'runtime', 'Compare HTTP URIs octet-for-octet except for case-insensitive scheme and host, default-port equivalence, and empty-path equivalence to slash.', 'rfc-2616');
+clause('wae', 'http_gateway_or_direct', ['WAESpec-C-003'], '5.1.3', 'implicit-must', 'transport-boundary', 'Allow the named origin resource to be reached through a WSP-to-HTTP gateway or directly from a server combining gateway and origin roles.');
+
+clause('wae', 'accept_capability_headers', ['WAESpec-C-005', 'WAESpec-C-006', 'WAESpec-C-007'], '3.3', 'implicit-must', 'transport-boundary', 'Convey supported media types, character sets, and languages through Accept, Accept-Charset, and Accept-Language request headers respectively.', 'wae-sin-101');
+clause('wae', 'accept_independent_of_uaprof', ['WAESpec-C-005', 'WAESpec-C-006', 'WAESpec-C-007'], '3.3', 'implicit-must', 'transport-boundary', 'Support the three Accept capability headers regardless of whether the client also supports or sends a UAProf profile.', 'wae-sin-101');
+clause('wae', 'accept_media_ranges', ['WAESpec-C-007'], '14.1', 'grammar', 'transport-boundary', 'Serialize supported response media types as exact type/subtype values or valid type and global wildcards with applicable media parameters.', 'rfc-2616');
+clause('wae', 'accept_media_preferences', ['WAESpec-C-007'], '14.1', 'implicit-must', 'transport-boundary', 'Encode media preferences with quality values from zero through one, default omitted quality to one, and preserve specificity precedence.', 'rfc-2616');
+clause('wae', 'accept_charset_ranges', ['WAESpec-C-005'], '14.2', 'grammar', 'transport-boundary', 'Serialize supported response character sets as registered charset names or wildcard, each optionally carrying a quality value.', 'rfc-2616');
+clause('wae', 'accept_charset_defaults', ['WAESpec-C-005'], '14.2', 'implicit-must', 'transport-boundary', 'Preserve the historical ISO-8859-1 implicit quality rule when Accept-Charset is present without either that charset or a wildcard.', 'rfc-2616');
+clause('wae', 'accept_language_ranges', ['WAESpec-C-006'], '14.4', 'grammar', 'transport-boundary', 'Serialize preferred natural languages as valid language ranges or wildcard, each optionally carrying a quality value.', 'rfc-2616');
+clause('wae', 'accept_language_matching', ['WAESpec-C-006'], '14.4', 'implicit-must', 'runtime', 'Apply exact-or-hyphen-prefix language matching and use the quality of the longest matching language range.', 'rfc-2616');
+clause('wae', 'accept_values_match_capability', ['WAESpec-C-005', 'WAESpec-C-006', 'WAESpec-C-007'], '5.1.4', 'implicit-must', 'transport-boundary', 'Generate capability headers from the user agent configuration and supported decoders rather than advertising formats it cannot process.');
+
+clause('wae', 'wml_language_delegate', ['WAESpec-C-015', 'WAESpec-C-017'], '5.1.5', 'implicit-must', 'runtime', 'Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements.');
+clause('wae', 'wmlscript_language_delegate', ['WAESpec-C-016', 'WAESpec-C-017'], '5.1.6', 'implicit-must', 'runtime', 'Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.');
+clause('wae', 'wml_user_agent_composition', ['WAESpec-C-017'], '5.1.7.2', 'implicit-must', 'runtime', 'Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime.');
+
+clause('wae', 'media_type_dispatch', ['WAESpec-C-019', 'WAESpec-C-020', 'WAESpec-C-021'], '5.1.8', 'implicit-must', 'transport-boundary', 'Dispatch WAE content according to its media type so the responsible decoder or interpreter applies that format structure and semantics.');
+clause('wae', 'media_push_fallback', ['WAESpec-C-019', 'WAESpec-C-020', 'WAESpec-C-021'], '5.1.8', 'explicit-should', 'security-policy', 'When pushed content has no defined push behavior, take no action beyond discarding it or placing it in cache.');
+clause('wae', 'wbxml_media_type', ['WAESpec-C-019'], '5.1.8.1', 'implicit-must', 'transport-boundary', 'Recognize application/vnd.wap.wbxml as generic WBXML content and route it to the WBXML decoder.');
+clause('wae', 'wbxml_document_typing', ['WAESpec-C-019'], '5.1.8.1', 'implicit-must', 'binary-decoder', 'Use decoded WBXML document typing rather than assuming generic WBXML is always WML.');
+clause('wae', 'wmlc_media_type', ['WAESpec-C-020'], '5.1.8.1', 'implicit-must', 'transport-boundary', 'Recognize application/vnd.wap.wmlc as encoded WML, decode it as WBXML, and pass the resulting WML deck to the engine.');
+clause('wae', 'wmlscriptc_media_type', ['WAESpec-C-021'], '5.1.8.2', 'implicit-must', 'transport-boundary', 'Recognize application/vnd.wap.wmlscriptc as encoded WMLScript and route its bytecode to the WMLScript interpreter.');
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -577,6 +777,19 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wml-scr.json`,
     selectedDisposition: 'required-by-class-c-client-mcf',
     clauseSources: ['WAP-191_104-WML']
+  },
+  {
+    family: 'wae',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-wae-scr.json`,
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    clauseSources: [
+      'WAP-190-WAESpec',
+      'WAP-190_101-WAESpec',
+      'WAP-190_103-WAESpec',
+      'rfc-2396',
+      'rfc-2616',
+      'rfc-2617'
+    ]
   },
   {
     family: 'wbxml',
@@ -668,8 +881,25 @@ const families = familyDefinitions.map((definition) => {
     clauseSources: definition.clauseSources.map((documentId) => {
       const ingestionMember = ingestionById.get(documentId);
       const releaseMember = releaseById.get(documentId);
+      if (!releaseMember || !ingestionMember) {
+        const externalDependency = externalIngestionById.get(documentId);
+        const artifact = sourceInputs.get(documentId)?.externalArtifact;
+        if (!externalDependency || !artifact) {
+          throw new Error(`${documentId}: missing clause source lock`);
+        }
+        return {
+          documentId,
+          sourceKind: 'external-dependency',
+          authority: externalDependency.authority,
+          authorityRecordUrl: externalDependency.authorityRecordUrl,
+          artifactId: artifact.id,
+          artifactSha256: artifact.sha256,
+          artifactBytes: artifact.bytes
+        };
+      }
       return {
         documentId,
+        sourceKind: 'release-member',
         filename: releaseMember.filename,
         pdfSha256: releaseMember.sha256,
         textExtractionSha256: ingestionMember.parsedText.sha256
@@ -719,9 +949,8 @@ const ledger = {
   scope: {
     status: 'in-progress',
     selectedProfileParentCount: 201,
-    coveredFamilies: ['wml', 'wbxml'],
+    coveredFamilies: ['wml', 'wae', 'wbxml'],
     remainingFamilies: [
-      'wae',
       'wmlscript',
       'wmlscript-libraries',
       'caching',

@@ -41,9 +41,10 @@ All nine selected Class C family increments are complete at SCR level:
 - the selected implementation audit is 7 implemented, 84 partial, and 110
   missing;
 - every selected row has an implementation owner and work-item mapping;
-- `CONF-003` is now in progress: WML and WBXML account for 42 selected parent
-  rows and 222 deduplicated, source-anchored clauses with planned direct
-  fixtures; the remaining seven families and 159 parents keep the gate open;
+- `CONF-003` is now in progress: WML, WAE, and WBXML account for 53 selected
+  parent rows and 261 deduplicated, source-anchored clauses with planned
+  direct fixtures; the remaining six families and 148 parents keep the gate
+  open;
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
 - the selected Class C client scope is 39 required, 27 optional, and 10

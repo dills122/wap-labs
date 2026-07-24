@@ -85,8 +85,9 @@ The current selected-row audit is:
 - direct code/test links: 8 of 11
 
 These counts describe feature-level evidence only. They are not a WAE
-compliance percentage because nested normative clauses remain to be
-extracted.
+compliance percentage. The selected rows now expand into 39 source-anchored
+clauses with planned direct fixtures, but clause implementation evidence
+remains `not-assessed`.
 
 ## Confirmed implementation evidence
 
@@ -145,18 +146,25 @@ This delta supports three decisions:
 For example, WAP-236 caching text does not establish the target caching
 obligation. The selected `CacheMod:MCF` family does.
 
+## Selected nested-clause slice
+
+`CONF-003` now expands all 11 selected WAE rows into 39 deduplicated clauses.
+The anchors cover the effective WAE base/SIN chain and the imported RFC 2396,
+RFC 2616, and RFC 2617 authorities. WML and WMLScript rows delegate to their
+own family ledgers; WAE retains the user-agent integration, HTTP URL,
+authentication, negotiation, and media-routing requirements.
+
 ## Remaining WAE work
 
-SCR-level extraction is complete, but WAE is not fully closed.
+SCR and clause-level planning are complete, but WAE implementation evidence is
+not fully closed.
 
-1. Extract nested normative clauses under each selected WAE row, including
-   SIN changes outside the SCR table.
-2. Implement and test `WAE-607` Basic authentication.
-3. Decide and implement generic WBXML media-type handling at the transport
+1. Implement and test `WAE-607` Basic authentication.
+2. Decide and implement generic WBXML media-type handling at the transport
    boundary.
-4. Complete WMLScript text/bytecode content-type routing and host handoff.
-5. Finish the optional WAP-237 media delta and capability declarations.
-6. Reconcile target-era WAE clauses with active `RQ-WAE-*`, test coverage,
+3. Complete WMLScript text/bytecode content-type routing and host handoff.
+4. Finish the optional WAP-237 media delta and capability declarations.
+5. Reconcile target-era WAE clauses with active `RQ-WAE-*`, test coverage,
    and release evidence without using WAP-236 as target authority.
 
 ## Source handling

@@ -17,10 +17,10 @@
     "selectedProfileParentCount": 201,
     "coveredFamilies": [
       "wml",
+      "wae",
       "wbxml"
     ],
     "remainingFamilies": [
-      "wae",
       "wmlscript",
       "wmlscript-libraries",
       "caching",
@@ -28,8 +28,8 @@
       "wcmp",
       "wsp"
     ],
-    "coveredSelectedParentCount": 42,
-    "remainingSelectedParentCount": 159,
+    "coveredSelectedParentCount": 53,
+    "remainingSelectedParentCount": 148,
     "completionRule": "CONF-003 remains open until every selected row in all nine mandatory Class C families has one or more anchored, deduplicated nested clauses."
   },
   "interpretation": {
@@ -38,12 +38,12 @@
     "implementationAssessment": "Parent implementation statuses are snapshots from the family SCR ledgers. Clause status remains not-assessed until direct source-derived fixture evidence is reviewed."
   },
   "summary": {
-    "selectedParentCount": 42,
-    "clauseCount": 222,
-    "requiredClauseCount": 211,
-    "recommendedClauseCount": 8,
-    "permittedClauseCount": 3,
-    "plannedFixtureCount": 222,
+    "selectedParentCount": 53,
+    "clauseCount": 261,
+    "requiredClauseCount": 246,
+    "recommendedClauseCount": 11,
+    "permittedClauseCount": 4,
+    "plannedFixtureCount": 261,
     "assessedClauseCount": 0
   },
   "families": [
@@ -62,6 +62,7 @@
       "clauseSources": [
         {
           "documentId": "WAP-191_104-WML",
+          "sourceKind": "release-member",
           "filename": "WAP-191_104-WML-20010718-a.pdf",
           "pdfSha256": "4c4a616f14204556045b9cbcebfdbc9a2408ae843e047b0730382abfbc8493f0",
           "textExtractionSha256": "b5dc6f04d58a7439f212fc3d29b8d36942ee4bd61fcc1a8bbbeee87dd1a7f2a0"
@@ -8304,6 +8305,1994 @@
       ]
     },
     {
+      "family": "wae",
+      "status": "nested-clauses-anchored-fixtures-planned",
+      "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wae-scr.json",
+      "parentLedgerSha256": "07df89fa37d079110e019560a418a2ae9bc325dc46dcf1e8e3809a273d6ad38b",
+      "effectiveSequence": [
+        "WAP-190-WAESpec",
+        "WAP-190_101-WAESpec",
+        "WAP-190_102-WAESpec",
+        "WAP-190_103-WAESpec",
+        "WAP-190_104-WAE-Spec"
+      ],
+      "selectedDisposition": "required-by-class-c-client-mcf",
+      "clauseSources": [
+        {
+          "documentId": "WAP-190-WAESpec",
+          "sourceKind": "release-member",
+          "filename": "WAP-190-WAESpec-20000329-a.pdf",
+          "pdfSha256": "92043389310057285b050afb8cb0a16c99f1651059be8ce61e1fab151c5c0182",
+          "textExtractionSha256": "4eab20f6ae42b92d2a1db6c56bfe6b7da723ed4409f96bae626c60349e174d0a"
+        },
+        {
+          "documentId": "WAP-190_101-WAESpec",
+          "sourceKind": "release-member",
+          "filename": "WAP-190_101-WAESpec-20001213-a.pdf",
+          "pdfSha256": "df5ad17ecc4aa407717dd61d42d0d4ff06878206684f64c66091b6f6d3e742c1",
+          "textExtractionSha256": "003595f985a4ddc7a890bafe63b3cb5b22b1d2f88b668ede32a9cb5c701e8688"
+        },
+        {
+          "documentId": "WAP-190_103-WAESpec",
+          "sourceKind": "release-member",
+          "filename": "WAP-190_103-WAESpec-20001213-a.pdf",
+          "pdfSha256": "743a22e09afb2e6277e750116b419e05221a2f032dab5186a26795643a218c52",
+          "textExtractionSha256": "29b307f71f3ab44c771802c4f4c352a8c4e003edc00f4e2f3aef50d1ff77c6ff"
+        },
+        {
+          "documentId": "rfc-2396",
+          "sourceKind": "external-dependency",
+          "authority": "RFC Editor",
+          "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2396.html",
+          "artifactId": "rfc-2396-text",
+          "artifactSha256": "67866c0aaa65b29372b4c7ca80ffdfa6caee825088593f4b8b296bff3c05cdc7",
+          "artifactBytes": 84503
+        },
+        {
+          "documentId": "rfc-2616",
+          "sourceKind": "external-dependency",
+          "authority": "RFC Editor",
+          "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2616.html",
+          "artifactId": "rfc-2616-text",
+          "artifactSha256": "10211d2885196b97b1c78e1672f3f68ae97c294596ef2b7fd890cbd30a3427bf",
+          "artifactBytes": 422279
+        },
+        {
+          "documentId": "rfc-2617",
+          "sourceKind": "external-dependency",
+          "authority": "RFC Editor",
+          "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2617.html",
+          "artifactId": "rfc-2617-text",
+          "artifactSha256": "cf5492136782d9e9fce492c254ca39e2c93328cf38c4dd006039abb5d8e27ba7",
+          "artifactBytes": 77638
+        }
+      ],
+      "selectedParentCount": 11,
+      "clauseCount": 39,
+      "parents": [
+        {
+          "id": "WAESpec-C-002",
+          "feature": "Basic HTTP 1.1 authentication",
+          "referencedSection": "5.1.2",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-607"
+          ],
+          "clauseIds": [
+            "WAE-CL-AUTH-BASIC-ENCODING",
+            "WAE-CL-AUTH-CHALLENGE-PARSING",
+            "WAE-CL-AUTH-CHALLENGE-SELECTION",
+            "WAE-CL-AUTH-ORIGIN-CREDENTIALS",
+            "WAE-CL-AUTH-PATH-REUSE-SCOPE",
+            "WAE-CL-AUTH-PREEMPTIVE-REUSE",
+            "WAE-CL-AUTH-PROTECTION-SPACE",
+            "WAE-CL-AUTH-PROXY-CREDENTIALS",
+            "WAE-CL-AUTH-REALM-OPACITY",
+            "WAE-CL-AUTH-REALM-REQUIRED",
+            "WAE-CL-AUTH-RECHALLENGE",
+            "WAE-CL-AUTH-SECURE-CHANNEL-WARNING",
+            "WAE-CL-AUTH-USERID-GRAMMAR",
+            "WAE-CL-BASIC-AUTH-REQUIRED"
+          ]
+        },
+        {
+          "id": "WAESpec-C-003",
+          "feature": "http: URL scheme",
+          "referencedSection": "5.1.3",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-602",
+            "T0-06"
+          ],
+          "clauseIds": [
+            "WAE-CL-HTTP-GATEWAY-OR-DIRECT",
+            "WAE-CL-HTTP-SCHEME-SUPPORT",
+            "WAE-CL-HTTP-TRANSPORT-INDEPENDENCE",
+            "WAE-CL-HTTP-URL-COMPARISON",
+            "WAE-CL-HTTP-URL-DEFAULTS",
+            "WAE-CL-HTTP-URL-GRAMMAR",
+            "WAE-CL-URI-HIERARCHICAL-COMPONENTS"
+          ]
+        },
+        {
+          "id": "WAESpec-C-005",
+          "feature": "Character set / encoding",
+          "referencedSection": "5.1.4",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-602",
+            "T0-05",
+            "T0-06"
+          ],
+          "clauseIds": [
+            "WAE-CL-ACCEPT-CAPABILITY-HEADERS",
+            "WAE-CL-ACCEPT-CHARSET-DEFAULTS",
+            "WAE-CL-ACCEPT-CHARSET-RANGES",
+            "WAE-CL-ACCEPT-INDEPENDENT-OF-UAPROF",
+            "WAE-CL-ACCEPT-VALUES-MATCH-CAPABILITY"
+          ]
+        },
+        {
+          "id": "WAESpec-C-006",
+          "feature": "Language",
+          "referencedSection": "5.1.4",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-602",
+            "T0-05"
+          ],
+          "clauseIds": [
+            "WAE-CL-ACCEPT-CAPABILITY-HEADERS",
+            "WAE-CL-ACCEPT-INDEPENDENT-OF-UAPROF",
+            "WAE-CL-ACCEPT-LANGUAGE-MATCHING",
+            "WAE-CL-ACCEPT-LANGUAGE-RANGES",
+            "WAE-CL-ACCEPT-VALUES-MATCH-CAPABILITY"
+          ]
+        },
+        {
+          "id": "WAESpec-C-007",
+          "feature": "Media type",
+          "referencedSection": "5.1.4",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-602",
+            "T0-05"
+          ],
+          "clauseIds": [
+            "WAE-CL-ACCEPT-CAPABILITY-HEADERS",
+            "WAE-CL-ACCEPT-INDEPENDENT-OF-UAPROF",
+            "WAE-CL-ACCEPT-MEDIA-PREFERENCES",
+            "WAE-CL-ACCEPT-MEDIA-RANGES",
+            "WAE-CL-ACCEPT-VALUES-MATCH-CAPABILITY"
+          ]
+        },
+        {
+          "id": "WAESpec-C-015",
+          "feature": "Wireless Markup Language",
+          "referencedSection": "5.1.5",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "engine-wasm",
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WML-201",
+            "WML-301",
+            "R0-01"
+          ],
+          "clauseIds": [
+            "WAE-CL-WML-LANGUAGE-DELEGATE"
+          ]
+        },
+        {
+          "id": "WAESpec-C-016",
+          "feature": "WMLScript",
+          "referencedSection": "5.1.6",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "engine-wasm",
+            "browser"
+          ],
+          "workItems": [
+            "WMLS-501",
+            "WMLS-502",
+            "W1-02",
+            "W1-04"
+          ],
+          "clauseIds": [
+            "WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE"
+          ]
+        },
+        {
+          "id": "WAESpec-C-017",
+          "feature": "WML user agent",
+          "referencedSection": "5.1.7.2",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "engine-wasm",
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-601",
+            "WML-201",
+            "WML-301",
+            "WMLS-501"
+          ],
+          "clauseIds": [
+            "WAE-CL-WML-LANGUAGE-DELEGATE",
+            "WAE-CL-WML-USER-AGENT-COMPOSITION",
+            "WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE"
+          ]
+        },
+        {
+          "id": "WAESpec-C-019",
+          "feature": "application/vnd.wap.wbxml media type",
+          "referencedSection": "5.1.8.1",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-602",
+            "R0-08"
+          ],
+          "clauseIds": [
+            "WAE-CL-MEDIA-PUSH-FALLBACK",
+            "WAE-CL-MEDIA-TYPE-DISPATCH",
+            "WAE-CL-WBXML-DOCUMENT-TYPING",
+            "WAE-CL-WBXML-MEDIA-TYPE"
+          ]
+        },
+        {
+          "id": "WAESpec-C-020",
+          "feature": "application/vnd.wap.wmlc media type",
+          "referencedSection": "5.1.8.1",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust",
+            "browser"
+          ],
+          "workItems": [
+            "WAE-602",
+            "T0-07",
+            "R0-08"
+          ],
+          "clauseIds": [
+            "WAE-CL-MEDIA-PUSH-FALLBACK",
+            "WAE-CL-MEDIA-TYPE-DISPATCH",
+            "WAE-CL-WMLC-MEDIA-TYPE"
+          ]
+        },
+        {
+          "id": "WAESpec-C-021",
+          "feature": "application/vnd.wap.wmlscriptc media type",
+          "referencedSection": "5.1.8.2",
+          "sourceAnchor": {
+            "documentId": "WAP-190_104-WAE-Spec",
+            "staticConformanceSection": "Appendix B 1.1",
+            "changeSection": "4.3"
+          },
+          "implementationStatus": "missing",
+          "ownerLayers": [
+            "transport-rust",
+            "engine-wasm",
+            "browser"
+          ],
+          "workItems": [
+            "WMLS-503",
+            "W1-01"
+          ],
+          "clauseIds": [
+            "WAE-CL-MEDIA-PUSH-FALLBACK",
+            "WAE-CL-MEDIA-TYPE-DISPATCH",
+            "WAE-CL-WMLSCRIPTC-MEDIA-TYPE"
+          ]
+        }
+      ],
+      "clauses": [
+        {
+          "id": "WAE-CL-BASIC-AUTH-REQUIRED",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190_103-WAESpec",
+            "section": "3.3",
+            "heading": "3.3 Change Description",
+            "normalizedTextSha256": "ef8eacc719c034db579d220b8b6b0d2840ecd72edffbb95f546ba7e2524a25d0"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Implement the HTTP Basic authentication scheme using the RFC 2616 authority selected by the effective WAE SIN chain.",
+          "fixturePlan": {
+            "id": "WAE-FX-BASIC-AUTH-REQUIRED",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Implement the HTTP Basic authentication scheme using the RFC 2616 authority selected by the effective WAE SIN chain."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-CHALLENGE-PARSING",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Parse one or more case-insensitive authentication schemes and their challenge parameters from WWW-Authenticate and Proxy-Authenticate fields.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-CHALLENGE-PARSING",
+            "kind": "parser",
+            "status": "planned",
+            "assertion": "Parse one or more case-insensitive authentication schemes and their challenge parameters from WWW-Authenticate and Proxy-Authenticate fields."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-REALM-REQUIRED",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Require every accepted Basic challenge to contain a quoted realm parameter while treating the parameter name case-insensitively.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-REALM-REQUIRED",
+            "kind": "parser",
+            "status": "planned",
+            "assertion": "Require every accepted Basic challenge to contain a quoted realm parameter while treating the parameter name case-insensitively."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-PROTECTION-SPACE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Identify an authentication protection space by the case-sensitive realm value together with the canonical root URL of its server.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-PROTECTION-SPACE",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "Identify an authentication protection space by the case-sensitive realm value together with the canonical root URL of its server."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-CHALLENGE-SELECTION",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "When several challenges are offered, select the strongest authentication scheme the user agent understands and request credentials for that challenge.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-CHALLENGE-SELECTION",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "When several challenges are offered, select the strongest authentication scheme the user agent understands and request credentials for that challenge."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-ORIGIN-CREDENTIALS",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Send origin-server Basic credentials in Authorization and associate them only with the realm and protection space of the requested resource.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-ORIGIN-CREDENTIALS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Send origin-server Basic credentials in Authorization and associate them only with the realm and protection space of the requested resource."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-PROXY-CREDENTIALS",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Handle a 407 proxy challenge with Proxy-Authorization while keeping proxy credentials distinct from end-to-end origin credentials.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-PROXY-CREDENTIALS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Handle a 407 proxy challenge with Proxy-Authorization while keeping proxy credentials distinct from end-to-end origin credentials."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-BASIC-ENCODING",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "2",
+            "heading": "2 Basic Authentication Scheme",
+            "normalizedTextSha256": "df2fbf4e97f6feb42a453de9dda24ed1919052d9c7404cd33420f25bea8b86a6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Basic credentials as Base64 over the user identifier, one colon separator, and the password, without MIME line-length wrapping.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-BASIC-ENCODING",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Encode Basic credentials as Base64 over the user identifier, one colon separator, and the password, without MIME line-length wrapping."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-USERID-GRAMMAR",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "2",
+            "heading": "2 Basic Authentication Scheme",
+            "normalizedTextSha256": "df2fbf4e97f6feb42a453de9dda24ed1919052d9c7404cd33420f25bea8b86a6"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Reject a Basic user identifier containing a colon while allowing the password field to contain text, including additional colons.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-USERID-GRAMMAR",
+            "kind": "parser",
+            "status": "planned",
+            "assertion": "Reject a Basic user identifier containing a colon while allowing the password field to contain text, including additional colons."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-REALM-OPACITY",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "2",
+            "heading": "2 Basic Authentication Scheme",
+            "normalizedTextSha256": "df2fbf4e97f6feb42a453de9dda24ed1919052d9c7404cd33420f25bea8b86a6"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat a Basic realm value as an opaque, case-sensitive string that is comparable only with realms on the same server.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-REALM-OPACITY",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "Treat a Basic realm value as an opaque, case-sensitive string that is comparable only with realms on the same server."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-PATH-REUSE-SCOPE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "2",
+            "heading": "2 Basic Authentication Scheme",
+            "normalizedTextSha256": "df2fbf4e97f6feb42a453de9dda24ed1919052d9c7404cd33420f25bea8b86a6"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Assume Basic credentials apply at or below the challenged Request-URI path depth, but never extend automatic reuse beyond the protection space.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-PATH-REUSE-SCOPE",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "Assume Basic credentials apply at or below the challenged Request-URI path depth, but never extend automatic reuse beyond the protection space."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-PREEMPTIVE-REUSE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "2",
+            "heading": "2 Basic Authentication Scheme",
+            "normalizedTextSha256": "df2fbf4e97f6feb42a453de9dda24ed1919052d9c7404cd33420f25bea8b86a6"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Permit preemptive Authorization only for a request already known to fall within the matching Basic protection space.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-PREEMPTIVE-REUSE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Permit preemptive Authorization only for a request already known to fall within the matching Basic protection space."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-RECHALLENGE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "1.2",
+            "heading": "1.2 Access Authentication Framework",
+            "normalizedTextSha256": "5a2eaea1cade5eeabda60b633ace51310f65eaf35f9aeb90e0afbf2b8dcf2ff0"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "When credentials are rejected with a new 401 or 407 challenge, do not silently treat the response as authenticated; expose a retry decision.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-RECHALLENGE",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "When credentials are rejected with a new 401 or 407 challenge, do not silently treat the response as authenticated; expose a retry decision."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-AUTH-SECURE-CHANNEL-WARNING",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-002"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2617",
+            "section": "4.1",
+            "heading": "4.1 Authentication of Clients using Basic Authentication",
+            "normalizedTextSha256": "751ff7dfea50acf808b4605e10ec32640e713876d83a89ddfc655fb9de56ed29"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Treat Basic credentials as cleartext-equivalent and use the scheme only with an external secure channel or an explicit unsafe-compatibility decision.",
+          "fixturePlan": {
+            "id": "WAE-FX-AUTH-SECURE-CHANNEL-WARNING",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "Treat Basic credentials as cleartext-equivalent and use the scheme only with an external secure channel or an explicit unsafe-compatibility decision."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-607"
+            ],
+            "requirementIds": [
+              "RQ-WAE-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-002": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-HTTP-SCHEME-SUPPORT",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.3",
+            "heading": "5.1.3 URL Schemes",
+            "normalizedTextSha256": "f1f3481e5de65f8f37ae89f8f9b77c9f816e3ff33a1aaa1db09bde48bdc17172"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Recognize the http URL scheme for resources named on HTTP origin servers.",
+          "fixturePlan": {
+            "id": "WAE-FX-HTTP-SCHEME-SUPPORT",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Recognize the http URL scheme for resources named on HTTP origin servers."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-HTTP-TRANSPORT-INDEPENDENCE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.3",
+            "heading": "5.1.3 URL Schemes",
+            "normalizedTextSha256": "f1f3481e5de65f8f37ae89f8f9b77c9f816e3ff33a1aaa1db09bde48bdc17172"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not infer the client-to-gateway protocol from an http URL; preserve the same resource identity across direct and gateway-backed transport.",
+          "fixturePlan": {
+            "id": "WAE-FX-HTTP-TRANSPORT-INDEPENDENCE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Do not infer the client-to-gateway protocol from an http URL; preserve the same resource identity across direct and gateway-backed transport."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-URI-HIERARCHICAL-COMPONENTS",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2396",
+            "section": "3",
+            "heading": "3. URI Syntactic Components",
+            "normalizedTextSha256": "ed23752b8e78547bb0f217527adfd34e73cad88f3d5a284b512376246ee76557"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Parse hierarchical URI references into scheme, authority, path, and optional query components without treating the path as a filesystem path.",
+          "fixturePlan": {
+            "id": "WAE-FX-URI-HIERARCHICAL-COMPONENTS",
+            "kind": "parser",
+            "status": "planned",
+            "assertion": "Parse hierarchical URI references into scheme, authority, path, and optional query components without treating the path as a filesystem path."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-HTTP-URL-GRAMMAR",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "3.2.2",
+            "heading": "3.2.2 http URL",
+            "normalizedTextSha256": "7e31b1c9f0b349e3ca228477599c6f0b619ac1602fc33019d28a56c693b24f39"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Parse an http URL as a required host plus optional port, absolute path, and query following the http scheme authority delimiter.",
+          "fixturePlan": {
+            "id": "WAE-FX-HTTP-URL-GRAMMAR",
+            "kind": "parser",
+            "status": "planned",
+            "assertion": "Parse an http URL as a required host plus optional port, absolute path, and query following the http scheme authority delimiter."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-HTTP-URL-DEFAULTS",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "3.2.2",
+            "heading": "3.2.2 http URL",
+            "normalizedTextSha256": "7e31b1c9f0b349e3ca228477599c6f0b619ac1602fc33019d28a56c693b24f39"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use port 80 when the http URL omits a port and supply slash as the request path when its absolute path is empty.",
+          "fixturePlan": {
+            "id": "WAE-FX-HTTP-URL-DEFAULTS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Use port 80 when the http URL omits a port and supply slash as the request path when its absolute path is empty."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-HTTP-URL-COMPARISON",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "3.2.3",
+            "heading": "3.2.3 URI Comparison",
+            "normalizedTextSha256": "b821f74da64427473ed5500c8f0211167bc56d1e53e791c59eb60fb018085a50"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Compare HTTP URIs octet-for-octet except for case-insensitive scheme and host, default-port equivalence, and empty-path equivalence to slash.",
+          "fixturePlan": {
+            "id": "WAE-FX-HTTP-URL-COMPARISON",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "Compare HTTP URIs octet-for-octet except for case-insensitive scheme and host, default-port equivalence, and empty-path equivalence to slash."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-HTTP-GATEWAY-OR-DIRECT",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.3",
+            "heading": "5.1.3 URL Schemes",
+            "normalizedTextSha256": "f1f3481e5de65f8f37ae89f8f9b77c9f816e3ff33a1aaa1db09bde48bdc17172"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Allow the named origin resource to be reached through a WSP-to-HTTP gateway or directly from a server combining gateway and origin roles.",
+          "fixturePlan": {
+            "id": "WAE-FX-HTTP-GATEWAY-OR-DIRECT",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Allow the named origin resource to be reached through a WSP-to-HTTP gateway or directly from a server combining gateway and origin roles."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-CAPABILITY-HEADERS",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-005",
+            "WAESpec-C-006",
+            "WAESpec-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190_101-WAESpec",
+            "section": "3.3",
+            "heading": "3.3 Change Description",
+            "normalizedTextSha256": "a504bd44d0f5ec7e923e236d4f819a7959745ece7af02fcc36e3bf46865c7516"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Convey supported media types, character sets, and languages through Accept, Accept-Charset, and Accept-Language request headers respectively.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-CAPABILITY-HEADERS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Convey supported media types, character sets, and languages through Accept, Accept-Charset, and Accept-Language request headers respectively."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-012",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-005": "implemented",
+              "WAESpec-C-006": "implemented",
+              "WAESpec-C-007": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-INDEPENDENT-OF-UAPROF",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-005",
+            "WAESpec-C-006",
+            "WAESpec-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190_101-WAESpec",
+            "section": "3.3",
+            "heading": "3.3 Change Description",
+            "normalizedTextSha256": "a504bd44d0f5ec7e923e236d4f819a7959745ece7af02fcc36e3bf46865c7516"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Support the three Accept capability headers regardless of whether the client also supports or sends a UAProf profile.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-INDEPENDENT-OF-UAPROF",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Support the three Accept capability headers regardless of whether the client also supports or sends a UAProf profile."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-012",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-005": "implemented",
+              "WAESpec-C-006": "implemented",
+              "WAESpec-C-007": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-MEDIA-RANGES",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "14.1",
+            "heading": "14.1 Accept",
+            "normalizedTextSha256": "b4d7f53bbf58c26e011c4faf710d80b7bf26e26c2140d2e9a76432cd27f02187"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Serialize supported response media types as exact type/subtype values or valid type and global wildcards with applicable media parameters.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-MEDIA-RANGES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Serialize supported response media types as exact type/subtype values or valid type and global wildcards with applicable media parameters."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-007": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-MEDIA-PREFERENCES",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "14.1",
+            "heading": "14.1 Accept",
+            "normalizedTextSha256": "b4d7f53bbf58c26e011c4faf710d80b7bf26e26c2140d2e9a76432cd27f02187"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode media preferences with quality values from zero through one, default omitted quality to one, and preserve specificity precedence.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-MEDIA-PREFERENCES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Encode media preferences with quality values from zero through one, default omitted quality to one, and preserve specificity precedence."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-007": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-CHARSET-RANGES",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-005"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "14.2",
+            "heading": "14.2 Accept-Charset",
+            "normalizedTextSha256": "b075155a75eca3e1c2a367c0cf31de024ada1ee6f1a0337920c287e5f8c9b627"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Serialize supported response character sets as registered charset names or wildcard, each optionally carrying a quality value.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-CHARSET-RANGES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Serialize supported response character sets as registered charset names or wildcard, each optionally carrying a quality value."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-012",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-005": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-CHARSET-DEFAULTS",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-005"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "14.2",
+            "heading": "14.2 Accept-Charset",
+            "normalizedTextSha256": "b075155a75eca3e1c2a367c0cf31de024ada1ee6f1a0337920c287e5f8c9b627"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Preserve the historical ISO-8859-1 implicit quality rule when Accept-Charset is present without either that charset or a wildcard.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-CHARSET-DEFAULTS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Preserve the historical ISO-8859-1 implicit quality rule when Accept-Charset is present without either that charset or a wildcard."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-012",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-005": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-LANGUAGE-RANGES",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "14.4",
+            "heading": "14.4 Accept-Language",
+            "normalizedTextSha256": "bbd45370006c9f4ead944d7e74bbedd9bac070bdacbdddf1c2079856f8b8c735"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Serialize preferred natural languages as valid language ranges or wildcard, each optionally carrying a quality value.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-LANGUAGE-RANGES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Serialize preferred natural languages as valid language ranges or wildcard, each optionally carrying a quality value."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-LANGUAGE-MATCHING",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "rfc-2616",
+            "section": "14.4",
+            "heading": "14.4 Accept-Language",
+            "normalizedTextSha256": "bbd45370006c9f4ead944d7e74bbedd9bac070bdacbdddf1c2079856f8b8c735"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Apply exact-or-hyphen-prefix language matching and use the quality of the longest matching language range.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-LANGUAGE-MATCHING",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "Apply exact-or-hyphen-prefix language matching and use the quality of the longest matching language range."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-ACCEPT-VALUES-MATCH-CAPABILITY",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-005",
+            "WAESpec-C-006",
+            "WAESpec-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.4",
+            "heading": "5.1.4 User Agent Characteristics",
+            "normalizedTextSha256": "ddbe1fa137b3ffd276378a815ab6e9f46a79e79cab4dc25c2b86c643047bb86c"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate capability headers from the user agent configuration and supported decoders rather than advertising formats it cannot process.",
+          "fixturePlan": {
+            "id": "WAE-FX-ACCEPT-VALUES-MATCH-CAPABILITY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Generate capability headers from the user agent configuration and supported decoders rather than advertising formats it cannot process."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-05",
+              "T0-06",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-012",
+              "RQ-WAE-013"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-005": "implemented",
+              "WAESpec-C-006": "implemented",
+              "WAESpec-C-007": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WML-LANGUAGE-DELEGATE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-015",
+            "WAESpec-C-017"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.5",
+            "heading": "5.1.5 Wireless Markup Language",
+            "normalizedTextSha256": "1b13134f2860795f2b42d31a9db997d625847cebcd0c124b350f9348587e8ff8"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements.",
+          "fixturePlan": {
+            "id": "WAE-FX-WML-LANGUAGE-DELEGATE",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "engine-wasm",
+              "transport-rust"
+            ],
+            "workItems": [
+              "R0-01",
+              "WAE-601",
+              "WML-201",
+              "WML-301",
+              "WMLS-501"
+            ],
+            "requirementIds": [
+              "RQ-RMK-001",
+              "RQ-WAE-002",
+              "RQ-WAE-016",
+              "RQ-WAE-017"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-015": "partial",
+              "WAESpec-C-017": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-016",
+            "WAESpec-C-017"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.6",
+            "heading": "5.1.6 WMLScript",
+            "normalizedTextSha256": "c0feb9b57ce06a0907bb7a40de75b7f116e07979784c0cf2200f83f5c26e2a70"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.",
+          "fixturePlan": {
+            "id": "WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "engine-wasm",
+              "transport-rust"
+            ],
+            "workItems": [
+              "W1-02",
+              "W1-04",
+              "WAE-601",
+              "WML-201",
+              "WML-301",
+              "WMLS-501",
+              "WMLS-502"
+            ],
+            "requirementIds": [
+              "RQ-WAE-002",
+              "RQ-WAE-003",
+              "RQ-WAE-016",
+              "RQ-WAE-017",
+              "RQ-WMLS-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-016": "partial",
+              "WAESpec-C-017": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WML-USER-AGENT-COMPOSITION",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-017"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.7.2",
+            "heading": "5.1.7.2 WML User Agent",
+            "normalizedTextSha256": "dabe3d5fd9b83131f5bf48122d2f8295edcde15ff9a520364b4ae9393f70c871"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime.",
+          "fixturePlan": {
+            "id": "WAE-FX-WML-USER-AGENT-COMPOSITION",
+            "kind": "runtime",
+            "status": "planned",
+            "assertion": "Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "engine-wasm",
+              "transport-rust"
+            ],
+            "workItems": [
+              "WAE-601",
+              "WML-201",
+              "WML-301",
+              "WMLS-501"
+            ],
+            "requirementIds": [
+              "RQ-WAE-002",
+              "RQ-WAE-016",
+              "RQ-WAE-017"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-017": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-MEDIA-TYPE-DISPATCH",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-019",
+            "WAESpec-C-020",
+            "WAESpec-C-021"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.8",
+            "heading": "5.1.8 WAE Media Types",
+            "normalizedTextSha256": "f1ddc7339875ee9ba4e3dfe485244ae61fc365b0063b5051e179d6ed9686d259"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Dispatch WAE content according to its media type so the responsible decoder or interpreter applies that format structure and semantics.",
+          "fixturePlan": {
+            "id": "WAE-FX-MEDIA-TYPE-DISPATCH",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Dispatch WAE content according to its media type so the responsible decoder or interpreter applies that format structure and semantics."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "engine-wasm",
+              "transport-rust"
+            ],
+            "workItems": [
+              "R0-08",
+              "T0-07",
+              "W1-01",
+              "WAE-602",
+              "WMLS-503"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-003",
+              "RQ-WAE-005",
+              "RQ-WMLS-011"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-019": "missing",
+              "WAESpec-C-020": "implemented",
+              "WAESpec-C-021": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-MEDIA-PUSH-FALLBACK",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-019",
+            "WAESpec-C-020",
+            "WAESpec-C-021"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.8",
+            "heading": "5.1.8 WAE Media Types",
+            "normalizedTextSha256": "f1ddc7339875ee9ba4e3dfe485244ae61fc365b0063b5051e179d6ed9686d259"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "When pushed content has no defined push behavior, take no action beyond discarding it or placing it in cache.",
+          "fixturePlan": {
+            "id": "WAE-FX-MEDIA-PUSH-FALLBACK",
+            "kind": "security-policy",
+            "status": "planned",
+            "assertion": "When pushed content has no defined push behavior, take no action beyond discarding it or placing it in cache."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "engine-wasm",
+              "transport-rust"
+            ],
+            "workItems": [
+              "R0-08",
+              "T0-07",
+              "W1-01",
+              "WAE-602",
+              "WMLS-503"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-003",
+              "RQ-WAE-005",
+              "RQ-WMLS-011"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-019": "missing",
+              "WAESpec-C-020": "implemented",
+              "WAESpec-C-021": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WBXML-MEDIA-TYPE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-019"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.8.1",
+            "heading": "5.1.8.1 Encoded WML format",
+            "normalizedTextSha256": "d8573ef0d4908bdd878c535d27773f283d0ca65eb8eeee3fa3d9f35cef5d5218"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Recognize application/vnd.wap.wbxml as generic WBXML content and route it to the WBXML decoder.",
+          "fixturePlan": {
+            "id": "WAE-FX-WBXML-MEDIA-TYPE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Recognize application/vnd.wap.wbxml as generic WBXML content and route it to the WBXML decoder."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "R0-08",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-005"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-019": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WBXML-DOCUMENT-TYPING",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-019"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.8.1",
+            "heading": "5.1.8.1 Encoded WML format",
+            "normalizedTextSha256": "d8573ef0d4908bdd878c535d27773f283d0ca65eb8eeee3fa3d9f35cef5d5218"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use decoded WBXML document typing rather than assuming generic WBXML is always WML.",
+          "fixturePlan": {
+            "id": "WAE-FX-WBXML-DOCUMENT-TYPING",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use decoded WBXML document typing rather than assuming generic WBXML is always WML."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "R0-08",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-005"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-019": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WMLC-MEDIA-TYPE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.8.1",
+            "heading": "5.1.8.1 Encoded WML format",
+            "normalizedTextSha256": "d8573ef0d4908bdd878c535d27773f283d0ca65eb8eeee3fa3d9f35cef5d5218"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Recognize application/vnd.wap.wmlc as encoded WML, decode it as WBXML, and pass the resulting WML deck to the engine.",
+          "fixturePlan": {
+            "id": "WAE-FX-WMLC-MEDIA-TYPE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Recognize application/vnd.wap.wmlc as encoded WML, decode it as WBXML, and pass the resulting WML deck to the engine."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "transport-rust"
+            ],
+            "workItems": [
+              "R0-08",
+              "T0-07",
+              "WAE-602"
+            ],
+            "requirementIds": [
+              "RQ-WAE-001",
+              "RQ-WAE-005"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-020": "implemented"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WAE-CL-WMLSCRIPTC-MEDIA-TYPE",
+          "family": "wae",
+          "parentRows": [
+            "WAESpec-C-021"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-190-WAESpec",
+            "section": "5.1.8.2",
+            "heading": "5.1.8.2 Encoded WMLScript format",
+            "normalizedTextSha256": "6d8c585b85bb7c55fa5ff2e457465067d981eaa7550ab13066043f447f81c354"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Recognize application/vnd.wap.wmlscriptc as encoded WMLScript and route its bytecode to the WMLScript interpreter.",
+          "fixturePlan": {
+            "id": "WAE-FX-WMLSCRIPTC-MEDIA-TYPE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Recognize application/vnd.wap.wmlscriptc as encoded WMLScript and route its bytecode to the WMLScript interpreter."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "browser",
+              "engine-wasm",
+              "transport-rust"
+            ],
+            "workItems": [
+              "W1-01",
+              "WMLS-503"
+            ],
+            "requirementIds": [
+              "RQ-WAE-003",
+              "RQ-WMLS-011"
+            ],
+            "parentImplementationSnapshot": {
+              "WAESpec-C-021": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        }
+      ]
+    },
+    {
       "family": "wbxml",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
@@ -8316,12 +10305,14 @@
       "clauseSources": [
         {
           "documentId": "WAP-192-WBXML",
+          "sourceKind": "release-member",
           "filename": "WAP-192-WBXML-20010725-a.pdf",
           "pdfSha256": "a6312060b4488680b1f56858b350bc97021c314fa315ca20e25a33521a4df92b",
           "textExtractionSha256": "55f1488bc07c0ed03de4773772c36d0127c6ad04d4993351785329f9caf1eb22"
         },
         {
           "documentId": "WAP-192_105-WBXML",
+          "sourceKind": "release-member",
           "filename": "WAP-192_105-WBXML-20011015-a.pdf",
           "pdfSha256": "e4c0bc05a51e27697d07a4d46f710b4daabdc7039950aa472b1d7de0e080ca98",
           "textExtractionSha256": "f5e14e2c820849c57e547b7a174776bd3f3417f0456a9495b808443cbf52f9b2"

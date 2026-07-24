@@ -44,8 +44,9 @@ Status: Active
 - Selected normative-clause ledger:
   - `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
   - WML: 39 selected parents / 174 clauses
+  - WAE: 11 selected parents / 39 clauses
   - WBXML: 3 selected parents / 48 clauses
-  - all 222 direct fixtures planned; clause implementation status not assessed
+  - all 261 direct fixtures planned; clause implementation status not assessed
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`

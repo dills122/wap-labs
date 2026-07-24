@@ -21,6 +21,12 @@ const release = readJson(
 const ingestion = readJson(
   path.join(manifestDirectory, 'wap-1.2.1-ingestion-status.json')
 );
+const externalIngestion = readJson(
+  path.join(
+    manifestDirectory,
+    'wap-1.2.1-external-ingestion-status.json'
+  )
+);
 const effectiveSpec = readJson(
   path.join(manifestDirectory, 'wap-1.2.1-effective-spec.json')
 );
@@ -37,9 +43,8 @@ function sha256(value) {
 }
 
 const failures = [];
-const coveredFamilies = ['wml', 'wbxml'];
+const coveredFamilies = ['wml', 'wae', 'wbxml'];
 const remainingFamilies = [
-  'wae',
   'wmlscript',
   'wmlscript-libraries',
   'caching',
@@ -55,6 +60,15 @@ const familyDefinitions = new Map([
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 39,
       expectedClauses: 174
+    }
+  ],
+  [
+    'wae',
+    {
+      ledgerFile: 'wap-1.2.1-wae-scr.json',
+      selectedDisposition: 'required-by-class-c-client-mcf',
+      expectedParents: 11,
+      expectedClauses: 39
     }
   ],
   [
@@ -102,6 +116,12 @@ const releaseById = new Map(
 const ingestionById = new Map(
   ingestion.members.map((member) => [member.documentId, member])
 );
+const externalIngestionById = new Map(
+  externalIngestion.dependencies.map((dependency) => [
+    dependency.dependencyId,
+    dependency
+  ])
+);
 
 if (ledger.schemaVersion !== 1) {
   failures.push(`schemaVersion=${ledger.schemaVersion}; expected 1`);
@@ -138,8 +158,8 @@ if (
     JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !==
     JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 42 ||
-  ledger.scope?.remainingSelectedParentCount !== 159 ||
+  ledger.scope?.coveredSelectedParentCount !== 53 ||
+  ledger.scope?.remainingSelectedParentCount !== 148 ||
   !ledger.scope?.completionRule?.includes('CONF-003 remains open')
 ) {
   failures.push('partial nine-family scope accounting drift');
@@ -156,7 +176,7 @@ if (
 
 const actualFamilies = (ledger.families ?? []).map((family) => family.family);
 if (JSON.stringify(actualFamilies) !== JSON.stringify(coveredFamilies)) {
-  failures.push('covered family order differs from the first CONF-003 slice');
+  failures.push('covered family order differs from the current CONF-003 slice');
 }
 
 const globalClauseIds = new Set();
@@ -219,13 +239,27 @@ for (const family of ledger.families ?? []) {
   for (const source of family.clauseSources ?? []) {
     const releaseMember = releaseById.get(source.documentId);
     const ingestionMember = ingestionById.get(source.documentId);
-    if (
-      !releaseMember ||
-      !ingestionMember ||
-      source.filename !== releaseMember.filename ||
-      source.pdfSha256 !== releaseMember.sha256 ||
-      source.textExtractionSha256 !== ingestionMember.parsedText?.sha256
-    ) {
+    const externalDependency = externalIngestionById.get(source.documentId);
+    const externalArtifact = externalDependency?.artifacts.find(
+      (artifact) => artifact.id === source.artifactId
+    );
+    const releaseSourceValid =
+      source.sourceKind === 'release-member' &&
+      releaseMember &&
+      ingestionMember &&
+      source.filename === releaseMember.filename &&
+      source.pdfSha256 === releaseMember.sha256 &&
+      source.textExtractionSha256 === ingestionMember.parsedText?.sha256;
+    const externalSourceValid =
+      source.sourceKind === 'external-dependency' &&
+      externalDependency &&
+      externalArtifact &&
+      source.authority === externalDependency.authority &&
+      source.authorityRecordUrl ===
+        externalDependency.authorityRecordUrl &&
+      source.artifactSha256 === externalArtifact.sha256 &&
+      source.artifactBytes === externalArtifact.bytes;
+    if (!releaseSourceValid && !externalSourceValid) {
       failures.push(
         `${family.family}/${source.documentId}: clause source lock drift`
       );
@@ -422,8 +456,8 @@ const expectedSummary = {
   assessedClauseCount: 0
 };
 if (
-  selectedParentCount !== 42 ||
-  clauseCount !== 222 ||
+  selectedParentCount !== 53 ||
+  clauseCount !== 261 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(
@@ -464,7 +498,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS first CONF-003 slice: ${selectedParentCount}/201 selected parents across WML and WBXML`
+  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, and WBXML`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`

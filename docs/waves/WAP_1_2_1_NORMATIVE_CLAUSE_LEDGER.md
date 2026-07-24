@@ -1,7 +1,7 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.1
-Status: `CONF-003` in progress; WML and WBXML slice complete
+Version: v0.2
+Status: `CONF-003` in progress; WML, WAE, and WBXML slices complete
 
 ## Purpose
 
@@ -21,34 +21,43 @@ node scripts/check-wap-selected-normative-clauses.mjs
 node scripts/check-wap-conformance-ledger.mjs
 ```
 
-Regeneration requires the hash-locked private WAP-191_104, WAP-192, and
-WAP-192_105 text extractions:
+Regeneration requires the hash-locked private WML, WAE, WBXML, and imported
+RFC text extractions:
 
 ```sh
 node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
   --wml-text /absolute/path/WAP-191_104-WML-20010718-a.txt \
   --wbxml-text /absolute/path/WAP-192-WBXML-20010725-a.txt \
   --wbxml-sin-text /absolute/path/WAP-192_105-WBXML-20011015-a.txt \
+  --wae-text /absolute/path/WAP-190-WAESpec-20000329-a.txt \
+  --wae-sin-101-text /absolute/path/WAP-190_101-WAESpec-20001213-a.txt \
+  --wae-sin-103-text /absolute/path/WAP-190_103-WAESpec-20001213-a.txt \
+  --rfc-2396-text /absolute/path/rfc2396.txt \
+  --rfc-2616-text /absolute/path/rfc2616.txt \
+  --rfc-2617-text /absolute/path/rfc2617.txt \
   --recorded-on YYYY-MM-DD
 ```
 
-The generator refuses text whose SHA-256 differs from the ingestion lock.
+The generator refuses release or external text whose SHA-256 differs from its
+ingestion lock.
 
-## First slice
+## Current slices
 
-The current artifact covers 42 of the 201 selected Class C parent rows:
+The current artifact covers 53 of the 201 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
 | WML | 39 | 174 |
+| WAE | 11 | 39 |
 | WBXML | 3 | 48 |
-| **Total** | **42** | **222** |
+| **Total** | **53** | **261** |
 
-The 222 clauses are classified as 211 required, eight recommended, and three
+The 261 clauses are classified as 246 required, 11 recommended, and four
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
-shadowing, navigation access control, image fallback, and WBXML literal-name
-processing.
+shadowing, Basic-authentication protection spaces, HTTP URL defaults,
+capability negotiation, WAE media routing, image fallback, and WBXML
+literal-name processing.
 
 Each clause records:
 
@@ -76,9 +85,8 @@ verbatim source text.
 
 ## Remaining `CONF-003` slices
 
-The remaining 159 selected parents are:
+The remaining 148 selected parents are:
 
-- WAE: 11;
 - WMLScript: 41;
 - WMLScript Libraries: 80;
 - caching: 5;
