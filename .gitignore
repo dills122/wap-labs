@@ -168,3 +168,6 @@ _site
 .codex/skills/
 .codex/steering/frontend-design-steering.md
 .codex/steering/javascript-esm-steering.md
+
+# Local Obsidian state (generated compliance notes remain tracked)
+docs/knowledge-graph/vault/.obsidian/

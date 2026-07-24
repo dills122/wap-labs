@@ -20,6 +20,8 @@
   },
   "scripts": {
     "codex:links": "node scripts/setup-codex-links.mjs",
+    "wap-graph:generate": "node spec-processing/scripts/generate-wap-knowledge-graph.mjs",
+    "wap-graph:check": "node scripts/check-wap-knowledge-graph.mjs",
     "lint:node": "pnpm -r --if-present run lint",
     "format:node": "pnpm -r --if-present run format",
     "format:check:node": "pnpm -r --if-present run format:check",

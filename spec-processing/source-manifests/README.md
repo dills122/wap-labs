@@ -107,6 +107,13 @@ direct source-derived normative tests. RFC 768/RFC 791 are artifact-locked;
 the selected CDPD `TIAEIA-732` family citation is authority-locked as an
 informative, licensed-payload metadata-only dependency.
 
+`wap-1.2.1-wml-2-knowledge-graph.json` is a generated pilot projection of the
+`WML-2` compliance sprint. It connects the sprint and work items to their
+directly mapped SCR rows, normative clauses, fixtures, requirements, source
+documents, owner layers, and dependency neighbors. Canonical manifests remain
+authoritative; the graph deliberately reports work items without direct
+clause mappings.
+
 Generate the lock from a separately retrieved official archive:
 
 ```sh
@@ -145,6 +152,7 @@ node scripts/check-wap-wmlscript-conformance-ledger.mjs
 node scripts/check-wap-caching-conformance-ledger.mjs
 node scripts/check-wap-transport-conformance-ledgers.mjs
 node scripts/check-wap-delta-register.mjs
+node scripts/check-wap-knowledge-graph.mjs
 ```
 
 Generate the selected-profile successor delta register from the completed

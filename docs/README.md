@@ -18,6 +18,8 @@
 - `architecture/wtls-modernization-research.md`: WAP-261 algorithm inventory, current Lowband audit, modern-default security profiles, downgrade policy, and deferred WTLS work program
 - `architecture/decisions/0001-library-first-native-wap-client.md`: proposed library-first native WAP client decision
 - `architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`: proposed decision to keep modern TLS, historical WTLS, clear WAP, and any future DTLS route as explicit non-downgrading profiles
+- `architecture/decisions/0003-generate-compliance-knowledge-graph.md`: proposed repository-derived graph, Obsidian projection, and bounded AI context decision
+- `knowledge-graph/README.md`: WML-2 graph pilot, generated artifact contract, Obsidian entrypoint, and AI retrieval rules
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + in-process Rust transport)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
