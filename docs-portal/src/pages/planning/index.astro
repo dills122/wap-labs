@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import { program, progress, workItems } from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+const statuses = [...new Set(program.sprints.map((sprint) => sprint.status))].sort();
+const sprintRows = program.sprints.map((sprint) => ({
+  ...sprint,
+  doneCount: sprint.workItems.filter((item) => item.status === 'done').length
+}));
+---
+
+<BaseLayout title="Delivery program" section="planning">
+  <header class="page-header page-shell">
+    <p class="kicker">Spec-driven delivery program</p>
+    <h1>From source lock to release evidence.</h1>
+    <p>
+      Thirteen dependency-ordered sprints turn the selected Class C profile into implementation,
+      fixtures, parity tests, interoperability evidence, and an honest release gate.
+    </p>
+  </header>
+  <section class="page-shell stat-row" aria-label="Program summary">
+    <div><strong>{program.sprints.length}</strong><span>Sprints</span></div>
+    <div><strong>{workItems.length}</strong><span>Work items</span></div>
+    <div><strong>{progress.workItems.done ?? 0}</strong><span>Items done</span></div>
+    <div><strong>{progress.workItems['in-progress'] ?? 0}</strong><span>In progress</span></div>
+  </section>
+  <section class="page-shell catalog-section" data-filter-scope>
+    <FilterBar label="Find a sprint" placeholder="Sprint, layer, family, goal…" statuses={statuses} />
+    <ol class="roadmap">
+      {sprintRows.map((sprint, index) => (
+          <li data-filter-row data-status={sprint.status}>
+            <a href={route(`planning/${sprint.id}`)}>
+              <span class="roadmap-index">{String(index + 1).padStart(2, '0')}</span>
+              <div class="roadmap-copy">
+                <div><span class="mono-id">{sprint.id}</span><StatusPill status={sprint.status} /></div>
+                <h2>{sprint.title}</h2>
+                <p>{sprint.goal}</p>
+                <ul class="inline-meta">
+                  <li>{sprint.workItems.length} work items</li>
+                  <li>{sprint.doneCount} done</li>
+                  <li>{sprint.dependsOn.length ? `after ${sprint.dependsOn.join(', ')}` : 'program entry'}</li>
+                </ul>
+              </div>
+              <span class="roadmap-arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+      ))}
+    </ol>
+  </section>
+</BaseLayout>

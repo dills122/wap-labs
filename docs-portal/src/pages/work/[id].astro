@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import { workItems, type WorkItem } from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+export function getStaticPaths() {
+  return workItems.map((item) => ({ params: { id: item.id }, props: { item } }));
+}
+
+interface Props { item: WorkItem }
+const { item } = Astro.props;
+---
+
+<BaseLayout title={item.id} section="planning">
+  <header class="record-header page-shell">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href={route('planning')}>Planning</a><span>/</span><a href={route(`planning/${item.sprintId}`)}>{item.sprintId}</a><span>/</span><span>{item.id}</span></nav>
+    <div>
+      <p class="kicker">Work item · {item.sprintTitle}</p>
+      <h1>{item.id}</h1>
+      <p>{item.acceptance[0] ?? item.outputs[0]}</p>
+    </div>
+    <StatusPill status={item.status} />
+  </header>
+  <div class="page-shell detail-grid">
+    <article class="detail-main work-detail">
+      <section><p class="section-label">Acceptance</p><h2>Definition of done</h2><ul class="check-list">{item.acceptance.map((text) => <li>{text}</li>)}</ul></section>
+      <section><p class="section-label">Outputs</p><h2>Artifacts to create or change</h2><ul class="file-list">{item.outputs.map((text) => <li><code>{text}</code></li>)}</ul></section>
+      <section><p class="section-label">Evidence</p><h2>How closure is proven</h2><ul class="file-list">{item.evidence.map((text) => <li><code>{text}</code></li>)}</ul></section>
+    </article>
+    <aside class="detail-aside">
+      <p class="section-label">Traceability</p>
+      <dl>
+        <div><dt>Sprint</dt><dd><a href={route(`planning/${item.sprintId}`)}>{item.sprintId}</a></dd></div>
+        <div><dt>Owner layers</dt><dd>{item.ownerLayers.join(', ')}</dd></div>
+        <div><dt>Source families</dt><dd>{item.sourceFamilies.join(', ')}</dd></div>
+        <div><dt>Existing tickets</dt><dd>{item.existingTickets.length ? item.existingTickets.join(', ') : 'None'}</dd></div>
+      </dl>
+      <p class="aside-note">This page is generated directly from the compliance program JSON. Update the canonical work item, not this view.</p>
+    </aside>
+  </div>
+</BaseLayout>

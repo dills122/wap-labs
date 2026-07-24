@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import { program, type Sprint } from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+export function getStaticPaths() {
+  return program.sprints.map((sprint) => ({ params: { id: sprint.id }, props: { sprint } }));
+}
+
+interface Props { sprint: Sprint }
+const { sprint } = Astro.props;
+---
+
+<BaseLayout title={`${sprint.id}: ${sprint.title}`} section="planning">
+  <header class="record-header page-shell">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href={route('planning')}>Planning</a><span>/</span><span>{sprint.id}</span></nav>
+    <div>
+      <p class="kicker">Program sprint</p>
+      <h1>{sprint.title}</h1>
+      <p>{sprint.goal}</p>
+    </div>
+    <StatusPill status={sprint.status} />
+  </header>
+  <div class="page-shell detail-grid">
+    <article class="detail-main">
+      <section>
+        <div class="section-heading"><div><p class="section-label">Work breakdown</p><h2>{sprint.workItems.length} traceable items</h2></div></div>
+        <ol class="work-list">
+          {sprint.workItems.map((item) => (
+            <li>
+              <a href={route(`work/${item.id}`)}>
+                <div><span class="mono-id">{item.id}</span><StatusPill status={item.status} /></div>
+                <strong>{item.acceptance[0] ?? item.outputs[0]}</strong>
+                <span class="work-arrow">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section>
+        <p class="section-label">Exit contract</p>
+        <h2>Evidence required to leave this sprint</h2>
+        <ul class="check-list">{sprint.exitGates.map((gate) => <li>{gate}</li>)}</ul>
+      </section>
+    </article>
+    <aside class="detail-aside">
+      <p class="section-label">Dependencies</p>
+      {sprint.dependsOn.length ? (
+        <ul>{sprint.dependsOn.map((id) => <li><a href={route(`planning/${id}`)}>{id}</a></li>)}</ul>
+      ) : <p>This is the program entry point.</p>}
+      <p class="section-label aside-label">Owner surfaces</p>
+      <ul class="tag-list">
+        {[...new Set(sprint.workItems.flatMap((item) => item.ownerLayers))].map((layer) => <li>{layer}</li>)}
+      </ul>
+    </aside>
+  </div>
+</BaseLayout>

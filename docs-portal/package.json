@@ -1,0 +1,17 @@
+{
+  "name": "@wap-labs/docs-portal",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "check": "astro check",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "astro": "7.0.9",
+    "typescript": "^6.0.3"
+  }
+}

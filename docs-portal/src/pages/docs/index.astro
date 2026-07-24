@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import { docSection, docTitle, isActiveDoc } from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+const docs = (await getCollection('projectDocs'))
+  .filter((entry) => isActiveDoc(entry.id))
+  .map((entry) => ({
+    id: entry.id.replace(/\.md$/, ''),
+    title: docTitle(entry.body, entry.id),
+    section: docSection(entry.id)
+  }))
+  .sort((a, b) => a.section.localeCompare(b.section) || a.title.localeCompare(b.title));
+const sections = [...new Set(docs.map((doc) => doc.section))];
+---
+
+<BaseLayout title="Document library" section="docs">
+  <header class="page-header page-shell">
+    <p class="kicker">Active repository documents</p>
+    <h1>The working library, without the archive noise.</h1>
+    <p>
+      Architecture, research, contributor direction, source recovery, compliance planning, and the
+      generated knowledge graph are indexed here directly from active Markdown.
+    </p>
+  </header>
+  <section class="page-shell stat-row">
+    <div><strong>{docs.length}</strong><span>Active documents</span></div>
+    <div><strong>{sections.length}</strong><span>Top-level sections</span></div>
+    <div><strong>0</strong><span>Copied content stores</span></div>
+  </section>
+  <section class="page-shell catalog-section" data-filter-scope>
+    <FilterBar label="Search document titles" placeholder="Architecture, WML, source recovery…" families={sections} />
+    <ul class="document-list">
+      {docs.map((doc) => (
+        <li data-filter-row data-family={doc.section}>
+          <a href={route(`docs/${doc.id}`)}>
+            <span class="doc-section">{doc.section}</span>
+            <strong>{doc.title}</strong>
+            <code>docs/{doc.id}.md</code>
+            <span aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

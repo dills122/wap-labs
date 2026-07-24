@@ -1,0 +1,72 @@
+---
+interface Props {
+  label: string;
+  placeholder: string;
+  statuses?: string[];
+  families?: string[];
+}
+
+const { label, placeholder, statuses = [], families = [] } = Astro.props;
+---
+
+<form class="filter-bar" data-filter-form>
+  <label class="search-field">
+    <span>{label}</span>
+    <input type="search" name="query" placeholder={placeholder} autocomplete="off" data-filter-query />
+  </label>
+  {
+    statuses.length > 0 && (
+      <label>
+        <span>Status</span>
+        <select name="status" data-filter-status>
+          <option value="">All statuses</option>
+          {statuses.map((status) => <option value={status}>{status}</option>)}
+        </select>
+      </label>
+    )
+  }
+  {
+    families.length > 0 && (
+      <label>
+        <span>Family</span>
+        <select name="family" data-filter-family>
+          <option value="">All families</option>
+          {families.map((family) => <option value={family}>{family}</option>)}
+        </select>
+      </label>
+    )
+  }
+  <p class="filter-count" aria-live="polite"><strong data-result-count>0</strong> shown</p>
+</form>
+
+<script>
+  const forms = document.querySelectorAll<HTMLFormElement>('[data-filter-form]');
+
+  for (const form of forms) {
+    const scope = form.closest<HTMLElement>('[data-filter-scope]');
+    const rows = [...(scope?.querySelectorAll<HTMLElement>('[data-filter-row]') ?? [])];
+    const query = form.querySelector<HTMLInputElement>('[data-filter-query]');
+    const status = form.querySelector<HTMLSelectElement>('[data-filter-status]');
+    const family = form.querySelector<HTMLSelectElement>('[data-filter-family]');
+    const count = form.querySelector<HTMLElement>('[data-result-count]');
+
+    const apply = () => {
+      const needle = query?.value.trim().toLowerCase() ?? '';
+      let visible = 0;
+
+      for (const row of rows) {
+        const textMatch = !needle || row.innerText.toLowerCase().includes(needle);
+        const statusMatch = !status?.value || row.dataset.status === status.value;
+        const familyMatch = !family?.value || row.dataset.family === family.value;
+        const show = textMatch && statusMatch && familyMatch;
+        row.hidden = !show;
+        if (show) visible += 1;
+      }
+
+      if (count) count.textContent = String(visible);
+    };
+
+    form.addEventListener('input', apply);
+    apply();
+  }
+</script>

@@ -2,6 +2,7 @@
 
 ## Primary Entry Points
 
+- `../docs-portal/README.md`: Astro project atlas for project state, standards sources, compliance, planning, work items, and active documentation
 - `wap-test-environment/README.md`: legacy stack setup and real-world validation runbook
 - `browser-emulator/README.md`: browser emulator build track (transport + WASM engine + host harness)
 - `browser-emulator/TAURI_PROFESSIONAL_POLISH_EXPLORATION.md`: high-leverage desktop polish opportunities and prioritized next-cycle options
@@ -19,6 +20,7 @@
 - `architecture/decisions/0001-library-first-native-wap-client.md`: proposed library-first native WAP client decision
 - `architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`: proposed decision to keep modern TLS, historical WTLS, clear WAP, and any future DTLS route as explicit non-downgrading profiles
 - `architecture/decisions/0003-generate-compliance-knowledge-graph.md`: accepted repository-derived graph, Obsidian projection, and bounded AI context decision
+- `architecture/decisions/0004-build-a-canonical-data-driven-project-atlas.md`: accepted Astro portal and canonical-data projection decision
 - `knowledge-graph/README.md`: WML-2 graph pilot, generated artifact contract, Obsidian entrypoint, and AI retrieval rules
 - `knowledge-graph/SLICE_ADOPTION.md`: accepted incremental graph-expansion policy and compliance-slice ready/done gates
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
