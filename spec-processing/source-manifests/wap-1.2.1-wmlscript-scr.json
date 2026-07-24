@@ -1,0 +1,5015 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wmlscript",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-193-WMLScript",
+      "WAP-193_101-WMLScript"
+    ],
+    "extractionSources": [
+      {
+        "documentId": "WAP-193-WMLScript",
+        "filename": "WAP-193-WMLScript-20001025-a.pdf",
+        "sha256": "7ace9baac33f0e648642ff539deaf234331adc95e1525e1c8f66ff88fb9c876a",
+        "role": "base"
+      },
+      {
+        "documentId": "WAP-193_101-WMLScript",
+        "filename": "WAP-193_101-WMLScript-20010928-a.pdf",
+        "sha256": "ea1535b36e49f80ac4ad80de3efe985c5af94068121afc4cfebe0528dd389ea0",
+        "role": "effective-consolidated-scr",
+        "textExtractionBytes": 352971,
+        "textExtractionSha256": "2cb6c5f33297a1a1a6243f6bed21d3530547f3655b02c0d552c225ae014471a3"
+      }
+    ],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "textExtractionBytes": 24020,
+      "textExtractionSha256": "5b2454adabb7f0478edb2ea8fe0576dc05851f7dc4e02e74cbf0ada1b0da8cdf"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WMLScript:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "interpretation": "WAP-193_101 is the consolidated effective WMLScript specification after WAP-193 and supplies the actor-delimited 112-row SCR. WAP-221 applies WMLScript:MCF to the 41 mandatory interpreter rows; encoder and optional interpreter rows remain outside the selected Class C client profile.",
+    "extractionMethod": "Normalized row transcription from the hash-locked effective text; source PDFs and full text remain outside Git."
+  },
+  "summary": {
+    "itemCount": 112,
+    "mandatoryCount": 108,
+    "optionalCount": 4,
+    "selectedClassCRequiredCount": 41,
+    "selectedClassCOptionalCount": 3,
+    "selectedClassCNotApplicableCount": 68,
+    "byActor": {
+      "wmlscript-encoder": 68,
+      "wmlscript-interpreter": 44
+    },
+    "byGroup": {
+      "automatic-data-conversion": 7,
+      "encoder-binary-format": 7,
+      "encoder-core-capabilities": 2,
+      "encoder-function-calls": 4,
+      "encoder-instruction-set": 12,
+      "encoder-language-core": 43,
+      "error-handling": 5,
+      "floating-point-support": 1,
+      "interpreter-binary-format": 7,
+      "interpreter-core-capabilities": 2,
+      "interpreter-function-calls": 10,
+      "interpreter-instruction-set": 12
+    },
+    "selectedImplementationStatus": {
+      "missing": 18,
+      "partial": 23
+    },
+    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedProvisionalTestEvidenceCount": 23
+  },
+  "obligations": [
+    {
+      "id": "WMLS-S-001",
+      "ordinal": 1,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-core-capabilities",
+      "feature": "Support for floating-point-capable and integer-only devices",
+      "referencedSection": "Support for floating-point-capable and integer-only devices",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.1"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-core-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-002",
+      "ordinal": 2,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-core-capabilities",
+      "feature": "WMLScript Standard Libraries",
+      "referencedSection": "WMLScript Standard Libraries",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.1"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-core-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-003",
+      "ordinal": 3,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Case-sensitive language",
+      "referencedSection": "Case-sensitive language",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-004",
+      "ordinal": 4,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Whitespace and line breaks between program tokens",
+      "referencedSection": "Whitespace and line breaks between program tokens",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-005",
+      "ordinal": 5,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Semicolon statement termination",
+      "referencedSection": "Semicolon statement termination",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-006",
+      "ordinal": 6,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Multi-line and single-line comments",
+      "referencedSection": "Multi-line and single-line comments",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-007",
+      "ordinal": 7,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Nested comments are disallowed",
+      "referencedSection": "Nested comments are disallowed",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-008",
+      "ordinal": 8,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Integer literals",
+      "referencedSection": "Integer literals",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-009",
+      "ordinal": 9,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Floating-point literals",
+      "referencedSection": "Floating-point literals",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-010",
+      "ordinal": 10,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Single- and double-quoted string literals",
+      "referencedSection": "Single- and double-quoted string literals",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-011",
+      "ordinal": 11,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "String escape sequences",
+      "referencedSection": "String escape sequences",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-012",
+      "ordinal": 12,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Boolean literals",
+      "referencedSection": "Boolean literals",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-013",
+      "ordinal": 13,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Invalid literal",
+      "referencedSection": "Invalid literal",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-014",
+      "ordinal": 14,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Identifier syntax",
+      "referencedSection": "Identifier syntax",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-015",
+      "ordinal": 15,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Variable scope and lifetime",
+      "referencedSection": "Variable scope and lifetime",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-016",
+      "ordinal": 16,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Integer size",
+      "referencedSection": "Integer size",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-017",
+      "ordinal": 17,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Floating-point size",
+      "referencedSection": "Floating-point size",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-018",
+      "ordinal": 18,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Assignment operators",
+      "referencedSection": "Assignment operators",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-019",
+      "ordinal": 19,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Arithmetic operators",
+      "referencedSection": "Arithmetic operators",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-020",
+      "ordinal": 20,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Logical operators",
+      "referencedSection": "Logical operators",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-021",
+      "ordinal": 21,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "String operators",
+      "referencedSection": "String operators",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-022",
+      "ordinal": 22,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Comparison operators",
+      "referencedSection": "Comparison operators",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-023",
+      "ordinal": 23,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Array operators",
+      "referencedSection": "Array operators",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-024",
+      "ordinal": 24,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Comma operator",
+      "referencedSection": "Comma operator",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-025",
+      "ordinal": 25,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Conditional operator",
+      "referencedSection": "Conditional operator",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-026",
+      "ordinal": 26,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "typeof operator",
+      "referencedSection": "typeof operator",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-027",
+      "ordinal": 27,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "isvalid operator",
+      "referencedSection": "isvalid operator",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-028",
+      "ordinal": 28,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Expression bindings",
+      "referencedSection": "Expression bindings",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-029",
+      "ordinal": 29,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Function declaration",
+      "referencedSection": "Function declaration",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-030",
+      "ordinal": 30,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Local script function calls",
+      "referencedSection": "Local script function calls",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-031",
+      "ordinal": 31,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "External function calls",
+      "referencedSection": "External function calls",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-032",
+      "ordinal": 32,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Library function calls",
+      "referencedSection": "Library function calls",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-033",
+      "ordinal": 33,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Default function return value",
+      "referencedSection": "Default function return value",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-034",
+      "ordinal": 34,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Empty statement",
+      "referencedSection": "Empty statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-035",
+      "ordinal": 35,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Block statement",
+      "referencedSection": "Block statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-036",
+      "ordinal": 36,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Variable statement",
+      "referencedSection": "Variable statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-037",
+      "ordinal": 37,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "if statement",
+      "referencedSection": "if statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-038",
+      "ordinal": 38,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "while statement",
+      "referencedSection": "while statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-039",
+      "ordinal": 39,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "for statement",
+      "referencedSection": "for statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-040",
+      "ordinal": 40,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "break statement",
+      "referencedSection": "break statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-041",
+      "ordinal": 41,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "continue statement",
+      "referencedSection": "continue statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-042",
+      "ordinal": 42,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "return statement",
+      "referencedSection": "return statement",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-043",
+      "ordinal": 43,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "External compilation-unit pragma",
+      "referencedSection": "External compilation-unit pragma",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-044",
+      "ordinal": 44,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Access-control pragma",
+      "referencedSection": "Access-control pragma",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-045",
+      "ordinal": 45,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-language-core",
+      "feature": "Meta-information pragma",
+      "referencedSection": "Meta-information pragma",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-language-core",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-046",
+      "ordinal": 46,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-function-calls",
+      "feature": "Function argument passing",
+      "referencedSection": "Function argument passing",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-047",
+      "ordinal": 47,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-function-calls",
+      "feature": "Allocation of variable indexes",
+      "referencedSection": "Allocation of variable indexes",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-048",
+      "ordinal": 48,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-function-calls",
+      "feature": "Automatic function return value",
+      "referencedSection": "Automatic function return value",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-049",
+      "ordinal": 49,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-function-calls",
+      "feature": "Variable initialization",
+      "referencedSection": "Variable initialization",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-050",
+      "ordinal": 50,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Binary-format data types",
+      "referencedSection": "Binary-format data types",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-051",
+      "ordinal": 51,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Multi-byte integer format",
+      "referencedSection": "Multi-byte integer format",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-052",
+      "ordinal": 52,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Character encoding",
+      "referencedSection": "Character encoding",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-053",
+      "ordinal": 53,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Bytecode header",
+      "referencedSection": "Bytecode header",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-054",
+      "ordinal": 54,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Constant pool",
+      "referencedSection": "Constant pool",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-055",
+      "ordinal": 55,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Pragma pool",
+      "referencedSection": "Pragma pool",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-056",
+      "ordinal": 56,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-binary-format",
+      "feature": "Function pool",
+      "referencedSection": "Function pool",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-057",
+      "ordinal": 57,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Control-flow instructions",
+      "referencedSection": "Control-flow instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-058",
+      "ordinal": 58,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Function-call instructions",
+      "referencedSection": "Function-call instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-059",
+      "ordinal": 59,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Variable access and manipulation",
+      "referencedSection": "Variable access and manipulation",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-060",
+      "ordinal": 60,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Access to constants",
+      "referencedSection": "Access to constants",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-061",
+      "ordinal": 61,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Arithmetic instructions",
+      "referencedSection": "Arithmetic instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-062",
+      "ordinal": 62,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Bitwise instructions",
+      "referencedSection": "Bitwise instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-063",
+      "ordinal": 63,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Comparison instructions",
+      "referencedSection": "Comparison instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-064",
+      "ordinal": 64,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Logical instructions",
+      "referencedSection": "Logical instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-065",
+      "ordinal": 65,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Stack instructions",
+      "referencedSection": "Stack instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-066",
+      "ordinal": 66,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Access to operand type",
+      "referencedSection": "Access to operand type",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-067",
+      "ordinal": 67,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Function-return instructions",
+      "referencedSection": "Function-return instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-S-068",
+      "ordinal": 68,
+      "actor": "wmlscript-encoder",
+      "group": "encoder-instruction-set",
+      "feature": "Debug instruction",
+      "referencedSection": "Debug instruction",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.1.5"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "encoder-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Encoder SCR retained for source completeness and a future compiler/encoder module; it is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-C-069",
+      "ordinal": 69,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-core-capabilities",
+      "feature": "Interpret WMLScript bytecode",
+      "referencedSection": "Interpret WMLScript bytecode",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.1"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-core-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-070",
+      "ordinal": 70,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-core-capabilities",
+      "feature": "WMLScript Standard Libraries",
+      "referencedSection": "WMLScript Standard Libraries",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.1"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-core-capabilities",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-012"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "WmlBrowserHost"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "set_and_get_var_roundtrip",
+            "limitation": "Only a project-specific WMLBrowser/Dialog subset exists; the six WAP standard libraries and identifiers are not complete."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-071",
+      "ordinal": 71,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Floating-point size",
+      "referencedSection": "Floating-point size",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional interpreter SCR retained for an explicit capability decision; it is not selected by WMLScript:MCF.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-C-072",
+      "ordinal": 72,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Conversions to String",
+      "referencedSection": "Conversions to String",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "coerce_to_string"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/value.rs",
+            "symbol": "ScriptValue"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "string_coercion_is_deterministic_for_scalars",
+            "limitation": "The test covers a local helper, not the complete WAP-193 conversion table."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-073",
+      "ordinal": 73,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Conversions to Integer",
+      "referencedSection": "Conversions to Integer",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-074",
+      "ordinal": 74,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Conversions to Floating-Point",
+      "referencedSection": "Conversions to Floating-Point",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional interpreter SCR retained for an explicit capability decision; it is not selected by WMLScript:MCF.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WMLS-C-075",
+      "ordinal": 75,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Conversions to Boolean",
+      "referencedSection": "Conversions to Boolean",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-076",
+      "ordinal": 76,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Conversions to Invalid",
+      "referencedSection": "Conversions to Invalid",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-077",
+      "ordinal": 77,
+      "actor": "wmlscript-interpreter",
+      "group": "automatic-data-conversion",
+      "feature": "Operator data-type conversion rules",
+      "referencedSection": "Operator data-type conversion rules",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.2"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "automatic-data-conversion",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-006",
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs",
+            "symbol": "coerce_to_string"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/value.rs",
+            "symbol": "ScriptValue"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs",
+            "test": "string_coercion_is_deterministic_for_scalars",
+            "limitation": "The test covers a local helper, not the complete WAP-193 conversion table."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-078",
+      "ordinal": 78,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "URL schemes",
+      "referencedSection": "URL schemes",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-003"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-03",
+          "W0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-079",
+      "ordinal": 79,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Fragment anchors",
+      "referencedSection": "Fragment anchors",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-003"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-03",
+          "W0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-080",
+      "ordinal": 80,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "URL-call syntax",
+      "referencedSection": "URL-call syntax",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-003"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-03",
+          "W0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-081",
+      "ordinal": 81,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "URL-call parameter passing",
+      "referencedSection": "URL-call parameter passing",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-003"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-03",
+          "W0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-082",
+      "ordinal": 82,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Relative URLs",
+      "referencedSection": "Relative URLs",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-003"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-03",
+          "W0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-083",
+      "ordinal": 83,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Function argument passing",
+      "referencedSection": "Function argument passing",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-004",
+          "RQ-WMLS-005"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm::execute_from_pc_with_locals_and_host"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm_tests.rs",
+            "test": "execute_call_and_return_with_arg_local_flow",
+            "limitation": "The project-specific frame model has not been proven against WAP function metadata and exact arity rules."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-084",
+      "ordinal": 84,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Allocation of variable indexes",
+      "referencedSection": "Allocation of variable indexes",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-004",
+          "RQ-WMLS-005"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm::execute_from_pc_with_locals_and_host"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm_tests.rs",
+            "test": "execute_call_and_return_with_arg_local_flow",
+            "limitation": "The project-specific frame model has not been proven against WAP function metadata and exact arity rules."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-085",
+      "ordinal": 85,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Automatic function return value",
+      "referencedSection": "Automatic function return value",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-004",
+          "RQ-WMLS-005"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm::execute_from_pc_with_locals_and_host"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm_tests.rs",
+            "test": "execute_call_and_return_with_arg_local_flow",
+            "limitation": "The project-specific frame model has not been proven against WAP function metadata and exact arity rules."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-086",
+      "ordinal": 86,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Variable initialization",
+      "referencedSection": "Variable initialization",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-004",
+          "RQ-WMLS-005"
+        ],
+        "workItems": [
+          "WMLS-502",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm::execute_from_pc_with_locals_and_host"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm_tests.rs",
+            "test": "execute_call_and_return_with_arg_local_flow",
+            "limitation": "The project-specific frame model has not been proven against WAP function metadata and exact arity rules."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-087",
+      "ordinal": 87,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-function-calls",
+      "feature": "Access control",
+      "referencedSection": "Access control",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-function-calls",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-002"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-03",
+          "W0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-088",
+      "ordinal": 88,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Binary-format data types",
+      "referencedSection": "Binary-format data types",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-089",
+      "ordinal": 89,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Multi-byte integer format",
+      "referencedSection": "Multi-byte integer format",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-090",
+      "ordinal": 90,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Character encoding",
+      "referencedSection": "Character encoding",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-091",
+      "ordinal": 91,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Bytecode header",
+      "referencedSection": "Bytecode header",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-092",
+      "ordinal": 92,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Constant pool",
+      "referencedSection": "Constant pool",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-093",
+      "ordinal": 93,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Pragma pool",
+      "referencedSection": "Pragma pool",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-094",
+      "ordinal": 94,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-binary-format",
+      "feature": "Function pool",
+      "referencedSection": "Function pool",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.4"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-binary-format",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-095",
+      "ordinal": 95,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Control-flow instructions",
+      "referencedSection": "Control-flow instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-096",
+      "ordinal": 96,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Function-call instructions",
+      "referencedSection": "Function-call instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-097",
+      "ordinal": 97,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Variable access and manipulation",
+      "referencedSection": "Variable access and manipulation",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-098",
+      "ordinal": 98,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Access to constants",
+      "referencedSection": "Access to constants",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-099",
+      "ordinal": 99,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Arithmetic instructions",
+      "referencedSection": "Arithmetic instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-100",
+      "ordinal": 100,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Bitwise instructions",
+      "referencedSection": "Bitwise instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-101",
+      "ordinal": 101,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Comparison instructions",
+      "referencedSection": "Comparison instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-102",
+      "ordinal": 102,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Logical instructions",
+      "referencedSection": "Logical instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-103",
+      "ordinal": 103,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Stack instructions",
+      "referencedSection": "Stack instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-104",
+      "ordinal": 104,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Access to operand type",
+      "referencedSection": "Access to operand type",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-105",
+      "ordinal": 105,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Function-return instructions",
+      "referencedSection": "Function-return instructions",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-106",
+      "ordinal": 106,
+      "actor": "wmlscript-interpreter",
+      "group": "interpreter-instruction-set",
+      "feature": "Debug instruction",
+      "referencedSection": "Debug instruction",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.5"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "interpreter-instruction-set",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-008"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WMLS-C-107",
+      "ordinal": 107,
+      "actor": "wmlscript-interpreter",
+      "group": "error-handling",
+      "feature": "Bytecode integrity verification",
+      "referencedSection": "Bytecode integrity verification",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.6"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "error-handling",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-009"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-108",
+      "ordinal": 108,
+      "actor": "wmlscript-interpreter",
+      "group": "error-handling",
+      "feature": "Runtime validity checks",
+      "referencedSection": "Runtime validity checks",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.6"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "error-handling",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-009"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "symbol": "decode_compilation_unit_with_limits"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/vm.rs",
+            "symbol": "Vm"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
+            "test": "decode_rejects_unknown_opcode",
+            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-109",
+      "ordinal": 109,
+      "actor": "wmlscript-interpreter",
+      "group": "error-handling",
+      "feature": "General error handling",
+      "referencedSection": "General error handling",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.6"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "error-handling",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-010"
+        ],
+        "workItems": [
+          "WMLS-505",
+          "W1-06",
+          "W1-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_script_types.rs",
+            "symbol": "ScriptExecutionOutcome"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "vm_trap_error_category_matrix_is_explicit",
+            "limitation": "The deterministic local taxonomy is not yet mapped exhaustively to WAP-193 chapter 12 outcomes."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-110",
+      "ordinal": 110,
+      "actor": "wmlscript-interpreter",
+      "group": "error-handling",
+      "feature": "Fatal error handling",
+      "referencedSection": "Fatal error handling",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.6"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "error-handling",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-010"
+        ],
+        "workItems": [
+          "WMLS-505",
+          "W1-06",
+          "W1-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_script_types.rs",
+            "symbol": "ScriptExecutionOutcome"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "vm_trap_error_category_matrix_is_explicit",
+            "limitation": "The deterministic local taxonomy is not yet mapped exhaustively to WAP-193 chapter 12 outcomes."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-111",
+      "ordinal": 111,
+      "actor": "wmlscript-interpreter",
+      "group": "error-handling",
+      "feature": "Non-fatal error handling",
+      "referencedSection": "Non-fatal error handling",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.6"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "error-handling",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-010"
+        ],
+        "workItems": [
+          "WMLS-505",
+          "W1-06",
+          "W1-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_script_types.rs",
+            "symbol": "ScriptExecutionOutcome"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "vm_trap_error_category_matrix_is_explicit",
+            "limitation": "The deterministic local taxonomy is not yet mapped exhaustively to WAP-193 chapter 12 outcomes."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WMLS-C-112",
+      "ordinal": 112,
+      "actor": "wmlscript-interpreter",
+      "group": "floating-point-support",
+      "feature": "Floating-point operations",
+      "referencedSection": "Floating-point operations",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "source-expression",
+        "raw": "WMLS-C-17 AND WMLS-C-73",
+        "note": "Preserved exactly from the effective SCR even though the printed identifiers omit the three-digit form."
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-193_101-WMLScript",
+        "staticConformanceSection": "15.2.7"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "floating-point-support",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WMLS-007"
+        ],
+        "workItems": [
+          "WMLS-504",
+          "W1-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional interpreter SCR retained for an explicit capability decision; it is not selected by WMLScript:MCF.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    }
+  ]
+}

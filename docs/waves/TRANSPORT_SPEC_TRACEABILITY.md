@@ -1,7 +1,7 @@
 # Waves Transport Spec Traceability
 
-Version: v0.2  
-Status: S0-02 complete (initial extraction + cleaned-source validation pass)
+Version: v0.3
+Status: active (target-era SCR extraction and selected-path audit complete)
 
 ## Purpose
 
@@ -14,23 +14,46 @@ Capture normative transport-layer requirements for the Waves protocol rewrite tr
   - `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
   - `docs/waves/networking-vector-adoption.json`
 
-## Source set reviewed (S0-02)
+## Strict target source set
 
-- `spec-processing/source-material/WAP-230-WSP-20010705-a.pdf`
-- `spec-processing/source-material/OMA-WAP-TS-WSP-V1_0-20020920-C.pdf`
-- `spec-processing/source-material/WAP-224-WTP-20010710-a.pdf`
-- `spec-processing/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF`
-- `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
+- WDP: `WAP-200` plus approved SINs `001`, `002`, `003`, `004`, and `005`
+- WCMP: `WAP-202`
+- WSP: `WAP-203` plus approved SINs `001`, `003`, and `005`
+- WTP, conditional only: `WAP-201` plus approved SINs, if a
+  connection-oriented WSP capability is claimed
 
-Parsed artifacts for this lane are additionally validated from `tmp/docling-new-source-material` during promotion checks before canonical replacement (`T0-16`/`T0-17`).
+The exact WDP/WCMP/WSP source rows and selected Class C dependency closure are
+recorded in:
+
+- `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`
+- `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
+
+The target release source identities are governed by
+`docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`. Private recovered payloads remain
+outside Git until redistribution is permitted.
+
+Successor-era `WAP-259`, `WAP-224`, `WAP-230`, and OMA corrections remain
+useful delta/context evidence. They cannot replace target-era authority.
 
 ## Normative precedence
 
-1. `WAP-259` for WDP baseline and bearer adaptation constraints.
-2. `WAP-224` for WTP transaction semantics and conformance.
-3. `OMA-WAP-224_002` as WTP correction overlay (SAR clarification + class-field encoding fix).
-4. `WAP-230` for WSP session/method/push and static conformance profile.
-5. `OMA-WAP-TS-WSP-V1_0` as WSP transport-profile clarification and late-binding extension for WSP 1.0 behavior.
+1. WAP-215 selects `WDP:MCF`, `WCMP:MCF`, and `WSP:MCF` for the Class C
+   client target.
+2. The effective WAP-200 sequence governs WDP.
+3. WAP-202 governs WCMP.
+4. The effective WAP-203 sequence governs WSP; SIN 005 corrects the
+   `WSP-CO-C-012` dependency expression.
+5. WAP-201/WTP becomes normative only for a separately claimed
+   connection-oriented WSP capability. The initial strict profile selects
+   connectionless WSP over WDP and does not activate WTP.
+6. Successor documents are delta/context evidence only.
+
+The `RQ-TRN-*` groups below are implementation-oriented themes. Exact
+conformance is decided by the three machine ledgers: 317 total source rows,
+22 selected rows, a selected audit of 0 implemented / 17 partial / 5 missing,
+and 0/22 direct normative tests.
 
 ## Requirements matrix
 
@@ -45,8 +68,10 @@ Legend:
   - Provide WDP abstract datagram service primitives and behavior to upper layers.
   - Core client/server WDP functionality must be present.
 - Spec:
-  - `WAP-259` 5.3, Appendix A
-  - SCRs: `WDP-C-001 (M)`, `WDP-S-001 (M)`, `WDP-CORE-C-001 (M)`, `WDP-CORE-S-001 (M)`, `WDP-PF-C-001 (M)`, `WDP-PF-C-002 (M)`, `WDP-PF-S-001 (M)`, `WDP-PF-S-002 (M)`
+  - effective `WAP-200` sequence, sections 3.1, 6.1, 6.3.1.1, Appendix E
+  - selected SCRs: `WDP-C-001`, `WDP-CORE-C-001`, `WDP-PF-C-001`,
+    `WDP-PF-C-002`, `WDP-CT-C-002`, `WDP-NA-C-000`, `WDP-NA-C-003`,
+    `WDP-NA-C-006`, `WDP-NA-C-007`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] `T-DUnitdata` path works for send/receive between transport and upper layers.
@@ -57,7 +82,8 @@ Legend:
 - Requirement:
   - For bearers using IP routing, WDP datagram service is UDP (not a custom datagram protocol).
 - Spec:
-  - `WAP-259` section 6 (WDP datagram protocol over bearers)
+  - effective `WAP-200` sequence, selected CDPD-over-UDP/IP alternative
+    `WDP-CT-C-002`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] IP-backed bearer profile uses UDP socket/datagram semantics.
@@ -69,7 +95,8 @@ Legend:
   - WDP must support port-based upper-layer addressing.
   - WAP registered service ports must be honored for protocol roles.
 - Spec:
-  - `WAP-259` 4.x, Appendix B (IANA/WAP ports)
+  - effective `WAP-200` sequence, sections 3.1 and 6.1
+  - selected rows `WDP-NA-C-003`, `WDP-NA-C-006`, and `WDP-NA-C-007`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Port mapping table includes WSP/WTP secure/non-secure service ports (`9200`-`9203`) and related service ports as needed.
@@ -81,8 +108,8 @@ Legend:
   - If bearer does not provide corruption protection, WDP adaptation must provide payload protection.
   - WCMP is recommended for WDP error signaling.
 - Spec:
-  - `WAP-259` 4.2/4.3
-  - SCRs: `WDP-C-002 (O)`, `WDP-S-002 (O)`
+  - effective `WAP-200` sequence and `WAP-202`
+  - selected WCMP rows are tracked in the exact WCMP ledger
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Corruption-handling policy is explicit per bearer profile.
@@ -93,7 +120,8 @@ Legend:
 - Requirement:
   - WTP requires underlying datagram service to provide at least port routing and SDU length.
 - Spec:
-  - `WAP-224` 5.2
+  - conditional target authority: effective `WAP-201` sequence
+  - successor evidence: `WAP-224` 5.2
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] WTP adapter contract requires source/destination addressing + SDU length metadata.
@@ -106,7 +134,8 @@ Legend:
     - Class 1 reliable invoke/no result
     - Class 2 reliable invoke + one reliable result
 - Spec:
-  - `WAP-224` 4.2.1, 4.2.2, 4.2.3; 6.1/6.2/6.3
+  - conditional target authority: effective `WAP-201` sequence
+  - successor evidence: `WAP-224` 4.2.1, 4.2.2, 4.2.3; 6.1/6.2/6.3
   - SCRs: `WTP-C-001..006`, `WTP-S-001..006` (profile-dependent mandatory set)
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -118,7 +147,8 @@ Legend:
 - Requirement:
   - Reliable transaction support includes retransmission-until-ack, abort handling, duplicate/TID handling, and timer/counter behavior.
 - Spec:
-  - `WAP-224` 7.1..7.12, 10
+  - conditional target authority: effective `WAP-201` sequence
+  - successor evidence: `WAP-224` 7.1..7.12, 10
   - SCR anchors: `WTP-C-010`, `WTP-C-011`, `WTP-C-015`, `WTP-C-016`, `WTP-C-022` (+ server counterparts)
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -131,7 +161,8 @@ Legend:
   - SAR and ESAR are optional but must interoperate correctly when present.
   - Selective retransmission and packet groups follow section 7.14/7.15 semantics.
 - Spec:
-  - `WAP-224` 4.6, 7.14, 7.15, 10.6
+  - conditional target authority: effective `WAP-201` sequence
+  - successor evidence: `WAP-224` 4.6, 7.14, 7.15, 10.6
   - SCR anchors: `WTP-C-020`, `WTP-C-023..026` (+ server counterparts)
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -141,11 +172,12 @@ Legend:
 ### RQ-TRN-009 WTP SIN clarification overlay
 
 - Requirement:
-  - Apply `OMA-WAP-224_002` clarifications:
+  - If the successor WTP capability is offered, apply `OMA-WAP-224_002`
+    clarifications:
     - SAR/non-SAR interaction behavior and flag semantics when SAR capability exists but is not used.
     - Class field encoding correction in PDU header table.
 - Spec:
-  - `OMA-WAP-224_002` section 3 and section 4
+  - successor-only evidence: `OMA-WAP-224_002` section 3 and section 4
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] SAR-capable vs non-SAR-capable interoperability cases are fixture-tested (both directions).
@@ -156,7 +188,7 @@ Legend:
 - Requirement:
   - WSP implementation must declare connectionless vs connection-oriented mode support and satisfy mode-specific dependencies.
 - Spec:
-  - `WAP-230` Appendix D.1
+  - effective `WAP-203` sequence, sections 6, 7, and 8; Appendix D
   - SCRs: `WSP-C-001`, `WSP-CL-*`, `WSP-CO-*` root mode requirements
 - AC:
   - Evidence: `transport-rust/src/network/wsp/session.rs`, `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json`; command: `cd transport-rust && cargo test --lib`
@@ -169,7 +201,7 @@ Legend:
   - Connection-oriented session must support connect/disconnect and optional suspend/resume behavior where profile includes it.
   - Pending method/push transactions must be aborted on disconnect/suspend transitions.
 - Spec:
-  - `WAP-230` 6.3, 7.1.2, 8.2.2/8.2.5
+  - effective `WAP-203` sequence, 6.3, 7.1.2, 8.2.2/8.2.5
   - SCR anchors: `WSP-CO-C-002..010`, `WSP-CO-S-002..010`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -182,7 +214,7 @@ Legend:
   - Support method invoke/result data flow and abort signaling semantics in active mode profile.
   - Transaction identifiers must correlate pending operations.
 - Spec:
-  - `WAP-230` 6.3.3, 6.4.2, 7.1.3/7.2, 8.2.3
+  - effective `WAP-203` sequence, 6.3.3, 6.4.2, 7.1.3/7.2, 8.2.3
   - SCR anchors: `WSP-CO-C-017..022`, `WSP-CL-C-004..020` (+ server-side counterparts)
 - AC:
   - Evidence: `transport-rust/src/network/wsp/pdu.rs`, `transport-rust/src/network/wsp/session.rs`, `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json`, `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json`; command: `cd transport-rust && cargo test --lib`
@@ -195,7 +227,7 @@ Legend:
   - Capability negotiation controls enabled facilities and defaults for session behavior.
   - Unknown capabilities are ignored safely.
 - Spec:
-  - `WAP-230` 6.3.2, 8.3
+  - effective `WAP-203` sequence, 6.3.2 and 8.3
   - SCR anchors: `WSP-CO-C-005`, `WSP-CO-C-006` (+ server equivalents)
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -208,7 +240,8 @@ Legend:
   - Encoding-version header behavior and header code-page rules must be followed for interoperability.
   - Unsupported binary encoding should produce standards-aligned error behavior.
 - Spec:
-  - `WAP-230` 8.4.2.70 and related header encoding sections
+  - effective `WAP-203` sequence, 8.4.1 and related 8.4 header-encoding
+    sections
   - SCR anchors: `WSP-CO-C-014`, `WSP-CO-C-020`, `WSP-CL-C-020` (+ server equivalents)
 - AC:
   - Evidence: `transport-rust/src/network/wsp/encoding_version.rs`, `transport-rust/src/network/wsp/header_block.rs`, `transport-rust/src/network/wsp/pdu.rs`, `transport-rust/src/network/wsp/session.rs`, `transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json`, `transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json`; command: `cd transport-rust && cargo test --lib`
@@ -220,7 +253,7 @@ Legend:
 - Requirement:
   - If push is enabled for profile, implement push/confirmed-push and related acknowledgement rules per mode.
 - Spec:
-  - `WAP-230` 6.3 Push facility, 8.2.4, Appendix D
+  - effective `WAP-203` sequence, 6.3 Push facility, 8.2.4, Appendix D
   - SCR anchors: `WSP-CO-C-010`, `WSP-CO-C-011`, `WSP-CL-C-002` (+ server counterparts)
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -233,7 +266,8 @@ Legend:
   - WTP responder-side TID acceptance/replay behavior must follow window-based validation and duplicate-handling rules.
   - WTP initiator TID allocation rate must respect MPL-derived constraints.
 - Spec:
-  - `WAP-224` 7.8.2, 7.8.3.1
+  - conditional target authority: effective `WAP-201` sequence
+  - successor evidence: `WAP-224` 7.8.2, 7.8.3.1
   - tables: `Table 6`, `Table 7`, `Table 8`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -245,7 +279,7 @@ Legend:
 - Requirement:
   - If connectionless mode is enabled, allowed client/server primitive occurrences must follow the WSP connectionless primitive matrix.
 - Spec:
-  - `WAP-230` 6.4.3
+  - effective `WAP-203` sequence, 6.4.3
   - table: `Table 9` (connectionless service primitives)
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -257,7 +291,7 @@ Legend:
 - Requirement:
   - WSP parsing/encoding must use spec-defined assigned-number registries for PDU types, abort reasons, well-known parameters, and header field names.
 - Spec:
-  - `WAP-230` section 8.4
+  - effective `WAP-203` sequence, section 8.4
   - tables: `Table 34`, `Table 35`, `Table 38`, `Table 39`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -269,7 +303,7 @@ Legend:
 - Requirement:
   - Negotiated capability values must follow capability semantics and enforce session limits for SDU/message size and outstanding-request counts.
 - Spec:
-  - `WAP-230` 6.3.2, 8.3
+  - effective `WAP-203` sequence, 6.3.2 and 8.3
   - tables: `Table 17`, `Table 18`, `Table 19`, `Table 20`, `Table 21`, `Table 22`, `Table 23`, `Table 24`, `Table 37`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
@@ -279,8 +313,10 @@ Legend:
 ## Migration phase mapping
 
 - Phase 1 (Transport profile baseline + ports/wrap): `RQ-TRN-001`..`RQ-TRN-004`, `RQ-TRN-010`, `RQ-TRN-017`
-- Phase 2 (WTP retransmission and replay discipline): `RQ-TRN-005`..`RQ-TRN-009`, `RQ-TRN-016`
-- Phase 3 (WSP session and method semantics): `RQ-TRN-010`..`RQ-TRN-015`, `RQ-TRN-018`, `RQ-TRN-019`
+- Phase 2 (conditional WTP capability only): `RQ-TRN-005`..`RQ-TRN-009`,
+  `RQ-TRN-016`
+- Phase 3 (WSP method semantics and optional session breadth):
+  `RQ-TRN-010`..`RQ-TRN-015`, `RQ-TRN-018`, `RQ-TRN-019`
 - Phase 4: post-phase integration alignment is blocked on profile gates (`T0-11`, `T0-14`) for any capability/security boundary that impacts runtime behavior.
 - Migration dependency lock: `T0-08`..`T0-14` must be closed before production profile move in `TECHNICAL_ARCHITECTURE.md`.
 - Profile-gate evidence reference (`T0-14`): `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` + `node scripts/check-networking-profile-gates.mjs`.
@@ -290,12 +326,19 @@ Legend:
 The transport stack will remain stable while adjacent networking specs are explicitly deferred:
 
 1. `WAP-204` family (WAP over GSM/USSD) is deferred because bearer-adapter semantics are profile- and carrier-specific; scope and requirements are maintained in `OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`.
-2. `WAP-120-WAPCachingMod` and `WAP-175*` cache-operation families are deferred because cache policy behavior belongs in higher-level messaging/app lifecycle layers, not the core protocol rewrite milestone.
+2. `WAP-120-WAPCachingMod` is outside transport ownership but active under
+   `WAE-603`; `WAP-175*` cache-operation breadth remains deferred from the
+   core protocol rewrite milestone.
 3. `WAP-213*` (pictogram/display adjuncts) is not required for protocol-layer correctness and is deferred to rendering-adjacent tracks.
 4. `WAP-227` and `WAP-231` are deferred because persistent state/EFI integrations are not needed for transport-layer milestone behavior.
 5. Any future revival must open a dedicated scope ticket, update this traceability mapping, and pass `T0-14`+`T0-17` lock checks.
 
 ## Notes
 
-- The WSP/WTP/WDP conformance appendices are extensive. This document focuses on requirements that materially impact Waves' planned protocol rewrite and host/runtime integration.
-- Bearer-specific adaptation matrices in `WAP-259` are tracked as profile decisions; only selected bearer paths used by Waves need implementation in initial milestones.
+- The exact ledgers, not this thematic matrix, are the selected-profile
+  completion authority.
+- The initial strict bearer decision is CDPD WDP over UDP/IP with IPv4. Its
+  `TIAEIA-732` family citation is normalized under `SRC-005` as an informative,
+  licensed-payload metadata-only dependency.
+- Additional bearers and connection-oriented WSP/WTP are modular enhancements;
+  they cannot replace or waive the 22-row strict connectionless path.

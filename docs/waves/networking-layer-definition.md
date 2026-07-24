@@ -10,11 +10,14 @@ This is the practical build definition for networking layer work in Waves.
 Build in explicit layers with profile-gated behavior:
 
 - `WDP`: address/port-capable datagram transport and adaptor profile.
-- `WTP`: transaction semantics (class 0/1/2), retransmission, duplicate handling, abort semantics.
-- `WSP`: session and connectionless methods, headers, capability negotiation, push.
+- `WCMP`: selected error and diagnostic message structures.
+- `WSP`: connectionless methods and headers for the strict profile; session,
+  capability negotiation, and Push only when explicitly claimed.
+- `WTP`: conditional transaction semantics for connection-oriented WSP.
 - `WTLS`: security façade with explicit phase plan (phase A shim, phase B full implementation).
 
-Transport profile scope for this document is core protocol rewrite (`WDP`/`WTP`/`WSP`) plus explicit profile gates.
+Transport profile scope for this document is the strict
+WDP/WCMP/connectionless-WSP path plus explicit gates for optional modules.
 
 ## 2) What must not be built here
 
@@ -33,18 +36,25 @@ Those remain in `engine-wasm` and `browser` as per contract boundaries.
 
 ## 4) Protocol definitions in priority order
 
-1. `WAP-259` (WDP): transport profile/ports/quadruplets and segmentation model.
-2. `WAP-224` + `OMA-WAP-224_002`: transaction classes, retransmission, duplicate, TID behavior, SAR overlays.
-3. `WAP-230` + `OMA-WAP-TS-WSP`: session modes, method/push/reply semantics, capabilities, header tables.
-4. `WAP-261/WAP-199`: WTLS placeholder and roadmap (security path).
+1. Effective `WAP-200` sequence: strict WDP source and SCR authority.
+2. `WAP-202`: strict WCMP source and SCR authority.
+3. Effective `WAP-203` sequence: strict WSP source and SCR authority.
+4. Effective `WAP-201` sequence: conditional WTP authority only when
+   connection-oriented WSP is claimed.
+5. `WAP-259`, `WAP-224`, `WAP-230`, and OMA corrections: successor
+   delta/context evidence only.
+6. `WAP-261/WAP-199`: WTLS placeholder and roadmap (security path).
 
 ## 5) Build order with acceptance gates
 
-- `new-source-material` parse reviews (`tmp/docling-new-source-material`) must be validated before any parser contract shifts.
+- The three exact transport ledgers must stay valid before parser or profile
+  contract shifts.
 - `WDP` transport abstractions and UDP implementation with validated port mapping.
-- `WTP` class-1/class-2 state machines with bounded timers and deterministic duplicates.
-- `WSP` connection-mode and connectionless codec/state baseline plus capability store.
+- `WCMP` selected message structures and deterministic error rules.
+- `WSP` connectionless GET/POST/REPLY codec and selected header baseline.
 - Browser integration surface contract verification (`transport.ts`).
+- Conditional WTP and connection-oriented WSP only after an extension-profile
+  claim activates them.
 - Optional WTLS shim enablement.
 
 ## 6) Open questions closed by design
@@ -66,7 +76,9 @@ Those remain in `engine-wasm` and `browser` as per contract boundaries.
 
 Create golden fixtures for:
 
-- `WSP` PDU encode/decode for connect/disconnect/get/reply/push,
-- `WTP` class-2 completion and abort traces,
+- the eight selected WSP connectionless rows and source-derived
+  GET/POST/REPLY encodings,
+- the five selected WCMP message rows,
 - `WDP` UDP receive/send roundtrip with `9200`/`9201`/`9202`/`9203` mapping,
-- transport profile gating for `connectionless_only`, `connection_mode`, `wtls_optional`, `push_enabled`.
+- transport profile gating for `connectionless_only`, conditional
+  `connection_mode`, `wtls_optional`, and `push_enabled`.

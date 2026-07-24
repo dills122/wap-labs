@@ -1,0 +1,1645 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "release": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "compatibilityFloor": "strict-historical-observable-behavior",
+    "implementationClaim": "pre-conformance",
+    "certificationClaim": "none"
+  },
+  "profiles": [
+    {
+      "id": "class-c-data-client",
+      "role": "primary-strict-target",
+      "status": "selected-from-wap-215",
+      "summary": "Exact CCR-CLASSC-C-001 data-client profile: WAE, WML, WBXML, WMLScript, WMLScript libraries, caching, WSP, WDP, and WCMP mandatory client features. WTP becomes mandatory only when connection-mode WSP is supported; security, push, telephony, identity, and UAProf remain separately declared."
+    },
+    {
+      "id": "class-b-telephony-client",
+      "role": "optional-future-profile",
+      "status": "deferred",
+      "summary": "Adds mandatory telephony, push, and security profile behavior after strict Class C closure."
+    },
+    {
+      "id": "class-a-complete-client",
+      "role": "optional-future-profile",
+      "status": "deferred",
+      "summary": "Makes mandatory and optional release features mandatory; not part of the first compliance release."
+    },
+    {
+      "id": "waves-enhanced",
+      "role": "additive-extension-mode",
+      "status": "planned",
+      "summary": "Modern features and improved behavior that preserve strict results or are explicitly separated from strict mode."
+    }
+  ],
+  "executionPolicy": {
+    "strictBeforeEnhancement": true,
+    "completedTicketsImmutable": true,
+    "runtimeChangesRequireSourceAnchor": true,
+    "sourceQualityChecksRemainManual": true,
+    "binarySourcePromotionRequiresRedistributionApproval": true,
+    "redistributionBlockDoesNotBlockInternalEvidence": true
+  },
+  "sprints": [
+    {
+      "id": "SRC-0",
+      "title": "Authoritative source control plane",
+      "status": "blocked",
+      "dependsOn": [],
+      "goal": "Lock the complete release, its supporting assets, class governance, and legal retrieval posture before implementation claims are expanded.",
+      "workItems": [
+        {
+          "id": "SRC-001",
+          "status": "done",
+          "ownerLayers": ["spec-processing", "documentation"],
+          "sourceFamilies": ["architecture", "conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "spec-processing/source-manifests/wap-1.2.1-release.json",
+            "spec-processing/scripts/check-wap-release-manifest.mjs"
+          ],
+          "acceptance": [
+            "All 97 technical release members have authority URLs, hashes, sizes, family classifications, and local-state comparisons."
+          ],
+          "evidence": [
+            "node spec-processing/scripts/check-wap-release-manifest.mjs"
+          ]
+        },
+        {
+          "id": "SRC-002",
+          "status": "done",
+          "ownerLayers": ["spec-processing", "documentation"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "spec-processing/source-manifests/wap-1.2.1-effective-spec.json",
+            "spec-processing/scripts/check-wap-effective-spec.mjs"
+          ],
+          "acceptance": [
+            "Every release member belongs to one family and approved base/SIN order is explicit; proposed documents are excluded from normative sequences."
+          ],
+          "evidence": [
+            "node spec-processing/scripts/check-wap-effective-spec.mjs"
+          ]
+        },
+        {
+          "id": "SRC-003",
+          "status": "done",
+          "ownerLayers": ["spec-processing", "documentation"],
+          "sourceFamilies": ["associated-assets"],
+          "existingTickets": [],
+          "outputs": [
+            "Six-entry WAP 1.2.1 DTD asset lock"
+          ],
+          "acceptance": [
+            "Channel, WML, PAP, SI, SL, and WTA-WML DTD URLs, sizes, and SHA-256 hashes are recorded without committing restricted content."
+          ],
+          "evidence": [
+            "node spec-processing/scripts/check-wap-release-manifest.mjs"
+          ]
+        },
+        {
+          "id": "SRC-004",
+          "status": "done",
+          "ownerLayers": ["spec-processing", "documentation"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Verified WAP-215 Class Conformance Requirements source lock",
+            "Exact Class C/B/A dependency graph",
+            "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+            "spec-processing/scripts/check-wap-class-conformance.mjs",
+            "docs/waves/WAP_SOURCE_RECOVERY_AND_PERMISSION.md"
+          ],
+          "acceptance": [
+            "The official WAP Forum WAP-215 payload is byte-locked and all six Class A/B/C client/server tables are extracted with exact identifiers and resolved release families."
+          ],
+          "evidence": [
+            "node spec-processing/scripts/check-wap-release-manifest.mjs",
+            "node spec-processing/scripts/check-wap-class-conformance.mjs"
+          ]
+        },
+        {
+          "id": "SRC-005",
+          "status": "done",
+          "ownerLayers": ["spec-processing", "documentation"],
+          "sourceFamilies": ["external-dependencies"],
+          "existingTickets": [],
+          "outputs": [
+            "spec-processing/source-manifests/wap-1.2.1-external-dependencies.json",
+            "spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json",
+            "docs/waves/WAP_1_2_1_EXTERNAL_DEPENDENCIES.md",
+            "W3C/IETF/ISO/Unicode dependency lock",
+            "Dependency applicability and supersession review"
+          ],
+          "acceptance": [
+            "Every normative external reference in strict-target families has authority metadata and is classified as definition-only, implementation-relevant, or test-relevant.",
+            "The selected TIAEIA-732 bearer citation has normalized part/version metadata and an explicit licensed-access disposition."
+          ],
+          "evidence": [
+            "node scripts/check-wap-external-dependencies.mjs",
+            "node spec-processing/scripts/check-wap-external-ingestion-status.mjs"
+          ]
+        },
+        {
+          "id": "SRC-006",
+          "status": "blocked",
+          "ownerLayers": ["spec-processing", "documentation"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": ["T0-16", "T0-17"],
+          "outputs": [
+            "spec-processing/source-manifests/wap-1.2.1-ingestion-status.json",
+            "spec-processing/scripts/check-wap-ingestion-status.mjs",
+            "Approved staged recovery of 27 missing and 3 divergent high-value release members",
+            "Verified cleaned-source promotion and append-only provenance snapshot"
+          ],
+          "acceptance": [
+            "All 97 technical members and text extractions have private hash/size evidence before promotion.",
+            "Redistribution is explicitly approved before binaries or parsed derivatives enter Git; afterward each promoted source matches the source lock and passes the existing manual cleanup workflow."
+          ],
+          "evidence": [
+            "manual: redistribution approval record",
+            "node spec-processing/scripts/check-wap-release-manifest.mjs",
+            "node spec-processing/scripts/check-wap-ingestion-status.mjs",
+            "spec-processing/scripts/generate-docling-provenance.sh"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Release and effective-spec validators pass.",
+        "The WAP-215 source lock and exact selected Class C client graph pass validation.",
+        "No recovered binary or parsed derivative is committed without redistribution approval."
+      ]
+    },
+    {
+      "id": "CONF-1",
+      "title": "CCR, SCR, and normative obligation ledgers",
+      "status": "done",
+      "dependsOn": ["SRC-0"],
+      "goal": "Replace thematic coverage estimates with one-to-one conformance accounting for the selected client profile.",
+      "workItems": [
+        {
+          "id": "CONF-001",
+          "status": "done",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": ["architecture", "conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Class C client CCR dependency graph",
+            "Class B/A optional profile graphs",
+            "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+          ],
+          "acceptance": [
+            "Every Class A/B/C client and server dependency is extracted from WAP-215, and every selected Class C client dependency resolves to an effective release family and feature group."
+          ],
+          "evidence": [
+            "node spec-processing/scripts/check-wap-class-conformance.mjs",
+            "node scripts/check-wap-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "CONF-002",
+          "status": "done",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": [
+            "wae",
+            "wml",
+            "wbxml",
+            "wmlscript",
+            "wmlscript-libraries",
+            "caching",
+            "wdp",
+            "wsp",
+            "wcmp"
+          ],
+          "existingTickets": ["R0-01", "W1-05"],
+      "outputs": [
+        "Machine-readable effective SCR ledger for every Class C family",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wae-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-caching-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
+      ],
+          "acceptance": [
+            "Every effective SCR line has source document, section, actor, M/O status, dependency expression, strict disposition, and review state."
+          ],
+      "evidence": [
+        "node scripts/check-wap-conformance-ledger.mjs",
+        "node scripts/check-wap-wae-conformance-ledger.mjs",
+        "node scripts/check-wap-wbxml-conformance-ledger.mjs",
+        "node scripts/check-wap-wmlscript-conformance-ledger.mjs",
+        "node scripts/check-wap-caching-conformance-ledger.mjs",
+        "node scripts/check-wap-transport-conformance-ledgers.mjs"
+      ]
+        },
+        {
+          "id": "CONF-003",
+          "status": "done",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": [
+            "wae",
+            "wml",
+            "wbxml",
+            "wmlscript",
+            "wmlscript-libraries",
+            "caching",
+            "wdp",
+            "wsp",
+            "wcmp"
+          ],
+          "existingTickets": [],
+          "outputs": [
+            "Normative clause ledger nested under SCR features",
+            "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+          ],
+          "acceptance": [
+            "All 201 selected rows across the nine mandatory Class C families have nested normative clauses anchored and deduplicated.",
+            "Normative text is not reduced to keyword search: implicit MUST rules and clauses within each SCR feature are anchored and deduplicated.",
+            "The completed ledger declares all nine covered families, zero remaining selected rows, and a closed 201-row gate."
+          ],
+          "evidence": [
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-wap-wae-conformance-ledger.mjs",
+            "node scripts/check-wap-wbxml-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "CONF-004",
+          "status": "done",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Strict, conditional, deferred, and Waves-extension disposition registry",
+            "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+            "Nine family SCR ledgers with strict and Class C dispositions"
+          ],
+          "acceptance": [
+            "No optional feature is silently treated as mandatory or vice versa; extensions cannot satisfy strict obligations."
+          ],
+          "evidence": [
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-requirement-status-drift.mjs"
+          ]
+        },
+        {
+          "id": "CONF-005",
+          "status": "done",
+          "ownerLayers": ["documentation", "qa", "cross-layer"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "SCR-to-RQ-to-ticket-to-test crosswalk",
+            "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+          ],
+          "acceptance": [
+            "Every mandatory Class C SCR line maps to implemented evidence or one additive open work item; thematic RQ groups may map many-to-many but cannot hide an unmapped SCR."
+          ],
+      "evidence": [
+        "node scripts/check-wap-conformance-ledger.mjs",
+        "node scripts/check-wap-wae-conformance-ledger.mjs",
+        "node scripts/check-wap-wbxml-conformance-ledger.mjs",
+        "node scripts/check-worklist-drift.mjs",
+        "node scripts/check-requirement-status-drift.mjs"
+      ]
+        },
+        {
+          "id": "CONF-006",
+          "status": "done",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Cross-document requirement-status drift check"
+          ],
+          "acceptance": [
+            "Requirement index, traceability, test coverage, and work program cannot disagree on covered/planned/deferred status without an explicit exception."
+          ],
+          "evidence": [
+            "node scripts/check-requirement-status-drift.mjs"
+          ]
+        },
+        {
+          "id": "CONF-007",
+          "status": "done",
+          "ownerLayers": [
+            "documentation",
+            "qa",
+            "cross-layer"
+          ],
+          "sourceFamilies": [
+            "wae",
+            "wml",
+            "wbxml",
+            "wmlscript",
+            "wmlscript-libraries",
+            "caching",
+            "wdp",
+            "wsp",
+            "wcmp"
+          ],
+          "existingTickets": [],
+          "outputs": [
+            "Unified WAP 1.2.1-to-successor implementation delta register",
+            "spec-processing/source-manifests/wap-1.2.1-successor-delta.json",
+            "docs/waves/WAP_1_2_1_SUCCESSOR_DELTA_REGISTER.md"
+          ],
+          "acceptance": [
+            "Every selected-row behavior implemented from successor-era material is classified as compatible, strict correction required, or successor-only.",
+            "Family-specific WAE, WDP/WCMP, and WSP delta registers feed one machine-checkable cross-family view; WML, WBXML, WMLScript, libraries, and caching are not omitted."
+          ],
+          "evidence": [
+            "node scripts/check-wap-delta-register.mjs"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Every mandatory selected-profile SCR has an owner and evidence state.",
+        "Every optional SCR has a declared capability or deferral.",
+        "No compliance percentage is calculated from thematic RQ groups alone."
+      ]
+    },
+    {
+      "id": "WML-2",
+      "title": "WML parser, deck model, and validation baseline",
+      "status": "todo",
+      "dependsOn": ["CONF-1"],
+      "goal": "Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.",
+      "workItems": [
+        {
+          "id": "WML-201",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["R0-01"],
+          "outputs": [
+            "Effective 76-item WML SCR matrix"
+          ],
+          "acceptance": [
+            "The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "node scripts/check-wap-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "WML-202",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["R0-04", "C5-03"],
+          "outputs": [
+            "Complete deck/head/template/card/access/meta parser model"
+          ],
+          "acceptance": [
+            "Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-203",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "transport-rust", "qa"],
+          "sourceFamilies": ["wml", "wbxml", "associated-assets"],
+          "existingTickets": ["R0-08", "T0-07"],
+          "outputs": [
+            "WML 1.3 DTD validation policy",
+            "Text/WBXML structural parity fixtures",
+            "Direct conformance evidence for the three WBXML:MCF client rows"
+          ],
+          "acceptance": [
+            "Text WML and WBXML-derived WML reach equivalent deck models; strict DTD identity and unknown-DTD behavior are explicit.",
+            "WBXML-C-001, WBXML-C-010, and WBXML-C-011 are fixture-backed against a pinned decoder; fake fixed-output and either-result fixtures do not satisfy this gate."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-wbxml-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "WML-204",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["R0-04", "B5-01", "C5-05"],
+          "outputs": [
+            "Complete field/control syntax and attribute validation"
+          ],
+          "acceptance": [
+            "Input/select/option/optgroup/fieldset constraints, masks, defaults, and validation failures are deterministic."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-205",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["R0-07"],
+          "outputs": [
+            "WML parse/error taxonomy"
+          ],
+          "acceptance": [
+            "Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        }
+      ],
+      "exitGates": [
+        "All strict WML structures parse or fail deterministically.",
+        "Text and WBXML input parity is fixture-backed.",
+        "The 76-item SCR matrix has no unmapped mandatory parser obligation."
+      ]
+    },
+    {
+      "id": "WML-3",
+      "title": "WML state, tasks, events, forms, and navigation",
+      "status": "todo",
+      "dependsOn": ["WML-2"],
+      "goal": "Close the observable runtime mechanics that define historical WML browser behavior.",
+      "workItems": [
+        {
+          "id": "WML-301",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml", "wae"],
+          "existingTickets": ["R0-02", "R0-03", "A5-01"],
+          "outputs": [
+            "Deck/card context, history, newcontext, and inter-card process-order closure"
+          ],
+          "acceptance": [
+            "Forward, backward, reload, failure rollback, and context reset match strict ordering across native and WASM adapters."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-302",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["C5-04"],
+          "outputs": [
+            "Variable store and substitution closure"
+          ],
+          "acceptance": [
+            "Initialization, escaping modes, substitution contexts, setvar ordering, and invalid references match effective WML rules."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-303",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["R0-04", "R0-09", "C5-04"],
+          "outputs": [
+            "do/onevent/task shadowing and softkey precedence closure"
+          ],
+          "acceptance": [
+            "go, prev, refresh, noop, intrinsic events, template/card shadowing, BACK availability, and activation order are deterministic."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-304",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "transport-rust", "browser", "qa"],
+          "sourceFamilies": ["wml", "wae"],
+          "existingTickets": ["R0-06", "T0-30", "C5-05"],
+          "outputs": [
+            "GET/POST/postfield/form commit pipeline"
+          ],
+          "acceptance": [
+            "Field commit, postfield generation, same-deck suppression, accept-charset, URL encoding, multipart optionality, referer, and no-cache behavior follow SIN 105."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-305",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["A5-03", "W0-05"],
+          "outputs": [
+            "Native WML timer lifecycle"
+          ],
+          "acceptance": [
+            "Timer start, stop, resume, expiry, invalid values, ontimer dispatch, and host wakeups are deterministic and target-parity tested."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WML-306",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml", "wae"],
+          "existingTickets": ["R0-07"],
+          "outputs": [
+            "Access control, low-memory, and runtime error policy"
+          ],
+          "acceptance": [
+            "Deck access checks, low-memory behavior, unknown DTDs, task failures, and user-visible errors have strict deterministic policies."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Mandatory WML runtime SCR lines are covered by deterministic tests.",
+        "Form/network effects cross contracts without host-side semantic reimplementation.",
+        "Native and WASM outcomes are equivalent."
+      ]
+    },
+    {
+      "id": "REN-4",
+      "title": "Historical rendering, focus, and input fidelity",
+      "status": "todo",
+      "dependsOn": ["WML-2", "WML-3"],
+      "goal": "Complete the visible and interactive WML 1.3 behavior expected from a data-only client.",
+      "workItems": [
+        {
+          "id": "REN-401",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["B5-02", "B5-03", "R0-05"],
+          "outputs": [
+            "Inline flow, wrapping, paragraph alignment, and wrap-mode fidelity"
+          ],
+          "acceptance": [
+            "Layout is deterministic under constrained viewports and preserves focus/navigation order."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "REN-402",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["C5-01", "C5-02", "R0-05"],
+          "outputs": [
+            "Table and preformatted text rendering"
+          ],
+          "acceptance": [
+            "Columns, cells, whitespace preservation, line breaks, and constrained overflow follow WML semantics."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "REN-403",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml", "wae"],
+          "existingTickets": ["R0-05"],
+          "outputs": [
+            "Image and WBMP baseline"
+          ],
+          "acceptance": [
+            "Mandatory alt behavior and supported image rendering are correct; optional spacing/alignment/size hints are explicitly claimed or deferred."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "REN-404",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml", "wae"],
+          "existingTickets": ["B5-01", "C5-05"],
+          "outputs": [
+            "Input/select focus, masks, tabindex, and commit behavior"
+          ],
+          "acceptance": [
+            "Historical keypad/softkey traversal is deterministic; optional tabindex is capability-declared and tested when enabled."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "REN-405",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["R0-10", "R0-11"],
+          "outputs": [
+            "Golden frame/input replay corpus"
+          ],
+          "acceptance": [
+            "Representative WML decks replay to stable render lists, focus states, history, and emitted effects across native and WASM."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "pnpm --dir browser test"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Mandatory visual/interactive SCR behavior has golden evidence.",
+        "Optional render hints are capability-declared.",
+        "No rendering semantics are implemented in transport or host adapters."
+      ]
+    },
+    {
+      "id": "WMLS-5",
+      "title": "WMLScript language, bytecode, VM, and libraries",
+      "status": "in-progress",
+      "dependsOn": ["CONF-1", "WML-3"],
+      "goal": "Close the mandatory Class C script engine and standard-library behavior with bounded deterministic execution.",
+      "workItems": [
+        {
+          "id": "WMLS-501",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wmlscript"],
+          "existingTickets": ["W1-02"],
+          "outputs": [
+            "Complete bytecode decoder and structural verifier"
+          ],
+          "acceptance": [
+            "The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WMLS-502",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wmlscript"],
+          "existingTickets": ["W1-04"],
+          "outputs": [
+            "Language operation and conversion parity"
+          ],
+          "acceptance": [
+            "Types, conversions, operators, calls, locals, return values, control flow, and invalid-operation semantics match the effective specification."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WMLS-503",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wmlscript", "wmlscript-libraries"],
+          "existingTickets": ["W1-03", "W0-08"],
+          "outputs": [
+            "Extern, pragma, URL invocation, and access-control closure"
+          ],
+          "acceptance": [
+            "Script loading and invocation respect content identity, access domains/paths, pragmas, argument binding, and deterministic failure."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WMLS-504",
+          "status": "in-progress",
+          "ownerLayers": ["engine-wasm", "qa"],
+          "sourceFamilies": ["wmlscript-libraries"],
+          "existingTickets": ["W1-05"],
+          "outputs": [
+            "Complete standard-library conformance matrix and implementation",
+            "spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json"
+          ],
+          "acceptance": [
+            "All 80 mandatory WMLScriptLibs:MCF rows map to exact source IDs, implementation status, open work, and deterministic tests; Lang, Float, String, URL, WMLBrowser, and Dialogs close their nested clauses; optional immediate refresh is declared."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-wap-wmlscript-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "WMLS-505",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wmlscript", "wmlscript-libraries"],
+          "existingTickets": ["W0-05", "W1-06", "W1-07"],
+          "outputs": [
+            "Host capability and script error boundary closure"
+          ],
+          "acceptance": [
+            "Dialogs, timers, navigation effects, fatal/non-fatal errors, resource limits, and post-invocation effect ordering are deterministic."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WMLS-506",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "browser", "engine-wasm", "qa"],
+          "sourceFamilies": ["wmlscript", "wbxml"],
+          "existingTickets": ["W1-01"],
+          "outputs": [
+            "WMLScript source/compiled content routing"
+          ],
+          "acceptance": [
+            "MIME handling, compiled-script decode, cache identity, fetch ownership, and engine invocation preserve layer boundaries."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Mandatory WMLScript and library SCR lines have executable evidence.",
+        "Malformed bytecode cannot reach execution.",
+        "Native/WASM and host capability outcomes are equivalent."
+      ]
+    },
+    {
+      "id": "WAE-6",
+      "title": "WAE, caching, formats, and content behavior",
+      "status": "in-progress",
+      "dependsOn": ["CONF-1", "WML-3", "REN-4", "WMLS-5"],
+      "goal": "Close browser-level WAE behavior that composes markup, script, media, cache, and request policy.",
+      "workItems": [
+        {
+          "id": "WAE-601",
+          "status": "in-progress",
+          "ownerLayers": ["documentation", "engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wae", "wae-overview"],
+          "existingTickets": [],
+          "outputs": [
+            "Effective WAP 1.2.1 WAE + SIN behavior map",
+            "spec-processing/source-manifests/wap-1.2.1-wae-scr.json"
+          ],
+          "acceptance": [
+            "WAE requirements come from WAP-190 plus SINs, with WAP-236 used only for explicit successor deltas."
+          ],
+          "evidence": [
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-wap-wae-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "WAE-602",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "transport-rust", "browser", "qa"],
+          "sourceFamilies": ["wae", "general-formats"],
+          "existingTickets": ["T0-05", "T0-06"],
+          "outputs": [
+            "Media type, charset, language, URI, and capability behavior closure"
+          ],
+          "acceptance": [
+            "Accepted content, character decoding, language/capability headers, URI limits, and unsupported content outcomes match the selected profile."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WAE-603",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["caching", "wae"],
+          "existingTickets": ["T0-04", "T0-15"],
+          "outputs": [
+            "User-agent cache model and invalidation closure",
+            "spec-processing/source-manifests/wap-1.2.1-caching-scr.json"
+          ],
+          "acceptance": [
+            "All five mandatory WAPCachingMod:MCF rows map to exact source IDs, implementation status, open work, and direct tests; zero-byte mode is explicit; both must-revalidate history branches, intra-resource behavior, and cache security are deterministic."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "node scripts/check-wap-caching-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "WAE-604",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wae"],
+          "existingTickets": ["R0-05"],
+          "outputs": [
+            "WBMP and WAE media behavior"
+          ],
+          "acceptance": [
+            "Mandatory WBMP decode/display and fallback behavior are capability-tested without relying on modern browser image semantics."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WAE-605",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wae", "wml", "wmlscript"],
+          "existingTickets": ["R0-07", "W1-06"],
+          "outputs": [
+            "Unified user-agent error and recovery policy"
+          ],
+          "acceptance": [
+            "Content, script, navigation, access, memory, and unsupported-feature errors have strict observable behavior and diagnostic-only enhancements."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WAE-606",
+          "status": "in-progress",
+          "ownerLayers": ["documentation", "qa", "cross-layer"],
+          "sourceFamilies": ["wae", "caching", "general-formats"],
+          "existingTickets": [],
+          "outputs": [
+            "WAP 1.2.1-to-WAP 2.0 WAE delta register"
+          ],
+          "acceptance": [
+            "Each current WAP 2.0-derived behavior is confirmed compatible, changed for strict mode, or isolated behind a successor/extension profile."
+          ],
+          "evidence": [
+            "node scripts/check-wap-wae-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "WAE-607",
+          "status": "todo",
+          "ownerLayers": [
+            "transport-rust",
+            "browser",
+            "qa"
+          ],
+          "sourceFamilies": [
+            "wae",
+            "wsp"
+          ],
+          "existingTickets": [],
+          "outputs": [
+            "WAP 1.2.1 HTTP Basic authentication challenge and credential-flow closure"
+          ],
+          "acceptance": [
+            "The browser and transport implement deterministic Basic challenge parsing, credential acquisition/storage policy, Authorization retry behavior, cancellation, and user-visible failure without treating header token registration as conformance."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Class C browser/WAE mandatory groups resolve to tested behavior.",
+        "Cache and media behavior are independent of modern DOM assumptions.",
+        "WAP 2.0 successor behavior cannot silently leak into strict mode."
+      ]
+    },
+    {
+      "id": "TRN-7",
+      "title": "WDP, WCMP, and conditional WTP Class C transport core",
+      "status": "in-progress",
+      "dependsOn": ["CONF-1"],
+      "goal": "Complete the historical datagram and transaction mechanics required beneath WSP.",
+      "workItems": [
+        {
+          "id": "TRN-701",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wdp", "wdp-wcmp-adaptation"],
+          "existingTickets": ["T0-19"],
+          "outputs": [
+            "Effective WDP service, addressing, port, and bearer profile",
+            "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json"
+          ],
+          "acceptance": [
+            "All nine selected CDPD/IPv4 WDP path rows map to implementation evidence or corrective work; the normalized informative TIAEIA-732 dependency retains its licensed-payload metadata-only boundary."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+          ]
+        },
+        {
+          "id": "TRN-702",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wdp"],
+          "existingTickets": ["T0-19"],
+          "outputs": [
+            "WDP constrained-payload and segmentation/reassembly policy"
+          ],
+          "acceptance": [
+            "Payload limits, truncation/rejection, segmentation applicability, and reassembly failure are deterministic for the selected bearer."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml"
+          ]
+        },
+        {
+          "id": "TRN-703",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wcmp", "wdp-wcmp-adaptation"],
+          "existingTickets": ["T0-17"],
+          "outputs": [
+            "WCMP generation/handling and error mapping",
+            "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json"
+          ],
+          "acceptance": [
+            "The five selected general-WCMP dependency rows are implemented and tested; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+          ]
+        },
+        {
+          "id": "TRN-704",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wtp"],
+          "existingTickets": ["T0-08", "T0-18"],
+          "outputs": [
+            "Effective WTP PDU and transaction state machines"
+          ],
+          "acceptance": [
+            "When connection-oriented WSP is claimed, classes, invoke/result/ack/abort, TID, duplicate handling, retransmission, and terminal states map to effective WTP SCR entries."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml"
+          ]
+        },
+        {
+          "id": "TRN-705",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wtp"],
+          "existingTickets": ["T0-18"],
+          "outputs": [
+            "WTP timing, NACK, hold-off, and retry closure"
+          ],
+          "acceptance": [
+            "When connection-oriented WSP is claimed, all WTP timers and retry limits use deterministic simulated time and incorporate SIN corrections in order."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml"
+          ]
+        },
+        {
+          "id": "TRN-706",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wdp", "wtp"],
+          "existingTickets": ["T0-22", "T0-24"],
+          "outputs": [
+            "WDP/WTP packet and replay golden corpus"
+          ],
+          "acceptance": [
+            "Positive, boundary, malformed, duplicate, timeout, and abort traces replay identically and cite exact effective source features."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay"
+          ]
+        },
+        {
+          "id": "TRN-707",
+          "status": "todo",
+          "ownerLayers": ["documentation", "transport-rust", "qa"],
+          "sourceFamilies": ["wdp", "wtp", "wcmp"],
+          "existingTickets": [],
+          "outputs": [
+            "WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register"
+          ],
+          "acceptance": [
+            "Current successor-spec implementation assumptions are either proven compatible or ticketed as strict-mode corrections."
+          ],
+          "evidence": [
+            "node scripts/check-wap-delta-register.mjs"
+          ]
+        }
+      ],
+      "exitGates": [
+        "The nine-row selected WDP path and five-row selected WCMP path have executable evidence.",
+        "WTP evidence is required only when connection-oriented WSP is claimed.",
+        "Timing tests are deterministic and do not require live networks.",
+        "WAP 2.0 transport deltas are explicit."
+      ]
+    },
+    {
+      "id": "WSP-8",
+      "title": "WSP session, connectionless, headers, and host fetch",
+      "status": "in-progress",
+      "dependsOn": ["CONF-1", "TRN-7", "WAE-6"],
+      "goal": "Complete the WAP 1.2.1 session layer and make it the real desktop ingress path.",
+      "workItems": [
+        {
+          "id": "WSP-801",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wsp"],
+          "existingTickets": ["T0-09", "T0-11", "T0-20"],
+          "outputs": [
+            "Effective WSP PDU, primitive, and method matrix",
+            "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
+          ],
+          "acceptance": [
+            "All 109 WSP rows retain exact source disposition and the eight-row selected connectionless path maps to implementation evidence or corrective work."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+          ]
+        },
+        {
+          "id": "WSP-802",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wsp", "general-formats"],
+          "existingTickets": ["T0-10", "T0-20"],
+          "outputs": [
+            "WSP header/assigned-number/encoding-version closure"
+          ],
+          "acceptance": [
+            "Known tokens, code pages, text fallbacks, unknown policy, encoding versions, and round trips match the WAP 1.2.1 effective set."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+          ]
+        },
+        {
+          "id": "WSP-803",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "qa"],
+          "sourceFamilies": ["wsp"],
+          "existingTickets": ["T0-11", "T0-18"],
+          "outputs": [
+            "WSP capability negotiation and session lifecycle"
+          ],
+          "acceptance": [
+            "Connect, capability bounds, suspend/resume, disconnect, re-establishment, and overage behavior are deterministic."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WSP-804",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "browser", "qa"],
+          "sourceFamilies": ["wsp", "wdp"],
+          "existingTickets": ["T0-27", "T0-28", "T0-29"],
+          "outputs": [
+            "Native WAP transport desktop GET ingress"
+          ],
+          "acceptance": [
+            "Browser mode selection, native fetch, fallback policy, error mapping, and Kannel smoke behavior preserve the generated transport contract."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "./scripts/transport-wap-smoke.sh"
+          ]
+        },
+        {
+          "id": "WSP-805",
+          "status": "in-progress",
+          "ownerLayers": ["transport-rust", "browser", "engine-wasm", "qa"],
+          "sourceFamilies": ["wsp", "wdp", "wml", "wae"],
+          "existingTickets": ["T0-30", "R0-06"],
+          "outputs": [
+            "Native WSP form POST ingress"
+          ],
+          "acceptance": [
+            "Effective WML form data crosses engine, host, connectionless WSP, and WDP with exact method/content/request-policy semantics; WTP is activated only for connection-oriented WSP."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "WSP-806",
+          "status": "todo",
+          "ownerLayers": ["documentation", "transport-rust", "qa"],
+          "sourceFamilies": ["wsp"],
+          "existingTickets": [],
+          "outputs": [
+            "WAP 1.2.1-to-WAP 2.0 WSP delta register"
+          ],
+          "acceptance": [
+            "WAP-230-derived behavior is classified as compatible, strict correction, or successor-only."
+          ],
+          "evidence": [
+            "node scripts/check-wap-delta-register.mjs"
+          ]
+        }
+      ],
+      "exitGates": [
+        "The eight-row selected connectionless WSP path has executable evidence.",
+        "Connection-oriented WSP and WTP remain separately capability-gated.",
+        "Desktop GET and POST use the native stack with explicit fallback.",
+        "Generated Rust/TypeScript transport contracts have no drift."
+      ]
+    },
+    {
+      "id": "INT-9",
+      "title": "Cross-layer parity and interoperability closure",
+      "status": "todo",
+      "dependsOn": ["WML-3", "REN-4", "WMLS-5", "WAE-6", "TRN-7", "WSP-8"],
+      "goal": "Prove the complete selected-profile behavior across source, engine, transport, gateway compatibility, and desktop host.",
+      "workItems": [
+        {
+          "id": "INT-901",
+          "status": "todo",
+          "ownerLayers": ["cross-layer", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": ["R0-10", "R0-11"],
+          "outputs": [
+            "End-to-end conformance fixture ledger and deterministic replay runner"
+          ],
+          "acceptance": [
+            "Every mandatory selected-profile feature participates in at least one unit, boundary, integration, or end-to-end evidence path."
+          ],
+          "evidence": [
+            "node scripts/check-wap-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "INT-902",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml", "wmlscript", "wae"],
+          "existingTickets": [],
+          "outputs": [
+            "Native Rust/WASM engine differential suite"
+          ],
+          "acceptance": [
+            "Deck load, navigation, focus, render output, scripts, timers, effects, and traces are byte/semantic equivalent across targets."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          ]
+        },
+        {
+          "id": "INT-903",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "gateway-kannel", "qa"],
+          "sourceFamilies": ["wdp", "wtp", "wsp"],
+          "existingTickets": ["T0-22", "T0-26", "T0-29"],
+          "outputs": [
+            "Kannel and captured-packet interoperability corpus"
+          ],
+          "acceptance": [
+            "Selected WAP transactions interoperate with Kannel and replay deterministically without allowing implementation behavior to override normative sources."
+          ],
+          "evidence": [
+            "./scripts/transport-wap-smoke.sh",
+            "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay"
+          ]
+        },
+        {
+          "id": "INT-904",
+          "status": "todo",
+          "ownerLayers": ["browser", "engine-wasm", "transport-rust", "qa"],
+          "sourceFamilies": ["wml", "wae", "wdp", "wtp", "wsp"],
+          "existingTickets": [],
+          "outputs": [
+            "Desktop fetch-decode-load-interact-submit-back golden scenarios"
+          ],
+          "acceptance": [
+            "A real WAP deck can traverse the entire strict stack with deterministic session history, form submission, script effects, and rendered output."
+          ],
+          "evidence": [
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser test"
+          ]
+        },
+        {
+          "id": "INT-905",
+          "status": "todo",
+          "ownerLayers": ["qa", "cross-layer"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Malformed, constrained-resource, and recovery stress suite"
+          ],
+          "acceptance": [
+            "Malformed source, constrained payloads, timeouts, duplicate packets, memory pressure, and script limits never crash or produce nondeterministic state."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "INT-906",
+          "status": "todo",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Evidence bundle with source, build, test, fixture, and known-deviation identities"
+          ],
+          "acceptance": [
+            "A release candidate can be independently audited without inferring coverage from ticket status or source-file count."
+          ],
+          "evidence": [
+            "node scripts/check-wap-release-evidence.mjs"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Cross-layer strict scenarios pass with native/WASM parity.",
+        "Interop evidence supplements rather than replaces normative evidence.",
+        "Every known deviation is explicit and ticketed."
+      ]
+    },
+    {
+      "id": "REL-10",
+      "title": "Strict Class C-compatible release evidence gate",
+      "status": "todo",
+      "dependsOn": ["INT-9"],
+      "goal": "Reach an evidence-backed strict compatibility release without making an unsupported historical certification claim.",
+      "workItems": [
+        {
+          "id": "REL-1001",
+          "status": "todo",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Final selected-profile implementation conformance statement"
+          ],
+          "acceptance": [
+            "All mandatory selected-profile features are claimed with evidence; optional features are explicitly supported or not supported; conditional WTP applicability is disclosed."
+          ],
+          "evidence": [
+            "node scripts/check-wap-conformance-ledger.mjs"
+          ]
+        },
+        {
+          "id": "REL-1002",
+          "status": "todo",
+          "ownerLayers": ["qa", "cross-layer"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Zero-unmapped-mandatory release gate"
+          ],
+          "acceptance": [
+            "No mandatory selected-profile CCR/SCR/normalized clause remains missing, ambiguous, or evidenced only by prose."
+          ],
+          "evidence": [
+            "node scripts/check-wap-release-evidence.mjs"
+          ]
+        },
+        {
+          "id": "REL-1003",
+          "status": "todo",
+          "ownerLayers": ["qa", "engine-wasm", "transport-rust", "browser"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Clean build and test matrix"
+          ],
+          "acceptance": [
+            "Engine, transport, host, frontend tests, contracts, typecheck, lint, WASM build, and desktop production build pass from documented toolchains."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser test",
+            "pnpm --dir browser run typecheck",
+            "pnpm --dir browser run lint",
+            "pnpm --dir browser run build"
+          ]
+        },
+        {
+          "id": "REL-1004",
+          "status": "todo",
+          "ownerLayers": ["browser", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Frontend production-build defect closure"
+          ],
+          "acceptance": [
+            "The malformed WebKit scrollbar selector no longer blocks CSS minification and a clean worktree production build succeeds under the declared Node/pnpm runtime."
+          ],
+          "evidence": [
+            "pnpm --dir browser run build"
+          ]
+        },
+        {
+          "id": "REL-1005",
+          "status": "todo",
+          "ownerLayers": ["documentation", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Known deviations and certification disclaimer"
+          ],
+          "acceptance": [
+            "Documentation distinguishes protocol/spec compatibility from WAP Forum certification and trademark rights."
+          ],
+          "evidence": [
+            "manual: release documentation review"
+          ]
+        },
+        {
+          "id": "REL-1006",
+          "status": "todo",
+          "ownerLayers": ["qa", "cross-layer"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Strict-mode regression baseline"
+          ],
+          "acceptance": [
+            "All strict golden outputs are versioned and become the differential floor for later enhancements."
+          ],
+          "evidence": [
+            "node scripts/check-wap-release-evidence.mjs"
+          ]
+        }
+      ],
+      "exitGates": [
+        "No mandatory selected-profile obligation is unmapped.",
+        "All clean builds and tests pass.",
+        "Compatibility claims identify CCR-CLASSC-C-001, disclose optional and conditional profiles, and do not imply formal certification."
+      ]
+    },
+    {
+      "id": "OPT-11",
+      "title": "Conditional security and optional WAP profiles",
+      "status": "todo",
+      "dependsOn": ["CONF-1", "REL-10"],
+      "goal": "Add historically compliant optional capability profiles without expanding the strict Class C floor.",
+      "workItems": [
+        {
+          "id": "OPT-1101",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "browser", "qa"],
+          "sourceFamilies": ["wtls"],
+          "existingTickets": ["T0-21"],
+          "outputs": [
+            "WTLS conditional profile and effective SCR ledger"
+          ],
+          "acceptance": [
+            "Record, alert, handshake, crypto, key exchange, certificate, and failure behavior are either implemented/tested or explicitly not claimed."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml"
+          ]
+        },
+        {
+          "id": "OPT-1102",
+          "status": "todo",
+          "ownerLayers": ["transport-rust", "browser", "qa"],
+          "sourceFamilies": ["wim"],
+          "existingTickets": [],
+          "outputs": [
+            "WIM/credential profile"
+          ],
+          "acceptance": [
+            "Identity-module capabilities remain separate from the data-only strict profile and have explicit host/security boundaries."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "OPT-1103",
+          "status": "todo",
+          "ownerLayers": ["gateway-kannel", "transport-rust", "engine-wasm", "qa"],
+          "sourceFamilies": [
+            "push-architecture",
+            "push-message",
+            "push-proxy-gateway",
+            "push-access-protocol",
+            "push-over-the-air",
+            "service-indication",
+            "service-loading",
+            "cache-operation"
+          ],
+          "existingTickets": [],
+          "outputs": [
+            "Push/SI/SL optional profile"
+          ],
+          "acceptance": [
+            "Push activation, content types, DTDs, PPG/PAP boundaries, SI/SL behavior, and cache operation are fully profile-gated."
+          ],
+          "evidence": [
+            "manual: optional push profile conformance suite"
+          ]
+        },
+        {
+          "id": "OPT-1104",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wta", "wtai", "wtai-gsm", "wtai-is136", "wtai-pdc"],
+          "existingTickets": [],
+          "outputs": [
+            "WTA/WTAI Class B-compatible profile"
+          ],
+          "acceptance": [
+            "Telephony functions and bearer addenda remain capability- and platform-gated and cannot affect Class C strict behavior."
+          ],
+          "evidence": [
+            "manual: optional WTA profile conformance suite"
+          ]
+        },
+        {
+          "id": "OPT-1105",
+          "status": "todo",
+          "ownerLayers": ["browser", "transport-rust", "qa"],
+          "sourceFamilies": ["user-agent-profile"],
+          "existingTickets": [],
+          "outputs": [
+            "UAProf optional profile"
+          ],
+          "acceptance": [
+            "Capability description, advertisement, and privacy behavior are explicit and do not change unprofiled strict requests."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "OPT-1106",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": [
+            "wmlscript-crypto",
+            "external-functionality-interface",
+            "persistent-storage",
+            "interoperability-pictograms"
+          ],
+          "existingTickets": [],
+          "outputs": [
+            "Remaining optional/historical capability dispositions"
+          ],
+          "acceptance": [
+            "Approved optional features receive isolated profiles; proposed-only documents remain historical and cannot create strict requirements."
+          ],
+          "evidence": [
+            "node scripts/check-wap-conformance-ledger.mjs"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Each optional profile has its own capability declaration and test lane.",
+        "Strict Class C outcomes are unchanged when optional profiles are disabled.",
+        "Proposed documents remain non-normative."
+      ]
+    },
+    {
+      "id": "ENH-12",
+      "title": "Behavior-preserving enhancements and Waves extensions",
+      "status": "todo",
+      "dependsOn": ["REL-10"],
+      "goal": "Improve the historical stack without weakening or obscuring strict compatibility.",
+      "strictDifferentialGate": true,
+      "workItems": [
+        {
+          "id": "ENH-1201",
+          "status": "todo",
+          "ownerLayers": ["cross-layer", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Strict/enhanced capability registry and mode contract"
+          ],
+          "acceptance": [
+            "Every extension declares whether it is invisible to strict results or requires enhanced mode."
+          ],
+          "evidence": [
+            "node scripts/check-waves-extension-registry.mjs"
+          ]
+        },
+        {
+          "id": "ENH-1202",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "transport-rust", "browser", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Strict-versus-enhanced differential suite"
+          ],
+          "acceptance": [
+            "Behavior-preserving optimizations produce identical strict traces, render lists, network PDUs, and errors."
+          ],
+          "evidence": [
+            "node scripts/check-waves-extension-registry.mjs"
+          ]
+        },
+        {
+          "id": "ENH-1203",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "transport-rust", "browser", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": [],
+          "outputs": [
+            "Performance and resource improvements"
+          ],
+          "acceptance": [
+            "Caching, parsing, layout, transport, and startup optimizations improve measured performance without changing strict observable outcomes."
+          ],
+          "evidence": [
+            "manual: benchmark plus strict differential report"
+          ]
+        },
+        {
+          "id": "ENH-1204",
+          "status": "todo",
+          "ownerLayers": ["browser", "documentation", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": ["D0-01", "D0-02", "D0-03", "D0-04"],
+          "outputs": [
+            "Diagnostics, inspector, and developer tooling"
+          ],
+          "acceptance": [
+            "Diagnostics expose strict state without becoming a semantic dependency or changing timing/order."
+          ],
+          "evidence": [
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser test"
+          ]
+        },
+        {
+          "id": "ENH-1205",
+          "status": "todo",
+          "ownerLayers": ["browser", "engine-wasm", "qa"],
+          "sourceFamilies": ["conformance-governance"],
+          "existingTickets": ["U0-01", "U0-02", "U0-03", "U0-04", "U0-05"],
+          "outputs": [
+            "Modern accessibility, onboarding, and usability layer"
+          ],
+          "acceptance": [
+            "Modern UX can wrap the emulator while keypad, softkey, focus, deck, and network mechanics remain strict inside the emulation boundary."
+          ],
+          "evidence": [
+            "pnpm --dir browser test",
+            "manual: accessibility and strict differential review"
+          ]
+        }
+      ],
+      "exitGates": [
+        "Every extension is registered and mode-scoped.",
+        "Strict differential tests pass.",
+        "Enhancements cannot satisfy or waive a strict conformance obligation."
+      ]
+    }
+  ]
+}

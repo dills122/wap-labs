@@ -1,11 +1,14 @@
 # Waves Source Material Master Audit
 
-Version: v0.1  
-Status: Source audit extraction complete; initial contract/test mapping complete; docling rerun validation pass complete for in-scope high-value domains
+Version: v0.5
+Status: selected WAP 1.2.1 Class C planning baseline complete; implementation evidence in progress
 
 ## Goal
 
 Run a repeatable, deep audit over all local source specs and ensure Waves requirements, contracts, and acceptance criteria are fully captured from normative material.
+
+Primary compatibility target: WAP 1.2.1 with WML 1.3. See
+`docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`.
 
 ## Corpus snapshot
 
@@ -19,6 +22,33 @@ Canonical per-file ledger:
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 
 Historical duplicate mirrors were removed during repository cleanup; canonical root-level PDFs are now the only supported source paths.
+
+The local corpus is primarily the later WAP 2.0 technical bundle. It is not a
+definition of the WAP 1.2.1 target release. The authoritative target inventory
+is `spec-processing/source-manifests/wap-1.2.1-release.json`:
+
+- 97 official release members
+- 21 byte-exact local members
+- 4 same-name but byte-different local variants
+- 72 members absent from the canonical local corpus
+- 27 missing plus 3 byte-different members in the 42-member
+  core/dependency/conditional subset
+
+Private research ingestion is now complete for all 97 technical members:
+
+- all 97 PDFs match release-lock byte sizes and SHA-256 values;
+- all 97 text extractions are non-empty and hash-locked;
+- 2,270 PDF pages are represented;
+- 76 members remain outside canonical promotion because redistribution review
+  is separate from research availability.
+
+See `spec-processing/source-manifests/wap-1.2.1-ingestion-status.json` and
+`docs/waves/WAP_SOURCE_RECOVERY_AND_PERMISSION.md`.
+
+The release-governing WAP-215 source is also recovered and hash-locked outside
+Git. Its six exact Class A/B/C client/server graphs and the selected Class C
+client profile are recorded in
+`spec-processing/source-manifests/wap-1.2.1-class-conformance.json`.
 
 ## Canonical-source rule
 
@@ -34,23 +64,28 @@ Supplemental-source precedence:
 
 ### D0 Runtime markup/execution semantics (must capture)
 
-- WML core and SIN lineage (`WAP-191*`, `WAP-238`, `spec-wml-19990616`)
-- WAE semantics (`WAP-236`, `WAP-237`)
+- WML 1.3 core and SIN lineage (`WAP-191*`)
+- WAE 1.2.1 semantics (`WAP-190*`, with `WAP-195*` overview context)
 - WMLScript core + libraries (`WAP-193*`, `WAP-194*`)
 - WBXML (`WAP-192*`)
+- Later WML/WAE documents (`WAP-238`, `WAP-236`, `WAP-237`) are successor
+  delta/context sources, not strict-target replacements
 
 ### D1 Transport/protocol rewrite targets (must capture before each migration phase)
 
-- WSP (`WAP-230`)
-- WTP (`WAP-224`, `OMA-WAP-224_002`)
-- WDP/WCMP (`WAP-259`, `WAP-202`, `WAP-159`)
-- HTTP/TCP mappings where applicable (`WAP-229*`, `WAP-223*`, `WAP-225`)
+- WSP (`WAP-203*`)
+- WTP (`WAP-201*`, including SIN `003`)
+- WDP/WCMP (`WAP-200*`, `WAP-202`, `WAP-159`)
+- Later WSP/WTP/WDP documents (`WAP-230`, `WAP-224*`, `WAP-259`) are
+  successor delta/context sources
 
 ### D2 Security parity/simulation boundary (capture for policy decisions)
 
-- WTLS/TLS and related SIN (`WAP-199`, `WAP-261*`, `WAP-219*`)
+- WTLS and release SIN lineage (`WAP-199*`)
 - cert/PKI/WIM references (`WAP-211*`, `WAP-217*`, `WAP-260*`, OMA SINs)
 - end-to-end transport security context (`WAP-187*`)
+- WAP 2.0 WTLS/TLS documents (`WAP-261*`, `WAP-219*`) are successor or
+  adjacent profile evidence
 
 ### D3 Out-of-scope or deferred for current Waves MVP
 
@@ -102,57 +137,83 @@ Supplemental-source precedence:
 - Out-of-scope family review:
   - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
 
-### Partially captured / needs deep extraction
+### Residual research outside the selected strict profile
 
-- explicit version/SIN precedence matrix for every spec family used by Waves
+- optional/bearer source activation queues, licensed historical payloads, and
+  public redistribution permission remain explicit in
+  `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`;
+- no selected Class C family remains without an effective-spec order, SCR
+  ledger, nested-clause plan, work owner, or fixture target.
 
-### Not yet converted into requirements artifacts
+### Converted into target requirements artifacts
 
-- none (initial mapping artifacts now exist)
+- WAP-215 Class A/B/C profile mapping and WAP-221 family-level conformance
+  grammar are complete for every selected Class C family
+- one-to-one mandatory/optional obligation ledgers for the WAP 1.2.1 target
+  (WML 1.3, WAE, WBXML, WMLScript, WMLScript Libraries, caching, WDP, WCMP,
+  and WSP complete at SCR/source-work-item and nested-clause planning level;
+  direct test evidence remains pending)
+- WAP 1.2.1-to-successor delta records cover all 201 selected Class C rows;
+  optional-media and later OMA follow-on deltas remain separately pending
 
-## Audit deliverables (what “done” looks like)
+Cross-source selected-profile accounting is now executable:
 
-1. Source inventory index with canonical precedence and domain ownership.
-2. Spec precedence matrix (`base spec + SIN overlays`) for every in-scope domain.
-3. Requirement traceability docs per domain:
-- runtime/markup
-- script/vm
-- transport
-- security boundary
-4. Ticket linkage:
-- each work item includes exact spec sections and SCR/CR identifiers.
-5. AC coverage report:
-- every requirement has testable AC and target test location.
+- 712 effective SCR/source rows across the nine mandatory feature families;
+- 201 rows selected by the exact Class C client profile and transport
+  dependency path;
+- 7 implemented, 84 partial, and 110 missing in the conservative
+  implementation audit;
+- every selected row has an owner and work-item mapping;
+- all 201 selected rows now expand into 781 deduplicated nested clauses with
+  source anchors and planned direct fixtures;
+- direct conformance fixture implementation and execution remain the
+  principal evidence gap.
 
-## Execution plan
+The family-level WAP 1.2.1 base/SIN precedence graph now exists at
+`spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes
+source order. The exact class graph exists at
+`spec-processing/source-manifests/wap-1.2.1-class-conformance.json`. The first
+line-item SCR ledgers now exist at
+`spec-processing/source-manifests/wap-1.2.1-wml-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wae-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-caching-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. All selected-family
+SCR ledgers are complete. The cumulative nested normative-clause ledger covers
+all nine selected families and all 201 selected parents at
+`spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`.
+WTP is additionally conditional on connection-oriented WSP.
 
-### Stage A: Inventory + precedence (short)
+## Completed planning deliverables
 
-- Normalize canonical file list and duplicate handling rules.
-- Define precedence chain per spec family (e.g., `WAP-224` + `OMA-WAP-224_002`).
+- [x] Source inventory, canonical precedence, and domain ownership.
+- [x] Effective base/SIN order for every selected family.
+- [x] Exact WAP-215 Class C profile and conditional-capability boundaries.
+- [x] Per-family SCR ledgers and all 781 selected nested clauses.
+- [x] Requirement, owner, work-item, and fixture-target crosswalk.
+- [x] Unified successor-delta register and deterministic drift controls.
+- [x] Dependency-ordered 13-sprint/78-item compliance program.
 
-### Stage B: Domain extraction (deep)
+The closure checkpoint and implementation handoff are in
+`docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`.
 
-- Extract normative clauses into domain traceability docs.
-- Separate mandatory vs optional behavior.
+## Immediate execution tasks
 
-### Stage C: Contract alignment
-
-- Map extracted requirements to contracts:
-  - `engine-wasm/contracts/wml-engine.ts`
-  - `transport-rust` public request/response/error models
-  - `browser/contracts/transport.ts`
-
-### Stage D: AC + tests
-
-- Add AC checklists and test IDs for each requirement.
-- Identify uncovered requirements as explicit follow-up tickets.
-
-## Immediate next audit tasks
-
-1. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synced with contract changes.
-2. Promote `planned` entries in `docs/waves/SPEC_TEST_COVERAGE.md` into implemented tests in each project backlog.
-3. Maintain completed Phase `S1` governance artifacts (`docs/waves/WORK_ITEMS.md`) and append new provenance snapshots for future reruns.
+1. Treat `CONF-003..007` selected-profile planning and governance as complete.
+2. Promote direct, source-derived fixtures and executable evidence through
+   the mapped runtime, transport, integration, and release sprints.
+3. Keep optional WAP-237 media and later OMA follow-on deltas separate from
+   the closed selected-profile gate.
+4. Extract an effective WAP-201/WTP ledger only before claiming the optional
+   connection-oriented WSP/WTP module.
+5. Obtain redistribution guidance before promoting the 76 privately recovered
+   release members or parsed derivatives into Git.
+6. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synchronized with any
+   implementation-facing contract changes.
 
 ## Quality gates
 
@@ -161,3 +222,10 @@ Supplemental-source precedence:
 - No “M” status spec requirement left without AC checklist.
 - Optional (`O`) items must be flagged as feature-gated, deferred, or explicitly out-of-scope.
 - Corpus counts in ledger/dashboard/master audit remain aligned with canonical source-material via `scripts/check-source-corpus-drift.mjs`.
+- WAP 1.2.1 release membership, hashes, classifications, and local-state
+  comparisons pass
+  `node spec-processing/scripts/check-wap-release-manifest.mjs`.
+- WAP-215 source identity and all six class dependency graphs pass
+  `node spec-processing/scripts/check-wap-class-conformance.mjs`.
+- Selected obligations, clauses, successor deltas, program status, and human
+  rollups pass `node scripts/check-requirement-status-drift.mjs`.

@@ -19,7 +19,9 @@ Archive:
 These assumptions are active for this board and should not be re-litigated in each ticket:
 
 1. `transport-rust/` gateway-bridged behavior is functionally validated via CLI probes.
-2. protocol-native networking (`WDP -> WTP -> WSP`) remains the current high-risk implementation lane.
+2. protocol-native networking (strict WDP/WCMP/connectionless-WSP plus
+   capability-gated connection-oriented WSP/WTP) remains the current
+   high-risk implementation lane.
 3. `engine-wasm/` runtime/rendering has reached a substantial milestone and remains integration-ready while networking core is completed.
 
 Project-level priority remains multi-lane:
@@ -54,6 +56,9 @@ Integrated dependencies:
 
 Project planning links:
 
+- WAP planning closure checkpoint: `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
+- WAP 1.2.1 / WML 1.3 compliance program: `docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md`
+- Machine-readable compliance work program: `docs/waves/wap-1.2.1-compliance-program.json`
 - Master prioritized sprint plan: `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
@@ -64,29 +69,47 @@ Project planning links:
 
 Canonical sprint priority rule:
 
-1. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` is the single ordering authority when section-level "Next In Line" lists differ.
-2. Section-level lists below are lane-local guidance and must not override master P0/P1 gating.
+1. `docs/waves/wap-1.2.1-compliance-program.json` is authoritative for WAP
+   dependency order and completion claims.
+2. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` resolves cross-lane
+   priority for work already in flight and is rebased to that dependency
+   order.
+3. Section-level lists below are lane-local or dated context and must not
+   override either authority.
 
-## Next In Line (Current Cross-Lane Priority Refresh - 2026-03-15)
+## Next In Line (WAP Compliance Rebase - 2026-07-24)
 
-The previous form + browser responsiveness block is no longer the active queue. `A5-04`, `A5-05`, `A5-06`, `A5-07`, and the first `M1-16` hardening slice are landed through `#108`, `#109`, and `#110`.
+The selected-profile source and planning lanes are complete. The active queue
+must now turn the 201 selected parent rows and 781 planned clauses into direct
+evidence.
 
 Current priority order is:
 
-1. `W0-05` Timer/dialog integration baseline (`P1`, already in progress; do not let it drift indefinitely).
-2. `D0-01` Engine debug connector contract and architecture definition (`P1`, planning-ready and now unblocked by the browser hot-path cleanup).
-3. `W1-06` Fatal/non-fatal script taxonomy closure (`P1` after the active runtime lane stabilizes).
-4. `M1-09` Engine-host frame migration execution (`F0` only after `W0-05` and `D0-01` are stable enough not to churn the boundary again).
-5. `M1-03` Engine API generator design/bootstrap (non-priority track).
-6. `M1-08` Residual high-churn decomposition follow-up only if new hotspots emerge during active ticket work.
+1. Start `WML-2` parser/deck/validation fixture work.
+2. Continue `TRN-7` WDP/WCMP evidence in parallel.
+3. Complete `WML-3`, then `REN-4` and `WMLS-5`.
+4. Treat existing WAE/WSP work as foundations until their upstream gates
+   close.
+5. Keep `D0-01`, frame migration, generators, and maintenance non-preemptive
+   unless they directly unblock a strict obligation.
 
 Planning assessment:
 
-1. A full replanning cycle is not required immediately; the next tranche is now clearer than it was before `#109/#110`.
-2. The next formal planning refresh should happen when either:
-- `W0-05` is closed, or
-- `D0-01` materially changes the host/engine boundary, or
-- `M1-09` is promoted from deferred to active execution.
+1. No selected Class C family needs further thematic extraction before
+   implementation starts.
+2. Replan only when a source-derived fixture changes a dependency, a profile
+   is activated, or implementation evidence changes a parent-row assessment.
+
+## Next In Line (Architecture Maintenance Sprint)
+
+Maintenance remains non-preemptive to the strict WAP execution order:
+
+1. Keep `M1-09` queued until the strict engine/runtime work and its host
+   boundary are stable enough for the frame migration.
+2. Keep `M1-03` as a non-priority generator design/prototype unless manual
+   contract synchronization begins blocking compliance work.
+3. Continue `M1-08` only as opportunistic boundary cleanup when active feature
+   work exposes a concrete high-churn file.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -108,6 +131,25 @@ Sprint policy:
 1. The documented `wap-net-core` posture is implementation-target, not fully live browser ingress, until `T0-27..T0-29` land.
 2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
 3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
+
+Source-ledger reconciliation:
+
+1. The exact WAP-200/WAP-202/WAP-203 row authority is
+   `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
+   manifests. The selected connectionless Class C path is 22 rows with an
+   audit of 0 implemented / 17 partial / 5 missing and 0/22 direct normative
+   tests.
+2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
+   reopened. Their existing evidence remains useful but provisional against
+   the exact target-era rows.
+3. Exact closure is owned by compliance-program work items `TRN-701`,
+   `TRN-703`, `WSP-801`, `WSP-802`, `WSP-804`, and `WSP-805`.
+4. `SRC-005` has normalized the selected CDPD bearer citation `TIAEIA-732`
+   with an explicit licensed-payload boundary; `CONF-003` has completed all
+   201 selected nested-clause plans, while implementation work items own
+   direct normative fixture execution.
+5. WTP remains a conditional capability and does not gate the initial
+   connectionless Class C path.
 
 ## Next In Line (Committed Bedrock Compliance Sprint - 2026-03-04)
 
@@ -294,6 +336,11 @@ Completed `B0` through `B3` tickets are archived in:
 - WBXML boundary behavior is conformance-backed beyond decode happy-path checks.
 7. `Spec`:
 - `RQ-RMK-007`, `RQ-WAE-005`
+8. `Notes`:
+- The WBXML SCR audit found that current tests establish isolation/error
+  behavior but do not directly prove literal/token equivalence. The additive
+  normative closure remains open in `R0-08`; this completed ticket is not
+  reopened.
 
 ### T0-08 WTP TID/MPL replay-window conformance follow-up
 
@@ -459,7 +506,8 @@ Completed `B0` through `B3` tickets are archived in:
 5. `Build`:
 - Publish an explicit profile decision for near-term and target-state transport:
   - current profile: gateway-bridged HTTP/WBXML normalization path
-  - target profile: in-process WDP/WTP/WSP behavior lane and activation criteria
+  - target profile: in-process WDP/connectionless-WSP lane with
+    connection-oriented WSP/WTP behind explicit activation criteria
 - Define non-negotiable boundary rules so engine/browser contracts stay stable across both profiles.
 - Define migration gates that block profile promotion until required protocol fixtures pass.
 6. `Tests`:
@@ -502,6 +550,15 @@ Completed `B0` through `B3` tickets are archived in:
 - Done-3: profile switch does not alter cache semantics without explicit migration note.
 9. `Spec`:
 - `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
+10. `Notes`:
+- This completed ticket established request-policy and deterministic reload
+  plumbing. It is not full WAP-120 conformance and is not reopened.
+- Exact corrective closure remains in program item `WAE-603`:
+  `WAPCachingMod:MCF` selects five mandatory client rows, currently audited as
+  0 implemented / 3 partial / 2 missing with zero direct normative tests.
+- Source authority:
+  `spec-processing/source-manifests/wap-1.2.1-caching-scr.json` and
+  `docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`.
 
 ### T0-16 Spec queue canonicalization and conflict resolution follow-up
 
@@ -551,7 +608,8 @@ Completed `B0` through `B3` tickets are archived in:
 - Keep this decision synchronized with `T0-14` profile gates.
 6. `Tests`:
 - checklist validation fixtures:
-  - `WAP-204` and `WAP-120` remain deferred under documented rationale
+  - `WAP-204` remains transport-deferred; WAP-120 remains outside transport
+    ownership and active under `WAE-603`
   - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
    - command: `node scripts/check-adjacent-scope-lock.mjs`
 7. `Accept`:
@@ -564,7 +622,10 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRX-001..010` where applicable
 - `RQ-TRN-001..019`
 10. `Notes`:
-- Completed the explicit deferred-family rationale and checklist alignment for `WAP-204*`, `WAP-120*`, `WAP-213*`, and related cache/adjacent messaging families in:
+- Completed the explicit transport-scope rationale and checklist alignment
+  for `WAP-204*`, `WAP-120*`, `WAP-213*`, and related cache/adjacent messaging
+  families; later source-ledger work moved WAP-120 user-agent closure to
+  `WAE-603` without reopening this transport ticket:
   - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
   - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
   - `docs/waves/networking-implementation-checklist.md`
@@ -626,7 +687,9 @@ Completed `B0` through `B3` tickets are archived in:
 - WDP trait and UDP baseline are live and do not leak gateway-only assumptions.
 - Port mapping and error paths are fixture-backed and traceable.
 8. `Migration gates`:
-- Done-1: datagram trait is the only WTP/WSP ingress path in protocol-native mode.
+- Done-1: datagram trait is the only connectionless-WSP ingress path in
+  `wap-net-core` and the only WTP ingress when that conditional module is
+  activated.
 - Done-2: port-mapping fixtures pass for declared profile modes.
 - Done-3: SAR behavior is explicit (`off` by default) and guarded by profile flags.
 9. `Spec`:
@@ -1142,6 +1205,35 @@ Completed `B0` through `B3` tickets are archived in:
 - Review artifact landed in `docs/waves/WAVES_REVIEW_2026-03-15.md`.
 - Follow-through landed in `#109` and `#110`: background startup probing, timer/render churn reduction, stale-safe navigation, combined frame-oriented host commands, off-UI-thread fetch execution, and targeted coverage around the affected coordinators.
 
+## WAE Selected-Profile Gap Queue
+
+### WAE-607 HTTP Basic authentication closure
+
+1. `Status`: `todo`
+2. `Depends On`: `CONF-002`, `WSP-8`
+3. `Owner`: `transport-rust`, `browser`
+4. `Files`:
+- `transport-rust/src/network/wsp/*`
+- `transport-rust/src/fetch_policy.rs`
+- `browser/src-tauri/src/*`
+- `browser/frontend/src/*`
+- `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`
+5. `Build`:
+- Parse and surface Basic authentication challenges across the active
+  transport profiles.
+- Define host-owned credential acquisition/storage/cancellation policy.
+- Retry with `Authorization` deterministically without logging credentials.
+- Preserve explicit failure and user-cancel outcomes.
+6. `Tests`:
+- Challenge parsing and malformed-challenge fixtures.
+- Credential retry, wrong-credential, cancellation, and retry-bound tests.
+- Browser-host tests proving secrets do not enter traces or persisted history.
+7. `Accept`:
+- `WAESpec-C-002` has an end-to-end browser/transport flow; WSP header token
+  registration alone cannot close the item.
+8. `Spec`:
+- `WAESpec-C-002`, WAP-190 section `5.1.2`, `RQ-WAE-014`
+
 ## Phase D: Engine Debug Connector (Planning-Ready)
 
 Reference plan:
@@ -1378,7 +1470,9 @@ Reference architecture:
 
 Compliance target for this lane:
 
-- Drive Waves toward `~90-95%` practical WMLScript/WMLSL conformance for in-scope runtime behavior.
+- Implement and prove all 121 mandatory interpreter/library rows selected by
+  WAP 1.2.1 Class C (`WMLScript:MCF` + `WMLScriptLibs:MCF`). Optional
+  capabilities and enhancements remain separately declared.
 - Prioritize bedrock compliance closure before breadth-library expansion:
   - external-call/pragma/url invocation correctness
   - bytecode structure verification gates
@@ -1435,7 +1529,10 @@ Completed `W0-01` through `W0-04` are archived in:
 8. `Notes`:
 - Additive compliance follow-up to completed decoder skeleton (`W0-02`).
 - Completed with pre-execution structural gates in decoder and boundary entry validation in VM (`invalid local index references`, `call arity/frame bounds`, `host arg-count bounds`, and instruction-boundary entry checks).
-- Strict header/pool/function-table verification closure remains tracked in `W1-02`.
+- This completed slice applies to the project-specific VM skeleton. It is
+  provisional architecture evidence, not WAP-193 bytecode conformance.
+- Strict WAP header/pool/function-table/instruction verification closure
+  remains tracked in `W1-02`.
 
 ### W0-07 `newContext` + `getCurrentCard` semantics follow-up
 
@@ -1507,10 +1604,15 @@ Completed `W0-01` through `W0-04` are archived in:
 - `engine-wasm/engine/src/wavescript/vm.rs`
 - `engine-wasm/engine/src/lib.rs`
 4. `Build`:
-- Implement pre-execution verification gates for bytecode structure and references.
+- Replace or front the project-specific byte stream with the effective
+  WAP-193 compilation-unit format.
+- Implement pre-execution verification gates for WAP header, constant pool,
+  pragma pool, function pool, instruction stream, and references.
 - Keep trap taxonomy deterministic and host-safe.
 5. `Tests`:
-- Malformed fixture set covering invalid section sizes, pool references, function boundaries, and jump targets.
+- Source-derived valid `.wmlsc` fixtures plus malformed cases covering
+  version/header fields, multi-byte encodings, section sizes, pool references,
+  function boundaries, every mandatory instruction family, and jump targets.
 6. `Accept`:
 - Invalid bytecode fails before execution, with deterministic trap class.
 7. `Spec`:
@@ -1552,21 +1654,43 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W1-05 SCR conformance matrix and CI guardrail for WMLScript lane
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W1-02`, `W1-03`, `W1-04`
 3. `Files`:
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+- `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
+- `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+- `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+- `scripts/check-wap-wmlscript-conformance-ledger.mjs`
 - `.github/workflows/*`
 4. `Build`:
-- Add machine-checkable mapping for mandatory SCRs (`WMLS-C-*`, `WMLSSL-*`) to implemented tests/status.
+- Maintain the machine-checkable mapping for all 112 WMLScript rows and 95
+  effective WMLScript Libraries rows, including source-exact `WMLSSL048`.
+- Apply exact Class C selection: 41 `WMLScript:MCF` rows and 80
+  `WMLScriptLibs:MCF` rows.
 - Fail CI when mandatory SCRs are unmapped or regress to untracked.
 5. `Tests`:
+- `node scripts/check-wap-wmlscript-conformance-ledger.mjs`
 - CI dry-run with one intentionally unmapped mandatory SCR.
 6. `Accept`:
-- Bedrock WMLScript compliance cannot silently drift.
+- [x] Effective SCR source/order/status/profile mappings are machine-checked.
+- [x] Every selected row maps to implementation status, requirements, and
+  open work.
+- [ ] Every selected row has direct normative test evidence or an explicit
+  release-blocking gap.
+- [ ] The validator runs in required CI and an intentional mapping regression
+  fails the job.
 7. `Spec`:
 - `RQ-WMLS-001..022` (mandatory subsets first)
+8. `Notes`:
+- Current audit is intentionally conservative:
+  - WMLScript: 23 partial / 18 missing / 0 implemented;
+  - Libraries: 14 partial / 66 missing / 0 implemented;
+  - direct normative tests: 0.
+- Existing custom-VM tests are provisional links only. They cannot close
+  WAP-193 binary-format or standard-library identifier rows.
 
 ### W1-06 Fatal/non-fatal script error taxonomy closure
 
@@ -1614,11 +1738,12 @@ Completed `W0-01` through `W0-04` are archived in:
 Reference:
 
 - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
-- `spec-processing/source-material/parsed-markdown/WAP-191-WML-20000219-a.cleaned.md`
+- `spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191-WML-20000219-a.cleaned.md`
+- `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`
 
 ### R0-01 WML-191 conformance matrix and CI gate
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `S0-14`
 3. `Files`:
 - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
@@ -1626,14 +1751,27 @@ Reference:
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 - `.github/workflows/*`
 4. `Build`:
-- Create a machine-checkable WML-191 conformance matrix (`WML-01..WML-75`) with status + test mapping.
+- Create a machine-checkable effective WML 1.3 conformance matrix
+  (`WML-C-01..59`, `WML-S-60..69`, `WML-C-70..76`) with source SCR ID,
+  status, profile disposition, and test mapping.
+- Apply `WAP-191_105` after `WAP-191_104`; SIN 105 adds optional
+  `WML-C-76` (`tabindex`) and clarifies POST/multipart behavior.
 - Add CI guardrail that fails when mandatory items are unmapped.
 5. `Tests`:
 - CI dry-run with one intentionally unmapped mandatory ID.
 6. `Accept`:
 - Mandatory WML IDs cannot silently regress to unmapped/untracked state.
 7. `Spec`:
-- `WAP-191` section `15.1` through `15.4`
+- effective `WAP-191` section `15.1` through `15.4` plus
+  `WAP-191_105` section `3`
+8. `Notes`:
+- Source/status/disposition/work-item accounting is implemented in
+  `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
+  `node scripts/check-wap-conformance-ledger.mjs`.
+- The exact sequence includes `WML-S-60..69`. The mandatory code audit records
+  2 implemented, 23 partial, and 22 missing rows, with direct tests for 25
+  rows. Nested clause, optional capability, and release-gate evidence remain,
+  so this ticket is not done.
 
 ### R0-02 Inter-card navigation process-order conformance
 
@@ -1764,15 +1902,26 @@ Reference:
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+- `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
 4. `Build`:
 - Add tooling/fixtures that validate WML token table expectations, XML well-formed/validation gates, and server/client conformance constraints.
+- Close the selected `WBXML-C-001`, `WBXML-C-010`, and `WBXML-C-011` rows
+  against a pinned decoder implementation rather than permissive subprocess
+  behavior.
 - Keep ownership explicit where behavior is authoring/tooling vs runtime-execution.
 5. `Tests`:
 - Fixture matrix for valid/invalid tokenization and decode compatibility classes.
+- Source-derived cases for WBXML headers, multi-byte integers, string tables,
+  code pages, global tokens, entities, opaque/extensions, literals, default
+  attributes, and malformed input.
 6. `Accept`:
 - Section `14` and `15.2/15.3/15.4` obligations are concretely represented in testable artifacts.
+- All three `WBXML:MCF` client rows have direct normative evidence or a
+  deterministic explicit unsupported result; fake fixed-output decoders and
+  `either` fixtures cannot satisfy the gate.
 7. `Spec`:
 - `WML-60`, `WML-61`, `WML-62`, `WML-63`, `WML-64`, `WML-65`, `WML-70`
+- `RQ-RMK-010`, `WBXML-C-001`, `WBXML-C-010`, `WBXML-C-011`
 
 ### R0-09 BACK key hard-availability and `do type=prev` precedence
 

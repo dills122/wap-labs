@@ -1,0 +1,4669 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wsp",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)",
+    "selectedRequirement": "WSP:MCF",
+    "transportPath": "Resolve mandatory WSP-C-001 through the connectionless WSP-CL-C-001 alternative. Connection-oriented rows remain conditional and activate WTP:MCF."
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-203-WSP",
+      "WAP-203_001-WSP",
+      "WAP-203_003-WSP",
+      "WAP-203_005-WSP"
+    ],
+    "effectiveTableDocument": "WAP-203_003-WSP",
+    "extractionSources": [
+      {
+        "documentId": "WAP-203-WSP",
+        "filename": "WAP-203-WSP-20000504-a.pdf",
+        "sha256": "fe6df3d2383abd46d1044cbd0dcd9cf216103346e3d88c5c7e66be21b52e5bd2",
+        "role": "base",
+        "repositoryState": "missing",
+        "textExtractionBytes": 387276,
+        "textExtractionSha256": "f866774d861bc07f8b30c1694095a629797bd17a5dd5455ea44d30be72d8c8aa"
+      },
+      {
+        "documentId": "WAP-203_001-WSP",
+        "filename": "WAP-203_001-WSP-20000620-a.pdf",
+        "sha256": "12006aa09ed8770f8c1ec388c9341024f67b3661d85f294d4fdce00e9e6f2e45",
+        "role": "sin",
+        "repositoryState": "missing",
+        "textExtractionBytes": 5615,
+        "textExtractionSha256": "7c7926fedd709008a4e583076d5d04249ddf761272d2d7bd705552a4e82a73f0"
+      },
+      {
+        "documentId": "WAP-203_003-WSP",
+        "filename": "WAP-203_003-WSP-20001218-a.pdf",
+        "sha256": "235419958d5ff05e7d587b92f1dbbf858ac0ca9115b61cf7fabe9a8872680159",
+        "role": "sin",
+        "repositoryState": "missing",
+        "textExtractionBytes": 50431,
+        "textExtractionSha256": "f03ee598fea8b8c282162b272f5e44a538b615c5afabb1f22a595022161adf18"
+      },
+      {
+        "documentId": "WAP-203_005-WSP",
+        "filename": "WAP-203_005-WSP-20010717-a.pdf",
+        "sha256": "709fe4ca20f25a4b3ce52735e070758ae31607755b1fb74d44224d2b218088d8",
+        "role": "sin",
+        "repositoryState": "missing",
+        "textExtractionBytes": 11633,
+        "textExtractionSha256": "163b055c46c8eed9c1a7eea39ecef8dc0d2cce49cb7bf0799bea89d29ada483b"
+      }
+    ],
+    "selectedExternalDependencies": [],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "dependencyGrammar": "SCR requirement expressions use AND/OR with AND taking precedence"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WSP:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "extractionMethod": "Row identifiers, first-line feature labels, status, actor, order, and dependency expressions were parsed from the hash-locked effective SCR table text. Private PDFs and full text remain outside Git."
+  },
+  "summary": {
+    "itemCount": 109,
+    "mandatoryCount": 39,
+    "optionalCount": 70,
+    "clientCount": 56,
+    "serverCount": 53,
+    "mandatoryClientCount": 20,
+    "selectedClassCTransportPathCount": 8,
+    "selectedImplementationStatus": {
+      "partial": 8
+    },
+    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedProvisionalTestEvidenceCount": 8,
+    "orderedIdsSha256": "5efb3b964986398370e16e9ae556a9fab455af7e8c1846880b868792d1d55584"
+  },
+  "obligations": [
+    {
+      "id": "WSP-C-001",
+      "ordinal": 1,
+      "actor": "client",
+      "group": "top-level",
+      "feature": "Device Mode",
+      "referencedSection": "Section 6,7&8",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WSP-CL-C-001 OR WSP-CO-C-001",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-mode-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-010"
+        ],
+        "workItems": [
+          "WSP-801",
+          "T0-09"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wsp/session.rs",
+            "symbol": "WspSessionMode::Connectionless"
+          },
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "execute_native_wap_request_with_transport"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_primitive_profile_mapped/primitive_profile_fixture.json",
+            "test": "connectionless-mode-gating-and-sequence",
+            "limitation": "Project-authored fixture; not derived from the WAP-203 effective table or protocol vectors."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CL-C-001",
+      "ordinal": 2,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Connectionless",
+      "referencedSection": "Section 6,7&8",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF AND WSP-CL-C-003 AND WSP-CL-C-004 AND WSP-CL-C-005 AND WSP-CL-C-006 AND WSP-CL-C-007 AND WSP-CL-C-020",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-010"
+        ],
+        "workItems": [
+          "WSP-801",
+          "T0-09"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wsp/session.rs",
+            "symbol": "WspSessionMode::Connectionless"
+          },
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "execute_native_wap_request_with_transport"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_primitive_profile_mapped/primitive_profile_fixture.json",
+            "test": "connectionless-mode-gating-and-sequence",
+            "limitation": "Project-authored fixture; not derived from the WAP-203 effective table or protocol vectors."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CO-C-001",
+      "ordinal": 3,
+      "actor": "client",
+      "group": "co",
+      "feature": "Connection-Oriented",
+      "referencedSection": "Section 6,7&8",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF AND WSP-CO-C-002 AND WSP-CO-C-003 AND WSP-CO-C-004 AND WSP-CO-C-005 AND WSP-CO-C-006 AND WSP-CO-C-007 AND WSP-CO-C-014 AND WSP-CO-C-017 AND WSP-CO-C-018 AND WSP-CO-C-019 AND WSP-CO-C-020 AND WSP-CO-C-033 AND WSP-CO-C-035",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-001",
+      "ordinal": 4,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Connectionless",
+      "referencedSection": "Section 6,7&8",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MSF AND WSP-CL-S-003 AND WSP-CL-S-004 AND WSP-CL-S-005 AND WSP-CL-S-006 AND WSP-CL-S-007 AND WSP-CL-S-020",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-001",
+      "ordinal": 5,
+      "actor": "server",
+      "group": "co",
+      "feature": "Connection-Oriented",
+      "referencedSection": "Section 6,7&8",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF AND WSP-CO-S-002 AND WSP-CO-S-003 AND WSP-CO-S-005 AND WSP-CO-S-006 AND WSP-CO-S-007 AND WSP-CO-S-014 AND WSP-CO-S-017 AND WSP-CO-S-018 AND WSP-CO-S-019 AND WSP-CO-S-020 AND WSP-CO-S-033",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-002",
+      "ordinal": 6,
+      "actor": "client",
+      "group": "co",
+      "feature": "Connect PDU",
+      "referencedSection": "6.3.3.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-003",
+      "ordinal": 7,
+      "actor": "client",
+      "group": "co",
+      "feature": "ConnectReply PDU",
+      "referencedSection": "7.1.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-004",
+      "ordinal": 8,
+      "actor": "client",
+      "group": "co",
+      "feature": "Redirect PDU",
+      "referencedSection": "7.1.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-005",
+      "ordinal": 9,
+      "actor": "client",
+      "group": "co",
+      "feature": "Capability Negotiation",
+      "referencedSection": "6.3.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-006",
+      "ordinal": 10,
+      "actor": "client",
+      "group": "co",
+      "feature": "Capability Negotiation",
+      "referencedSection": "7.1.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-007",
+      "ordinal": 11,
+      "actor": "client",
+      "group": "co",
+      "feature": "Disconnect PDU",
+      "referencedSection": "6.3.3.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-008",
+      "ordinal": 12,
+      "actor": "client",
+      "group": "co",
+      "feature": "Suspend PDU",
+      "referencedSection": "6.3.3.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-009",
+      "ordinal": 13,
+      "actor": "client",
+      "group": "co",
+      "feature": "Resume PDU",
+      "referencedSection": "6.3.3.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-010",
+      "ordinal": 14,
+      "actor": "client",
+      "group": "co",
+      "feature": "Push PDU",
+      "referencedSection": "6.3.3.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-011",
+      "ordinal": 15,
+      "actor": "client",
+      "group": "co",
+      "feature": "ConfirmedPush PDU",
+      "referencedSection": "6.3.3.10",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WSP-CO-C-034 AND WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-012",
+      "ordinal": 16,
+      "actor": "client",
+      "group": "co",
+      "feature": "Ack. Headers",
+      "referencedSection": "6.3.3.7",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF AND WTP-C-013",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-013",
+      "ordinal": 17,
+      "actor": "client",
+      "group": "co",
+      "feature": "Extended Methods",
+      "referencedSection": "6.3.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-014",
+      "ordinal": 18,
+      "actor": "client",
+      "group": "co",
+      "feature": "Default Header Code",
+      "referencedSection": "8.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-015",
+      "ordinal": 19,
+      "actor": "client",
+      "group": "co",
+      "feature": "Extended Header Code",
+      "referencedSection": "8.3.2.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-016",
+      "ordinal": 20,
+      "actor": "client",
+      "group": "co",
+      "feature": "Aliases",
+      "referencedSection": "6.3.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-017",
+      "ordinal": 21,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method GET -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-018",
+      "ordinal": 22,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method GET -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-019",
+      "ordinal": 23,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method POST -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-020",
+      "ordinal": 24,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method POST -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-021",
+      "ordinal": 25,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-022",
+      "ordinal": 26,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-023",
+      "ordinal": 27,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-024",
+      "ordinal": 28,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-025",
+      "ordinal": 29,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-026",
+      "ordinal": 30,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-027",
+      "ordinal": 31,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-028",
+      "ordinal": 32,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-029",
+      "ordinal": 33,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method PUT -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-030",
+      "ordinal": 34,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method PUT -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-031",
+      "ordinal": 35,
+      "actor": "client",
+      "group": "co",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-032",
+      "ordinal": 36,
+      "actor": "client",
+      "group": "co",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-033",
+      "ordinal": 37,
+      "actor": "client",
+      "group": "co",
+      "feature": "Method Abort",
+      "referencedSection": "6.3.3.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-034",
+      "ordinal": 38,
+      "actor": "client",
+      "group": "co",
+      "feature": "Push Abort",
+      "referencedSection": "6.3.3.10",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-C-035",
+      "ordinal": 39,
+      "actor": "client",
+      "group": "co",
+      "feature": "Encoding Version",
+      "referencedSection": "8.4.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "conditional-on-connection-oriented-wsp-and-wtp",
+        "classCProfile": "conditional-on-connection-oriented-wsp-and-wtp",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-002",
+      "ordinal": 40,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Push PDU",
+      "referencedSection": "6.4.2.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-003",
+      "ordinal": 41,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Header Encoding",
+      "referencedSection": "8.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-014"
+        ],
+        "workItems": [
+          "WSP-802",
+          "T0-20"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Header and encoding-version modules provide substantial behavior, but their tables/defaults are successor-oriented and lack WAP-203 effective-source vectors.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wsp/header_block.rs",
+            "symbol": "encode_header_block"
+          },
+          {
+            "path": "transport-rust/src/network/wsp/encoding_version.rs",
+            "symbol": "WspEncodingVersionPolicy"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json",
+            "test": "reply-encoding-version-header-and-body",
+            "limitation": "Synthetic fixture; WAP-203/SIN-005 header-table identity is not proven."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CL-C-004",
+      "ordinal": 42,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method GET -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "encode_connectionless_request"
+          },
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "decode_connectionless_wsp_reply"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "test": "native_connectionless_wire_format_prefixes_transaction_id",
+            "limitation": "Synthetic local wire test; not a source-derived WAP-203 conformance vector."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CL-C-005",
+      "ordinal": 43,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method GET -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "encode_connectionless_request"
+          },
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "decode_connectionless_wsp_reply"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "test": "native_connectionless_wire_format_prefixes_transaction_id",
+            "limitation": "Synthetic local wire test; not a source-derived WAP-203 conformance vector."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CL-C-006",
+      "ordinal": 44,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method POST -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "encode_connectionless_request"
+          },
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "decode_connectionless_wsp_reply"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "test": "native_connectionless_post_wire_format_encodes_header_block_and_body",
+            "limitation": "Synthetic local wire test; not a source-derived WAP-203 conformance vector."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CL-C-007",
+      "ordinal": 45,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method POST -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "encode_connectionless_request"
+          },
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "symbol": "decode_connectionless_wsp_reply"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/native_fetch.rs",
+            "test": "native_connectionless_post_wire_format_encodes_header_block_and_body",
+            "limitation": "Synthetic local wire test; not a source-derived WAP-203 conformance vector."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CL-C-008",
+      "ordinal": 46,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-009",
+      "ordinal": 47,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-010",
+      "ordinal": 48,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-011",
+      "ordinal": 49,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-012",
+      "ordinal": 50,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-013",
+      "ordinal": 51,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-014",
+      "ordinal": 52,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-015",
+      "ordinal": 53,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-016",
+      "ordinal": 54,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method PUT -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-017",
+      "ordinal": 55,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Method PUT -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-018",
+      "ordinal": 56,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-019",
+      "ordinal": 57,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "optional-connectionless-feature",
+        "classCProfile": "optional-connectionless-feature",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-C-020",
+      "ordinal": 58,
+      "actor": "client",
+      "group": "cl",
+      "feature": "Encoding Version",
+      "referencedSection": "8.4.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MCF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-014"
+        ],
+        "workItems": [
+          "WSP-802",
+          "T0-20"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Header and encoding-version modules provide substantial behavior, but their tables/defaults are successor-oriented and lack WAP-203 effective-source vectors.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wsp/header_block.rs",
+            "symbol": "encode_header_block"
+          },
+          {
+            "path": "transport-rust/src/network/wsp/encoding_version.rs",
+            "symbol": "WspEncodingVersionPolicy"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json",
+            "test": "reply-encoding-version-header-and-body",
+            "limitation": "Synthetic fixture; WAP-203/SIN-005 header-table identity is not proven."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "WSP-CO-S-002",
+      "ordinal": 59,
+      "actor": "server",
+      "group": "co",
+      "feature": "Connect PDU",
+      "referencedSection": "6.3.3.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-003",
+      "ordinal": 60,
+      "actor": "server",
+      "group": "co",
+      "feature": "ConnectReply PDU",
+      "referencedSection": "7.1.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-004",
+      "ordinal": 61,
+      "actor": "server",
+      "group": "co",
+      "feature": "Redirect PDU",
+      "referencedSection": "7.1.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-005",
+      "ordinal": 62,
+      "actor": "server",
+      "group": "co",
+      "feature": "Capability Negotiation",
+      "referencedSection": "6.3.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-006",
+      "ordinal": 63,
+      "actor": "server",
+      "group": "co",
+      "feature": "Capability Negotiation",
+      "referencedSection": "7.1.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-007",
+      "ordinal": 64,
+      "actor": "server",
+      "group": "co",
+      "feature": "Disconnect PDU",
+      "referencedSection": "6.3.3.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-008",
+      "ordinal": 65,
+      "actor": "server",
+      "group": "co",
+      "feature": "Suspend PDU",
+      "referencedSection": "6.3.3.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-009",
+      "ordinal": 66,
+      "actor": "server",
+      "group": "co",
+      "feature": "Resume PDU",
+      "referencedSection": "6.3.3.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-010",
+      "ordinal": 67,
+      "actor": "server",
+      "group": "co",
+      "feature": "Push PDU",
+      "referencedSection": "6.3.3.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-011",
+      "ordinal": 68,
+      "actor": "server",
+      "group": "co",
+      "feature": "ConfirmedPush PDU",
+      "referencedSection": "6.3.3.10",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-012",
+      "ordinal": 69,
+      "actor": "server",
+      "group": "co",
+      "feature": "Ack. Headers",
+      "referencedSection": "6.3.3.7",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF AND WTP-S-013",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-013",
+      "ordinal": 70,
+      "actor": "server",
+      "group": "co",
+      "feature": "Extended Methods",
+      "referencedSection": "6.3.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-014",
+      "ordinal": 71,
+      "actor": "server",
+      "group": "co",
+      "feature": "Default Header Code",
+      "referencedSection": "6.3.2.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-015",
+      "ordinal": 72,
+      "actor": "server",
+      "group": "co",
+      "feature": "Extended Header Code",
+      "referencedSection": "6.3.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-016",
+      "ordinal": 73,
+      "actor": "server",
+      "group": "co",
+      "feature": "Aliases",
+      "referencedSection": "6.3.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-017",
+      "ordinal": 74,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method GET -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-018",
+      "ordinal": 75,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method GET -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-019",
+      "ordinal": 76,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method POST -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-020",
+      "ordinal": 77,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method POST -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-021",
+      "ordinal": 78,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-022",
+      "ordinal": 79,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-023",
+      "ordinal": 80,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-024",
+      "ordinal": 81,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-025",
+      "ordinal": 82,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-026",
+      "ordinal": 83,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-027",
+      "ordinal": 84,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-028",
+      "ordinal": 85,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-029",
+      "ordinal": 86,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method PUT -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-030",
+      "ordinal": 87,
+      "actor": "server",
+      "group": "co",
+      "feature": "Method PUT -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-031",
+      "ordinal": 88,
+      "actor": "server",
+      "group": "co",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-032",
+      "ordinal": 89,
+      "actor": "server",
+      "group": "co",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.3.3.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CO-S-033",
+      "ordinal": 90,
+      "actor": "server",
+      "group": "co",
+      "feature": "Encoding Version",
+      "referencedSection": "8.4.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WTP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connection-oriented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-002",
+      "ordinal": 91,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Push PDU",
+      "referencedSection": "6.4.2.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-003",
+      "ordinal": 92,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Header Encoding",
+      "referencedSection": "8.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-004",
+      "ordinal": 93,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method GET -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-005",
+      "ordinal": 94,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method GET -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-006",
+      "ordinal": 95,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method POST -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-007",
+      "ordinal": 96,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method POST -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-008",
+      "ordinal": 97,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-009",
+      "ordinal": 98,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method DELETE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-010",
+      "ordinal": 99,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-011",
+      "ordinal": 100,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method HEAD -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-012",
+      "ordinal": 101,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-013",
+      "ordinal": 102,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method OPTIONS -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-014",
+      "ordinal": 103,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-015",
+      "ordinal": 104,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method TRACE -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-016",
+      "ordinal": 105,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method PUT -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-017",
+      "ordinal": 106,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Method PUT -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-018",
+      "ordinal": 107,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-019",
+      "ordinal": 108,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Multipart Data -",
+      "referencedSection": "6.4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WSP-CL-S-020",
+      "ordinal": 109,
+      "actor": "server",
+      "group": "cl",
+      "feature": "Encoding Version",
+      "referencedSection": "8.4.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WDP:MSF",
+      "sourceAnchor": {
+        "documentId": "WAP-203_003-WSP",
+        "staticConformanceSection": "Appendix D"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wsp-connectionless",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRN-012"
+        ],
+        "workItems": [
+          "WSP-801",
+          "WSP-804",
+          "WSP-805",
+          "T0-27",
+          "T0-30"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Waves Spec Coverage Dashboard
 
-Version: v0.1  
+Version: v0.2
 Status: Active
 
 ## Coverage status
@@ -10,6 +10,25 @@ Status: Active
 - Doc: `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 - Scope: all canonical root-level source PDFs under `spec-processing/source-material` (98 files)
 - Status: all 98 canonical PDFs are `deep-extracted`
+- Primary target: WAP 1.2.1 with WML 1.3
+- Target-source status: 21/97 byte-exact, 4/97 same-name/content-different,
+  72/97 missing from the canonical PDF corpus
+- Private target-source status: all 97 release members plus WAP-215 are
+  byte/hash verified outside Git; public promotion remains permission-gated
+- Selected profile: exact WAP-215 Class C client `CCR-CLASSC-C-001`
+- Selected-profile SCR accounting:
+  - nine mandatory feature families
+  - 712 effective source rows
+  - 201 selected strict rows
+  - implementation audit: 7 implemented, 84 partial, 110 missing
+  - all 201 selected rows have owner/work-item mappings
+- Important: `deep-extracted` describes review of the current WAP 2.0-heavy
+  local corpus. It is not evidence that the WAP 1.2.1 target source set or
+  implementation is complete.
+- Target source baseline:
+  `docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`
+- Planning closure checkpoint:
+  `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
 - Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves) plus `2` supplemental context-source parses (`WAP.pdf`, Wiley tech brief)
 
 ### Completed traceability domains
@@ -19,6 +38,28 @@ Status: Active
 - Sources:
   - `WAP-191*` (WML + SIN lineage)
   - `WAP-192*` (WBXML + SIN lineage)
+- WBXML ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
+  - 15 active rows and 3 selected Class C client rows
+  - selected audit: 0 implemented, 1 partial, 2 missing
+  - direct normative test evidence: 0/3; one subprocess-boundary test linked
+- Selected normative-clause ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
+  - WML: 39 selected parents / 174 clauses
+  - WAE: 11 selected parents / 39 clauses
+  - WBXML: 3 selected parents / 48 clauses
+  - caching: 5 selected parents / 68 clauses
+  - WCMP: 5 selected parents / 28 clauses
+  - WSP: 8 selected parents / 57 clauses
+  - WDP: 9 selected parents / 49 clauses
+  - WMLScript: 41 selected parents / 107 clauses
+  - WMLScript Libraries: 80 selected parents / 211 clauses
+  - all 781 direct fixtures planned; clause implementation status not assessed
+- Selected-profile successor delta register:
+  - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
+  - all 201 selected rows classified
+  - 17 successor-derived foundations: 2 compatible / 15 strict correction
+  - 184 selected rows have no identified successor-derived implementation basis
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
@@ -27,21 +68,54 @@ Status: Active
   - `WAP-193_101-WMLScript-20010928-a`
   - `WAP-194-WMLScriptLibraries-20000925-a`
   - `WAP-194_103-WMLScriptLibraries-20020318-a`
+- Ledgers:
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+  - 112 rows and 41 selected Class C interpreter rows
+  - selected audit: 0 implemented, 23 partial, 18 missing
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+  - 95 rows and 80 selected Class C interpreter rows
+  - selected audit: 0 implemented, 14 partial, 66 missing
+  - direct normative test evidence: 0/121 selected rows
 
 3. WAE user-agent behavior and media framework
 - Doc: `docs/waves/WAE_SPEC_TRACEABILITY.md`
-- Sources:
+- Strict-target sources:
+  - `WAP-190-WAESpec-20000329-a`
+  - `WAP-190_101`, `_102`, `_103`, and `_104` approved SINs
+  - WAP-215 `WAESpec:MCF` Class C selection
+- Ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-wae-scr.json`
+  - 86 active rows, 22 SIN-removed rows, and 11 selected Class C client rows
+  - selected audit: 5 implemented, 3 partial, 3 missing
+- Caching ledger:
+  - `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+  - 11 WAP-120 rows and 5 selected Class C user-agent rows
+  - selected audit: 0 implemented, 3 partial, 2 missing
+  - direct normative test evidence: 0/5
+- Successor delta sources:
   - `WAP-236-WAESpec-20020207-a`
-  - `WAP-237-WAEMT-20010515-a`
+  - `WAP-237-WAEMT-20010515-a` (optional-media delta still pending)
 
 4. Transport rewrite stack
 - Doc: `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-- Sources:
-  - `WAP-230-WSP-20010705-a`
-  - `OMA-WAP-TS-WSP-V1_0-20020920-C`
-  - `WAP-224-WTP-20010710-a`
-  - `OMA-WAP-224_002-WTP-SIN-20020827-a`
+- Strict-target sources:
+  - `WAP-200-WDP` plus approved SINs `001` through `005`
+  - `WAP-202-WCMP`
+  - `WAP-203-WSP` plus approved SINs `001`, `003`, and `005`
+- Ledgers:
+  - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
+  - 317 source rows and 22 selected connectionless Class C rows
+  - selected audit: 0 implemented, 17 partial, 5 missing
+  - direct normative test evidence: 0/22
+- Conditional target source:
+  - `WAP-201-WTP` plus approved SINs, only when connection-oriented WSP is
+    claimed
+- Successor delta/context sources:
   - `WAP-259-WDP-20010614-a`
+  - `WAP-224-WTP-20010710-a` plus `OMA-WAP-224_002`
+  - `WAP-230-WSP-20010705-a` plus `OMA-WAP-TS-WSP-V1_0`
 
 5. Transport-adjacent interoperability and adaptation boundaries
 - Doc: `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
@@ -100,33 +174,77 @@ Status: Active
 
 ## Open coverage gaps
 
-0. WAP-191 full-stack conformance closure (`WML-01..75`)
-- Status: in progress (planned execution lane created)
+0. Effective WAP-191 full-stack conformance closure (76 actor-specific SCR IDs)
+- Status: in progress (source and nested-clause ledgers plus mandatory code
+  audit complete; direct fixtures, optional-capability, and release evidence pending)
+- Selected-profile scope: 39 required Class C client rows, 27 optional client
+  rows, and 10 server/encoder rows not applicable to the client
 - Deliverables:
+  - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
+  - `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md`
   - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
   - Phase R tickets in `docs/waves/WORK_ITEMS.md` (`R0-01`..`R0-08`)
 
+0a. Effective WAP-192 WBXML conformance closure (15 actor-specific SCR IDs)
+- Status: in progress (source ledger and selected-client code audit complete;
+  48 nested clauses planned; direct normative fixtures pending)
+- Selected-profile scope: 3 required Class C client rows and 12
+  server/document/encoder rows outside the client profile
+- Deliverables:
+  - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
+  - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
+  - `RQ-RMK-010` in `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+  - corrective fixture/tooling closure in `R0-08` and `WML-203`
+
+0b. WAP-120 caching conformance closure (11 actor-specific SCR IDs)
+- Status: in progress (source ledger and selected-client audit complete;
+  explicit zero-byte-cache policy, normative fixtures, and implementation
+  closure pending)
+- Selected-profile scope: 5 required Class C user-agent rows; one optional
+  user-agent row and all five gateway rows remain outside the selected client
+  profile
+- Deliverables:
+  - `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+  - `docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`
+  - `RQ-WAE-008` in `docs/waves/WAE_SPEC_TRACEABILITY.md`
+  - corrective closure in `WAE-603`
+
 1. WMLScript bedrock conformance closure (`WAP-193_101` + `WAP-194/194_103`)
-- Status: in progress (active implementation, bedrock-first closure lane added)
+- Status: in progress (exact source ledgers and implementation audit complete;
+  318 nested clauses planned; direct fixtures, implementation, and CI closure pending)
 - Deliverables:
   - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md` (active baseline + bedrock priority groups)
-  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-06`)
+  - `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
+  - `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+  - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-07`)
 - Priority closure focus:
-  - bytecode structural verification gates
+  - actual WAP-193 compilation-unit and instruction decoding
   - external-call/pragma/access-control conformance
   - content-type routing for WMLScript payloads
   - core function/local/conversion/error semantics
+  - Lang, Float, String, URL, WMLBrowser, and Dialogs exact IDs/behavior
 
-2. Transport bedrock conformance closure (`WAP-259`, `WAP-224`, `WAP-230`)
-- Status: in progress (cleaned-source table-grounded closure lane added)
+2. Transport bedrock conformance closure (`WAP-200`, `WAP-202`, `WAP-203`)
+- Status: in progress (exact SCR extraction, selected-path resolution, and
+  implementation audit plus 134 nested clauses complete; direct fixtures and
+  implementation closure pending)
 - Deliverables:
-  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` (`RQ-TRN-016`..`RQ-TRN-019`)
-  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`, `T0-14`, `T0-15`)
+  - `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`
+  - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
+  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+  - program work items `TRN-701`, `TRN-703`, `WSP-801`, `WSP-802`,
+    `WSP-804`, and `WSP-805`
 - Priority closure focus:
-  - WTP TID/MPL replay-window behavior
-  - WSP connectionless primitive-profile gating
-  - WSP assigned-number registry fidelity (PDU/abort/header/parameter maps)
-  - WSP capability negotiation and bounds enforcement
+  - nine selected WDP rows, including the CDPD/IPv4 bearer declaration
+  - five selected WCMP general-message rows
+  - eight selected connectionless WSP rows and exact WAP-203 registries
+  - browser GET/POST ingress through the selected connectionless path
+  - retain the normalized, licensed-payload `TIAEIA-732` capability metadata
+  - WTP only if connection-oriented WSP is later claimed
 
 3. Networking target-profile decision and migration gates (`gateway bridge` -> `in-process WAP transport`)
 - Status: in progress (decision ticket added; implementation unchanged)
@@ -180,19 +298,21 @@ Status: Active
 
 ## Navigation
 
-1. Master audit plan:
+1. WAP planning closure:
+- `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
+2. Master audit plan:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-2. Work items:
+3. Work items:
 - `docs/waves/WORK_ITEMS.md`
-3. Contract mapping:
+4. Contract mapping:
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
-4. Test coverage matrix:
+5. Test coverage matrix:
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-5. Supplemental context audit:
+6. Supplemental context audit:
 - `docs/waves/archive/reports/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
-6. Source authority policy:
+7. Source authority policy:
 - `docs/waves/SOURCE_AUTHORITY_POLICY.md`
-7. Requirement index:
+8. Requirement index:
 - `docs/waves/REQUIREMENT_INDEX.md`
-8. Open policy questions:
+9. Open policy questions:
 - `docs/waves/OPEN_SPEC_QUESTIONS.md`

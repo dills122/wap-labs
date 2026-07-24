@@ -1,10 +1,15 @@
 # Master Prioritized Sprint Plan (March 2026)
 
-Status: active  
-Effective date: 2026-03-15  
+Status: active for already-in-flight cross-lane work; WAP 1.2.1 completion is governed by the compliance program
+
+Effective date: 2026-03-15
+
 Planning horizon: 3 consecutive sprints
 
-This plan is the cross-lane source of truth for "what is next" and resolves priority collisions between runtime compliance, networking closure, and maintenance.
+This plan resolves priority collisions for work already in flight. For new
+WAP 1.2.1 work and any completion/conformance claim, the dependency authority
+is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
+`docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`.
 
 ## Priority Model
 
@@ -21,6 +26,31 @@ This plan is the cross-lane source of truth for "what is next" and resolves prio
 - `docs/waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`
 - `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - `docs/wml-engine/work-items.md`
+- `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
+- `docs/waves/wap-1.2.1-compliance-program.json`
+
+## WAP Compliance Rebase (2026-07-24)
+
+Source/spec planning for the selected WAP-215 Class C profile is complete:
+201 selected parent rows, 781 planned clause fixtures, and a
+13-sprint/78-item execution program. The conservative implementation snapshot
+is 7 implemented, 84 partial, and 110 missing parent rows; clause-level
+assessment is still 0/781.
+
+Use this order for new completion work:
+
+1. `WML-2` and `TRN-7` may proceed in parallel.
+2. `WML-3` follows `WML-2`.
+3. `REN-4` and `WMLS-5` follow `WML-3`.
+4. `WAE-6` follows runtime, rendering, and script closure.
+5. `WSP-8` follows `TRN-7` and `WAE-6`.
+6. `INT-9` and then `REL-10` close cross-layer and release evidence.
+7. `OPT-11` and `ENH-12` remain post-`REL-10` capability lanes.
+
+Existing downstream work may continue as an isolated foundation, but it
+cannot close its sprint or satisfy an upstream obligation early. The blocked
+source item `SRC-006` gates public redistribution only and does not block
+internal implementation or evidence work.
 
 ## Current Snapshot (as of 2026-03-15)
 
@@ -180,12 +210,15 @@ Implementation reference:
 
 ## Parallel Follow-on Sprint Recommendation
 
-Current recommendation after this refresh:
+Current recommendation after the compliance rebase:
 
-1. `A5-01` history entry fidelity follow-up.
-2. `W0-05` timer/dialog integration baseline.
-3. `D0-01` debug connector contract baseline.
-4. `W1-06` fatal/non-fatal script error taxonomy closure.
+1. Start the `WML-2` parser/deck/validation fixture lane.
+2. Continue `TRN-7` WDP/WCMP source-derived packet and error evidence in
+   parallel.
+3. Treat `W0-05` and `W1-06` as `WMLS-5` foundations; do not declare that
+   sprint complete before `WML-3`.
+4. Keep `D0-01` and maintenance work non-preemptive while strict P0/P1
+   obligations are open.
 
 Completed this sprint:
 

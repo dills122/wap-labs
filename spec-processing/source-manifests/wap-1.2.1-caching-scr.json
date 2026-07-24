@@ -1,0 +1,625 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "caching",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)",
+    "cacheProfile": "strict behavior with zero-byte cache allowed by WAP-120"
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-120-WAPCachingMod"
+    ],
+    "extractionSources": [
+      {
+        "documentId": "WAP-120-WAPCachingMod",
+        "filename": "WAP-120-WAPCachingMod-20010413-a.pdf",
+        "sha256": "8aeacd0a36676d2b22c7ebee211f327049b712ca1ba0dc20faac7af24a9a17ee",
+        "role": "base",
+        "repositoryState": "canonical-content-differs",
+        "textExtractionBytes": 25438,
+        "textExtractionSha256": "a87a9b3fd7f8b0af45a0c80fb5e525ef3f01f056b9292ed28dea8b1f4de47ab9"
+      }
+    ],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "textExtractionBytes": 24020,
+      "textExtractionSha256": "5b2454adabb7f0478edb2ea8fe0576dc05851f7dc4e02e74cbf0ada1b0da8cdf"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WAPCachingMod:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "externalDependencies": [
+      {
+        "id": "rfc-2616",
+        "title": "Hypertext Transfer Protocol -- HTTP/1.1",
+        "version": "RFC 2616, June 1999",
+        "authority": "RFC Editor",
+        "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2616.html",
+        "referenceDisposition": "effective-normative",
+        "acquisitionState": "verified-private-full-artifact",
+        "artifacts": [
+          {
+            "id": "rfc-2616-text",
+            "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2616.txt",
+            "bytes": 422279,
+            "sha256": "10211d2885196b97b1c78e1672f3f68ae97c294596ef2b7fd890cbd30a3427bf"
+          }
+        ]
+      },
+      {
+        "id": "rfc-1305",
+        "title": "Network Time Protocol (Version 3) Specification, Implementation and Analysis",
+        "version": "RFC 1305, March 1992",
+        "authority": "RFC Editor",
+        "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1305.html",
+        "referenceDisposition": "effective-normative",
+        "acquisitionState": "verified-private-full-artifact",
+        "artifacts": [
+          {
+            "id": "rfc-1305-text",
+            "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1305.txt",
+            "bytes": 307085,
+            "sha256": "60988c658f503f664cd1238febbd4629dd7bfc574567ebb940b75a59f5848119"
+          }
+        ]
+      }
+    ],
+    "interpretation": "WAP-120 supplies an 11-row actor-specific SCR. WAP-221 applies WAPCachingMod:MCF to the five mandatory user-agent rows; optional TOD synchronization and all gateway rows remain outside the selected Class C client profile. WAP-120 explicitly permits a zero-byte cache but still governs observable history, intra-resource, and security behavior.",
+    "extractionMethod": "Normalized transcription from the hash-locked release-member text; recovered PDF and full text remain outside Git."
+  },
+  "summary": {
+    "itemCount": 11,
+    "mandatoryCount": 9,
+    "optionalCount": 2,
+    "selectedClassCRequiredCount": 5,
+    "selectedClassCOptionalCount": 1,
+    "selectedClassCNotApplicableCount": 5,
+    "byActor": {
+      "wap-gateway-cache": 5,
+      "wml-user-agent-cache": 6
+    },
+    "byGroup": {
+      "cache-security": 2,
+      "gateway-response-cache": 1,
+      "history-revalidation": 2,
+      "http-cache-model": 2,
+      "intra-resource-navigation": 1,
+      "time-of-day": 3
+    },
+    "selectedImplementationStatus": {
+      "missing": 2,
+      "partial": 3
+    },
+    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedProvisionalTestEvidenceCount": 3
+  },
+  "obligations": [
+    {
+      "id": "UACache-C-001",
+      "ordinal": 1,
+      "actor": "wml-user-agent-cache",
+      "group": "http-cache-model",
+      "feature": "Implement HTTP caching model as described in RFC 2616",
+      "referencedSection": "4.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "external-standard",
+        "dependencyIds": [
+          "rfc-2616"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "http-cache-model",
+        "ownerLayers": [
+          "transport-rust",
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603",
+          "T0-15"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "The current fetch path has no repository-owned HTTP response cache and behaves like an implicit zero-byte cache, but that profile and the absence of hidden host caching are not declared or directly tested against WAP-120/RFC 2616.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/fetch_policy.rs",
+            "symbol": "apply_request_policy"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "loadTransportUrl"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "browser/frontend/src/app/navigation-state.load.test.ts",
+            "test": "maps reload source to no-cache request policy",
+            "limitation": "Proves an explicit reload header mapping, not the complete zero-byte HTTP cache model."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "UACache-C-002",
+      "ordinal": 2,
+      "actor": "wml-user-agent-cache",
+      "group": "history-revalidation",
+      "feature": "Revalidate a stale cached resource on history back when Cache-Control includes must-revalidate",
+      "referencedSection": "4.1.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "history-revalidation",
+        "ownerLayers": [
+          "transport-rust",
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603",
+          "T0-15"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No response-cache metadata model parses freshness or must-revalidate, and history back cannot conditionally reproduce the original request for stale cached content.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "UACache-C-003",
+      "ordinal": 3,
+      "actor": "wml-user-agent-cache",
+      "group": "history-revalidation",
+      "feature": "Do not revalidate a stale cached resource on history back without must-revalidate",
+      "referencedSection": "4.1.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "history-revalidation",
+        "ownerLayers": [
+          "transport-rust",
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603",
+          "T0-15"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "History back currently refetches an earlier external resource because there is no cached entity/freshness model; no behavior preserves a stale cached representation when must-revalidate is absent.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "UACache-C-004",
+      "ordinal": 4,
+      "actor": "wml-user-agent-cache",
+      "group": "intra-resource-navigation",
+      "feature": "Do not revalidate WML intra-deck or WMLScript intra-compilation-unit navigation",
+      "referencedSection": "4.1.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "intra-resource-navigation",
+        "ownerLayers": [
+          "transport-rust",
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603",
+          "T0-15"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Intra-deck fragment navigation stays inside the loaded engine deck, and registered script calls stay inside the engine, but direct WAP-120 fixtures do not yet prove both required intra-resource cases.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "navigate_to_card_internal"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "invoke_script_ref_internal"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "enter_navigates_to_fragment_card",
+            "limitation": "Proves in-deck navigation without transport fetch but is not a complete WAP-120 cache fixture."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "script_link_executes_registered_unit_without_external_navigation",
+            "limitation": "Uses the project-specific script runtime rather than a WAP-193 compilation-unit fixture."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "UACache-C-005",
+      "ordinal": 5,
+      "actor": "wml-user-agent-cache",
+      "group": "time-of-day",
+      "feature": "Synchronize the user-agent time base with the gateway",
+      "referencedSection": "5.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "time-of-day",
+        "ownerLayers": [
+          "transport-rust",
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603",
+          "T0-15"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional client capability retained for explicit declaration and is outside WAPCachingMod:MCF.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "UACache-C-006",
+      "ordinal": 6,
+      "actor": "wml-user-agent-cache",
+      "group": "cache-security",
+      "feature": "Protect cached contents from malicious or unintended access",
+      "referencedSection": "6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "cache-security",
+        "ownerLayers": [
+          "transport-rust",
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603",
+          "T0-15"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "No repository-owned persistent HTTP cache is present, reducing the stored-cache attack surface, but the zero-byte policy and sensitive deck/script/history retention boundaries are not explicitly security-tested.",
+        "implementationEvidence": [
+          {
+            "path": "browser/frontend/src/session-history.ts",
+            "symbol": "HostHistoryEntry"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "browser/frontend/src/session-history.test.ts",
+            "test": "keeps separate entries when request policy metadata differs",
+            "limitation": "History determinism is not a cache confidentiality/access-control test."
+          }
+        ],
+        "evidenceState": "provisional-non-normative-test-linked"
+      }
+    },
+    {
+      "id": "UACache-S-007",
+      "ordinal": 7,
+      "actor": "wap-gateway-cache",
+      "group": "http-cache-model",
+      "feature": "Implement HTTP proxy caching model as described in RFC 2616",
+      "referencedSection": "4.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "external-standard",
+        "dependencyIds": [
+          "rfc-2616"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "http-cache-model",
+        "ownerLayers": [
+          "gateway-kannel",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Gateway/server SCR retained for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "UACache-S-008",
+      "ordinal": 8,
+      "actor": "wap-gateway-cache",
+      "group": "time-of-day",
+      "feature": "Synchronize the gateway time base with NTP",
+      "referencedSection": "4.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "external-standard",
+        "dependencyIds": [
+          "rfc-1305"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "time-of-day",
+        "ownerLayers": [
+          "gateway-kannel",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Gateway/server SCR retained for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "UACache-S-009",
+      "ordinal": 9,
+      "actor": "wap-gateway-cache",
+      "group": "gateway-response-cache",
+      "feature": "Cache WSP responses using HTTP proxy semantics",
+      "referencedSection": "4.2.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "gateway-response-cache",
+        "ownerLayers": [
+          "gateway-kannel",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Gateway/server SCR retained for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "UACache-S-010",
+      "ordinal": 10,
+      "actor": "wap-gateway-cache",
+      "group": "time-of-day",
+      "feature": "Support x-wap-tod in WSP requests",
+      "referencedSection": "5.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "dependencyIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "time-of-day",
+        "ownerLayers": [
+          "gateway-kannel",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Gateway/server SCR retained for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "UACache-S-011",
+      "ordinal": 11,
+      "actor": "wap-gateway-cache",
+      "group": "cache-security",
+      "feature": "Obey RFC 2616 caching security considerations",
+      "referencedSection": "6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "external-standard",
+        "dependencyIds": [
+          "rfc-2616"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-120-WAPCachingMod",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "cache-security",
+        "ownerLayers": [
+          "gateway-kannel",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-WAE-008"
+        ],
+        "workItems": [
+          "WAE-603"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Gateway/server SCR retained for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    }
+  ]
+}

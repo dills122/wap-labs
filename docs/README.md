@@ -32,6 +32,7 @@
 - `waves/TRANSPORT_RUST_PHASE_PLAN.md`: active phased implementation plan for `transport-rust` (FFI decode, streaming, protocol, and WTLS stages)
 - `waves/TRANSPORT_E2E_READINESS_SCORECARD.md`: measured readiness for local Kannel/WML end-to-end transport and browser smoke coverage
 - `waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`: canonical cross-lane, priority-ordered sprint plan for immediate and next-slice execution
+- `waves/WAP_1_2_1_PLANNING_BASELINE.md`: closed WAP 1.2.1/WML 1.3 source, obligation, fixture, and implementation-planning checkpoint
 - `waves/SPRINT_PLAN_2026-03_BEDROCK_COMPLIANCE.md`: committed dependency-ordered sprint plan for request-policy/history/process-order/bytecode verification closure
 - `waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`: canonical migration plan for EngineFrame-based host integration
 - `waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`: ticketized execution board for frame/input interface migration

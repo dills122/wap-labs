@@ -1,0 +1,1075 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "recordedOn": "2026-07-24",
+  "authority": {
+    "documentId": "WAP-215-ClassConform-20001213-a",
+    "title": "Class Conformance Requirements",
+    "publicationStatus": "approved",
+    "approvedOn": "2000-12-13",
+    "sourceUrl": "https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf",
+    "catalogUrl": "https://www.wapforum.org/what/technical_1_2_1.htm",
+    "bytes": 47936,
+    "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+    "checksumAlgorithm": "sha256",
+    "pageCount": 16,
+    "textExtraction": {
+      "bytes": 35121,
+      "sha256": "d0b4cb2e7e1cb1340320845655176233f53b817bf29f93b102db6f49c030d00f",
+      "checksumAlgorithm": "sha256"
+    },
+    "repositoryState": "metadata-only-pending-redistribution-review",
+    "sourceSections": [
+      "7.2",
+      "7.3"
+    ],
+    "sourceTables": [
+      "Table 2",
+      "Table 3"
+    ]
+  },
+  "selectedTarget": {
+    "deviceRole": "client",
+    "deviceClass": "C",
+    "identifier": "CCR-CLASSC-C-001",
+    "description": "data profile client",
+    "requirementExpressions": [
+      "WAESpec:MCF",
+      "WML:MCF",
+      "WBXML:MCF",
+      "WMLScript:MCF",
+      "WMLScriptLibs:MCF",
+      "WAPCachingMod:MCF",
+      "WSP:MCF",
+      "WDP:MCF",
+      "WCMP:MCF"
+    ],
+    "effectiveFamilies": [
+      "wae",
+      "wml",
+      "wbxml",
+      "wmlscript",
+      "wmlscript-libraries",
+      "caching",
+      "wsp",
+      "wdp",
+      "wcmp"
+    ]
+  },
+  "interpretation": {
+    "featureGroupNotation": "MCF/OCF are mandatory/optional client features; MSF/OSF are mandatory/optional server features.",
+    "classAlternatives": "Each WAP June 2000 client or server profile selects exactly one of Class A, B, or C.",
+    "wtpClientCondition": "WTP is mandatory for a client only when that client supports connection-mode WSP.",
+    "classCOptionalProfiles": "WTLS, WIM, Push, WTA/WTAI, UAProf, and WMLScript Crypto are not required by CCR-CLASSC-C-001 and remain separately declared capabilities."
+  },
+  "actors": [
+    {
+      "deviceRole": "client",
+      "rootIdentifier": "CCR-WAPJ2K-C-001",
+      "rootRequirementType": "one-of",
+      "profileIdentifiers": [
+        "CCR-CLASSA-C-001",
+        "CCR-CLASSB-C-001",
+        "CCR-CLASSC-C-001"
+      ],
+      "profiles": [
+        {
+          "identifier": "CCR-CLASSA-C-001",
+          "deviceClass": "A",
+          "status": "optional-alternative-under-root",
+          "requirements": [
+            {
+              "expression": "WAESpec:MCF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WAESpec:OCF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WML:MCF",
+              "sourceAlias": "WML",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WML:OCF",
+              "sourceAlias": "WML",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WBXML:MCF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WBXML:OCF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WMLScript:MCF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScript:OCF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScriptLibs:MCF",
+              "sourceAlias": "WMLScriptLibs",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WMLScriptLibs:OCF",
+              "sourceAlias": "WMLScriptLibs",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WAPCachingMod:MCF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "MCF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "WAPCachingMod:OCF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "OCF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "UAProf:MCF",
+              "sourceAlias": "UAProf",
+              "featureGroup": "MCF",
+              "effectiveFamily": "user-agent-profile"
+            },
+            {
+              "expression": "UAProf:OCF",
+              "sourceAlias": "UAProf",
+              "featureGroup": "OCF",
+              "effectiveFamily": "user-agent-profile"
+            },
+            {
+              "expression": "PushMessage:MCF",
+              "sourceAlias": "PushMessage",
+              "featureGroup": "MCF",
+              "effectiveFamily": "push-message"
+            },
+            {
+              "expression": "PushMessage:OCF",
+              "sourceAlias": "PushMessage",
+              "featureGroup": "OCF",
+              "effectiveFamily": "push-message"
+            },
+            {
+              "expression": "PushOTA:MCF",
+              "sourceAlias": "PushOTA",
+              "featureGroup": "MCF",
+              "effectiveFamily": "push-over-the-air"
+            },
+            {
+              "expression": "PushOTA:OCF",
+              "sourceAlias": "PushOTA",
+              "featureGroup": "OCF",
+              "effectiveFamily": "push-over-the-air"
+            },
+            {
+              "expression": "ServiceInd:MCF",
+              "sourceAlias": "ServiceInd",
+              "featureGroup": "MCF",
+              "effectiveFamily": "service-indication"
+            },
+            {
+              "expression": "ServiceInd:OCF",
+              "sourceAlias": "ServiceInd",
+              "featureGroup": "OCF",
+              "effectiveFamily": "service-indication"
+            },
+            {
+              "expression": "ServiceLoad:MCF",
+              "sourceAlias": "ServiceLoad",
+              "featureGroup": "MCF",
+              "effectiveFamily": "service-loading"
+            },
+            {
+              "expression": "ServiceLoad:OCF",
+              "sourceAlias": "ServiceLoad",
+              "featureGroup": "OCF",
+              "effectiveFamily": "service-loading"
+            },
+            {
+              "expression": "CacheOP:MCF",
+              "sourceAlias": "CacheOP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "cache-operation"
+            },
+            {
+              "expression": "CacheOP:OCF",
+              "sourceAlias": "CacheOP",
+              "featureGroup": "OCF",
+              "effectiveFamily": "cache-operation"
+            },
+            {
+              "expression": "WSP:MCF",
+              "sourceAlias": "WSP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WSP:OCF",
+              "sourceAlias": "WSP",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WTP:MCF",
+              "sourceAlias": "WTP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtp"
+            },
+            {
+              "expression": "WTP:OCF",
+              "sourceAlias": "WTP",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wtp"
+            },
+            {
+              "expression": "WDP:MCF",
+              "sourceAlias": "WDP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WDP:OCF",
+              "sourceAlias": "WDP",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WAPOverGSMUSSD:MCF",
+              "sourceAlias": "WAPOverGSMUSSD",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wap-over-gsm-ussd"
+            },
+            {
+              "expression": "WAPOverGSMUSSD:OCF",
+              "sourceAlias": "WAPOverGSMUSSD",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wap-over-gsm-ussd"
+            },
+            {
+              "expression": "WCMP:MCF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wcmp"
+            },
+            {
+              "expression": "WCMP:OCF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wcmp"
+            },
+            {
+              "expression": "WTLS:MCF",
+              "sourceAlias": "WTLS",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtls"
+            },
+            {
+              "expression": "WTLS:OCF",
+              "sourceAlias": "WTLS",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wtls"
+            },
+            {
+              "expression": "WIM:MCF",
+              "sourceAlias": "WIM",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wim"
+            },
+            {
+              "expression": "WIM:OCF",
+              "sourceAlias": "WIM",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wim"
+            },
+            {
+              "expression": "WMLScriptCrypto:MCF",
+              "sourceAlias": "WMLScriptCrypto",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript-crypto"
+            },
+            {
+              "expression": "WMLScriptCrypto:OCF",
+              "sourceAlias": "WMLScriptCrypto",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wmlscript-crypto"
+            },
+            {
+              "expression": "WTA:MCF",
+              "sourceAlias": "WTA",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wta"
+            },
+            {
+              "expression": "WTA:OCF",
+              "sourceAlias": "WTA",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wta"
+            },
+            {
+              "expression": "WTAI:MCF",
+              "sourceAlias": "WTAI",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtai"
+            },
+            {
+              "expression": "WTAI:OCF",
+              "sourceAlias": "WTAI",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wtai"
+            },
+            {
+              "expression": "WTAIIS136:MCF",
+              "sourceAlias": "WTAIIS136",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtai-is136"
+            },
+            {
+              "expression": "WTAIIS136:OCF",
+              "sourceAlias": "WTAIIS136",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wtai-is136"
+            },
+            {
+              "expression": "WTAIGSM:MCF",
+              "sourceAlias": "WTAIGSM",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtai-gsm"
+            },
+            {
+              "expression": "WTAIGSM:OCF",
+              "sourceAlias": "WTAIGSM",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wtai-gsm"
+            },
+            {
+              "expression": "WTAIPDC:MCF",
+              "sourceAlias": "WTAIPDC",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtai-pdc"
+            },
+            {
+              "expression": "WTAIPDC:OCF",
+              "sourceAlias": "WTAIPDC",
+              "featureGroup": "OCF",
+              "effectiveFamily": "wtai-pdc"
+            }
+          ]
+        },
+        {
+          "identifier": "CCR-CLASSB-C-001",
+          "deviceClass": "B",
+          "status": "optional-alternative-under-root",
+          "requirements": [
+            {
+              "expression": "WAESpec:MCF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WML:MCF",
+              "sourceAlias": "WML",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WBXML:MCF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WMLScript:MCF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScriptLibs:MCF",
+              "sourceAlias": "WMLScriptLibs",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WAPCachingMod:MCF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "MCF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "WSP:MCF",
+              "sourceAlias": "WSP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WDP:MCF",
+              "sourceAlias": "WDP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WCMP:MCF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wcmp"
+            },
+            {
+              "expression": "PushMessage:MCF",
+              "sourceAlias": "PushMessage",
+              "featureGroup": "MCF",
+              "effectiveFamily": "push-message"
+            },
+            {
+              "expression": "PushOTA:MCF",
+              "sourceAlias": "PushOTA",
+              "featureGroup": "MCF",
+              "effectiveFamily": "push-over-the-air"
+            },
+            {
+              "expression": "ServiceInd:MCF",
+              "sourceAlias": "ServiceInd",
+              "featureGroup": "MCF",
+              "effectiveFamily": "service-indication"
+            },
+            {
+              "expression": "WTLS:MCF",
+              "sourceAlias": "WTLS",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtls"
+            },
+            {
+              "expression": "WTA:MCF",
+              "sourceAlias": "WTA",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wta"
+            },
+            {
+              "expression": "WTAI:MCF",
+              "sourceAlias": "WTAI",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wtai"
+            }
+          ]
+        },
+        {
+          "identifier": "CCR-CLASSC-C-001",
+          "deviceClass": "C",
+          "status": "optional-alternative-under-root",
+          "requirements": [
+            {
+              "expression": "WAESpec:MCF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WML:MCF",
+              "sourceAlias": "WML",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WBXML:MCF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WMLScript:MCF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScriptLibs:MCF",
+              "sourceAlias": "WMLScriptLibs",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WAPCachingMod:MCF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "MCF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "WSP:MCF",
+              "sourceAlias": "WSP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WDP:MCF",
+              "sourceAlias": "WDP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WCMP:MCF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "MCF",
+              "effectiveFamily": "wcmp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "deviceRole": "server",
+      "rootIdentifier": "CCR-WAPJ2K-S-001",
+      "rootRequirementType": "one-of",
+      "profileIdentifiers": [
+        "CCR-CLASSA-S-001",
+        "CCR-CLASSB-S-001",
+        "CCR-CLASSC-S-001"
+      ],
+      "profiles": [
+        {
+          "identifier": "CCR-CLASSA-S-001",
+          "deviceClass": "A",
+          "status": "optional-alternative-under-root",
+          "requirements": [
+            {
+              "expression": "WAESpec:MSF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WAESpec:OSF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WML:MSF",
+              "sourceAlias": "WML",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WML:OSF",
+              "sourceAlias": "WML",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WBXML:MSF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WBXML:OSF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WMLScript:MSF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScript:OSF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScriptSL:MSF",
+              "sourceAlias": "WMLScriptSL",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WMLScriptlibs:OSF",
+              "sourceAlias": "WMLScriptlibs",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WAPCachingMod:MSF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "MSF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "WAPCachingMod:OSF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "OSF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "UAProf:MSF",
+              "sourceAlias": "UAProf",
+              "featureGroup": "MSF",
+              "effectiveFamily": "user-agent-profile"
+            },
+            {
+              "expression": "UAProf:OSF",
+              "sourceAlias": "UAProf",
+              "featureGroup": "OSF",
+              "effectiveFamily": "user-agent-profile"
+            },
+            {
+              "expression": "PPGService:MSF",
+              "sourceAlias": "PPGService",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-proxy-gateway"
+            },
+            {
+              "expression": "PPGService:OSF",
+              "sourceAlias": "PPGService",
+              "featureGroup": "OSF",
+              "effectiveFamily": "push-proxy-gateway"
+            },
+            {
+              "expression": "PushMessage:MSF",
+              "sourceAlias": "PushMessage",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-message"
+            },
+            {
+              "expression": "PushMessage:OSF",
+              "sourceAlias": "PushMessage",
+              "featureGroup": "OSF",
+              "effectiveFamily": "push-message"
+            },
+            {
+              "expression": "PushOTA:MSF",
+              "sourceAlias": "PushOTA",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-over-the-air"
+            },
+            {
+              "expression": "PushOTA:OSF",
+              "sourceAlias": "PushOTA",
+              "featureGroup": "OSF",
+              "effectiveFamily": "push-over-the-air"
+            },
+            {
+              "expression": "ServiceInd:MSF",
+              "sourceAlias": "ServiceInd",
+              "featureGroup": "MSF",
+              "effectiveFamily": "service-indication"
+            },
+            {
+              "expression": "ServiceInd:OSF",
+              "sourceAlias": "ServiceInd",
+              "featureGroup": "OSF",
+              "effectiveFamily": "service-indication"
+            },
+            {
+              "expression": "ServiceLoad:MSF",
+              "sourceAlias": "ServiceLoad",
+              "featureGroup": "MSF",
+              "effectiveFamily": "service-loading"
+            },
+            {
+              "expression": "ServiceLoad:OSF",
+              "sourceAlias": "ServiceLoad",
+              "featureGroup": "OSF",
+              "effectiveFamily": "service-loading"
+            },
+            {
+              "expression": "PAP:MSF",
+              "sourceAlias": "PAP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-access-protocol"
+            },
+            {
+              "expression": "PAP:OSF",
+              "sourceAlias": "PAP",
+              "featureGroup": "OSF",
+              "effectiveFamily": "push-access-protocol"
+            },
+            {
+              "expression": "CacheOP:MSF",
+              "sourceAlias": "CacheOP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "cache-operation"
+            },
+            {
+              "expression": "CacheOP:OSF",
+              "sourceAlias": "CacheOP",
+              "featureGroup": "OSF",
+              "effectiveFamily": "cache-operation"
+            },
+            {
+              "expression": "WSP:MSF",
+              "sourceAlias": "WSP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WSP:OSF",
+              "sourceAlias": "WSP",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WTP:MSF",
+              "sourceAlias": "WTP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtp"
+            },
+            {
+              "expression": "WTP:OSF",
+              "sourceAlias": "WTP",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wtp"
+            },
+            {
+              "expression": "WDP:MSF",
+              "sourceAlias": "WDP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WDP:OSF",
+              "sourceAlias": "WDP",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WAPOverGSMUSSD:MSF",
+              "sourceAlias": "WAPOverGSMUSSD",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wap-over-gsm-ussd"
+            },
+            {
+              "expression": "WAPOverGSMUSSD:OSF",
+              "sourceAlias": "WAPOverGSMUSSD",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wap-over-gsm-ussd"
+            },
+            {
+              "expression": "WCMP:MSF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wcmp"
+            },
+            {
+              "expression": "WCMP:OSF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wcmp"
+            },
+            {
+              "expression": "WTLS:MSF",
+              "sourceAlias": "WTLS",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtls"
+            },
+            {
+              "expression": "WTLS:OSF",
+              "sourceAlias": "WTLS",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wtls"
+            },
+            {
+              "expression": "WIM:MSF",
+              "sourceAlias": "WIM",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wim"
+            },
+            {
+              "expression": "WIM:OSF",
+              "sourceAlias": "WIM",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wim"
+            },
+            {
+              "expression": "WMLScriptCrypto:MSF",
+              "sourceAlias": "WMLScriptCrypto",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript-crypto"
+            },
+            {
+              "expression": "WMLScriptCrypto:OSF",
+              "sourceAlias": "WMLScriptCrypto",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wmlscript-crypto"
+            },
+            {
+              "expression": "WTA:MSF",
+              "sourceAlias": "WTA",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wta"
+            },
+            {
+              "expression": "WTA:OSF",
+              "sourceAlias": "WTA",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wta"
+            },
+            {
+              "expression": "WTAI:MSF",
+              "sourceAlias": "WTAI",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtai"
+            },
+            {
+              "expression": "WTAI:OSF",
+              "sourceAlias": "WTAI",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wtai"
+            },
+            {
+              "expression": "WTAIIS136:MSF",
+              "sourceAlias": "WTAIIS136",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtai-is136"
+            },
+            {
+              "expression": "WTAIIS136:OSF",
+              "sourceAlias": "WTAIIS136",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wtai-is136"
+            },
+            {
+              "expression": "WTAIGSM:MSF",
+              "sourceAlias": "WTAIGSM",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtai-gsm"
+            },
+            {
+              "expression": "WTAIGSM:OSF",
+              "sourceAlias": "WTAIGSM",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wtai-gsm"
+            },
+            {
+              "expression": "WTAIPDC:MSF",
+              "sourceAlias": "WTAIPDC",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtai-pdc"
+            },
+            {
+              "expression": "WTAIPDC:OSF",
+              "sourceAlias": "WTAIPDC",
+              "featureGroup": "OSF",
+              "effectiveFamily": "wtai-pdc"
+            }
+          ]
+        },
+        {
+          "identifier": "CCR-CLASSB-S-001",
+          "deviceClass": "B",
+          "status": "optional-alternative-under-root",
+          "requirements": [
+            {
+              "expression": "WAESpec:MSF",
+              "sourceAlias": "WAESpec",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WML:MSF",
+              "sourceAlias": "WML",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WBXML:MSF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WMLScript:MSF",
+              "sourceAlias": "WMLScript",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLScriptLibs:MSF",
+              "sourceAlias": "WMLScriptLibs",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WAPCachingMod:MSF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "MSF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "PPGService:MSF",
+              "sourceAlias": "PPGService",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-proxy-gateway"
+            },
+            {
+              "expression": "PushMessage:MSF",
+              "sourceAlias": "PushMessage",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-message"
+            },
+            {
+              "expression": "PushOTA:MSF",
+              "sourceAlias": "PushOTA",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-over-the-air"
+            },
+            {
+              "expression": "ServiceInd:MSF",
+              "sourceAlias": "ServiceInd",
+              "featureGroup": "MSF",
+              "effectiveFamily": "service-indication"
+            },
+            {
+              "expression": "PAP:MSF",
+              "sourceAlias": "PAP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "push-access-protocol"
+            },
+            {
+              "expression": "WSP:MSF",
+              "sourceAlias": "WSP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WTP:MSF",
+              "sourceAlias": "WTP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtp"
+            },
+            {
+              "expression": "WDP:MSF",
+              "sourceAlias": "WDP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WCMP:MSF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wcmp"
+            },
+            {
+              "expression": "WTLS:MSF",
+              "sourceAlias": "WTLS",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtls"
+            },
+            {
+              "expression": "WTA:MSF",
+              "sourceAlias": "WTA",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wta"
+            },
+            {
+              "expression": "WTAI:MSF",
+              "sourceAlias": "WTAI",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtai"
+            }
+          ]
+        },
+        {
+          "identifier": "CCR-CLASSC-S-001",
+          "deviceClass": "C",
+          "status": "optional-alternative-under-root",
+          "requirements": [
+            {
+              "expression": "WAE:MSF",
+              "sourceAlias": "WAE",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wae"
+            },
+            {
+              "expression": "WML:MSF",
+              "sourceAlias": "WML",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wml"
+            },
+            {
+              "expression": "WBXML:MSF",
+              "sourceAlias": "WBXML",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wbxml"
+            },
+            {
+              "expression": "WMLS:MSF",
+              "sourceAlias": "WMLS",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript"
+            },
+            {
+              "expression": "WMLSSL:MSF",
+              "sourceAlias": "WMLSSL",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wmlscript-libraries"
+            },
+            {
+              "expression": "WAPCachingMod:MSF",
+              "sourceAlias": "WAPCachingMod",
+              "featureGroup": "MSF",
+              "effectiveFamily": "caching"
+            },
+            {
+              "expression": "WSP:MSF",
+              "sourceAlias": "WSP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wsp"
+            },
+            {
+              "expression": "WTP:MSF",
+              "sourceAlias": "WTP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wtp"
+            },
+            {
+              "expression": "WDP:MSF",
+              "sourceAlias": "WDP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wdp"
+            },
+            {
+              "expression": "WCMP:MSF",
+              "sourceAlias": "WCMP",
+              "featureGroup": "MSF",
+              "effectiveFamily": "wcmp"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "actorCount": 2,
+    "profileCount": 6,
+    "profileGraphSha256": "16a4c4c392848545bbcd89fe170ba54c959c28536d36d9f02547a43d0bf2df18",
+    "selectedRequirementCount": 9
+  }
+}

@@ -31,6 +31,14 @@ Capture transport-adjacent requirements that affect Waves interoperability bound
 6. `WAP-202` defines WCMP behavior and message semantics.
 7. `WAP-159` defines WDP/WCMP adaptation over SMPP tunnels (gateway integration profile).
 
+For the strict WAP 1.2.1 Class C target, the exact WCMP authority is
+`spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`. The selected
+general-message dependency path contains `WCMP-C-001`, `WCMP-SP-C-002`,
+`WCMP-GEN-C-001`, `WCMP-GEN-C-003`, and `WCMP-GEN-C-006`; all five are
+currently missing and have no direct normative test evidence. The
+`RQ-TRX-006..008` groups below are thematic owners, not substitutes for those
+five rows.
+
 ## Requirements matrix
 
 Legend:
@@ -178,6 +186,8 @@ Legend:
 
 ## Migration coupling
 
+- `TRN-703` owns implementation and direct fixture closure for the five-row
+  selected WCMP path.
 - `RQ-TRX-009` posture declaration is recorded via `T0-12`; protocol-level implementation beyond delegated/deferred posture remains gated by `T0-14` profile decisions.
 - `RQ-TRX-010` scope is explicitly `deferred` in `T0-13`; any future in-scope activation requires a follow-on ticket with adapter fixtures before code-path enablement.
 - `T0-17` remains the final scope lock so adjacent behavior cannot enter profile migration without explicit ticketing.

@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
-Version: v0.1  
-Status: S0-07 complete (initial extraction + docling rerun validation pass)
+Version: v0.3
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence pending
 
 ## Purpose
 
@@ -148,9 +148,72 @@ Legend:
   - [ ] Runtime compatibility notes identify where Waves follows WML 1.x strict behavior vs WML2-style compatibility handling.
   - [ ] Parser/runtime behavior for unknown markup and timer/task lifecycle remains deterministic under fixture tests.
 
+### RQ-RMK-010 WBXML 1.3 client decoder conformance
+
+- Requirement:
+  - Accept the effective WBXML 1.3 binary structure required by
+    `WBXML-C-001`.
+  - Apply the section 6.3 default-attribute behavior identified by
+    `WBXML-C-010`.
+  - Treat binary and literal token values equivalently for tags, attribute
+    names, and attribute values as required by `WBXML-C-011`.
+- Spec:
+  - `WAP-192-WBXML-20010725-a` sections 5, 6.3, and 6.4
+  - `WAP-192_105-WBXML-20011015-a` section 3.3 and corrected section 9
+  - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
+- Status:
+  - `partial/planned`: the external subprocess boundary exists, but no pinned
+    decoder or direct source-derived conformance fixtures prove the three
+    selected rows.
+- AC:
+  - Evidence: [ ] Link source-derived fixtures and exact runnable tests for all
+    three selected rows.
+  - [ ] Decoder version/capability identity is pinned and available in the
+    supported all-in-one packaging path.
+  - [ ] Header, multi-byte integer, string-table, code-page, global-token,
+    literal, entity, opaque, extension, and malformed-input behavior is
+    deterministic.
+  - [ ] Default-attribute and binary/literal equivalence fixtures reach
+    equivalent textual WML/deck outcomes where applicable.
+  - [ ] Strict decode remains in `transport-rust`; `engine-wasm` receives
+    normalized textual WML.
+
+### RQ-RMK-011 Deck access-control enforcement
+
+- Requirement:
+  - Enforce effective WML 1.3 deck access-domain, access-path, and
+    `sendreferer` rules before exposing protected deck content.
+- Spec:
+  - `WAP-191_104` sections 11.4 and 12.1
+  - SCR: `WML-C-14`
+- AC:
+  - Evidence: [ ] Link source-derived allow/deny fixtures and host-policy
+    integration tests.
+  - [ ] Domain and path comparisons use the strict WML rules.
+  - [ ] Denied access cannot mutate card, history, variable, or render state.
+  - [ ] Referrer disclosure follows the deck access policy.
+
+### RQ-RMK-012 User-agent error handling
+
+- Requirement:
+  - Apply effective WML 1.3 user-agent error outcomes consistently across
+    parsing, task execution, navigation, rendering, and resource handling.
+- Spec:
+  - `WAP-191_104` section 12.3
+  - SCR: `WML-C-16`
+- AC:
+  - Evidence: [ ] Link source-derived error fixtures and deterministic
+    rollback/outcome tests.
+  - [ ] Each specified error class maps to a stable host-visible outcome.
+  - [ ] Failed operations preserve required card, history, and context state.
+  - [ ] Strict failures remain distinct from optional diagnostics and
+    extension recovery behavior.
+
 ## Notes
 
 - This traceability pass is derived from direct local-spec review plus existing deep extraction notes in `docs/wml-engine/source-material-review.md`.
+- The exact WBXML SCR/profile/evidence mapping is maintained in
+  `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`.
 - Full WAP-191 implementation-gap and execution planning follow-up is tracked in:
   - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
   - Phase R tickets in `docs/waves/WORK_ITEMS.md`

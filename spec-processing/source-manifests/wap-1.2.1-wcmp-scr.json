@@ -1,0 +1,2418 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wcmp",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)",
+    "selectedRequirement": "WCMP:MCF",
+    "transportPath": "WCMP-C-001 plus the general WCMP message-structure alternative WCMP-SP-C-002 and its three dependency rows. The RFC ICMP alternative remains capability-declared but unselected."
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-202-WCMP"
+    ],
+    "effectiveTableDocument": "WAP-202-WCMP",
+    "extractionSources": [
+      {
+        "documentId": "WAP-202-WCMP",
+        "filename": "WAP-202-WCMP-20010624-a.pdf",
+        "sha256": "231166eec1103a8729147db180efdefd894e4879205cef7891f55ac79f034fa9",
+        "role": "base",
+        "repositoryState": "canonical-content-differs",
+        "textExtractionBytes": 67038,
+        "textExtractionSha256": "b66ab9bdae87752b43e6607c273f2d9d37a6b933df3d59fb1ade663068d70db6"
+      }
+    ],
+    "selectedExternalDependencies": [],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "dependencyGrammar": "SCR requirement expressions use AND/OR with AND taking precedence"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WCMP:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "extractionMethod": "Row identifiers, first-line feature labels, status, actor, order, and dependency expressions were parsed from the hash-locked effective SCR table text. Private PDFs and full text remain outside Git."
+  },
+  "summary": {
+    "itemCount": 62,
+    "mandatoryCount": 2,
+    "optionalCount": 60,
+    "clientCount": 31,
+    "serverCount": 31,
+    "mandatoryClientCount": 1,
+    "selectedClassCTransportPathCount": 5,
+    "selectedImplementationStatus": {
+      "missing": 5
+    },
+    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedProvisionalTestEvidenceCount": 0,
+    "orderedIdsSha256": "b1a481f22af82ba4bd69c433d692f714ba236a680c4ae318629c0d87ceb0e285"
+  },
+  "obligations": [
+    {
+      "id": "WCMP-C-001",
+      "ordinal": 1,
+      "actor": "client",
+      "group": "top-level",
+      "feature": "WCMP in client",
+      "referencedSection": null,
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WCMP-SP-C-001 OR WCMP-SP-C-002",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "no-implementation-or-test-evidence"
+      }
+    },
+    {
+      "id": "WCMP-SP-C-001",
+      "ordinal": 2,
+      "actor": "client",
+      "group": "sp",
+      "feature": "Does the implementation conform to",
+      "referencedSection": "[RFC792],",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-SP-C-002",
+      "ordinal": 3,
+      "actor": "client",
+      "group": "sp",
+      "feature": "Does the implementation conform to the",
+      "referencedSection": "5.4, 5.5.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WCMP-GEN-C-001 AND WCMP-GEN-C-003 AND WCMP-GEN-C-006",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "no-implementation-or-test-evidence"
+      }
+    },
+    {
+      "id": "WCMP-NE-C-001",
+      "ordinal": 4,
+      "actor": "client",
+      "group": "ne",
+      "feature": "protocol UDP endpoint",
+      "referencedSection": "[RFC768]",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WCMP-SP-C-001",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-NE-C-002",
+      "ordinal": 5,
+      "actor": "client",
+      "group": "ne",
+      "feature": "protocol WDP endpoint",
+      "referencedSection": "[WDP]",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WCMP-SP-C-002 AND WCMP-GEN-C-010 AND WCMP-GEN-C-014 AND WCMP-GEN-C-016 AND WCMP-GEN-C-020 AND WCMP-GEN-C-024 AND WCMP-GEN-C-025",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-001",
+      "ordinal": 6,
+      "actor": "client",
+      "group": "gen",
+      "feature": "WCMP message type Destination",
+      "referencedSection": "5.5.3.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "no-implementation-or-test-evidence"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-002",
+      "ordinal": 7,
+      "actor": "client",
+      "group": "gen",
+      "feature": "WCMP message type Parameter",
+      "referencedSection": "5.5.3.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-003",
+      "ordinal": 8,
+      "actor": "client",
+      "group": "gen",
+      "feature": "message type Message Too Big",
+      "referencedSection": "5.5.3.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-007"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "no-implementation-or-test-evidence"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-004",
+      "ordinal": 9,
+      "actor": "client",
+      "group": "gen",
+      "feature": "message type Reassembly Failure",
+      "referencedSection": "5.5.3.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-005",
+      "ordinal": 10,
+      "actor": "client",
+      "group": "gen",
+      "feature": "message type Echo Request",
+      "referencedSection": "5.5.3.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-006",
+      "ordinal": 11,
+      "actor": "client",
+      "group": "gen",
+      "feature": "message type Echo Reply",
+      "referencedSection": "5.5.3.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "no-implementation-or-test-evidence"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-007",
+      "ordinal": 12,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-008",
+      "ordinal": 13,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-009",
+      "ordinal": 14,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-010",
+      "ordinal": 15,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-011",
+      "ordinal": 16,
+      "actor": "client",
+      "group": "gen",
+      "feature": "to generate Reassembly Failure:",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-012",
+      "ordinal": 17,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Reassembly Failure:",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-013",
+      "ordinal": 18,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Parameter Problem:",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-014",
+      "ordinal": 19,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Message Too Big",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-015",
+      "ordinal": 20,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Echo Request",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-016",
+      "ordinal": 21,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to generate Echo Reply",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-017",
+      "ordinal": 22,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-018",
+      "ordinal": 23,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-019",
+      "ordinal": 24,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-020",
+      "ordinal": 25,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-021",
+      "ordinal": 26,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Reassembly",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-022",
+      "ordinal": 27,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Reassembly",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-023",
+      "ordinal": 28,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Parameter",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-024",
+      "ordinal": 29,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Message Too",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-025",
+      "ordinal": 30,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Echo Request",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-C-026",
+      "ordinal": 31,
+      "actor": "client",
+      "group": "gen",
+      "feature": "able to process incoming Echo Reply",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "optional-or-alternate-wcmp-protocol-path",
+        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-S-001",
+      "ordinal": 32,
+      "actor": "server",
+      "group": "top-level",
+      "feature": "WCMP in server",
+      "referencedSection": null,
+      "specificationStatus": "mandatory",
+      "dependencyExpression": "WCMP-SP-S-001 OR WCMP-SP-S-002",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-SP-S-001",
+      "ordinal": 33,
+      "actor": "server",
+      "group": "sp",
+      "feature": "Does the implementation conform to",
+      "referencedSection": "[RFC792],",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-SP-S-002",
+      "ordinal": 34,
+      "actor": "server",
+      "group": "sp",
+      "feature": "Does the implementation conform to the",
+      "referencedSection": "5.4, 5.5.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WCMP-GEN-S-001 AND WCMP-GEN-S-003 AND WCMP-GEN-S-006",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-NE-S-001",
+      "ordinal": 35,
+      "actor": "server",
+      "group": "ne",
+      "feature": "protocol UDP endpoint",
+      "referencedSection": "[RFC768]",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WCMP-SP-S-001",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-NE-S-002",
+      "ordinal": 36,
+      "actor": "server",
+      "group": "ne",
+      "feature": "protocol WDP endpoint",
+      "referencedSection": "[WDP]",
+      "specificationStatus": "optional",
+      "dependencyExpression": "WCMP-SP-S-002 AND WCMP-GEN-S-010 AND WCMP-GEN-S-014 AND WCMP-GEN-S-016 AND WCMP-GEN-S-020 AND WCMP-GEN-S-024 AND WCMP-GEN-S-025",
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-client-profile",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-001",
+      "ordinal": 37,
+      "actor": "server",
+      "group": "gen",
+      "feature": "WCMP message type Destination",
+      "referencedSection": "5.5.3.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-002",
+      "ordinal": 38,
+      "actor": "server",
+      "group": "gen",
+      "feature": "WCMP message type Parameter",
+      "referencedSection": "5.5.3.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-003",
+      "ordinal": 39,
+      "actor": "server",
+      "group": "gen",
+      "feature": "message type Message Too Big",
+      "referencedSection": "5.5.3.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-004",
+      "ordinal": 40,
+      "actor": "server",
+      "group": "gen",
+      "feature": "message type Reassembly Failure",
+      "referencedSection": "5.5.3.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-005",
+      "ordinal": 41,
+      "actor": "server",
+      "group": "gen",
+      "feature": "message type Echo Request",
+      "referencedSection": "5.5.3.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-006",
+      "ordinal": 42,
+      "actor": "server",
+      "group": "gen",
+      "feature": "message type Echo Reply",
+      "referencedSection": "5.5.3.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-007",
+      "ordinal": 43,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-008",
+      "ordinal": 44,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-009",
+      "ordinal": 45,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-010",
+      "ordinal": 46,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-011",
+      "ordinal": 47,
+      "actor": "server",
+      "group": "gen",
+      "feature": "to generate Reassembly Failure:",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-012",
+      "ordinal": 48,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Reassembly Failure:",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-013",
+      "ordinal": 49,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Parameter Problem:",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-014",
+      "ordinal": 50,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Message Too Big",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-015",
+      "ordinal": 51,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Echo Request",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-016",
+      "ordinal": 52,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to generate Echo Reply",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-017",
+      "ordinal": 53,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-018",
+      "ordinal": 54,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-019",
+      "ordinal": 55,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-020",
+      "ordinal": 56,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Destination",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-021",
+      "ordinal": 57,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Reassembly",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-022",
+      "ordinal": 58,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Reassembly",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-023",
+      "ordinal": 59,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Parameter",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-024",
+      "ordinal": 60,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Message Too",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-025",
+      "ordinal": 61,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Echo Request",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    },
+    {
+      "id": "WCMP-GEN-S-026",
+      "ordinal": 62,
+      "actor": "server",
+      "group": "gen",
+      "feature": "able to process incoming Echo Reply",
+      "referencedSection": null,
+      "specificationStatus": "optional",
+      "dependencyExpression": null,
+      "sourceAnchor": {
+        "documentId": "WAP-202-WCMP",
+        "staticConformanceSection": "Appendix A"
+      },
+      "disposition": {
+        "strict": "not-applicable-to-client",
+        "classCProfile": "server-only",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-not-selected-path",
+      "mapping": {
+        "implementationDomain": "wcmp-message-types",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "not-assessed"
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Waves WAE Spec Traceability
 
-Version: v0.1  
-Status: S0-01 complete (initial extraction + docling rerun validation pass)
+Version: v0.2
+Status: WAP 1.2.1 authority normalized; WAP-236 retained as delta evidence
 
 ## Purpose
 
@@ -11,17 +11,54 @@ Capture WAE normative requirements relevant to Waves and map them to implementat
 
 - See `docs/waves/SOURCE_AUTHORITY_POLICY.md` for normative vs supplemental source precedence and citation rules.
 
-## Source set reviewed (S0-01)
+## Source set reviewed
 
+- `WAP-190-WAESpec-20000329-a.pdf`
+- `WAP-190_101-WAESpec-20001213-a.pdf`
+- `WAP-190_102-WAESpec-20001213-a.pdf`
+- `WAP-190_103-WAESpec-20001213-a.pdf`
+- `WAP-190_104-WAE-Spec-20010731-a.pdf`
+- `WAP-215-ClassConform-20001213-a.pdf`
+- `WAP-221-CREQ-20010425-a.pdf`
 - `spec-processing/source-material/WAP-236-WAESpec-20020207-a.pdf`
 - `spec-processing/source-material/WAP-237-WAEMT-20010515-a.pdf`
 
 ## Normative precedence
 
-1. `WAP-236-WAESpec-20020207-a` (includes `WAP-236_101` SIN in the rollup).
-2. `WAP-237-WAEMT-20010515-a` for WBMP/media-type specifics referenced by WAE.
+1. The effective WAP-190 chain, ending in the resulting SCR table supplied by
+   `WAP-190_104`.
+2. WAP-221 for SCR dependency syntax and feature-group meaning.
+3. WAP-215 `CCR-CLASSC-C-001` for the selected `WAESpec:MCF` profile.
+4. WAP-236 and WAP-237 as successor delta evidence only.
 
-## Requirements matrix
+The exact 86-row target ledger, 11-row Class C selection, source hashes,
+implementation audit, and successor classifications are in:
+
+- `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`
+- `spec-processing/source-manifests/wap-1.2.1-wae-scr.json`
+
+## Target-era Class C WAE baseline
+
+`WAESpec:MCF` selects exactly:
+
+- Basic HTTP authentication and the `http:` URL scheme;
+- charset, language, and media-type capability signaling;
+- WML, WMLScript, and the WML user agent;
+- `application/vnd.wap.wbxml`, `application/vnd.wap.wmlc`, and
+  `application/vnd.wap.wmlscriptc`.
+
+Five rows currently have implemented evidence, three are partial, and three
+are missing. Optional graphics/WBMP, vCard/vCalendar, Push, WTA, multipart,
+Channels, and Service Indication rows are not silently included in the first
+Class C claim.
+
+## WAP-236 successor supplement
+
+The requirement groups below predate this target normalization and are still
+useful for implementation planning. They are not, by themselves, WAP 1.2.1
+requirements. Each must be confirmed against a target-era family, classified
+as a compatible clarification, or isolated behind a successor/extension
+profile.
 
 Legend:
 
@@ -118,14 +155,28 @@ Legend:
 ### RQ-WAE-008 Cache model support
 
 - Requirement:
-  - UA must support WAP caching model per spec.
+  - UA must support the WAP-120 caching model, including the permitted
+    zero-byte-cache posture, history revalidation branches, intra-resource
+    navigation, and cache-content protection.
 - Spec:
-  - `WAP-236` 7.1.2.2
-  - SCR: `WAESpec-HTS-C-004 (M)`
+  - strict target: `WAP-120` 4.1, 4.1.1, 4.1.2, 6, Appendix A
+  - selected SCRs: `UACache-C-001..004`, `UACache-C-006` (`M`)
+  - machine ledger:
+    `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+  - successor evidence only: `WAP-236` 7.1.2.2 /
+    `WAESpec-HTS-C-004`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Cache behavior policy exists for deck/script/media retrieval and invalidation.
-  - [ ] Integration tests verify deterministic cache hit/miss expectations.
+  - Evidence: [ ] Direct WAP-120 fixtures remain open in `WAE-603`; validate
+    source/status/work mapping with
+    `node scripts/check-wap-caching-conformance-ledger.mjs`.
+  - [ ] Zero-byte versus HTTP-cache capability is explicit and host caches
+    cannot silently alter strict behavior.
+  - [ ] Stale history replay covers both `must-revalidate` branches with the
+    exact original request identity.
+  - [ ] WML intra-deck and WMLScript intra-compilation-unit transitions do not
+    revalidate.
+  - [ ] Cached/retained sensitive data has an explicit protection and
+    lifetime policy.
 
 ### RQ-WAE-009 WSP client-header caching in proxy
 
@@ -271,5 +322,8 @@ Legend:
 
 ## Notes
 
-- This extraction is scoped to WAE requirements that directly affect Waves runtime/host/transport behavior.
+- The target-era extraction is complete at SCR-feature level; nested normative
+  clauses remain open.
+- The WAP-236 supplement is scoped to requirements that directly affect Waves
+  runtime/host/transport behavior and cannot replace WAP-190 authority.
 - Deferred optional areas (Push/vCard/vCalendar/multipart variants beyond immediate roadmap) remain tracked but not yet scheduled for implementation.

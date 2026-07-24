@@ -1,7 +1,7 @@
 # Waves WMLScript Spec Traceability
 
-Version: v0.1  
-Status: Active implementation baseline (incremental conformance closure + docling rerun validation pass)
+Version: v0.4
+Status: Active thematic baseline; all selected SCR and nested clauses authoritative
 
 ## Purpose
 
@@ -26,7 +26,11 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 
 ## Compliance target and prioritization
 
-- Target: achieve and maintain approximately `90-95%` practical WMLScript/WMLSL conformance for in-scope Waves runtime behavior.
+- Strict target: implement and prove all 121 mandatory WMLScript and
+  WMLScript Libraries interpreter rows selected by the WAP 1.2.1 Class C
+  profile. A percentage estimate is not a conformance claim.
+- Optional capabilities are declared separately; enhancements may improve
+  internals or UX but may not replace strict observable behavior.
 - Strategy: close bedrock compliance gaps first, then broaden library/function coverage.
 - Bedrock-first requirement groups:
   - `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003` (external callable model, pragmas, URL/script invocation ownership)
@@ -38,10 +42,28 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 ## Current implementation posture
 
 - Waves has active WaveScript/WMLScript runtime implementation in `engine-wasm/engine/src/wavescript/*`.
-- Existing implementation is a conformance progression baseline, not yet full section `9/10/11` binary-format parity.
+- Existing implementation is a project-specific nine-opcode progression
+  baseline, not a WAP-193 compilation-unit decoder.
+- Exact machine-readable authority:
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
+- Human audit:
+  - `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
+  - `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
+- Selected-row audit:
+  - WMLScript: 41 required, 23 partial / 18 missing / 0 implemented;
+  - Libraries: 80 required, 14 partial / 66 missing / 0 implemented;
+  - direct normative tests: 0.
+- Nested-clause plan:
+  - WMLScript: all 41 selected parents / 107 deduplicated clauses;
+  - WMLScript Libraries: all 80 selected parents / 211 deduplicated clauses.
 - Work-plan source of truth for closure sequencing:
   - `docs/waves/WORK_ITEMS.md` (`Phase W`, `Phase W1`)
   - `docs/waves/SPEC_TEST_COVERAGE.md`
+
+The `RQ-WMLS-*` groups below organize work. They do not replace exact SCR
+status, and a checked thematic acceptance box must not be read as closing an
+SCR unless the machine ledger links direct normative evidence.
 
 ## Requirement matrix
 
@@ -149,10 +171,15 @@ Legend:
   - `WAP-193_101` 9.2..9.6, 10
   - SCRs: `WMLS-C-088..094 (M)`, `WMLS-C-095..106 (M)`
 - AC:
-  - Evidence: [x] Decoder structural tests in `engine-wasm/engine/src/wavescript/decoder.rs` (`decode_preserves_valid_bytes`, `decode_rejects_unknown_opcode`, `decode_rejects_truncated_immediate`, `decode_rejects_call_target_not_on_instruction_boundary`, `decode_rejects_local_index_above_limit`, `decode_rejects_call_arity_above_limits`, `decode_rejects_host_call_arg_count_above_limit`); command: `cd engine-wasm/engine && cargo test decode_rejects_call_target_not_on_instruction_boundary && cargo test decode_rejects_local_index_above_limit && cargo test decode_rejects_call_arity_above_limits && cargo test decode_rejects_host_call_arg_count_above_limit`
-  - [x] Known-good `.wmlsc` fixtures decode to stable internal representation.
-  - [x] Unsupported/reserved types fail verification before execution.
-  - [x] Function boundaries and instruction boundaries are validated.
+  - Evidence: [ ] Add source-derived WAP-193 `.wmlsc` fixtures and direct
+    tests for the header, constant pool, pragma pool, function pool, and
+    effective instruction encoding.
+  - [ ] Known-good WAP `.wmlsc` fixtures decode to stable internal representation.
+  - [ ] Unsupported/reserved WAP types fail verification before execution.
+  - [ ] WAP function and instruction boundaries are validated.
+  - Provisional evidence only: current decoder tests reject malformed input
+    in the project-specific nine-opcode format. They do not parse WAP-193
+    compilation units and therefore do not close `WMLS-C-088..108`.
 
 ### RQ-WMLS-009: Bytecode verification gates
 
@@ -162,10 +189,11 @@ Legend:
   - `WAP-193_101` 11.1, 11.2
   - SCRs: `WMLS-C-107 (M)`, `WMLS-C-108 (M)`
 - AC:
-  - Evidence: [x] Decoder/VM verification tests in `engine-wasm/engine/src/wavescript/decoder.rs` + `engine-wasm/engine/src/wavescript/vm_tests.rs` (`decode_respects_custom_bounds`, `decode_rejects_call_target_not_on_instruction_boundary`, `decode_rejects_local_index_above_limit`, `execute_from_pc_rejects_non_boundary_entry_point`); command: `cd engine-wasm/engine && cargo test decode_respects_custom_bounds && cargo test execute_from_pc_rejects_non_boundary_entry_point`
+  - Evidence: [ ] Link direct WAP-193 integrity/runtime-validity fixtures;
+    local decoder/VM bounds tests are provisional architecture evidence.
   - [ ] Version/size/pool-count checks enforced.
-  - [x] Jump targets verified to instruction boundaries within function bounds.
-  - [x] Invalid local/constant/library/function indexes trap deterministically.
+  - [ ] WAP jump targets are verified to instruction boundaries within function bounds.
+  - [ ] Invalid WAP local/constant/library/function indexes trap deterministically.
 
 ### RQ-WMLS-010: Error detection and handling model
 
@@ -343,11 +371,13 @@ Legend:
 These groups should be tracked explicitly in tickets and tests:
 
 1. WaveScript VM mandatory SCRs:
-- `WMLS-C-069..111` (all `M`)
+- `WMLS-C-069`, `WMLS-C-070`, `WMLS-C-072`, `WMLS-C-073`, and
+  `WMLS-C-075..111` (41 `M` rows)
 2. WMLScript optional SCRs to gate by feature flags:
 - `WMLS-C-071`, `WMLS-C-074`, `WMLS-C-112`
 3. WMLScript libraries mandatory SCRs:
-- `WMLSSL-014..016`, `WMLSSL-018..094` (all `M` except integer-only/float optionality handling as specified)
+- `WMLSSL-014..016`, `WMLSSL-018..047`, source-exact `WMLSSL048`
+  (normalized alias `WMLSSL-048`), and `WMLSSL-049..094` (80 `M` rows)
 4. WMLScript libraries optional SCRs:
 - `WMLSSL-017 (O)`
 - `WMLSSL-C-095 (O)` from `WAP-194_103`
@@ -359,3 +389,9 @@ For each implementation ticket in `docs/waves/WORK_ITEMS.md`, include:
 - `Spec`: list of section refs and SCR IDs touched
 - `AC`: checklist copied or derived from the relevant `RQ-WMLS-*` entries above
 - `Tests`: explicit fixture/test IDs mapped to the same spec refs
+
+Validate exact coverage with:
+
+```sh
+node scripts/check-wap-wmlscript-conformance-ledger.mjs
+```

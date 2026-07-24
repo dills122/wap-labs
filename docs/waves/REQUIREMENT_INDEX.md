@@ -9,6 +9,34 @@ Primary references:
 - `docs/waves/WORK_ITEMS.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 
+The thematic `RQ-WAE-*` IDs were originally extracted from WAP-236. For the
+strict WAP 1.2.1 target, use the exact WAP-190 row crosswalk in
+`spec-processing/source-manifests/wap-1.2.1-wae-scr.json`; WAP-236-only
+requirements remain successor planning until target-era authority is proven.
+For WBXML, use the exact corrected row crosswalk in
+`spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`; boundary ownership
+under `RQ-RMK-007` does not establish decoder conformance under
+`RQ-RMK-010`.
+For WMLScript, the thematic `RQ-WMLS-*` groups do not establish exact
+conformance. Use
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json` and
+`spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`;
+the selected Class C audit currently has 121 mandatory rows, zero implemented
+rows, and zero direct normative tests.
+For caching, use the exact WAP-120 row crosswalk in
+`spec-processing/source-manifests/wap-1.2.1-caching-scr.json`. The selected
+`WAPCachingMod:MCF` audit has five mandatory user-agent rows, zero implemented
+rows, and zero direct normative tests; `RQ-WAE-008` remains a thematic owner,
+not a substitute for those five source obligations.
+For transport, `RQ-TRN-*` and `RQ-TRX-*` are thematic groupings rather than
+exact conformance rows. Use
+`spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. Their selected
+connectionless Class C path contains 22 rows with an audit of zero
+implemented, 17 partial, five missing, and zero direct normative tests. WTP
+remains conditional unless connection-oriented WSP is claimed.
+
 | Requirement ID | Owner Layer | Primary Ticket Lane | Test Status | Traceability Doc |
 |---|---|---|---|---|
 | `RQ-DEF-001` | deferred (docs gate) | deferred capability lane | `planned/deferred` | `DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md` |
@@ -23,6 +51,9 @@ Primary references:
 | `RQ-RMK-007` | engine-wasm (+ browser integration) | `R0-*` (plus `T0-04` for `RQ-RMK-008`) | `covered` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-RMK-008` | engine-wasm (+ browser integration) | `R0-*` (plus `T0-04` for `RQ-RMK-008`) | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-RMK-009` | engine-wasm (+ browser integration) | `R0-*` (plus `T0-04` for `RQ-RMK-008`) | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
+| `RQ-RMK-010` | transport-rust | `WML-203`, `R0-08` | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
+| `RQ-RMK-011` | engine-wasm + browser policy | `R0-07` | `missing/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
+| `RQ-RMK-012` | engine-wasm + browser policy | `R0-07` | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-SEC-001` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
 | `RQ-SEC-002` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
 | `RQ-SEC-003` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |
@@ -76,7 +107,7 @@ Primary references:
 | `RQ-WAE-011` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-012` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-013` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
-| `RQ-WAE-014` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
+| `RQ-WAE-014` | transport-rust + browser | `WAE-607` | `missing/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-015` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-016` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-017` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
@@ -93,10 +124,10 @@ Primary references:
 | `RQ-WMLS-010` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-011` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-012` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-013` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-014` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-015` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
-| `RQ-WMLS-016` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-013` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-014` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-015` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
+| `RQ-WMLS-016` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-017` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-018` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-019` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |

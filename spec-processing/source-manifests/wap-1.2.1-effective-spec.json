@@ -1,0 +1,2798 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "generatedFrom": "spec-processing/source-manifests/wap-1.2.1-release.json",
+  "governingConformanceDocument": "WAP-221-CREQ-20010425-a",
+  "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+  "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+  "graphStatus": "source-precedence-complete-scr-extraction-pending",
+  "semantics": {
+    "effectiveSequence": "Approved documents only, ordered by publication date with base before SIN on ties.",
+    "proposedDocuments": "Retained as historical evidence and excluded from the normative effective sequence.",
+    "laterSpecifications": "Successor WAP 2.0 material is delta evidence and cannot override strict WAP 1.2.1 behavior."
+  },
+  "summary": {
+    "familyCount": 35,
+    "byTargetDisposition": {
+      "historical-only": 2,
+      "optional-profile": 18,
+      "strict-baseline": 8,
+      "strict-conditional": 2,
+      "strict-supporting": 5
+    }
+  },
+  "families": [
+    {
+      "family": "architecture",
+      "title": "Wireless Application Protocol Architecture",
+      "sourceClass": "dependency",
+      "targetDisposition": "strict-supporting",
+      "ownerLayers": [
+        "cross-layer"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-100-WAPArch"
+      ],
+      "baseDocuments": [
+        "WAP-100-WAPArch"
+      ],
+      "sinDocuments": [],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-210-WAPArch-20010712-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-100-WAPArch",
+          "filename": "WAP-100-WAPArch-19980430-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "1998-04-30",
+          "sha256": "22b07da0456889db0dea58d06b0b8d59165421f49a1cdf336aea9abdd6420712",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "cache-operation",
+      "title": "Cache Operation",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-175-CacheOp",
+        "WAP-175_102-CacheOp"
+      ],
+      "baseDocuments": [
+        "WAP-175-CacheOp"
+      ],
+      "sinDocuments": [
+        "WAP-175_102-CacheOp"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-175-CacheOp",
+          "to": "WAP-175_102-CacheOp",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-175-CacheOp",
+          "to": "WAP-175_102-CacheOp",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-175-CacheOp",
+          "filename": "WAP-175-CacheOp-20010731-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-31",
+          "sha256": "98b9772ebffda32be714c18aa992c160d7ea5226179b967faffb0c66860d7c00",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-175_102-CacheOp",
+          "filename": "WAP-175_102-CacheOp-20010816-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-08-16",
+          "sha256": "0cff9648815c1c2850a831a3770321901c4348d77ec7ecb1f92923bb0185eb6f",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "caching",
+      "title": "WAP Caching Model",
+      "sourceClass": "dependency",
+      "targetDisposition": "strict-supporting",
+      "ownerLayers": [
+        "engine-wasm",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-120-WAPCachingMod"
+      ],
+      "baseDocuments": [
+        "WAP-120-WAPCachingMod"
+      ],
+      "sinDocuments": [],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-caching-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WAPCachingMod:MCF",
+        "note": "WAP-120 Appendix A supplies eleven actor-specific caching SCR rows. The selected Class C client applies WAPCachingMod:MCF to the five mandatory user-agent rows; zero-byte cache remains a valid but explicit behavior profile."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-120-WAPCachingMod",
+          "filename": "WAP-120-WAPCachingMod-20010413-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-04-13",
+          "sha256": "8aeacd0a36676d2b22c7ebee211f327049b712ca1ba0dc20faac7af24a9a17ee",
+          "localState": "canonical-content-differs"
+        }
+      ]
+    },
+    {
+      "family": "external-functionality-interface",
+      "title": "External Functionality Interface",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "browser"
+      ],
+      "completeness": "release-carried-sin-without-base",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-231_100-EFI"
+      ],
+      "baseDocuments": [],
+      "sinDocuments": [
+        "WAP-231_100-EFI"
+      ],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-231_100-EFI",
+          "filename": "WAP-231_100-EFI-20011018-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-10-18",
+          "sha256": "57f6864a9062ab83f46876c298e07f7b22feb438e48c7729fe3e2bbcaf22eaf3",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "general-formats",
+      "title": "WAP General Formats",
+      "sourceClass": "dependency",
+      "targetDisposition": "strict-supporting",
+      "ownerLayers": [
+        "cross-layer"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-188-WAPGenFormats"
+      ],
+      "baseDocuments": [
+        "WAP-188-WAPGenFormats"
+      ],
+      "sinDocuments": [],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-188-WAPGenFormats",
+          "filename": "WAP-188-WAPGenFormats-20010710-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-10",
+          "sha256": "a36aadcd2294fbb363fcd5b141614f8bd5861193c6efe9f2c29e6422ba176810",
+          "localState": "canonical-content-differs"
+        }
+      ]
+    },
+    {
+      "family": "interoperability-pictograms",
+      "title": "WAP Interoperability Pictograms",
+      "sourceClass": "historical",
+      "targetDisposition": "historical-only",
+      "ownerLayers": [
+        "engine-wasm"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [],
+      "baseDocuments": [],
+      "sinDocuments": [],
+      "historicalDocuments": [
+        "WAP-213_101-WAPInterPic"
+      ],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-213_101-WAPInterPic",
+          "filename": "WAP-213_101-WAPInterPic-20011123-p.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "proposed",
+          "publishedOn": "2001-11-23",
+          "sha256": "1d5c69f4df11e723468223becd3b021e4f342c669b513e0dfa70a64f29232bcf",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "persistent-storage",
+      "title": "Persistent Storage Interface",
+      "sourceClass": "historical",
+      "targetDisposition": "historical-only",
+      "ownerLayers": [
+        "engine-wasm",
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [],
+      "baseDocuments": [],
+      "sinDocuments": [],
+      "historicalDocuments": [
+        "WAP-227_100-PSTOR"
+      ],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-227_100-PSTOR",
+          "filename": "WAP-227_100-PSTOR-20011109-p.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "proposed",
+          "publishedOn": "2001-11-09",
+          "sha256": "ac037583b5c7b125ae24464a340883980d5e696ba5ab659d5e4e902a37a45237",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "push-access-protocol",
+      "title": "Push Access Protocol",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "gateway-kannel"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-164-PAP",
+        "WAP-164_100-PAP",
+        "WAP-164_101-PAP",
+        "WAP-164_102-PAP"
+      ],
+      "baseDocuments": [
+        "WAP-164-PAP"
+      ],
+      "sinDocuments": [
+        "WAP-164_100-PAP",
+        "WAP-164_101-PAP",
+        "WAP-164_102-PAP"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-164-PAP",
+          "to": "WAP-164_100-PAP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-164_100-PAP",
+          "to": "WAP-164_101-PAP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-164_101-PAP",
+          "to": "WAP-164_102-PAP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-164-PAP",
+          "to": "WAP-164_100-PAP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-164-PAP",
+          "to": "WAP-164_101-PAP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-164-PAP",
+          "to": "WAP-164_102-PAP",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-164-PAP",
+          "filename": "WAP-164-PAP-19991108-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "1999-11-08",
+          "sha256": "e86d1bf47ad52bc3309f00d586feb792f36ad720b37997a42b523b019e4e27de",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-164_100-PAP",
+          "filename": "WAP-164_100-PAP-20000218-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-18",
+          "sha256": "9a90d8b6e8c3740cb7f34c77bd3c3bd067b26a627cdbd45788022d5ee5571463",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-164_101-PAP",
+          "filename": "WAP-164_101-PAP-20010420-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-04-20",
+          "sha256": "93a98822e3e0fbee172aab9f998469024b239cac9f5f1497dd6ff11531d766e8",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-164_102-PAP",
+          "filename": "WAP-164_102-PAP-20010731-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-31",
+          "sha256": "7fdd3c208174c5990afe58874973e8b435b2f37beb33c9d63193dd3f41cb5736",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "push-architecture",
+      "title": "Push Architecture Overview",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "gateway-kannel",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-165-PushArchOverview"
+      ],
+      "baseDocuments": [
+        "WAP-165-PushArchOverview"
+      ],
+      "sinDocuments": [],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-165-PushArchOverview",
+          "filename": "WAP-165-PushArchOverview-19991108-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "1999-11-08",
+          "sha256": "f3e4c7d41555f1102ee633b379e30affeee678eada982d4cb8ad3689cabcbbc5",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "push-message",
+      "title": "Push Message",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "gateway-kannel",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-145-PushMessage",
+        "WAP-145_101-PushMessage"
+      ],
+      "baseDocuments": [
+        "WAP-145-PushMessage"
+      ],
+      "sinDocuments": [
+        "WAP-145_101-PushMessage"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-145-PushMessage",
+          "to": "WAP-145_101-PushMessage",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-145-PushMessage",
+          "to": "WAP-145_101-PushMessage",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-145-PushMessage",
+          "filename": "WAP-145-PushMessage-19990816-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "1999-08-16",
+          "sha256": "6bc284c1211673ec60a3872f1db0c00dc2730fad093dd9b58a23e6c838b6f07f",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-145_101-PushMessage",
+          "filename": "WAP-145_101-PushMessage-20010614-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-06-14",
+          "sha256": "cf936b53eecb0a1aaca9bcd488dc4c10bc53b9291bd9aab60356c9bff034ad8d",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "push-over-the-air",
+      "title": "Push OTA Protocol",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "gateway-kannel",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-189-PushOTA",
+        "WAP-189_100-PushOTA",
+        "WAP-189_101-PushOTA"
+      ],
+      "baseDocuments": [
+        "WAP-189-PushOTA"
+      ],
+      "sinDocuments": [
+        "WAP-189_100-PushOTA",
+        "WAP-189_101-PushOTA"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-189-PushOTA",
+          "to": "WAP-189_100-PushOTA",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-189_100-PushOTA",
+          "to": "WAP-189_101-PushOTA",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-189-PushOTA",
+          "to": "WAP-189_100-PushOTA",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-189-PushOTA",
+          "to": "WAP-189_101-PushOTA",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-189-PushOTA",
+          "filename": "WAP-189-PushOTA-20000217-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-17",
+          "sha256": "283bf534dd678225082c20c7c22c03f7d045b4ba661958b593c033ddf00e9624",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-189_100-PushOTA",
+          "filename": "WAP-189_100-PushOTA-20001211-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-11",
+          "sha256": "6049c87149a707c6b752d9c4a174d015ef66e10de6e607453f1be6ea9cb2de0b",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-189_101-PushOTA",
+          "filename": "WAP-189_101-PushOTA-20010926-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-09-26",
+          "sha256": "045089e802ad5bd83fbd3fdeab72ef60bbbeb96ba17a4d84295f62420378e4dc",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "push-proxy-gateway",
+      "title": "Push Proxy Gateway Service",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "gateway-kannel"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-151-PPGService",
+        "WAP-151_100-PPGService",
+        "WAP-151_101-PPGService",
+        "WAP-151_102-PPGService"
+      ],
+      "baseDocuments": [
+        "WAP-151-PPGService"
+      ],
+      "sinDocuments": [
+        "WAP-151_100-PPGService",
+        "WAP-151_101-PPGService",
+        "WAP-151_102-PPGService"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-151-PPGService",
+          "to": "WAP-151_100-PPGService",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-151_100-PPGService",
+          "to": "WAP-151_101-PPGService",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-151_101-PPGService",
+          "to": "WAP-151_102-PPGService",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-151-PPGService",
+          "to": "WAP-151_100-PPGService",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-151-PPGService",
+          "to": "WAP-151_101-PPGService",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-151-PPGService",
+          "to": "WAP-151_102-PPGService",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-151-PPGService",
+          "filename": "WAP-151-PPGService-19990816-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "1999-08-16",
+          "sha256": "c8c9254340745fedf70ec497489e7e5dcf7658d1a5d822b0079e4c07725ff837",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-151_100-PPGService",
+          "filename": "WAP-151_100-PPGService-20000218-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-18",
+          "sha256": "3ea7dbf4bc3f55b84cc3fe8f7455931fb477b58d18da33224eaa16f4207dbb3e",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-151_101-PPGService",
+          "filename": "WAP-151_101-PPGService-20010422-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-04-22",
+          "sha256": "09d184d0e3debd8dc4db7d43d9cfffb55f201794cb83280fe02a9833b4e47ce9",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-151_102-PPGService",
+          "filename": "WAP-151_102-PPGService-20010927-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-09-27",
+          "sha256": "2c1e0c354e96d6d39a53aaee8dd49d199f485ad391ddb97b7b9d3cc6c40e118e",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "service-indication",
+      "title": "Service Indication",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-167-ServiceInd",
+        "WAP-167_103-ServiceInd"
+      ],
+      "baseDocuments": [
+        "WAP-167-ServiceInd"
+      ],
+      "sinDocuments": [
+        "WAP-167_103-ServiceInd"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-167-ServiceInd",
+          "to": "WAP-167_103-ServiceInd",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-167-ServiceInd",
+          "to": "WAP-167_103-ServiceInd",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-167-ServiceInd",
+          "filename": "WAP-167-ServiceInd-20010731-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-31",
+          "sha256": "2addf05e776101fb5875b3b216e374125deba9b2fbe883578567394f57669f0d",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-167_103-ServiceInd",
+          "filename": "WAP-167_103-ServiceInd-20010926-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-09-26",
+          "sha256": "f365fb52fedb513e387a6ef4c9f5a16ae5ba70b5280b11fc4537671bcc789c7e",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "service-loading",
+      "title": "Service Loading",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-168-ServiceLoad",
+        "WAP-168_103-ServiceLoad"
+      ],
+      "baseDocuments": [
+        "WAP-168-ServiceLoad"
+      ],
+      "sinDocuments": [
+        "WAP-168_103-ServiceLoad"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-168-ServiceLoad",
+          "to": "WAP-168_103-ServiceLoad",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-168-ServiceLoad",
+          "to": "WAP-168_103-ServiceLoad",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-168-ServiceLoad",
+          "filename": "WAP-168-ServiceLoad-20010731-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-31",
+          "sha256": "5e5d5566f3e46507a367a7a6748f4bacac6f63be6dca9c2b711ba1213973f42c",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-168_103-ServiceLoad",
+          "filename": "WAP-168_103-ServiceLoad-20010816-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-08-16",
+          "sha256": "eb832f0290514113c3058de11598a435de17ace007b30f4b6df821fffd3e0440",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "user-agent-profile",
+      "title": "User Agent Profile",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "browser",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-174-UAProf",
+        "WAP-174_100-UAProf",
+        "WAP-174_003-UAPROF",
+        "WAP-174_004-UAPROF",
+        "WAP-174_006-UAPROF"
+      ],
+      "baseDocuments": [
+        "WAP-174-UAProf"
+      ],
+      "sinDocuments": [
+        "WAP-174_100-UAProf",
+        "WAP-174_003-UAPROF",
+        "WAP-174_004-UAPROF",
+        "WAP-174_006-UAPROF"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-174-UAProf",
+          "to": "WAP-174_100-UAProf",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-174_100-UAProf",
+          "to": "WAP-174_003-UAPROF",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-174_003-UAPROF",
+          "to": "WAP-174_004-UAPROF",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-174_004-UAPROF",
+          "to": "WAP-174_006-UAPROF",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-174-UAProf",
+          "to": "WAP-174_100-UAProf",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-174-UAProf",
+          "to": "WAP-174_003-UAPROF",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-174-UAProf",
+          "to": "WAP-174_004-UAPROF",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-174-UAProf",
+          "to": "WAP-174_006-UAPROF",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-174-UAProf",
+          "filename": "WAP-174-UAProf-19991110-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "1999-11-10",
+          "sha256": "25dcf758e485c38066f0693990d596dd6874bf550a7b82ad42a5ca765f2e3011",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-174_100-UAProf",
+          "filename": "WAP-174_100-UAProf-20000621-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-06-21",
+          "sha256": "34e5df65e1a29e7f4bf1f8a05ee1a00cd6f374b5f7e87f3c653a02707616cd2d",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-174_003-UAPROF",
+          "filename": "WAP-174_003-UAPROF-20010208-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-08",
+          "sha256": "3655e4ce55ffc3732c2385e5ccb7d2354005ef0004bb0d646146a5f84f181578",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-174_004-UAPROF",
+          "filename": "WAP-174_004-UAPROF-20010208-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-08",
+          "sha256": "82b3d4caecb101e7de4a69e6bf7b082299c37c4ede5fd0d7b4899afae96f402d",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-174_006-UAPROF",
+          "filename": "WAP-174_006-UAPROF-20011002-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-10-02",
+          "sha256": "0d5ca596f0fd387434a8ee0b35f8184177c8259c2323603b2c87552c55c055b1",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wae",
+      "title": "Wireless Application Environment",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "engine-wasm",
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-190-WAESpec",
+        "WAP-190_101-WAESpec",
+        "WAP-190_102-WAESpec",
+        "WAP-190_103-WAESpec",
+        "WAP-190_104-WAE-Spec"
+      ],
+      "baseDocuments": [
+        "WAP-190-WAESpec"
+      ],
+      "sinDocuments": [
+        "WAP-190_101-WAESpec",
+        "WAP-190_102-WAESpec",
+        "WAP-190_103-WAESpec",
+        "WAP-190_104-WAE-Spec"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-190-WAESpec",
+          "to": "WAP-190_101-WAESpec",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-190_101-WAESpec",
+          "to": "WAP-190_102-WAESpec",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-190_102-WAESpec",
+          "to": "WAP-190_103-WAESpec",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-190_103-WAESpec",
+          "to": "WAP-190_104-WAE-Spec",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-190-WAESpec",
+          "to": "WAP-190_101-WAESpec",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-190-WAESpec",
+          "to": "WAP-190_102-WAESpec",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-190-WAESpec",
+          "to": "WAP-190_103-WAESpec",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-190-WAESpec",
+          "to": "WAP-190_104-WAE-Spec",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wae-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WAESpec:MCF",
+        "note": "WAP-190_104 section 4.3 supplies the resulting tracked-change SCR table after the approved WAE SIN chain. The selected Class C client applies WAESpec:MCF to the eleven effective mandatory client rows."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-236-WAESpec-20020207-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "selected-profile-delta-complete"
+        },
+        {
+          "documentId": "WAP-237-WAEMT-20010515-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "optional-media-delta-pending"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-190-WAESpec",
+          "filename": "WAP-190-WAESpec-20000329-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-03-29",
+          "sha256": "92043389310057285b050afb8cb0a16c99f1651059be8ce61e1fab151c5c0182",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-190_101-WAESpec",
+          "filename": "WAP-190_101-WAESpec-20001213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-13",
+          "sha256": "df5ad17ecc4aa407717dd61d42d0d4ff06878206684f64c66091b6f6d3e742c1",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-190_102-WAESpec",
+          "filename": "WAP-190_102-WAESpec-20001213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-13",
+          "sha256": "9fd9013b166c31d679f40c8a7f369998498cedd265da810919ae09640045b98e",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-190_103-WAESpec",
+          "filename": "WAP-190_103-WAESpec-20001213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-13",
+          "sha256": "743a22e09afb2e6277e750116b419e05221a2f032dab5186a26795643a218c52",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-190_104-WAE-Spec",
+          "filename": "WAP-190_104-WAE-Spec-20010731-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-31",
+          "sha256": "3a8b6c8e10b0472cb47391f7093e0562de9a8d521e462d98fff28df191923ba2",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wae-overview",
+      "title": "Wireless Application Environment Overview",
+      "sourceClass": "dependency",
+      "targetDisposition": "strict-supporting",
+      "ownerLayers": [
+        "cross-layer"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-195-WAEOverview",
+        "WAP-195_101-WAEOverview"
+      ],
+      "baseDocuments": [
+        "WAP-195-WAEOverview"
+      ],
+      "sinDocuments": [
+        "WAP-195_101-WAEOverview"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-195-WAEOverview",
+          "to": "WAP-195_101-WAEOverview",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-195-WAEOverview",
+          "to": "WAP-195_101-WAEOverview",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-195-WAEOverview",
+          "filename": "WAP-195-WAEOverview-20000329-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-03-29",
+          "sha256": "ad7940d6589f4adf921442ef37325b9a33ca5467502e39f302e84b063c7639d2",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-195_101-WAEOverview",
+          "filename": "WAP-195_101-WAEOverview-20010117-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-01-17",
+          "sha256": "8d5b3e5e428e895e53577b0df2e89c2c5b288dc8d57acdc0eed30d2474186303",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wap-over-gsm-ussd",
+      "title": "WAP over GSM USSD",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "gateway-kannel",
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-204-WAPOverGSMUSSD",
+        "WAP-204_103-WAPOverGSMUSSD"
+      ],
+      "baseDocuments": [
+        "WAP-204-WAPOverGSMUSSD"
+      ],
+      "sinDocuments": [
+        "WAP-204_103-WAPOverGSMUSSD"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-204-WAPOverGSMUSSD",
+          "to": "WAP-204_103-WAPOverGSMUSSD",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-204-WAPOverGSMUSSD",
+          "to": "WAP-204_103-WAPOverGSMUSSD",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-204-WAPOverGSMUSSD",
+          "filename": "WAP-204-WAPOverGSMUSSD-20010730-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-30",
+          "sha256": "71629ac6a2c9e9fa32a0b9cd940e26d872ca697866ce9b30d70f8950bffb69bb",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-204_103-WAPOverGSMUSSD",
+          "filename": "WAP-204_103-WAPOverGSMUSSD-20010813-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-08-13",
+          "sha256": "74e1f248b03a1ca8710ef3e3ab04093e40fb21163097672949c0861490a2eee0",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wbxml",
+      "title": "Binary XML Content Format",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-192-WBXML",
+        "WAP-192_105-WBXML"
+      ],
+      "baseDocuments": [
+        "WAP-192-WBXML"
+      ],
+      "sinDocuments": [
+        "WAP-192_105-WBXML"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-192-WBXML",
+          "to": "WAP-192_105-WBXML",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-192-WBXML",
+          "to": "WAP-192_105-WBXML",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WBXML:MCF",
+        "note": "WAP-192_105 corrects the actor-specific WBXML 1.3 SCR and restores omitted WAP-192.101 changes. The selected Class C client applies WBXML:MCF to the three effective mandatory client rows."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-192-WBXML",
+          "filename": "WAP-192-WBXML-20010725-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-25",
+          "sha256": "a6312060b4488680b1f56858b350bc97021c314fa315ca20e25a33521a4df92b",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-192_105-WBXML",
+          "filename": "WAP-192_105-WBXML-20011015-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-10-15",
+          "sha256": "e4c0bc05a51e27697d07a4d46f710b4daabdc7039950aa472b1d7de0e080ca98",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wcmp",
+      "title": "Wireless Control Message Protocol",
+      "sourceClass": "core-optional",
+      "targetDisposition": "strict-conditional",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-202-WCMP"
+      ],
+      "baseDocuments": [
+        "WAP-202-WCMP"
+      ],
+      "sinDocuments": [],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WCMP:MCF",
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-202-WCMP",
+          "filename": "WAP-202-WCMP-20010624-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-06-24",
+          "sha256": "231166eec1103a8729147db180efdefd894e4879205cef7891f55ac79f034fa9",
+          "localState": "canonical-content-differs"
+        }
+      ]
+    },
+    {
+      "family": "wdp",
+      "title": "Wireless Datagram Protocol",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-200-WDP",
+        "WAP-200_001-WDP",
+        "WAP-200_002-WDP",
+        "WAP-200_003-WDP",
+        "WAP-200_004-WDP",
+        "WAP-200_005-WDP"
+      ],
+      "baseDocuments": [
+        "WAP-200-WDP"
+      ],
+      "sinDocuments": [
+        "WAP-200_001-WDP",
+        "WAP-200_002-WDP",
+        "WAP-200_003-WDP",
+        "WAP-200_004-WDP",
+        "WAP-200_005-WDP"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-200-WDP",
+          "to": "WAP-200_001-WDP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-200_001-WDP",
+          "to": "WAP-200_002-WDP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-200_002-WDP",
+          "to": "WAP-200_003-WDP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-200_003-WDP",
+          "to": "WAP-200_004-WDP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-200_004-WDP",
+          "to": "WAP-200_005-WDP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-200-WDP",
+          "to": "WAP-200_001-WDP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-200-WDP",
+          "to": "WAP-200_002-WDP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-200-WDP",
+          "to": "WAP-200_003-WDP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-200-WDP",
+          "to": "WAP-200_004-WDP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-200-WDP",
+          "to": "WAP-200_005-WDP",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WDP:MCF",
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-259-WDP-20010614-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "selected-profile-delta-complete"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-200-WDP",
+          "filename": "WAP-200-WDP-20000219-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-19",
+          "sha256": "e6279c8c3108ceeb8268b868211585fff7331feec5bda4ff90ce9be2df2d23b3",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-200_001-WDP",
+          "filename": "WAP-200_001-WDP-20001212-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-12",
+          "sha256": "c335aeb5038a0b8db025f99250ec3fe77cfe5facce0b7784345dc39cb9c2df35",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-200_002-WDP",
+          "filename": "WAP-200_002-WDP-20001213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-13",
+          "sha256": "d340608eedb73fd75058532b539aedc261cc6050aedacf3a8c8739ebda5c5132",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-200_003-WDP",
+          "filename": "WAP-200_003-WDP-20010328-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-03-28",
+          "sha256": "4743542d4b9fbe0a517edc1709679430d6e9498b30e8d2ed7c199f88ce404586",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-200_004-WDP",
+          "filename": "WAP-200_004-WDP-20010517-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-05-17",
+          "sha256": "36bf5d608c7bf1490326f1d531a72d1539a4fc88d32d4b4b8a6c9d6e06019498",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-200_005-WDP",
+          "filename": "WAP-200_005-WDP-20010718-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-18",
+          "sha256": "2279c021d44f6b7e329ba68f4227031e4c325776234052beef78654b37bc34a7",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wdp-wcmp-adaptation",
+      "title": "WDP/WCMP Wireless Data Gateway Adaptation",
+      "sourceClass": "dependency",
+      "targetDisposition": "strict-supporting",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-159-WDPWCMPAdapt"
+      ],
+      "baseDocuments": [
+        "WAP-159-WDPWCMPAdapt"
+      ],
+      "sinDocuments": [],
+      "historicalDocuments": [],
+      "relationships": [],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-159-WDPWCMPAdapt",
+          "filename": "WAP-159-WDPWCMPAdapt-20010713-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-13",
+          "sha256": "dbce0885ef85163751679bfb4fe7e28df3e95cbd45a713babe597a44a18ad7a0",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wim",
+      "title": "Wireless Identity Module",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "transport-rust",
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-198-WIM",
+        "WAP-198_100-WIM",
+        "WAP-198_101-WIM",
+        "WAP-198_102-WIM",
+        "WAP-198_103-WIM",
+        "WAP-198_105-WIM"
+      ],
+      "baseDocuments": [
+        "WAP-198-WIM"
+      ],
+      "sinDocuments": [
+        "WAP-198_100-WIM",
+        "WAP-198_101-WIM",
+        "WAP-198_102-WIM",
+        "WAP-198_103-WIM",
+        "WAP-198_105-WIM"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-198-WIM",
+          "to": "WAP-198_100-WIM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-198_100-WIM",
+          "to": "WAP-198_101-WIM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-198_101-WIM",
+          "to": "WAP-198_102-WIM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-198_102-WIM",
+          "to": "WAP-198_103-WIM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-198_103-WIM",
+          "to": "WAP-198_105-WIM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-198-WIM",
+          "to": "WAP-198_100-WIM",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-198-WIM",
+          "to": "WAP-198_101-WIM",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-198-WIM",
+          "to": "WAP-198_102-WIM",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-198-WIM",
+          "to": "WAP-198_103-WIM",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-198-WIM",
+          "to": "WAP-198_105-WIM",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-260-WIM-20010712-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-198-WIM",
+          "filename": "WAP-198-WIM-20000218-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-18",
+          "sha256": "366280ea21c7a3894d12e2329c0cfb76b9e97d9a0fead4e003ac52a9d2213e7a",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-198_100-WIM",
+          "filename": "WAP-198_100-WIM-20000630-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-06-30",
+          "sha256": "a8b8822708e59aad9c145471fd022ca223c49a7729a3d8d9bc6db78f61b5c443",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-198_101-WIM",
+          "filename": "WAP-198_101-WIM-20001031-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-10-31",
+          "sha256": "3e0d277aa48c0bc8cbf44ada2e3aca5411558c47130f02bfbdb438833a8c497e",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-198_102-WIM",
+          "filename": "WAP-198_102-WIM-20001227-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-27",
+          "sha256": "56003b67835707fe2976f28b560083c59fabf2a248704ada4756b2c0f0fff63d",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-198_103-WIM",
+          "filename": "WAP-198_103-WIM20010214-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-14",
+          "sha256": "e5399976b1dbaf3aa1a2e8c1cfab0058b265fd37d5960f471133e6388cb8f52b",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-198_105-WIM",
+          "filename": "WAP-198_105-WIM-20010723-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-23",
+          "sha256": "aee38df1ae1b0c6e3ed80cd48210d1f5f85e1cc27c8eb4947584eeffcbe72b46",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wml",
+      "title": "Wireless Markup Language 1.3",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "engine-wasm"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-191-WML",
+        "WAP-191_102-WML",
+        "WAP-191_104-WML",
+        "WAP-191_105-WML"
+      ],
+      "baseDocuments": [
+        "WAP-191-WML"
+      ],
+      "sinDocuments": [
+        "WAP-191_102-WML",
+        "WAP-191_104-WML",
+        "WAP-191_105-WML"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-191-WML",
+          "to": "WAP-191_102-WML",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-191_102-WML",
+          "to": "WAP-191_104-WML",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-191_104-WML",
+          "to": "WAP-191_105-WML",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-191-WML",
+          "to": "WAP-191_102-WML",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-191-WML",
+          "to": "WAP-191_104-WML",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-191-WML",
+          "to": "WAP-191_105-WML",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "note": "All 76 effective WML 1.3 SCR rows are source-extracted and mapped to work items. The mandatory implementation audit records 2 implemented, 23 partial, and 22 missing rows, with direct tests linked to 25 rows. WAP-215 CCR-CLASSC-C-001 selects the 39 mandatory WML user-agent rows for the Class C client profile."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-238-WML-20010911-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "selected-profile-delta-complete"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-191-WML",
+          "filename": "WAP-191-WML-20000219-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-19",
+          "sha256": "4b1301be200bf7d06020f78f05ac2ae7056f00c30a741a62f73d9b6ab867ae9c",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-191_102-WML",
+          "filename": "WAP-191_102-WML-20001213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-13",
+          "sha256": "4900fd9f728a3f3d6d698b06398c29e2861f5fd774dd8478553aadedc9721011",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-191_104-WML",
+          "filename": "WAP-191_104-WML-20010718-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-18",
+          "sha256": "4c4a616f14204556045b9cbcebfdbc9a2408ae843e047b0730382abfbc8493f0",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-191_105-WML",
+          "filename": "WAP-191_105-WML-20020212-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2002-02-12",
+          "sha256": "3d803628d1cc67a6e08ce4e0d1f6e82f44651eb3a1bfa5160d7f98206bea4cc3",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wmlscript",
+      "title": "WMLScript Language",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "engine-wasm"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-193-WMLScript",
+        "WAP-193_101-WMLScript"
+      ],
+      "baseDocuments": [
+        "WAP-193-WMLScript"
+      ],
+      "sinDocuments": [
+        "WAP-193_101-WMLScript"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-193-WMLScript",
+          "to": "WAP-193_101-WMLScript",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-193-WMLScript",
+          "to": "WAP-193_101-WMLScript",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WMLScript:MCF",
+        "note": "WAP-193_101 supplies the consolidated actor-specific 112-row WMLScript SCR. The selected Class C client applies WMLScript:MCF to the 41 effective mandatory interpreter rows."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-193-WMLScript",
+          "filename": "WAP-193-WMLScript-20001025-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-10-25",
+          "sha256": "7ace9baac33f0e648642ff539deaf234331adc95e1525e1c8f66ff88fb9c876a",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-193_101-WMLScript",
+          "filename": "WAP-193_101-WMLScript-20010928-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-09-28",
+          "sha256": "ea1535b36e49f80ac4ad80de3efe985c5af94068121afc4cfebe0528dd389ea0",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wmlscript-crypto",
+      "title": "WMLScript Crypto API Library",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-161-WMLScriptCrypto",
+        "WAP-161_101-WMLScriptCrypto"
+      ],
+      "baseDocuments": [
+        "WAP-161-WMLScriptCrypto"
+      ],
+      "sinDocuments": [
+        "WAP-161_101-WMLScriptCrypto"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-161-WMLScriptCrypto",
+          "to": "WAP-161_101-WMLScriptCrypto",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-161-WMLScriptCrypto",
+          "to": "WAP-161_101-WMLScriptCrypto",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-161-WMLScriptCrypto",
+          "filename": "WAP-161-WMLScriptCrypto-20010620-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-06-20",
+          "sha256": "cb22101c9237a57022805c1ea6c1aa4e349e227bcbc634fb5e77249736458455",
+          "localState": "canonical-content-differs"
+        },
+        {
+          "documentId": "WAP-161_101-WMLScriptCrypto",
+          "filename": "WAP-161_101-WMLScriptCrypto-20010730-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-30",
+          "sha256": "894d3efd1859887160e908fa5459fbc3f44a3b56c9dba57783429a5223b8d0be",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wmlscript-libraries",
+      "title": "WMLScript Standard Libraries",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "engine-wasm"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-194-WMLScriptLibraries",
+        "WAP-194_103-WMLScriptLibraries"
+      ],
+      "baseDocuments": [
+        "WAP-194-WMLScriptLibraries"
+      ],
+      "sinDocuments": [
+        "WAP-194_103-WMLScriptLibraries"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-194-WMLScriptLibraries",
+          "to": "WAP-194_103-WMLScriptLibraries",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-194-WMLScriptLibraries",
+          "to": "WAP-194_103-WMLScriptLibraries",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WMLScriptLibs:MCF",
+        "note": "WAP-194 supplies 94 SCR rows and WAP-194_103 adds optional immediate-refresh row WMLSSL-C-095. The selected Class C client applies WMLScriptLibs:MCF to the 80 effective mandatory interpreter rows."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-194-WMLScriptLibraries",
+          "filename": "WAP-194-WMLScriptLibraries-20000925-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-09-25",
+          "sha256": "cf8ced8446a62fbc958a0beed5097aa3a0a41a864abcdfee86e7ad4f5c3d5680",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-194_103-WMLScriptLibraries",
+          "filename": "WAP-194_103-WMLScriptLibraries-20020318-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2002-03-18",
+          "sha256": "7716dbaf7289a1335e9c46a21d0ce209be711f9917f946ca88fab17f1e6a446c",
+          "localState": "canonical-exact"
+        }
+      ]
+    },
+    {
+      "family": "wsp",
+      "title": "Wireless Session Protocol",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-203-WSP",
+        "WAP-203_001-WSP",
+        "WAP-203_003-WSP",
+        "WAP-203_005-WSP"
+      ],
+      "baseDocuments": [
+        "WAP-203-WSP"
+      ],
+      "sinDocuments": [
+        "WAP-203_001-WSP",
+        "WAP-203_003-WSP",
+        "WAP-203_005-WSP"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-203-WSP",
+          "to": "WAP-203_001-WSP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-203_001-WSP",
+          "to": "WAP-203_003-WSP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-203_003-WSP",
+          "to": "WAP-203_005-WSP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-203-WSP",
+          "to": "WAP-203_001-WSP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-203-WSP",
+          "to": "WAP-203_003-WSP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-203-WSP",
+          "to": "WAP-203_005-WSP",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "line-item-ledger-complete-class-c-applied",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WSP:MCF",
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-230-WSP-20010705-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "selected-profile-delta-complete"
+        },
+        {
+          "documentId": "OMA-WAP-TS-WSP-V1_0-20020920-C",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-203-WSP",
+          "filename": "WAP-203-WSP-20000504-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-05-04",
+          "sha256": "fe6df3d2383abd46d1044cbd0dcd9cf216103346e3d88c5c7e66be21b52e5bd2",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-203_001-WSP",
+          "filename": "WAP-203_001-WSP-20000620-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-06-20",
+          "sha256": "12006aa09ed8770f8c1ec388c9341024f67b3661d85f294d4fdce00e9e6f2e45",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-203_003-WSP",
+          "filename": "WAP-203_003-WSP-20001218-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-18",
+          "sha256": "235419958d5ff05e7d587b92f1dbbf858ac0ca9115b61cf7fabe9a8872680159",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-203_005-WSP",
+          "filename": "WAP-203_005-WSP-20010717-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-17",
+          "sha256": "709fe4ca20f25a4b3ce52735e070758ae31607755b1fb74d44224d2b218088d8",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wta",
+      "title": "Wireless Telephony Application",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-169-WTA",
+        "WAP-169_101-WTA",
+        "WAP-169_102-WTA",
+        "WAP-169_104-WTA",
+        "WAP-169_105-WTA"
+      ],
+      "baseDocuments": [
+        "WAP-169-WTA"
+      ],
+      "sinDocuments": [
+        "WAP-169_101-WTA",
+        "WAP-169_102-WTA",
+        "WAP-169_104-WTA",
+        "WAP-169_105-WTA"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-169-WTA",
+          "to": "WAP-169_101-WTA",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-169_101-WTA",
+          "to": "WAP-169_102-WTA",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-169_102-WTA",
+          "to": "WAP-169_104-WTA",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-169_104-WTA",
+          "to": "WAP-169_105-WTA",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-169-WTA",
+          "to": "WAP-169_101-WTA",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-169-WTA",
+          "to": "WAP-169_102-WTA",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-169-WTA",
+          "to": "WAP-169_104-WTA",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-169-WTA",
+          "to": "WAP-169_105-WTA",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-169-WTA",
+          "filename": "WAP-169-WTA-20000707-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-07-07",
+          "sha256": "12ff66ca7a6c15ea6db7965ab951f8ba8ff1b5e6bddb70edc61f6b755375866b",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-169_101-WTA",
+          "filename": "WAP-169_101-WTA-20001107-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-11-07",
+          "sha256": "f2a06a06bb5e93dc97663453546a1321f6a96b1dde3957c9fcf9a5803420f98a",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-169_102-WTA",
+          "filename": "WAP-169_102-WTA-20010206-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-06",
+          "sha256": "7d540740792ccadf1d5eb0f95480206a1e41811642ea244d3d195438d078152c",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-169_104-WTA",
+          "filename": "WAP-169_104-WTA-20010508-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-05-08",
+          "sha256": "c5d909eda81dc53192362af4e598ff6ae8ef51f1e15c710dfe59ed0b0508f600",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-169_105-WTA",
+          "filename": "WAP-169_105-WTA-20010519-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-05-19",
+          "sha256": "32fec298f2ed2a46c6b4ac049e2ba4c547ddf3cb7861b9b9f3d90334830252c3",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wtai",
+      "title": "Wireless Telephony Application Interface",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "engine-wasm",
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-170-WTAI",
+        "WAP-170_101-WTAI",
+        "WAP-170_102-WTAI"
+      ],
+      "baseDocuments": [
+        "WAP-170-WTAI"
+      ],
+      "sinDocuments": [
+        "WAP-170_101-WTAI",
+        "WAP-170_102-WTAI"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-170-WTAI",
+          "to": "WAP-170_101-WTAI",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-170_101-WTAI",
+          "to": "WAP-170_102-WTAI",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-170-WTAI",
+          "to": "WAP-170_101-WTAI",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-170-WTAI",
+          "to": "WAP-170_102-WTAI",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-170-WTAI",
+          "filename": "WAP-170-WTAI-20000707-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-07-07",
+          "sha256": "edb994ff45f70e095898f19661fe8de724b456ce629cd4fc4a170cade115dcb0",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-170_101-WTAI",
+          "filename": "WAP-170_101-WTAI-20010206-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-06",
+          "sha256": "ef51092bd4e206d637957b99d644ae623c8b8afca5179c27a20caec80a0a2134",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-170_102-WTAI",
+          "filename": "WAP-170_102-WTAI-20010226-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-26",
+          "sha256": "7dba0d60c87ce98c0efd813967c94706d55d795c6cf6ae815524d47a7a0b90fe",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wtai-gsm",
+      "title": "WTAI GSM Addendum",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-171-WTAIGSM",
+        "WAP-171_101-WTAIGSM",
+        "WAP-171_102-WTAIGSM",
+        "WAP-171_103-WTAIGSM"
+      ],
+      "baseDocuments": [
+        "WAP-171-WTAIGSM"
+      ],
+      "sinDocuments": [
+        "WAP-171_101-WTAIGSM",
+        "WAP-171_102-WTAIGSM",
+        "WAP-171_103-WTAIGSM"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-171-WTAIGSM",
+          "to": "WAP-171_101-WTAIGSM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-171_101-WTAIGSM",
+          "to": "WAP-171_102-WTAIGSM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-171_102-WTAIGSM",
+          "to": "WAP-171_103-WTAIGSM",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-171-WTAIGSM",
+          "to": "WAP-171_101-WTAIGSM",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-171-WTAIGSM",
+          "to": "WAP-171_102-WTAIGSM",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-171-WTAIGSM",
+          "to": "WAP-171_103-WTAIGSM",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-171-WTAIGSM",
+          "filename": "WAP-171-WTAIGSM-20000707-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-07-07",
+          "sha256": "b4c609b10f90757f64b19c437ba7750b3fa97ac2139a14813e84eeba56fc01ef",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-171_101-WTAIGSM",
+          "filename": "WAP-171_101-WTAIGSM-20010206-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-06",
+          "sha256": "a9d4ae9aa5d390b251d08dba3e22a41a8f920fb23c0390ee11e64668246dc99b",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-171_102-WTAIGSM",
+          "filename": "WAP-171_102-WTAIGSM-20010213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-13",
+          "sha256": "02c8f8e8e16a0bf32eed1ec1cd983808a9ec244b624c4926845b0bb3ba0042d4",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-171_103-WTAIGSM",
+          "filename": "WAP-171_103-WTAIGSM-20010516-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-05-16",
+          "sha256": "dbf2840b28f620a819831718201221949bd79b6a873c74096b4fd80d4fb8b922",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wtai-is136",
+      "title": "WTAI IS-136 Addendum",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-172-WTAIIS136",
+        "WAP-172_101-WTAIIS136"
+      ],
+      "baseDocuments": [
+        "WAP-172-WTAIIS136"
+      ],
+      "sinDocuments": [
+        "WAP-172_101-WTAIIS136"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-172-WTAIIS136",
+          "to": "WAP-172_101-WTAIIS136",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-172-WTAIIS136",
+          "to": "WAP-172_101-WTAIIS136",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-172-WTAIIS136",
+          "filename": "WAP-172-WTAIIS136-20000707-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-07-07",
+          "sha256": "19734ee2645cdc87eae56d46f5ee3a2e542df7e178f950157d46470cf0ce8df4",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-172_101-WTAIIS136",
+          "filename": "WAP-172_101-WTAIIS136-20010206-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-06",
+          "sha256": "8859f4747b1bc73846ccedd1294b8c9b281b0fa590635a06a02cd59f5d8b62e8",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wtai-pdc",
+      "title": "WTAI PDC Addendum",
+      "sourceClass": "profile-optional",
+      "targetDisposition": "optional-profile",
+      "ownerLayers": [
+        "browser"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-173-WTAIPDC",
+        "WAP-173_101-WTAIPDC",
+        "WAP-173_102-WTAIPDC"
+      ],
+      "baseDocuments": [
+        "WAP-173-WTAIPDC"
+      ],
+      "sinDocuments": [
+        "WAP-173_101-WTAIPDC",
+        "WAP-173_102-WTAIPDC"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-173-WTAIPDC",
+          "to": "WAP-173_101-WTAIPDC",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-173_101-WTAIPDC",
+          "to": "WAP-173_102-WTAIPDC",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-173-WTAIPDC",
+          "to": "WAP-173_101-WTAIPDC",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-173-WTAIPDC",
+          "to": "WAP-173_102-WTAIPDC",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [],
+      "documents": [
+        {
+          "documentId": "WAP-173-WTAIPDC",
+          "filename": "WAP-173-WTAIPDC-20000728-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-07-28",
+          "sha256": "c148beba4b7a5098f8b146f7b40f2511838ba232d2749b20daadd75c3e416b6c",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-173_101-WTAIPDC",
+          "filename": "WAP-173_101-WTAIPDC-20010206-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-06",
+          "sha256": "624ce5cad48fcbeb7d21f2ced0014fba29cfa487d5965a8bd334f5a411db6f5e",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-173_102-WTAIPDC",
+          "filename": "WAP-173_102-WTAIPDC-20010507-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-05-07",
+          "sha256": "99bfec4116b2e36b580861597089633fc2c5505fe6d7cf6ecb81ad87ea020ca3",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wtls",
+      "title": "Wireless Transport Layer Security",
+      "sourceClass": "core-optional",
+      "targetDisposition": "strict-conditional",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-199-WTLS",
+        "WAP-199_102-WTLS",
+        "WAP-199_103-WTLS",
+        "WAP-199_104-WTLS",
+        "WAP-199_105-WTLS",
+        "WAP-199_106-WTLS"
+      ],
+      "baseDocuments": [
+        "WAP-199-WTLS"
+      ],
+      "sinDocuments": [
+        "WAP-199_102-WTLS",
+        "WAP-199_103-WTLS",
+        "WAP-199_104-WTLS",
+        "WAP-199_105-WTLS",
+        "WAP-199_106-WTLS"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-199-WTLS",
+          "to": "WAP-199_102-WTLS",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-199_102-WTLS",
+          "to": "WAP-199_103-WTLS",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-199_103-WTLS",
+          "to": "WAP-199_104-WTLS",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-199_104-WTLS",
+          "to": "WAP-199_105-WTLS",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-199_105-WTLS",
+          "to": "WAP-199_106-WTLS",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-199-WTLS",
+          "to": "WAP-199_102-WTLS",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-199-WTLS",
+          "to": "WAP-199_103-WTLS",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-199-WTLS",
+          "to": "WAP-199_104-WTLS",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-199-WTLS",
+          "to": "WAP-199_105-WTLS",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-199-WTLS",
+          "to": "WAP-199_106-WTLS",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-261-WTLS-20010406-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        },
+        {
+          "documentId": "WAP-261_100-WTLS-20010926-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-199-WTLS",
+          "filename": "WAP-199-WTLS-20000218-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-18",
+          "sha256": "f15f2a243d6a1d7f89bc279679ca31a6b1599b2c490dcf12a0c02e4d30e6675c",
+          "localState": "canonical-exact"
+        },
+        {
+          "documentId": "WAP-199_102-WTLS",
+          "filename": "WAP-199_102-WTLS-20010214-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-02-14",
+          "sha256": "90e1d17bd0fa06baf046d595d97a6f4e5839019d59a7f6b8eef93a85a0b6e149",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-199_103-WTLS",
+          "filename": "WAP-199_103-WTLS-20010730-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-07-30",
+          "sha256": "69bda76a4384eafcfdcb0c1f2ee666c9f43372459431cd7ccbb2211ff0280300",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-199_104-WTLS",
+          "filename": "WAP-199_104-WTLS-20010926-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-09-26",
+          "sha256": "36da0b765918cce04c6f57c42973ef23f7985ba5d28865ab3cfaa76896a65cfc",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-199_105-WTLS",
+          "filename": "WAP-199_105-WTLS-20011027-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-10-27",
+          "sha256": "3ebd065b9c21363cd96d7b69d8bdf7d3498b0198965c263aa74787c533ba68c0",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-199_106-WTLS",
+          "filename": "WAP-199_106-WTLS-20011027-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2001-10-27",
+          "sha256": "5d68ab0d7387f0e6c9d1c5c4e33216148ced71ba7cc95121c8fd319b57f31cb9",
+          "localState": "missing"
+        }
+      ]
+    },
+    {
+      "family": "wtp",
+      "title": "Wireless Transaction Protocol",
+      "sourceClass": "core-mandatory",
+      "targetDisposition": "strict-baseline",
+      "ownerLayers": [
+        "transport-rust"
+      ],
+      "completeness": "release-member-chain-complete",
+      "interpretationRule": "Start with each approved base and apply approved SINs in effectiveSequence order. A SIN changes only the identified text unless it explicitly supplies a replacement.",
+      "effectiveSequence": [
+        "WAP-201-WTP",
+        "WAP-201_001-WTP",
+        "WAP-201_002-WTP",
+        "OMA-WAP-201_003-WTP-SIN"
+      ],
+      "baseDocuments": [
+        "WAP-201-WTP"
+      ],
+      "sinDocuments": [
+        "WAP-201_001-WTP",
+        "WAP-201_002-WTP",
+        "OMA-WAP-201_003-WTP-SIN"
+      ],
+      "historicalDocuments": [],
+      "relationships": [
+        {
+          "from": "WAP-201-WTP",
+          "to": "WAP-201_001-WTP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-201_001-WTP",
+          "to": "WAP-201_002-WTP",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-201_002-WTP",
+          "to": "OMA-WAP-201_003-WTP-SIN",
+          "type": "applied-before"
+        },
+        {
+          "from": "WAP-201-WTP",
+          "to": "WAP-201_001-WTP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-201-WTP",
+          "to": "WAP-201_002-WTP",
+          "type": "amended-by"
+        },
+        {
+          "from": "WAP-201-WTP",
+          "to": "OMA-WAP-201_003-WTP-SIN",
+          "type": "amended-by"
+        }
+      ],
+      "scrExtraction": {
+        "status": "pending-line-item-ledger",
+        "governingDocument": "WAP-221-CREQ-20010425-a",
+        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+      },
+      "successorEvidence": [
+        {
+          "documentId": "WAP-224-WTP-20010710-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        },
+        {
+          "documentId": "OMA-WAP-224_002-WTP-SIN-20020827-a",
+          "role": "delta-evidence-only",
+          "deltaStatus": "pending"
+        }
+      ],
+      "documents": [
+        {
+          "documentId": "WAP-201-WTP",
+          "filename": "WAP-201-WTP-20000219-a.pdf",
+          "documentRole": "base",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-02-19",
+          "sha256": "b035ceebfb5bfd2a7d6396ff8d604aaa878113dd0924c305e6fba3c92f186304",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-201_001-WTP",
+          "filename": "WAP-201_001-WTP-20001212-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-12",
+          "sha256": "c630b409e1f8c9e4af5caba16095ffcd08bab08959d84c5afae76513a9f21b7d",
+          "localState": "missing"
+        },
+        {
+          "documentId": "WAP-201_002-WTP",
+          "filename": "WAP-201_002-WTP-20001213-a.pdf",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2000-12-13",
+          "sha256": "b26e9f19c25c858e9b6a26f23445420b4d3750cd08ed2dfae2c5088ed18d8644",
+          "localState": "missing"
+        },
+        {
+          "documentId": "OMA-WAP-201_003-WTP-SIN",
+          "filename": "OMA-WAP-201_003-WTP-SIN-20020904-a.PDF",
+          "documentRole": "sin",
+          "publicationStatus": "approved",
+          "publishedOn": "2002-09-04",
+          "sha256": "d5e962f4ffd3f2fd70703ddbad1ea94f22d2f69956a8185d34e41a6502b52adc",
+          "localState": "missing"
+        }
+      ]
+    }
+  ]
+}

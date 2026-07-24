@@ -185,12 +185,14 @@ Expected sprint outcome:
 
 - High-priority misses for `UA-RQ-002/003/005/018/026` materially reduced with test-backed acceptance criteria.
 
-### Remaining architecture-level unresolved item
+### Architecture-level transport decision
 
-- The primary unresolved cross-cutting decision is networking target profile and migration gates:
-  - current behavior: gateway-bridged HTTP path with WAP URL translation and WBXML normalization
-  - target behavior: deeper in-process WDP/WTP/WSP protocol semantics
-- This is now explicitly tracked as `T0-14` in `docs/waves/WORK_ITEMS.md` and linked in coverage/test planning docs.
+- `T0-14` resolved the profile boundary and later native slices activated
+  `wap-net-core`.
+- The strict profile is native WDP/UDP -> connectionless WSP with selected
+  WCMP behavior; connection-oriented WSP/WTP is conditional extension scope.
+- Exact source-row closure remains open under `TRN-701`, `TRN-703`, and
+  `WSP-801`/`802`/`804`/`805`.
 
 ### Rerun delta check (remaining 35-file wave)
 
