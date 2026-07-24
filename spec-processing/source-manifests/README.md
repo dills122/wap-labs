@@ -94,6 +94,18 @@ For the selected Class C client, the caching ledger selects five mandatory
 user-agent rows. Optional user-agent TOD synchronization and all five gateway
 rows remain outside the selected feature group.
 
+`wap-1.2.1-wdp-scr.json`, `wap-1.2.1-wcmp-scr.json`, and
+`wap-1.2.1-wsp-scr.json` preserve all 317 effective transport SCR rows plus
+the exact connectionless Class C dependency path. The selected path uses
+CDPD-shaped WDP over UDP/IPv4, general WCMP rather than host ICMP, and
+connectionless WSP; connection-oriented WSP and WTP remain conditional.
+
+The three transport ledgers select 22 dependency-closed rows: 9 WDP, 5 WCMP,
+and 8 WSP. Their conservative audit is 17 partial and 5 missing with zero
+direct source-derived normative tests. RFC 768/RFC 791 are artifact-locked;
+the selected CDPD `TIAEIA-732` citation remains an explicit external-source
+normalization gap.
+
 Generate the lock from a separately retrieved official archive:
 
 ```sh
@@ -130,6 +142,7 @@ node scripts/check-wap-wae-conformance-ledger.mjs
 node scripts/check-wap-wbxml-conformance-ledger.mjs
 node scripts/check-wap-wmlscript-conformance-ledger.mjs
 node scripts/check-wap-caching-conformance-ledger.mjs
+node scripts/check-wap-transport-conformance-ledgers.mjs
 ```
 
 Generate the WML SCR ledger from private text extractions:
@@ -187,6 +200,17 @@ node spec-processing/scripts/generate-wap-caching-scr-ledger.mjs \
   --caching-text /absolute/path/WAP-120-WAPCachingMod-20010413-a.txt \
   --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
   --recorded-on YYYY-MM-DD
+```
+
+Generate the effective WDP, WCMP, and WSP ledgers from the verified private
+release-text directory:
+
+```sh
+node spec-processing/scripts/generate-wap-transport-scr-ledgers.mjs \
+  --source-root /absolute/path/to/wap-1.2.1-text \
+  --creq-text /absolute/path/WAP-221-CREQ-20010425-a.txt \
+  --recorded-on YYYY-MM-DD
+node scripts/check-wap-transport-conformance-ledgers.mjs
 ```
 
 Generate the private research-ingestion ledgers:
