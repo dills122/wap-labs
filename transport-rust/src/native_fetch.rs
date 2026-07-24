@@ -332,6 +332,19 @@ fn default_http_port_for_host(host: &str) -> u16 {
     }
 }
 
+// NOTE(wsp-codec-duplication): The functions from here through
+// `decode_well_known_media` below are a hand-rolled, minimal WSP
+// uintvar/content-type/header/PDU codec used only by this native
+// connectionless fetch path. A separate, spec-conformant, fixture-tested
+// WSP codec already exists at `crate::network::wsp` (`pdu.rs`,
+// `header_block.rs`, `header_registry.rs`, `encoding_version.rs`,
+// `session.rs`, `decoder.rs`, `encoder.rs`) but is not called from here —
+// it is currently exercised only by its own `#[cfg(test)]` modules. This is
+// tracked drift, not an intentional permanent split: see
+// `docs/waves/MAINTENANCE_WORK_ITEMS.md` (entry dated 2026-07-23,
+// "network::wsp codec is dead code relative to the live native fetch
+// path") for the history and the recommendation to wire `network::wsp`
+// into this module in a future, dedicated change.
 fn encode_connectionless_request(
     transaction_id: u8,
     method: &str,
@@ -493,14 +506,28 @@ fn decode_content_type_value(input: &[u8]) -> Result<(String, usize), String> {
                 "truncated native WSP reply: content type general form incomplete".to_string(),
             );
         }
-        let media = decode_text_string(&input[1..1 + length])?;
+        let (media, _consumed) = decode_text_string(&input[1..1 + length])?;
         return Ok((media, 1 + length));
     }
-    let media = decode_text_string(input)?;
-    Ok((media.clone(), media.len() + 1))
+    // General form: `decode_text_string` reports exactly how many bytes of
+    // `input` it consumed (terminating NUL included), which is the only
+    // correct source for the returned length here. Do not reconstruct it
+    // from `media.len() + 1` — when the string is quoted with a leading
+    // 0x7F byte (RFC 2045 quoted-string escape used by WSP token-text),
+    // `decode_text_string` strips that leading byte from `media`, so
+    // `media.len()` undercounts the raw bytes consumed by exactly one.
+    let (media, consumed) = decode_text_string(input)?;
+    Ok((media, consumed))
 }
 
-fn decode_text_string(input: &[u8]) -> Result<String, String> {
+/// Decodes a NUL-terminated WSP text-string, returning the decoded text and
+/// the number of bytes consumed from `input` (including the leading 0x7F
+/// quote byte, if present, and the terminating NUL). The returned length is
+/// intentionally not derivable from `text.len() + 1` alone: a leading 0x7F
+/// is stripped from the returned text but still counts toward consumed
+/// bytes, so quoted and unquoted strings of the same visible length consume
+/// different amounts of input.
+fn decode_text_string(input: &[u8]) -> Result<(String, usize), String> {
     let terminator = input
         .iter()
         .position(|byte| *byte == 0x00)
@@ -510,8 +537,9 @@ fn decode_text_string(input: &[u8]) -> Result<String, String> {
     } else {
         &input[..terminator]
     };
-    String::from_utf8(content.to_vec())
-        .map_err(|error| format!("invalid utf-8 in native WSP text string: {error}"))
+    let text = String::from_utf8(content.to_vec())
+        .map_err(|error| format!("invalid utf-8 in native WSP text string: {error}"))?;
+    Ok((text, terminator + 1))
 }
 
 fn decode_wsp_status_code(status: u8) -> Result<u16, String> {
@@ -949,5 +977,66 @@ mod tests {
                 .expect_err("transaction-id mismatch should fail");
 
         assert!(error.contains("unexpected native WSP reply transaction id"));
+    }
+
+    #[test]
+    fn decode_content_type_value_general_form_matches_len_plus_one() {
+        // Unquoted general-form text-string: no leading 0x7F is stripped,
+        // so the consumed byte count legitimately equals `media.len() + 1`
+        // (the string bytes plus the terminating NUL). This is the
+        // non-quoted case the fix must leave unchanged.
+        let input = b"text/html\x00";
+
+        let (media, consumed) = decode_content_type_value(input).expect("value should decode");
+
+        assert_eq!(media, "text/html");
+        assert_eq!(consumed, media.len() + 1);
+        assert_eq!(consumed, input.len());
+    }
+
+    #[test]
+    fn decode_content_type_value_quoted_general_form_counts_quote_byte() {
+        // Quoted general-form text-string (leading 0x7F escape byte, per
+        // WSP token-text quoting): `decode_text_string` strips the leading
+        // 0x7F from the returned media string, so `media.len() + 1` alone
+        // undercounts the consumed bytes by exactly one. Regression test
+        // for that off-by-one.
+        let input = b"\x7Ftext/html\x00";
+
+        let (media, consumed) = decode_content_type_value(input).expect("value should decode");
+
+        assert_eq!(media, "text/html");
+        assert_eq!(
+            consumed,
+            input.len(),
+            "quoted content type must count the leading 0x7F byte as consumed"
+        );
+        assert_ne!(
+            consumed,
+            media.len() + 1,
+            "regression guard: consumed length must not be derived from media.len() + 1 \
+             when the value was quoted"
+        );
+    }
+
+    #[test]
+    fn native_connectionless_reply_decodes_quoted_general_form_content_type() {
+        // Exercises the real downstream caller of `decode_content_type_value`
+        // (`decode_connectionless_wsp_reply`'s `content_type_len >
+        // header_section.len()` sanity check) with a quoted general-form
+        // content type, proving the corrected byte count still passes that
+        // check and yields the right decoded reply.
+        let content_type = b"\x7Ftext/html\x00";
+        let headers_len = encode_uintvar(content_type.len()).expect("headers len should encode");
+        let mut wire = vec![CONNECTIONLESS_INITIAL_TRANSACTION_ID, 0x04, 0x20];
+        wire.extend_from_slice(&headers_len);
+        wire.extend_from_slice(content_type);
+
+        let reply = decode_connectionless_wsp_reply(CONNECTIONLESS_INITIAL_TRANSACTION_ID, &wire)
+            .expect("quoted content type reply should decode");
+
+        assert_eq!(reply.content_type, "text/html");
+        assert_eq!(reply.status_code, 200);
+        assert!(reply.body.is_empty());
     }
 }
