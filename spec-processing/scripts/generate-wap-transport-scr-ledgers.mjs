@@ -327,12 +327,7 @@ for (const config of configs) {
           ? [
               externalDependencySnapshot('rfc-768'),
               externalDependencySnapshot('rfc-791'),
-              {
-                citationLabel: 'TIAEIA-732',
-                role: 'selected CDPD bearer technology reference',
-                acquisitionState: 'open-label-not-yet-normalized',
-                note: 'The citation is retained in the external dependency open-review queue and requires an authoritative metadata/license record.'
-              }
+              externalDependencySnapshot('tiaeia-is-732-cdpd-set')
             ]
           : [],
       governingSource: {

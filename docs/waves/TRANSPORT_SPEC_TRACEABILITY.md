@@ -338,7 +338,7 @@ The transport stack will remain stable while adjacent networking specs are expli
 - The exact ledgers, not this thematic matrix, are the selected-profile
   completion authority.
 - The initial strict bearer decision is CDPD WDP over UDP/IP with IPv4. Its
-  `TIAEIA-732` external source citation remains an explicit source-normalization
-  action under `SRC-005`.
+  `TIAEIA-732` family citation is normalized under `SRC-005` as an informative,
+  licensed-payload metadata-only dependency.
 - Additional bearers and connection-oriented WSP/WTP are modular enhancements;
   they cannot replace or waive the 22-row strict connectionless path.

@@ -187,7 +187,7 @@ const src005 = sourceSprint?.workItems.find(
   (workItem) => workItem.id === 'SRC-005'
 );
 if (
-  src005?.status !== 'in-progress' ||
+  src005?.status !== 'done' ||
   !src005?.acceptance?.some(
     (line) =>
       line.includes('TIAEIA-732') &&

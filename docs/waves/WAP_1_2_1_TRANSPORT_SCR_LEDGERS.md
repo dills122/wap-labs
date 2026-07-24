@@ -145,21 +145,28 @@ must:
 
 The presence of partial WTP code cannot silently widen the release claim.
 
-## Source gap exposed by the bearer choice
+## Source boundary exposed by the bearer choice
 
 RFC 768 and RFC 791 are already backed by hash-locked primary text artifacts.
-The CDPD citation `TIAEIA-732` is still an open external-source label.
+The CDPD citation `TIAEIA-732` is authority-locked to the historical
+December 1997 `TIA/EIA/IS-732` multi-part set with an explicit
+licensed-payload, metadata-only acquisition state.
 
 Current TIA distribution records expose the historical
 `TIA/EIA/IS-732-*` lineage through licensed ANSI/TIA/EIA-732 parts; for
 example, the official store record for
 [ANSI/TIA/EIA-732-100](https://store.accuristech.com/standards/tia-ansi-tia-eia-732-100?product_id=2591772)
 identifies `TIA/EIA/IS-732-100` as its historical version. The exact WAP-200
-citation scope, required part(s), metadata, and license/access route still need
-normalization before the CDPD source chain is complete.
+citation remains family-wide. The catalog identifies
+[ANSI/TIA/EIA-732-311](https://store.accuristech.com/standards/tia-ansi-tia-eia-732-311?product_id=2592308)
+as the transport/network lower-layer subprofile and 732-312 as its subnetwork
+companion, but WAP-200 does not narrow its citation to either part.
 
-This is a source-completeness blocker for the selected bearer profile, not a
-reason to over-credit the current UDP adapter.
+Appendix E classifies bracketed citations as informative, so the licensed
+family payload is not treated as an implicit normative-clause import. The
+selected bearer declaration still requires WAP-200/RFC 768/RFC 791 behavior
+and direct evidence; source normalization does not over-credit the current UDP
+adapter.
 
 ## Work closure
 
@@ -170,7 +177,8 @@ reason to over-credit the current UDP adapter.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.
-- `SRC-005`: normalize the `TIAEIA-732` external dependency record.
+- `SRC-005`: complete; preserve the normalized `TIAEIA-732` dependency and
+  licensed-access boundary.
 - `CONF-003`: finish WDP nested clauses and promote direct normative fixtures;
   the WCMP and connectionless WSP extractions are complete.
 

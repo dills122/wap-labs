@@ -49,6 +49,19 @@
       "reviewState": "verified-primary-metadata"
     },
     {
+      "id": "tiaeia-is-732-cdpd-set",
+      "title": "Cellular Digital Packet Data (CDPD) System Specification",
+      "version": "TIA/EIA/IS-732 multi-part set, December 1997",
+      "authority": "Telecommunications Industry Association",
+      "sourceUrl": "https://store.accuristech.com/standards/tia-ansi-tia-eia-732-100?product_id=2591772",
+      "referenceDisposition": "informative-selected-bearer-capability",
+      "applicability": "selected-cdpd-bearer",
+      "citedByFamilies": ["wdp"],
+      "citationLabels": ["TIAEIA-732"],
+      "reviewState": "verified-authorized-distributor-metadata",
+      "scopeNote": "WAP-200 cites the 732 family generically. The authority catalog identifies the December 1997 TIA/EIA/IS-732-100 historical edition and the July 2001 ANSI/TIA/EIA-732 successor family. Parts 732-311 (lower-layer subprofiles) and 732-312 (subnetwork subprofiles) are relevant candidates, but WAP-200 does not narrow its citation to either part."
+    },
+    {
       "id": "rfc-792",
       "title": "Internet Control Message Protocol",
       "version": "RFC 792, September 1981",
@@ -613,7 +626,6 @@
         "TIA/EIA-136-711",
         "TIAEIA-637",
         "TIAEIA-707",
-        "TIAEIA-732",
         "TIAEIA-95",
         "TR45.3.6",
         "TTC JJ-70.10",
@@ -658,8 +670,8 @@
     }
   ],
   "summary": {
-    "authorityLockedDependencies": 40,
+    "authorityLockedDependencies": 41,
     "openCitationGroups": 4,
-    "openCitationLabels": 63
+    "openCitationLabels": 62
   }
 }

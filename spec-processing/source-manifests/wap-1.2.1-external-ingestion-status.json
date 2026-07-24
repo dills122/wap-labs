@@ -11,11 +11,11 @@
     "note": "Hashes prove research acquisition only. Artifact licenses and the project redistribution policy must be reviewed before repository promotion."
   },
   "summary": {
-    "dependencyCount": 40,
+    "dependencyCount": 41,
     "artifactCount": 46,
     "artifactBytesTotal": 14440993,
     "byAcquisitionState": {
-      "metadata-only-licensed-payload": 4,
+      "metadata-only-licensed-payload": 5,
       "verified-private-full-artifact": 34,
       "verified-private-partial-artifact": 2
     }
@@ -64,6 +64,16 @@
           "checksumAlgorithm": "sha256"
         }
       ]
+    },
+    {
+      "dependencyId": "tiaeia-is-732-cdpd-set",
+      "title": "Cellular Digital Packet Data (CDPD) System Specification",
+      "version": "TIA/EIA/IS-732 multi-part set, December 1997",
+      "authority": "Telecommunications Industry Association",
+      "authorityRecordUrl": "https://store.accuristech.com/standards/tia-ansi-tia-eia-732-100?product_id=2591772",
+      "acquisitionState": "metadata-only-licensed-payload",
+      "note": "The authority's authorized distributor verifies the historical TIA/EIA/IS-732 lineage and successor parts. The secured standards payload requires licensed access and is not stored in the research cache or repository.",
+      "artifacts": []
     },
     {
       "dependencyId": "rfc-792",

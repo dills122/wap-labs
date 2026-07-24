@@ -93,8 +93,8 @@ All nine selected Class C family increments are complete at SCR level:
 - the selected transport audit is 0 implemented, 17 partial, and 5 missing,
   with zero direct WAP-200/WAP-202/WAP-203 normative tests;
 - connection-oriented WSP and WTP remain a separately activated capability;
-  the selected CDPD `TIAEIA-732` citation remains an external-source
-  normalization gap.
+  the selected CDPD `TIAEIA-732` family citation is authority-locked as a
+  licensed-payload, metadata-only informative capability reference.
 
 See `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md` and
 `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`, and
@@ -161,12 +161,12 @@ Source Sprint `SRC-0` now has reproducible research-access evidence:
 
 - 97/97 technical release PDFs and 97/97 text extractions are hash/size
   recorded in `wap-1.2.1-ingestion-status.json`;
-- 40/40 locked external dependencies have acquisition records backed by 46
+- 41/41 locked external dependencies have acquisition records backed by 46
   artifacts;
 - 34 external dependencies have full primary artifacts, two have partial
-  historical evidence, and four licensed IEEE/ISO payloads remain
+  historical evidence, and five licensed IEEE/ISO/TIA payloads remain
   metadata-only;
-- the external open-label queue is reduced from 69 to 63.
+- the external open-label queue is reduced from 69 to 62.
 
 WAP-215 has also been recovered from the official live WAP Forum directory,
 hash-locked, and extracted into exact Class A/B/C client/server graphs. This
@@ -174,9 +174,9 @@ closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
 
-1. Finish `SRC-0` by normalizing the selected `TIAEIA-732` bearer reference,
-   locking remaining normative external dependencies, and resolving the
-   redistribution blocker.
+1. Treat `SRC-005` external-dependency normalization as complete, including
+   the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`
+   redistribution guidance as the remaining source-program blocker.
 2. Treat `CONF-002` family-level SCR extraction as complete. Continue
    `CONF-003` nested-clause extraction across all nine selected families; add
    WTP only when connection-oriented WSP is claimed.

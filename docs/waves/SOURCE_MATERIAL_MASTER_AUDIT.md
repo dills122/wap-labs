@@ -227,17 +227,15 @@ connection-oriented WSP.
 
 ## Immediate next audit tasks
 
-1. Complete `SRC-005`: normalize the selected `TIAEIA-732` bearer citation
-   and retain explicit metadata-only status for licensed external payloads.
-2. Complete `CONF-003`: extract and deduplicate nested normative clauses
+1. Complete `CONF-003`: extract and deduplicate nested normative clauses
    beneath all 201 selected rows.
-3. Promote direct, source-derived fixtures and executable evidence through
+2. Promote direct, source-derived fixtures and executable evidence through
    the mapped runtime, transport, integration, and release sprints.
-4. Complete `CONF-007`, the unified WAP 1.2.1-to-successor delta register,
+3. Complete `CONF-007`, the unified WAP 1.2.1-to-successor delta register,
    including code built from later WMLScript, WDP, WSP, and related materials.
-5. Extract an effective WAP-201/WTP ledger only before claiming the optional
+4. Extract an effective WAP-201/WTP ledger only before claiming the optional
    connection-oriented WSP/WTP module.
-6. Obtain redistribution guidance before promoting the 76 privately recovered
+5. Obtain redistribution guidance before promoting the 76 privately recovered
    release members or parsed derivatives into Git.
 7. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synchronized with any
    implementation-facing contract changes.

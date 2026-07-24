@@ -233,7 +233,7 @@ Status: Active
   - five selected WCMP general-message rows
   - eight selected connectionless WSP rows and exact WAP-203 registries
   - browser GET/POST ingress through the selected connectionless path
-  - normalize the licensed `TIAEIA-732` citation/part metadata
+  - retain the normalized, licensed-payload `TIAEIA-732` capability metadata
   - WTP only if connection-oriented WSP is later claimed
 
 3. Networking target-profile decision and migration gates (`gateway bridge` -> `in-process WAP transport`)

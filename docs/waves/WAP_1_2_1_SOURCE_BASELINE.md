@@ -176,10 +176,12 @@ level:
 - WSP: 109 active rows; the selected eight-row path resolves `WSP:MCF`
   through connectionless WSP.
 
-Nested normative-clause extraction remains open for all nine families. WTP is
-additionally required only if connection-oriented WSP is claimed. The
-selected CDPD bearer also leaves `TIAEIA-732` as an explicit external-source
-normalization gap.
+Nested normative-clause extraction is complete for WML, WAE, WBXML, caching,
+WCMP, and the selected connectionless WSP path. WMLScript, WMLScript
+libraries, and WDP remain. WTP is additionally required only if
+connection-oriented WSP is claimed. The selected CDPD `TIAEIA-732` family
+citation is normalized as an informative, licensed-payload metadata-only
+dependency.
 
 The WAP 2.0-era WAE (`WAP-236`), WDP (`WAP-259`), WTP (`WAP-224`), WSP
 (`WAP-230`), WTLS (`WAP-261`), and architecture (`WAP-210`) documents are

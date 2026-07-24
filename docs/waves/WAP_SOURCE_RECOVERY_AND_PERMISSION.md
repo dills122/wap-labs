@@ -25,8 +25,8 @@ certification claim.
 | Associated release DTDs | 6/6 | 6/6 hash-verified | Metadata-only |
 | General conformance sources | WAP-215, WAP-221, and WAP-273 | 3/3 hash-verified | Metadata-only |
 | WAP-215 class requirements | Official live WAP Forum object | 47,936-byte approved PDF and text extraction verified | Exact six-profile ledger recorded; source/derivative held |
-| Locked external dependencies | 40/40 acquisition records | 34 full, 2 partial, 4 licensed-payload metadata-only | Metadata-only |
-| Remaining external citation labels | 63 labels in four groups | Not yet complete | Explicit open queue |
+| Locked external dependencies | 41/41 acquisition records | 34 full, 2 partial, 5 licensed-payload metadata-only | Metadata-only |
+| Remaining external citation labels | 62 labels in four groups | Not yet complete | Explicit open queue |
 
 Machine-readable evidence:
 

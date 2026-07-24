@@ -108,10 +108,12 @@
         ]
       },
       {
-        "citationLabel": "TIAEIA-732",
-        "role": "selected CDPD bearer technology reference",
-        "acquisitionState": "open-label-not-yet-normalized",
-        "note": "The citation is retained in the external dependency open-review queue and requires an authoritative metadata/license record."
+        "id": "tiaeia-is-732-cdpd-set",
+        "title": "Cellular Digital Packet Data (CDPD) System Specification",
+        "sourceUrl": "https://store.accuristech.com/standards/tia-ansi-tia-eia-732-100?product_id=2591772",
+        "referenceDisposition": "informative-selected-bearer-capability",
+        "acquisitionState": "metadata-only-licensed-payload",
+        "artifacts": []
       }
     ],
     "governingSource": {

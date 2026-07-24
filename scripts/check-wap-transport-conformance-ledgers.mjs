@@ -374,7 +374,11 @@ if (
   failures.push('WSP connection-oriented/WTP conditional boundary drift');
 }
 
-for (const dependencyId of ['rfc-768', 'rfc-791']) {
+for (const dependencyId of [
+  'rfc-768',
+  'rfc-791',
+  'tiaeia-is-732-cdpd-set'
+]) {
   const snapshot = wdp.authority?.selectedExternalDependencies?.find(
     (entry) => entry.id === dependencyId
   );
@@ -405,14 +409,16 @@ const openLabels = new Set(
   externalDependencies.openCitationGroups.flatMap((group) => group.labels)
 );
 if (
-  !openLabels.has('TIAEIA-732') ||
+  openLabels.has('TIAEIA-732') ||
   !wdp.authority?.selectedExternalDependencies?.some(
     (entry) =>
-      entry.citationLabel === 'TIAEIA-732' &&
-      entry.acquisitionState === 'open-label-not-yet-normalized'
+      entry.id === 'tiaeia-is-732-cdpd-set' &&
+      entry.referenceDisposition === 'informative-selected-bearer-capability' &&
+      entry.acquisitionState === 'metadata-only-licensed-payload' &&
+      entry.artifacts?.length === 0
   )
 ) {
-  failures.push('selected CDPD TIAEIA-732 source gap is not explicit');
+  failures.push('selected CDPD TIAEIA-732 metadata/license boundary drift');
 }
 
 if (failures.length > 0) {

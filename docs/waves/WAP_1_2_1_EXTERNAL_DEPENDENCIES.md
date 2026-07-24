@@ -25,7 +25,7 @@ external-source or implementation-conformance claim.
 
 ## Current lock
 
-The reviewed lock contains 40 authority-pinned dependencies:
+The reviewed lock contains 41 authority-pinned dependencies:
 
 | Group | Locked examples | Primary role |
 |---|---|---|
@@ -36,12 +36,15 @@ The reviewed lock contains 40 authority-pinned dependencies:
 | ISO | ISO/IEC 10646-1:1993 and ISO/TR 8509:1987 | characters and transport service conventions |
 | IANA | historical WBXML MIBenum character-set dependency | WBXML character-set identifiers |
 | Unicode | Unicode 2.0.0 | character repertoire and string behavior |
+| TIA | TIA/EIA/IS-732 multi-part CDPD system specification, December 1997 | Selected WDP CDPD bearer capability |
 
-Six formerly open labels are now exact historical records:
+Seven formerly open labels are now exact historical records:
 
 - RFC 1630, 1738, 1808, and 1864;
 - W3C HTML 4.0, Recommendation 18 December 1997;
-- ISO 8879:1986.
+- ISO 8879:1986;
+- the generic `TIAEIA-732` CDPD family citation, normalized to the historical
+  December 1997 multi-part set with its licensed-payload boundary intact.
 
 Later replacements are not substituted for the cited historical versions.
 For example, WML/WAE SINs move some HTTP references from RFC 2068 to RFC 2616,
@@ -71,14 +74,14 @@ It records 46 private research artifacts totaling 14,440,993 bytes:
 |---|---:|---|
 | Full primary artifact | 34 | 31 RFC texts, dated W3C XML/HTML sources, and ECMA-262 first edition |
 | Partial primary artifact | 2 | Current IANA character-set registry and Unicode 2.0 component/UCD set; historical/full cited form remains open |
-| Licensed-payload metadata only | 4 | IEEE 754-1985 and three historical ISO sources |
+| Licensed-payload metadata only | 5 | IEEE 754-1985, three historical ISO sources, and the historical TIA/EIA/IS-732 CDPD set |
 
 The artifacts remain outside Git. The ledger stores logical cache references,
 hashes, sizes, source URLs, and acquisition limits.
 
 ## Open review groups
 
-There are 63 unique citation labels in four explicit groups:
+There are 62 unique citation labels in four explicit groups:
 
 1. legacy URI/HTTP context whose normative versus informative status still
    needs effective-SIN review (now reduced to the XML media-type draft);

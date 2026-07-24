@@ -121,7 +121,7 @@
         },
         {
           "id": "SRC-005",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["spec-processing", "documentation"],
           "sourceFamilies": ["external-dependencies"],
           "existingTickets": [],
@@ -949,7 +949,7 @@
             "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json"
           ],
           "acceptance": [
-            "All nine selected CDPD/IPv4 WDP path rows map to implementation evidence or corrective work; the TIAEIA-732 source gap remains explicit until normalized."
+            "All nine selected CDPD/IPv4 WDP path rows map to implementation evidence or corrective work; the normalized informative TIAEIA-732 dependency retains its licensed-payload metadata-only boundary."
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml",

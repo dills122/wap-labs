@@ -40,7 +40,8 @@ const primaryHosts = new Set([
   'standards.ieee.org',
   'www.iso.org',
   'www.iana.org',
-  'www.unicode.org'
+  'www.unicode.org',
+  'store.accuristech.com'
 ]);
 
 if (manifest.schemaVersion !== 1 || manifest.releaseId !== 'wap-1.2.1') {
@@ -92,7 +93,9 @@ for (const dependency of manifest.dependencies ?? []) {
     sourceUrl.protocol !== 'https:' ||
     !primaryHosts.has(sourceUrl.hostname)
   ) {
-    failures.push(`${dependency.id}: source URL is not on an approved primary host`);
+    failures.push(
+      `${dependency.id}: source URL is not on an approved authority/distributor host`
+    );
   }
 
   if (

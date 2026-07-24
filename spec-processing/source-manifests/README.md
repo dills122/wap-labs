@@ -103,8 +103,8 @@ connectionless WSP; connection-oriented WSP and WTP remain conditional.
 The three transport ledgers select 22 dependency-closed rows: 9 WDP, 5 WCMP,
 and 8 WSP. Their conservative audit is 17 partial and 5 missing with zero
 direct source-derived normative tests. RFC 768/RFC 791 are artifact-locked;
-the selected CDPD `TIAEIA-732` citation remains an explicit external-source
-normalization gap.
+the selected CDPD `TIAEIA-732` family citation is authority-locked as an
+informative, licensed-payload metadata-only dependency.
 
 Generate the lock from a separately retrieved official archive:
 
