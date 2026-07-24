@@ -20,16 +20,16 @@
       "wae",
       "wbxml",
       "caching",
-      "wcmp"
+      "wcmp",
+      "wsp"
     ],
     "remainingFamilies": [
       "wmlscript",
       "wmlscript-libraries",
-      "wdp",
-      "wsp"
+      "wdp"
     ],
-    "coveredSelectedParentCount": 63,
-    "remainingSelectedParentCount": 138,
+    "coveredSelectedParentCount": 71,
+    "remainingSelectedParentCount": 130,
     "completionRule": "CONF-003 remains open until every selected row in all nine mandatory Class C families has one or more anchored, deduplicated nested clauses."
   },
   "interpretation": {
@@ -38,12 +38,12 @@
     "implementationAssessment": "Parent implementation statuses are snapshots from the family SCR ledgers. Clause status remains not-assessed until direct source-derived fixture evidence is reviewed."
   },
   "summary": {
-    "selectedParentCount": 63,
-    "clauseCount": 357,
-    "requiredClauseCount": 325,
-    "recommendedClauseCount": 23,
-    "permittedClauseCount": 9,
-    "plannedFixtureCount": 357,
+    "selectedParentCount": 71,
+    "clauseCount": 414,
+    "requiredClauseCount": 377,
+    "recommendedClauseCount": 26,
+    "permittedClauseCount": 11,
+    "plannedFixtureCount": 414,
     "assessedClauseCount": 0
   },
   "families": [
@@ -16696,6 +16696,2704 @@
             ],
             "parentImplementationSnapshot": {
               "WCMP-GEN-C-006": "missing"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        }
+      ]
+    },
+    {
+      "family": "wsp",
+      "status": "nested-clauses-anchored-fixtures-planned",
+      "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json",
+      "parentLedgerSha256": "2fa1be1c80f4d1b25fcf0da2ceaeebf21428f56305e55ed812f974bf02e56ea8",
+      "effectiveSequence": [
+        "WAP-203-WSP",
+        "WAP-203_001-WSP",
+        "WAP-203_003-WSP",
+        "WAP-203_005-WSP"
+      ],
+      "selectedDisposition": "required-by-selected-class-c-transport-path",
+      "clauseSources": [
+        {
+          "documentId": "WAP-203-WSP",
+          "sourceKind": "release-member",
+          "filename": "WAP-203-WSP-20000504-a.pdf",
+          "pdfSha256": "fe6df3d2383abd46d1044cbd0dcd9cf216103346e3d88c5c7e66be21b52e5bd2",
+          "textExtractionSha256": "f866774d861bc07f8b30c1694095a629797bd17a5dd5455ea44d30be72d8c8aa"
+        },
+        {
+          "documentId": "WAP-203_001-WSP",
+          "sourceKind": "release-member",
+          "filename": "WAP-203_001-WSP-20000620-a.pdf",
+          "pdfSha256": "12006aa09ed8770f8c1ec388c9341024f67b3661d85f294d4fdce00e9e6f2e45",
+          "textExtractionSha256": "7c7926fedd709008a4e583076d5d04249ddf761272d2d7bd705552a4e82a73f0"
+        }
+      ],
+      "selectedParentCount": 8,
+      "clauseCount": 57,
+      "parents": [
+        {
+          "id": "WSP-C-001",
+          "feature": "Device Mode",
+          "referencedSection": "Section 6,7&8",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-801",
+            "T0-09"
+          ],
+          "clauseIds": [
+            "WSP-CL-CONNECTIONLESS-NONCONFIRMED",
+            "WSP-CL-DEVICE-CONNECTIONLESS-MODE",
+            "WSP-CL-UNITDATA-DIRECT-MAPPING"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-001",
+          "feature": "Connectionless",
+          "referencedSection": "Section 6,7&8",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-801",
+            "T0-09"
+          ],
+          "clauseIds": [
+            "WSP-CL-COMMUNICATION-FAILURE-LOCAL",
+            "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+            "WSP-CL-CONNECTIONLESS-NONCONFIRMED",
+            "WSP-CL-DEVICE-CONNECTIONLESS-MODE",
+            "WSP-CL-INTEGER-NETWORK-ORDER",
+            "WSP-CL-OUT-OF-BAND-PARAMETERS",
+            "WSP-CL-PEER-INDICATION-DELIVERY",
+            "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+            "WSP-CL-TRANSPORT-ERROR-IGNORED",
+            "WSP-CL-UNITDATA-DIRECT-MAPPING",
+            "WSP-CL-UNITDATA-RECEIVE-DISPATCH",
+            "WSP-CL-UNITDATA-SECURITY-EQUIVALENCE"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-003",
+          "feature": "Header Encoding",
+          "referencedSection": "8.4",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-802",
+            "T0-20"
+          ],
+          "clauseIds": [
+            "WSP-CL-EXPECT-SIN-ENCODING",
+            "WSP-CL-HEADER-CODE-PAGE-RANGES",
+            "WSP-CL-HEADER-COMPACTION-FORMS",
+            "WSP-CL-HEADER-DEFAULT-PAGE",
+            "WSP-CL-HEADER-EXTENSION-PAGE-AGREEMENT",
+            "WSP-CL-HEADER-FIELD-ASSIGNMENTS",
+            "WSP-CL-HEADER-HTTP-COMPATIBILITY",
+            "WSP-CL-HEADER-LIST-EXPANSION",
+            "WSP-CL-HEADER-NAME-VERSION-CHOICE",
+            "WSP-CL-HEADER-SYNTAX-REGISTRY",
+            "WSP-CL-HEADER-UNKNOWN-VALUE-SKIP",
+            "WSP-CL-HEADER-VALUE-ENCODING-CHOICE",
+            "WSP-CL-HEADER-VALUE-LENGTH-PREFIX",
+            "WSP-CL-INTEGER-NETWORK-ORDER",
+            "WSP-CL-POST-CONTENT-TYPE",
+            "WSP-CL-REPLY-CONTENT-TYPE",
+            "WSP-CL-UNSUPPORTED-ENCODING-RETRY"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-004",
+          "feature": "Method GET -",
+          "referencedSection": "6.4.2.1",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-801",
+            "WSP-804",
+            "WSP-805",
+            "T0-27",
+            "T0-30"
+          ],
+          "clauseIds": [
+            "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+            "WSP-CL-CONNECTIONLESS-TID-REQUIRED",
+            "WSP-CL-GET-PDU-LAYOUT",
+            "WSP-CL-GET-PDU-METHOD",
+            "WSP-CL-GET-URI-NO-NUL",
+            "WSP-CL-METHOD-BODY-CONSTRAINT",
+            "WSP-CL-METHOD-HTTP-SEMANTICS",
+            "WSP-CL-METHOD-INVOKE-PARAMETERS",
+            "WSP-CL-METHOD-INVOKE-TRANSPARENCY",
+            "WSP-CL-PDU-TYPE-DISPATCH",
+            "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+            "WSP-CL-SELECTED-PDU-ASSIGNMENTS",
+            "WSP-CL-TID-PEER-CORRELATION"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-005",
+          "feature": "Method GET -",
+          "referencedSection": "6.4.2.1",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-801",
+            "WSP-804",
+            "WSP-805",
+            "T0-27",
+            "T0-30"
+          ],
+          "clauseIds": [
+            "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+            "WSP-CL-CONNECTIONLESS-TID-REQUIRED",
+            "WSP-CL-METHOD-ERROR-BODY",
+            "WSP-CL-METHOD-RESULT-HTTP-SEMANTICS",
+            "WSP-CL-METHOD-RESULT-PARAMETERS",
+            "WSP-CL-PDU-TYPE-DISPATCH",
+            "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+            "WSP-CL-REPLY-BODY-TO-SDU-END",
+            "WSP-CL-REPLY-CONTENT-TYPE",
+            "WSP-CL-REPLY-PDU-LAYOUT",
+            "WSP-CL-REPLY-STATUS-ASSIGNMENT",
+            "WSP-CL-SELECTED-PDU-ASSIGNMENTS",
+            "WSP-CL-TID-PEER-CORRELATION",
+            "WSP-CL-UNITDATA-RECEIVE-DISPATCH"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-006",
+          "feature": "Method POST -",
+          "referencedSection": "6.4.2.1",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-801",
+            "WSP-804",
+            "WSP-805",
+            "T0-27",
+            "T0-30"
+          ],
+          "clauseIds": [
+            "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+            "WSP-CL-CONNECTIONLESS-TID-REQUIRED",
+            "WSP-CL-METHOD-BODY-CONSTRAINT",
+            "WSP-CL-METHOD-HTTP-SEMANTICS",
+            "WSP-CL-METHOD-INVOKE-PARAMETERS",
+            "WSP-CL-METHOD-INVOKE-TRANSPARENCY",
+            "WSP-CL-PDU-TYPE-DISPATCH",
+            "WSP-CL-POST-BODY-TO-SDU-END",
+            "WSP-CL-POST-CONTENT-TYPE",
+            "WSP-CL-POST-PDU-LAYOUT",
+            "WSP-CL-POST-PDU-METHOD",
+            "WSP-CL-POST-URI-NO-NUL",
+            "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+            "WSP-CL-SELECTED-PDU-ASSIGNMENTS",
+            "WSP-CL-TID-PEER-CORRELATION"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-007",
+          "feature": "Method POST -",
+          "referencedSection": "6.4.2.1",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-801",
+            "WSP-804",
+            "WSP-805",
+            "T0-27",
+            "T0-30"
+          ],
+          "clauseIds": [
+            "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+            "WSP-CL-CONNECTIONLESS-TID-REQUIRED",
+            "WSP-CL-METHOD-ERROR-BODY",
+            "WSP-CL-METHOD-RESULT-HTTP-SEMANTICS",
+            "WSP-CL-METHOD-RESULT-PARAMETERS",
+            "WSP-CL-PDU-TYPE-DISPATCH",
+            "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+            "WSP-CL-REPLY-BODY-TO-SDU-END",
+            "WSP-CL-REPLY-CONTENT-TYPE",
+            "WSP-CL-REPLY-PDU-LAYOUT",
+            "WSP-CL-REPLY-STATUS-ASSIGNMENT",
+            "WSP-CL-SELECTED-PDU-ASSIGNMENTS",
+            "WSP-CL-TID-PEER-CORRELATION",
+            "WSP-CL-UNITDATA-RECEIVE-DISPATCH"
+          ]
+        },
+        {
+          "id": "WSP-CL-C-020",
+          "feature": "Encoding Version",
+          "referencedSection": "8.4.1",
+          "sourceAnchor": {
+            "documentId": "WAP-203_003-WSP",
+            "staticConformanceSection": "Appendix D"
+          },
+          "implementationStatus": "partial",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "WSP-802",
+            "T0-20"
+          ],
+          "clauseIds": [
+            "WSP-CL-ENCODING-VERSION-ABSENT-DEFAULT",
+            "WSP-CL-ENCODING-VERSION-CLIENT-SELECTION",
+            "WSP-CL-ENCODING-VERSION-EXTENSION-PAGES",
+            "WSP-CL-ENCODING-VERSION-HOP-BY-HOP",
+            "WSP-CL-ENCODING-VERSION-NO-OVERCLAIM",
+            "WSP-CL-ENCODING-VERSION-PEER-CACHE",
+            "WSP-CL-ENCODING-VERSION-REQUIRED",
+            "WSP-CL-ENCODING-VERSION-TEXT-FORM",
+            "WSP-CL-HEADER-FIELD-ASSIGNMENTS",
+            "WSP-CL-HEADER-NAME-VERSION-CHOICE",
+            "WSP-CL-UNSUPPORTED-ENCODING-RETRY"
+          ]
+        }
+      ],
+      "clauses": [
+        {
+          "id": "WSP-CL-DEVICE-CONNECTIONLESS-MODE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-C-001",
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.1",
+            "heading": "6.4.1 Overview",
+            "normalizedTextSha256": "8b01900af4fc38e8082b5d48d76ac3e0dfe1ed2c59d7855bc43583959a6f44ea"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.",
+          "fixturePlan": {
+            "id": "WSP-FX-DEVICE-CONNECTIONLESS-MODE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-C-001": "partial",
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-CONNECTIONLESS-NONCONFIRMED",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-C-001",
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.1",
+            "heading": "6.4.1 Overview",
+            "normalizedTextSha256": "8b01900af4fc38e8082b5d48d76ac3e0dfe1ed2c59d7855bc43583959a6f44ea"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.",
+          "fixturePlan": {
+            "id": "WSP-FX-CONNECTIONLESS-NONCONFIRMED",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Exchange method content through non-confirmed facilities and tolerate unreliable peer communication."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-C-001": "partial",
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001",
+            "WSP-CL-C-004",
+            "WSP-CL-C-005",
+            "WSP-CL-C-006",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.1",
+            "heading": "6.4.1 Overview",
+            "normalizedTextSha256": "8b01900af4fc38e8082b5d48d76ac3e0dfe1ed2c59d7855bc43583959a6f44ea"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Implement the connectionless method-invocation facility for selected GET and POST requests and replies.",
+          "fixturePlan": {
+            "id": "WSP-FX-CONNECTIONLESS-METHOD-FACILITY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Implement the connectionless method-invocation facility for selected GET and POST requests and replies."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010",
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial",
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-INVOKE-PARAMETERS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.1",
+            "heading": "6.4.2.1 S-Unit-MethodInvoke",
+            "normalizedTextSha256": "c450fdef8df3c297f2806bc84918ae917a7a4a91fa84d440d57755fdf0e9ef45"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-INVOKE-PARAMETERS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-INVOKE-TRANSPARENCY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.1",
+            "heading": "6.4.2.1 S-Unit-MethodInvoke",
+            "normalizedTextSha256": "c450fdef8df3c297f2806bc84918ae917a7a4a91fa84d440d57755fdf0e9ef45"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-INVOKE-TRANSPARENCY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-HTTP-SEMANTICS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.1",
+            "heading": "6.4.2.1 S-Unit-MethodInvoke",
+            "normalizedTextSha256": "c450fdef8df3c297f2806bc84918ae917a7a4a91fa84d440d57755fdf0e9ef45"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-HTTP-SEMANTICS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-BODY-CONSTRAINT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.1",
+            "heading": "6.4.2.1 S-Unit-MethodInvoke",
+            "normalizedTextSha256": "c450fdef8df3c297f2806bc84918ae917a7a4a91fa84d440d57755fdf0e9ef45"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not provide a request body when the invoked HTTP method does not permit an entity body.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-BODY-CONSTRAINT",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Do not provide a request body when the invoked HTTP method does not permit an entity body."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-RESULT-PARAMETERS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.2",
+            "heading": "6.4.2.2 S-Unit-MethodResult",
+            "normalizedTextSha256": "085fcd2f79c30feb4fc459e128d2d7d067b9b8d9a36873850eb52acc86019721"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-RESULT-PARAMETERS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-RESULT-HTTP-SEMANTICS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.2",
+            "heading": "6.4.2.2 S-Unit-MethodResult",
+            "normalizedTextSha256": "085fcd2f79c30feb4fc459e128d2d7d067b9b8d9a36873850eb52acc86019721"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-RESULT-HTTP-SEMANTICS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-METHOD-ERROR-BODY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.2.2",
+            "heading": "6.4.2.2 S-Unit-MethodResult",
+            "normalizedTextSha256": "085fcd2f79c30feb4fc459e128d2d7d067b9b8d9a36873850eb52acc86019721"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "When a result status is an error, preserve any response body that supplies human-displayable error information.",
+          "fixturePlan": {
+            "id": "WSP-FX-METHOD-ERROR-BODY",
+            "kind": "rendering",
+            "status": "planned",
+            "assertion": "When a result status is an error, preserve any response body that supplies human-displayable error information."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001",
+            "WSP-CL-C-004",
+            "WSP-CL-C-005",
+            "WSP-CL-C-006",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.3",
+            "heading": "6.4.3 Constraints on Using the Service Primitives",
+            "normalizedTextSha256": "62b37efab739dc9f20d640fb81134bb005be84d4b1e0dbc1eff74f3dcfb5c5c3"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.",
+          "fixturePlan": {
+            "id": "WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010",
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial",
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-PEER-INDICATION-DELIVERY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.3",
+            "heading": "6.4.3 Constraints on Using the Service Primitives",
+            "normalizedTextSha256": "62b37efab739dc9f20d640fb81134bb005be84d4b1e0dbc1eff74f3dcfb5c5c3"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Deliver an indication primitive when the corresponding peer request primitive is received.",
+          "fixturePlan": {
+            "id": "WSP-FX-PEER-INDICATION-DELIVERY",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Deliver an indication primitive when the corresponding peer request primitive is received."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-COMMUNICATION-FAILURE-LOCAL",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "6.4.4",
+            "heading": "6.4.4 Error Handling",
+            "normalizedTextSha256": "4776ad6fc6616c041b61a4bce3e63a2b5d7e5435ea2d5ba4488428d5e5990d6d"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter.",
+          "fixturePlan": {
+            "id": "WSP-FX-COMMUNICATION-FAILURE-LOCAL",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-UNITDATA-DIRECT-MAPPING",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-C-001",
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "7.2",
+            "heading": "7.2 Connectionless WSP",
+            "normalizedTextSha256": "46b854c21e7aea34ecb93e11d204cafa6349651d7a3b27f8b0673633798f4e63"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.",
+          "fixturePlan": {
+            "id": "WSP-FX-UNITDATA-DIRECT-MAPPING",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-C-001": "partial",
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-UNITDATA-SECURITY-EQUIVALENCE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "7.2",
+            "heading": "7.2 Connectionless WSP",
+            "normalizedTextSha256": "46b854c21e7aea34ecb93e11d204cafa6349651d7a3b27f8b0673633798f4e63"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.",
+          "fixturePlan": {
+            "id": "WSP-FX-UNITDATA-SECURITY-EQUIVALENCE",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-UNITDATA-RECEIVE-DISPATCH",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001",
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "7.2",
+            "heading": "7.2 Connectionless WSP",
+            "normalizedTextSha256": "46b854c21e7aea34ecb93e11d204cafa6349651d7a3b27f8b0673633798f4e63"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.",
+          "fixturePlan": {
+            "id": "WSP-FX-UNITDATA-RECEIVE-DISPATCH",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010",
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-TRANSPORT-ERROR-IGNORED",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "7.2",
+            "heading": "7.2 Connectionless WSP",
+            "normalizedTextSha256": "46b854c21e7aea34ecb93e11d204cafa6349651d7a3b27f8b0673633798f4e63"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Ignore underlying transport error indications at the connectionless WSP protocol layer.",
+          "fixturePlan": {
+            "id": "WSP-FX-TRANSPORT-ERROR-IGNORED",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "Ignore underlying transport error indications at the connectionless WSP protocol layer."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-OUT-OF-BAND-PARAMETERS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "7.2",
+            "heading": "7.2 Connectionless WSP",
+            "normalizedTextSha256": "46b854c21e7aea34ecb93e11d204cafa6349651d7a3b27f8b0673633798f4e63"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.",
+          "fixturePlan": {
+            "id": "WSP-FX-OUT-OF-BAND-PARAMETERS",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "WSP-801"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-INTEGER-NETWORK-ORDER",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-001",
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.1.1",
+            "heading": "8.1.1 Primitive Data Types",
+            "normalizedTextSha256": "e3fe5ab3a3402833afe4046e975965594df77b945f837f8fe9974b525b394c97"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode multi-octet integer values in big-endian network octet order.",
+          "fixturePlan": {
+            "id": "WSP-FX-INTEGER-NETWORK-ORDER",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode multi-octet integer values in big-endian network octet order."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-09",
+              "T0-20",
+              "WSP-801",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-010",
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-001": "partial",
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-CONNECTIONLESS-TID-REQUIRED",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-005",
+            "WSP-CL-C-006",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.1",
+            "heading": "8.2.1 PDU Common Fields",
+            "normalizedTextSha256": "07343a3823b7a50c43c28e8b19725897a672709e2c72a85d36c0ef0ee1a69f81"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.",
+          "fixturePlan": {
+            "id": "WSP-FX-CONNECTIONLESS-TID-REQUIRED",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-TID-PEER-CORRELATION",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-005",
+            "WSP-CL-C-006",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.1",
+            "heading": "8.2.1 PDU Common Fields",
+            "normalizedTextSha256": "07343a3823b7a50c43c28e8b19725897a672709e2c72a85d36c0ef0ee1a69f81"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.",
+          "fixturePlan": {
+            "id": "WSP-FX-TID-PEER-CORRELATION",
+            "kind": "state-machine",
+            "status": "planned",
+            "assertion": "Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-PDU-TYPE-DISPATCH",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-005",
+            "WSP-CL-C-006",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.1",
+            "heading": "8.2.1 PDU Common Fields",
+            "normalizedTextSha256": "07343a3823b7a50c43c28e8b19725897a672709e2c72a85d36c0ef0ee1a69f81"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.",
+          "fixturePlan": {
+            "id": "WSP-FX-PDU-TYPE-DISPATCH",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use the PDU type octet to select the function and type-specific remainder of the WSP PDU."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-SELECTED-PDU-ASSIGNMENTS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004",
+            "WSP-CL-C-005",
+            "WSP-CL-C-006",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "appendix-a",
+            "heading": "Appendix A Assigned Numbers",
+            "normalizedTextSha256": "bdc0ba6d57364f866601489bb42892c1f37500e03a27c9e92844f9495bbf9ee9"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.",
+          "fixturePlan": {
+            "id": "WSP-FX-SELECTED-PDU-ASSIGNMENTS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial",
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-GET-PDU-METHOD",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.1",
+            "heading": "8.2.3.1 Get",
+            "normalizedTextSha256": "6c4d4c7e1e81c004b89b3660240b3f432375570be99976ce0c9a09c86c44ea9a"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode the selected HTTP GET method using the Get PDU format.",
+          "fixturePlan": {
+            "id": "WSP-FX-GET-PDU-METHOD",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode the selected HTTP GET method using the Get PDU format."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-GET-PDU-LAYOUT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.1",
+            "heading": "8.2.3.1 Get",
+            "normalizedTextSha256": "6c4d4c7e1e81c004b89b3660240b3f432375570be99976ce0c9a09c86c44ea9a"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.",
+          "fixturePlan": {
+            "id": "WSP-FX-GET-PDU-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-GET-URI-NO-NUL",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-004"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.1",
+            "heading": "8.2.3.1 Get",
+            "normalizedTextSha256": "6c4d4c7e1e81c004b89b3660240b3f432375570be99976ce0c9a09c86c44ea9a"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Exclude a storage string terminator from the length-delimited Get URI field.",
+          "fixturePlan": {
+            "id": "WSP-FX-GET-URI-NO-NUL",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Exclude a storage string terminator from the length-delimited Get URI field."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-004": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-POST-PDU-METHOD",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.2",
+            "heading": "8.2.3.2 Post",
+            "normalizedTextSha256": "919cf5ad0be5f948be893725a2d738208d87a1c9b79d31ee619e6c3b030c399f"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode the selected HTTP POST method using the Post PDU format.",
+          "fixturePlan": {
+            "id": "WSP-FX-POST-PDU-METHOD",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode the selected HTTP POST method using the Post PDU format."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-POST-PDU-LAYOUT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.2",
+            "heading": "8.2.3.2 Post",
+            "normalizedTextSha256": "919cf5ad0be5f948be893725a2d738208d87a1c9b79d31ee619e6c3b030c399f"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.",
+          "fixturePlan": {
+            "id": "WSP-FX-POST-PDU-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-POST-URI-NO-NUL",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.2",
+            "heading": "8.2.3.2 Post",
+            "normalizedTextSha256": "919cf5ad0be5f948be893725a2d738208d87a1c9b79d31ee619e6c3b030c399f"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Exclude a storage string terminator from the length-delimited Post URI field.",
+          "fixturePlan": {
+            "id": "WSP-FX-POST-URI-NO-NUL",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Exclude a storage string terminator from the length-delimited Post URI field."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-POST-CONTENT-TYPE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-006",
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.2",
+            "heading": "8.2.3.2 Post",
+            "normalizedTextSha256": "919cf5ad0be5f948be893725a2d738208d87a1c9b79d31ee619e6c3b030c399f"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.",
+          "fixturePlan": {
+            "id": "WSP-FX-POST-CONTENT-TYPE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-802",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012",
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-POST-BODY-TO-SDU-END",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-006"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.2",
+            "heading": "8.2.3.2 Post",
+            "normalizedTextSha256": "919cf5ad0be5f948be893725a2d738208d87a1c9b79d31ee619e6c3b030c399f"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat every octet after the declared headers as request body data through the end of the transport SDU.",
+          "fixturePlan": {
+            "id": "WSP-FX-POST-BODY-TO-SDU-END",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Treat every octet after the declared headers as request body data through the end of the transport SDU."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-006": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-REPLY-PDU-LAYOUT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.3",
+            "heading": "8.2.3.3 Reply",
+            "normalizedTextSha256": "1a3a46834cc478b5e8f40f65f923ae0abfc17ac4941e4fad772147cb69d8c29a"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.",
+          "fixturePlan": {
+            "id": "WSP-FX-REPLY-PDU-LAYOUT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-REPLY-STATUS-ASSIGNMENT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "appendix-a",
+            "heading": "Appendix A Assigned Numbers",
+            "normalizedTextSha256": "bdc0ba6d57364f866601489bb42892c1f37500e03a27c9e92844f9495bbf9ee9"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.",
+          "fixturePlan": {
+            "id": "WSP-FX-REPLY-STATUS-ASSIGNMENT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-REPLY-CONTENT-TYPE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007",
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.3",
+            "heading": "8.2.3.3 Reply",
+            "normalizedTextSha256": "1a3a46834cc478b5e8f40f65f923ae0abfc17ac4941e4fad772147cb69d8c29a"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Decode the Reply body media type before the remaining response headers.",
+          "fixturePlan": {
+            "id": "WSP-FX-REPLY-CONTENT-TYPE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Decode the Reply body media type before the remaining response headers."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-802",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012",
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial",
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-REPLY-BODY-TO-SDU-END",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-005",
+            "WSP-CL-C-007"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.2.3.3",
+            "heading": "8.2.3.3 Reply",
+            "normalizedTextSha256": "1a3a46834cc478b5e8f40f65f923ae0abfc17ac4941e4fad772147cb69d8c29a"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.",
+          "fixturePlan": {
+            "id": "WSP-FX-REPLY-BODY-TO-SDU-END",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Treat every octet after the declared Reply headers as response body data through the end of the transport SDU."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-27",
+              "T0-30",
+              "WSP-801",
+              "WSP-804",
+              "WSP-805"
+            ],
+            "requirementIds": [
+              "RQ-TRN-012"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-005": "partial",
+              "WSP-CL-C-007": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-HTTP-COMPATIBILITY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1",
+            "heading": "8.4.1 General",
+            "normalizedTextSha256": "f218a9a22f8fee9882d9ddc6d34a22d9c2f9f8675508f5ffde272d3bac08eeb2"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-HTTP-COMPATIBILITY",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-COMPACTION-FORMS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1",
+            "heading": "8.4.1 General",
+            "normalizedTextSha256": "f218a9a22f8fee9882d9ddc6d34a22d9c2f9f8675508f5ffde272d3bac08eeb2"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-COMPACTION-FORMS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-NAME-VERSION-CHOICE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003",
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.1",
+            "heading": "8.4.1.1 Field name",
+            "normalizedTextSha256": "1e30de32b1cefdee6ee7c77ea5c5e0139ccaea763d16a15f69da4aa52f98eead"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-NAME-VERSION-CHOICE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial",
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-DEFAULT-PAGE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.1",
+            "heading": "8.4.1.1 Field name",
+            "normalizedTextSha256": "1e30de32b1cefdee6ee7c77ea5c5e0139ccaea763d16a15f69da4aa52f98eead"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Start every header set on default code page 1 and keep a shifted page active only through that header set.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-DEFAULT-PAGE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Start every header set on default code page 1 and keep a shifted page active only through that header set."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-CODE-PAGE-RANGES",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.1",
+            "heading": "8.4.1.1 Field name",
+            "normalizedTextSha256": "1e30de32b1cefdee6ee7c77ea5c5e0139ccaea763d16a15f69da4aa52f98eead"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-CODE-PAGE-RANGES",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-EXTENSION-PAGE-AGREEMENT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.1",
+            "heading": "8.4.1.1 Field name",
+            "normalizedTextSha256": "1e30de32b1cefdee6ee7c77ea5c5e0139ccaea763d16a15f69da4aa52f98eead"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use application-page single-octet field names only after agreement; otherwise use Token-text field names.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-EXTENSION-PAGE-AGREEMENT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use application-page single-octet field names only after agreement; otherwise use Token-text field names."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-VALUE-ENCODING-CHOICE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.2",
+            "heading": "8.4.1.2 Field values",
+            "normalizedTextSha256": "7cb12ca3eb408871cbe99275fcd2067f36194b0034f6605ad4ce6438acf45ac9"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-VALUE-ENCODING-CHOICE",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-VALUE-LENGTH-PREFIX",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.2",
+            "heading": "8.4.1.2 Field values",
+            "normalizedTextSha256": "7cb12ca3eb408871cbe99275fcd2067f36194b0034f6605ad4ce6438acf45ac9"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-VALUE-LENGTH-PREFIX",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-UNKNOWN-VALUE-SKIP",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.2",
+            "heading": "8.4.1.2 Field values",
+            "normalizedTextSha256": "7cb12ca3eb408871cbe99275fcd2067f36194b0034f6605ad4ce6438acf45ac9"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-UNKNOWN-VALUE-SKIP",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-LIST-EXPANSION",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.1.3",
+            "heading": "8.4.1.3 Encoding of list values",
+            "normalizedTextSha256": "de2dde1d4ef943c1743c3397ab3bc1124f47cc94dcf99ab0a58cbea6c9e5cce3"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-LIST-EXPANSION",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-SYNTAX-REGISTRY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2",
+            "heading": "8.4.2 Header syntax",
+            "normalizedTextSha256": "5f29e11190d39411dd499c74a4b841bb3d46264661a58dfeb0b064272e51f71f"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-SYNTAX-REGISTRY",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-HEADER-FIELD-ASSIGNMENTS",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003",
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "appendix-a",
+            "heading": "Appendix A Assigned Numbers",
+            "normalizedTextSha256": "bdc0ba6d57364f866601489bb42892c1f37500e03a27c9e92844f9495bbf9ee9"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.",
+          "fixturePlan": {
+            "id": "WSP-FX-HEADER-FIELD-ASSIGNMENTS",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial",
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-EXPECT-SIN-ENCODING",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203_001-WSP",
+            "section": "3.3",
+            "heading": "3.3 Change",
+            "normalizedTextSha256": "07f4be74bdbb8c95cd62c53284ec78d3636007db932efa899be4b2dd9f40f8c0"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.",
+          "fixturePlan": {
+            "id": "WSP-FX-EXPECT-SIN-ENCODING",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-REQUIRED",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Include the hop-by-hop Encoding-Version header in every connectionless request and reply.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-REQUIRED",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Include the hop-by-hop Encoding-Version header in every connectionless request and reply."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-ABSENT-DEFAULT",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-ABSENT-DEFAULT",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-CLIENT-SELECTION",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Send the highest encoding version the client implements that does not exceed the known server maximum.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-CLIENT-SELECTION",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Send the highest encoding version the client implements that does not exceed the known server maximum."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-NO-OVERCLAIM",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Never advertise or emit a binary encoding version for which the sending peer is not compliant.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-NO-OVERCLAIM",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Never advertise or emit a binary encoding version for which the sending peer is not compliant."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-EXTENSION-PAGES",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Send a dedicated Encoding-Version value for each used extended header code page.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-EXTENSION-PAGES",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Send a dedicated Encoding-Version value for each used extended header code page."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-PEER-CACHE",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Cache the server-supported encoding version and use it to choose compatible encodings on later requests.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-PEER-CACHE",
+            "kind": "state-machine",
+            "status": "planned",
+            "assertion": "Cache the server-supported encoding version and use it to choose compatible encodings on later requests."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-UNSUPPORTED-ENCODING-RETRY",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-003",
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.2.70",
+            "heading": "8.4.2.70 Encoding-Version field",
+            "normalizedTextSha256": "0757f5286764c13d549ef75c9b86066462a8225fd14d1f69e44b99e0ac351332"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.",
+          "fixturePlan": {
+            "id": "WSP-FX-UNSUPPORTED-ENCODING-RETRY",
+            "kind": "error-policy",
+            "status": "planned",
+            "assertion": "On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-003": "partial",
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-TEXT-FORM",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.3.1",
+            "heading": "8.4.3.1 Encoding-Version field",
+            "normalizedTextSha256": "5d8ec7c2150505c15360af88c6fef4b8e56da6e0bbc747598001c7c730765756"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-TEXT-FORM",
+            "kind": "binary-decoder",
+            "status": "planned",
+            "assertion": "Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
+            },
+            "clauseImplementationStatus": "not-assessed",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WSP-CL-ENCODING-VERSION-HOP-BY-HOP",
+          "family": "wsp",
+          "parentRows": [
+            "WSP-CL-C-020"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-203-WSP",
+            "section": "8.4.4",
+            "heading": "8.4.4 End-to-end and Hop-by-hop Headers",
+            "normalizedTextSha256": "0fa887b48d3a3c00b6125c5c2096dfe7fb183421b5d8f623e6e9b83695b63696"
+          },
+          "normativeForce": "implicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.",
+          "fixturePlan": {
+            "id": "WSP-FX-ENCODING-VERSION-HOP-BY-HOP",
+            "kind": "transport-boundary",
+            "status": "planned",
+            "assertion": "Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header."
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-20",
+              "WSP-802"
+            ],
+            "requirementIds": [
+              "RQ-TRN-014"
+            ],
+            "parentImplementationSnapshot": {
+              "WSP-CL-C-020": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

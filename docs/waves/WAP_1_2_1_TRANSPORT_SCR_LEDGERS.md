@@ -125,6 +125,11 @@ synthetic cases. Exact WAP-203 base/SIN assigned numbers, header rules, status
 codes, primitive semantics, malformed cases, and end-to-end vectors remain
 open.
 
+`CONF-003` now expands those rows into 57 source-anchored clauses. The plan
+covers direct Unitdata mapping, GET/POST and Reply layouts, effective
+default-page header encoding, assigned-number matrices, and Encoding-Version
+negotiation without activating connection-oriented WSP/WTP.
+
 ## WTP boundary
 
 The initial strict profile does not select connection-oriented WSP.
@@ -166,8 +171,8 @@ reason to over-credit the current UDP adapter.
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.
 - `SRC-005`: normalize the `TIAEIA-732` external dependency record.
-- `CONF-003`: finish WDP/WSP nested clauses and promote direct normative
-  fixtures; the WCMP extraction is complete.
+- `CONF-003`: finish WDP nested clauses and promote direct normative fixtures;
+  the WCMP and connectionless WSP extractions are complete.
 
 ## Enhancement policy
 

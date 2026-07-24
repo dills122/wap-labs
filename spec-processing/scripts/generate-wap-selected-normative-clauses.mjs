@@ -20,6 +20,8 @@ const waeSin101TextPath = option('--wae-sin-101-text');
 const waeSin103TextPath = option('--wae-sin-103-text');
 const cachingTextPath = option('--caching-text');
 const wcmpTextPath = option('--wcmp-text');
+const wspTextPath = option('--wsp-text');
+const wspSin001TextPath = option('--wsp-sin-001-text');
 const rfc2396TextPath = option('--rfc-2396-text');
 const rfc2616TextPath = option('--rfc-2616-text');
 const rfc2617TextPath = option('--rfc-2617-text');
@@ -37,6 +39,8 @@ if (
   !waeSin103TextPath ||
   !cachingTextPath ||
   !wcmpTextPath ||
+  !wspTextPath ||
+  !wspSin001TextPath ||
   !rfc2396TextPath ||
   !rfc2616TextPath ||
   !rfc2617TextPath ||
@@ -52,6 +56,8 @@ if (
       '--wae-sin-103-text /absolute/path/WAP-190_103-WAESpec-20001213-a.txt ' +
       '--caching-text /absolute/path/WAP-120-WAPCachingMod-20010413-a.txt ' +
       '--wcmp-text /absolute/path/WAP-202-WCMP-20010624-a.txt ' +
+      '--wsp-text /absolute/path/WAP-203-WSP-20000504-a.txt ' +
+      '--wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
       '--rfc-2616-text /absolute/path/rfc2616.txt ' +
       '--rfc-2617-text /absolute/path/rfc2617.txt ' +
@@ -150,6 +156,20 @@ const sourceInputs = new Map([
     {
       path: wcmpTextPath,
       text: fs.readFileSync(wcmpTextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-203-WSP',
+    {
+      path: wspTextPath,
+      text: fs.readFileSync(wspTextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-203_001-WSP',
+    {
+      path: wspSin001TextPath,
+      text: fs.readFileSync(wspSin001TextPath, 'utf8')
     }
   ],
   [
@@ -439,6 +459,55 @@ const sectionDefinitions = {
         '5.5.3.5. WCMP Echo Request/Reply',
         'Appendix A.               Static Conformance Requirements                                     (Normative)'
       ]
+    }
+  },
+  wsp: {
+    sourceDocumentId: 'WAP-203-WSP',
+    ranges: {
+      '6.4.1': ['6.4.1 Overview', '6.4.2 Service Primitives'],
+      '6.4.2.1': ['6.4.2.1 S-Unit-MethodInvoke', '6.4.2.2 S-Unit-MethodResult'],
+      '6.4.2.2': ['6.4.2.2 S-Unit-MethodResult', '6.4.2.3 S-Unit-Push'],
+      '6.4.3': [
+        '6.4.3 Constraints on Using the Service Primitives',
+        '6.4.4 Error Handling'
+      ],
+      '6.4.4': ['6.4.4 Error Handling', '7 WSP Protocol Operations'],
+      '7.2': ['7.2 Connectionless WSP', '8 WSP Data Unit Structure and Encoding'],
+      '8.1.1': [
+        '8.1.1 Primitive Data Types',
+        '8.1.2 Variable Length Unsigned Integers'
+      ],
+      '8.2.1': ['8.2.1 PDU Common Fields', '8.2.2 Session Management Facility'],
+      '8.2.3.1': ['8.2.3.1 Get', '8.2.3.2 Post'],
+      '8.2.3.2': ['8.2.3.2 Post', '8.2.3.3 Reply'],
+      '8.2.3.3': ['8.2.3.3 Reply', '8.2.3.4 Acknowledgement Headers'],
+      '8.4.1': ['8.4.1 General', '8.4.1.1 Field name'],
+      '8.4.1.1': ['8.4.1.1 Field name', '8.4.1.2 Field values'],
+      '8.4.1.2': ['8.4.1.2 Field values', '8.4.1.3 Encoding of list values'],
+      '8.4.1.3': ['8.4.1.3 Encoding of list values', '8.4.2 Header syntax'],
+      '8.4.2': ['8.4.2 Header syntax', '8.4.3 Textual Header Syntax'],
+      '8.4.2.70': [
+        '8.4.2.70 Encoding-Version field',
+        '8.4.3 Textual Header Syntax'
+      ],
+      '8.4.3.1': [
+        '8.4.3.1 Encoding-Version field',
+        '8.4.4 End-to-end and Hop-by-hop Headers'
+      ],
+      '8.4.4': [
+        '8.4.4 End-to-end and Hop-by-hop Headers',
+        '8.5 Multipart Data'
+      ],
+      'appendix-a': [
+        'Appendix A Assigned Numbers',
+        'Appendix B Header encoding examples'
+      ]
+    }
+  },
+  'wsp-sin-001': {
+    sourceDocumentId: 'WAP-203_001-WSP',
+    ranges: {
+      '3.3': ['3.3 Change', null]
     }
   },
   'rfc-2396': {
@@ -966,6 +1035,69 @@ clause('wcmp', 'echo_mtu_truncation', ['WCMP-GEN-C-006'], '5.5.3.5', 'implicit-m
 clause('wcmp', 'echo_correlation_fields', ['WCMP-GEN-C-006'], '5.5.3.5', 'implicit-must', 'state-machine', 'Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request.');
 clause('wcmp', 'echo_reply_rate_limit', ['WCMP-GEN-C-006'], '5.2', 'explicit-may', 'security-policy', 'Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic.');
 
+// Connectionless WSP branch selected for the Class C browser profile.
+clause('wsp', 'device_connectionless_mode', ['WSP-C-001', 'WSP-CL-C-001'], '6.4.1', 'implicit-must', 'transport-boundary', 'Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.');
+clause('wsp', 'connectionless_nonconfirmed', ['WSP-C-001', 'WSP-CL-C-001'], '6.4.1', 'implicit-must', 'transport-boundary', 'Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.');
+clause('wsp', 'connectionless_method_facility', ['WSP-CL-C-001', 'WSP-CL-C-004', 'WSP-CL-C-005', 'WSP-CL-C-006', 'WSP-CL-C-007'], '6.4.1', 'implicit-must', 'transport-boundary', 'Implement the connectionless method-invocation facility for selected GET and POST requests and replies.');
+clause('wsp', 'method_invoke_parameters', ['WSP-CL-C-004', 'WSP-CL-C-006'], '6.4.2.1', 'table', 'transport-boundary', 'Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.');
+clause('wsp', 'method_invoke_transparency', ['WSP-CL-C-004', 'WSP-CL-C-006'], '6.4.2.1', 'implicit-must', 'transport-boundary', 'Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.');
+clause('wsp', 'method_http_semantics', ['WSP-CL-C-004', 'WSP-CL-C-006'], '6.4.2.1', 'implicit-must', 'transport-boundary', 'Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.');
+clause('wsp', 'method_body_constraint', ['WSP-CL-C-004', 'WSP-CL-C-006'], '6.4.2.1', 'explicit-must', 'error-policy', 'Do not provide a request body when the invoked HTTP method does not permit an entity body.');
+clause('wsp', 'method_result_parameters', ['WSP-CL-C-005', 'WSP-CL-C-007'], '6.4.2.2', 'table', 'transport-boundary', 'Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.');
+clause('wsp', 'method_result_http_semantics', ['WSP-CL-C-005', 'WSP-CL-C-007'], '6.4.2.2', 'implicit-must', 'transport-boundary', 'Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.');
+clause('wsp', 'method_error_body', ['WSP-CL-C-005', 'WSP-CL-C-007'], '6.4.2.2', 'explicit-should', 'rendering', 'When a result status is an error, preserve any response body that supplies human-displayable error information.');
+clause('wsp', 'primitive_role_restrictions', ['WSP-CL-C-001', 'WSP-CL-C-004', 'WSP-CL-C-005', 'WSP-CL-C-006', 'WSP-CL-C-007'], '6.4.3', 'grammar', 'transport-boundary', 'Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.');
+clause('wsp', 'peer_indication_delivery', ['WSP-CL-C-001'], '6.4.3', 'explicit-should', 'transport-boundary', 'Deliver an indication primitive when the corresponding peer request primitive is received.');
+clause('wsp', 'communication_failure_local', ['WSP-CL-C-001'], '6.4.4', 'implicit-must', 'error-policy', 'Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter.');
+clause('wsp', 'unitdata_direct_mapping', ['WSP-C-001', 'WSP-CL-C-001'], '7.2', 'implicit-must', 'transport-boundary', 'Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.');
+clause('wsp', 'unitdata_security_equivalence', ['WSP-CL-C-001'], '7.2', 'implicit-must', 'transport-boundary', 'Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.');
+clause('wsp', 'unitdata_receive_dispatch', ['WSP-CL-C-001', 'WSP-CL-C-005', 'WSP-CL-C-007'], '7.2', 'table', 'transport-boundary', 'Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.');
+clause('wsp', 'transport_error_ignored', ['WSP-CL-C-001'], '7.2', 'table', 'error-policy', 'Ignore underlying transport error indications at the connectionless WSP protocol layer.');
+clause('wsp', 'out_of_band_parameters', ['WSP-CL-C-001'], '7.2', 'explicit-may', 'transport-boundary', 'Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.');
+
+clause('wsp', 'integer_network_order', ['WSP-CL-C-001', 'WSP-CL-C-003'], '8.1.1', 'implicit-must', 'binary-decoder', 'Encode multi-octet integer values in big-endian network octet order.');
+clause('wsp', 'connectionless_tid_required', ['WSP-CL-C-004', 'WSP-CL-C-005', 'WSP-CL-C-006', 'WSP-CL-C-007'], '8.2.1', 'explicit-must', 'binary-decoder', 'Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.');
+clause('wsp', 'tid_peer_correlation', ['WSP-CL-C-004', 'WSP-CL-C-005', 'WSP-CL-C-006', 'WSP-CL-C-007'], '8.2.1', 'implicit-must', 'state-machine', 'Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.');
+clause('wsp', 'pdu_type_dispatch', ['WSP-CL-C-004', 'WSP-CL-C-005', 'WSP-CL-C-006', 'WSP-CL-C-007'], '8.2.1', 'implicit-must', 'binary-decoder', 'Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.');
+clause('wsp', 'selected_pdu_assignments', ['WSP-CL-C-004', 'WSP-CL-C-005', 'WSP-CL-C-006', 'WSP-CL-C-007'], 'appendix-a', 'table', 'binary-decoder', 'Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.');
+
+clause('wsp', 'get_pdu_method', ['WSP-CL-C-004'], '8.2.3.1', 'implicit-must', 'binary-decoder', 'Encode the selected HTTP GET method using the Get PDU format.');
+clause('wsp', 'get_pdu_layout', ['WSP-CL-C-004'], '8.2.3.1', 'grammar', 'binary-decoder', 'Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.');
+clause('wsp', 'get_uri_no_nul', ['WSP-CL-C-004'], '8.2.3.1', 'explicit-must', 'binary-decoder', 'Exclude a storage string terminator from the length-delimited Get URI field.');
+clause('wsp', 'post_pdu_method', ['WSP-CL-C-006'], '8.2.3.2', 'implicit-must', 'binary-decoder', 'Encode the selected HTTP POST method using the Post PDU format.');
+clause('wsp', 'post_pdu_layout', ['WSP-CL-C-006'], '8.2.3.2', 'grammar', 'binary-decoder', 'Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.');
+clause('wsp', 'post_uri_no_nul', ['WSP-CL-C-006'], '8.2.3.2', 'explicit-must', 'binary-decoder', 'Exclude a storage string terminator from the length-delimited Post URI field.');
+clause('wsp', 'post_content_type', ['WSP-CL-C-006', 'WSP-CL-C-003'], '8.2.3.2', 'implicit-must', 'binary-decoder', 'Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.');
+clause('wsp', 'post_body_to_sdu_end', ['WSP-CL-C-006'], '8.2.3.2', 'implicit-must', 'binary-decoder', 'Treat every octet after the declared headers as request body data through the end of the transport SDU.');
+clause('wsp', 'reply_pdu_layout', ['WSP-CL-C-005', 'WSP-CL-C-007'], '8.2.3.3', 'grammar', 'binary-decoder', 'Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.');
+clause('wsp', 'reply_status_assignment', ['WSP-CL-C-005', 'WSP-CL-C-007'], 'appendix-a', 'table', 'binary-decoder', 'Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.');
+clause('wsp', 'reply_content_type', ['WSP-CL-C-005', 'WSP-CL-C-007', 'WSP-CL-C-003'], '8.2.3.3', 'implicit-must', 'binary-decoder', 'Decode the Reply body media type before the remaining response headers.');
+clause('wsp', 'reply_body_to_sdu_end', ['WSP-CL-C-005', 'WSP-CL-C-007'], '8.2.3.3', 'implicit-must', 'binary-decoder', 'Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.');
+
+clause('wsp', 'header_http_compatibility', ['WSP-CL-C-003'], '8.4.1', 'implicit-must', 'binary-decoder', 'Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.');
+clause('wsp', 'header_compaction_forms', ['WSP-CL-C-003'], '8.4.1', 'table', 'binary-decoder', 'Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.');
+clause('wsp', 'header_name_version_choice', ['WSP-CL-C-003', 'WSP-CL-C-020'], '8.4.1.1', 'explicit-must', 'binary-decoder', 'Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.');
+clause('wsp', 'header_default_page', ['WSP-CL-C-003'], '8.4.1.1', 'implicit-must', 'binary-decoder', 'Start every header set on default code page 1 and keep a shifted page active only through that header set.');
+clause('wsp', 'header_code_page_ranges', ['WSP-CL-C-003'], '8.4.1.1', 'table', 'binary-decoder', 'Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.');
+clause('wsp', 'header_extension_page_agreement', ['WSP-CL-C-003'], '8.4.1.1', 'explicit-must', 'binary-decoder', 'Use application-page single-octet field names only after agreement; otherwise use Token-text field names.');
+clause('wsp', 'header_value_encoding_choice', ['WSP-CL-C-003'], '8.4.1.2', 'explicit-must', 'binary-decoder', 'Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.');
+clause('wsp', 'header_value_length_prefix', ['WSP-CL-C-003'], '8.4.1.2', 'table', 'binary-decoder', 'Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.');
+clause('wsp', 'header_unknown_value_skip', ['WSP-CL-C-003'], '8.4.1.2', 'implicit-must', 'binary-decoder', 'Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.');
+clause('wsp', 'header_list_expansion', ['WSP-CL-C-003'], '8.4.1.3', 'explicit-must', 'binary-decoder', 'Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.');
+clause('wsp', 'header_syntax_registry', ['WSP-CL-C-003'], '8.4.2', 'table', 'binary-decoder', 'Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.');
+clause('wsp', 'header_field_assignments', ['WSP-CL-C-003', 'WSP-CL-C-020'], 'appendix-a', 'table', 'binary-decoder', 'Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.');
+clause('wsp', 'expect_sin_encoding', ['WSP-CL-C-003'], '3.3', 'implicit-must', 'binary-decoder', 'Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.', 'wsp-sin-001');
+
+clause('wsp', 'encoding_version_required', ['WSP-CL-C-020'], '8.4.2.70', 'explicit-must', 'transport-boundary', 'Include the hop-by-hop Encoding-Version header in every connectionless request and reply.');
+clause('wsp', 'encoding_version_absent_default', ['WSP-CL-C-020'], '8.4.2.70', 'explicit-must', 'binary-decoder', 'When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page.');
+clause('wsp', 'encoding_version_client_selection', ['WSP-CL-C-020'], '8.4.2.70', 'explicit-must', 'transport-boundary', 'Send the highest encoding version the client implements that does not exceed the known server maximum.');
+clause('wsp', 'encoding_version_no_overclaim', ['WSP-CL-C-020'], '8.4.2.70', 'explicit-must', 'transport-boundary', 'Never advertise or emit a binary encoding version for which the sending peer is not compliant.');
+clause('wsp', 'encoding_version_extension_pages', ['WSP-CL-C-020'], '8.4.2.70', 'explicit-should', 'transport-boundary', 'Send a dedicated Encoding-Version value for each used extended header code page.');
+clause('wsp', 'encoding_version_peer_cache', ['WSP-CL-C-020'], '8.4.2.70', 'explicit-may', 'state-machine', 'Cache the server-supported encoding version and use it to choose compatible encodings on later requests.');
+clause('wsp', 'unsupported_encoding_retry', ['WSP-CL-C-003', 'WSP-CL-C-020'], '8.4.2.70', 'implicit-must', 'error-policy', 'On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.');
+clause('wsp', 'encoding_version_text_form', ['WSP-CL-C-020'], '8.4.3.1', 'grammar', 'binary-decoder', 'Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.');
+clause('wsp', 'encoding_version_hop_by_hop', ['WSP-CL-C-020'], '8.4.4', 'implicit-must', 'transport-boundary', 'Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.');
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -1054,6 +1186,12 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wcmp-scr.json`,
     selectedDisposition: 'required-by-selected-class-c-transport-path',
     clauseSources: ['WAP-202-WCMP']
+  },
+  {
+    family: 'wsp',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-wsp-scr.json`,
+    selectedDisposition: 'required-by-selected-class-c-transport-path',
+    clauseSources: ['WAP-203-WSP', 'WAP-203_001-WSP']
   }
 ];
 
@@ -1207,12 +1345,11 @@ const ledger = {
   scope: {
     status: 'in-progress',
     selectedProfileParentCount: 201,
-    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching', 'wcmp'],
+    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching', 'wcmp', 'wsp'],
     remainingFamilies: [
       'wmlscript',
       'wmlscript-libraries',
-      'wdp',
-      'wsp'
+      'wdp'
     ],
     coveredSelectedParentCount: selectedParentCount,
     remainingSelectedParentCount: 201 - selectedParentCount,

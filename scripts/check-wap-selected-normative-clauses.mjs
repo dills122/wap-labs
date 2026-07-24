@@ -43,12 +43,11 @@ function sha256(value) {
 }
 
 const failures = [];
-const coveredFamilies = ['wml', 'wae', 'wbxml', 'caching', 'wcmp'];
+const coveredFamilies = ['wml', 'wae', 'wbxml', 'caching', 'wcmp', 'wsp'];
 const remainingFamilies = [
   'wmlscript',
   'wmlscript-libraries',
-  'wdp',
-  'wsp'
+  'wdp'
 ];
 const familyDefinitions = new Map([
   [
@@ -94,6 +93,15 @@ const familyDefinitions = new Map([
       selectedDisposition: 'required-by-selected-class-c-transport-path',
       expectedParents: 5,
       expectedClauses: 28
+    }
+  ],
+  [
+    'wsp',
+    {
+      ledgerFile: 'wap-1.2.1-wsp-scr.json',
+      selectedDisposition: 'required-by-selected-class-c-transport-path',
+      expectedParents: 8,
+      expectedClauses: 57
     }
   ]
 ]);
@@ -174,8 +182,8 @@ if (
     JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !==
     JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 63 ||
-  ledger.scope?.remainingSelectedParentCount !== 138 ||
+  ledger.scope?.coveredSelectedParentCount !== 71 ||
+  ledger.scope?.remainingSelectedParentCount !== 130 ||
   !ledger.scope?.completionRule?.includes('CONF-003 remains open')
 ) {
   failures.push('partial nine-family scope accounting drift');
@@ -472,8 +480,8 @@ const expectedSummary = {
   assessedClauseCount: 0
 };
 if (
-  selectedParentCount !== 63 ||
-  clauseCount !== 357 ||
+  selectedParentCount !== 71 ||
+  clauseCount !== 414 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(
@@ -514,7 +522,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, and WCMP`
+  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, WCMP, and WSP`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`

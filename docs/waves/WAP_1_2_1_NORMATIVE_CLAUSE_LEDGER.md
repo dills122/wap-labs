@@ -1,7 +1,7 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.4
-Status: `CONF-003` in progress; WML, WAE, WBXML, caching, and WCMP slices complete
+Version: v0.5
+Status: `CONF-003` in progress; WML, WAE, WBXML, caching, WCMP, and WSP slices complete
 
 ## Purpose
 
@@ -34,6 +34,8 @@ node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
   --wae-sin-103-text /absolute/path/WAP-190_103-WAESpec-20001213-a.txt \
   --caching-text /absolute/path/WAP-120-WAPCachingMod-20010413-a.txt \
   --wcmp-text /absolute/path/WAP-202-WCMP-20010624-a.txt \
+  --wsp-text /absolute/path/WAP-203-WSP-20000504-a.txt \
+  --wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt \
   --rfc-2396-text /absolute/path/rfc2396.txt \
   --rfc-2616-text /absolute/path/rfc2616.txt \
   --rfc-2617-text /absolute/path/rfc2617.txt \
@@ -45,7 +47,7 @@ ingestion lock.
 
 ## Current slices
 
-The current artifact covers 63 of the 201 selected Class C parent rows:
+The current artifact covers 71 of the 201 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
@@ -54,9 +56,10 @@ The current artifact covers 63 of the 201 selected Class C parent rows:
 | WBXML | 3 | 48 |
 | Caching | 5 | 68 |
 | WCMP | 5 | 28 |
-| **Total** | **63** | **357** |
+| WSP | 8 | 57 |
+| **Total** | **71** | **414** |
 
-The 357 clauses are classified as 325 required, 23 recommended, and nine
+The 414 clauses are classified as 377 required, 26 recommended, and 11
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,
@@ -89,12 +92,11 @@ verbatim source text.
 
 ## Remaining `CONF-003` slices
 
-The remaining 138 selected parents are:
+The remaining 130 selected parents are:
 
 - WMLScript: 41;
 - WMLScript Libraries: 80;
-- WDP: 9;
-- WSP: 8.
+- WDP: 9.
 
 `CONF-003` remains open until all nine selected families and all 201 parent
 rows are represented. WTP is added only if connection-oriented WSP becomes a

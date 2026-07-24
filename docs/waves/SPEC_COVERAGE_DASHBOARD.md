@@ -48,7 +48,8 @@ Status: Active
   - WBXML: 3 selected parents / 48 clauses
   - caching: 5 selected parents / 68 clauses
   - WCMP: 5 selected parents / 28 clauses
-  - all 357 direct fixtures planned; clause implementation status not assessed
+  - WSP: 8 selected parents / 57 clauses
+  - all 414 direct fixtures planned; clause implementation status not assessed
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
