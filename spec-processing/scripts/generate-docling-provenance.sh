@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. && pwd)"
-DATE_TAG="${1:-2026-03-02}"
+DATE_TAG="${1:-$(date +%F)}"
 PROFILE_TAG="docling:dlparse_v4,no-ocr,image-placeholder"
 
 BASE_REPORT="$ROOT/tmp/docling-rerun/cleanup-report.txt"
