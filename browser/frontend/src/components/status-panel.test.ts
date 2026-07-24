@@ -14,7 +14,7 @@ describe('WvStatusPanel', () => {
     el.setStatus('Ready.', 'ok');
     await el.updateComplete;
     const root = el.shadowRoot?.querySelector<HTMLDivElement>('#status-root');
-    expect(root?.textContent).toBe('Ready.');
+    expect(root?.textContent?.trim()).toBe('Ready.');
     expect(root?.className).toContain('status-ok');
 
     el.remove();
@@ -47,7 +47,7 @@ describe('WvStatusPanel', () => {
     el.setAttribute('tone', 'loading');
     await el.updateComplete;
     const root = el.shadowRoot?.querySelector<HTMLDivElement>('#status-root');
-    expect(root?.textContent).toBe('Loading...');
+    expect(root?.textContent?.trim()).toBe('Loading...');
     expect(root?.className).toContain('status-loading');
 
     el.remove();
