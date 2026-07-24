@@ -230,16 +230,25 @@ const conf003 = conformanceSprint?.workItems.find(
   (workItem) => workItem.id === 'CONF-003'
 );
 if (
-  conf003?.status !== 'todo' ||
+  conf003?.status !== 'in-progress' ||
+  !conf003?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json'
+  ) ||
   !conf003?.acceptance?.some((line) =>
     line.includes('All 201 selected rows')
+  ) ||
+  !conf003?.acceptance?.some((line) =>
+    line.includes('CONF-003 stays open')
+  ) ||
+  !conf003?.evidence?.includes(
+    'node scripts/check-wap-selected-normative-clauses.mjs'
   ) ||
   !conf003?.evidence?.includes(
     'node scripts/check-wap-conformance-ledger.mjs'
   )
 ) {
   failures.push(
-    'CONF-003 must retain nested-clause closure for all 201 selected rows'
+    'CONF-003 must retain its partial clause ledger and all-201 closure gate'
   );
 }
 const conf002 = conformanceSprint?.workItems.find(

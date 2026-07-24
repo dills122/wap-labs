@@ -2,7 +2,8 @@
 
 Version: v0.2
 Status: source extraction complete; mandatory implementation audit complete;
-WAP-215 Class C profile applied; optional-capability assessment pending
+WAP-215 Class C profile applied; selected nested clauses planned;
+optional-capability assessment pending
 
 ## Purpose
 
@@ -15,11 +16,13 @@ Machine-readable authority:
 
 - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
 - `spec-processing/source-manifests/wap-1.2.1-class-conformance.json`
+- `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
 
 Validation:
 
 ```sh
 node scripts/check-wap-conformance-ledger.mjs
+node scripts/check-wap-selected-normative-clauses.mjs
 ```
 
 ## Effective source chain
@@ -114,6 +117,12 @@ root). Across the 39 required Class C client rows, the audit currently records
 percentage: nested normative clauses, optional capabilities, cross-target
 parity, and release evidence still have separate gates.
 
+The first `CONF-003` slice now expands all 39 selected WML rows into 174
+deduplicated, section-hash-anchored clauses. Every clause has an inherited
+owner/work mapping and a planned direct fixture. Clause implementation status
+remains `not-assessed`, so these records improve planning completeness without
+raising the implementation audit.
+
 The 14 missing required Class C client rows are:
 
 - context/policy: `WML-C-11`, `WML-C-13`, `WML-C-14`;
@@ -132,9 +141,9 @@ audit are complete, but implementation and release conformance are not.
 
 ## Next pass
 
-1. Extend the audit from SCR features into nested normative clauses.
+1. Implement and review the 174 source-derived direct clause fixtures.
 2. Add cross-target and cross-layer strict-mode outcomes to the linked tests.
-3. Split broad Phase R work items only where a mandatory row lacks a
+3. Split broad Phase R work items only where a required clause lacks a
    deterministic acceptance lane.
 4. Assess the 27 optional client rows and publish the capability declaration.
 5. Carry the selected WAP-215 profile mapping into the remaining release

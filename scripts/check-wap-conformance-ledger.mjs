@@ -472,6 +472,18 @@ if (transportCheck.status !== 0) {
   process.exit(transportCheck.status ?? 1);
 }
 
+const selectedClauseCheck = spawnSync(
+  process.execPath,
+  ['scripts/check-wap-selected-normative-clauses.mjs'],
+  {
+    cwd: root,
+    stdio: 'inherit'
+  }
+);
+if (selectedClauseCheck.status !== 0) {
+  process.exit(selectedClauseCheck.status ?? 1);
+}
+
 const selectedProfileLedgers = [
   {
     family: 'wml',

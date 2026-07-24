@@ -239,7 +239,7 @@
         },
         {
           "id": "CONF-003",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["documentation", "qa"],
           "sourceFamilies": [
             "wae",
@@ -254,13 +254,16 @@
           ],
           "existingTickets": [],
           "outputs": [
-            "Normative clause ledger nested under SCR features"
+            "Normative clause ledger nested under SCR features",
+            "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
           ],
           "acceptance": [
             "All 201 selected rows across the nine mandatory Class C families have nested normative clauses anchored and deduplicated.",
-            "Normative text is not reduced to keyword search: implicit MUST rules and clauses within each SCR feature are anchored and deduplicated."
+            "Normative text is not reduced to keyword search: implicit MUST rules and clauses within each SCR feature are anchored and deduplicated.",
+            "Incremental family slices declare covered and remaining selected rows; CONF-003 stays open until the 201-row gate is complete."
           ],
           "evidence": [
+            "node scripts/check-wap-selected-normative-clauses.mjs",
             "node scripts/check-wap-conformance-ledger.mjs",
             "node scripts/check-wap-wae-conformance-ledger.mjs",
             "node scripts/check-wap-wbxml-conformance-ledger.mjs"

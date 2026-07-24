@@ -1,7 +1,8 @@
 # WAP 1.2.1 WBXML SCR Ledger
 
-Version: v0.1
-Status: effective SCR extracted; Class C applied; nested-clause audit pending
+Version: v0.2
+Status: effective SCR extracted; Class C applied; selected nested clauses
+planned
 
 ## Purpose
 
@@ -12,11 +13,13 @@ that merely invokes an unverified decoder executable.
 The machine-readable authority is:
 
 - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
 
 Validate it with:
 
 ```sh
 node scripts/check-wap-wbxml-conformance-ledger.mjs
+node scripts/check-wap-selected-normative-clauses.mjs
 node scripts/check-wap-conformance-ledger.mjs
 ```
 
@@ -70,7 +73,10 @@ The selected-row audit is:
 - boundary tests: 1
 
 These are feature-level evidence counts, not a WBXML compliance percentage.
-The sections nested under each row still require clause-level extraction.
+The first `CONF-003` slice expands the three rows into 48 deduplicated clauses
+covering section 5 and its subsections plus sections 6.3 and 6.4. Every clause
+has a section hash, owner/work mapping, and planned direct fixture; none is
+treated as implemented evidence yet.
 
 ## Current implementation evidence
 
@@ -113,8 +119,7 @@ client claim and have not been implementation-audited in this pass.
 
 ## Remaining WBXML work
 
-1. Extract the nested normative clauses under sections 5, 6.1, 6.3, and 6.4,
-   including implicit conformance rules outside the SCR table.
+1. Implement and review the 48 planned source-derived direct fixtures.
 2. Choose and pin a decoder implementation or implement the decoder in
    `transport-rust`; record version, supported code pages, and failure policy.
 3. Replace permissive/fake success evidence with source-derived fixtures for
