@@ -53,6 +53,18 @@ export class BrowserPresenter {
   private snapshotDirty = true;
   private transportResponseDirty = true;
   private navigationProgressTimer: ReturnType<typeof setTimeout> | undefined;
+  // U7: flushDeveloperPanels() re-serializes whichever dev-panel sub-object
+  // is dirty via JSON.stringify(..., null, 2). Each mutating setter used to
+  // call it immediately and synchronously, so a burst of same-tick mutations
+  // (e.g. patchSessionState's setSessionState + recordTimeline, or several
+  // recordTimeline calls in a row while stepping through a navigation) paid
+  // for a full flush pass per call instead of once for the batch. Mutating
+  // setters now call scheduleDeveloperPanelFlush() instead, which coalesces
+  // same-tick mutations into a single microtask-deferred flush. The
+  // dev-drawer 'toggle' handler still flushes immediately (see below) so
+  // opening the drawer shows current state synchronously rather than a tick
+  // late.
+  private flushScheduled = false;
   private readonly handleDevDrawerToggle = (): void => {
     this.flushDeveloperPanels();
   };
@@ -88,7 +100,7 @@ export class BrowserPresenter {
   setSessionState(next: HostSessionState): void {
     this.hostSessionState = next;
     this.sessionStateDirty = true;
-    this.flushDeveloperPanels();
+    this.scheduleDeveloperPanelFlush();
     const shownUrl =
       this.hostSessionState.finalUrl ?? this.hostSessionState.requestedUrl ?? WAVES_COPY.shell.idle;
     this.refs.activeUrlLabelEl.textContent = shownUrl;
@@ -105,7 +117,7 @@ export class BrowserPresenter {
   clearTimeline(): void {
     this.timelineState = clearTimelineState();
     this.timelineDirty = true;
-    this.flushDeveloperPanels();
+    this.scheduleDeveloperPanelFlush();
   }
 
   recordTimeline(
@@ -123,7 +135,7 @@ export class BrowserPresenter {
     );
     uiEvents.emit('timeline', { action, phase });
     this.timelineDirty = true;
-    this.flushDeveloperPanels();
+    this.scheduleDeveloperPanelFlush();
   }
 
   setStatus(message: string): void {
@@ -272,7 +284,7 @@ export class BrowserPresenter {
   setSnapshot(snapshot: EngineRuntimeSnapshot): void {
     this.latestSnapshot = snapshot;
     this.snapshotDirty = true;
-    this.flushDeveloperPanels();
+    this.scheduleDeveloperPanelFlush();
     this.announceScriptDialogRequests(snapshot.lastScriptDialogRequests);
     this.announceScriptExecutionFailure(snapshot);
   }
@@ -284,7 +296,7 @@ export class BrowserPresenter {
   setTransportResponse(response: FetchResponse | null): void {
     this.latestTransportResponse = response;
     this.transportResponseDirty = true;
-    this.flushDeveloperPanels();
+    this.scheduleDeveloperPanelFlush();
   }
 
   drawRenderList(renderList: RenderList): void {
@@ -320,6 +332,24 @@ export class BrowserPresenter {
 
   timelineLength(): number {
     return this.timelineState.entries.length;
+  }
+
+  // U7: coalesces same-tick mutations (e.g. patchSessionState's
+  // setSessionState + recordTimeline pair, or several recordTimeline calls
+  // made back-to-back while stepping through a navigation) into a single
+  // flush instead of one full JSON.stringify pass per mutating call.
+  // flushDeveloperPanels() itself is unchanged -- it still only stringifies
+  // whichever specific sub-object is dirty, and still no-ops entirely while
+  // the drawer is closed.
+  private scheduleDeveloperPanelFlush(): void {
+    if (this.flushScheduled) {
+      return;
+    }
+    this.flushScheduled = true;
+    queueMicrotask(() => {
+      this.flushScheduled = false;
+      this.flushDeveloperPanels();
+    });
   }
 
   private flushDeveloperPanels(): void {

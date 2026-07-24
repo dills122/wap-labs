@@ -114,16 +114,31 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U7 Debug-panel full-JSON reserialize on every mutation
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
-- `browser/frontend/src/app/browser-presenter.ts` (`flushDeveloperPanels`)
+- `browser/frontend/src/app/browser-presenter.ts` (`flushDeveloperPanels`, `scheduleDeveloperPanelFlush`)
+- `browser/frontend/src/app/browser-presenter.test.ts`
 4. `Finding`:
 - When the dev drawer is open, every session/snapshot/timeline mutation re-serializes the entire object graph via `JSON.stringify(..., null, 2)` rather than diffing. Gated behind `devDrawerEl.open` and dirty flags already (better than the original 2026-03-15 review's "every update" finding), but still O(n) per mutation while open.
 5. `Recommendation`:
 - Not urgent — developer-facing panel, not user-facing. Revisit only if it shows up in real profiling, or bundle into a future `M1-08` follow-up pass.
 6. `Accept`:
 - N/A — low priority, informational.
+7. `Notes`:
+- Fixed as part of the `M1-08` follow-up pass. `setSessionState`/`clearTimeline`/`recordTimeline`/
+  `setSnapshot`/`setTransportResponse` no longer call `flushDeveloperPanels()` synchronously and
+  immediately; they call a new `scheduleDeveloperPanelFlush()`, which coalesces same-tick
+  mutations (e.g. `patchSessionState`'s `setSessionState` + `recordTimeline` pair, or several
+  `recordTimeline` calls made back-to-back while stepping through a navigation) into a single
+  microtask-deferred flush instead of one full `JSON.stringify` pass per call. The dev-drawer
+  `toggle` listener still calls `flushDeveloperPanels()` directly/synchronously so opening the
+  drawer shows current state immediately rather than a tick late. `flushDeveloperPanels()` itself
+  is unchanged (still per-field dirty-gated, still a no-op while the drawer is closed). Verified
+  with a new regression test (`coalesces a burst of same-tick timeline mutations into a single
+  reserialize`) that spies on `JSON.stringify` and asserts three synchronous `recordTimeline`
+  calls produce exactly one reserialize of the timeline array, plus a companion test confirming
+  mutations in separate ticks still each flush. Low-risk, no behavior change to what's displayed.
 
 ### U8 `marketing-site/global.css` is a single 1261-line unsplit stylesheet
 
@@ -140,7 +155,7 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ## Also tracked elsewhere (not duplicated here)
 
-- `BrowserController` god-file decomposition — tracked as `M1-08` in `docs/waves/MAINTENANCE_WORK_ITEMS.md` (status: residual/opportunistic per that ticket's own notes).
+- `BrowserController` god-file decomposition — tracked as `M1-08` in `docs/waves/MAINTENANCE_WORK_ITEMS.md` (status: done — residual DOM-listener-wiring and keyboard-intent-routing extraction landed).
 - `network::wsp` dead-code-vs-live-fetch-path split — tracked as `M1-18`.
 - `fetch_policy.rs` shallow destination-check hardening, gateway-bridged `AllowPrivate` invariant pinning, and `fetch_host.rs` gateway-transport-fallback host-scope confirmation — transport/tauri-layer hardening items surfaced in the same audit; see the maintenance doc entries `M1-19`/`M1-20`/`M1-21` added alongside this file.
 - Full field-level IPC response-shape validation (currently only a null/undefined boundary guard) — deliberately partial; revisit as its own scoped design decision (schema library vs. hand-rolled checks), not bundled here.
