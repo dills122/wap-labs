@@ -156,6 +156,57 @@ describe('BrowserPresenter', () => {
     expect(refs.activeUrlLabelEl.textContent).toBe('http://local.test/start.wml');
   });
 
+  // U7: a burst of same-tick recordTimeline calls (the common case while
+  // stepping through a navigation) used to pay for a full JSON.stringify of
+  // the timeline entries array on every single call. Mutations now coalesce
+  // into one microtask-deferred flush per batch.
+  it('coalesces a burst of same-tick timeline mutations into a single reserialize', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    refs.devDrawerEl.open = true;
+
+    const stringifySpy = vi.spyOn(JSON, 'stringify');
+
+    presenter.recordTimeline('load', 'start', { url: 'http://local.test/start.wml' });
+    presenter.recordTimeline('load', 'ok');
+    presenter.recordTimeline('render', 'state', { count: 1 });
+
+    // Nothing has been written to the DOM yet -- the flush is deferred.
+    expect(refs.timelineEl.textContent).toBe('');
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    // Three timeline mutations in the same tick should have produced exactly
+    // one reserialize of the (now three-entry) timeline array, not three.
+    const timelineStringifyCalls = stringifySpy.mock.calls.filter(
+      (call) =>
+        call[0] ===
+        (presenter as unknown as { timelineState: { entries: unknown } }).timelineState.entries
+    );
+    expect(timelineStringifyCalls).toHaveLength(1);
+    expect(refs.timelineEl.textContent).toContain('"action": "render"');
+
+    stringifySpy.mockRestore();
+  });
+
+  it('still flushes every distinct mutation across separate ticks', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    refs.devDrawerEl.open = true;
+
+    presenter.recordTimeline('first', 'state');
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(refs.timelineEl.textContent).toContain('"action": "first"');
+    expect(refs.timelineEl.textContent).not.toContain('"action": "second"');
+
+    presenter.recordTimeline('second', 'state');
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(refs.timelineEl.textContent).toContain('"action": "second"');
+  });
+
   it('clears the frozen skeleton placeholder markup when a first load fails', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
