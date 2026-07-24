@@ -1,0 +1,945 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "sourceManifest": "spec-processing/source-manifests/wap-1.2.1-external-dependencies.json",
+  "recordedOn": "2026-07-24",
+  "status": "external-source-acquisition-in-progress",
+  "policy": {
+    "repositoryMode": "metadata-only",
+    "researchCacheCommitted": false,
+    "cacheRefsAreLogicalIdentifiers": true,
+    "note": "Hashes prove research acquisition only. Artifact licenses and the project redistribution policy must be reviewed before repository promotion."
+  },
+  "summary": {
+    "dependencyCount": 39,
+    "artifactCount": 45,
+    "artifactBytesTotal": 14363355,
+    "byAcquisitionState": {
+      "metadata-only-licensed-payload": 4,
+      "verified-private-full-artifact": 33,
+      "verified-private-partial-artifact": 2
+    }
+  },
+  "dependencies": [
+    {
+      "dependencyId": "rfc-768",
+      "title": "User Datagram Protocol",
+      "version": "RFC 768, August 1980",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc768.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-768-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc768.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc768.txt",
+          "bytes": 5896,
+          "sha256": "7dc8880e1ecef9c3f9da0db4b876a16e96bfa4f0953cc9d977d414f8f680c2f0",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-791",
+      "title": "Internet Protocol",
+      "version": "RFC 791, September 1981",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc791.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-791-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc791.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc791.txt",
+          "bytes": 94892,
+          "sha256": "6cfb387fcecfc1b72f2f69343c5b6951b5d263d708162e2b5c66ab8f394f6265",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-792",
+      "title": "Internet Control Message Protocol",
+      "version": "RFC 792, September 1981",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc792.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-792-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc792.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc792.txt",
+          "bytes": 29186,
+          "sha256": "58714393ded142bacf188d7e8977eef98f4110c4c87ac94595f750df5664c2c6",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-822",
+      "title": "Standard for the Format of ARPA Internet Text Messages",
+      "version": "RFC 822 / STD 11, August 1982",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc822.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-822-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc822.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc822.txt",
+          "bytes": 106299,
+          "sha256": "1e7bc6c75e4c6866c54cbf26ae280b96cac9e87d6293db5a21d7aaf4ffb8bc1a",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1305",
+      "title": "Network Time Protocol (Version 3) Specification, Implementation and Analysis",
+      "version": "RFC 1305, March 1992",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1305.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1305-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1305.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1305.txt",
+          "bytes": 307085,
+          "sha256": "60988c658f503f664cd1238febbd4629dd7bfc574567ebb940b75a59f5848119",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1321",
+      "title": "The MD5 Message-Digest Algorithm",
+      "version": "RFC 1321, April 1992",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1321.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1321-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1321.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1321.txt",
+          "bytes": 35222,
+          "sha256": "284a79d148400d9cd2a423211d1103b5cef0fb9256a4cbe6d7ebe5197c3149dd",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1630",
+      "title": "Universal Resource Identifiers in WWW",
+      "version": "RFC 1630, June 1994",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1630.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1630-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1630.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1630.txt",
+          "bytes": 57601,
+          "sha256": "75886315396874afde4cf0b603972182391075bd68f74cf429648705062efdbd",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1738",
+      "title": "Uniform Resource Locators (URL)",
+      "version": "RFC 1738, December 1994",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1738.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1738-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1738.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1738.txt",
+          "bytes": 51348,
+          "sha256": "2622f97a21c8b28558e860c2ad53a6f3114ac0cf905eb51aefa38e0629d76b2d",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1766",
+      "title": "Tags for the Identification of Languages",
+      "version": "RFC 1766, March 1995",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1766.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1766-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1766.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1766.txt",
+          "bytes": 16966,
+          "sha256": "2588b2a99bb5f81a4140a25ff44e88660655d72c3ff29fd051be4d68c3452630",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1808",
+      "title": "Relative Uniform Resource Locators",
+      "version": "RFC 1808, June 1995",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1808.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1808-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1808.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1808.txt",
+          "bytes": 34950,
+          "sha256": "ea3895bbf4c7caeccb232f85b71fabd8554b2d93bd5df0260e268426f006657e",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-1864",
+      "title": "The Content-MD5 Header Field",
+      "version": "RFC 1864, October 1995",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc1864.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-1864-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc1864.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc1864.txt",
+          "bytes": 7216,
+          "sha256": "6d13d493caeafb268d79b8a9dc7c443dbe6df1fb439ac8eb72184927f952a887",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2040",
+      "title": "The RC5, RC5-CBC, RC5-CBC-Pad, and RC5-CTS Algorithms",
+      "version": "RFC 2040, October 1996",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2040.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2040-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2040.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2040.txt",
+          "bytes": 54598,
+          "sha256": "b22d1c9602c5847890934399830fd61d9f380e65748b2c0cb3bb2cf1243eff07",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2045",
+      "title": "Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies",
+      "version": "RFC 2045, November 1996",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2045.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2045-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2045.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2045.txt",
+          "bytes": 72932,
+          "sha256": "9bb251635dd37fda97dcce6c08dea019432117a0f1e389051d2ecbf7b76350b0",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2046",
+      "title": "Multipurpose Internet Mail Extensions (MIME) Part Two: Media Types",
+      "version": "RFC 2046, November 1996",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2046.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2046-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2046.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2046.txt",
+          "bytes": 105854,
+          "sha256": "7ac4096b9263e11a704f06892638258ac1ddc0394dd75ffdc171e7b5ba0123e0",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2047",
+      "title": "MIME Part Three: Message Header Extensions for Non-ASCII Text",
+      "version": "RFC 2047, November 1996",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2047.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2047-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2047.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2047.txt",
+          "bytes": 33262,
+          "sha256": "f3b1356151ae24d616076880115c5ac0c313a88bcbe76d32d0cacf4b5f24f01d",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2048",
+      "title": "Multipurpose Internet Mail Extensions (MIME) Part Four: Registration Procedures",
+      "version": "RFC 2048, November 1996",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2048.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2048-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2048.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2048.txt",
+          "bytes": 45034,
+          "sha256": "afd80d65eb2a0bf8cd34ca5c328472938fc863e10c98768a73479060d080708c",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2068",
+      "title": "Hypertext Transfer Protocol -- HTTP/1.1",
+      "version": "RFC 2068, January 1997",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2068.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2068-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2068.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2068.txt",
+          "bytes": 378114,
+          "sha256": "d6c4e471389f2d309ab1f90881576542c742f95b115336a346447d052e0477cf",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2104",
+      "title": "HMAC: Keyed-Hashing for Message Authentication",
+      "version": "RFC 2104, February 1997",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2104.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2104-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2104.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2104.txt",
+          "bytes": 22297,
+          "sha256": "64d5245a9101929025336e470e3737f118704001249d503c85a86e19fe9fbb01",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2119",
+      "title": "Key words for use in RFCs to Indicate Requirement Levels",
+      "version": "RFC 2119 / BCP 14, March 1997",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2119.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2119-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2119.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2119.txt",
+          "bytes": 4723,
+          "sha256": "3c2ceb7bfc84cd34720f4a5271338ab9d8280d34bdd1eb250c64306202f2ed8b",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2145",
+      "title": "Use and Interpretation of HTTP Version Numbers",
+      "version": "RFC 2145, May 1997",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2145.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2145-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2145.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2145.txt",
+          "bytes": 13659,
+          "sha256": "5c670bcd2b4dceb8641820aae4702585541a1ba224aac2703bddcba2ec3f3796",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2234",
+      "title": "Augmented BNF for Syntax Specifications: ABNF",
+      "version": "RFC 2234, November 1997",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2234.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2234-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2234.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2234.txt",
+          "bytes": 24265,
+          "sha256": "dcaf77997b83a9a0bda70bc00aa4670c084087e86b4aed57f5b705dfef6eb9ca",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2246",
+      "title": "The TLS Protocol Version 1.0",
+      "version": "RFC 2246, January 1999",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2246.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2246-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2246.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2246.txt",
+          "bytes": 170401,
+          "sha256": "d6489dc4c87b821146724e00db9a9ed31fb317e3bd628387a8adf50e9033eea1",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2253",
+      "title": "Lightweight Directory Access Protocol (v3): UTF-8 String Representation of Distinguished Names",
+      "version": "RFC 2253, December 1997",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2253.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2253-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2253.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2253.txt",
+          "bytes": 18226,
+          "sha256": "45f3ab5d1b52ef29e5b26e6a98936c7fa5f3ec2b316e6059a592b745d1b42eea",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2279",
+      "title": "UTF-8, a transformation format of ISO 10646",
+      "version": "RFC 2279, January 1998",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2279.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2279-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2279.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2279.txt",
+          "bytes": 21634,
+          "sha256": "e7873c93473ef2e21db92a4702f8e743fe5b70ff9ebef1096896aafe1ab0144d",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2387",
+      "title": "The MIME Multipart/Related Content-type",
+      "version": "RFC 2387, August 1998",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2387.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2387-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2387.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2387.txt",
+          "bytes": 18864,
+          "sha256": "b92f065d32e774c1c6cc8d656f5dbf34a71a2714444f2aa7d4e1ad4fa1091aa6",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2388",
+      "title": "Returning Values from Forms: multipart/form-data",
+      "version": "RFC 2388, August 1998",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2388.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2388-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2388.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2388.txt",
+          "bytes": 16531,
+          "sha256": "66a62dc9a3c4cf6695597517b300fd118d13cf8252e6f8401bfde7b75c4e1446",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2396",
+      "title": "Uniform Resource Identifiers (URI): Generic Syntax",
+      "version": "RFC 2396, August 1998",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2396.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2396-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2396.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2396.txt",
+          "bytes": 84503,
+          "sha256": "67866c0aaa65b29372b4c7ca80ffdfa6caee825088593f4b8b296bff3c05cdc7",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2460",
+      "title": "Internet Protocol, Version 6 (IPv6) Specification",
+      "version": "RFC 2460, December 1998",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2460.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2460-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2460.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2460.txt",
+          "bytes": 85890,
+          "sha256": "e48b421dc2635deef363c91af689576c707abd4ffb1be20ff26c00f785f909f2",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2463",
+      "title": "Internet Control Message Protocol (ICMPv6) for IPv6",
+      "version": "RFC 2463, December 1998",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2463.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2463-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2463.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2463.txt",
+          "bytes": 34190,
+          "sha256": "d6c2e63aa72f4b625c90965ca7aecc38321668b0f3409d7b04534d1df046759c",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2616",
+      "title": "Hypertext Transfer Protocol -- HTTP/1.1",
+      "version": "RFC 2616, June 1999",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2616.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2616-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2616.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2616.txt",
+          "bytes": 422279,
+          "sha256": "10211d2885196b97b1c78e1672f3f68ae97c294596ef2b7fd890cbd30a3427bf",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "xml-1.0-19980210",
+      "title": "Extensible Markup Language (XML) 1.0",
+      "version": "W3C Recommendation 10 February 1998",
+      "authority": "W3C",
+      "authorityRecordUrl": "https://www.w3.org/TR/1998/REC-xml-19980210",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "w3c-xml-1.0-html",
+          "sourceUrl": "https://www.w3.org/TR/1998/REC-xml-19980210",
+          "mediaType": "text/html",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/w3c/xml-1.0-19980210.html",
+          "bytes": 178484,
+          "sha256": "5afa70b532e93d8b9d389a9ad3caadfff0a6151b22e8efb8c235632939f9e6d1",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "html-4.0-19971218",
+      "title": "HTML 4.0 Specification",
+      "version": "W3C Recommendation 18 December 1997",
+      "authority": "W3C",
+      "authorityRecordUrl": "https://www.w3.org/TR/REC-html40-971218/",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "w3c-html-4.0-pdf",
+          "sourceUrl": "https://www.w3.org/TR/REC-html40-971218/html40.pdf",
+          "mediaType": "application/pdf",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/w3c/html-4.0-19971218.pdf",
+          "bytes": 2136233,
+          "sha256": "49e01b35fa91aa9592ecef9dae362ddb60e217d21e59646bb19b52f806a8bbe0",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "ecma-262-1",
+      "title": "ECMAScript Language Specification",
+      "version": "ECMA-262, 1st edition, June 1997",
+      "authority": "Ecma International",
+      "authorityRecordUrl": "https://ecma-international.org/wp-content/uploads/ECMA-262_1st_edition_june_1997.pdf",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "ecma-262-first-edition-pdf",
+          "sourceUrl": "https://ecma-international.org/wp-content/uploads/ECMA-262_1st_edition_june_1997.pdf",
+          "mediaType": "application/pdf",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/ecma/ecma-262-1.pdf",
+          "bytes": 326871,
+          "sha256": "cccbe1a1f1a653ddc864ab396987a4fba288acbdd06b1a4bab49fe61ff9a73fc",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "ieee-754-1985",
+      "title": "IEEE Standard for Binary Floating-Point Arithmetic",
+      "version": "ANSI/IEEE Std 754-1985",
+      "authority": "IEEE",
+      "authorityRecordUrl": "https://standards.ieee.org/ieee/754/993/",
+      "acquisitionState": "metadata-only-licensed-payload",
+      "note": "The historical IEEE standard payload is not publicly available from the authority page.",
+      "artifacts": []
+    },
+    {
+      "dependencyId": "iso-10646-1-1993",
+      "title": "Universal Multiple-Octet Coded Character Set (UCS), Part 1",
+      "version": "ISO/IEC 10646-1:1993",
+      "authority": "ISO",
+      "authorityRecordUrl": "https://www.iso.org/standard/18741.html",
+      "acquisitionState": "metadata-only-licensed-payload",
+      "note": "The historical ISO standard payload requires licensed standards access.",
+      "artifacts": []
+    },
+    {
+      "dependencyId": "iso-8879-1986",
+      "title": "Information processing — Text and office systems — Standard Generalized Markup Language (SGML)",
+      "version": "ISO 8879:1986",
+      "authority": "ISO",
+      "authorityRecordUrl": "https://www.iso.org/standard/16387.html",
+      "acquisitionState": "metadata-only-licensed-payload",
+      "note": "The historical ISO standard payload requires licensed standards access.",
+      "artifacts": []
+    },
+    {
+      "dependencyId": "iso-tr-8509-1987",
+      "title": "Open Systems Interconnection — Service conventions",
+      "version": "ISO/TR 8509:1987",
+      "authority": "ISO",
+      "authorityRecordUrl": "https://www.iso.org/standard/15732.html",
+      "acquisitionState": "metadata-only-licensed-payload",
+      "note": "The historical ISO technical-report payload requires licensed standards access.",
+      "artifacts": []
+    },
+    {
+      "dependencyId": "iana-character-sets",
+      "title": "Character Sets registry",
+      "version": "IANA MIBenum registry as cited by WBXML 1.3",
+      "authority": "IANA",
+      "authorityRecordUrl": "https://www.iana.org/assignments/character-sets/character-sets.xhtml",
+      "acquisitionState": "verified-private-partial-artifact",
+      "note": "The current registry is preserved for research, but the WBXML-era historical registry snapshot remains open.",
+      "artifacts": [
+        {
+          "id": "iana-character-sets-current-xml",
+          "sourceUrl": "https://www.iana.org/assignments/character-sets/character-sets.xml",
+          "mediaType": "application/xml",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/iana/character-sets.xml",
+          "bytes": 110797,
+          "sha256": "d3741a07a6eaa4451f8878af5cfc92289480ae42f448567a3163420cdcde00e9",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "unicode-2.0.0",
+      "title": "The Unicode Standard, Version 2.0",
+      "version": "Unicode 2.0.0, July 1996",
+      "authority": "Unicode Consortium",
+      "authorityRecordUrl": "https://www.unicode.org/versions/components-2.0.0.html",
+      "acquisitionState": "verified-private-partial-artifact",
+      "note": "The paper Unicode 2.0 standard is not online; the official component catalog and versioned UCD files are preserved.",
+      "artifacts": [
+        {
+          "id": "unicode-2.0.0-components",
+          "sourceUrl": "https://www.unicode.org/versions/components-2.0.0.html",
+          "mediaType": "text/html",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/components-2.0.0.html",
+          "bytes": 8532,
+          "sha256": "76fd0173af45b78b94e439bd29f7af0aeb777f8f03ec993063b7cfcf2226d6ee",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-unicodedata-2.0.14",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/UnicodeData-2.0.14.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/UnicodeData-2.0.14.txt",
+          "bytes": 444408,
+          "sha256": "fdb15931fefb25d34546c575c6507732a4ac48b4b4148510f46ee0161a84c336",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-readme-2.0.14",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/ReadMe-2.0.14.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/ReadMe-2.0.14.txt",
+          "bytes": 12831,
+          "sha256": "ec14d0bf4fadc0db4d9575949c2c3c75d11feb275f8d182a4d11a51eca726afe",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-arabicshaping-1",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/ArabicShaping-1.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/ArabicShaping-1.txt",
+          "bytes": 4177,
+          "sha256": "543e80014c58d001277092de38edf47d75db04f54711a02331f134ab252b6cfa",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-blocks-1",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/Blocks-1.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/Blocks-1.txt",
+          "bytes": 1989,
+          "sha256": "91b0d41a60af658a73e277f108d3f4959a8ec3f3983654b24c00db3a4e146877",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-jamo-1",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/Jamo-1.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/Jamo-1.txt",
+          "bytes": 2390,
+          "sha256": "30b19f31a99bf2ca2bb38bdb8c54ef43fd3db7809fac68dfa20d3909feb8ad81",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-unihan-1",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/Unihan-1.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/Unihan-1.txt",
+          "bytes": 8283008,
+          "sha256": "2e5df6e81652cc4d8e618be6a8f8f9b86ccb43784fdf9746484b12f1a3d749fb",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-props-2.0.14",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/Props-2.0.14.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/Props-2.0.14.txt",
+          "bytes": 8274,
+          "sha256": "5b5b9d6e7985defa597329f389802d29d1e1213861afe530ca5ed2da62775e2e",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-proplist-2.0.14",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/PropList-2.0.14.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/PropList-2.0.14.txt",
+          "bytes": 35336,
+          "sha256": "b23b98764b7e3e6eef67c161cd4b247dc1e5bcea3184598cdfc8d6cf83a83e23",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-index-1",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/Index-1.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/Index-1.txt",
+          "bytes": 78441,
+          "sha256": "69042633b56ac6193fac7bd3669fa0753d915fedc0c20f83830e0f46f544d2d9",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "unicode-nameslist-1",
+          "sourceUrl": "https://www.unicode.org/Public/2.0-Update/NamesList-1.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/NamesList-1.txt",
+          "bytes": 357667,
+          "sha256": "91f206273602a1241fb31fc351030b703fc68826c1d02c9f588d3bfb493a0ce6",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3345 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "sourceManifest": "spec-processing/source-manifests/wap-1.2.1-release.json",
+  "processedOn": "2026-07-23",
+  "recordedOn": "2026-07-24",
+  "status": "research-ingestion-complete-promotion-pending",
+  "processing": {
+    "pdfVerification": "sha256-and-byte-size-against-release-manifest",
+    "pageInspectionTool": "pdfinfo",
+    "textExtractionTool": "pdftotext",
+    "textExtractionToolVersion": "26.02.0",
+    "extractionCommandShape": "pdftotext <release-member.pdf> <release-member.txt>",
+    "researchCacheCommitted": false,
+    "researchCacheLocationRecorded": false
+  },
+  "policy": {
+    "repositoryMode": "metadata-only",
+    "recoveredBinaryPromotion": "requires-explicit-redistribution-approval",
+    "parsedDerivativePromotion": "requires-explicit-redistribution-approval",
+    "cacheRefsAreLogicalIdentifiers": true,
+    "note": "This ledger proves private research ingestion. It does not authorize or claim public redistribution of recovered PDFs or parsed text."
+  },
+  "summary": {
+    "memberCount": 97,
+    "verifiedPdfCount": 97,
+    "extractedTextCount": 97,
+    "nonEmptyTextCount": 97,
+    "pdfBytesTotal": 9988119,
+    "textBytesTotal": 5703023,
+    "pageCountTotal": 2270,
+    "textLineCountTotal": 102810,
+    "bySourceClass": {
+      "core-mandatory": 29,
+      "core-optional": 7,
+      "dependency": 6,
+      "historical": 2,
+      "profile-optional": 53
+    },
+    "byPromotionState": {
+      "already-canonical-exact": 21,
+      "blocked-redistribution-review": 76
+    }
+  },
+  "members": [
+    {
+      "documentId": "OMA-WAP-201_003-WTP-SIN",
+      "filename": "OMA-WAP-201_003-WTP-SIN-20020904-a.PDF",
+      "family": "wtp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 32896,
+        "sha256": "d5e962f4ffd3f2fd70703ddbad1ea94f22d2f69956a8185d34e41a6502b52adc"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/OMA-WAP-201_003-WTP-SIN-20020904-a.PDF",
+        "bytes": 32896,
+        "sha256": "d5e962f4ffd3f2fd70703ddbad1ea94f22d2f69956a8185d34e41a6502b52adc",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/OMA-WAP-201_003-WTP-SIN-20020904-a.txt",
+        "filename": "OMA-WAP-201_003-WTP-SIN-20020904-a.txt",
+        "bytes": 7798,
+        "sha256": "0ebebf8360f4dd5d05fd5619606b26ba2fb9149fa9b744490586566ab42a286c",
+        "lineCount": 149
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-100-WAPArch",
+      "filename": "WAP-100-WAPArch-19980430-a.pdf",
+      "family": "architecture",
+      "sourceClass": "dependency",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 123506,
+        "sha256": "22b07da0456889db0dea58d06b0b8d59165421f49a1cdf336aea9abdd6420712"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-100-WAPArch-19980430-a.pdf",
+        "bytes": 123506,
+        "sha256": "22b07da0456889db0dea58d06b0b8d59165421f49a1cdf336aea9abdd6420712",
+        "pageCount": 20
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-100-WAPArch-19980430-a.txt",
+        "filename": "WAP-100-WAPArch-19980430-a.txt",
+        "bytes": 50268,
+        "sha256": "d3023015f9409301ece11b61a00487e97585b8647ad8a44a17e9cfa5a45191db",
+        "lineCount": 830
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-120-WAPCachingMod",
+      "filename": "WAP-120-WAPCachingMod-20010413-a.pdf",
+      "family": "caching",
+      "sourceClass": "dependency",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 198194,
+        "sha256": "8aeacd0a36676d2b22c7ebee211f327049b712ca1ba0dc20faac7af24a9a17ee"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-120-WAPCachingMod-20010413-a.pdf",
+        "bytes": 198194,
+        "sha256": "8aeacd0a36676d2b22c7ebee211f327049b712ca1ba0dc20faac7af24a9a17ee",
+        "pageCount": 13
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-120-WAPCachingMod-20010413-a.txt",
+        "filename": "WAP-120-WAPCachingMod-20010413-a.txt",
+        "bytes": 25438,
+        "sha256": "a87a9b3fd7f8b0af45a0c80fb5e525ef3f01f056b9292ed28dea8b1f4de47ab9",
+        "lineCount": 440
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "canonical-content-differs",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-145_101-PushMessage",
+      "filename": "WAP-145_101-PushMessage-20010614-a.pdf",
+      "family": "push-message",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 29839,
+        "sha256": "cf936b53eecb0a1aaca9bcd488dc4c10bc53b9291bd9aab60356c9bff034ad8d"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-145_101-PushMessage-20010614-a.pdf",
+        "bytes": 29839,
+        "sha256": "cf936b53eecb0a1aaca9bcd488dc4c10bc53b9291bd9aab60356c9bff034ad8d",
+        "pageCount": 6
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-145_101-PushMessage-20010614-a.txt",
+        "filename": "WAP-145_101-PushMessage-20010614-a.txt",
+        "bytes": 9625,
+        "sha256": "626cb775bff60ff65ded972039efd1dba91036a20550947f614e081317fe31d0",
+        "lineCount": 196
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-145-PushMessage",
+      "filename": "WAP-145-PushMessage-19990816-a.pdf",
+      "family": "push-message",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 56410,
+        "sha256": "6bc284c1211673ec60a3872f1db0c00dc2730fad093dd9b58a23e6c838b6f07f"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-145-PushMessage-19990816-a.pdf",
+        "bytes": 56410,
+        "sha256": "6bc284c1211673ec60a3872f1db0c00dc2730fad093dd9b58a23e6c838b6f07f",
+        "pageCount": 13
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-145-PushMessage-19990816-a.txt",
+        "filename": "WAP-145-PushMessage-19990816-a.txt",
+        "bytes": 28371,
+        "sha256": "5cac0e4dc119f0eb1fbb1ba644ad5d25204522dca64c39440c576bb4dad039d3",
+        "lineCount": 533
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-151_100-PPGService",
+      "filename": "WAP-151_100-PPGService-20000218-a.pdf",
+      "family": "push-proxy-gateway",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 13964,
+        "sha256": "3ea7dbf4bc3f55b84cc3fe8f7455931fb477b58d18da33224eaa16f4207dbb3e"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-151_100-PPGService-20000218-a.pdf",
+        "bytes": 13964,
+        "sha256": "3ea7dbf4bc3f55b84cc3fe8f7455931fb477b58d18da33224eaa16f4207dbb3e",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-151_100-PPGService-20000218-a.txt",
+        "filename": "WAP-151_100-PPGService-20000218-a.txt",
+        "bytes": 6172,
+        "sha256": "4483cbea532cf0d39da5b8a34555947c9a684bca151cbf95f5207ca6e9094709",
+        "lineCount": 132
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-151_101-PPGService",
+      "filename": "WAP-151_101-PPGService-20010422-a.pdf",
+      "family": "push-proxy-gateway",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 28646,
+        "sha256": "09d184d0e3debd8dc4db7d43d9cfffb55f201794cb83280fe02a9833b4e47ce9"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-151_101-PPGService-20010422-a.pdf",
+        "bytes": 28646,
+        "sha256": "09d184d0e3debd8dc4db7d43d9cfffb55f201794cb83280fe02a9833b4e47ce9",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-151_101-PPGService-20010422-a.txt",
+        "filename": "WAP-151_101-PPGService-20010422-a.txt",
+        "bytes": 11380,
+        "sha256": "bc3fa3dfe5689bda128df5ed7ec973a38b3255b8dbe9657858160640d4732747",
+        "lineCount": 242
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-151_102-PPGService",
+      "filename": "WAP-151_102-PPGService-20010927-a.pdf",
+      "family": "push-proxy-gateway",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 41270,
+        "sha256": "2c1e0c354e96d6d39a53aaee8dd49d199f485ad391ddb97b7b9d3cc6c40e118e"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-151_102-PPGService-20010927-a.pdf",
+        "bytes": 41270,
+        "sha256": "2c1e0c354e96d6d39a53aaee8dd49d199f485ad391ddb97b7b9d3cc6c40e118e",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-151_102-PPGService-20010927-a.txt",
+        "filename": "WAP-151_102-PPGService-20010927-a.txt",
+        "bytes": 12986,
+        "sha256": "bdeb271e81e7cc6e7b95789a24c5da5066aed7c2f9c8f05470fbcfe21fc2669f",
+        "lineCount": 262
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-151-PPGService",
+      "filename": "WAP-151-PPGService-19990816-a.pdf",
+      "family": "push-proxy-gateway",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 93706,
+        "sha256": "c8c9254340745fedf70ec497489e7e5dcf7658d1a5d822b0079e4c07725ff837"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-151-PPGService-19990816-a.pdf",
+        "bytes": 93706,
+        "sha256": "c8c9254340745fedf70ec497489e7e5dcf7658d1a5d822b0079e4c07725ff837",
+        "pageCount": 20
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-151-PPGService-19990816-a.txt",
+        "filename": "WAP-151-PPGService-19990816-a.txt",
+        "bytes": 52021,
+        "sha256": "5ccdfd72a699d28194ae88c977057ab538ba4925e76d6f1994019b60a575d350",
+        "lineCount": 888
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-159-WDPWCMPAdapt",
+      "filename": "WAP-159-WDPWCMPAdapt-20010713-a.pdf",
+      "family": "wdp-wcmp-adaptation",
+      "sourceClass": "dependency",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 94211,
+        "sha256": "dbce0885ef85163751679bfb4fe7e28df3e95cbd45a713babe597a44a18ad7a0"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-159-WDPWCMPAdapt-20010713-a.pdf",
+        "bytes": 94211,
+        "sha256": "dbce0885ef85163751679bfb4fe7e28df3e95cbd45a713babe597a44a18ad7a0",
+        "pageCount": 22
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-159-WDPWCMPAdapt-20010713-a.txt",
+        "filename": "WAP-159-WDPWCMPAdapt-20010713-a.txt",
+        "bytes": 71452,
+        "sha256": "e94312ad43caab9be32ec53122ba866a89635813a3aa41dd36acf719c586e200",
+        "lineCount": 1042
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-161_101-WMLScriptCrypto",
+      "filename": "WAP-161_101-WMLScriptCrypto-20010730-a.pdf",
+      "family": "wmlscript-crypto",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 32515,
+        "sha256": "894d3efd1859887160e908fa5459fbc3f44a3b56c9dba57783429a5223b8d0be"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-161_101-WMLScriptCrypto-20010730-a.pdf",
+        "bytes": 32515,
+        "sha256": "894d3efd1859887160e908fa5459fbc3f44a3b56c9dba57783429a5223b8d0be",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-161_101-WMLScriptCrypto-20010730-a.txt",
+        "filename": "WAP-161_101-WMLScriptCrypto-20010730-a.txt",
+        "bytes": 11203,
+        "sha256": "24ebd4d3050c267e0109b11a447fde502278c925ac7ecf5a8f7f6c62470548bd",
+        "lineCount": 224
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-161-WMLScriptCrypto",
+      "filename": "WAP-161-WMLScriptCrypto-20010620-a.pdf",
+      "family": "wmlscript-crypto",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 50603,
+        "sha256": "cb22101c9237a57022805c1ea6c1aa4e349e227bcbc634fb5e77249736458455"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-161-WMLScriptCrypto-20010620-a.pdf",
+        "bytes": 50603,
+        "sha256": "cb22101c9237a57022805c1ea6c1aa4e349e227bcbc634fb5e77249736458455",
+        "pageCount": 23
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-161-WMLScriptCrypto-20010620-a.txt",
+        "filename": "WAP-161-WMLScriptCrypto-20010620-a.txt",
+        "bytes": 49012,
+        "sha256": "7e4f4209ac59095f93993fc785e69500c9ac19d9744ef6430b472795097d17e1",
+        "lineCount": 903
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "canonical-content-differs",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-164_100-PAP",
+      "filename": "WAP-164_100-PAP-20000218-a.pdf",
+      "family": "push-access-protocol",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 42325,
+        "sha256": "9a90d8b6e8c3740cb7f34c77bd3c3bd067b26a627cdbd45788022d5ee5571463"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-164_100-PAP-20000218-a.pdf",
+        "bytes": 42325,
+        "sha256": "9a90d8b6e8c3740cb7f34c77bd3c3bd067b26a627cdbd45788022d5ee5571463",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-164_100-PAP-20000218-a.txt",
+        "filename": "WAP-164_100-PAP-20000218-a.txt",
+        "bytes": 16804,
+        "sha256": "ab2dcc8a17b03b61732c2a0f53c0f869d602174b90baaee2dfd1dd031108fbb3",
+        "lineCount": 331
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-164_101-PAP",
+      "filename": "WAP-164_101-PAP-20010420-a.pdf",
+      "family": "push-access-protocol",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 27164,
+        "sha256": "93a98822e3e0fbee172aab9f998469024b239cac9f5f1497dd6ff11531d766e8"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-164_101-PAP-20010420-a.pdf",
+        "bytes": 27164,
+        "sha256": "93a98822e3e0fbee172aab9f998469024b239cac9f5f1497dd6ff11531d766e8",
+        "pageCount": 6
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-164_101-PAP-20010420-a.txt",
+        "filename": "WAP-164_101-PAP-20010420-a.txt",
+        "bytes": 10873,
+        "sha256": "b3598b267ec5d64e3b5dc9a812a867cb423b3a9b4ca2ed712ddd051080872cb6",
+        "lineCount": 211
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-164_102-PAP",
+      "filename": "WAP-164_102-PAP-20010731-a.pdf",
+      "family": "push-access-protocol",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 40446,
+        "sha256": "7fdd3c208174c5990afe58874973e8b435b2f37beb33c9d63193dd3f41cb5736"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-164_102-PAP-20010731-a.pdf",
+        "bytes": 40446,
+        "sha256": "7fdd3c208174c5990afe58874973e8b435b2f37beb33c9d63193dd3f41cb5736",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-164_102-PAP-20010731-a.txt",
+        "filename": "WAP-164_102-PAP-20010731-a.txt",
+        "bytes": 13816,
+        "sha256": "f24a6406bc6e038e79bb142d1ab95d7680eb42f717b80fcf431c5d39028f433c",
+        "lineCount": 266
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-164-PAP",
+      "filename": "WAP-164-PAP-19991108-a.pdf",
+      "family": "push-access-protocol",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 231000,
+        "sha256": "e86d1bf47ad52bc3309f00d586feb792f36ad720b37997a42b523b019e4e27de"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-164-PAP-19991108-a.pdf",
+        "bytes": 231000,
+        "sha256": "e86d1bf47ad52bc3309f00d586feb792f36ad720b37997a42b523b019e4e27de",
+        "pageCount": 44
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-164-PAP-19991108-a.txt",
+        "filename": "WAP-164-PAP-19991108-a.txt",
+        "bytes": 110070,
+        "sha256": "8c5427ae0c9d36417e6443dcc2043ee77554087a5c47047d77af0b6fa2551f26",
+        "lineCount": 2024
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-165-PushArchOverview",
+      "filename": "WAP-165-PushArchOverview-19991108-a.pdf",
+      "family": "push-architecture",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 212297,
+        "sha256": "f3e4c7d41555f1102ee633b379e30affeee678eada982d4cb8ad3689cabcbbc5"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-165-PushArchOverview-19991108-a.pdf",
+        "bytes": 212297,
+        "sha256": "f3e4c7d41555f1102ee633b379e30affeee678eada982d4cb8ad3689cabcbbc5",
+        "pageCount": 26
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-165-PushArchOverview-19991108-a.txt",
+        "filename": "WAP-165-PushArchOverview-19991108-a.txt",
+        "bytes": 58626,
+        "sha256": "16ce171c38715cd8eeef6a318eee23c040fce9ca030f66df129c9985567e1e89",
+        "lineCount": 902
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-167_103-ServiceInd",
+      "filename": "WAP-167_103-ServiceInd-20010926-a.pdf",
+      "family": "service-indication",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 40952,
+        "sha256": "f365fb52fedb513e387a6ef4c9f5a16ae5ba70b5280b11fc4537671bcc789c7e"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-167_103-ServiceInd-20010926-a.pdf",
+        "bytes": 40952,
+        "sha256": "f365fb52fedb513e387a6ef4c9f5a16ae5ba70b5280b11fc4537671bcc789c7e",
+        "pageCount": 8
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-167_103-ServiceInd-20010926-a.txt",
+        "filename": "WAP-167_103-ServiceInd-20010926-a.txt",
+        "bytes": 15242,
+        "sha256": "1e6dbffad9a535c7b1f25094667c14421edad077618a46b4dd95c3d70c9fdda3",
+        "lineCount": 284
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-167-ServiceInd",
+      "filename": "WAP-167-ServiceInd-20010731-a.pdf",
+      "family": "service-indication",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 112765,
+        "sha256": "2addf05e776101fb5875b3b216e374125deba9b2fbe883578567394f57669f0d"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-167-ServiceInd-20010731-a.pdf",
+        "bytes": 112765,
+        "sha256": "2addf05e776101fb5875b3b216e374125deba9b2fbe883578567394f57669f0d",
+        "pageCount": 28
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-167-ServiceInd-20010731-a.txt",
+        "filename": "WAP-167-ServiceInd-20010731-a.txt",
+        "bytes": 72149,
+        "sha256": "482cf531ca43051cb91627e6ddaf03cdf7d7263715e4f8f2e0817d1dc268903b",
+        "lineCount": 1284
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-168_103-ServiceLoad",
+      "filename": "WAP-168_103-ServiceLoad-20010816-a.pdf",
+      "family": "service-loading",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 29452,
+        "sha256": "eb832f0290514113c3058de11598a435de17ace007b30f4b6df821fffd3e0440"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-168_103-ServiceLoad-20010816-a.pdf",
+        "bytes": 29452,
+        "sha256": "eb832f0290514113c3058de11598a435de17ace007b30f4b6df821fffd3e0440",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-168_103-ServiceLoad-20010816-a.txt",
+        "filename": "WAP-168_103-ServiceLoad-20010816-a.txt",
+        "bytes": 7475,
+        "sha256": "2eecc8c492d4ba2eff75d14c84ece7d560760ad8884cc59da26fc3aaf05815cd",
+        "lineCount": 133
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-168-ServiceLoad",
+      "filename": "WAP-168-ServiceLoad-20010731-a.pdf",
+      "family": "service-loading",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 83537,
+        "sha256": "5e5d5566f3e46507a367a7a6748f4bacac6f63be6dca9c2b711ba1213973f42c"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-168-ServiceLoad-20010731-a.pdf",
+        "bytes": 83537,
+        "sha256": "5e5d5566f3e46507a367a7a6748f4bacac6f63be6dca9c2b711ba1213973f42c",
+        "pageCount": 18
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-168-ServiceLoad-20010731-a.txt",
+        "filename": "WAP-168-ServiceLoad-20010731-a.txt",
+        "bytes": 44460,
+        "sha256": "bdfe86287c0f1e4fa2cd53951bb9cc78aa8ff964ceee54c6ba3460f2eeedccfa",
+        "lineCount": 811
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-169_101-WTA",
+      "filename": "WAP-169_101-WTA-20001107-a.pdf",
+      "family": "wta",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 40913,
+        "sha256": "f2a06a06bb5e93dc97663453546a1321f6a96b1dde3957c9fcf9a5803420f98a"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-169_101-WTA-20001107-a.pdf",
+        "bytes": 40913,
+        "sha256": "f2a06a06bb5e93dc97663453546a1321f6a96b1dde3957c9fcf9a5803420f98a",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-169_101-WTA-20001107-a.txt",
+        "filename": "WAP-169_101-WTA-20001107-a.txt",
+        "bytes": 17609,
+        "sha256": "db579deca01ac954307a6545bdd54fb27a01ef44a63fe52d93614a45e2dcaecb",
+        "lineCount": 317
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-169_102-WTA",
+      "filename": "WAP-169_102-WTA-20010206-a.pdf",
+      "family": "wta",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 67905,
+        "sha256": "7d540740792ccadf1d5eb0f95480206a1e41811642ea244d3d195438d078152c"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-169_102-WTA-20010206-a.pdf",
+        "bytes": 67905,
+        "sha256": "7d540740792ccadf1d5eb0f95480206a1e41811642ea244d3d195438d078152c",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-169_102-WTA-20010206-a.txt",
+        "filename": "WAP-169_102-WTA-20010206-a.txt",
+        "bytes": 29309,
+        "sha256": "43b6b95e5a83b242d2743693f0f9bb63eb0acad621b82887afc3f603dddd9a8b",
+        "lineCount": 616
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-169_104-WTA",
+      "filename": "WAP-169_104-WTA-20010508-a.pdf",
+      "family": "wta",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 159914,
+        "sha256": "c5d909eda81dc53192362af4e598ff6ae8ef51f1e15c710dfe59ed0b0508f600"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-169_104-WTA-20010508-a.pdf",
+        "bytes": 159914,
+        "sha256": "c5d909eda81dc53192362af4e598ff6ae8ef51f1e15c710dfe59ed0b0508f600",
+        "pageCount": 20
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-169_104-WTA-20010508-a.txt",
+        "filename": "WAP-169_104-WTA-20010508-a.txt",
+        "bytes": 56830,
+        "sha256": "be6bbad5b11f24b0e79f78649c45cdf7b4a0123c04721eb7d3b4c502e7c081d3",
+        "lineCount": 1002
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-169_105-WTA",
+      "filename": "WAP-169_105-WTA-20010519-a.pdf",
+      "family": "wta",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 54320,
+        "sha256": "32fec298f2ed2a46c6b4ac049e2ba4c547ddf3cb7861b9b9f3d90334830252c3"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-169_105-WTA-20010519-a.pdf",
+        "bytes": 54320,
+        "sha256": "32fec298f2ed2a46c6b4ac049e2ba4c547ddf3cb7861b9b9f3d90334830252c3",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-169_105-WTA-20010519-a.txt",
+        "filename": "WAP-169_105-WTA-20010519-a.txt",
+        "bytes": 16167,
+        "sha256": "616664f0a8fbf09527610c11a4c8c50ee39842e956e52f222009d03ef6e1020e",
+        "lineCount": 309
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-169-WTA",
+      "filename": "WAP-169-WTA-20000707-a.pdf",
+      "family": "wta",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 306094,
+        "sha256": "12ff66ca7a6c15ea6db7965ab951f8ba8ff1b5e6bddb70edc61f6b755375866b"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-169-WTA-20000707-a.pdf",
+        "bytes": 306094,
+        "sha256": "12ff66ca7a6c15ea6db7965ab951f8ba8ff1b5e6bddb70edc61f6b755375866b",
+        "pageCount": 49
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-169-WTA-20000707-a.txt",
+        "filename": "WAP-169-WTA-20000707-a.txt",
+        "bytes": 129333,
+        "sha256": "2ed0379ca4d7537532505749be77c9ee556648f3b5f784356ec56c4e4ca07214",
+        "lineCount": 2282
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-170_101-WTAI",
+      "filename": "WAP-170_101-WTAI-20010206-a.pdf",
+      "family": "wtai",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 65748,
+        "sha256": "ef51092bd4e206d637957b99d644ae623c8b8afca5179c27a20caec80a0a2134"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-170_101-WTAI-20010206-a.pdf",
+        "bytes": 65748,
+        "sha256": "ef51092bd4e206d637957b99d644ae623c8b8afca5179c27a20caec80a0a2134",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-170_101-WTAI-20010206-a.txt",
+        "filename": "WAP-170_101-WTAI-20010206-a.txt",
+        "bytes": 25708,
+        "sha256": "20dff8cd82956ab9e91c550882f4a10cce98afe77eb7aace588ed53158ff617a",
+        "lineCount": 578
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-170_102-WTAI",
+      "filename": "WAP-170_102-WTAI-20010226-a.pdf",
+      "family": "wtai",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 64100,
+        "sha256": "7dba0d60c87ce98c0efd813967c94706d55d795c6cf6ae815524d47a7a0b90fe"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-170_102-WTAI-20010226-a.pdf",
+        "bytes": 64100,
+        "sha256": "7dba0d60c87ce98c0efd813967c94706d55d795c6cf6ae815524d47a7a0b90fe",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-170_102-WTAI-20010226-a.txt",
+        "filename": "WAP-170_102-WTAI-20010226-a.txt",
+        "bytes": 32736,
+        "sha256": "d23b5fc4e4bec6d2f46c028a88991dfdd49f3ae0c115181a8476677a6bb66033",
+        "lineCount": 574
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-170-WTAI",
+      "filename": "WAP-170-WTAI-20000707-a.pdf",
+      "family": "wtai",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 239523,
+        "sha256": "edb994ff45f70e095898f19661fe8de724b456ce629cd4fc4a170cade115dcb0"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-170-WTAI-20000707-a.pdf",
+        "bytes": 239523,
+        "sha256": "edb994ff45f70e095898f19661fe8de724b456ce629cd4fc4a170cade115dcb0",
+        "pageCount": 54
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-170-WTAI-20000707-a.txt",
+        "filename": "WAP-170-WTAI-20000707-a.txt",
+        "bytes": 149803,
+        "sha256": "39f4a9eb46cd51d27cdba202bf8fb47fd57f68a6b43fe97710a8da874fdd57da",
+        "lineCount": 2431
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-171_101-WTAIGSM",
+      "filename": "WAP-171_101-WTAIGSM-20010206-a.pdf",
+      "family": "wtai-gsm",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 28389,
+        "sha256": "a9d4ae9aa5d390b251d08dba3e22a41a8f920fb23c0390ee11e64668246dc99b"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-171_101-WTAIGSM-20010206-a.pdf",
+        "bytes": 28389,
+        "sha256": "a9d4ae9aa5d390b251d08dba3e22a41a8f920fb23c0390ee11e64668246dc99b",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-171_101-WTAIGSM-20010206-a.txt",
+        "filename": "WAP-171_101-WTAIGSM-20010206-a.txt",
+        "bytes": 9902,
+        "sha256": "7a7023c455072dced3f99cd6511c3635c9bd562baab1c2ed351ee2773762c897",
+        "lineCount": 212
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-171_102-WTAIGSM",
+      "filename": "WAP-171_102-WTAIGSM-20010213-a.pdf",
+      "family": "wtai-gsm",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 21688,
+        "sha256": "02c8f8e8e16a0bf32eed1ec1cd983808a9ec244b624c4926845b0bb3ba0042d4"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-171_102-WTAIGSM-20010213-a.pdf",
+        "bytes": 21688,
+        "sha256": "02c8f8e8e16a0bf32eed1ec1cd983808a9ec244b624c4926845b0bb3ba0042d4",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-171_102-WTAIGSM-20010213-a.txt",
+        "filename": "WAP-171_102-WTAIGSM-20010213-a.txt",
+        "bytes": 7693,
+        "sha256": "7cddc3520e6098947a7238adb7f8f0e9e0bfa49f858b58d4a6a0dba15e61f52a",
+        "lineCount": 147
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-171_103-WTAIGSM",
+      "filename": "WAP-171_103-WTAIGSM-20010516-a.pdf",
+      "family": "wtai-gsm",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 52452,
+        "sha256": "dbf2840b28f620a819831718201221949bd79b6a873c74096b4fd80d4fb8b922"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-171_103-WTAIGSM-20010516-a.pdf",
+        "bytes": 52452,
+        "sha256": "dbf2840b28f620a819831718201221949bd79b6a873c74096b4fd80d4fb8b922",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-171_103-WTAIGSM-20010516-a.txt",
+        "filename": "WAP-171_103-WTAIGSM-20010516-a.txt",
+        "bytes": 15719,
+        "sha256": "e9edf4a3e20b24ee1558d078554c3f0f0a74f7e58f33a3073174be0aaf01bb76",
+        "lineCount": 265
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-171-WTAIGSM",
+      "filename": "WAP-171-WTAIGSM-20000707-a.pdf",
+      "family": "wtai-gsm",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 90336,
+        "sha256": "b4c609b10f90757f64b19c437ba7750b3fa97ac2139a14813e84eeba56fc01ef"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-171-WTAIGSM-20000707-a.pdf",
+        "bytes": 90336,
+        "sha256": "b4c609b10f90757f64b19c437ba7750b3fa97ac2139a14813e84eeba56fc01ef",
+        "pageCount": 22
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-171-WTAIGSM-20000707-a.txt",
+        "filename": "WAP-171-WTAIGSM-20000707-a.txt",
+        "bytes": 56810,
+        "sha256": "52cabbc1e171fb9ac659f784aacdca8967157443c3b2c1445ed448114d74f15a",
+        "lineCount": 919
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-172_101-WTAIIS136",
+      "filename": "WAP-172_101-WTAIIS136-20010206-a.pdf",
+      "family": "wtai-is136",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 23169,
+        "sha256": "8859f4747b1bc73846ccedd1294b8c9b281b0fa590635a06a02cd59f5d8b62e8"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-172_101-WTAIIS136-20010206-a.pdf",
+        "bytes": 23169,
+        "sha256": "8859f4747b1bc73846ccedd1294b8c9b281b0fa590635a06a02cd59f5d8b62e8",
+        "pageCount": 6
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-172_101-WTAIIS136-20010206-a.txt",
+        "filename": "WAP-172_101-WTAIIS136-20010206-a.txt",
+        "bytes": 8142,
+        "sha256": "177d944851fb680275cbb06c827cb017f47ef6ab1e31349fcd804850422ebbfe",
+        "lineCount": 169
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-172-WTAIIS136",
+      "filename": "WAP-172-WTAIIS136-20000707-a.pdf",
+      "family": "wtai-is136",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 38425,
+        "sha256": "19734ee2645cdc87eae56d46f5ee3a2e542df7e178f950157d46470cf0ce8df4"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-172-WTAIIS136-20000707-a.pdf",
+        "bytes": 38425,
+        "sha256": "19734ee2645cdc87eae56d46f5ee3a2e542df7e178f950157d46470cf0ce8df4",
+        "pageCount": 11
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-172-WTAIIS136-20000707-a.txt",
+        "filename": "WAP-172-WTAIIS136-20000707-a.txt",
+        "bytes": 18532,
+        "sha256": "576f8095544dcfe1198fc26e1de2eb3c3477f9fb0b12c8a139578a03c5abc222",
+        "lineCount": 339
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-173_101-WTAIPDC",
+      "filename": "WAP-173_101-WTAIPDC-20010206-a.pdf",
+      "family": "wtai-pdc",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 27324,
+        "sha256": "624ce5cad48fcbeb7d21f2ced0014fba29cfa487d5965a8bd334f5a411db6f5e"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-173_101-WTAIPDC-20010206-a.pdf",
+        "bytes": 27324,
+        "sha256": "624ce5cad48fcbeb7d21f2ced0014fba29cfa487d5965a8bd334f5a411db6f5e",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-173_101-WTAIPDC-20010206-a.txt",
+        "filename": "WAP-173_101-WTAIPDC-20010206-a.txt",
+        "bytes": 9387,
+        "sha256": "6d2b0bdbe8abaa4c6abe721af5179be2a29ed142b1914aa8f1b655b5ccdda597",
+        "lineCount": 198
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-173_102-WTAIPDC",
+      "filename": "WAP-173_102-WTAIPDC-20010507-a.pdf",
+      "family": "wtai-pdc",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 22390,
+        "sha256": "99bfec4116b2e36b580861597089633fc2c5505fe6d7cf6ecb81ad87ea020ca3"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-173_102-WTAIPDC-20010507-a.pdf",
+        "bytes": 22390,
+        "sha256": "99bfec4116b2e36b580861597089633fc2c5505fe6d7cf6ecb81ad87ea020ca3",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-173_102-WTAIPDC-20010507-a.txt",
+        "filename": "WAP-173_102-WTAIPDC-20010507-a.txt",
+        "bytes": 8767,
+        "sha256": "2104cb569e786976f2871442aa36b7f08d97d34dbec6c0992eb9839201e05056",
+        "lineCount": 161
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-173-WTAIPDC",
+      "filename": "WAP-173-WTAIPDC-20000728-a.pdf",
+      "family": "wtai-pdc",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 68795,
+        "sha256": "c148beba4b7a5098f8b146f7b40f2511838ba232d2749b20daadd75c3e416b6c"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-173-WTAIPDC-20000728-a.pdf",
+        "bytes": 68795,
+        "sha256": "c148beba4b7a5098f8b146f7b40f2511838ba232d2749b20daadd75c3e416b6c",
+        "pageCount": 19
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-173-WTAIPDC-20000728-a.txt",
+        "filename": "WAP-173-WTAIPDC-20000728-a.txt",
+        "bytes": 42082,
+        "sha256": "57c8ada8701f5e51322979a6224e404309e41806989865684291d61c3341b675",
+        "lineCount": 731
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-174_003-UAPROF",
+      "filename": "WAP-174_003-UAPROF-20010208-a.pdf",
+      "family": "user-agent-profile",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 52748,
+        "sha256": "3655e4ce55ffc3732c2385e5ccb7d2354005ef0004bb0d646146a5f84f181578"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-174_003-UAPROF-20010208-a.pdf",
+        "bytes": 52748,
+        "sha256": "3655e4ce55ffc3732c2385e5ccb7d2354005ef0004bb0d646146a5f84f181578",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-174_003-UAPROF-20010208-a.txt",
+        "filename": "WAP-174_003-UAPROF-20010208-a.txt",
+        "bytes": 26690,
+        "sha256": "946a32fc7ed8ffb2d7d26ae777c8b38b4062730cf6e63091ec03998e41c9aa0b",
+        "lineCount": 565
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-174_004-UAPROF",
+      "filename": "WAP-174_004-UAPROF-20010208-a.pdf",
+      "family": "user-agent-profile",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 54250,
+        "sha256": "82b3d4caecb101e7de4a69e6bf7b082299c37c4ede5fd0d7b4899afae96f402d"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-174_004-UAPROF-20010208-a.pdf",
+        "bytes": 54250,
+        "sha256": "82b3d4caecb101e7de4a69e6bf7b082299c37c4ede5fd0d7b4899afae96f402d",
+        "pageCount": 16
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-174_004-UAPROF-20010208-a.txt",
+        "filename": "WAP-174_004-UAPROF-20010208-a.txt",
+        "bytes": 28722,
+        "sha256": "471a60f9b72e2f2b7c60f79010e34cc6e89a92e677a4244bee1df8c5cc31924b",
+        "lineCount": 636
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-174_006-UAPROF",
+      "filename": "WAP-174_006-UAPROF-20011002-a.pdf",
+      "family": "user-agent-profile",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 65607,
+        "sha256": "0d5ca596f0fd387434a8ee0b35f8184177c8259c2323603b2c87552c55c055b1"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-174_006-UAPROF-20011002-a.pdf",
+        "bytes": 65607,
+        "sha256": "0d5ca596f0fd387434a8ee0b35f8184177c8259c2323603b2c87552c55c055b1",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-174_006-UAPROF-20011002-a.txt",
+        "filename": "WAP-174_006-UAPROF-20011002-a.txt",
+        "bytes": 37631,
+        "sha256": "754a3c4b3ec93e9be6bceb6f80892562bfe86f71bab951ac9404864733940e92",
+        "lineCount": 743
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-174_100-UAProf",
+      "filename": "WAP-174_100-UAProf-20000621-a.pdf",
+      "family": "user-agent-profile",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 195527,
+        "sha256": "34e5df65e1a29e7f4bf1f8a05ee1a00cd6f374b5f7e87f3c653a02707616cd2d"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-174_100-UAProf-20000621-a.pdf",
+        "bytes": 195527,
+        "sha256": "34e5df65e1a29e7f4bf1f8a05ee1a00cd6f374b5f7e87f3c653a02707616cd2d",
+        "pageCount": 40
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-174_100-UAProf-20000621-a.txt",
+        "filename": "WAP-174_100-UAProf-20000621-a.txt",
+        "bytes": 107677,
+        "sha256": "f971867513417c26c62656e325aa84455e4be33b64647c02bbf8b76ad9b4b7c8",
+        "lineCount": 2062
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-174-UAProf",
+      "filename": "WAP-174-UAProf-19991110-a.pdf",
+      "family": "user-agent-profile",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 323743,
+        "sha256": "25dcf758e485c38066f0693990d596dd6874bf550a7b82ad42a5ca765f2e3011"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-174-UAProf-19991110-a.pdf",
+        "bytes": 323743,
+        "sha256": "25dcf758e485c38066f0693990d596dd6874bf550a7b82ad42a5ca765f2e3011",
+        "pageCount": 76
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-174-UAProf-19991110-a.txt",
+        "filename": "WAP-174-UAProf-19991110-a.txt",
+        "bytes": 238515,
+        "sha256": "eb3bf1a748f090edbb94949f6940538804684cbe2eb11958a78da63c1e716c9a",
+        "lineCount": 4100
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-175_102-CacheOp",
+      "filename": "WAP-175_102-CacheOp-20010816-a.pdf",
+      "family": "cache-operation",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 29064,
+        "sha256": "0cff9648815c1c2850a831a3770321901c4348d77ec7ecb1f92923bb0185eb6f"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-175_102-CacheOp-20010816-a.pdf",
+        "bytes": 29064,
+        "sha256": "0cff9648815c1c2850a831a3770321901c4348d77ec7ecb1f92923bb0185eb6f",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-175_102-CacheOp-20010816-a.txt",
+        "filename": "WAP-175_102-CacheOp-20010816-a.txt",
+        "bytes": 7269,
+        "sha256": "7c3b25281feb81cd5c562101528689eaaae7236291bd7b2f36ce3387b12500f5",
+        "lineCount": 128
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-175-CacheOp",
+      "filename": "WAP-175-CacheOp-20010731-a.pdf",
+      "family": "cache-operation",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 69563,
+        "sha256": "98b9772ebffda32be714c18aa992c160d7ea5226179b967faffb0c66860d7c00"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-175-CacheOp-20010731-a.pdf",
+        "bytes": 69563,
+        "sha256": "98b9772ebffda32be714c18aa992c160d7ea5226179b967faffb0c66860d7c00",
+        "pageCount": 18
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-175-CacheOp-20010731-a.txt",
+        "filename": "WAP-175-CacheOp-20010731-a.txt",
+        "bytes": 41991,
+        "sha256": "131f47a2cb2440c863a1e1869d31d5a28b75779191237b7806e235818cac81d9",
+        "lineCount": 738
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-188-WAPGenFormats",
+      "filename": "WAP-188-WAPGenFormats-20010710-a.pdf",
+      "family": "general-formats",
+      "sourceClass": "dependency",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 25210,
+        "sha256": "a36aadcd2294fbb363fcd5b141614f8bd5861193c6efe9f2c29e6422ba176810"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-188-WAPGenFormats-20010710-a.pdf",
+        "bytes": 25210,
+        "sha256": "a36aadcd2294fbb363fcd5b141614f8bd5861193c6efe9f2c29e6422ba176810",
+        "pageCount": 11
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-188-WAPGenFormats-20010710-a.txt",
+        "filename": "WAP-188-WAPGenFormats-20010710-a.txt",
+        "bytes": 16441,
+        "sha256": "59161d2ed855d12de64a76f10abc4300b68e67f87632ec017d171af5b36d4ff4",
+        "lineCount": 292
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "canonical-content-differs",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-189_100-PushOTA",
+      "filename": "WAP-189_100-PushOTA-20001211-a.pdf",
+      "family": "push-over-the-air",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 27295,
+        "sha256": "6049c87149a707c6b752d9c4a174d015ef66e10de6e607453f1be6ea9cb2de0b"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-189_100-PushOTA-20001211-a.pdf",
+        "bytes": 27295,
+        "sha256": "6049c87149a707c6b752d9c4a174d015ef66e10de6e607453f1be6ea9cb2de0b",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-189_100-PushOTA-20001211-a.txt",
+        "filename": "WAP-189_100-PushOTA-20001211-a.txt",
+        "bytes": 12941,
+        "sha256": "0f2d8434fd35e205292a4392d5868c0570941852f89ad9b52211d7705073b5ec",
+        "lineCount": 236
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-189_101-PushOTA",
+      "filename": "WAP-189_101-PushOTA-20010926-a.pdf",
+      "family": "push-over-the-air",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 30445,
+        "sha256": "045089e802ad5bd83fbd3fdeab72ef60bbbeb96ba17a4d84295f62420378e4dc"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-189_101-PushOTA-20010926-a.pdf",
+        "bytes": 30445,
+        "sha256": "045089e802ad5bd83fbd3fdeab72ef60bbbeb96ba17a4d84295f62420378e4dc",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-189_101-PushOTA-20010926-a.txt",
+        "filename": "WAP-189_101-PushOTA-20010926-a.txt",
+        "bytes": 8492,
+        "sha256": "6a45610d0731af180cb8c5c52097ffc8e6e2c41c646de4c0001146ab506c2667",
+        "lineCount": 151
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-189-PushOTA",
+      "filename": "WAP-189-PushOTA-20000217-a.pdf",
+      "family": "push-over-the-air",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 121487,
+        "sha256": "283bf534dd678225082c20c7c22c03f7d045b4ba661958b593c033ddf00e9624"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-189-PushOTA-20000217-a.pdf",
+        "bytes": 121487,
+        "sha256": "283bf534dd678225082c20c7c22c03f7d045b4ba661958b593c033ddf00e9624",
+        "pageCount": 20
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-189-PushOTA-20000217-a.txt",
+        "filename": "WAP-189-PushOTA-20000217-a.txt",
+        "bytes": 52891,
+        "sha256": "9b73d8b10455ea8a795d04a3918fecc38882566ed339b221e514259b6398e130",
+        "lineCount": 959
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-190_101-WAESpec",
+      "filename": "WAP-190_101-WAESpec-20001213-a.pdf",
+      "family": "wae",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 21716,
+        "sha256": "df5ad17ecc4aa407717dd61d42d0d4ff06878206684f64c66091b6f6d3e742c1"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-190_101-WAESpec-20001213-a.pdf",
+        "bytes": 21716,
+        "sha256": "df5ad17ecc4aa407717dd61d42d0d4ff06878206684f64c66091b6f6d3e742c1",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-190_101-WAESpec-20001213-a.txt",
+        "filename": "WAP-190_101-WAESpec-20001213-a.txt",
+        "bytes": 11114,
+        "sha256": "003595f985a4ddc7a890bafe63b3cb5b22b1d2f88b668ede32a9cb5c701e8688",
+        "lineCount": 185
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-190_102-WAESpec",
+      "filename": "WAP-190_102-WAESpec-20001213-a.pdf",
+      "family": "wae",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 19343,
+        "sha256": "9fd9013b166c31d679f40c8a7f369998498cedd265da810919ae09640045b98e"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-190_102-WAESpec-20001213-a.pdf",
+        "bytes": 19343,
+        "sha256": "9fd9013b166c31d679f40c8a7f369998498cedd265da810919ae09640045b98e",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-190_102-WAESpec-20001213-a.txt",
+        "filename": "WAP-190_102-WAESpec-20001213-a.txt",
+        "bytes": 7881,
+        "sha256": "6d4f598f8f77bbdb1c9d31b73ee43dd565d465e6ff48df2fd8759d0c815214b0",
+        "lineCount": 152
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-190_103-WAESpec",
+      "filename": "WAP-190_103-WAESpec-20001213-a.pdf",
+      "family": "wae",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 19446,
+        "sha256": "743a22e09afb2e6277e750116b419e05221a2f032dab5186a26795643a218c52"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-190_103-WAESpec-20001213-a.pdf",
+        "bytes": 19446,
+        "sha256": "743a22e09afb2e6277e750116b419e05221a2f032dab5186a26795643a218c52",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-190_103-WAESpec-20001213-a.txt",
+        "filename": "WAP-190_103-WAESpec-20001213-a.txt",
+        "bytes": 8100,
+        "sha256": "29b307f71f3ab44c771802c4f4c352a8c4e003edc00f4e2f3aef50d1ff77c6ff",
+        "lineCount": 159
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-190_104-WAE-Spec",
+      "filename": "WAP-190_104-WAE-Spec-20010731-a.pdf",
+      "family": "wae",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 80657,
+        "sha256": "3a8b6c8e10b0472cb47391f7093e0562de9a8d521e462d98fff28df191923ba2"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-190_104-WAE-Spec-20010731-a.pdf",
+        "bytes": 80657,
+        "sha256": "3a8b6c8e10b0472cb47391f7093e0562de9a8d521e462d98fff28df191923ba2",
+        "pageCount": 16
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-190_104-WAE-Spec-20010731-a.txt",
+        "filename": "WAP-190_104-WAE-Spec-20010731-a.txt",
+        "bytes": 41248,
+        "sha256": "6cef60644acb9b63cbdd00b345dc1b8ef819eaa1209012463e3c96e244ccbaa6",
+        "lineCount": 887
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-190-WAESpec",
+      "filename": "WAP-190-WAESpec-20000329-a.pdf",
+      "family": "wae",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 147182,
+        "sha256": "92043389310057285b050afb8cb0a16c99f1651059be8ce61e1fab151c5c0182"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-190-WAESpec-20000329-a.pdf",
+        "bytes": 147182,
+        "sha256": "92043389310057285b050afb8cb0a16c99f1651059be8ce61e1fab151c5c0182",
+        "pageCount": 30
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-190-WAESpec-20000329-a.txt",
+        "filename": "WAP-190-WAESpec-20000329-a.txt",
+        "bytes": 87193,
+        "sha256": "4eab20f6ae42b92d2a1db6c56bfe6b7da723ed4409f96bae626c60349e174d0a",
+        "lineCount": 1354
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-191_102-WML",
+      "filename": "WAP-191_102-WML-20001213-a.pdf",
+      "family": "wml",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 20185,
+        "sha256": "4900fd9f728a3f3d6d698b06398c29e2861f5fd774dd8478553aadedc9721011"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-191_102-WML-20001213-a.pdf",
+        "bytes": 20185,
+        "sha256": "4900fd9f728a3f3d6d698b06398c29e2861f5fd774dd8478553aadedc9721011",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-191_102-WML-20001213-a.txt",
+        "filename": "WAP-191_102-WML-20001213-a.txt",
+        "bytes": 10296,
+        "sha256": "3e76977a072fc9c8f4c0794a999a800ae4feac8e5956708e1e05dab53c14c44b",
+        "lineCount": 173
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-191_104-WML",
+      "filename": "WAP-191_104-WML-20010718-a.pdf",
+      "family": "wml",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 303180,
+        "sha256": "4c4a616f14204556045b9cbcebfdbc9a2408ae843e047b0730382abfbc8493f0"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-191_104-WML-20010718-a.pdf",
+        "bytes": 303180,
+        "sha256": "4c4a616f14204556045b9cbcebfdbc9a2408ae843e047b0730382abfbc8493f0",
+        "pageCount": 87
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-191_104-WML-20010718-a.txt",
+        "filename": "WAP-191_104-WML-20010718-a.txt",
+        "bytes": 244652,
+        "sha256": "b5dc6f04d58a7439f212fc3d29b8d36942ee4bd61fcc1a8bbbeee87dd1a7f2a0",
+        "lineCount": 4418
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-191_105-WML",
+      "filename": "WAP-191_105-WML-20020212-a.pdf",
+      "family": "wml",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 47283,
+        "sha256": "3d803628d1cc67a6e08ce4e0d1f6e82f44651eb3a1bfa5160d7f98206bea4cc3"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-191_105-WML-20020212-a.pdf",
+        "bytes": 47283,
+        "sha256": "3d803628d1cc67a6e08ce4e0d1f6e82f44651eb3a1bfa5160d7f98206bea4cc3",
+        "pageCount": 8
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-191_105-WML-20020212-a.txt",
+        "filename": "WAP-191_105-WML-20020212-a.txt",
+        "bytes": 18274,
+        "sha256": "356617e98381dff6c9aad4ae9ff139736f24dde5447790ee454b3b78fa83650e",
+        "lineCount": 322
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-191-WML",
+      "filename": "WAP-191-WML-20000219-a.pdf",
+      "family": "wml",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 543004,
+        "sha256": "4b1301be200bf7d06020f78f05ac2ae7056f00c30a741a62f73d9b6ab867ae9c"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-191-WML-20000219-a.pdf",
+        "bytes": 543004,
+        "sha256": "4b1301be200bf7d06020f78f05ac2ae7056f00c30a741a62f73d9b6ab867ae9c",
+        "pageCount": 110
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-191-WML-20000219-a.txt",
+        "filename": "WAP-191-WML-20000219-a.txt",
+        "bytes": 250876,
+        "sha256": "c44fede7b6dc0ce11a8d46fe9557e8af28905db68d8116ffcbe73779b5bdb5de",
+        "lineCount": 5242
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-192_105-WBXML",
+      "filename": "WAP-192_105-WBXML-20011015-a.pdf",
+      "family": "wbxml",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 42513,
+        "sha256": "e4c0bc05a51e27697d07a4d46f710b4daabdc7039950aa472b1d7de0e080ca98"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-192_105-WBXML-20011015-a.pdf",
+        "bytes": 42513,
+        "sha256": "e4c0bc05a51e27697d07a4d46f710b4daabdc7039950aa472b1d7de0e080ca98",
+        "pageCount": 8
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-192_105-WBXML-20011015-a.txt",
+        "filename": "WAP-192_105-WBXML-20011015-a.txt",
+        "bytes": 15513,
+        "sha256": "f5e14e2c820849c57e547b7a174776bd3f3417f0456a9495b808443cbf52f9b2",
+        "lineCount": 311
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-192-WBXML",
+      "filename": "WAP-192-WBXML-20010725-a.pdf",
+      "family": "wbxml",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 107898,
+        "sha256": "a6312060b4488680b1f56858b350bc97021c314fa315ca20e25a33521a4df92b"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-192-WBXML-20010725-a.pdf",
+        "bytes": 107898,
+        "sha256": "a6312060b4488680b1f56858b350bc97021c314fa315ca20e25a33521a4df92b",
+        "pageCount": 30
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-192-WBXML-20010725-a.txt",
+        "filename": "WAP-192-WBXML-20010725-a.txt",
+        "bytes": 73421,
+        "sha256": "55f1488bc07c0ed03de4773772c36d0127c6ad04d4993351785329f9caf1eb22",
+        "lineCount": 1441
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-193_101-WMLScript",
+      "filename": "WAP-193_101-WMLScript-20010928-a.pdf",
+      "family": "wmlscript",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 399416,
+        "sha256": "ea1535b36e49f80ac4ad80de3efe985c5af94068121afc4cfebe0528dd389ea0"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-193_101-WMLScript-20010928-a.pdf",
+        "bytes": 399416,
+        "sha256": "ea1535b36e49f80ac4ad80de3efe985c5af94068121afc4cfebe0528dd389ea0",
+        "pageCount": 136
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-193_101-WMLScript-20010928-a.txt",
+        "filename": "WAP-193_101-WMLScript-20010928-a.txt",
+        "bytes": 352971,
+        "sha256": "2cb6c5f33297a1a1a6243f6bed21d3530547f3655b02c0d552c225ae014471a3",
+        "lineCount": 6514
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-193-WMLScript",
+      "filename": "WAP-193-WMLScript-20001025-a.pdf",
+      "family": "wmlscript",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 395176,
+        "sha256": "7ace9baac33f0e648642ff539deaf234331adc95e1525e1c8f66ff88fb9c876a"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-193-WMLScript-20001025-a.pdf",
+        "bytes": 395176,
+        "sha256": "7ace9baac33f0e648642ff539deaf234331adc95e1525e1c8f66ff88fb9c876a",
+        "pageCount": 136
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-193-WMLScript-20001025-a.txt",
+        "filename": "WAP-193-WMLScript-20001025-a.txt",
+        "bytes": 351181,
+        "sha256": "5aacd03ec60d3a46982f1cfe3abc7213f684aa3841ac4ef4df5c8f41a941bcd3",
+        "lineCount": 6483
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-194_103-WMLScriptLibraries",
+      "filename": "WAP-194_103-WMLScriptLibraries-20020318-a.pdf",
+      "family": "wmlscript-libraries",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 29777,
+        "sha256": "7716dbaf7289a1335e9c46a21d0ce209be711f9917f946ca88fab17f1e6a446c"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-194_103-WMLScriptLibraries-20020318-a.pdf",
+        "bytes": 29777,
+        "sha256": "7716dbaf7289a1335e9c46a21d0ce209be711f9917f946ca88fab17f1e6a446c",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-194_103-WMLScriptLibraries-20020318-a.txt",
+        "filename": "WAP-194_103-WMLScriptLibraries-20020318-a.txt",
+        "bytes": 7512,
+        "sha256": "0c4a03afdad4e7450561a6ee156a14382817b4c699fd2398de4a95ab380124c5",
+        "lineCount": 134
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-194-WMLScriptLibraries",
+      "filename": "WAP-194-WMLScriptLibraries-20000925-a.pdf",
+      "family": "wmlscript-libraries",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 182952,
+        "sha256": "cf8ced8446a62fbc958a0beed5097aa3a0a41a864abcdfee86e7ad4f5c3d5680"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-194-WMLScriptLibraries-20000925-a.pdf",
+        "bytes": 182952,
+        "sha256": "cf8ced8446a62fbc958a0beed5097aa3a0a41a864abcdfee86e7ad4f5c3d5680",
+        "pageCount": 58
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-194-WMLScriptLibraries-20000925-a.txt",
+        "filename": "WAP-194-WMLScriptLibraries-20000925-a.txt",
+        "bytes": 138740,
+        "sha256": "0e3c8884b13aef22387dcf8ce5496f27e81f1a5b5edb582613b1bc84b26aea25",
+        "lineCount": 2662
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-195_101-WAEOverview",
+      "filename": "WAP-195_101-WAEOverview-20010117-a.pdf",
+      "family": "wae-overview",
+      "sourceClass": "dependency",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 19633,
+        "sha256": "8d5b3e5e428e895e53577b0df2e89c2c5b288dc8d57acdc0eed30d2474186303"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-195_101-WAEOverview-20010117-a.pdf",
+        "bytes": 19633,
+        "sha256": "8d5b3e5e428e895e53577b0df2e89c2c5b288dc8d57acdc0eed30d2474186303",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-195_101-WAEOverview-20010117-a.txt",
+        "filename": "WAP-195_101-WAEOverview-20010117-a.txt",
+        "bytes": 9143,
+        "sha256": "72f1ee5ed8b5523ba23d52f16cbf290b10104b5feec26a58b943fe13f7a26beb",
+        "lineCount": 155
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-195-WAEOverview",
+      "filename": "WAP-195-WAEOverview-20000329-a.pdf",
+      "family": "wae-overview",
+      "sourceClass": "dependency",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 193396,
+        "sha256": "ad7940d6589f4adf921442ef37325b9a33ca5467502e39f302e84b063c7639d2"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-195-WAEOverview-20000329-a.pdf",
+        "bytes": 193396,
+        "sha256": "ad7940d6589f4adf921442ef37325b9a33ca5467502e39f302e84b063c7639d2",
+        "pageCount": 23
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-195-WAEOverview-20000329-a.txt",
+        "filename": "WAP-195-WAEOverview-20000329-a.txt",
+        "bytes": 77983,
+        "sha256": "e6a4f3f9e9832aaee7abf7f70613570c4894e667660c45a93300372a6035a105",
+        "lineCount": 1112
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-198_100-WIM",
+      "filename": "WAP-198_100-WIM-20000630-a.pdf",
+      "family": "wim",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 62126,
+        "sha256": "a8b8822708e59aad9c145471fd022ca223c49a7729a3d8d9bc6db78f61b5c443"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-198_100-WIM-20000630-a.pdf",
+        "bytes": 62126,
+        "sha256": "a8b8822708e59aad9c145471fd022ca223c49a7729a3d8d9bc6db78f61b5c443",
+        "pageCount": 20
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-198_100-WIM-20000630-a.txt",
+        "filename": "WAP-198_100-WIM-20000630-a.txt",
+        "bytes": 36294,
+        "sha256": "0f1abb1b31b2b479586463788582ee847e17eb50ca90719195ae723788c52813",
+        "lineCount": 814
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-198_101-WIM",
+      "filename": "WAP-198_101-WIM-20001031-a.pdf",
+      "family": "wim",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 24227,
+        "sha256": "3e0d277aa48c0bc8cbf44ada2e3aca5411558c47130f02bfbdb438833a8c497e"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-198_101-WIM-20001031-a.pdf",
+        "bytes": 24227,
+        "sha256": "3e0d277aa48c0bc8cbf44ada2e3aca5411558c47130f02bfbdb438833a8c497e",
+        "pageCount": 6
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-198_101-WIM-20001031-a.txt",
+        "filename": "WAP-198_101-WIM-20001031-a.txt",
+        "bytes": 9607,
+        "sha256": "a6bc3ca13698b84427c011342bc554776f143c6146ffe5026e4eada047c6d055",
+        "lineCount": 217
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-198_102-WIM",
+      "filename": "WAP-198_102-WIM-20001227-a.pdf",
+      "family": "wim",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 78983,
+        "sha256": "56003b67835707fe2976f28b560083c59fabf2a248704ada4756b2c0f0fff63d"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-198_102-WIM-20001227-a.pdf",
+        "bytes": 78983,
+        "sha256": "56003b67835707fe2976f28b560083c59fabf2a248704ada4756b2c0f0fff63d",
+        "pageCount": 29
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-198_102-WIM-20001227-a.txt",
+        "filename": "WAP-198_102-WIM-20001227-a.txt",
+        "bytes": 48025,
+        "sha256": "8c7c097354f9846a25870e494bf0be7ae6bf351ade682fc35cc7e175a01f8a58",
+        "lineCount": 1115
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-198_103-WIM",
+      "filename": "WAP-198_103-WIM20010214-a.pdf",
+      "family": "wim",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 59243,
+        "sha256": "e5399976b1dbaf3aa1a2e8c1cfab0058b265fd37d5960f471133e6388cb8f52b"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-198_103-WIM20010214-a.pdf",
+        "bytes": 59243,
+        "sha256": "e5399976b1dbaf3aa1a2e8c1cfab0058b265fd37d5960f471133e6388cb8f52b",
+        "pageCount": 11
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-198_103-WIM20010214-a.txt",
+        "filename": "WAP-198_103-WIM20010214-a.txt",
+        "bytes": 30249,
+        "sha256": "0266ba1df61256d4f2c6cf658d9f4021938a6e80ce821aba07177bd95361eb91",
+        "lineCount": 444
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-198_105-WIM",
+      "filename": "WAP-198_105-WIM-20010723-a.pdf",
+      "family": "wim",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 55440,
+        "sha256": "aee38df1ae1b0c6e3ed80cd48210d1f5f85e1cc27c8eb4947584eeffcbe72b46"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-198_105-WIM-20010723-a.pdf",
+        "bytes": 55440,
+        "sha256": "aee38df1ae1b0c6e3ed80cd48210d1f5f85e1cc27c8eb4947584eeffcbe72b46",
+        "pageCount": 12
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-198_105-WIM-20010723-a.txt",
+        "filename": "WAP-198_105-WIM-20010723-a.txt",
+        "bytes": 33474,
+        "sha256": "a9c42344d3578979b30ac954d71d7024e4445dbbe0c14fddcfd3088391833ccd",
+        "lineCount": 517
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-198-WIM",
+      "filename": "WAP-198-WIM-20000218-a.pdf",
+      "family": "wim",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 270722,
+        "sha256": "366280ea21c7a3894d12e2329c0cfb76b9e97d9a0fead4e003ac52a9d2213e7a"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-198-WIM-20000218-a.pdf",
+        "bytes": 270722,
+        "sha256": "366280ea21c7a3894d12e2329c0cfb76b9e97d9a0fead4e003ac52a9d2213e7a",
+        "pageCount": 100
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-198-WIM-20000218-a.txt",
+        "filename": "WAP-198-WIM-20000218-a.txt",
+        "bytes": 249404,
+        "sha256": "97d1590942adb34492b324c1241a8398edd0fc02af559c3f2bf98c9aa040227e",
+        "lineCount": 4584
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-199_102-WTLS",
+      "filename": "WAP-199_102-WTLS-20010214-a.pdf",
+      "family": "wtls",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 29276,
+        "sha256": "90e1d17bd0fa06baf046d595d97a6f4e5839019d59a7f6b8eef93a85a0b6e149"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-199_102-WTLS-20010214-a.pdf",
+        "bytes": 29276,
+        "sha256": "90e1d17bd0fa06baf046d595d97a6f4e5839019d59a7f6b8eef93a85a0b6e149",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-199_102-WTLS-20010214-a.txt",
+        "filename": "WAP-199_102-WTLS-20010214-a.txt",
+        "bytes": 14730,
+        "sha256": "6c933697cd0ffca4bc0f81f92a7c8e1cf188c947df66dc726f3cdadedf851d65",
+        "lineCount": 287
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-199_103-WTLS",
+      "filename": "WAP-199_103-WTLS-20010730-a.pdf",
+      "family": "wtls",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 55893,
+        "sha256": "69bda76a4384eafcfdcb0c1f2ee666c9f43372459431cd7ccbb2211ff0280300"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-199_103-WTLS-20010730-a.pdf",
+        "bytes": 55893,
+        "sha256": "69bda76a4384eafcfdcb0c1f2ee666c9f43372459431cd7ccbb2211ff0280300",
+        "pageCount": 12
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-199_103-WTLS-20010730-a.txt",
+        "filename": "WAP-199_103-WTLS-20010730-a.txt",
+        "bytes": 35632,
+        "sha256": "5e98485a132e7a0e78dab5612b964e978208b5b348047b92842e68d189ebb0ec",
+        "lineCount": 531
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-199_104-WTLS",
+      "filename": "WAP-199_104-WTLS-20010926-a.pdf",
+      "family": "wtls",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 32109,
+        "sha256": "36da0b765918cce04c6f57c42973ef23f7985ba5d28865ab3cfaa76896a65cfc"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-199_104-WTLS-20010926-a.pdf",
+        "bytes": 32109,
+        "sha256": "36da0b765918cce04c6f57c42973ef23f7985ba5d28865ab3cfaa76896a65cfc",
+        "pageCount": 6
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-199_104-WTLS-20010926-a.txt",
+        "filename": "WAP-199_104-WTLS-20010926-a.txt",
+        "bytes": 11153,
+        "sha256": "5aa0ae445484b0a10cbc4028177bd1d046c49b393ffaf5787430e5c75ad26a1a",
+        "lineCount": 194
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-199_105-WTLS",
+      "filename": "WAP-199_105-WTLS-20011027-a.pdf",
+      "family": "wtls",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 30731,
+        "sha256": "3ebd065b9c21363cd96d7b69d8bdf7d3498b0198965c263aa74787c533ba68c0"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-199_105-WTLS-20011027-a.pdf",
+        "bytes": 30731,
+        "sha256": "3ebd065b9c21363cd96d7b69d8bdf7d3498b0198965c263aa74787c533ba68c0",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-199_105-WTLS-20011027-a.txt",
+        "filename": "WAP-199_105-WTLS-20011027-a.txt",
+        "bytes": 9177,
+        "sha256": "c3b429831a407525c2d86cfdbea6932890b79b3ba487b51a996597e5edee1961",
+        "lineCount": 161
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-199_106-WTLS",
+      "filename": "WAP-199_106-WTLS-20011027-a.pdf",
+      "family": "wtls",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 31514,
+        "sha256": "5d68ab0d7387f0e6c9d1c5c4e33216148ced71ba7cc95121c8fd319b57f31cb9"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-199_106-WTLS-20011027-a.pdf",
+        "bytes": 31514,
+        "sha256": "5d68ab0d7387f0e6c9d1c5c4e33216148ced71ba7cc95121c8fd319b57f31cb9",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-199_106-WTLS-20011027-a.txt",
+        "filename": "WAP-199_106-WTLS-20011027-a.txt",
+        "bytes": 10276,
+        "sha256": "1ddacaa9752ce9b1360d8e2ba20540bb8a77801467e3d0d0ebcc02e87859d814",
+        "lineCount": 167
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-199-WTLS",
+      "filename": "WAP-199-WTLS-20000218-a.pdf",
+      "family": "wtls",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 273967,
+        "sha256": "f15f2a243d6a1d7f89bc279679ca31a6b1599b2c490dcf12a0c02e4d30e6675c"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-199-WTLS-20000218-a.pdf",
+        "bytes": 273967,
+        "sha256": "f15f2a243d6a1d7f89bc279679ca31a6b1599b2c490dcf12a0c02e4d30e6675c",
+        "pageCount": 99
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-199-WTLS-20000218-a.txt",
+        "filename": "WAP-199-WTLS-20000218-a.txt",
+        "bytes": 280283,
+        "sha256": "c3ac7551562feb748a880bcc333e017e791e5bd0d2ffbcc67b47981955a0fe46",
+        "lineCount": 4873
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-200_001-WDP",
+      "filename": "WAP-200_001-WDP-20001212-a.pdf",
+      "family": "wdp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 107049,
+        "sha256": "c335aeb5038a0b8db025f99250ec3fe77cfe5facce0b7784345dc39cb9c2df35"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-200_001-WDP-20001212-a.pdf",
+        "bytes": 107049,
+        "sha256": "c335aeb5038a0b8db025f99250ec3fe77cfe5facce0b7784345dc39cb9c2df35",
+        "pageCount": 12
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-200_001-WDP-20001212-a.txt",
+        "filename": "WAP-200_001-WDP-20001212-a.txt",
+        "bytes": 21508,
+        "sha256": "a2ca05f811cee487f35fd57cb26dd491d715a1ccd8913766175cbc5305376d90",
+        "lineCount": 439
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-200_002-WDP",
+      "filename": "WAP-200_002-WDP-20001213-a.pdf",
+      "family": "wdp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 50474,
+        "sha256": "d340608eedb73fd75058532b539aedc261cc6050aedacf3a8c8739ebda5c5132"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-200_002-WDP-20001213-a.pdf",
+        "bytes": 50474,
+        "sha256": "d340608eedb73fd75058532b539aedc261cc6050aedacf3a8c8739ebda5c5132",
+        "pageCount": 13
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-200_002-WDP-20001213-a.txt",
+        "filename": "WAP-200_002-WDP-20001213-a.txt",
+        "bytes": 32415,
+        "sha256": "95d98ff1939de5b30381a6b11765624d5be56f76ea30470547d9223c3df7fd9e",
+        "lineCount": 608
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-200_003-WDP",
+      "filename": "WAP-200_003-WDP-20010328-a.pdf",
+      "family": "wdp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 63890,
+        "sha256": "4743542d4b9fbe0a517edc1709679430d6e9498b30e8d2ed7c199f88ce404586"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-200_003-WDP-20010328-a.pdf",
+        "bytes": 63890,
+        "sha256": "4743542d4b9fbe0a517edc1709679430d6e9498b30e8d2ed7c199f88ce404586",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-200_003-WDP-20010328-a.txt",
+        "filename": "WAP-200_003-WDP-20010328-a.txt",
+        "bytes": 21267,
+        "sha256": "08671153e272ab4bbecef211a81b352a4005ae19de993cb2659d4b49ded53f4f",
+        "lineCount": 366
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-200_004-WDP",
+      "filename": "WAP-200_004-WDP-20010517-a.pdf",
+      "family": "wdp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 75520,
+        "sha256": "36bf5d608c7bf1490326f1d531a72d1539a4fc88d32d4b4b8a6c9d6e06019498"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-200_004-WDP-20010517-a.pdf",
+        "bytes": 75520,
+        "sha256": "36bf5d608c7bf1490326f1d531a72d1539a4fc88d32d4b4b8a6c9d6e06019498",
+        "pageCount": 13
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-200_004-WDP-20010517-a.txt",
+        "filename": "WAP-200_004-WDP-20010517-a.txt",
+        "bytes": 34382,
+        "sha256": "f5eeb413987f58bb09b4ea0f9aa0828835c6aebd373479065a172a09cce67be6",
+        "lineCount": 519
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-200_005-WDP",
+      "filename": "WAP-200_005-WDP-20010718-a.pdf",
+      "family": "wdp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 236697,
+        "sha256": "2279c021d44f6b7e329ba68f4227031e4c325776234052beef78654b37bc34a7"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-200_005-WDP-20010718-a.pdf",
+        "bytes": 236697,
+        "sha256": "2279c021d44f6b7e329ba68f4227031e4c325776234052beef78654b37bc34a7",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-200_005-WDP-20010718-a.txt",
+        "filename": "WAP-200_005-WDP-20010718-a.txt",
+        "bytes": 37072,
+        "sha256": "b6d8dd480706bb4716133086c09b62998a520263822a1b2417d14732f14c4e0c",
+        "lineCount": 572
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-200-WDP",
+      "filename": "WAP-200-WDP-20000219-a.pdf",
+      "family": "wdp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 630940,
+        "sha256": "e6279c8c3108ceeb8268b868211585fff7331feec5bda4ff90ce9be2df2d23b3"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-200-WDP-20000219-a.pdf",
+        "bytes": 630940,
+        "sha256": "e6279c8c3108ceeb8268b868211585fff7331feec5bda4ff90ce9be2df2d23b3",
+        "pageCount": 92
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-200-WDP-20000219-a.txt",
+        "filename": "WAP-200-WDP-20000219-a.txt",
+        "bytes": 237756,
+        "sha256": "f2ecf22a755de511785dbc12d00c932c41e0801df111a88517d5f0ab328a7542",
+        "lineCount": 4500
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-201_001-WTP",
+      "filename": "WAP-201_001-WTP-20001212-a.pdf",
+      "family": "wtp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 24471,
+        "sha256": "c630b409e1f8c9e4af5caba16095ffcd08bab08959d84c5afae76513a9f21b7d"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-201_001-WTP-20001212-a.pdf",
+        "bytes": 24471,
+        "sha256": "c630b409e1f8c9e4af5caba16095ffcd08bab08959d84c5afae76513a9f21b7d",
+        "pageCount": 6
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-201_001-WTP-20001212-a.txt",
+        "filename": "WAP-201_001-WTP-20001212-a.txt",
+        "bytes": 9784,
+        "sha256": "9cef6d9ed4a3e99edacbcf0f786a13803a82983b3c8ce64fff4af3875986c085",
+        "lineCount": 189
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-201_002-WTP",
+      "filename": "WAP-201_002-WTP-20001213-a.pdf",
+      "family": "wtp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 38212,
+        "sha256": "b26e9f19c25c858e9b6a26f23445420b4d3750cd08ed2dfae2c5088ed18d8644"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-201_002-WTP-20001213-a.pdf",
+        "bytes": 38212,
+        "sha256": "b26e9f19c25c858e9b6a26f23445420b4d3750cd08ed2dfae2c5088ed18d8644",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-201_002-WTP-20001213-a.txt",
+        "filename": "WAP-201_002-WTP-20001213-a.txt",
+        "bytes": 19075,
+        "sha256": "edd84a57948f67fc940d4c536c0ab31716982b027f6f399f87eca2bb604f6ad8",
+        "lineCount": 340
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-201-WTP",
+      "filename": "WAP-201-WTP-20000219-a.pdf",
+      "family": "wtp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 163767,
+        "sha256": "b035ceebfb5bfd2a7d6396ff8d604aaa878113dd0924c305e6fba3c92f186304"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-201-WTP-20000219-a.pdf",
+        "bytes": 163767,
+        "sha256": "b035ceebfb5bfd2a7d6396ff8d604aaa878113dd0924c305e6fba3c92f186304",
+        "pageCount": 68
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-201-WTP-20000219-a.txt",
+        "filename": "WAP-201-WTP-20000219-a.txt",
+        "bytes": 201622,
+        "sha256": "35734cb1a0da21956249b25bb58da027cd76cb7297f7fc5fabd4ce438632c935",
+        "lineCount": 3614
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-202-WCMP",
+      "filename": "WAP-202-WCMP-20010624-a.pdf",
+      "family": "wcmp",
+      "sourceClass": "core-optional",
+      "ingestionPriority": 2,
+      "releaseMember": {
+        "bytes": 137844,
+        "sha256": "231166eec1103a8729147db180efdefd894e4879205cef7891f55ac79f034fa9"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-202-WCMP-20010624-a.pdf",
+        "bytes": 137844,
+        "sha256": "231166eec1103a8729147db180efdefd894e4879205cef7891f55ac79f034fa9",
+        "pageCount": 26
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-202-WCMP-20010624-a.txt",
+        "filename": "WAP-202-WCMP-20010624-a.txt",
+        "bytes": 67038,
+        "sha256": "b66ab9bdae87752b43e6607c273f2d9d37a6b933df3d59fb1ade663068d70db6",
+        "lineCount": 1103
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "canonical-content-differs",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-203_001-WSP",
+      "filename": "WAP-203_001-WSP-20000620-a.pdf",
+      "family": "wsp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 15207,
+        "sha256": "12006aa09ed8770f8c1ec388c9341024f67b3661d85f294d4fdce00e9e6f2e45"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-203_001-WSP-20000620-a.pdf",
+        "bytes": 15207,
+        "sha256": "12006aa09ed8770f8c1ec388c9341024f67b3661d85f294d4fdce00e9e6f2e45",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-203_001-WSP-20000620-a.txt",
+        "filename": "WAP-203_001-WSP-20000620-a.txt",
+        "bytes": 5615,
+        "sha256": "7c7926fedd709008a4e583076d5d04249ddf761272d2d7bd705552a4e82a73f0",
+        "lineCount": 119
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-203_003-WSP",
+      "filename": "WAP-203_003-WSP-20001218-a.pdf",
+      "family": "wsp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 104288,
+        "sha256": "235419958d5ff05e7d587b92f1dbbf858ac0ca9115b61cf7fabe9a8872680159"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-203_003-WSP-20001218-a.pdf",
+        "bytes": 104288,
+        "sha256": "235419958d5ff05e7d587b92f1dbbf858ac0ca9115b61cf7fabe9a8872680159",
+        "pageCount": 14
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-203_003-WSP-20001218-a.txt",
+        "filename": "WAP-203_003-WSP-20001218-a.txt",
+        "bytes": 50431,
+        "sha256": "f03ee598fea8b8c282162b272f5e44a538b615c5afabb1f22a595022161adf18",
+        "lineCount": 792
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-203_005-WSP",
+      "filename": "WAP-203_005-WSP-20010717-a.pdf",
+      "family": "wsp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 33612,
+        "sha256": "709fe4ca20f25a4b3ce52735e070758ae31607755b1fb74d44224d2b218088d8"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-203_005-WSP-20010717-a.pdf",
+        "bytes": 33612,
+        "sha256": "709fe4ca20f25a4b3ce52735e070758ae31607755b1fb74d44224d2b218088d8",
+        "pageCount": 7
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-203_005-WSP-20010717-a.txt",
+        "filename": "WAP-203_005-WSP-20010717-a.txt",
+        "bytes": 11633,
+        "sha256": "163b055c46c8eed9c1a7eea39ecef8dc0d2cce49cb7bf0799bea89d29ada483b",
+        "lineCount": 227
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-203-WSP",
+      "filename": "WAP-203-WSP-20000504-a.pdf",
+      "family": "wsp",
+      "sourceClass": "core-mandatory",
+      "ingestionPriority": 1,
+      "releaseMember": {
+        "bytes": 397958,
+        "sha256": "fe6df3d2383abd46d1044cbd0dcd9cf216103346e3d88c5c7e66be21b52e5bd2"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-203-WSP-20000504-a.pdf",
+        "bytes": 397958,
+        "sha256": "fe6df3d2383abd46d1044cbd0dcd9cf216103346e3d88c5c7e66be21b52e5bd2",
+        "pageCount": 122
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-203-WSP-20000504-a.txt",
+        "filename": "WAP-203-WSP-20000504-a.txt",
+        "bytes": 387276,
+        "sha256": "f866774d861bc07f8b30c1694095a629797bd17a5dd5455ea44d30be72d8c8aa",
+        "lineCount": 6413
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-204_103-WAPOverGSMUSSD",
+      "filename": "WAP-204_103-WAPOverGSMUSSD-20010813-a.pdf",
+      "family": "wap-over-gsm-ussd",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 40192,
+        "sha256": "74e1f248b03a1ca8710ef3e3ab04093e40fb21163097672949c0861490a2eee0"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-204_103-WAPOverGSMUSSD-20010813-a.pdf",
+        "bytes": 40192,
+        "sha256": "74e1f248b03a1ca8710ef3e3ab04093e40fb21163097672949c0861490a2eee0",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-204_103-WAPOverGSMUSSD-20010813-a.txt",
+        "filename": "WAP-204_103-WAPOverGSMUSSD-20010813-a.txt",
+        "bytes": 8905,
+        "sha256": "179a42da28a396f20c51d93061ad32d9c747fe6b0df8ebe50afe9883edb2b10c",
+        "lineCount": 167
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-204-WAPOverGSMUSSD",
+      "filename": "WAP-204-WAPOverGSMUSSD-20010730-a.pdf",
+      "family": "wap-over-gsm-ussd",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 142592,
+        "sha256": "71629ac6a2c9e9fa32a0b9cd940e26d872ca697866ce9b30d70f8950bffb69bb"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-204-WAPOverGSMUSSD-20010730-a.pdf",
+        "bytes": 142592,
+        "sha256": "71629ac6a2c9e9fa32a0b9cd940e26d872ca697866ce9b30d70f8950bffb69bb",
+        "pageCount": 39
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-204-WAPOverGSMUSSD-20010730-a.txt",
+        "filename": "WAP-204-WAPOverGSMUSSD-20010730-a.txt",
+        "bytes": 111264,
+        "sha256": "17a00a0bf2d5bdd049c1dc6e0984d64ccef1ac2685a1edac8d7c60c5f6f64017",
+        "lineCount": 1908
+      },
+      "repositoryPromotion": {
+        "state": "already-canonical-exact",
+        "canonicalSourceState": "canonical-exact",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": true,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-213_101-WAPInterPic",
+      "filename": "WAP-213_101-WAPInterPic-20011123-p.pdf",
+      "family": "interoperability-pictograms",
+      "sourceClass": "historical",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 43543,
+        "sha256": "1d5c69f4df11e723468223becd3b021e4f342c669b513e0dfa70a64f29232bcf"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-213_101-WAPInterPic-20011123-p.pdf",
+        "bytes": 43543,
+        "sha256": "1d5c69f4df11e723468223becd3b021e4f342c669b513e0dfa70a64f29232bcf",
+        "pageCount": 9
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-213_101-WAPInterPic-20011123-p.txt",
+        "filename": "WAP-213_101-WAPInterPic-20011123-p.txt",
+        "bytes": 14400,
+        "sha256": "c825d7e5cf3642092e88bdbe68d4741015d15616495e769ecd484d7c6dea4573",
+        "lineCount": 281
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-227_100-PSTOR",
+      "filename": "WAP-227_100-PSTOR-20011109-p.pdf",
+      "family": "persistent-storage",
+      "sourceClass": "historical",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 30817,
+        "sha256": "ac037583b5c7b125ae24464a340883980d5e696ba5ab659d5e4e902a37a45237"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-227_100-PSTOR-20011109-p.pdf",
+        "bytes": 30817,
+        "sha256": "ac037583b5c7b125ae24464a340883980d5e696ba5ab659d5e4e902a37a45237",
+        "pageCount": 5
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-227_100-PSTOR-20011109-p.txt",
+        "filename": "WAP-227_100-PSTOR-20011109-p.txt",
+        "bytes": 8390,
+        "sha256": "1b81b626cae2463817ec950c7d855759865cc08093e0265abd9ac5c8d3a628a3",
+        "lineCount": 149
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    },
+    {
+      "documentId": "WAP-231_100-EFI",
+      "filename": "WAP-231_100-EFI-20011018-a.pdf",
+      "family": "external-functionality-interface",
+      "sourceClass": "profile-optional",
+      "ingestionPriority": 3,
+      "releaseMember": {
+        "bytes": 91936,
+        "sha256": "57f6864a9062ab83f46876c298e07f7b22feb438e48c7729fe3e2bbcaf22eaf3"
+      },
+      "recoveredPdf": {
+        "state": "verified-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/pdf/WAP-231_100-EFI-20011018-a.pdf",
+        "bytes": 91936,
+        "sha256": "57f6864a9062ab83f46876c298e07f7b22feb438e48c7729fe3e2bbcaf22eaf3",
+        "pageCount": 19
+      },
+      "parsedText": {
+        "state": "extracted-temporary",
+        "cacheRef": "private-research-cache/wap-1.2.1/text/WAP-231_100-EFI-20011018-a.txt",
+        "filename": "WAP-231_100-EFI-20011018-a.txt",
+        "bytes": 49758,
+        "sha256": "fbe6450ccaa87640f7b7841605d4aa476f62a9495943b492a27c8613931033a9",
+        "lineCount": 949
+      },
+      "repositoryPromotion": {
+        "state": "blocked-redistribution-review",
+        "canonicalSourceState": "missing",
+        "redistributionStatus": "review-required",
+        "sourceBinaryCommitted": false,
+        "recoveredBinaryCommitted": false,
+        "parsedDerivativeCommitted": false
+      }
+    }
+  ]
+}
