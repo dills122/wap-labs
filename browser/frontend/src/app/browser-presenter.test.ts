@@ -262,6 +262,178 @@ describe('BrowserPresenter', () => {
     }
   });
 
+  it('shows the first-render skeleton immediately with no delay', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+    const endProgress = presenter.beginNavigationProgress();
+
+    // No timers involved for the very first render -- it appears synchronously.
+    expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(true);
+    expect(refs.viewportEl.querySelector('.skeleton-hint')).not.toBeNull();
+
+    endProgress();
+    expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+    expect(refs.viewportEl.innerHTML).toBe('');
+  });
+
+  it('does not flash an in-progress indicator for a repeat navigation that resolves within the delay', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      presenter.drawRenderList({ draw: [{ type: 'text', text: 'hello', x: 0, y: 0 }] });
+
+      const endProgress = presenter.beginNavigationProgress(180);
+      // Resolves fast (well under the delay threshold).
+      vi.advanceTimersByTime(50);
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
+
+      endProgress();
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
+      // Existing content must never be touched by a navigation that never
+      // visibly showed progress.
+      expect(refs.viewportEl.textContent).toContain('hello');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('shows a lightweight in-progress hint for a repeat navigation slower than the delay', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      presenter.drawRenderList({ draw: [{ type: 'text', text: 'hello', x: 0, y: 0 }] });
+
+      const endProgress = presenter.beginNavigationProgress(180);
+      vi.advanceTimersByTime(180);
+
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(true);
+      expect(refs.viewportEl.getAttribute('aria-busy')).toBe('true');
+      const hint = refs.viewportEl.querySelector('.viewport-navigation-hint');
+      expect(hint).not.toBeNull();
+      expect(hint?.textContent).toBe(WAVES_COPY.shell.navigationPending);
+      // Existing content must stay on screen underneath the hint.
+      expect(refs.viewportEl.textContent).toContain('hello');
+
+      endProgress();
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
+      expect(refs.viewportEl.textContent).toContain('hello');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('cancels a pending in-progress delay if a fresh render arrives first', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      presenter.drawRenderList({ draw: [{ type: 'text', text: 'first', x: 0, y: 0 }] });
+
+      const endProgress = presenter.beginNavigationProgress(180);
+      vi.advanceTimersByTime(50);
+      presenter.drawRenderList({ draw: [{ type: 'text', text: 'second', x: 0, y: 0 }] });
+      vi.advanceTimersByTime(200);
+
+      // The delayed indicator must not appear after the render already landed.
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+      expect(refs.viewportEl.textContent).toContain('second');
+
+      endProgress();
+      expect(refs.viewportEl.textContent).toContain('second');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('announces a fatal WMLScript trap as a distinctly worded toast', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+      presenter.setSnapshot({
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        baseUrl: 'http://local.test/start.wml',
+        contentType: 'text/vnd.wap.wml',
+        lastScriptDialogRequests: [],
+        lastScriptTimerRequests: [],
+        lastScriptExecutionOk: false,
+        lastScriptExecutionTrap: 'vm: stack overflow (limit=64)',
+        lastScriptExecutionErrorClass: 'fatal',
+        lastScriptExecutionErrorCategory: 'resource'
+      });
+
+      expect(refs.toastEl.textContent).toBe(
+        WAVES_COPY.status.scriptExecutionFailed(
+          'resource limit error',
+          'vm: stack overflow (limit=64)'
+        )
+      );
+      expect(refs.toastEl.className).toBe('toast toast-error');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not re-announce the same sticky script trap across repeated snapshots', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      const baseSnapshot = {
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        baseUrl: 'http://local.test/start.wml',
+        contentType: 'text/vnd.wap.wml',
+        lastScriptDialogRequests: [],
+        lastScriptTimerRequests: [],
+        lastScriptExecutionOk: false,
+        lastScriptExecutionTrap: 'vm: type error (expected number)',
+        lastScriptExecutionErrorClass: 'fatal',
+        lastScriptExecutionErrorCategory: 'computational'
+      };
+
+      presenter.setSnapshot(baseSnapshot);
+      expect(refs.toastEl.textContent).toBe(
+        WAVES_COPY.status.scriptExecutionFailed(
+          'computation error',
+          'vm: type error (expected number)'
+        )
+      );
+
+      refs.toastEl.textContent = '__unchanged__';
+      // lastScriptExecutionOk is sticky on the engine side -- a later
+      // snapshot carrying the exact same trap must not re-toast.
+      presenter.setSnapshot({ ...baseSnapshot });
+
+      expect(refs.toastEl.textContent).toBe('__unchanged__');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('removes the dev-drawer toggle listener on dispose', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+    presenter.patchSessionState({ navigationStatus: 'loaded' });
+    presenter.dispose();
+
+    refs.devDrawerEl.open = true;
+    refs.devDrawerEl.dispatchEvent(new Event('toggle'));
+
+    // flushDeveloperPanels would normally populate this once the drawer
+    // opens; after dispose, the listener is gone so it stays empty.
+    expect(refs.sessionStateEl.textContent).toBe('');
+  });
+
   it('exports timeline data through a blob download', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

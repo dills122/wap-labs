@@ -17,6 +17,10 @@ export const WAVES_CONFIG = {
   networkProbeDelayMs: 1200,
   networkProbeTimeoutMs: 1800,
   engineTimerTickMs: 100,
+  // Repeat navigations (not the very first deck render) only show an
+  // in-progress indicator if they take longer than this, so instant
+  // local-mode loads don't flash it (see U1 in USABILITY_RESILIENCE_BACKLOG.md).
+  navigationProgressDelayMs: 180,
   toastTtlMs: 6000,
   scriptTimerAnonymousIdPadLength: 6
 } as const;

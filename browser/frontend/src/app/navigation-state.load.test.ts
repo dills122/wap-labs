@@ -124,6 +124,34 @@ describe('navigation-state load behavior', () => {
     expect(navigationErrors).toEqual(['gateway timed out']);
   });
 
+  it('reports a network-layer transport failure as the "network" error kind', async () => {
+    const navigationErrors: Array<{ message: string; kind: string }> = [];
+    const host = createHostClientMock({
+      fetchDeck: async () =>
+        fetchOk({
+          ok: false,
+          status: 504,
+          contentType: 'text/plain',
+          error: { code: 'GATEWAY_TIMEOUT', message: 'gateway timed out' },
+          engineDeckInput: undefined,
+          wml: undefined
+        })
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNavigationError: (message, kind) => {
+        navigationErrors.push({ message, kind });
+      }
+    });
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(navigationErrors).toEqual([{ message: 'gateway timed out', kind: 'network' }]);
+  });
+
   it('fires onNavigationError when the fetch succeeds but returns no WML payload', async () => {
     const navigationErrors: string[] = [];
     const host = createHostClientMock({
@@ -150,6 +178,36 @@ describe('navigation-state load behavior', () => {
     expect(result).toBeNull();
     expect(machine.getSessionState().navigationStatus).toBe('error');
     expect(navigationErrors).toHaveLength(1);
+  });
+
+  it('reports a fetch that succeeded with no WML payload as the "parse" error kind', async () => {
+    // U2: distinguishes a deck that fetched fine but didn't parse from a
+    // network-layer failure, so the frontend can word them differently.
+    const navigationErrors: Array<{ message: string; kind: string }> = [];
+    const host = createHostClientMock({
+      fetchDeck: async () =>
+        fetchOk({
+          ok: true,
+          status: 200,
+          engineDeckInput: undefined,
+          wml: undefined
+        })
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNavigationError: (message, kind) => {
+        navigationErrors.push({ message, kind });
+      }
+    });
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(navigationErrors).toEqual([
+      { message: 'Fetch succeeded but returned no WML payload.', kind: 'parse' }
+    ]);
   });
 
   it('does not push duplicate history entry when reload uses pushHistory=false', async () => {
