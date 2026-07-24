@@ -100,6 +100,17 @@ Planning assessment:
 2. Replan only when a source-derived fixture changes a dependency, a profile
    is activated, or implementation evidence changes a parent-row assessment.
 
+## Next In Line (Architecture Maintenance Sprint)
+
+Maintenance remains non-preemptive to the strict WAP execution order:
+
+1. Keep `M1-09` queued until the strict engine/runtime work and its host
+   boundary are stable enough for the frame migration.
+2. Keep `M1-03` as a non-priority generator design/prototype unless manual
+   contract synchronization begins blocking compliance work.
+3. Continue `M1-08` only as opportunistic boundary cleanup when active feature
+   work exposes a concrete high-churn file.
+
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
 - `docs/waves/MAINTENANCE_WORK_ITEMS.md`
