@@ -27,6 +27,8 @@ Status: Active
   implementation is complete.
 - Target source baseline:
   `docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`
+- Planning closure checkpoint:
+  `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
 - Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves) plus `2` supplemental context-source parses (`WAP.pdf`, Wiley tech brief)
 
 ### Completed traceability domains
@@ -296,19 +298,21 @@ Status: Active
 
 ## Navigation
 
-1. Master audit plan:
+1. WAP planning closure:
+- `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
+2. Master audit plan:
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
-2. Work items:
+3. Work items:
 - `docs/waves/WORK_ITEMS.md`
-3. Contract mapping:
+4. Contract mapping:
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
-4. Test coverage matrix:
+5. Test coverage matrix:
 - `docs/waves/SPEC_TEST_COVERAGE.md`
-5. Supplemental context audit:
+6. Supplemental context audit:
 - `docs/waves/archive/reports/SUPPLEMENTAL_SOURCE_CONTEXT_GAP_AUDIT_2026-03-05.md`
-6. Source authority policy:
+7. Source authority policy:
 - `docs/waves/SOURCE_AUTHORITY_POLICY.md`
-7. Requirement index:
+8. Requirement index:
 - `docs/waves/REQUIREMENT_INDEX.md`
-8. Open policy questions:
+9. Open policy questions:
 - `docs/waves/OPEN_SPEC_QUESTIONS.md`

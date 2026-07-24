@@ -56,6 +56,7 @@ Integrated dependencies:
 
 Project planning links:
 
+- WAP planning closure checkpoint: `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
 - WAP 1.2.1 / WML 1.3 compliance program: `docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md`
 - Machine-readable compliance work program: `docs/waves/wap-1.2.1-compliance-program.json`
 - Master prioritized sprint plan: `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
@@ -68,33 +69,36 @@ Project planning links:
 
 Canonical sprint priority rule:
 
-1. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` is the single ordering authority when section-level "Next In Line" lists differ.
-2. Section-level lists below are lane-local guidance and must not override master P0/P1 gating.
-3. The WAP 1.2.1 compliance program defines target-completeness and
-   dependency gates. It does not reorder work already in progress until
-   `CONF-1` produces the selected-profile obligation ledger and the master
-   priority plan is refreshed from that evidence.
+1. `docs/waves/wap-1.2.1-compliance-program.json` is authoritative for WAP
+   dependency order and completion claims.
+2. `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` resolves cross-lane
+   priority for work already in flight and is rebased to that dependency
+   order.
+3. Section-level lists below are lane-local or dated context and must not
+   override either authority.
 
-## Next In Line (Current Cross-Lane Priority Refresh - 2026-03-15)
+## Next In Line (WAP Compliance Rebase - 2026-07-24)
 
-The previous form + browser responsiveness block is no longer the active queue. `A5-04`, `A5-05`, `A5-06`, `A5-07`, and the first `M1-16` hardening slice are landed through `#108`, `#109`, and `#110`.
+The selected-profile source and planning lanes are complete. The active queue
+must now turn the 201 selected parent rows and 781 planned clauses into direct
+evidence.
 
 Current priority order is:
 
-1. `W0-05` Timer/dialog integration baseline (`P1`, already in progress; do not let it drift indefinitely).
-2. `D0-01` Engine debug connector contract and architecture definition (`P1`, planning-ready and now unblocked by the browser hot-path cleanup).
-3. `W1-06` Fatal/non-fatal script taxonomy closure (`P1` after the active runtime lane stabilizes).
-4. `M1-09` Engine-host frame migration execution (`F0` only after `W0-05` and `D0-01` are stable enough not to churn the boundary again).
-5. `M1-03` Engine API generator design/bootstrap (non-priority track).
-6. `M1-08` Residual high-churn decomposition follow-up only if new hotspots emerge during active ticket work.
+1. Start `WML-2` parser/deck/validation fixture work.
+2. Continue `TRN-7` WDP/WCMP evidence in parallel.
+3. Complete `WML-3`, then `REN-4` and `WMLS-5`.
+4. Treat existing WAE/WSP work as foundations until their upstream gates
+   close.
+5. Keep `D0-01`, frame migration, generators, and maintenance non-preemptive
+   unless they directly unblock a strict obligation.
 
 Planning assessment:
 
-1. A full replanning cycle is not required immediately; the next tranche is now clearer than it was before `#109/#110`.
-2. The next formal planning refresh should happen when either:
-- `W0-05` is closed, or
-- `D0-01` materially changes the host/engine boundary, or
-- `M1-09` is promoted from deferred to active execution.
+1. No selected Class C family needs further thematic extraction before
+   implementation starts.
+2. Replan only when a source-derived fixture changes a dependency, a profile
+   is activated, or implementation evidence changes a parent-row assessment.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 

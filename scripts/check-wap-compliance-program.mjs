@@ -68,6 +68,14 @@ if (program.target?.release !== 'WAP 1.2.1' || program.target?.markup !== 'WML 1
 if (!program.executionPolicy?.strictBeforeEnhancement) {
   failures.push('strictBeforeEnhancement must remain enabled');
 }
+if (
+  !program.executionPolicy?.binarySourcePromotionRequiresRedistributionApproval ||
+  !program.executionPolicy?.redistributionBlockDoesNotBlockInternalEvidence
+) {
+  failures.push(
+    'redistribution must gate public source promotion without blocking internal evidence work'
+  );
+}
 const selectedProfile = program.profiles?.find(
   (profile) => profile.id === 'class-c-data-client'
 );

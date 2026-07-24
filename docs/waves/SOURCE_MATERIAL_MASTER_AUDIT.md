@@ -1,7 +1,7 @@
 # Waves Source Material Master Audit
 
-Version: v0.4
-Status: selected WAP 1.2.1 Class C source, SCR, and nested-clause baseline complete; implementation evidence in progress
+Version: v0.5
+Status: selected WAP 1.2.1 Class C planning baseline complete; implementation evidence in progress
 
 ## Goal
 
@@ -137,9 +137,13 @@ Supplemental-source precedence:
 - Out-of-scope family review:
   - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
 
-### Partially captured / needs deep extraction
+### Residual research outside the selected strict profile
 
-- explicit version/SIN precedence matrix for every spec family used by Waves
+- optional/bearer source activation queues, licensed historical payloads, and
+  public redistribution permission remain explicit in
+  `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`;
+- no selected Class C family remains without an effective-spec order, SCR
+  ledger, nested-clause plan, work owner, or fixture target.
 
 ### Converted into target requirements artifacts
 
@@ -184,45 +188,20 @@ all nine selected families and all 201 selected parents at
 `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`.
 WTP is additionally conditional on connection-oriented WSP.
 
-## Audit deliverables (what “done” looks like)
+## Completed planning deliverables
 
-1. Source inventory index with canonical precedence and domain ownership.
-2. Spec precedence matrix (`base spec + SIN overlays`) for every in-scope domain.
-3. Requirement traceability docs per domain:
-- runtime/markup
-- script/vm
-- transport
-- security boundary
-4. Ticket linkage:
-- each work item includes exact spec sections and SCR/CR identifiers.
-5. AC coverage report:
-- every requirement has testable AC and target test location.
+- [x] Source inventory, canonical precedence, and domain ownership.
+- [x] Effective base/SIN order for every selected family.
+- [x] Exact WAP-215 Class C profile and conditional-capability boundaries.
+- [x] Per-family SCR ledgers and all 781 selected nested clauses.
+- [x] Requirement, owner, work-item, and fixture-target crosswalk.
+- [x] Unified successor-delta register and deterministic drift controls.
+- [x] Dependency-ordered 13-sprint/78-item compliance program.
 
-## Execution plan
+The closure checkpoint and implementation handoff are in
+`docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`.
 
-### Stage A: Inventory + precedence (short)
-
-- Normalize canonical file list and duplicate handling rules.
-- Define precedence chain per spec family (e.g., `WAP-224` + `OMA-WAP-224_002`).
-
-### Stage B: Domain extraction (deep)
-
-- Extract normative clauses into domain traceability docs.
-- Separate mandatory vs optional behavior.
-
-### Stage C: Contract alignment
-
-- Map extracted requirements to contracts:
-  - `engine-wasm/contracts/wml-engine.ts`
-  - `transport-rust` public request/response/error models
-  - `browser/contracts/transport.ts`
-
-### Stage D: AC + tests
-
-- Add AC checklists and test IDs for each requirement.
-- Identify uncovered requirements as explicit follow-up tickets.
-
-## Immediate next audit tasks
+## Immediate execution tasks
 
 1. Treat `CONF-003..007` selected-profile planning and governance as complete.
 2. Promote direct, source-derived fixtures and executable evidence through
@@ -233,7 +212,7 @@ WTP is additionally conditional on connection-oriented WSP.
    connection-oriented WSP/WTP module.
 5. Obtain redistribution guidance before promoting the 76 privately recovered
    release members or parsed derivatives into Git.
-7. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synchronized with any
+6. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synchronized with any
    implementation-facing contract changes.
 
 ## Quality gates
@@ -248,3 +227,5 @@ WTP is additionally conditional on connection-oriented WSP.
   `node spec-processing/scripts/check-wap-release-manifest.mjs`.
 - WAP-215 source identity and all six class dependency graphs pass
   `node spec-processing/scripts/check-wap-class-conformance.mjs`.
+- Selected obligations, clauses, successor deltas, program status, and human
+  rollups pass `node scripts/check-requirement-status-drift.mjs`.

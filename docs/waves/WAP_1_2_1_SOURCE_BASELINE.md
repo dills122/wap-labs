@@ -1,6 +1,6 @@
 # WAP 1.2.1 / WML 1.3 Source Baseline
 
-Version: v0.2
+Version: v0.3
 Status: active target baseline; exact Class C client profile applied
 
 ## Compatibility target
@@ -41,6 +41,7 @@ Recovery and permission runbook:
 
 Compliance execution program:
 
+- `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
 - `docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md`
 - `docs/waves/wap-1.2.1-compliance-program.json`
 

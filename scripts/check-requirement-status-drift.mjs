@@ -124,6 +124,9 @@ const normativeLedgerDocument = read(
 const complianceProgramDocument = read(
   'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md'
 );
+const planningBaseline = read(
+  'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md'
+);
 const program = readJson(
   'docs/waves/wap-1.2.1-compliance-program.json'
 );
@@ -133,14 +136,27 @@ const selectedClauses = readJson(
 
 const programItems = new Map();
 const programTokens = new Map();
+const programStatusCounts = {
+  done: 0,
+  blocked: 0,
+  'in-progress': 0,
+  todo: 0
+};
 for (const sprint of program.sprints ?? []) {
   for (const workItem of sprint.workItems ?? []) {
     programItems.set(workItem.id, workItem);
     programTokens.set(workItem.id, workItem.status);
+    programStatusCounts[workItem.status] += 1;
     for (const ticket of workItem.existingTickets ?? []) {
       programTokens.set(ticket, workItem.status);
     }
   }
+}
+if (
+  JSON.stringify(programStatusCounts) !==
+  JSON.stringify({ done: 12, blocked: 1, 'in-progress': 11, todo: 54 })
+) {
+  failures.push('compliance-program work-item status rollup drift');
 }
 
 const historicalWorkItemExceptions = new Map([
@@ -350,6 +366,15 @@ const requiredDocumentFragments = new Map([
       'WMLScript Libraries: 80 selected parents / 211 clauses',
       'all 781 direct fixtures planned'
     ]
+  ],
+  [
+    'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
+    [
+      'Planning status: complete for the selected strict profile',
+      '| **Total** | **201** | **781** | **7** | **84** | **110** |',
+      '60 residual external citations',
+      '`SRC-006` is the only blocked source item'
+    ]
   ]
 ]);
 const loadedRollups = new Map([
@@ -362,7 +387,8 @@ const loadedRollups = new Map([
     'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
     complianceProgramDocument
   ],
-  ['docs/waves/SPEC_COVERAGE_DASHBOARD.md', coverageDashboard]
+  ['docs/waves/SPEC_COVERAGE_DASHBOARD.md', coverageDashboard],
+  ['docs/waves/WAP_1_2_1_PLANNING_BASELINE.md', planningBaseline]
 ]);
 for (const [documentPath, fragments] of requiredDocumentFragments) {
   const document = loadedRollups.get(documentPath);

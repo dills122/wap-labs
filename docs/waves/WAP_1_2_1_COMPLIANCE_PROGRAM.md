@@ -1,6 +1,6 @@
 # WAP 1.2.1 / WML 1.3 Compliance Program
 
-Version: v0.2
+Version: v0.3
 Status: active pre-conformance program
 
 ## Outcome
@@ -250,7 +250,8 @@ production build.
 ## Planning relationship
 
 This program defines target completeness and compliance dependencies.
-`docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` remains the current
-ordering authority for work already in flight. After `CONF-1` reconciles the
-selected-profile obligation ledger with existing tickets, the master plan
-should be refreshed from that evidence.
+`docs/waves/WAP_1_2_1_PLANNING_BASELINE.md` is the human closure checkpoint.
+`docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md` retains cross-lane
+ordering for work already in flight and has been rebased to this program's
+dependency order. This program is authoritative for new WAP 1.2.1 work and
+completion claims.

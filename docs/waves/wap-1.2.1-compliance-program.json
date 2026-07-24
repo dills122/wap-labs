@@ -38,7 +38,8 @@
     "completedTicketsImmutable": true,
     "runtimeChangesRequireSourceAnchor": true,
     "sourceQualityChecksRemainManual": true,
-    "binarySourcePromotionRequiresRedistributionApproval": true
+    "binarySourcePromotionRequiresRedistributionApproval": true,
+    "redistributionBlockDoesNotBlockInternalEvidence": true
   },
   "sprints": [
     {
