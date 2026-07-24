@@ -1,7 +1,6 @@
 pub mod contract_types;
 pub mod waves_config;
 
-#[cfg(not(test))]
 pub mod bootstrap;
 mod engine_bridge;
 mod fetch_host;

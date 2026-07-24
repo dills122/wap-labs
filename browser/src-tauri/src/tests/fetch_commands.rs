@@ -150,16 +150,6 @@ fn health_command_returns_expected_string() {
 }
 
 #[test]
-fn bundled_wbxml_resource_relpath_looks_valid() {
-    let linux = "wbxml/linux/wbxml2xml";
-    let mac = "wbxml/macos/wbxml2xml";
-    let windows = "wbxml/windows/wbxml2xml.exe";
-    assert!(linux.starts_with("wbxml/"));
-    assert!(mac.starts_with("wbxml/"));
-    assert!(windows.starts_with("wbxml/"));
-}
-
-#[test]
 fn fetch_deck_command_keeps_caller_request_id_in_error_details() {
     let response = fetch_deck(FetchDeckRequest {
         url: "http://example.test".to_string(),
