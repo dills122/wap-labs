@@ -1,0 +1,4277 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wae",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-190-WAESpec",
+      "WAP-190_101-WAESpec",
+      "WAP-190_102-WAESpec",
+      "WAP-190_103-WAESpec",
+      "WAP-190_104-WAE-Spec"
+    ],
+    "extractionSources": [
+      {
+        "documentId": "WAP-190-WAESpec",
+        "filename": "WAP-190-WAESpec-20000329-a.pdf",
+        "sha256": "92043389310057285b050afb8cb0a16c99f1651059be8ce61e1fab151c5c0182",
+        "role": "base"
+      },
+      {
+        "documentId": "WAP-190_101-WAESpec",
+        "filename": "WAP-190_101-WAESpec-20001213-a.pdf",
+        "sha256": "df5ad17ecc4aa407717dd61d42d0d4ff06878206684f64c66091b6f6d3e742c1",
+        "role": "sin"
+      },
+      {
+        "documentId": "WAP-190_102-WAESpec",
+        "filename": "WAP-190_102-WAESpec-20001213-a.pdf",
+        "sha256": "9fd9013b166c31d679f40c8a7f369998498cedd265da810919ae09640045b98e",
+        "role": "sin"
+      },
+      {
+        "documentId": "WAP-190_103-WAESpec",
+        "filename": "WAP-190_103-WAESpec-20001213-a.pdf",
+        "sha256": "743a22e09afb2e6277e750116b419e05221a2f032dab5186a26795643a218c52",
+        "role": "sin"
+      },
+      {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "filename": "WAP-190_104-WAE-Spec-20010731-a.pdf",
+        "sha256": "3a8b6c8e10b0472cb47391f7093e0562de9a8d521e462d98fff28df191923ba2",
+        "role": "resulting-updated-scr-table"
+      }
+    ],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "textExtractionBytes": 24020,
+      "textExtractionSha256": "5b2454adabb7f0478edb2ea8fe0576dc05851f7dc4e02e74cbf0ada1b0da8cdf"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WAESpec:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "interpretation": "Apply WAP-190 SINs in effective order. WAP-190_104 section 4.3 supplies the resulting tracked-change SCR table; deleted text/rows are excluded and added text is normalized. WAP-221 defines WAESpec:MCF as the eleven effective mandatory client rows. WAP-236 is successor delta evidence only.",
+    "extractionMethod": "Tracked-change-aware normalized transcription, independently checked against page images; source PDFs and full text remain outside Git."
+  },
+  "summary": {
+    "itemCount": 86,
+    "mandatoryCount": 25,
+    "optionalCount": 61,
+    "removedBySinCount": 22,
+    "selectedClassCRequiredCount": 11,
+    "selectedClassCOptionalCount": 40,
+    "selectedClassCNotApplicableCount": 35,
+    "byActor": {
+      "wae-server": 35,
+      "wae-user-agent": 51
+    },
+    "byGroup": {
+      "calendar-and-phone-book": 33,
+      "client-header-handling": 2,
+      "general-wae-features": 42,
+      "graphics": 1,
+      "wbmp": 8
+    },
+    "selectedImplementationStatus": {
+      "implemented": 5,
+      "missing": 3,
+      "partial": 3
+    },
+    "selectedDirectTestEvidenceCount": 8
+  },
+  "obligations": [
+    {
+      "id": "WAESpec-C-002",
+      "ordinal": 1,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Basic HTTP 1.1 authentication",
+      "referencedSection": "5.1.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "authentication",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-014"
+        ],
+        "workItems": [
+          "WAE-607"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "WSP header names include Authorization and WWW-Authenticate, but no end-to-end HTTP Basic challenge, credential, retry, or user-facing flow was found.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WAESpec-C-003",
+      "ordinal": 2,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "http: URL scheme",
+      "referencedSection": "5.1.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "uri-and-transport-policy",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-010"
+        ],
+        "workItems": [
+          "WAE-602",
+          "T0-06"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "The fetch boundary recognizes the http scheme and rejects unsupported schemes deterministically.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/fetch_policy.rs",
+            "symbol": "validate_fetch_destination"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/fetch_mapping.rs",
+            "test": "transport_fetch_accepts_url_at_1024_octet_boundary",
+            "command": "cd transport-rust && cargo test --lib transport_fetch_accepts_url_at_1024_octet_boundary"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-005",
+      "ordinal": 3,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Character set / encoding",
+      "referencedSection": "5.1.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "capability-advertisement",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-012",
+          "RQ-WAE-013"
+        ],
+        "workItems": [
+          "WAE-602",
+          "T0-05",
+          "T0-06"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "The WAP baseline request policy emits Accept-Charset and keeps caller overrides deterministic.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/fetch_policy.rs",
+            "symbol": "apply_ua_capability_headers"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/request_gateway_policy.rs",
+            "test": "apply_request_policy_wap_baseline_profile_adds_capability_headers",
+            "command": "cd transport-rust && cargo test --lib apply_request_policy_wap_baseline_profile_adds_capability_headers"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-006",
+      "ordinal": 4,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Language",
+      "referencedSection": "5.1.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "capability-advertisement",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-013"
+        ],
+        "workItems": [
+          "WAE-602",
+          "T0-05"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "The WAP baseline request policy emits Accept-Language and preserves caller language overrides.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/fetch_policy.rs",
+            "symbol": "apply_ua_capability_headers"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/request_gateway_policy.rs",
+            "test": "apply_request_policy_wap_baseline_profile_keeps_existing_capability_headers",
+            "command": "cd transport-rust && cargo test --lib apply_request_policy_wap_baseline_profile_keeps_existing_capability_headers"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-007",
+      "ordinal": 5,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Media type",
+      "referencedSection": "5.1.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "capability-advertisement",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-001",
+          "RQ-WAE-013"
+        ],
+        "workItems": [
+          "WAE-602",
+          "T0-05"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "The WAP baseline request policy emits the WML/WMLC/WBMP Accept media list and preserves explicit overrides.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/fetch_policy.rs",
+            "symbol": "apply_ua_capability_headers"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/request_gateway_policy.rs",
+            "test": "apply_request_policy_wap_baseline_profile_adds_capability_headers",
+            "command": "cd transport-rust && cargo test --lib apply_request_policy_wap_baseline_profile_adds_capability_headers"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-015",
+      "ordinal": 6,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Wireless Markup Language",
+      "referencedSection": "5.1.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-runtime-integration",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-002",
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "WML-201",
+          "WML-301",
+          "R0-01"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Deck loading and a substantial WML runtime exist, but the effective WML SCR ledger still records mandatory parser, task, form, rendering, and policy gaps.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/lib.rs",
+            "symbol": "pub struct WmlEngine"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/traces_public_api.rs",
+            "test": "m1_02_load_deck_context_public_api_sets_metadata_and_state",
+            "command": "cd engine-wasm/engine && cargo test m1_02_load_deck_context_public_api_sets_metadata_and_state"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-016",
+      "ordinal": 7,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "WMLScript",
+      "referencedSection": "5.1.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wmlscript-runtime-integration",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-003",
+          "RQ-WMLS-001"
+        ],
+        "workItems": [
+          "WMLS-501",
+          "WMLS-502",
+          "W1-02",
+          "W1-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "A bytecode decoder, VM, invocation surface, and library subset exist; the WMLScript and library conformance sprints retain structural, semantic, access-control, and coverage gaps.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_public_api.rs",
+            "symbol": "execute_script_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "execute_script_unit_addition_returns_ok",
+            "command": "cd engine-wasm/engine && cargo test execute_script_unit_addition_returns_ok"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-017",
+      "ordinal": 8,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "WML user agent",
+      "referencedSection": "5.1.7.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-user-agent-composition",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-002",
+          "RQ-WAE-016",
+          "RQ-WAE-017"
+        ],
+        "workItems": [
+          "WAE-601",
+          "WML-201",
+          "WML-301",
+          "WMLS-501"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "The host, WML runtime, and script runtime compose into a functioning user agent, but the selected WML/WMLScript ledgers and nested WAE behavior map are not yet closed.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/lib.rs",
+            "symbol": "pub struct WmlEngine"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/traces_public_api.rs",
+            "test": "m1_02_load_deck_and_load_deck_context_have_matching_runtime_behavior",
+            "command": "cd engine-wasm/engine && cargo test m1_02_load_deck_and_load_deck_context_have_matching_runtime_behavior"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-018",
+      "ordinal": 9,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "WTA user agent",
+      "referencedSection": "5.1.7.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-019",
+      "ordinal": 10,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.wbxml media type",
+      "referencedSection": "5.1.8.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "media-type-routing",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-001",
+          "RQ-WAE-005"
+        ],
+        "workItems": [
+          "WAE-602",
+          "R0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The generic application/vnd.wap.wbxml media type is absent from the supported content-type matrix; WMLC-specific WBXML decoding does not satisfy this separate row.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WAESpec-C-020",
+      "ordinal": 11,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.wmlc media type",
+      "referencedSection": "5.1.8.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "media-type-routing",
+        "ownerLayers": [
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-001",
+          "RQ-WAE-005"
+        ],
+        "workItems": [
+          "WAE-602",
+          "T0-07",
+          "R0-08"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "The transport recognizes application/vnd.wap.wmlc, decodes it through the WBXML boundary, and preserves its source media type in the engine payload.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/responses.rs",
+            "symbol": "map_success_payload_response"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/fetch_mapping.rs",
+            "test": "transport_map_success_payload_wmlc_decode_success_maps_ok",
+            "command": "cd transport-rust && cargo test --lib transport_map_success_payload_wmlc_decode_success_maps_ok"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WAESpec-C-021",
+      "ordinal": 12,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.wmlscriptc media type",
+      "referencedSection": "5.1.8.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "script-media-type-routing",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-WAE-003",
+          "RQ-WMLS-011"
+        ],
+        "workItems": [
+          "WMLS-503",
+          "W1-01"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The VM accepts registered bytecode, but transport/host routing for application/vnd.wap.wmlscriptc remains an explicit open work item.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WAESpec-C-022",
+      "ordinal": 13,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "text/x-vCard media type",
+      "referencedSection": "5.1.8.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-023",
+      "ordinal": 14,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "text/x-vCalendar media type",
+      "referencedSection": "5.1.8.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-025",
+      "ordinal": 15,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "image/vnd.wap.wbmp",
+      "referencedSection": "5.1.8.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-026",
+      "ordinal": 16,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.mixed",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-027",
+      "ordinal": 17,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.related",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-028",
+      "ordinal": 18,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.alternative",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-029",
+      "ordinal": 19,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.form-data",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-030",
+      "ordinal": 20,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Channels",
+      "referencedSection": "5.1.8.7",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-C-031",
+      "ordinal": 21,
+      "actor": "wae-user-agent",
+      "group": "general-wae-features",
+      "feature": "Service Indication",
+      "referencedSection": "5.1.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WGRAPHICS-C-001",
+      "ordinal": 22,
+      "actor": "wae-user-agent",
+      "group": "graphics",
+      "feature": "Graphic image support",
+      "referencedSection": "6.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-WBMP-C-000 AND WML-C-32",
+        "references": [
+          "WAESpec-WBMP-C-000",
+          "WML-C-32"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.2",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "graphics-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-000",
+      "ordinal": 23,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "Wireless bitmap support",
+      "referencedSection": "6.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-C-025 AND WAESpec-WBMP-C-001 AND WAESpec-WBMP-C-002 AND WAESpec-WBMP-C-003 AND WAESpec-WBMP-C-004 AND WAESpec-WBMP-C-005 AND WAESpec-WBMP-C-006 AND WAESpec-WBMP-C-007",
+        "references": [
+          "WAESpec-C-025",
+          "WAESpec-WBMP-C-001",
+          "WAESpec-WBMP-C-002",
+          "WAESpec-WBMP-C-003",
+          "WAESpec-WBMP-C-004",
+          "WAESpec-WBMP-C-005",
+          "WAESpec-WBMP-C-006",
+          "WAESpec-WBMP-C-007"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-001",
+      "ordinal": 24,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "image/vnd.wap.wbmp; level=0",
+      "referencedSection": "6.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-002",
+      "ordinal": 25,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "WBMP syntax",
+      "referencedSection": "6.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-003",
+      "ordinal": 26,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "Multi-byte integer values",
+      "referencedSection": "6.3.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-004",
+      "ordinal": 27,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "Header parts",
+      "referencedSection": "6.3.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-005",
+      "ordinal": 28,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "Extension headers",
+      "referencedSection": "6.3.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-006",
+      "ordinal": 29,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "Data structures for supported image types",
+      "referencedSection": "6.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WBMP-C-007",
+      "ordinal": 30,
+      "actor": "wae-user-agent",
+      "group": "wbmp",
+      "feature": "WBMP type 0 support",
+      "referencedSection": "6.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbmp-format",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-604"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-001",
+      "ordinal": 31,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard support",
+      "referencedSection": "7.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-C-022 AND WAESpec-WVDT-C-014",
+        "references": [
+          "WAESpec-C-022",
+          "WAESpec-WVDT-C-014"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-002",
+      "ordinal": 32,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar support",
+      "referencedSection": "7.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-C-023 AND WAESpec-WVDT-C-015",
+        "references": [
+          "WAESpec-C-023",
+          "WAESpec-WVDT-C-015"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-003",
+      "ordinal": 33,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard data using WDP datagrams",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-C-009",
+        "references": [
+          "WAESpec-WVDT-C-009"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-004",
+      "ordinal": 34,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar data using WDP datagrams",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-C-021",
+        "references": [
+          "WAESpec-WVDT-C-021"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-005",
+      "ordinal": 35,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard data using WSP requests",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-C-010",
+        "references": [
+          "WAESpec-WVDT-C-010"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-006",
+      "ordinal": 36,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar data using WSP requests",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-C-011",
+        "references": [
+          "WAESpec-WVDT-C-011"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-007",
+      "ordinal": 37,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard data using Push",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-008",
+      "ordinal": 38,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar data using Push",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-009",
+      "ordinal": 39,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Correct vCard WDP port and datagram format",
+      "referencedSection": "7.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "mixed",
+        "expression": "(WDP-RP-C-003 AND WDP:MCF) OR (WDP-RP-C-005 AND WDP:MCF AND WTLS:MCF)",
+        "references": [
+          "WDP-RP-C-003",
+          "WDP:MCF",
+          "WDP-RP-C-005",
+          "WTLS:MCF"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-010",
+      "ordinal": 40,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "text/x-vCard WSP exchange",
+      "referencedSection": "7.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-011",
+      "ordinal": 41,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "text/x-vCalendar WSP exchange",
+      "referencedSection": "7.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-012",
+      "ordinal": 42,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": ".vcf extension",
+      "referencedSection": "7.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-013",
+      "ordinal": 43,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": ".vcs extension",
+      "referencedSection": "7.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-014",
+      "ordinal": 44,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard formats for sending phone-book data",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-WVDT-C-017 AND WAESpec-WVDT-C-018",
+        "references": [
+          "WAESpec-WVDT-C-017",
+          "WAESpec-WVDT-C-018"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-015",
+      "ordinal": 45,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar formats for sending calendar information",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-C-020",
+        "references": [
+          "WAESpec-WVDT-C-020"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-016",
+      "ordinal": 46,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Phone-book data exchange",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-WVDT-C-017 AND WAESpec-WVDT-C-018 AND WAESpec-WVDT-C-009",
+        "references": [
+          "WAESpec-WVDT-C-017",
+          "WAESpec-WVDT-C-018",
+          "WAESpec-WVDT-C-009"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-017",
+      "ordinal": 47,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Display vCard Name and Telephone Number",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-018",
+      "ordinal": 48,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Support vCard Name and Telephone Number properties",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-019",
+      "ordinal": 49,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Calendar data exchange",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "all-of",
+        "expression": "WAESpec-WVDT-C-020 AND WAESpec-WVDT-C-021",
+        "references": [
+          "WAESpec-WVDT-C-020",
+          "WAESpec-WVDT-C-021"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-020",
+      "ordinal": 50,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Display vEvent object to user",
+      "referencedSection": "7.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-C-021",
+      "ordinal": 51,
+      "actor": "wae-user-agent",
+      "group": "calendar-and-phone-book",
+      "feature": "Correct vCalendar WDP port and datagram format",
+      "referencedSection": "7.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "mixed",
+        "expression": "(WDP-RP-C-004 AND WDP:MCF) OR (WDP-RP-C-006 AND WDP:MCF AND WTLS:MCF)",
+        "references": [
+          "WDP-RP-C-004",
+          "WDP:MCF",
+          "WDP-RP-C-006",
+          "WTLS:MCF"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 1.4",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional WAE capability is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WAESpec-S-002",
+      "ordinal": 52,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Basic HTTP 1.1 authentication",
+      "referencedSection": "5.1.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-003",
+      "ordinal": 53,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "http: URL scheme",
+      "referencedSection": "5.1.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-005",
+      "ordinal": 54,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Character set / encoding",
+      "referencedSection": "5.1.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-006",
+      "ordinal": 55,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Language",
+      "referencedSection": "5.1.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-007",
+      "ordinal": 56,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Media type",
+      "referencedSection": "5.1.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-015",
+      "ordinal": 57,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Wireless Markup Language",
+      "referencedSection": "5.1.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-016",
+      "ordinal": 58,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "WMLScript",
+      "referencedSection": "5.1.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-017",
+      "ordinal": 59,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "WML user agent",
+      "referencedSection": "5.1.7.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-018",
+      "ordinal": 60,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "WTA user agent",
+      "referencedSection": "5.1.7.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-019",
+      "ordinal": 61,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.wbxml media type",
+      "referencedSection": "5.1.8.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-020",
+      "ordinal": 62,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.wmlc media type",
+      "referencedSection": "5.1.8.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-021",
+      "ordinal": 63,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.wmlscriptc media type",
+      "referencedSection": "5.1.8.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-022",
+      "ordinal": 64,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "text/x-vCard media type",
+      "referencedSection": "5.1.8.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-023",
+      "ordinal": 65,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "text/x-vCalendar media type",
+      "referencedSection": "5.1.8.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-025",
+      "ordinal": 66,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "image/vnd.wap.wbmp",
+      "referencedSection": "5.1.8.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-026",
+      "ordinal": 67,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.mixed",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-027",
+      "ordinal": 68,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.related",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-028",
+      "ordinal": 69,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.alternative",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-029",
+      "ordinal": 70,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "application/vnd.wap.multipart.form-data",
+      "referencedSection": "5.1.8.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-030",
+      "ordinal": 71,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Channels",
+      "referencedSection": "5.1.8.7",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-S-031",
+      "ordinal": 72,
+      "actor": "wae-server",
+      "group": "general-wae-features",
+      "feature": "Service Indication",
+      "referencedSection": "5.1.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.1",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wae-feature-policy",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WAE-601"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WCHH-S-001",
+      "ordinal": 73,
+      "actor": "wae-server",
+      "group": "client-header-handling",
+      "feature": "Cached request headers in WSP connect service primitive",
+      "referencedSection": "8",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.2",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-client-header-cache",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WSP-803"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WCHH-S-002",
+      "ordinal": 74,
+      "actor": "wae-server",
+      "group": "client-header-handling",
+      "feature": "Cached request headers in WSP resume service primitive",
+      "referencedSection": "8",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WSP_CO_S008",
+        "references": [
+          "WSP_CO_S008"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.2",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wsp-client-header-cache",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "WSP-803"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-001",
+      "ordinal": 75,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard support",
+      "referencedSection": "7.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-S-022",
+        "references": [
+          "WAESpec-S-022"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-002",
+      "ordinal": 76,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar support",
+      "referencedSection": "7.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-S-023",
+        "references": [
+          "WAESpec-S-023"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-003",
+      "ordinal": 77,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard data using WDP datagrams",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-S-009",
+        "references": [
+          "WAESpec-WVDT-S-009"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-004",
+      "ordinal": 78,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar data using WDP datagrams",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-S-021",
+        "references": [
+          "WAESpec-WVDT-S-021"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-005",
+      "ordinal": 79,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard data using WSP requests",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-S-010",
+        "references": [
+          "WAESpec-WVDT-S-010"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-006",
+      "ordinal": 80,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar data using WSP requests",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "reference",
+        "expression": "WAESpec-WVDT-S-011",
+        "references": [
+          "WAESpec-WVDT-S-011"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-007",
+      "ordinal": 81,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCard data using Push",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-008",
+      "ordinal": 82,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "vCalendar data using Push",
+      "referencedSection": "7.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-009",
+      "ordinal": 83,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "Correct vCard WDP port and datagram format",
+      "referencedSection": "7.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "mixed",
+        "expression": "(WDP-RP-C-003 AND WDP:MCF) OR (WDP-RP-C-005 AND WDP:MCF AND WTLS:MCF)",
+        "references": [
+          "WDP-RP-C-003",
+          "WDP:MCF",
+          "WDP-RP-C-005",
+          "WTLS:MCF"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-010",
+      "ordinal": 84,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "text/x-vCard WSP exchange",
+      "referencedSection": "7.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-011",
+      "ordinal": 85,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "text/x-vCalendar WSP exchange",
+      "referencedSection": "7.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "expression": null,
+        "references": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-021",
+      "ordinal": 86,
+      "actor": "wae-server",
+      "group": "calendar-and-phone-book",
+      "feature": "Correct vCalendar WDP port and datagram format",
+      "referencedSection": "7.2.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "mixed",
+        "expression": "(WDP-RP-C-004 AND WDP:MCF) OR (WDP-RP-C-006 AND WDP:MCF AND WTLS:MCF)",
+        "references": [
+          "WDP-RP-C-004",
+          "WDP:MCF",
+          "WDP-RP-C-006",
+          "WTLS:MCF"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "staticConformanceSection": "Appendix B 2.3",
+        "changeSection": "4.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "calendar-contact-capability",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "OPT-1101"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/proxy SCR row is preserved for source completeness and is outside the selected client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    }
+  ],
+  "removedRows": [
+    {
+      "id": "WAESpec-C-001",
+      "actor": "wae-user-agent",
+      "feature": "WSP",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "CCR-only reference",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-004",
+      "actor": "wae-user-agent",
+      "feature": "UAProf characteristics reporting",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-008",
+      "actor": "wae-user-agent",
+      "feature": "WML version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-009",
+      "actor": "wae-user-agent",
+      "feature": "WMLScript version and floating-point support",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-010",
+      "actor": "wae-user-agent",
+      "feature": "Standard libraries supported",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-011",
+      "actor": "wae-user-agent",
+      "feature": "WTA version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-012",
+      "actor": "wae-user-agent",
+      "feature": "WTAI Basic version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-013",
+      "actor": "wae-user-agent",
+      "feature": "WTAI Public version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-014",
+      "actor": "wae-user-agent",
+      "feature": "WTAI network-specific versions and libraries",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-C-024",
+      "actor": "wae-user-agent",
+      "feature": "image/png",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed by approved WAP-190_102",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-001",
+      "actor": "wae-server",
+      "feature": "WSP",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "CCR-only reference",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-004",
+      "actor": "wae-server",
+      "feature": "UAProf characteristics reporting",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-008",
+      "actor": "wae-server",
+      "feature": "WML version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-009",
+      "actor": "wae-server",
+      "feature": "WMLScript version and floating-point support",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-010",
+      "actor": "wae-server",
+      "feature": "Standard libraries supported",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-011",
+      "actor": "wae-server",
+      "feature": "WTA version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-012",
+      "actor": "wae-server",
+      "feature": "WTAI Basic version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-013",
+      "actor": "wae-server",
+      "feature": "WTAI Public version",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-014",
+      "actor": "wae-server",
+      "feature": "WTAI network-specific versions and libraries",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed from the WAE 1.1 SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-S-024",
+      "actor": "wae-server",
+      "feature": "image/png",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed by approved WAP-190_102",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-012",
+      "actor": "wae-server",
+      "feature": ".vcf extension",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed in the updated server SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    },
+    {
+      "id": "WAESpec-WVDT-S-013",
+      "actor": "wae-server",
+      "feature": ".vcs extension",
+      "effectiveDisposition": "removed-by-approved-sin",
+      "reason": "Removed in the updated server SCR",
+      "sourceAnchor": {
+        "documentId": "WAP-190_104-WAE-Spec",
+        "changeSection": "4.2-4.3"
+      }
+    }
+  ],
+  "successorDelta": {
+    "authority": {
+      "documentId": "WAP-236-WAESpec-20020207-a",
+      "filename": "WAP-236-WAESpec-20020207-a.pdf",
+      "sha256": "4e87f8028613ea3cfa19cea0c2244fd502e50b896e6440c297b14e016ae04adf",
+      "role": "delta-evidence-only",
+      "targetNormative": false
+    },
+    "status": "selected-mcf-concept-delta-complete",
+    "policy": "Successor behavior is not imported into strict WAP 1.2.1 mode unless the target-era source independently requires it. Compatible improvements remain allowed behind explicit strict-preserving or successor capability gates.",
+    "selectedMandatoryMappings": [
+      {
+        "targetId": "WAESpec-C-002",
+        "successorIds": [
+          "WAESpec-SEC-C-001"
+        ],
+        "classification": "preserved-renamed",
+        "note": "Basic authentication remains mandatory under the successor security group."
+      },
+      {
+        "targetId": "WAESpec-C-003",
+        "successorIds": [
+          "WAESpec-URI-C-002"
+        ],
+        "classification": "preserved-renamed",
+        "note": "The mandatory http URL scheme is retained under the successor URI group."
+      },
+      {
+        "targetId": "WAESpec-C-005",
+        "successorIds": [
+          "WAESpec-I18N-C-001",
+          "WAESpec-I18N-C-002",
+          "WAESpec-I18N-C-003",
+          "WAESpec-UAC-C-002"
+        ],
+        "classification": "expanded-and-split",
+        "note": "The broad charset/encoding row is split into mandatory UTF/XML processing plus optional Accept-Charset advertising."
+      },
+      {
+        "targetId": "WAESpec-C-006",
+        "successorIds": [
+          "WAESpec-UAC-C-004"
+        ],
+        "classification": "status-relaxed-and-reframed",
+        "note": "Language advertising becomes an optional Accept-Language capability in the WAP-236 SCR."
+      },
+      {
+        "targetId": "WAESpec-C-007",
+        "successorIds": [
+          "WAESpec-MT-C-001",
+          "WAESpec-UAC-C-001"
+        ],
+        "classification": "expanded-and-split",
+        "note": "Media-type handling stays mandatory while explicit Accept advertising is separated as optional."
+      },
+      {
+        "targetId": "WAESpec-C-015",
+        "successorIds": [
+          "WAESpec-ML-C-001",
+          "WAESpec-ML-C-002",
+          "WAESpec-ML-C-003",
+          "WAESpec-ML-C-004"
+        ],
+        "classification": "expanded-profile-choice",
+        "note": "The successor introduces XHTML/WML1 versus WML2 profile choices and an explicit context-continuity row."
+      },
+      {
+        "targetId": "WAESpec-C-016",
+        "successorIds": [
+          "WAESpec-WMLS-C-001",
+          "WAESpec-WMLS-C-002"
+        ],
+        "classification": "expanded-and-split",
+        "note": "WMLScript becomes separate mandatory execution and standard-library obligations with cross-spec dependencies."
+      },
+      {
+        "targetId": "WAESpec-C-017",
+        "successorIds": [
+          "WAESpec-ML-C-001",
+          "WAESpec-ML-C-004",
+          "WAESpec-UAB-C-001",
+          "WAESpec-UAB-C-002",
+          "WAESpec-UAB-C-003",
+          "WAESpec-UAB-C-004",
+          "WAESpec-UAB-C-005"
+        ],
+        "classification": "decomposed-into-behaviors",
+        "note": "The broad WML user-agent row is decomposed into markup/context and explicit navigation/BACK behavior."
+      },
+      {
+        "targetId": "WAESpec-C-019",
+        "successorIds": [],
+        "classification": "removed-from-wae-scr-and-delegated",
+        "note": "WAP-236 has no standalone generic WBXML media-type SCR row and delegates WBXML conformance to format-specific specifications."
+      },
+      {
+        "targetId": "WAESpec-C-020",
+        "successorIds": [
+          "WAESpec-ML-C-002"
+        ],
+        "classification": "subsumed-by-profile",
+        "note": "Binary/text WML1 support is expressed through the successor markup profile choice."
+      },
+      {
+        "targetId": "WAESpec-C-021",
+        "successorIds": [
+          "WAESpec-WMLS-C-001"
+        ],
+        "classification": "subsumed-by-profile",
+        "note": "The WMLScript bytecode media behavior is subsumed by execution support and WMLS:MCF."
+      }
+    ],
+    "successorOnlyMandatoryExamples": [
+      {
+        "successorId": "WAESpec-HTS-C-004",
+        "feature": "Caching model",
+        "targetDisposition": "Resolve from the separately selected CacheMod:MCF target family, not from WAP-236."
+      },
+      {
+        "successorId": "WAESpec-URI-C-003",
+        "feature": "HTTPS URL scheme",
+        "targetDisposition": "Successor/secure capability; not an implicit WAESpec:MCF target obligation."
+      },
+      {
+        "successorId": "WAESpec-UAB-C-001",
+        "feature": "Navigation history",
+        "targetDisposition": "Useful clarifying successor evidence; strict target behavior remains grounded in WML/WAE target-era clauses."
+      }
+    ]
+  }
+}
