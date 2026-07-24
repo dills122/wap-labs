@@ -1,0 +1,75 @@
+---
+const capabilities = [
+  ['Browse', 'Open local examples and follow linked WML pages in the same session.'],
+  ['Interact', 'Edit fields, move focus, and submit forms through the real runtime.'],
+  ['Inspect', 'Check state, snapshots, and timelines to understand every transition.'],
+  ['Recover', 'Keep loading and failure states visible instead of hitting a dead end.']
+];
+---
+
+<section class="capabilities section-block" aria-labelledby="capabilities-title">
+  <div class="section-heading" data-reveal>
+    <p class="section-number">03 / In practice</p>
+    <h2 id="capabilities-title">A browser,<br />not just a harness.</h2>
+  </div>
+  <ol class="capability-list">
+    {
+      capabilities.map(([title, detail], index) => (
+        <li data-reveal style={`--reveal-order: ${index}`}>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <h3>{title}</h3>
+          <p>{detail}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .capability-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: var(--rule-thick);
+    border-left: var(--rule-thin);
+    list-style: none;
+  }
+
+  .capability-list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem 1rem;
+    min-height: 11rem;
+    align-content: start;
+    padding: var(--space-4);
+    border-right: var(--rule-thin);
+    border-bottom: var(--rule-thin);
+  }
+
+  .capability-list li > span {
+    grid-row: span 2;
+    color: var(--color-signal-dark);
+    font: 700 0.7rem/1 var(--font-mono);
+  }
+
+  .capability-list p {
+    max-width: 25rem;
+    color: var(--color-ink-soft);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 50rem) {
+    .capability-list {
+      grid-template-columns: 1fr;
+    }
+
+    .capability-list li {
+      min-height: 9rem;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .capability-list li {
+      padding: 1.2rem 1rem;
+    }
+  }
+</style>

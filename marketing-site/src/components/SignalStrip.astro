@@ -1,0 +1,69 @@
+---
+---
+
+<aside class="signal-strip" aria-label="Product highlights">
+  <p><span>01</span> Softkey-style input</p>
+  <p><span>02</span> Visible session trace</p>
+  <p><span>03</span> Constrained transport</p>
+  <p class="signal-strip-end" aria-hidden="true">WAVES // ONLINE</p>
+</aside>
+
+<style>
+  .signal-strip {
+    display: grid;
+    grid-template-columns: repeat(3, auto) 1fr;
+    align-items: center;
+    border-top: var(--rule-thick);
+    border-bottom: var(--rule-thick);
+    color: var(--color-paper);
+    background: var(--color-night);
+    animation: tune-in var(--motion-duration-slow) var(--motion-ease-out) 420ms both;
+  }
+
+  .signal-strip p {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    min-height: 3.7rem;
+    padding: 0.75rem clamp(0.8rem, 2vw, 1.5rem);
+    border-right: 1px solid var(--color-night-soft);
+    font: 700 0.66rem/1.2 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .signal-strip p span {
+    color: var(--color-signal);
+  }
+
+  .signal-strip .signal-strip-end {
+    justify-content: flex-end;
+    color: var(--color-night-muted);
+    border-right: 0;
+  }
+
+  @media (max-width: 68rem) {
+    .signal-strip {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .signal-strip .signal-strip-end {
+      display: none;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .signal-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .signal-strip p {
+      min-height: 2.8rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--color-night-soft);
+    }
+
+    .signal-strip p:last-of-type {
+      border-bottom: 0;
+    }
+  }
+</style>

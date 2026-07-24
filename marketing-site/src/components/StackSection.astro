@@ -1,0 +1,149 @@
+---
+const architectureLayers = [
+  {
+    number: '01',
+    name: 'Gateway',
+    owner: 'Kannel + environment',
+    detail: 'Compatibility testing at the edge of the stack.'
+  },
+  {
+    number: '02',
+    name: 'Transport',
+    owner: 'Lowband',
+    detail: 'WBXML, WSP/WTP behavior, and the fetch rules beneath the browser.'
+  },
+  {
+    number: '03',
+    name: 'Engine',
+    owner: 'WaveNav',
+    detail: 'A Rust/WASM runtime for parsing WML, navigation, and card rendering.'
+  },
+  {
+    number: '04',
+    name: 'Browser',
+    owner: 'Waves',
+    detail: 'The desktop host that turns the layers into a usable browser.'
+  }
+];
+---
+
+<section class="stack-section section-block" id="stack" aria-labelledby="stack-title">
+  <div class="section-heading section-heading-wide" data-reveal>
+    <p class="section-number">02 / The system</p>
+    <h2 id="stack-title">Layered on purpose.</h2>
+    <p>Each part of the stack does one job, with the browser sitting at the top—not swallowing the layers below.</p>
+  </div>
+
+  <ol class="architecture-list">
+    {
+      architectureLayers.map((layer, index) => (
+        <li data-reveal style={`--reveal-order: ${index}`}>
+          <span class="architecture-number">{layer.number}</span>
+          <div>
+            <h3>{layer.name}</h3>
+            <p class="architecture-owner">{layer.owner}</p>
+          </div>
+          <p class="architecture-detail">{layer.detail}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .stack-section {
+    display: block;
+  }
+
+  .section-heading-wide {
+    display: grid;
+    grid-template-columns: 0.5fr 1fr 0.75fr;
+    gap: var(--space-5);
+    align-items: end;
+  }
+
+  .section-heading-wide h2 {
+    margin-top: 0;
+  }
+
+  .section-heading-wide > p:last-child {
+    margin-top: 0;
+  }
+
+  .architecture-list {
+    margin-top: var(--space-7);
+    border-top: var(--rule-thick);
+    list-style: none;
+  }
+
+  .architecture-list li {
+    display: grid;
+    grid-template-columns: 5rem minmax(12rem, 0.75fr) minmax(15rem, 1.25fr);
+    gap: var(--space-4);
+    align-items: center;
+    min-height: 7rem;
+    padding: var(--space-4) 0;
+    border-bottom: var(--rule-thin);
+  }
+
+  .architecture-number {
+    color: var(--color-signal);
+    font: 900 2.6rem/1 var(--font-display);
+  }
+
+  .architecture-owner {
+    margin-top: 0.5rem;
+    color: var(--color-terminal);
+    font: 700 0.67rem/1.2 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .architecture-detail {
+    max-width: 38rem;
+    color: var(--color-ink-soft);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 68rem) {
+    .section-heading-wide {
+      grid-template-columns: 0.4fr 1fr;
+    }
+
+    .section-heading-wide > p:last-child {
+      grid-column: 2;
+    }
+  }
+
+  @media (max-width: 50rem) {
+    .section-heading-wide {
+      display: block;
+    }
+
+    .section-heading-wide h2 {
+      margin-top: var(--space-3);
+    }
+
+    .section-heading-wide > p:last-child {
+      margin-top: var(--space-4);
+    }
+
+    .architecture-list li {
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+    }
+
+    .architecture-detail {
+      grid-column: 2;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .architecture-list li {
+      grid-template-columns: 2.8rem minmax(0, 1fr);
+      gap: var(--space-3);
+    }
+
+    .architecture-number {
+      font-size: 1.9rem;
+    }
+  }
+</style>

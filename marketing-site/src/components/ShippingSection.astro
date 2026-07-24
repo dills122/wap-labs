@@ -1,0 +1,130 @@
+---
+const shippingNow = [
+  {
+    label: 'Session',
+    title: 'Faster navigation loops',
+    detail: 'Back, history, and follow-link behavior stay stable while you iterate.',
+    outcome: 'Follow a link and continue without restarting the browsing loop.'
+  },
+  {
+    label: 'Diagnostics',
+    title: 'Actionable runtime detail',
+    detail: 'Transport state, runtime snapshots, and timelines stay visible in the browser.',
+    outcome: 'Understand why a transition happened without attaching extra tooling.'
+  },
+  {
+    label: 'Sources',
+    title: 'Local and live parity',
+    detail: 'Move between local examples and live WML pages with the same browser shell.',
+    outcome: 'Keep one input model and inspection workflow across both sources.'
+  },
+  {
+    label: 'Recovery',
+    title: 'Explicit degraded states',
+    detail: 'Loading and network failures keep the current browser context visible.',
+    outcome: 'Inspect what happened and continue instead of landing on a frozen shell.'
+  }
+];
+---
+
+<section class="shipping section-block" id="shipping" aria-labelledby="shipping-title">
+  <div class="section-heading" data-reveal>
+    <p class="section-number">04 / Shipping now</p>
+    <h2 id="shipping-title">Core flows, turned into day-to-day tools.</h2>
+    <p>Open a deck, interact, inspect, and continue in one stable loop—even when the network slows down or fails.</p>
+    <ol class="shipping-flow" aria-label="Current browser workflow">
+      <li><span>01</span>Open deck</li>
+      <li><span>02</span>Interact</li>
+      <li><span>03</span>Inspect</li>
+      <li><span>04</span>Continue</li>
+    </ol>
+  </div>
+  <ol class="shipping-list">
+    {
+      shippingNow.map((item, index) => (
+        <li data-reveal style={`--reveal-order: ${index}`}>
+          <span class="shipping-index">{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <p class="shipping-label">{item.label}</p>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+            <p class="shipping-outcome">{item.outcome}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .shipping .section-heading h2 {
+    max-width: 11ch;
+  }
+
+  .shipping-flow {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: var(--space-5);
+    border-top: var(--rule-thick);
+    border-left: var(--rule-thin);
+    list-style: none;
+  }
+
+  .shipping-flow li {
+    display: flex;
+    gap: 0.6rem;
+    min-height: 2.8rem;
+    align-items: center;
+    padding: 0.65rem 0.75rem;
+    border-right: var(--rule-thin);
+    border-bottom: var(--rule-thin);
+    font: 700 0.66rem/1.2 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .shipping-flow span {
+    color: var(--color-signal-dark);
+  }
+
+  .shipping-list {
+    border-top: var(--rule-thick);
+    list-style: none;
+  }
+
+  .shipping-list li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+    padding: 1.65rem 0;
+    border-bottom: var(--rule-thin);
+  }
+
+  .shipping-index {
+    color: var(--color-signal-dark);
+    font: 700 0.72rem/1 var(--font-mono);
+  }
+
+  .shipping-label {
+    margin-bottom: 0.55rem;
+    color: var(--color-terminal);
+    font: 700 0.64rem/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .shipping-list li > div > p:not(.shipping-label, .shipping-outcome) {
+    max-width: 34rem;
+    margin-top: 0.65rem;
+    color: var(--color-ink-soft);
+    line-height: 1.5;
+  }
+
+  .shipping-outcome {
+    max-width: 37rem;
+    margin-top: 0.85rem;
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--color-signal);
+    color: var(--color-ink);
+    font: 700 0.72rem/1.45 var(--font-mono);
+  }
+</style>
