@@ -1,7 +1,7 @@
 # Waves Security Boundary Traceability
 
-Version: v0.1  
-Status: S0-04 complete (initial extraction + docling rerun validation pass)
+Version: v0.2
+Status: S0-04 complete; WTLS wire/security audit refreshed 2026-07-24
 
 ## Purpose
 
@@ -82,17 +82,30 @@ Legend:
   - `WAP-199` (legacy WTLS baseline context)
   - `WAP-261` core + Appendix A static conformance groups (`WTLS-C-*`, `WTLS-S-*`)
 - AC:
-  - Evidence: [x] `transport-rust/src/network/wtls/record.rs`, `transport-rust/src/network/wtls/alerts.rs`, `transport-rust/src/network/wtls/handshake.rs`; fixtures `transport-rust/tests/fixtures/transport/wtls_record_boundary_mapped/record_fixture.json` and `transport-rust/tests/fixtures/transport/wtls_handshake_reliability_mapped/handshake_fixture.json`; command: `cd transport-rust && cargo test --lib`
+  - Evidence: [ ] Link WAP-261-wire-correct tests/fixtures and commands proving this requirement.
+  - Prototype evidence only: `transport-rust/src/network/wtls/record.rs`, `transport-rust/src/network/wtls/alerts.rs`, `transport-rust/src/network/wtls/handshake.rs`; fixtures `transport-rust/tests/fixtures/transport/wtls_record_boundary_mapped/record_fixture.json` and `transport-rust/tests/fixtures/transport/wtls_handshake_reliability_mapped/handshake_fixture.json`; command: `cd transport-rust && cargo test --lib`
   - [x] Security implementation matrix states which WTLS feature families are:
     - simulated
-    - delegated to modern TLS
+    - implemented as exact WTLS
     - deferred for parity
 
 Implementation note:
+
 - Current baseline is explicit:
-  - simulated: record envelope parsing/serialization, alert framing, narrow handshake message framing
+  - simulated: a stable record envelope, two-byte alert, and narrow handshake envelope
   - delegated/reused: retransmission and duplicate-message reliability policy via existing WTP logic
-  - deferred: cipher/MAC/key-exchange/session crypto and full conformance matrices
+  - deferred: WAP-261 wire codecs, cipher/MAC/key-exchange/session crypto, certificate/trust, live secure route, and full conformance matrices
+- The simulation is not a WAP-261 wire subset:
+  - record content types and header structure are TLS-shaped rather than WTLS bit fields;
+  - handshake framing inserts a non-spec sequence field and omits most message types;
+  - alerts omit the critical level, full registry, and four-byte checksum.
+- `waps://` currently selects port 9202 but sends unprotected WSP without invoking these modules.
+- Pre-alpha development/interoperability profiles may retain that route only with an unavoidable
+  no-WTLS warning and false authentication, confidentiality, and integrity state; release
+  profiles must fail closed.
+- Modern TLS is a separate direct-HTTPS security profile, not delegated WTLS behavior.
+- Detailed evidence and the ordered replacement plan are in
+  `docs/architecture/wtls-modernization-research.md`.
 
 ### RQ-SEC-005 WTLS server certificate constraints from SIN
 
@@ -101,13 +114,15 @@ Implementation note:
 - Spec:
   - `WAP-261_100` section 3.3 updates to 10.5.1.2 and 10.5.2
 - AC:
-  - Evidence: [x] `transport-rust/src/network/wtls/handshake.rs` enforces deterministic handshake framing and failure surfaces for the current minimal-active lane; command: `cd transport-rust && cargo test --lib`
+  - Evidence: [ ] Link certificate-selection, trust, and negative tests implementing the SIN rule.
   - [ ] Certificate-selection logic (or simulation logic) follows SIN rule and exception handling.
-  - [x] Mismatch path yields deterministic handshake failure behavior.
+  - [ ] Mismatch path yields deterministic WAP-261 handshake failure behavior.
 
 Implementation note:
-- The current `T0-21` baseline does not implement certificate parsing or trust evaluation.
-- Instead it makes the boundary explicit and default-disabled, so certificate-selection behavior cannot activate implicitly.
+
+- The current `T0-21` baseline does not implement Client Hello certificate identifiers,
+  certificate parsing, certificate selection, or trust evaluation.
+- Its generic invalid-type/shape failures are not evidence for the SIN certificate rule.
 - SIN-driven certificate constraints remain deferred to the full active security lane, but the boundary and failure posture are now deterministic and test-backed.
 
 ### RQ-SEC-006 End-to-end secure proxy model behavior
@@ -126,14 +141,29 @@ Implementation note:
 ## Waves boundary decisions (current)
 
 1. Runtime correctness first:
+
 - Engine/runtime determinism is prioritized before full historical crypto stack parity.
 
 2. Secure transport bridging:
-- Current architecture may delegate secure channel establishment to modern transport stack while preserving legacy observable semantics at runtime boundaries.
+
+- Direct HTTPS delegates secure channel establishment to a maintained modern TLS stack.
+- Historical WTLS requires its own exact WAP-261 implementation and cannot be delegated to TLS.
 
 3. Compatibility obligations:
+
 - Any simulated/delegated behavior must still preserve user-agent observable outcomes defined by security-related specs (error/reporting/session semantics).
+
+4. Security profile separation:
+
+- Modern TLS is the default secure web route.
+- WTLS is an opt-in, allowlisted compatibility profile.
+- Clear WAP is never an automatic fallback.
+- A future DTLS route is a separately named enhancement and makes no WTLS claim.
+- See `docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`.
 
 ## Notes
 
-- WTLS Appendix A contains a large SCR matrix. This document captures Waves-relevant boundary obligations first; per-feature WTLS parity tables can be expanded in a follow-up if/when full native WTLS implementation is scheduled.
+- WTLS Appendix A contains a large SCR matrix. `WTLS-01` in the modernization research freezes a
+  row-level client profile before implementation resumes.
+- WAP-261 defines no AES bulk cipher. Its historical registry uses RC5, DES/3DES, and IDEA CBC;
+  AES-GCM and ChaCha20-Poly1305 belong to the separate modern TLS/DTLS profile.

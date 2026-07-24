@@ -10,6 +10,14 @@
 
 ## Cross-Layer Architecture
 
+- `architecture/native-wap-browser-product-architecture.md`: Kannel-independent browser, modular SDK boundaries, gap assessment, and phased product work program
+- `architecture/c4-context.md`: product-suite system context and external WAP/WML relationships
+- `architecture/c4-containers.md`: runtime/deployment-unit view for Waves and optional Lowband adapters
+- `architecture/c4-components.md`: in-process Waves Host, Lowband, and WaveNav component boundaries
+- `architecture/c4-deployment.md`: all-in-one desktop and optional SDK delivery topology
+- `architecture/wtls-modernization-research.md`: WAP-261 algorithm inventory, current Lowband audit, modern-default security profiles, downgrade policy, and deferred WTLS work program
+- `architecture/decisions/0001-library-first-native-wap-client.md`: proposed library-first native WAP client decision
+- `architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`: proposed decision to keep modern TLS, historical WTLS, clear WAP, and any future DTLS route as explicit non-downgrading profiles
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + in-process Rust transport)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
