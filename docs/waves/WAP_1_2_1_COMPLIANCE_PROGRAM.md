@@ -41,10 +41,10 @@ All nine selected Class C family increments are complete at SCR level:
 - the selected implementation audit is 7 implemented, 84 partial, and 110
   missing;
 - every selected row has an implementation owner and work-item mapping;
-- `CONF-003` is now in progress: WML, WAE, WBXML, caching, WCMP, WSP, and WDP
-  account for 80 selected parent rows and 463 deduplicated, source-anchored
-  clauses with planned direct fixtures; the remaining two families and 121
-  parents keep the gate open;
+- `CONF-003` is now in progress: WML, WAE, WBXML, caching, WCMP, WSP, WDP,
+  and WMLScript account for 121 selected parent rows and 570 deduplicated,
+  source-anchored clauses with planned direct fixtures; the remaining
+  WMLScript Libraries family and 80 parents keep the gate open;
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
 - the selected Class C client scope is 39 required, 27 optional, and 10
@@ -74,6 +74,8 @@ All nine selected Class C family increments are complete at SCR level:
   WAP-193_101 table; `WMLScript:MCF` selects 41 mandatory interpreter rows;
 - the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,
   with zero direct normative WAP bytecode tests;
+- all 41 selected WMLScript language rows expand into 107 anchored clauses,
+  with 105 required and two recommended behaviors;
 - 95 effective WMLScript Libraries rows are extracted after adding optional
   `WMLSSL-C-095`; `WMLScriptLibs:MCF` selects 80 mandatory interpreter rows;
 - the selected libraries audit is 0 implemented, 14 partial, and 66 missing,

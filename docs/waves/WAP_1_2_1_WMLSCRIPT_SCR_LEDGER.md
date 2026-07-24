@@ -1,7 +1,7 @@
 # WAP 1.2.1 WMLScript SCR Ledger
 
-Version: v0.1
-Status: effective SCR extracted; Class C applied; nested-clause audit pending
+Version: v0.2
+Status: effective SCR extracted; Class C applied; 107 nested clauses planned
 
 ## Purpose
 
@@ -67,7 +67,9 @@ The optional interpreter rows are `WMLS-C-071` (floating-point size),
 These counts describe exact selected SCR rows, not a compliance percentage.
 “Partial” means related behavior exists but the repository has not proved the
 complete WAP-193 requirement. No selected row is marked implemented while the
-binary format and nested clauses remain unverified.
+binary format and direct source-derived fixtures remain unverified. All 41
+selected rows now map to 107 deduplicated normative clauses: 105 required and
+two recommended.
 
 ### Partial foundations
 
@@ -104,7 +106,7 @@ The ledger maps every row to existing requirement and sprint lanes:
 - `WMLS-506` / `W1-01`: WMLScript media types and cross-layer handoff;
 - `W1-05`: machine-ledger and CI closure.
 
-The next implementation pass must start with source-derived binary fixtures
+The next implementation pass must execute the planned source-derived binary fixtures
 and the actual WAP-193 data structures. Extending the current custom bytecode
 without a WAP compatibility boundary would deepen the gap.
 

@@ -1,7 +1,7 @@
 # Waves WMLScript Spec Traceability
 
-Version: v0.2
-Status: Active thematic baseline; exact WAP 1.2.1 SCR ledgers now authoritative
+Version: v0.3
+Status: Active thematic baseline; language SCR and nested clauses authoritative
 
 ## Purpose
 
@@ -54,6 +54,9 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
   - WMLScript: 41 required, 23 partial / 18 missing / 0 implemented;
   - Libraries: 80 required, 14 partial / 66 missing / 0 implemented;
   - direct normative tests: 0.
+- Nested-clause plan:
+  - WMLScript: all 41 selected parents / 107 deduplicated clauses;
+  - WMLScript Libraries: 80 selected parents remain to be expanded.
 - Work-plan source of truth for closure sequencing:
   - `docs/waves/WORK_ITEMS.md` (`Phase W`, `Phase W1`)
   - `docs/waves/SPEC_TEST_COVERAGE.md`

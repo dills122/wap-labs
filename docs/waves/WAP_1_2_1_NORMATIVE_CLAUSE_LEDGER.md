@@ -1,7 +1,7 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.6
-Status: `CONF-003` in progress; WML, WAE, WBXML, caching, WCMP, WSP, and WDP slices complete
+Version: v0.7
+Status: `CONF-003` in progress; all selected slices except WMLScript Libraries complete
 
 ## Purpose
 
@@ -37,6 +37,7 @@ node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
   --wsp-text /absolute/path/WAP-203-WSP-20000504-a.txt \
   --wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt \
   --wdp-text /absolute/path/WAP-200-WDP-20000219-a.txt \
+  --wmlscript-text /absolute/path/WAP-193_101-WMLScript-20010928-a.txt \
   --rfc-768-text /absolute/path/rfc768.txt \
   --rfc-791-text /absolute/path/rfc791.txt \
   --rfc-2396-text /absolute/path/rfc2396.txt \
@@ -50,7 +51,7 @@ ingestion lock.
 
 ## Current slices
 
-The current artifact covers 80 of the 201 selected Class C parent rows:
+The current artifact covers 121 of the 201 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
@@ -61,9 +62,10 @@ The current artifact covers 80 of the 201 selected Class C parent rows:
 | WCMP | 5 | 28 |
 | WSP | 8 | 57 |
 | WDP | 9 | 49 |
-| **Total** | **80** | **463** |
+| WMLScript | 41 | 107 |
+| **Total** | **121** | **570** |
 
-The 463 clauses are classified as 422 required, 29 recommended, and 12
+The 570 clauses are classified as 527 required, 31 recommended, and 12
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,
@@ -97,9 +99,8 @@ verbatim source text.
 
 ## Remaining `CONF-003` slices
 
-The remaining 121 selected parents are:
+The remaining 80 selected parents are:
 
-- WMLScript: 41;
 - WMLScript Libraries: 80.
 
 `CONF-003` remains open until all nine selected families and all 201 parent

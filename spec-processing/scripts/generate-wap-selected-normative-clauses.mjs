@@ -23,6 +23,7 @@ const wcmpTextPath = option('--wcmp-text');
 const wspTextPath = option('--wsp-text');
 const wspSin001TextPath = option('--wsp-sin-001-text');
 const wdpTextPath = option('--wdp-text');
+const wmlscriptTextPath = option('--wmlscript-text');
 const rfc768TextPath = option('--rfc-768-text');
 const rfc791TextPath = option('--rfc-791-text');
 const rfc2396TextPath = option('--rfc-2396-text');
@@ -45,6 +46,7 @@ if (
   !wspTextPath ||
   !wspSin001TextPath ||
   !wdpTextPath ||
+  !wmlscriptTextPath ||
   !rfc768TextPath ||
   !rfc791TextPath ||
   !rfc2396TextPath ||
@@ -65,6 +67,7 @@ if (
       '--wsp-text /absolute/path/WAP-203-WSP-20000504-a.txt ' +
       '--wsp-sin-001-text /absolute/path/WAP-203_001-WSP-20000620-a.txt ' +
       '--wdp-text /absolute/path/WAP-200-WDP-20000219-a.txt ' +
+      '--wmlscript-text /absolute/path/WAP-193_101-WMLScript-20010928-a.txt ' +
       '--rfc-768-text /absolute/path/rfc768.txt ' +
       '--rfc-791-text /absolute/path/rfc791.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
@@ -186,6 +189,13 @@ const sourceInputs = new Map([
     {
       path: wdpTextPath,
       text: fs.readFileSync(wdpTextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-193_101-WMLScript',
+    {
+      path: wmlscriptTextPath,
+      text: fs.readFileSync(wmlscriptTextPath, 'utf8')
     }
   ],
   [
@@ -554,6 +564,60 @@ const sectionDefinitions = {
       '7.2': ['7.2 Mapping of WDP for IP', '7.3 Mapping of WDP for GSM SMS, ANSI-136 GHOST and'],
       'appendix-b': ['Appendix B: Port Number Definitions', 'Appendix C: Bearer Type Assignments'],
       'appendix-c': ['Appendix C: Bearer Type Assignments', 'Appendix D: Implementation Notes']
+    }
+  },
+  wmlscript: {
+    sourceDocumentId: 'WAP-193_101-WMLScript',
+    ranges: {
+      '6.6.1': ['6.6.1 Standard Libraries', '6.7 Pragmas'],
+      '6.8.1': ['6.8.1 General Conversion Rules', '6.8.2 Conversions to String'],
+      '6.8.2': ['6.8.2 Conversions to String', '6.8.3 Conversions to Integer'],
+      '6.8.3': ['6.8.3 Conversions to Integer', '6.8.4 Conversions to Floating-Point'],
+      '6.8.5': ['6.8.5 Conversions to Boolean', '6.8.6 Conversions to Invalid'],
+      '6.8.6': ['6.8.6 Conversions to Invalid', '6.8.7 Summary'],
+      '6.8.7': ['6.8.7 Summary', '6.9 Operator Data Type Conversion Rules'],
+      '6.9': ['6.9 Operator Data Type Conversion Rules', '6.10 Summary of Operators and Conversions'],
+      '8': ['8. WMLSCRIPT BYTECODE INTERPRETER', '8.1 Interpreter Architecture'],
+      '8.1': ['8.1 Interpreter Architecture', '8.2 Character Set'],
+      '8.2': ['8.2 Character Set', '8.3 WMLScript and URLs'],
+      '8.3': ['8.3 WMLScript and URLs', '8.3.1 URL Schemes'],
+      '8.3.1': ['8.3.1 URL Schemes', '8.3.2 Fragment Anchors'],
+      '8.3.2': ['8.3.2 Fragment Anchors', '8.3.3 URL Call Syntax'],
+      '8.3.3': ['8.3.3 URL Call Syntax', '8.3.4 URL Calls and Parameter Passing'],
+      '8.3.4': ['8.3.4 URL Calls and Parameter Passing', '8.3.5 Character Escaping'],
+      '8.3.5': ['8.3.5 Character Escaping', '8.3.6 Relative URLs'],
+      '8.3.6': ['8.3.6 Relative URLs', '8.4 Bytecode Semantics'],
+      '8.4.1': ['8.4.1 Passing of Function Arguments', '8.4.2 Allocation of Variable Indexes'],
+      '8.4.2': ['8.4.2 Allocation of Variable Indexes', '8.4.3 Automatic Function Return Value'],
+      '8.4.3': ['8.4.3 Automatic Function Return Value', '8.4.4 Initialisation of Variables'],
+      '8.4.4': ['8.4.4 Initialisation of Variables', '8.5 Access Control'],
+      '8.5': ['8.5 Access Control', '9. WMLSCRIPT BINARY FORMAT'],
+      '9.1.1': ['9.1.1 Used Data Types', '9.1.2 Multi-byte Integer Format'],
+      '9.1.2': ['9.1.2 Multi-byte Integer Format', '9.1.3 Character Encoding'],
+      '9.1.3': ['9.1.3 Character Encoding', '9.1.4 Notational Conventions'],
+      '9.2': ['9.2 WMLScript Bytecode', '9.3 Bytecode Header'],
+      '9.3': ['9.3 Bytecode Header', '9.4 Constant Pool'],
+      '9.4': ['9.4 Constant Pool', '9.5   Pragma Pool'],
+      '9.5': ['9.5   Pragma Pool', '9.6 Function Pool'],
+      '9.6': ['9.6 Function Pool', '9.7 Limitations'],
+      '10.5.1': ['10.5.1 Control Flow Instructions', '10.5.2 Function Call Instructions'],
+      '10.5.2': ['10.5.2 Function Call Instructions', '10.5.3 Variable Access and Manipulation'],
+      '10.5.3': ['10.5.3 Variable Access and Manipulation', '10.5.4 Access To Constants'],
+      '10.5.4': ['10.5.4 Access To Constants', '10.5.5 Arithmetic Instructions'],
+      '10.5.5': ['10.5.5 Arithmetic Instructions', '10.5.6 Bitwise Instructions'],
+      '10.5.6': ['10.5.6 Bitwise Instructions', '10.5.7 Comparison Instructions'],
+      '10.5.7': ['10.5.7 Comparison Instructions', '10.5.8 Logical Instructions'],
+      '10.5.8': ['10.5.8 Logical Instructions', '10.5.9 Stack Instructions'],
+      '10.5.9': ['10.5.9 Stack Instructions', '10.5.10 Access to Operand Type'],
+      '10.5.10': ['10.5.10 Access to Operand Type', '10.5.11 Function Return Instructions'],
+      '10.5.11': ['10.5.11 Function Return Instructions', '10.5.12 Miscellaneous Instructions'],
+      '10.5.12': ['10.5.12 Miscellaneous Instructions', '11. BYTECODE VERIFICATION'],
+      '11.1': ['11.1 Integrity Check', '11.2 Runtime Validity Checks'],
+      '11.2': ['11.2 Runtime Validity Checks', '12. RUN-TIME ERROR DETECTION AND HANDLING'],
+      '12.1': ['12.1 Error Detection', '12.2 Error Handling'],
+      '12.2': ['12.2 Error Handling', '12.3 Fatal Errors'],
+      '12.3': ['12.3 Fatal Errors', '12.4 Non-Fatal Errors'],
+      '12.4': ['12.4 Non-Fatal Errors', '12.5 Library Calls and Errors']
     }
   },
   'rfc-768': {
@@ -1217,6 +1281,121 @@ clause('wdp', 'ipv4_source_destination_fields', ['WDP-PF-C-001', 'WDP-PF-C-002',
 clause('wdp', 'ipv4_robust_interoperation', ['WDP-NA-C-003'], '3.2', 'explicit-must', 'binary-decoder', 'Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely.', 'rfc-791');
 clause('wdp', 'ipv4_no_reliability', ['WDP-C-001', 'WDP-CORE-C-001'], '1.4', 'implicit-must', 'transport-boundary', 'Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer.', 'rfc-791');
 
+// WMLScript selected Class C interpreter clauses.
+clause('wmlscript', 'bytecode_compilation_unit', ['WMLS-C-069'], '8', 'explicit-must', 'binary-decoder', 'Accept compiled WMLScript compilation units in the effective chapter 9 binary format rather than treating source text or project bytecode as WAP bytecode.');
+clause('wmlscript', 'interpreter_execution_state', ['WMLS-C-069'], '8.1', 'implicit-must', 'runtime', 'Maintain an instruction pointer, function variables, operand stack, and function-call stack while executing a WMLScript function.');
+clause('wmlscript', 'interpreter_call_result', ['WMLS-C-069'], '8.1', 'implicit-must', 'runtime', 'Return control and the function return value to the caller after normal WMLScript function completion.');
+clause('wmlscript', 'standard_library_boundary', ['WMLS-C-070'], '6.6.1', 'explicit-must', 'runtime', 'Expose every required WMLScript standard library through the interpreter call boundary defined by the separate selected library ledger.');
+
+clause('wmlscript', 'conversion_string_matrix', ['WMLS-C-072'], '6.8.2', 'table', 'runtime', 'Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid.');
+clause('wmlscript', 'conversion_string_numeric_grammar', ['WMLS-C-072'], '6.8.2', 'explicit-must', 'runtime', 'Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.');
+clause('wmlscript', 'conversion_integer_matrix', ['WMLS-C-073'], '6.8.3', 'table', 'runtime', 'Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs.');
+clause('wmlscript', 'conversion_integer_string_grammar', ['WMLS-C-073'], '6.8.3', 'explicit-must', 'runtime', 'Convert a string to integer only when the entire string is a valid decimal integer representation.');
+clause('wmlscript', 'conversion_boolean_matrix', ['WMLS-C-075'], '6.8.5', 'table', 'runtime', 'Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.');
+clause('wmlscript', 'conversion_invalid_prohibited', ['WMLS-C-076'], '6.8.6', 'explicit-must', 'runtime', 'Do not convert another data type into invalid; create invalid only as a literal or operation-error result.');
+clause('wmlscript', 'conversion_invalid_propagation', ['WMLS-C-076', 'WMLS-C-077'], '6.8.6', 'implicit-must', 'runtime', 'Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior.');
+clause('wmlscript', 'conversion_summary_matrix', ['WMLS-C-072', 'WMLS-C-073', 'WMLS-C-075', 'WMLS-C-076'], '6.8.7', 'table', 'runtime', 'Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values.');
+clause('wmlscript', 'operator_conversion_order', ['WMLS-C-077'], '6.9', 'explicit-must', 'runtime', 'Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned.');
+clause('wmlscript', 'operator_conversion_atomicity', ['WMLS-C-077'], '6.9', 'implicit-must', 'runtime', 'Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.');
+clause('wmlscript', 'operator_numeric_precedence', ['WMLS-C-077'], '6.9', 'table', 'runtime', 'Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands.');
+clause('wmlscript', 'operator_conversion_result_invalid', ['WMLS-C-077'], '6.9', 'implicit-must', 'runtime', 'Return invalid when a selected legal conversion itself produces invalid.');
+
+clause('wmlscript', 'url_named_compilation_units', ['WMLS-C-078'], '8.3', 'implicit-must', 'transport-boundary', 'Name and fetch WMLScript compilation units by URL using a protocol with HTTP semantics.');
+clause('wmlscript', 'url_scheme_support', ['WMLS-C-078'], '8.3.1', 'explicit-must', 'transport-boundary', 'Support the URL schemes required by the selected WAE profile.');
+clause('wmlscript', 'fragment_function_identity', ['WMLS-C-079'], '8.3.2', 'implicit-must', 'runtime', 'Resolve a URL fragment identifier as the external function name within the referenced WMLScript compilation unit.');
+clause('wmlscript', 'fragment_document_form', ['WMLS-C-079'], '8.3.2', 'grammar', 'parser', 'Parse a function fragment after a hash mark appended to the compilation-unit URL.');
+clause('wmlscript', 'url_call_grammar', ['WMLS-C-080'], '8.3.3', 'grammar', 'parser', 'Parse URL-call fragments as a function name followed by parentheses containing zero or more comma-separated literal arguments.');
+clause('wmlscript', 'url_call_literal_only', ['WMLS-C-080'], '8.3.3', 'error-condition', 'parser', 'Reject expressions and nested function calls in URL-call argument lists; accept only the defined invalid, boolean, numeric, and string literals.');
+clause('wmlscript', 'url_call_unescape_before_parse', ['WMLS-C-080'], '8.3.5', 'explicit-must', 'parser', 'Apply URL and containing-content unescaping before parsing the URL-call fragment grammar.');
+clause('wmlscript', 'url_call_access_first', ['WMLS-C-081', 'WMLS-C-087'], '8.3.4', 'implicit-must', 'security-policy', 'Perform compilation-unit access control before matching or invoking the requested external function.');
+clause('wmlscript', 'url_call_external_match', ['WMLS-C-079', 'WMLS-C-081', 'WMLS-C-087'], '8.3.4', 'implicit-must', 'runtime', 'Match the fragment function name only against externally callable functions and fail when no match exists.');
+clause('wmlscript', 'url_call_typed_arguments', ['WMLS-C-081'], '8.3.4', 'implicit-must', 'runtime', 'Parse each fragment literal into its corresponding WMLScript data type and pass arguments in source order.');
+clause('wmlscript', 'url_call_invalid_parameters', ['WMLS-C-080', 'WMLS-C-081'], '8.3.4', 'error-condition', 'error-policy', 'Fail a URL call when its parameter list has invalid syntax or does not match the target function arity.');
+clause('wmlscript', 'relative_url_resolution', ['WMLS-C-082'], '8.3.6', 'explicit-must', 'transport-boundary', 'Resolve relative compilation-unit URLs using RFC 2396 rules and the current compilation-unit URL as base.');
+clause('wmlscript', 'argument_stack_order', ['WMLS-C-083'], '8.4.1', 'explicit-must', 'runtime', 'Push function arguments onto the operand stack in declaration order, beginning with the first argument.');
+clause('wmlscript', 'argument_call_initialization', ['WMLS-C-083'], '8.4.1', 'explicit-must', 'runtime', 'Pop call arguments and use them to initialize the matching callee argument variables without reordering.');
+clause('wmlscript', 'argument_variable_indexes', ['WMLS-C-084'], '8.4.2', 'explicit-must', 'runtime', 'Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count.');
+clause('wmlscript', 'local_variable_indexes', ['WMLS-C-084'], '8.4.2', 'explicit-must', 'runtime', 'Allocate local-variable indexes consecutively after the final argument index and match the declared local count.');
+clause('wmlscript', 'automatic_empty_return', ['WMLS-C-085'], '8.4.3', 'explicit-must', 'runtime', 'Return an empty string when execution reaches a function end without a return instruction.');
+clause('wmlscript', 'local_empty_initialization', ['WMLS-C-086'], '8.4.4', 'explicit-should', 'runtime', 'Initialize every function local variable to an empty string before executing the function body.');
+clause('wmlscript', 'external_keyword_gate', ['WMLS-C-087'], '8.5', 'explicit-must', 'security-policy', 'Permit calls from another compilation unit only to functions marked external.');
+clause('wmlscript', 'access_domain_path_gate', ['WMLS-C-087'], '8.5', 'explicit-must', 'security-policy', 'Permit an external call only when its caller matches the compilation unit access-domain and access-path restrictions.');
+clause('wmlscript', 'access_denial_error', ['WMLS-C-087'], '8.5', 'error-condition', 'error-policy', 'Reject a protected compilation-unit call as an access violation without executing the target function.');
+
+clause('wmlscript', 'binary_data_type_registry', ['WMLS-C-088'], '9.1.1', 'table', 'binary-decoder', 'Decode every defined bit, byte, signed, unsigned, multi-byte integer, and float32 field type with its specified width and representation.');
+clause('wmlscript', 'binary_network_order', ['WMLS-C-088'], '9.1.1', 'explicit-must', 'binary-decoder', 'Decode multi-byte integers and bit fields in most-significant-first network order.');
+clause('wmlscript', 'multibyte_integer_continuation', ['WMLS-C-089'], '9.1.2', 'grammar', 'binary-decoder', 'Decode multi-byte integers from seven-bit groups whose high bit is set on every non-final octet and clear on the final octet.');
+clause('wmlscript', 'multibyte_integer_order', ['WMLS-C-089'], '9.1.2', 'implicit-must', 'binary-decoder', 'Combine multi-byte integer octets and value bits in most-significant-group-first order.');
+clause('wmlscript', 'multibyte_integer_unused_zero', ['WMLS-C-089'], '9.1.2', 'explicit-must', 'binary-decoder', 'Require unused value bits in the initial multi-byte integer octet to be zero.');
+clause('wmlscript', 'character_set_mibenum', ['WMLS-C-090'], '9.1.3', 'implicit-must', 'binary-decoder', 'Interpret encoded character-set identities as IANA MIBenum values.');
+clause('wmlscript', 'character_set_native_execution', ['WMLS-C-069', 'WMLS-C-090'], '8.2', 'explicit-must', 'runtime', 'Perform all WMLScript string operations in one native interpreter character set, transcoding only at input or output boundaries.');
+clause('wmlscript', 'character_string_byte_lengths', ['WMLS-C-090'], '9.1.3', 'implicit-must', 'binary-decoder', 'Interpret encoded string lengths as byte counts in the declared transfer encoding rather than character counts.');
+clause('wmlscript', 'bytecode_section_order', ['WMLS-C-069', 'WMLS-C-091', 'WMLS-C-092', 'WMLS-C-093', 'WMLS-C-094'], '9.2', 'table', 'binary-decoder', 'Decode each compilation unit in header, constant pool, pragma pool, then function pool order.');
+clause('wmlscript', 'bytecode_header_version', ['WMLS-C-091'], '9.3', 'table', 'binary-decoder', 'Decode the version byte as major-minus-one and minor nibbles, with effective version 1.1 encoded as 0x01.');
+clause('wmlscript', 'bytecode_header_code_size', ['WMLS-C-091'], '9.3', 'implicit-must', 'binary-decoder', 'Interpret CodeSize as the exact byte count following the version and encoded size field.');
+clause('wmlscript', 'constant_pool_count', ['WMLS-C-092'], '9.4', 'implicit-must', 'binary-decoder', 'Decode exactly NumberOfConstants sequential entries and assign zero-based indexes by pool order.');
+clause('wmlscript', 'constant_pool_charset', ['WMLS-C-090', 'WMLS-C-092'], '9.4', 'implicit-must', 'binary-decoder', 'Use the constant-pool character-set MIBenum for string constants encoded with the external character definition.');
+clause('wmlscript', 'constant_type_registry', ['WMLS-C-092'], '9.4', 'table', 'binary-decoder', 'Decode constant types 0 through 6 as signed integers, float32, UTF-8 string, empty string, or externally encoded string, and reject reserved types.');
+clause('wmlscript', 'constant_integer_widths', ['WMLS-C-092'], '9.4', 'table', 'binary-decoder', 'Decode signed integer constants in the selected 8-bit, 16-bit, or 32-bit two-complement representation.');
+clause('wmlscript', 'constant_string_lengths', ['WMLS-C-090', 'WMLS-C-092'], '9.4', 'grammar', 'binary-decoder', 'Decode length-prefixed UTF-8 and externally encoded string constants without requiring a terminating null octet.');
+clause('wmlscript', 'constant_embedded_null', ['WMLS-C-092'], '9.4', 'explicit-must', 'binary-decoder', 'Preserve embedded null characters inside length-delimited WMLScript string constants.');
+clause('wmlscript', 'pragma_pool_count', ['WMLS-C-093'], '9.5', 'implicit-must', 'binary-decoder', 'Decode exactly NumberOfPragmas sequential pragma records.');
+clause('wmlscript', 'pragma_type_registry', ['WMLS-C-093'], '9.5', 'table', 'binary-decoder', 'Decode pragma types 0 through 3 as access domain, access path, user-agent property, or user-agent property with scheme, and reject reserved types.');
+clause('wmlscript', 'pragma_access_uniqueness', ['WMLS-C-087', 'WMLS-C-093'], '9.5', 'explicit-must', 'binary-decoder', 'Allow at most one access-domain and one access-path pragma in a compilation unit.');
+clause('wmlscript', 'pragma_string_indexes', ['WMLS-C-093'], '9.5', 'explicit-must', 'binary-decoder', 'Require access and meta pragma indexes to reference string constants of the permitted constant types.');
+clause('wmlscript', 'function_pool_count', ['WMLS-C-094'], '9.6', 'implicit-must', 'binary-decoder', 'Decode the declared function count, external function-name table, and exactly that many function records.');
+clause('wmlscript', 'function_pool_indexes', ['WMLS-C-094'], '9.6', 'implicit-must', 'binary-decoder', 'Assign zero-based function indexes by function-pool order for local call instructions.');
+clause('wmlscript', 'function_name_table', ['WMLS-C-079', 'WMLS-C-087', 'WMLS-C-094'], '9.6', 'explicit-must', 'binary-decoder', 'Store only external function names in the name table and preserve their function-pool order.');
+clause('wmlscript', 'function_record_boundaries', ['WMLS-C-094', 'WMLS-C-107'], '9.6', 'implicit-must', 'binary-decoder', 'Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.');
+
+clause('wmlscript', 'control_flow_instruction_matrix', ['WMLS-C-069', 'WMLS-C-095'], '10.5.1', 'table', 'binary-decoder', 'Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.');
+clause('wmlscript', 'control_flow_targets', ['WMLS-C-095', 'WMLS-C-108'], '10.5.1', 'explicit-must', 'runtime', 'Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.');
+clause('wmlscript', 'function_call_instruction_matrix', ['WMLS-C-069', 'WMLS-C-096'], '10.5.2', 'table', 'binary-decoder', 'Implement every local, library, and URL call opcode variant with its index widths, argument count, stack effect, result, and errors.');
+clause('wmlscript', 'function_call_index_types', ['WMLS-C-096', 'WMLS-C-108'], '10.5.2', 'explicit-must', 'binary-decoder', 'Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.');
+clause('wmlscript', 'variable_instruction_matrix', ['WMLS-C-069', 'WMLS-C-097'], '10.5.3', 'table', 'binary-decoder', 'Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.');
+clause('wmlscript', 'variable_instruction_bounds', ['WMLS-C-097', 'WMLS-C-108'], '10.5.3', 'explicit-must', 'error-policy', 'Reject a variable instruction whose index is outside the current function argument-and-local variable range.');
+clause('wmlscript', 'constant_instruction_matrix', ['WMLS-C-069', 'WMLS-C-098'], '10.5.4', 'table', 'binary-decoder', 'Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.');
+clause('wmlscript', 'constant_instruction_bounds', ['WMLS-C-098', 'WMLS-C-108'], '10.5.4', 'explicit-must', 'error-policy', 'Reject an indexed constant load that references outside the constant pool or an unsupported constant type.');
+clause('wmlscript', 'arithmetic_instruction_matrix', ['WMLS-C-069', 'WMLS-C-099'], '10.5.5', 'table', 'binary-decoder', 'Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.');
+clause('wmlscript', 'arithmetic_invalid_results', ['WMLS-C-077', 'WMLS-C-099', 'WMLS-C-111'], '10.5.5', 'implicit-must', 'runtime', 'Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.');
+clause('wmlscript', 'bitwise_instruction_matrix', ['WMLS-C-069', 'WMLS-C-100'], '10.5.6', 'table', 'binary-decoder', 'Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.');
+clause('wmlscript', 'bitwise_integer_results', ['WMLS-C-077', 'WMLS-C-100'], '10.5.6', 'implicit-must', 'runtime', 'Convert bitwise operands to integers and return invalid when an integer conversion is illegal.');
+clause('wmlscript', 'comparison_instruction_matrix', ['WMLS-C-069', 'WMLS-C-101'], '10.5.7', 'table', 'binary-decoder', 'Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.');
+clause('wmlscript', 'comparison_invalid_result', ['WMLS-C-077', 'WMLS-C-101'], '10.5.7', 'implicit-must', 'runtime', 'Return invalid rather than true or false when a comparison operand conversion or value is invalid.');
+clause('wmlscript', 'logical_instruction_matrix', ['WMLS-C-069', 'WMLS-C-102'], '10.5.8', 'table', 'binary-decoder', 'Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.');
+clause('wmlscript', 'logical_boolean_conversion', ['WMLS-C-077', 'WMLS-C-102'], '10.5.8', 'implicit-must', 'runtime', 'Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.');
+clause('wmlscript', 'stack_instruction_matrix', ['WMLS-C-069', 'WMLS-C-103'], '10.5.9', 'table', 'binary-decoder', 'Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.');
+clause('wmlscript', 'stack_underflow_fatal', ['WMLS-C-103', 'WMLS-C-110'], '10.5.9', 'error-condition', 'error-policy', 'Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.');
+clause('wmlscript', 'operand_type_instruction_matrix', ['WMLS-C-069', 'WMLS-C-104'], '10.5.10', 'table', 'binary-decoder', 'Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.');
+clause('wmlscript', 'operand_type_no_conversion', ['WMLS-C-104'], '10.5.10', 'explicit-must', 'runtime', 'Inspect the evaluated operand type without performing an automatic data conversion.');
+clause('wmlscript', 'return_instruction_matrix', ['WMLS-C-069', 'WMLS-C-105'], '10.5.11', 'table', 'binary-decoder', 'Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.');
+clause('wmlscript', 'return_top_level_boundary', ['WMLS-C-085', 'WMLS-C-105'], '10.5.11', 'implicit-must', 'runtime', 'Return the selected value to the host caller when leaving the top-level invoked WMLScript function.');
+clause('wmlscript', 'debug_instruction_matrix', ['WMLS-C-069', 'WMLS-C-106'], '10.5.12', 'table', 'binary-decoder', 'Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.');
+
+clause('wmlscript', 'integrity_before_execution', ['WMLS-C-107'], '11.1', 'explicit-must', 'error-policy', 'Complete bytecode integrity verification before executing the compilation unit.');
+clause('wmlscript', 'integrity_version_check', ['WMLS-C-091', 'WMLS-C-107'], '11.1', 'explicit-must', 'binary-decoder', 'Require matching major bytecode versions and a bytecode minor version no greater than the interpreter-supported minor version.');
+clause('wmlscript', 'integrity_code_size_check', ['WMLS-C-091', 'WMLS-C-107'], '11.1', 'explicit-must', 'binary-decoder', 'Require the declared bytecode size to match the available compilation-unit bytes.');
+clause('wmlscript', 'integrity_pool_counts', ['WMLS-C-092', 'WMLS-C-093', 'WMLS-C-094', 'WMLS-C-107'], '11.1', 'explicit-must', 'binary-decoder', 'Require constant, pragma, function-name, and function counts to match the records encoded in their pools.');
+clause('wmlscript', 'integrity_function_sizes', ['WMLS-C-094', 'WMLS-C-107'], '11.1', 'explicit-must', 'binary-decoder', 'Require every declared function code size to fit wholly inside the compilation unit.');
+clause('wmlscript', 'integrity_instruction_stream', ['WMLS-C-095', 'WMLS-C-096', 'WMLS-C-097', 'WMLS-C-098', 'WMLS-C-099', 'WMLS-C-100', 'WMLS-C-101', 'WMLS-C-102', 'WMLS-C-103', 'WMLS-C-104', 'WMLS-C-105', 'WMLS-C-106', 'WMLS-C-107'], '11.1', 'explicit-must', 'binary-decoder', 'Reject unknown, truncated, reserved, or structurally invalid instruction encodings before execution.');
+clause('wmlscript', 'integrity_failure_quarantine', ['WMLS-C-107', 'WMLS-C-110'], '11.1', 'explicit-must', 'error-policy', 'Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.');
+clause('wmlscript', 'runtime_jump_validity', ['WMLS-C-095', 'WMLS-C-108'], '11.2', 'explicit-must', 'error-policy', 'Require every taken jump target to fall on an instruction boundary within the current function.');
+clause('wmlscript', 'runtime_function_validity', ['WMLS-C-096', 'WMLS-C-108'], '11.2', 'explicit-must', 'error-policy', 'Validate called function, library, URL, and argument-count references before transferring control.');
+clause('wmlscript', 'runtime_variable_validity', ['WMLS-C-097', 'WMLS-C-108'], '11.2', 'explicit-must', 'error-policy', 'Validate every variable index against the current function frame before reading or writing it.');
+clause('wmlscript', 'runtime_constant_validity', ['WMLS-C-098', 'WMLS-C-108'], '11.2', 'explicit-must', 'error-policy', 'Validate every constant index and required constant type before loading or using it.');
+clause('wmlscript', 'runtime_stack_validity', ['WMLS-C-095', 'WMLS-C-096', 'WMLS-C-097', 'WMLS-C-099', 'WMLS-C-100', 'WMLS-C-101', 'WMLS-C-102', 'WMLS-C-103', 'WMLS-C-104', 'WMLS-C-105', 'WMLS-C-108'], '11.2', 'explicit-must', 'error-policy', 'Check operand availability for each instruction before applying its stack effect.');
+
+clause('wmlscript', 'error_detection_tools', ['WMLS-C-109'], '12.1', 'implicit-must', 'runtime', 'Expose value/type validation through standard library predicates plus typeof and isvalid so scripts can avoid predictable errors.');
+clause('wmlscript', 'error_classification', ['WMLS-C-109'], '12.2', 'table', 'error-policy', 'Classify each specified runtime error as fatal or non-fatal and apply its defined caller-visible outcome.');
+clause('wmlscript', 'error_abort_last_resort', ['WMLS-C-109'], '12.2', 'explicit-should', 'error-policy', 'Use invocation abort only when the error cannot be represented by a specified non-fatal result.');
+clause('wmlscript', 'fatal_abort_and_signal', ['WMLS-C-110'], '12.3', 'explicit-must', 'error-policy', 'Abort the current WMLScript program on a fatal error and signal failure to the calling user agent.');
+clause('wmlscript', 'fatal_bytecode_error_matrix', ['WMLS-C-107', 'WMLS-C-108', 'WMLS-C-110'], '12.3', 'table', 'error-policy', 'Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.');
+clause('wmlscript', 'fatal_resource_error_matrix', ['WMLS-C-110'], '12.3', 'table', 'error-policy', 'Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.');
+clause('wmlscript', 'nonfatal_continue_with_result', ['WMLS-C-111'], '12.4', 'explicit-must', 'error-policy', 'Represent each non-fatal error by its specified invalid or zero result and allow the program to continue.');
+clause('wmlscript', 'nonfatal_computation_matrix', ['WMLS-C-099', 'WMLS-C-111'], '12.4', 'table', 'runtime', 'Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.');
+clause('wmlscript', 'nonfatal_constant_matrix', ['WMLS-C-098', 'WMLS-C-111'], '12.4', 'table', 'runtime', 'Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.');
+clause('wmlscript', 'nonfatal_conversion_matrix', ['WMLS-C-073', 'WMLS-C-077', 'WMLS-C-111'], '12.4', 'table', 'runtime', 'Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.');
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -1317,6 +1496,12 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wdp-scr.json`,
     selectedDisposition: 'required-by-selected-class-c-transport-path',
     clauseSources: ['WAP-200-WDP', 'rfc-768', 'rfc-791']
+  },
+  {
+    family: 'wmlscript',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-wmlscript-scr.json`,
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    clauseSources: ['WAP-193_101-WMLScript']
   }
 ];
 
@@ -1470,8 +1655,17 @@ const ledger = {
   scope: {
     status: 'in-progress',
     selectedProfileParentCount: 201,
-    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching', 'wcmp', 'wsp', 'wdp'],
-    remainingFamilies: ['wmlscript', 'wmlscript-libraries'],
+    coveredFamilies: [
+      'wml',
+      'wae',
+      'wbxml',
+      'caching',
+      'wcmp',
+      'wsp',
+      'wdp',
+      'wmlscript'
+    ],
+    remainingFamilies: ['wmlscript-libraries'],
     coveredSelectedParentCount: selectedParentCount,
     remainingSelectedParentCount: 201 - selectedParentCount,
     completionRule:

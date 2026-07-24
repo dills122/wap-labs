@@ -50,9 +50,10 @@ const coveredFamilies = [
   'caching',
   'wcmp',
   'wsp',
-  'wdp'
+  'wdp',
+  'wmlscript'
 ];
-const remainingFamilies = ['wmlscript', 'wmlscript-libraries'];
+const remainingFamilies = ['wmlscript-libraries'];
 const familyDefinitions = new Map([
   [
     'wml',
@@ -115,6 +116,15 @@ const familyDefinitions = new Map([
       selectedDisposition: 'required-by-selected-class-c-transport-path',
       expectedParents: 9,
       expectedClauses: 49
+    }
+  ],
+  [
+    'wmlscript',
+    {
+      ledgerFile: 'wap-1.2.1-wmlscript-scr.json',
+      selectedDisposition: 'required-by-class-c-client-mcf',
+      expectedParents: 41,
+      expectedClauses: 107
     }
   ]
 ]);
@@ -195,8 +205,8 @@ if (
     JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !==
     JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 80 ||
-  ledger.scope?.remainingSelectedParentCount !== 121 ||
+  ledger.scope?.coveredSelectedParentCount !== 121 ||
+  ledger.scope?.remainingSelectedParentCount !== 80 ||
   !ledger.scope?.completionRule?.includes('CONF-003 remains open')
 ) {
   failures.push('partial nine-family scope accounting drift');
@@ -493,8 +503,8 @@ const expectedSummary = {
   assessedClauseCount: 0
 };
 if (
-  selectedParentCount !== 80 ||
-  clauseCount !== 463 ||
+  selectedParentCount !== 121 ||
+  clauseCount !== 570 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(
@@ -535,7 +545,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, WCMP, WSP, and WDP`
+  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, caching, WCMP, WSP, WDP, and WMLScript`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`
