@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import { formatBytes, releaseManifest } from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+const families = [...new Set(releaseManifest.members.map((item) => item.family))].sort();
+const statuses = [...new Set(releaseManifest.members.map((item) => item.local.state))].sort();
+---
+
+<BaseLayout title="Source catalog" section="sources">
+  <header class="page-header page-shell">
+    <p class="kicker">Authoritative source catalog</p>
+    <h1>Every release member, accounted for.</h1>
+    <p>
+      The WAP 1.2.1 release manifest is the inventory control plane: authority URL, publication
+      role, cryptographic identity, family, priority, and local ingestion state.
+    </p>
+  </header>
+  <section class="page-shell stat-row" aria-label="Source state summary">
+    <div><strong>{releaseManifest.summary.memberCount}</strong><span>Total members</span></div>
+    {Object.entries(releaseManifest.summary.byLocalState).map(([state, count]) => (
+      <div><strong>{count}</strong><span>{state}</span></div>
+    ))}
+  </section>
+  <section class="page-shell catalog-section" data-filter-scope>
+    <FilterBar
+      label="Find a source"
+      placeholder="Document ID, title, hash…"
+      statuses={statuses}
+      families={families}
+    />
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Document</th><th>Family</th><th>Role</th><th>Published</th><th>Local state</th><th>Size</th></tr></thead>
+        <tbody>
+          {releaseManifest.members.map((source) => (
+            <tr data-filter-row data-status={source.local.state} data-family={source.family}>
+              <td>
+                <a class="record-link" href={route(`sources/${source.documentId}`)}>
+                  <span class="mono-id">{source.documentId}</span>
+                  <strong>{source.title}</strong>
+                </a>
+              </td>
+              <td>{source.family}</td>
+              <td>{source.documentRole}</td>
+              <td>{source.publishedOn}</td>
+              <td><StatusPill status={source.local.state} /></td>
+              <td>{formatBytes(source.bytes)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</BaseLayout>

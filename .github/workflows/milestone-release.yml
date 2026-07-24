@@ -98,6 +98,9 @@ jobs:
       - name: Build marketing site
         run: pnpm --dir marketing-site --ignore-workspace run build
 
+      - name: Build project Atlas
+        run: pnpm --dir docs-portal run build
+
       - name: Build WaveNav WASM package
         working-directory: engine-wasm/engine
         run: wasm-pack build --target web --out-dir ../pkg
@@ -111,6 +114,8 @@ jobs:
           cp -R marketing-site/dist/. release-assets/site/
           mkdir -p release-assets/site/simulator
           cp -R engine-wasm/host-sample/dist/. release-assets/site/simulator/
+          mkdir -p release-assets/site/atlas
+          cp -R docs-portal/dist/. release-assets/site/atlas/
           git archive --format=tar.gz --output "release-assets/wap-labs-v${{ inputs.version }}-source.tar.gz" HEAD
           tar -czf "release-assets/wap-labs-v${{ inputs.version }}-site-bundle.tar.gz" -C release-assets/site .
           (cd release-assets && sha256sum "wap-labs-v${{ inputs.version }}-source.tar.gz" "wap-labs-v${{ inputs.version }}-site-bundle.tar.gz" > "SHA256SUMS.txt")

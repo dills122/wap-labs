@@ -1,0 +1,11 @@
+---
+import { labelize } from '../lib/repository';
+
+interface Props {
+  status: string;
+}
+
+const { status } = Astro.props;
+---
+
+<span class:list={['status-pill', `status-${status}`]}>{labelize(status)}</span>

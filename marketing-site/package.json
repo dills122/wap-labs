@@ -11,7 +11,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.0.9"
+    "astro": "7.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "js-yaml": "^4.3.0",
+      "picomatch": "^2.3.2",
+      "sharp": "^0.35.0",
+      "smol-toml": "^1.6.1",
+      "svgo": "^4.0.2"
+    }
   },
   "repository": {
     "type": "git",

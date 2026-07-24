@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import {
+  formatBytes,
+  releaseManifest,
+  sourceFamilyById,
+  type SourceMember
+} from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+export function getStaticPaths() {
+  return releaseManifest.members.map((source) => ({
+    params: { id: source.documentId },
+    props: { source }
+  }));
+}
+
+interface Props { source: SourceMember }
+const { source } = Astro.props;
+const family = sourceFamilyById.get(source.family);
+---
+
+<BaseLayout title={source.documentId} section="sources" description={`${source.title}: provenance and effective-spec context.`}>
+  <header class="record-header page-shell">
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href={route('sources')}>Sources</a><span>/</span><span>{source.family}</span></nav>
+    <div>
+      <p class="kicker">{source.documentRole} · {source.publicationStatus}</p>
+      <h1>{source.title}</h1>
+      <p class="record-id">{source.documentId}</p>
+    </div>
+    <StatusPill status={source.local.state} />
+  </header>
+  <div class="page-shell detail-grid">
+    <article class="detail-main">
+      <section>
+        <p class="section-label">Provenance</p>
+        <h2>Release identity</h2>
+        <dl class="metadata-list">
+          <div><dt>Authority</dt><dd>{source.authority}</dd></div>
+          <div><dt>Published</dt><dd>{source.publishedOn}</dd></div>
+          <div><dt>Filename</dt><dd><code>{source.filename}</code></dd></div>
+          <div><dt>Bytes</dt><dd>{source.bytes.toLocaleString()} ({formatBytes(source.bytes)})</dd></div>
+          <div class="wide"><dt>SHA-256</dt><dd><code class="hash">{source.sha256}</code></dd></div>
+          <div><dt>Redistribution</dt><dd>{source.redistributionStatus}</dd></div>
+          <div><dt>Ingestion priority</dt><dd>{source.ingestionPriority}</dd></div>
+        </dl>
+        <a class="button" href={source.individualSourceUrl}>Open authority copy ↗</a>
+      </section>
+      {family && (
+        <section>
+          <p class="section-label">Effective specification</p>
+          <h2>{family.title}</h2>
+          <p>{family.interpretationRule}</p>
+          <ol class="sequence-list">
+            {family.effectiveSequence.map((id, index) => (
+              <li class:list={{ current: id === source.documentId }}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <a href={route(`sources/${id}`)}>{id}</a>
+                {id === source.documentId && <em>this document</em>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+    </article>
+    <aside class="detail-aside">
+      <p class="section-label">Classification</p>
+      <dl>
+        <div><dt>Family</dt><dd>{source.family}</dd></div>
+        <div><dt>Source class</dt><dd>{source.sourceClass}</dd></div>
+        <div><dt>Target disposition</dt><dd>{family?.targetDisposition ?? 'unmapped'}</dd></div>
+        <div><dt>Local path</dt><dd>{source.local.path ?? 'Not present'}</dd></div>
+      </dl>
+      <a href={route(`compliance#${source.family}`)}>View family contract →</a>
+    </aside>
+  </div>
+</BaseLayout>

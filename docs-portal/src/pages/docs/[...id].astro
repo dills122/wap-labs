@@ -1,0 +1,56 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { docSection, docTitle, isActiveDoc } from '../../lib/repository';
+import { route } from '../../lib/routes';
+
+export async function getStaticPaths() {
+  const docs = (await getCollection('projectDocs')).filter((entry) => isActiveDoc(entry.id));
+  return docs.map((doc) => ({
+    params: { id: doc.id.replace(/\.md$/, '') },
+    props: { doc }
+  }));
+}
+
+interface Props { doc: CollectionEntry<'projectDocs'> }
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const id = doc.id.replace(/\.md$/, '');
+const title = docTitle(doc.body, doc.id);
+const section = docSection(doc.id);
+---
+
+<BaseLayout title={title} section="docs">
+  <div class="page-shell doc-layout" data-doc-path={id}>
+    <article class="doc-article">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href={route('docs')}>Documents</a><span>/</span><span>{section}</span></nav>
+      <p class="doc-path">docs/{id}.md</p>
+      <div class="markdown-body"><Content /></div>
+    </article>
+    <aside class="doc-toc">
+      <p class="section-label">On this page</p>
+      {headings.length ? (
+        <ol>{headings.filter((heading) => heading.depth <= 3).map((heading) => <li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol>
+      ) : <p>No section headings.</p>}
+      <a class="source-edit-link" href={`https://github.com/dills122/wap-labs/blob/main/docs/${id}.md`}>View source ↗</a>
+    </aside>
+  </div>
+  <script is:inline define:vars={{ portalBase: route('docs') }}>
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  </script>
+</BaseLayout>

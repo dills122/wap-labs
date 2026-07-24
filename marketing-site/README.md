@@ -6,6 +6,7 @@ Developer-facing landing/info site built with Astro static output.
 - Framework: Astro
 - Deployed location on GitHub Pages: `/`
 - Simulator location on GitHub Pages: `/simulator/`
+- Project Atlas location on GitHub Pages: `/atlas/` (built from `docs-portal/`)
 
 ## Local commands
 

@@ -153,6 +153,7 @@ files
 tmp
 
 _site
+_site-preview
 
 **/fuzz/corpus/**
 # Curated regression seeds are tracked deliberately (unlike ad-hoc/mutated
@@ -168,3 +169,6 @@ _site
 .codex/skills/
 .codex/steering/frontend-design-steering.md
 .codex/steering/javascript-esm-steering.md
+
+# Local Obsidian state (generated compliance notes remain tracked)
+docs/knowledge-graph/vault/.obsidian/

@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusPill from '../components/StatusPill.astro';
+import {
+  clauseManifest,
+  effectiveSpec,
+  percentComplete,
+  program,
+  progress,
+  releaseManifest,
+  strictFamilies,
+  workItems
+} from '../lib/repository';
+import { route } from '../lib/routes';
+
+const completion = percentComplete();
+const activeSprints = program.sprints.filter((sprint) =>
+  ['in-progress', 'blocked'].includes(sprint.status)
+);
+const nextSprints = program.sprints.filter((sprint) => sprint.status === 'todo').slice(0, 3);
+const layers = [
+  ['Gateway', 'Kannel compatibility environment', 'gateway-kannel + docker/kannel'],
+  ['Transport', 'WDP, WCMP, WTP, WSP and WBXML', 'transport-rust'],
+  ['Engine', 'WML runtime, scripting, layout and rendering', 'engine-wasm'],
+  ['Browser', 'Desktop host, input and inspection surfaces', 'browser']
+];
+---
+
+<BaseLayout title="Project overview" section="overview">
+  <section class="hero page-shell">
+    <div class="hero-copy">
+      <p class="kicker">Living project record · pre-alpha</p>
+      <h1>Rebuilding the early mobile web from its source.</h1>
+      <p class="lede">
+        Waves is a modern, layered WAP/WML browser stack built against the original standards.
+        Historical compatibility defines the core; better behavior ships as an explicit extension.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href={route('planning')}>Explore the delivery plan <span>→</span></a>
+        <a class="button" href={route('sources')}>Audit the source set</a>
+      </div>
+    </div>
+    <aside class="target-brief" aria-labelledby="target-title">
+      <p class="brief-index">Target / 01</p>
+      <h2 id="target-title">{program.target.release} + {program.target.markup}</h2>
+      <dl>
+        <div><dt>Profile</dt><dd>Class C data client</dd></div>
+        <div><dt>Floor</dt><dd>Strict historical observable behavior</dd></div>
+        <div><dt>Claim</dt><dd>{program.target.implementationClaim}</dd></div>
+        <div><dt>Certification</dt><dd>{program.target.certificationClaim}</dd></div>
+      </dl>
+      <a href={route('compliance')}>Read the compatibility contract →</a>
+    </aside>
+  </section>
+
+  <section class="signal-band" aria-label="Project facts">
+    <div><strong>{releaseManifest.summary.memberCount}</strong><span>release sources locked</span></div>
+    <div><strong>{effectiveSpec.summary.familyCount}</strong><span>specification families</span></div>
+    <div><strong>{clauseManifest.summary.clauseCount}</strong><span>normative clauses planned</span></div>
+    <div><strong>{workItems.length}</strong><span>work items</span></div>
+  </section>
+
+  <section class="page-shell split-section">
+    <div class="section-intro">
+      <p class="section-label">State of the project</p>
+      <h2>Planning is mapped. Implementation is the long pole.</h2>
+      <p>
+        Source coverage, class-profile selection, SCR ledgers, and clause extraction now form the
+        control plane. The program is {completion}% complete by work-item status; that is planning
+        progress, not a conformance claim.
+      </p>
+    </div>
+    <div class="progress-panel">
+      <div class="progress-heading"><span>Work-item closure</span><strong>{completion}%</strong></div>
+      <div class="progress-track" aria-label={`${completion}% of work items marked done`}>
+        <span style={`width:${completion}%`}></span>
+      </div>
+      <dl class="progress-counts">
+        <div><dt>Done</dt><dd>{progress.workItems.done ?? 0}</dd></div>
+        <div><dt>In progress</dt><dd>{progress.workItems['in-progress'] ?? 0}</dd></div>
+        <div><dt>To do</dt><dd>{progress.workItems.todo ?? 0}</dd></div>
+        <div><dt>Blocked</dt><dd>{progress.workItems.blocked ?? 0}</dd></div>
+      </dl>
+      <p class="callout">
+        <strong>Current source constraint:</strong> 72 release members remain absent from the
+        redistributable repository corpus. Their identities and hashes are already locked.
+      </p>
+    </div>
+  </section>
+
+  <section class="page-shell">
+    <div class="section-heading">
+      <div><p class="section-label">Now / next</p><h2>Follow the program at either altitude.</h2></div>
+      <a href={route('planning')}>All 13 sprints →</a>
+    </div>
+    <div class="sprint-columns">
+      <div>
+        <h3 class="column-title">Active or constrained</h3>
+        <ol class="compact-list">
+          {activeSprints.map((sprint) => (
+            <li>
+              <a href={route(`planning/${sprint.id}`)}>
+                <span class="mono-id">{sprint.id}</span>
+                <strong>{sprint.title}</strong>
+                <StatusPill status={sprint.status} />
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div>
+        <h3 class="column-title">Next program gates</h3>
+        <ol class="compact-list">
+          {nextSprints.map((sprint) => (
+            <li>
+              <a href={route(`planning/${sprint.id}`)}>
+                <span class="mono-id">{sprint.id}</span>
+                <strong>{sprint.title}</strong>
+                <StatusPill status={sprint.status} />
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell">
+    <div class="section-heading">
+      <div><p class="section-label">System map</p><h2>Four layers. Deliberate boundaries.</h2></div>
+    </div>
+    <ol class="layer-map">
+      {layers.map(([name, scope, owner], index) => (
+        <li>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <h3>{name}</h3>
+          <p>{scope}</p>
+          <code>{owner}</code>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="page-shell strict-strip">
+    <div>
+      <p class="section-label">Strict target surface</p>
+      <h2>{strictFamilies.length} effective families govern Class C.</h2>
+    </div>
+    <ul class="tag-list">
+      {strictFamilies.map((family) => (
+        <li><a href={route(`compliance#${family.family}`)}>{family.family}</a></li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

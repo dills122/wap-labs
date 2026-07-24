@@ -2,6 +2,7 @@ packages:
   # Active Node package today
   - "engine-wasm/host-sample"
   - "browser/frontend"
+  - "docs-portal"
 
 catalog:
   "@types/node": "^26.1.1"
