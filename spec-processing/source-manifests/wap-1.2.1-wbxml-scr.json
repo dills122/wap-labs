@@ -1,0 +1,715 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wbxml",
+  "recordedOn": "2026-07-24",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
+  },
+  "authority": {
+    "effectiveSequence": [
+      "WAP-192-WBXML",
+      "WAP-192_105-WBXML"
+    ],
+    "extractionSources": [
+      {
+        "documentId": "WAP-192-WBXML",
+        "filename": "WAP-192-WBXML-20010725-a.pdf",
+        "sha256": "a6312060b4488680b1f56858b350bc97021c314fa315ca20e25a33521a4df92b",
+        "role": "base"
+      },
+      {
+        "documentId": "WAP-192_105-WBXML",
+        "filename": "WAP-192_105-WBXML-20011015-a.pdf",
+        "sha256": "e4c0bc05a51e27697d07a4d46f710b4daabdc7039950aa472b1d7de0e080ca98",
+        "role": "effective-scr-correction",
+        "textExtractionBytes": 15513,
+        "textExtractionSha256": "f5e14e2c820849c57e547b7a174776bd3f3417f0456a9495b808443cbf52f9b2"
+      }
+    ],
+    "governingSource": {
+      "documentId": "WAP-221-CREQ-20010425-a",
+      "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
+      "selectedDefinition": "MCF = all mandatory client features of the specification SCR",
+      "textExtractionBytes": 24020,
+      "textExtractionSha256": "5b2454adabb7f0478edb2ea8fe0576dc05851f7dc4e02e74cbf0ada1b0da8cdf"
+    },
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WBXML:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "interpretation": "Apply WAP-192_105 to WAP-192. The approved SIN supplies corrected actor-specific SCR rows and restores changes omitted from WAP-192.101. WAP-221 defines WBXML:MCF as the three effective mandatory client rows; server/encoder rows remain outside the selected Class C client profile.",
+    "extractionMethod": "Tracked-change-aware normalized transcription checked against SIN page images; source PDFs, full text, and page images remain outside Git."
+  },
+  "summary": {
+    "itemCount": 15,
+    "mandatoryCount": 11,
+    "optionalCount": 4,
+    "selectedClassCRequiredCount": 3,
+    "selectedClassCOptionalCount": 0,
+    "selectedClassCNotApplicableCount": 12,
+    "byActor": {
+      "wbxml-client-decoder": 3,
+      "wbxml-server-encoder": 12
+    },
+    "byGroup": {
+      "binary-structure": 2,
+      "default-attribute-values": 2,
+      "document-structure-conformance": 2,
+      "document-tokenisation": 8,
+      "token-value-association": 1
+    },
+    "selectedImplementationStatus": {
+      "missing": 2,
+      "partial": 1
+    },
+    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedBoundaryTestEvidenceCount": 1
+  },
+  "obligations": [
+    {
+      "id": "WBXML-S-001",
+      "ordinal": 1,
+      "actor": "wbxml-server-encoder",
+      "group": "binary-structure",
+      "feature": "Binary XML Structure",
+      "referencedSection": "5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.1",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "binary-structure",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-C-001",
+      "ordinal": 2,
+      "actor": "wbxml-client-decoder",
+      "group": "binary-structure",
+      "feature": "Binary XML Structure",
+      "referencedSection": "5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.1",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "binary-structure",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "WML-203",
+          "R0-08",
+          "T0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "WMLC payloads reach a bounded external decoder subprocess, but the repository neither pins a conforming decoder nor tests the WBXML 1.3 binary structure and token grammar directly.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/wbxml.rs",
+            "symbol": "decode_wmlc_with_tool_limits"
+          },
+          {
+            "path": "transport-rust/src/responses.rs",
+            "symbol": "map_success_payload_response"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/wbxml_env.rs",
+            "test": "transport_decode_wmlc_uses_subprocess_backend",
+            "command": "cd transport-rust && cargo test --lib transport_decode_wmlc_uses_subprocess_backend",
+            "limitation": "The fake decoder emits fixed XML and does not validate the input token stream."
+          }
+        ],
+        "evidenceState": "boundary-test-linked"
+      }
+    },
+    {
+      "id": "WBXML-S-002",
+      "ordinal": 3,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Conversion of all XML mark-up, excluding unparsed entities, into tokens",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-003",
+      "ordinal": 4,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Removal of Processing Instructions intended for the tokeniser",
+      "referencedSection": "6.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-004",
+      "ordinal": 5,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Removal of all comments, the XML declaration, and the document type declaration",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-005",
+      "ordinal": 6,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Conversion of all text into String or Entity tokens",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-006",
+      "ordinal": 7,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Conversion of all XML parsed entities into string or entity tokens",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-007",
+      "ordinal": 8,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Conversion of all XML unparsed entities into string or entity tokens",
+      "referencedSection": "6.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-008",
+      "ordinal": 9,
+      "actor": "wbxml-server-encoder",
+      "group": "document-structure-conformance",
+      "feature": "Checking that document is well-formed",
+      "referencedSection": "6.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-structure-conformance",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-009",
+      "ordinal": 10,
+      "actor": "wbxml-server-encoder",
+      "group": "document-structure-conformance",
+      "feature": "Document validation",
+      "referencedSection": "6.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-structure-conformance",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-010",
+      "ordinal": 11,
+      "actor": "wbxml-server-encoder",
+      "group": "default-attribute-values",
+      "feature": "Encoding default attribute values",
+      "referencedSection": "6.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "default-attribute-values",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-C-010",
+      "ordinal": 12,
+      "actor": "wbxml-client-decoder",
+      "group": "default-attribute-values",
+      "feature": "Encoding default attribute values",
+      "referencedSection": "6.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "default-attribute-values",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "WML-203",
+          "R0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No source-pinned decoder behavior or fixture proves the effective section 6.3 default-attribute-value requirement.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WBXML-S-012",
+      "ordinal": 13,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Preservation of Processor Instructions NOT intended for the tokeniser",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-S-013",
+      "ordinal": 14,
+      "actor": "wbxml-server-encoder",
+      "group": "document-tokenisation",
+      "feature": "Encoding of attribute names as an attribute start token or a single LITERAL token",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.2",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "document-tokenisation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Server/encoder SCR row is preserved for source completeness and is outside the selected Class C client profile.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "outside-selected-client-profile"
+      }
+    },
+    {
+      "id": "WBXML-C-011",
+      "ordinal": 15,
+      "actor": "wbxml-client-decoder",
+      "group": "token-value-association",
+      "feature": "Support both the binary token value and the literal value for all tags, attribute names, and attribute values",
+      "referencedSection": "6.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-192_105-WBXML",
+        "staticConformanceSection": "9.3",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "token-value-association",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "workItems": [
+          "WML-203",
+          "R0-08",
+          "T0-07"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No direct fixture proves equivalent decoding of binary and literal tokens for tags, attribute names, and attribute values; the permissive corpus and fake subprocess tests are insufficient.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    }
+  ]
+}
