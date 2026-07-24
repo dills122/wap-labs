@@ -1,7 +1,7 @@
 # WAP 1.2.1 User-Agent Caching SCR Ledger
 
-Version: v0.1
-Status: effective SCR extracted; Class C applied; nested HTTP audit pending
+Version: v0.2
+Status: effective SCR extracted; Class C applied; nested HTTP audit complete
 
 ## Purpose
 
@@ -12,6 +12,7 @@ interaction, intra-resource navigation, and cache security.
 The machine-readable authority is:
 
 - `spec-processing/source-manifests/wap-1.2.1-caching-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
 
 Validate it with:
 
@@ -103,6 +104,18 @@ This is not enough for full credit. In particular, no code parses response
 freshness or `must-revalidate`, and external history back cannot choose between
 the two mandatory stale-resource branches.
 
+## Selected nested-clause slice
+
+`CONF-003` now expands all five selected caching rows into 68 deduplicated
+clauses. Fifty-seven clauses map to the imported HTTP/1.1 cache model, while
+the WAP-120 additions preserve zero-byte applicability, exact history replay,
+both stale-back branches, intra-resource no-fetch behavior, and local cache
+protection.
+
+All clauses have source anchors and planned direct fixtures. Their
+implementation status remains `not-assessed` until the fixtures and direct
+code/test evidence are reviewed.
+
 ## Work closure
 
 Existing open program item `WAE-603` is the canonical corrective lane.
@@ -117,8 +130,7 @@ reopened.
    preserving the exact original method, entity, headers, and request policy;
 4. WML intra-deck and WMLScript intra-compilation-unit no-fetch fixtures;
 5. cache/data-retention threat modeling and tests;
-6. RFC 2616 nested-clause extraction for the selected WAP-120 references;
-7. migration gates for a future bounded cache implementation.
+6. migration gates for a future bounded cache implementation.
 
 ## Enhancement policy
 

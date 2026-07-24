@@ -43,11 +43,10 @@ function sha256(value) {
 }
 
 const failures = [];
-const coveredFamilies = ['wml', 'wae', 'wbxml'];
+const coveredFamilies = ['wml', 'wae', 'wbxml', 'caching'];
 const remainingFamilies = [
   'wmlscript',
   'wmlscript-libraries',
-  'caching',
   'wdp',
   'wcmp',
   'wsp'
@@ -78,6 +77,15 @@ const familyDefinitions = new Map([
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 3,
       expectedClauses: 48
+    }
+  ],
+  [
+    'caching',
+    {
+      ledgerFile: 'wap-1.2.1-caching-scr.json',
+      selectedDisposition: 'required-by-class-c-client-mcf',
+      expectedParents: 5,
+      expectedClauses: 68
     }
   ]
 ]);
@@ -158,8 +166,8 @@ if (
     JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !==
     JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 53 ||
-  ledger.scope?.remainingSelectedParentCount !== 148 ||
+  ledger.scope?.coveredSelectedParentCount !== 58 ||
+  ledger.scope?.remainingSelectedParentCount !== 143 ||
   !ledger.scope?.completionRule?.includes('CONF-003 remains open')
 ) {
   failures.push('partial nine-family scope accounting drift');
@@ -456,8 +464,8 @@ const expectedSummary = {
   assessedClauseCount: 0
 };
 if (
-  selectedParentCount !== 53 ||
-  clauseCount !== 261 ||
+  selectedParentCount !== 58 ||
+  clauseCount !== 329 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(
@@ -498,7 +506,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, and WBXML`
+  `PASS current CONF-003 slice: ${selectedParentCount}/201 selected parents across WML, WAE, WBXML, and caching`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`

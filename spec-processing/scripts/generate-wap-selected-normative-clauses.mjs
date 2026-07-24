@@ -18,6 +18,7 @@ const wbxmlSinTextPath = option('--wbxml-sin-text');
 const waeTextPath = option('--wae-text');
 const waeSin101TextPath = option('--wae-sin-101-text');
 const waeSin103TextPath = option('--wae-sin-103-text');
+const cachingTextPath = option('--caching-text');
 const rfc2396TextPath = option('--rfc-2396-text');
 const rfc2616TextPath = option('--rfc-2616-text');
 const rfc2617TextPath = option('--rfc-2617-text');
@@ -33,6 +34,7 @@ if (
   !waeTextPath ||
   !waeSin101TextPath ||
   !waeSin103TextPath ||
+  !cachingTextPath ||
   !rfc2396TextPath ||
   !rfc2616TextPath ||
   !rfc2617TextPath ||
@@ -46,6 +48,7 @@ if (
       '--wae-text /absolute/path/WAP-190-WAESpec-20000329-a.txt ' +
       '--wae-sin-101-text /absolute/path/WAP-190_101-WAESpec-20001213-a.txt ' +
       '--wae-sin-103-text /absolute/path/WAP-190_103-WAESpec-20001213-a.txt ' +
+      '--caching-text /absolute/path/WAP-120-WAPCachingMod-20010413-a.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
       '--rfc-2616-text /absolute/path/rfc2616.txt ' +
       '--rfc-2617-text /absolute/path/rfc2617.txt ' +
@@ -130,6 +133,13 @@ const sourceInputs = new Map([
     {
       path: waeSin103TextPath,
       text: fs.readFileSync(waeSin103TextPath, 'utf8')
+    }
+  ],
+  [
+    'WAP-120-WAPCachingMod',
+    {
+      path: cachingTextPath,
+      text: fs.readFileSync(cachingTextPath, 'utf8')
     }
   ],
   [
@@ -375,6 +385,28 @@ const sectionDefinitions = {
       '3.3': ['3.3 Change Description', null]
     }
   },
+  caching: {
+    sourceDocumentId: 'WAP-120-WAPCachingMod',
+    ranges: {
+      '4': ['4. Caching Model', '4.1. WAP User Agent Responsibilities'],
+      '4.1': [
+        '4.1. WAP User Agent Responsibilities',
+        '4.1.1.                Interaction with the User Agent History Mechanism'
+      ],
+      '4.1.1': [
+        '4.1.1.                Interaction with the User Agent History Mechanism',
+        '4.1.2.                Intra-Resource Navigation'
+      ],
+      '4.1.2': [
+        '4.1.2.                Intra-Resource Navigation',
+        '4.2. WAP Gateway Responsibilities'
+      ],
+      '6': [
+        '6. Security Considerations',
+        'Appendix A. Static Conformance Requirements'
+      ]
+    }
+  },
   'rfc-2396': {
     sourceDocumentId: 'rfc-2396',
     ranges: {
@@ -386,9 +418,84 @@ const sectionDefinitions = {
     ranges: {
       '3.2.2': ['3.2.2 http URL', '3.2.3 URI Comparison'],
       '3.2.3': ['3.2.3 URI Comparison', '3.3 Date/Time Formats'],
+      '13': ['13 Caching in HTTP', '13.1.1 Cache Correctness'],
+      '13.1.1': ['13.1.1 Cache Correctness', '13.1.2 Warnings'],
+      '13.1.2': ['13.1.2 Warnings', '13.1.3 Cache-control Mechanisms'],
+      '13.1.3': [
+        '13.1.3 Cache-control Mechanisms',
+        '13.1.4 Explicit User Agent Warnings'
+      ],
+      '13.1.4': [
+        '13.1.4 Explicit User Agent Warnings',
+        '13.1.5 Exceptions to the Rules and Warnings'
+      ],
+      '13.1.5': [
+        '13.1.5 Exceptions to the Rules and Warnings',
+        '13.1.6 Client-controlled Behavior'
+      ],
+      '13.1.6': ['13.1.6 Client-controlled Behavior', '13.2 Expiration Model'],
+      '13.2.1': [
+        '13.2.1 Server-Specified Expiration',
+        '13.2.2 Heuristic Expiration'
+      ],
+      '13.2.2': ['13.2.2 Heuristic Expiration', '13.2.3 Age Calculations'],
+      '13.2.3': ['13.2.3 Age Calculations', '13.2.4 Expiration Calculations'],
+      '13.2.4': [
+        '13.2.4 Expiration Calculations',
+        '13.2.5 Disambiguating Expiration Values'
+      ],
+      '13.2.5': [
+        '13.2.5 Disambiguating Expiration Values',
+        '13.2.6 Disambiguating Multiple Responses'
+      ],
+      '13.2.6': [
+        '13.2.6 Disambiguating Multiple Responses',
+        '13.3 Validation Model'
+      ],
+      '13.3': ['13.3 Validation Model', '13.3.1 Last-Modified Dates'],
+      '13.3.1': [
+        '13.3.1 Last-Modified Dates',
+        '13.3.2 Entity Tag Cache Validators'
+      ],
+      '13.3.2': [
+        '13.3.2 Entity Tag Cache Validators',
+        '13.3.3 Weak and Strong Validators'
+      ],
+      '13.3.3': [
+        '13.3.3 Weak and Strong Validators',
+        '13.3.4 Rules for When to Use Entity Tags and Last-Modified Dates'
+      ],
+      '13.3.4': [
+        '13.3.4 Rules for When to Use Entity Tags and Last-Modified Dates',
+        '13.3.5 Non-validating Conditionals'
+      ],
+      '13.3.5': [
+        '13.3.5 Non-validating Conditionals',
+        '13.4 Response Cacheability'
+      ],
+      '13.4': ['13.4 Response Cacheability', '13.5 Constructing Responses From Caches'],
+      '13.5.1': [
+        '13.5.1 End-to-end and Hop-by-hop Headers',
+        '13.5.2 Non-modifiable Headers'
+      ],
+      '13.5.2': [
+        '13.5.2 Non-modifiable Headers',
+        '13.5.3 Combining Headers'
+      ],
+      '13.5.3': ['13.5.3 Combining Headers', '13.5.4 Combining Byte Ranges'],
+      '13.5.4': ['13.5.4 Combining Byte Ranges', '13.6 Caching Negotiated Responses'],
+      '13.6': ['13.6 Caching Negotiated Responses', '13.7 Shared and Non-Shared Caches'],
+      '13.7': ['13.7 Shared and Non-Shared Caches', '13.8 Errors or Incomplete Response Cache Behavior'],
+      '13.8': ['13.8 Errors or Incomplete Response Cache Behavior', '13.9 Side Effects of GET and HEAD'],
+      '13.9': ['13.9 Side Effects of GET and HEAD', '13.10 Invalidation After Updates or Deletions'],
+      '13.10': ['13.10 Invalidation After Updates or Deletions', '13.11 Write-Through Mandatory'],
+      '13.11': ['13.11 Write-Through Mandatory', '13.12 Cache Replacement'],
+      '13.12': ['13.12 Cache Replacement', '13.13 History Lists'],
+      '13.13': ['13.13 History Lists', '14 Header Field Definitions'],
       '14.1': ['14.1 Accept', '14.2 Accept-Charset'],
       '14.2': ['14.2 Accept-Charset', '14.3 Accept-Encoding'],
-      '14.4': ['14.4 Accept-Language', '14.5 Accept-Ranges']
+      '14.4': ['14.4 Accept-Language', '14.5 Accept-Ranges'],
+      '14.9': ['14.9 Cache-Control', '14.10 Connection']
     }
   },
   'rfc-2617': {
@@ -720,6 +827,78 @@ clause('wae', 'wbxml_document_typing', ['WAESpec-C-019'], '5.1.8.1', 'implicit-m
 clause('wae', 'wmlc_media_type', ['WAESpec-C-020'], '5.1.8.1', 'implicit-must', 'transport-boundary', 'Recognize application/vnd.wap.wmlc as encoded WML, decode it as WBXML, and pass the resulting WML deck to the engine.');
 clause('wae', 'wmlscriptc_media_type', ['WAESpec-C-021'], '5.1.8.2', 'implicit-must', 'transport-boundary', 'Recognize application/vnd.wap.wmlscriptc as encoded WMLScript and route its bytecode to the WMLScript interpreter.');
 
+// WAP-120 selected user-agent caching clauses plus its imported RFC 2616
+// client-cache model.
+clause('caching', 'wap_model_required', ['UACache-C-001'], '4.1', 'explicit-must', 'transport-boundary', 'Faithfully implement the HTTP/1.1 resource caching model imported by WAP-120.');
+clause('caching', 'zero_byte_profile', ['UACache-C-001'], '4', 'implicit-must', 'runtime', 'Apply WAP caching semantics even when configured with zero bytes of persistent cache capacity.');
+clause('caching', 'expiration_and_validation', ['UACache-C-001'], '13', 'implicit-must', 'state-machine', 'Use expiration to avoid unnecessary requests and validation to avoid retransmitting an unchanged full response.', 'rfc-2616');
+clause('caching', 'semantic_relaxation_explicit', ['UACache-C-001'], '13', 'explicit-must', 'runtime', 'Relax semantic transparency only through an explicit protocol or user choice and expose required warnings for non-transparent cached responses.', 'rfc-2616');
+clause('caching', 'newest_applicable_response', ['UACache-C-001'], '13.1.1', 'explicit-must', 'state-machine', 'Select the most up-to-date cached response applicable to the request before evaluating whether it can be reused.', 'rfc-2616');
+clause('caching', 'cache_reuse_conditions', ['UACache-C-001'], '13.1.1', 'explicit-must', 'state-machine', 'Reuse a cached response only when it is fresh enough, successfully revalidated, or an explicitly permitted status or stale response.', 'rfc-2616');
+clause('caching', 'origin_unavailable_result', ['UACache-C-001'], '13.1.1', 'explicit-must', 'error-policy', 'When the origin is unreachable, serve only a response valid under cache rules; otherwise return an error or warning describing the communication failure.', 'rfc-2616');
+clause('caching', 'stale_response_warning', ['UACache-C-001'], '13.1.2', 'explicit-must', 'runtime', 'Attach and process a Warning whenever a cached response is neither first-hand nor fresh enough.', 'rfc-2616');
+clause('caching', 'warning_revalidation_lifecycle', ['UACache-C-001'], '13.1.2', 'explicit-must', 'state-machine', 'Delete 1xx freshness warnings after successful revalidation while retaining 2xx warnings about entity or header characteristics.', 'rfc-2616');
+clause('caching', 'directive_conflict_policy', ['UACache-C-001'], '13.1.3', 'implicit-must', 'state-machine', 'Resolve apparently conflicting cache-control values using the most restrictive interpretation unless a directive explicitly relaxes transparency.', 'rfc-2616');
+clause('caching', 'user_override_explicit', ['UACache-C-001'], '13.1.4', 'explicit-should', 'runtime', 'Do not default to stale or abnormally ineffective caching; enable such behavior only through an explicit user configuration.', 'rfc-2616');
+clause('caching', 'user_override_warning', ['UACache-C-001'], '13.1.4', 'explicit-should', 'rendering', 'Indicate when a user cache override displays known-stale content or persistently reduces normal cache effectiveness.', 'rfc-2616');
+clause('caching', 'client_freshness_directives', ['UACache-C-001'], '13.1.6', 'explicit-may', 'transport-boundary', 'Allow requests to constrain maximum response age and minimum remaining freshness or explicitly accept bounded stale responses.', 'rfc-2616');
+clause('caching', 'explicit_expiration', ['UACache-C-001'], '13.2.1', 'implicit-must', 'state-machine', 'Treat response Expires and Cache-Control max-age values as server-specified freshness limits for subsequent requests.', 'rfc-2616');
+clause('caching', 'always_stale_validation', ['UACache-C-001'], '13.2.1', 'explicit-should', 'state-machine', 'Validate an entry before reuse when its explicit expiration time is already in the past.', 'rfc-2616');
+clause('caching', 'heuristic_expiration', ['UACache-C-001'], '13.2.2', 'explicit-may', 'state-machine', 'Permit cautious heuristic freshness when explicit expiration is absent while respecting the RFC worst-case constraints.', 'rfc-2616');
+clause('caching', 'age_initial_calculation', ['UACache-C-001'], '13.2.3', 'explicit-must', 'state-machine', 'Calculate corrected initial age conservatively from Date, Age, request time, response time, and apparent network delay.', 'rfc-2616');
+clause('caching', 'age_resident_calculation', ['UACache-C-001'], '13.2.3', 'implicit-must', 'state-machine', 'Calculate current age as corrected initial age plus the time the response has resided in the local cache.', 'rfc-2616');
+clause('caching', 'freshness_lifetime_priority', ['UACache-C-001'], '13.2.4', 'implicit-must', 'state-machine', 'Derive freshness lifetime from max-age before Expires and otherwise from a permitted heuristic.', 'rfc-2616');
+clause('caching', 'heuristic_warning_113', ['UACache-C-001'], '13.2.4', 'explicit-must', 'runtime', 'Attach Warning 113 when serving a heuristically fresh response more than 24 hours old and that warning is not already present.', 'rfc-2616');
+clause('caching', 'freshness_comparison', ['UACache-C-001'], '13.2.4', 'implicit-must', 'state-machine', 'Treat a response as fresh only while its freshness lifetime is greater than its current age.', 'rfc-2616');
+clause('caching', 'fresh_variant_recency', ['UACache-C-001'], '13.2.5', 'explicit-must', 'state-machine', 'When fresh responses for one representation have different validators, select the entry with the most recent Date value.', 'rfc-2616');
+clause('caching', 'older_revalidation_retry', ['UACache-C-001'], '13.2.6', 'explicit-should', 'transport-boundary', 'If revalidation returns an apparently older Date, retry unconditionally with max-age zero or no-cache.', 'rfc-2616');
+clause('caching', 'conditional_validation', ['UACache-C-001'], '13.3', 'implicit-must', 'transport-boundary', 'Validate stale entries with a conditional request carrying the stored validator and interpret a match as a bodyless 304 response.', 'rfc-2616');
+clause('caching', 'unrefreshable_without_validator', ['UACache-C-001'], '13.3', 'implicit-must', 'state-machine', 'Allow a response without a validator to be cached until expiration, but do not attempt conditional refresh after it becomes stale.', 'rfc-2616');
+clause('caching', 'last_modified_validator', ['UACache-C-001'], '13.3.1', 'implicit-must', 'transport-boundary', 'Use Last-Modified as a date validator when it is the available validator for a cached representation.', 'rfc-2616');
+clause('caching', 'entity_tag_validator', ['UACache-C-001'], '13.3.2', 'implicit-must', 'transport-boundary', 'Store ETag values with cached representations and send them in cache-conditional requests.', 'rfc-2616');
+clause('caching', 'validator_strength', ['UACache-C-001'], '13.3.3', 'implicit-must', 'state-machine', 'Use strong comparison where byte identity is required and weak comparison only where semantic equivalence is sufficient.', 'rfc-2616');
+clause('caching', 'validator_request_selection', ['UACache-C-001'], '13.3.4', 'explicit-must', 'transport-boundary', 'Send an available entity tag in cache conditionals, use Last-Modified when it is the only validator, and send both when both exist.', 'rfc-2616');
+clause('caching', 'nonvalidator_headers', ['UACache-C-001'], '13.3.5', 'implicit-must', 'state-machine', 'Do not use arbitrary response-header equality as cache validation beyond entity tags and the defined Last-Modified compatibility mechanism.', 'rfc-2616');
+clause('caching', 'default_cacheable_statuses', ['UACache-C-001'], '13.4', 'implicit-must', 'state-machine', 'Permit storage of status 200, 203, 206, 300, 301, and 410 responses unless another cache rule prohibits it.', 'rfc-2616');
+clause('caching', 'other_status_cacheability', ['UACache-C-001'], '13.4', 'explicit-must', 'state-machine', 'Do not reuse other response statuses unless an explicit expiration value or cache-control directive makes them cacheable.', 'rfc-2616');
+clause('caching', 'end_to_end_header_storage', ['UACache-C-001'], '13.5.1', 'explicit-must', 'state-machine', 'Store and replay end-to-end response headers with cache entries while excluding hop-by-hop connection headers.', 'rfc-2616');
+clause('caching', 'nonmodifiable_headers', ['UACache-C-001'], '13.5.2', 'explicit-must', 'transport-boundary', 'Preserve Content-Location, Content-MD5, ETag, Last-Modified, and Expires according to the non-modifiable header rules.', 'rfc-2616');
+clause('caching', 'validated_header_merge', ['UACache-C-001'], '13.5.3', 'explicit-must', 'state-machine', 'On 304 or compatible 206 validation, reuse the stored entity and replace cached end-to-end headers with corresponding new values.', 'rfc-2616');
+clause('caching', 'partial_range_merge', ['UACache-C-001'], '13.5.4', 'explicit-may', 'state-machine', 'Combine partial ranges only when both pieces have strongly matching validators; otherwise retain only the most recent partial response.', 'rfc-2616');
+clause('caching', 'vary_selection_match', ['UACache-C-001'], '13.6', 'explicit-must', 'state-machine', 'Reuse a Vary-governed response only when every selecting request header matches the stored request after allowed whitespace normalization.', 'rfc-2616');
+clause('caching', 'vary_star_miss', ['UACache-C-001'], '13.6', 'explicit-must', 'state-machine', 'Treat Vary asterisk as an unconditional cache-selection miss that requires origin-server interpretation.', 'rfc-2616');
+clause('caching', 'private_cache_isolation', ['UACache-C-001', 'UACache-C-006'], '13.7', 'explicit-should', 'security-policy', 'Enforce that a non-shared user-agent cache is accessible only to its single user through appropriate security mechanisms.', 'rfc-2616');
+clause('caching', 'partial_response_marking', ['UACache-C-001'], '13.8', 'explicit-must', 'state-machine', 'Treat an incomplete stored response as partial and never return it as 200 OK instead of explicitly marked 206 Partial Content.', 'rfc-2616');
+clause('caching', 'revalidation_5xx_policy', ['UACache-C-001'], '13.8', 'explicit-may', 'error-policy', 'On a 5xx validation response, forward the error or use a prior response only when must-revalidate does not forbid stale reuse.', 'rfc-2616');
+clause('caching', 'query_response_freshness', ['UACache-C-001'], '13.9', 'explicit-must', 'state-machine', 'Do not treat a GET or HEAD query-URI response as fresh unless the server supplies an explicit expiration time.', 'rfc-2616');
+clause('caching', 'unsafe_method_invalidation', ['UACache-C-001'], '13.10', 'explicit-must', 'state-machine', 'Invalidate cached entities affected by successful PUT, DELETE, or POST requests, including same-host Location and Content-Location targets.', 'rfc-2616');
+clause('caching', 'unknown_method_invalidation', ['UACache-C-001'], '13.10', 'explicit-should', 'state-machine', 'Invalidate the Request-URI cache entry when passing through an unsafe method whose semantics are not understood.', 'rfc-2616');
+clause('caching', 'write_through_unsafe_methods', ['UACache-C-001'], '13.11', 'explicit-must', 'transport-boundary', 'Write every potentially modifying method through to the origin and wait for its response instead of answering from cache.', 'rfc-2616');
+clause('caching', 'new_response_replacement', ['UACache-C-001'], '13.12', 'explicit-should', 'state-machine', 'Use a newly received cacheable response for the current request and do not replace an entry with a response carrying an older Date.', 'rfc-2616');
+clause('caching', 'history_cache_distinction', ['UACache-C-001', 'UACache-C-002', 'UACache-C-003'], '13.13', 'explicit-should', 'state-machine', 'Keep history distinct from ordinary cache reuse so back navigation normally restores what the user previously saw.', 'rfc-2616');
+clause('caching', 'cache_control_passthrough', ['UACache-C-001'], '14.9', 'explicit-must', 'transport-boundary', 'Parse and pass Cache-Control directives through the request and response chain even when a local component does not use them.', 'rfc-2616');
+clause('caching', 'cache_control_no_cache', ['UACache-C-001'], '14.9', 'explicit-must', 'state-machine', 'Do not reuse a no-cache response without successful origin revalidation, including any field-name-limited restrictions.', 'rfc-2616');
+clause('caching', 'cache_control_no_store', ['UACache-C-001', 'UACache-C-006'], '14.9', 'explicit-must', 'security-policy', 'For no-store, retain no message data in non-volatile cache and make a best effort to purge it promptly from volatile cache.', 'rfc-2616');
+clause('caching', 'cache_control_private', ['UACache-C-001', 'UACache-C-006'], '14.9', 'explicit-must', 'security-policy', 'Never store a private response in a shared cache while permitting storage in the selected single-user cache.', 'rfc-2616');
+clause('caching', 'cache_control_max_age', ['UACache-C-001'], '14.9', 'implicit-must', 'state-machine', 'Give response max-age precedence over Expires and use the lesser value when both request and response specify max-age.', 'rfc-2616');
+clause('caching', 'cache_control_reload', ['UACache-C-001'], '14.9', 'explicit-must', 'transport-boundary', 'Map request no-cache to end-to-end reload and max-age zero to end-to-end revalidation, carrying a local validator when available.', 'rfc-2616');
+clause('caching', 'cache_control_only_if_cached', ['UACache-C-001'], '14.9', 'explicit-should', 'error-policy', 'For only-if-cached, return a compliant stored response or a 504 result without contacting the origin.', 'rfc-2616');
+clause('caching', 'cache_control_must_revalidate', ['UACache-C-001', 'UACache-C-002'], '14.9', 'explicit-must', 'state-machine', 'Never reuse a stale must-revalidate entry without successful end-to-end validation; return an error when the origin cannot be reached.', 'rfc-2616');
+clause('caching', 'cache_control_no_transform', ['UACache-C-001'], '14.9', 'explicit-must', 'transport-boundary', 'Do not transform an entity body or its governed representation headers when no-transform is present.', 'rfc-2616');
+clause('caching', 'cache_control_extensions', ['UACache-C-001'], '14.9', 'explicit-must', 'parser', 'Ignore unrecognized cache directives while continuing to obey accompanying standard directives that provide safe fallback behavior.', 'rfc-2616');
+
+clause('caching', 'history_cached_attempt', ['UACache-C-002', 'UACache-C-003'], '4.1.1', 'explicit-should', 'state-machine', 'On WML back navigation, first attempt to restore the resource associated with the history entry from cache.');
+clause('caching', 'history_must_revalidate', ['UACache-C-002'], '4.1.1', 'explicit-must', 'state-machine', 'Revalidate a stale history resource before back navigation when its cached response carries must-revalidate.');
+clause('caching', 'history_request_replay', ['UACache-C-002'], '4.1.1', 'explicit-must', 'transport-boundary', 'Revalidate history with precisely the original method, request entity, and other request semantics, including POST data.');
+clause('caching', 'history_revalidation_no_prompt', ['UACache-C-002'], '4.1.1', 'explicit-must', 'runtime', 'Perform required history revalidation without asking the user to resubmit or confirm the original request.');
+clause('caching', 'history_no_revalidate_without_directive', ['UACache-C-003'], '4.1.1', 'explicit-must', 'state-machine', 'Do not revalidate a stale history resource during back navigation when must-revalidate is absent.');
+clause('caching', 'history_snapshot_or_current', ['UACache-C-002', 'UACache-C-003'], '4.1.1', 'implicit-must', 'state-machine', 'Show the historical cached representation by default and the up-to-date representation only when must-revalidate requires it.');
+clause('caching', 'intra_resource_no_revalidate', ['UACache-C-004'], '4.1.2', 'implicit-must', 'state-machine', 'Do not revalidate while navigating or processing within one cached resource unless that content type defines another validation model.');
+clause('caching', 'wmlscript_intra_unit', ['UACache-C-004'], '4.1.2', 'implicit-must', 'runtime', 'Allow calls within one WMLScript compilation unit without revalidation after the initial validity check and fetch.');
+clause('caching', 'wml_intra_deck', ['UACache-C-004'], '4.1.2', 'implicit-must', 'runtime', 'Allow navigation among cards in one WML deck without revalidation after the initial deck validity check and fetch.');
+clause('caching', 'cache_private_content', ['UACache-C-006'], '6', 'explicit-must', 'security-policy', 'Protect private information stored in the user-agent cache from unintended or malicious access.');
+clause('caching', 'cache_nonvolatile_boundary', ['UACache-C-006'], '6', 'implicit-must', 'security-policy', 'Apply access protection to sensitive cache data that survives in non-volatile storage, including data retained across browser restarts.');
+
 // WBXML 1.3 selected Class C decoder clauses.
 clause('wbxml', 'network_byte_order', ['WBXML-C-001'], '5', 'implicit-must', 'binary-decoder', 'Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.');
 clause('wbxml', 'multibyte_continuation', ['WBXML-C-001'], '5.1', 'implicit-must', 'binary-decoder', 'Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.');
@@ -796,6 +975,12 @@ const familyDefinitions = [
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wbxml-scr.json`,
     selectedDisposition: 'required-by-class-c-client-mcf',
     clauseSources: ['WAP-192-WBXML', 'WAP-192_105-WBXML']
+  },
+  {
+    family: 'caching',
+    ledgerPath: `${manifestDirectory}/wap-1.2.1-caching-scr.json`,
+    selectedDisposition: 'required-by-class-c-client-mcf',
+    clauseSources: ['WAP-120-WAPCachingMod', 'rfc-2616']
   }
 ];
 
@@ -949,11 +1134,10 @@ const ledger = {
   scope: {
     status: 'in-progress',
     selectedProfileParentCount: 201,
-    coveredFamilies: ['wml', 'wae', 'wbxml'],
+    coveredFamilies: ['wml', 'wae', 'wbxml', 'caching'],
     remainingFamilies: [
       'wmlscript',
       'wmlscript-libraries',
-      'caching',
       'wdp',
       'wcmp',
       'wsp'
