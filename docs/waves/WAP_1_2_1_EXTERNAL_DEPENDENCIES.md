@@ -1,6 +1,6 @@
 # WAP 1.2.1 External Dependency Baseline
 
-Version: v0.1
+Version: v0.2
 Status: active; reference classification in progress
 
 ## Purpose
@@ -25,11 +25,11 @@ external-source or implementation-conformance claim.
 
 ## Current lock
 
-The reviewed lock contains 39 authority-pinned dependencies:
+The reviewed lock contains 40 authority-pinned dependencies:
 
 | Group | Locked examples | Primary role |
 |---|---|---|
-| IETF | RFC 768/791/792, MIME, HTTP 1.1, URI, UTF-8, ABNF, TLS 1.0 | WDP/WCMP, WAE/WML/WSP, WMLScript, WBXML, optional WTLS |
+| IETF | RFC 768/791/792, MIME, HTTP 1.1, HTTP authentication, URI, UTF-8, ABNF, TLS 1.0 | WDP/WCMP, WAE/WML/WSP, WMLScript, WBXML, optional WTLS |
 | W3C | XML 1.0 Recommendation dated 10 February 1998 | WML/WBXML grammar and application formats |
 | Ecma | ECMA-262 first edition, June 1997 | WMLScript language lineage |
 | IEEE | IEEE 754-1985 | WMLScript numeric behavior |
@@ -48,6 +48,11 @@ For example, WML/WAE SINs move some HTTP references from RFC 2068 to RFC 2616,
 while the effective WMLScript publication still cites RFC 2068. Both identities
 must remain visible until feature-level applicability is resolved.
 
+WAP-190_103 changes WAE Basic authentication to RFC 2616. RFC 2616 section 11
+normatively delegates the Basic scheme to RFC 2617, so RFC 2617 is retained as
+an effective transitive dependency for the selected WAE client row rather than
+being hidden behind the top-level citation.
+
 Primary version evidence includes the dated
 [W3C XML 1.0 Recommendation](https://www.w3.org/TR/1998/REC-xml-19980210),
 [ECMA-262 first edition](https://ecma-international.org/wp-content/uploads/ECMA-262_1st_edition_june_1997.pdf),
@@ -60,11 +65,11 @@ The machine-readable acquisition ledger is:
 
 - `spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json`
 
-It records 45 private research artifacts totaling 14,363,355 bytes:
+It records 46 private research artifacts totaling 14,440,993 bytes:
 
 | State | Dependencies | Meaning |
 |---|---:|---|
-| Full primary artifact | 33 | 30 RFC texts, dated W3C XML/HTML sources, and ECMA-262 first edition |
+| Full primary artifact | 34 | 31 RFC texts, dated W3C XML/HTML sources, and ECMA-262 first edition |
 | Partial primary artifact | 2 | Current IANA character-set registry and Unicode 2.0 component/UCD set; historical/full cited form remains open |
 | Licensed-payload metadata only | 4 | IEEE 754-1985 and three historical ISO sources |
 

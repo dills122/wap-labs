@@ -1,6 +1,6 @@
 # WAP 1.2.1 Source Recovery and Permission Runbook
 
-Version: v0.2
+Version: v0.3
 Status: active; WAP-215 and private research ingestion complete, public
 promotion pending
 
@@ -25,7 +25,7 @@ certification claim.
 | Associated release DTDs | 6/6 | 6/6 hash-verified | Metadata-only |
 | General conformance sources | WAP-215, WAP-221, and WAP-273 | 3/3 hash-verified | Metadata-only |
 | WAP-215 class requirements | Official live WAP Forum object | 47,936-byte approved PDF and text extraction verified | Exact six-profile ledger recorded; source/derivative held |
-| Locked external dependencies | 39/39 acquisition records | 33 full, 2 partial, 4 licensed-payload metadata-only | Metadata-only |
+| Locked external dependencies | 40/40 acquisition records | 34 full, 2 partial, 4 licensed-payload metadata-only | Metadata-only |
 | Remaining external citation labels | 63 labels in four groups | Not yet complete | Explicit open queue |
 
 Machine-readable evidence:
@@ -37,8 +37,8 @@ Machine-readable evidence:
 - `spec-processing/source-manifests/wap-1.2.1-external-dependencies.json`
 
 The WAP release ingestion covers 2,270 PDF pages, 9,988,119 PDF bytes, and
-5,703,023 extracted-text bytes. The external acquisition ledger covers 45
-artifacts totaling 14,363,355 bytes.
+5,703,023 extracted-text bytes. The external acquisition ledger covers 46
+artifacts totaling 14,440,993 bytes.
 
 ## Why some WAP documents look locked
 

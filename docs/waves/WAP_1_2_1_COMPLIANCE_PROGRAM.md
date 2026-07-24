@@ -160,9 +160,9 @@ Source Sprint `SRC-0` now has reproducible research-access evidence:
 
 - 97/97 technical release PDFs and 97/97 text extractions are hash/size
   recorded in `wap-1.2.1-ingestion-status.json`;
-- 39/39 locked external dependencies have acquisition records backed by 45
+- 40/40 locked external dependencies have acquisition records backed by 46
   artifacts;
-- 33 external dependencies have full primary artifacts, two have partial
+- 34 external dependencies have full primary artifacts, two have partial
   historical evidence, and four licensed IEEE/ISO payloads remain
   metadata-only;
 - the external open-label queue is reduced from 69 to 63.

@@ -117,7 +117,7 @@ for (const dependency of manifest.dependencies ?? []) {
 const expectedRfcIds = [
   768, 791, 792, 822, 1305, 1321, 1630, 1738, 1766, 1808, 1864, 2040,
   2045, 2046, 2047, 2048, 2068, 2104, 2119, 2145, 2234, 2246, 2253,
-  2279, 2387, 2388, 2396, 2460, 2463, 2616
+  2279, 2387, 2388, 2396, 2460, 2463, 2616, 2617
 ].map((number) => `rfc-${number}`);
 for (const id of expectedRfcIds) {
   if (!ids.has(id)) {

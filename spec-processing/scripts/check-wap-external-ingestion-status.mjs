@@ -40,7 +40,7 @@ function stableObject(value) {
 
 const expectedStateCounts = {
   'metadata-only-licensed-payload': 4,
-  'verified-private-full-artifact': 33,
+  'verified-private-full-artifact': 34,
   'verified-private-partial-artifact': 2
 };
 const allowedStates = new Set(Object.keys(expectedStateCounts));
@@ -219,8 +219,8 @@ if (
 ) {
   failures.push('summary.byAcquisitionState does not match records');
 }
-if (artifactCount !== 45) {
-  failures.push(`artifactCount=${artifactCount}; expected 45`);
+if (artifactCount !== 46) {
+  failures.push(`artifactCount=${artifactCount}; expected 46`);
 }
 
 if (failures.length > 0) {
@@ -232,9 +232,9 @@ if (failures.length > 0) {
 }
 
 console.log('==> WAP 1.2.1 external ingestion status');
-console.log('PASS 39/39 authority-locked dependencies have acquisition records');
-console.log('PASS 45 cached artifacts have non-empty hash/size evidence');
-console.log('PASS 33 full; 2 partial; 4 licensed-payload metadata-only');
+console.log('PASS 40/40 authority-locked dependencies have acquisition records');
+console.log('PASS 46 cached artifacts have non-empty hash/size evidence');
+console.log('PASS 34 full; 2 partial; 4 licensed-payload metadata-only');
 if (args['cache-dir']) {
   console.log('PASS optional research-cache hashes match the committed ledger');
 }

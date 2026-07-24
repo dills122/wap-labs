@@ -228,9 +228,9 @@ optional) in
 actor selects 39 required user-agent rows; 27 client rows are optional and 10
 encoder/server rows are not applicable to this client profile.
 
-The external-dependency lock now contains 39 historical authority records and
+The external-dependency lock now contains 40 historical authority records and
 preserves 63 citation labels in four explicit open review groups. Its
-acquisition ledger contains 45 private artifacts: 33 dependencies have full
+acquisition ledger contains 46 private artifacts: 34 dependencies have full
 primary artifacts, two have partial historical evidence, and four historical
 IEEE/ISO payloads remain metadata-only. See
 `docs/waves/WAP_1_2_1_EXTERNAL_DEPENDENCIES.md`. Being cited or acquired is not

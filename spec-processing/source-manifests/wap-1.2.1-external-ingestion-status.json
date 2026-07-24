@@ -11,12 +11,12 @@
     "note": "Hashes prove research acquisition only. Artifact licenses and the project redistribution policy must be reviewed before repository promotion."
   },
   "summary": {
-    "dependencyCount": 39,
-    "artifactCount": 45,
-    "artifactBytesTotal": 14363355,
+    "dependencyCount": 40,
+    "artifactCount": 46,
+    "artifactBytesTotal": 14440993,
     "byAcquisitionState": {
       "metadata-only-licensed-payload": 4,
-      "verified-private-full-artifact": 33,
+      "verified-private-full-artifact": 34,
       "verified-private-partial-artifact": 2
     }
   },
@@ -677,6 +677,28 @@
           "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2616.txt",
           "bytes": 422279,
           "sha256": "10211d2885196b97b1c78e1672f3f68ae97c294596ef2b7fd890cbd30a3427bf",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "rfc-2617",
+      "title": "HTTP Authentication: Basic and Digest Access Authentication",
+      "version": "RFC 2617, June 1999",
+      "authority": "RFC Editor",
+      "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc2617.html",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "A primary artifact is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "rfc-2617-text",
+          "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2617.txt",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/rfc/rfc2617.txt",
+          "bytes": 77638,
+          "sha256": "cf5492136782d9e9fce492c254ca39e2c93328cf38c4dd006039abb5d8e27ba7",
           "checksumAlgorithm": "sha256"
         }
       ]

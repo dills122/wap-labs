@@ -410,6 +410,18 @@
       "reviewState": "manual-sin-resolution-required"
     },
     {
+      "id": "rfc-2617",
+      "title": "HTTP Authentication: Basic and Digest Access Authentication",
+      "version": "RFC 2617, June 1999",
+      "authority": "RFC Editor",
+      "sourceUrl": "https://www.rfc-editor.org/rfc/rfc2617.html",
+      "referenceDisposition": "effective-normative-transitive",
+      "applicability": "strict-browser",
+      "citedByFamilies": ["wae"],
+      "citationLabels": ["RFC2617", "RFC 2617", "RFC2616 reference 43"],
+      "reviewState": "verified-primary-metadata"
+    },
+    {
       "id": "xml-1.0-19980210",
       "title": "Extensible Markup Language (XML) 1.0",
       "version": "W3C Recommendation 10 February 1998",
@@ -646,7 +658,7 @@
     }
   ],
   "summary": {
-    "authorityLockedDependencies": 39,
+    "authorityLockedDependencies": 40,
     "openCitationGroups": 4,
     "openCitationLabels": 63
   }
