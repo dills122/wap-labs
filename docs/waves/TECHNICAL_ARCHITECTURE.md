@@ -121,15 +121,21 @@ Fetch destination policy posture (`M1-17`):
 
 Current protocol stack posture:
 
-1. default profile: `wap-net-core` (native `WDP -> WTP -> WSP` transport ingress)
-2. extension profile: `wap-net-ext` remains future-gated for CL/push/advanced session features
+1. default profile: `wap-net-core` (native WDP/UDP -> connectionless WSP
+   transport ingress)
+2. extension profile: `wap-net-ext` remains future-gated for additional
+   bearers, connection-oriented WSP/WTP, Push, and advanced session features
 3. security profile: `wtls=disabled|active-minimal` in current codepath, with transition decision tracked by `T0-14` and `T0-21`
 
 Supported profile classes:
 
 1. `gateway-bridged`: legacy gateway path retained as rollback posture and local smoke comparison lane.
-2. `wap-net-core`: active native `WDP -> WTP -> WSP` path with mandatory CO-method support (`Get`/`Post`/`Reply`) and deterministic transaction state.
-3. `wap-net-ext`: future extension mode enabling CL and optional advanced session/push features after explicit gate decisions.
+2. `wap-net-core`: active native WDP/UDP -> connectionless WSP path with
+   mandatory selected-profile method support (`Get`/`Post`/`Reply`) and
+   deterministic request state; WTP is not activated by this profile.
+3. `wap-net-ext`: future extension mode enabling additional bearers,
+   connection-oriented WSP/WTP, Push, and optional advanced sessions after
+   explicit gate decisions.
 
 Transport profile decision rules:
 
@@ -137,7 +143,11 @@ Transport profile decision rules:
 2. all profile promotions are gated by completed protocol fixtures and ticket chain
 3. request/response contract to browser and engine must remain stable across profile changes
 4. profile moves require `docs/waves/networking-migration-readiness-checklist.md` gate completion for the relevant `T0-08..T0-17` items
-5. protocol-native promotion requires `T0-18..T0-24` closure for WDP/WTP/WSP core, interop replay evidence, and replay seed-corpus governance
+5. protocol-native readiness uses `T0-18..T0-24` implementation evidence,
+   while exact WDP/WCMP/connectionless-WSP conformance remains gated by
+   `TRN-701`, `TRN-703`, and `WSP-801`/`802`/`804`/`805`; WTP evidence becomes
+   release-gating only when the extension profile claims connection-oriented
+   WSP
 6. transport-adjacent TCP posture for `RQ-TRX-009` is declaration-gated in `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md` and tracked by `T0-12`
 7. SMPP adaptation (`RQ-TRX-010`, `WAP-159`) is currently deferred by `T0-13`; no transport-rust SMPP mapping path is active in MVP profile
 8. canonical profile-state and rollback criteria are defined in `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` and validated by `node scripts/check-networking-profile-gates.mjs`

@@ -73,12 +73,24 @@ Status: Active
 
 4. Transport rewrite stack
 - Doc: `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-- Sources:
-  - `WAP-230-WSP-20010705-a`
-  - `OMA-WAP-TS-WSP-V1_0-20020920-C`
-  - `WAP-224-WTP-20010710-a`
-  - `OMA-WAP-224_002-WTP-SIN-20020827-a`
+- Strict-target sources:
+  - `WAP-200-WDP` plus approved SINs `001` through `005`
+  - `WAP-202-WCMP`
+  - `WAP-203-WSP` plus approved SINs `001`, `003`, and `005`
+- Ledgers:
+  - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
+  - 317 source rows and 22 selected connectionless Class C rows
+  - selected audit: 0 implemented, 17 partial, 5 missing
+  - direct normative test evidence: 0/22
+- Conditional target source:
+  - `WAP-201-WTP` plus approved SINs, only when connection-oriented WSP is
+    claimed
+- Successor delta/context sources:
   - `WAP-259-WDP-20010614-a`
+  - `WAP-224-WTP-20010710-a` plus `OMA-WAP-224_002`
+  - `WAP-230-WSP-20010705-a` plus `OMA-WAP-TS-WSP-V1_0`
 
 5. Transport-adjacent interoperability and adaptation boundaries
 - Doc: `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
@@ -189,16 +201,25 @@ Status: Active
   - core function/local/conversion/error semantics
   - Lang, Float, String, URL, WMLBrowser, and Dialogs exact IDs/behavior
 
-2. Transport bedrock conformance closure (`WAP-259`, `WAP-224`, `WAP-230`)
-- Status: in progress (cleaned-source table-grounded closure lane added)
+2. Transport bedrock conformance closure (`WAP-200`, `WAP-202`, `WAP-203`)
+- Status: in progress (exact SCR extraction, selected-path resolution, and
+  implementation audit complete; nested clauses, direct fixtures, and
+  implementation closure pending)
 - Deliverables:
-  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` (`RQ-TRN-016`..`RQ-TRN-019`)
-  - Phase T tickets in `docs/waves/WORK_ITEMS.md` (`T0-08`..`T0-11`, `T0-14`, `T0-15`)
+  - `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`
+  - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
+  - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
+  - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+  - program work items `TRN-701`, `TRN-703`, `WSP-801`, `WSP-802`,
+    `WSP-804`, and `WSP-805`
 - Priority closure focus:
-  - WTP TID/MPL replay-window behavior
-  - WSP connectionless primitive-profile gating
-  - WSP assigned-number registry fidelity (PDU/abort/header/parameter maps)
-  - WSP capability negotiation and bounds enforcement
+  - nine selected WDP rows, including the CDPD/IPv4 bearer declaration
+  - five selected WCMP general-message rows
+  - eight selected connectionless WSP rows and exact WAP-203 registries
+  - browser GET/POST ingress through the selected connectionless path
+  - normalize the licensed `TIAEIA-732` citation/part metadata
+  - WTP only if connection-oriented WSP is later claimed
 
 3. Networking target-profile decision and migration gates (`gateway bridge` -> `in-process WAP transport`)
 - Status: in progress (decision ticket added; implementation unchanged)

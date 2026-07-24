@@ -147,7 +147,26 @@ const families = [...grouped.entries()]
       historicalDocuments: historical.map((document) => document.documentId),
       relationships,
       scrExtraction:
-        family === 'caching'
+        ['wdp', 'wcmp', 'wsp'].includes(family)
+          ? {
+              status: 'line-item-ledger-complete-class-c-applied',
+              governingDocument: 'WAP-221-CREQ-20010425-a',
+              governingClassProfileDocument:
+                'WAP-215-ClassConform-20001213-a',
+              ledger:
+                `spec-processing/source-manifests/wap-1.2.1-${family}-scr.json`,
+              classProfileLedger:
+                'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
+              selectedProfile: 'CCR-CLASSC-C-001',
+              selectedFeatureGroup:
+                ({ wdp: 'WDP:MCF', wcmp: 'WCMP:MCF', wsp: 'WSP:MCF' })[
+                  family
+                ],
+              note:
+                'The effective actor-specific SCR is source-extracted with exact dependency expressions. ' +
+                'The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional.'
+            }
+          : family === 'caching'
           ? {
               status: 'line-item-ledger-complete-class-c-applied',
               governingDocument: 'WAP-221-CREQ-20010425-a',

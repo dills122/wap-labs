@@ -16,7 +16,7 @@ Ticket: `T0-14`
 ### `gateway-bridged` (legacy baseline)
 
 - Transport uses configured gateway HTTP/WBXML path.
-- Native `WDP/WTP/WSP` protocol stack is not the active ingress path.
+- Native WDP/connectionless-WSP protocol stack is not the active ingress path.
 - Host/runtime contracts remain stable and deterministic under this mode.
 
 Fixture lane:
@@ -27,13 +27,16 @@ Fixture lane:
 
 ### `wap-net-core` (active)
 
-- Transport ingress is native `WDP -> WTP -> WSP`.
+- Transport ingress is native WDP/UDP -> connectionless WSP.
+- The strict WAP 1.2.1 Class C path does not activate WTP.
 - Profile activation requires protocol-core fixture evidence and replay-gate evidence.
 - Activation must not alter browser/engine contracts without explicit contract update tickets.
 
 Current caveat:
 
-- protocol-core fixture/promotion gates are satisfied, but live desktop/browser fetch still requires the native activation slice (`T0-27`, `T0-28`, `T0-29`) before this profile is the default browser ingress path.
+- Native GET/POST ingress and smoke slices are landed, but exact
+  WAP-200/WAP-202/WAP-203 conformance remains open under `TRN-701`,
+  `TRN-703`, and `WSP-801`/`802`/`804`/`805`.
 
 Fixture lane:
 
@@ -43,7 +46,8 @@ Fixture lane:
 
 ### `wap-net-ext` (target, gated)
 
-- Future extension profile for connectionless/push/advanced session features.
+- Future extension profile for additional bearers, connection-oriented
+  WSP/WTP, Push, and advanced session features.
 - Promotion requires explicit additional gates beyond the protocol-core baseline.
 - Activation must remain contract-compatible or ship with explicit contract changes.
 
@@ -60,13 +64,16 @@ Promotion from `gateway-bridged` to `wap-net-core` required all of:
 5. Local Kannel E2E readiness remains explicit and tracked in:
    - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 
-This gate set is satisfied for protocol-core readiness. Browser/desktop live ingress promotion to `wap-net-core` still depends on `T0-27`, `T0-28`, and `T0-29`.
+This gate set and the browser/native activation slices are satisfied for
+protocol-core readiness. They do not substitute for the exact 22-row strict
+transport conformance program.
 
 ## Rollback criteria
 
 If profile activation introduces deterministic regressions or contract drift, rollback from `wap-net-core` to `gateway-bridged` is mandatory when any of the following occur:
 
-1. Replay harness (`T0-22`/`T0-24`) fails for `CONNECT`/`GET`/`REPLY` or retransmit/duplicate lanes.
+1. Replay harness (`T0-22`/`T0-24`) fails for the selected `GET`/`POST`/`REPLY`
+   lane or for an explicitly enabled extension lane.
 2. Contract checks fail for browser/engine boundary payloads.
 3. Cross-layer fixture regressions appear in transport/runtime hostflow evidence.
 

@@ -11,21 +11,26 @@ Transport boundary ends at normalized deck payload and optional XML event stream
 ## Current Baseline
 
 - `transport-rust` is integrated in browser host (`browser/src-tauri`).
-- The browser's default `auto` profile selects the in-process `wap-net-core` path for
-  `wap://`/`waps://`; an explicit `gateway-bridged` profile remains available.
-- The live native path is constrained connectionless WSP over WDP/UDP and does not yet call the
+- The browser's default `auto` profile selects the in-process `wap-net-core`
+  path for `wap://`/`waps://`; an explicit `gateway-bridged` profile remains
+  available as a fallback/comparison path.
+- Native GET/POST ingress is available under `wap-net-core`, but the live path
+  is constrained connectionless WSP over WDP/UDP and does not yet call the
   fixture-tested `network::wsp`/`network::wtp` modules.
-- `waps://` currently selects port 9202 but does not apply WTLS or any other protection.
-  Pre-alpha development/interoperability profiles may keep this path available with an
-  unavoidable no-WTLS warning and false protection state; release profiles must fail closed.
+- `waps://` currently selects port 9202 but does not apply WTLS or any other
+  protection. Pre-alpha development/interoperability profiles may keep this
+  path available with an unavoidable no-WTLS warning and false protection
+  state; release profiles must fail closed.
 - WBXML decode currently uses external `wbxml2xml` executable invocation.
 - Retry/timeout/error mapping and coverage gate are active in Rust CI.
 
 Profile modes in use:
 
 1. `gateway-bridged` (legacy): terminal path enters through configured gateway and remains available as rollback posture.
-2. `wap-net-core` (current): in-process `WDP -> WTP -> WSP` stack with deterministic profile gating.
-3. `wap-net-ext` (future): CL/push/advanced profile features after explicit migration approval.
+2. `wap-net-core` (current): in-process WDP/UDP -> connectionless WSP with
+   deterministic profile gating; WTP is not activated by the strict profile.
+3. `wap-net-ext` (future): additional bearers, connection-oriented WSP/WTP,
+   Push, and advanced sessions after explicit migration approval.
 
 Current profile decision point:
 
@@ -71,7 +76,7 @@ Scope:
 - Add bounded parsing/memory guardrails and deterministic failure mapping.
 - Keep engine-facing contract stable unless explicitly versioned.
 
-## Phase C: Native WSP/WTP protocol parsing path (feature-gated)
+## Phase C: Native connectionless WSP/WDP path
 
 Status: active protocol lane.
 
@@ -81,9 +86,12 @@ Objective:
 
 Scope:
 
-- Add parser/FSM modules (candidate: `nom`) for WSP/WTP framing and headers.
+- Close exact WAP-200 and WAP-203 selected rows for WDP and connectionless
+  WSP framing/headers.
+- Add the selected WAP-202 WCMP core.
 - Introduce transport mode flags and clear fallback strategy.
 - Keep browser API stable (`fetch_deck` contract first).
+- Keep connection-oriented WSP/WTP as a separately gated extension.
 
 ## Phase D: WTLS and security profile expansion (deferred)
 
@@ -138,6 +146,9 @@ Immediate safety prerequisite, outside the deferred crypto implementation:
 - `Phase D` does not run forward until profile gates close and explicit security-profile scope is settled in `T0-14` and `T0-21`.
 - `WTLS-00` insecure-test labeling and release gating are not blocked on Phase D and should land
   with the native browser foundation.
+- Completed `T0-*` implementation lanes are provisional evidence. Exact
+  strict-profile closure is tracked by `TRN-701`, `TRN-703`, and
+  `WSP-801`/`802`/`804`/`805`.
 
 ## Dependency Guidance
 

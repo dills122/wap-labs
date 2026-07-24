@@ -143,9 +143,12 @@ Document reviewed requirements for currently out-of-scope domains so deferrals a
 - Spec:
   - `WAP-120`, `WAP-204*`, `WAP-213*`, `WAP-227`, `WAP-231`
 - Current posture:
-  - `deferred/out-of-scope` unless specific capability is promoted.
+  - transport-specific adjuncts are `deferred/out-of-scope` unless promoted;
+    WAP-120 caching is separately mandatory in the selected WAE user-agent
+    profile.
 - Scope rationale:
-  - `WAP-120` is deferred because cache policy control is application-level and not required for deterministic protocol rewrite milestones.
+  - `WAP-120` is outside transport ownership, but its five selected
+    user-agent rows are active compliance work under `WAE-603`.
   - `WAP-204` is deferred because GSM/USSD bearer behavior depends on carrier/tunnel-specific adaptation and is maintained as transport-adjacent context.
   - `WAP-213` is deferred because pictogram/render adjunct behavior is UX/display-specific and outside protocol-loop ownership.
   - `WAP-227`/`WAP-231` are deferred because persistence and EFI hooks create separate lifecycle and storage guarantees not yet in transport core scope.

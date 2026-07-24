@@ -160,8 +160,8 @@ reason to over-credit the current UDP adapter.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.
-- `CONF-002`: extract nested clauses and normalize the TIAEIA-732 external
-  dependency record.
+- `SRC-005`: normalize the `TIAEIA-732` external dependency record.
+- `CONF-003`: extract nested clauses and promote direct normative fixtures.
 
 ## Enhancement policy
 

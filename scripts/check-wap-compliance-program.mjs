@@ -209,11 +209,24 @@ if (
 for (const ledgerPath of [
   'spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json',
   'spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json',
-  'spec-processing/source-manifests/wap-1.2.1-caching-scr.json'
+  'spec-processing/source-manifests/wap-1.2.1-caching-scr.json',
+  'spec-processing/source-manifests/wap-1.2.1-wdp-scr.json',
+  'spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json',
+  'spec-processing/source-manifests/wap-1.2.1-wsp-scr.json'
 ]) {
   if (!conf002?.outputs?.includes(ledgerPath)) {
     failures.push(`CONF-002 must retain ${ledgerPath}`);
   }
+}
+if (
+  conf002?.status !== 'done' ||
+  !conf002?.evidence?.includes(
+    'node scripts/check-wap-transport-conformance-ledgers.mjs'
+  )
+) {
+  failures.push(
+    'CONF-002 must close all selected-family SCR ledgers with transport validation'
+  );
 }
 if (
   !conf002?.evidence?.includes(
@@ -283,6 +296,64 @@ if (
 ) {
   failures.push(
     'WAE-603 must retain exact five-row WAPCachingMod:MCF closure'
+  );
+}
+const transportSprint = program.sprints.find(
+  (sprint) => sprint.id === 'TRN-7'
+);
+const wdpCore = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-701'
+);
+const wcmpCore = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-703'
+);
+if (
+  transportSprint?.status !== 'in-progress' ||
+  wdpCore?.status !== 'in-progress' ||
+  wcmpCore?.status !== 'in-progress' ||
+  !wdpCore?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-wdp-scr.json'
+  ) ||
+  !wcmpCore?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json'
+  ) ||
+  !wdpCore?.acceptance?.some((line) => line.includes('nine selected')) ||
+  !wcmpCore?.acceptance?.some((line) => line.includes('five selected')) ||
+  !transportSprint?.exitGates?.some((line) =>
+    line.includes('only when connection-oriented WSP is claimed')
+  )
+) {
+  failures.push(
+    'TRN-7 must retain the exact WDP/WCMP selected path and conditional WTP boundary'
+  );
+}
+const wspSprint = program.sprints.find((sprint) => sprint.id === 'WSP-8');
+const wspMatrix = wspSprint?.workItems.find(
+  (workItem) => workItem.id === 'WSP-801'
+);
+const wspPost = wspSprint?.workItems.find(
+  (workItem) => workItem.id === 'WSP-805'
+);
+if (
+  wspSprint?.status !== 'in-progress' ||
+  wspMatrix?.status !== 'in-progress' ||
+  !wspMatrix?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-wsp-scr.json'
+  ) ||
+  !wspMatrix?.acceptance?.some((line) =>
+    line.includes('eight-row selected connectionless path')
+  ) ||
+  !wspMatrix?.evidence?.includes(
+    'node scripts/check-wap-transport-conformance-ledgers.mjs'
+  ) ||
+  !wspPost?.acceptance?.some(
+    (line) =>
+      line.includes('connectionless WSP') &&
+      line.includes('WTP is activated only')
+  )
+) {
+  failures.push(
+    'WSP-8 must retain the exact connectionless Class C path and WTP capability gate'
   );
 }
 const wml203 = program.sprints

@@ -19,7 +19,9 @@ Archive:
 These assumptions are active for this board and should not be re-litigated in each ticket:
 
 1. `transport-rust/` gateway-bridged behavior is functionally validated via CLI probes.
-2. protocol-native networking (`WDP -> WTP -> WSP`) remains the current high-risk implementation lane.
+2. protocol-native networking (strict WDP/WCMP/connectionless-WSP plus
+   capability-gated connection-oriented WSP/WTP) remains the current
+   high-risk implementation lane.
 3. `engine-wasm/` runtime/rendering has reached a substantial milestone and remains integration-ready while networking core is completed.
 
 Project-level priority remains multi-lane:
@@ -114,6 +116,24 @@ Sprint policy:
 1. The documented `wap-net-core` posture is implementation-target, not fully live browser ingress, until `T0-27..T0-29` land.
 2. Keep this lane capacity-bounded alongside committed runtime/compliance lanes; do not starve in-flight `R0-*`/`W0-*` closure tickets.
 3. Defer non-bedrock feature expansion unless required to unblock committed lanes.
+
+Source-ledger reconciliation:
+
+1. The exact WAP-200/WAP-202/WAP-203 row authority is
+   `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
+   manifests. The selected connectionless Class C path is 22 rows with an
+   audit of 0 implemented / 17 partial / 5 missing and 0/22 direct normative
+   tests.
+2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
+   reopened. Their existing evidence remains useful but provisional against
+   the exact target-era rows.
+3. Exact closure is owned by compliance-program work items `TRN-701`,
+   `TRN-703`, `WSP-801`, `WSP-802`, `WSP-804`, and `WSP-805`.
+4. `SRC-005` owns normalization of the selected CDPD bearer citation
+   `TIAEIA-732`; `CONF-003` owns nested clause extraction and direct normative
+   fixture expansion.
+5. WTP remains a conditional capability and does not gate the initial
+   connectionless Class C path.
 
 ## Next In Line (Committed Bedrock Compliance Sprint - 2026-03-04)
 
@@ -470,7 +490,8 @@ Completed `B0` through `B3` tickets are archived in:
 5. `Build`:
 - Publish an explicit profile decision for near-term and target-state transport:
   - current profile: gateway-bridged HTTP/WBXML normalization path
-  - target profile: in-process WDP/WTP/WSP behavior lane and activation criteria
+  - target profile: in-process WDP/connectionless-WSP lane with
+    connection-oriented WSP/WTP behind explicit activation criteria
 - Define non-negotiable boundary rules so engine/browser contracts stay stable across both profiles.
 - Define migration gates that block profile promotion until required protocol fixtures pass.
 6. `Tests`:
@@ -571,7 +592,8 @@ Completed `B0` through `B3` tickets are archived in:
 - Keep this decision synchronized with `T0-14` profile gates.
 6. `Tests`:
 - checklist validation fixtures:
-  - `WAP-204` and `WAP-120` remain deferred under documented rationale
+  - `WAP-204` remains transport-deferred; WAP-120 remains outside transport
+    ownership and active under `WAE-603`
   - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
    - command: `node scripts/check-adjacent-scope-lock.mjs`
 7. `Accept`:
@@ -584,7 +606,10 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRX-001..010` where applicable
 - `RQ-TRN-001..019`
 10. `Notes`:
-- Completed the explicit deferred-family rationale and checklist alignment for `WAP-204*`, `WAP-120*`, `WAP-213*`, and related cache/adjacent messaging families in:
+- Completed the explicit transport-scope rationale and checklist alignment
+  for `WAP-204*`, `WAP-120*`, `WAP-213*`, and related cache/adjacent messaging
+  families; later source-ledger work moved WAP-120 user-agent closure to
+  `WAE-603` without reopening this transport ticket:
   - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
   - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
   - `docs/waves/networking-implementation-checklist.md`
@@ -646,7 +671,9 @@ Completed `B0` through `B3` tickets are archived in:
 - WDP trait and UDP baseline are live and do not leak gateway-only assumptions.
 - Port mapping and error paths are fixture-backed and traceable.
 8. `Migration gates`:
-- Done-1: datagram trait is the only WTP/WSP ingress path in protocol-native mode.
+- Done-1: datagram trait is the only connectionless-WSP ingress path in
+  `wap-net-core` and the only WTP ingress when that conditional module is
+  activated.
 - Done-2: port-mapping fixtures pass for declared profile modes.
 - Done-3: SAR behavior is explicit (`off` by default) and guarded by profile flags.
 9. `Spec`:

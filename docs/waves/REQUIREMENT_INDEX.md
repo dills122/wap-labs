@@ -28,6 +28,14 @@ For caching, use the exact WAP-120 row crosswalk in
 `WAPCachingMod:MCF` audit has five mandatory user-agent rows, zero implemented
 rows, and zero direct normative tests; `RQ-WAE-008` remains a thematic owner,
 not a substitute for those five source obligations.
+For transport, `RQ-TRN-*` and `RQ-TRX-*` are thematic groupings rather than
+exact conformance rows. Use
+`spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`,
+`spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
+`spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. Their selected
+connectionless Class C path contains 22 rows with an audit of zero
+implemented, 17 partial, five missing, and zero direct normative tests. WTP
+remains conditional unless connection-oriented WSP is claimed.
 
 | Requirement ID | Owner Layer | Primary Ticket Lane | Test Status | Traceability Doc |
 |---|---|---|---|---|

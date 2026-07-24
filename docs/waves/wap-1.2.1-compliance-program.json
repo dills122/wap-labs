@@ -198,7 +198,7 @@
         },
         {
           "id": "CONF-002",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["documentation", "qa"],
           "sourceFamilies": [
             "wae",
@@ -219,7 +219,10 @@
         "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json",
-        "spec-processing/source-manifests/wap-1.2.1-caching-scr.json"
+        "spec-processing/source-manifests/wap-1.2.1-caching-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
+        "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
       ],
           "acceptance": [
             "Every effective SCR line has source document, section, actor, M/O status, dependency expression, strict disposition, and review state."
@@ -229,7 +232,8 @@
         "node scripts/check-wap-wae-conformance-ledger.mjs",
         "node scripts/check-wap-wbxml-conformance-ledger.mjs",
         "node scripts/check-wap-wmlscript-conformance-ledger.mjs",
-        "node scripts/check-wap-caching-conformance-ledger.mjs"
+        "node scripts/check-wap-caching-conformance-ledger.mjs",
+        "node scripts/check-wap-transport-conformance-ledgers.mjs"
       ]
         },
         {
@@ -894,24 +898,26 @@
     {
       "id": "TRN-7",
       "title": "WDP, WCMP, and conditional WTP Class C transport core",
-      "status": "todo",
+      "status": "in-progress",
       "dependsOn": ["CONF-1"],
       "goal": "Complete the historical datagram and transaction mechanics required beneath WSP.",
       "workItems": [
         {
           "id": "TRN-701",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wdp", "wdp-wcmp-adaptation"],
           "existingTickets": ["T0-19"],
           "outputs": [
-            "Effective WDP service, addressing, port, and bearer profile"
+            "Effective WDP service, addressing, port, and bearer profile",
+            "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json"
           ],
           "acceptance": [
-            "Client datagram primitives, source/destination addressing, ports, MTU, errors, and selected UDP/IP bearer behavior map to effective WDP SCR lines."
+            "All nine selected CDPD/IPv4 WDP path rows map to implementation evidence or corrective work; the TIAEIA-732 source gap remains explicit until normalized."
           ],
           "evidence": [
-            "cargo test --manifest-path transport-rust/Cargo.toml"
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
           ]
         },
         {
@@ -932,18 +938,20 @@
         },
         {
           "id": "TRN-703",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wcmp", "wdp-wcmp-adaptation"],
           "existingTickets": ["T0-17"],
           "outputs": [
-            "WCMP generation/handling and error mapping"
+            "WCMP generation/handling and error mapping",
+            "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json"
           ],
           "acceptance": [
-            "Mandatory WCMP error paths are implemented and optional paths are capability-declared using the WAP 1.2.1 byte identity, not the divergent local variant."
+            "The five selected general-WCMP dependency rows are implemented and tested; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity."
           ],
           "evidence": [
-            "cargo test --manifest-path transport-rust/Cargo.toml"
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
           ]
         },
         {
@@ -956,7 +964,7 @@
             "Effective WTP PDU and transaction state machines"
           ],
           "acceptance": [
-            "Classes, invoke/result/ack/abort, TID, duplicate handling, retransmission, and terminal states map to effective WTP SCR entries."
+            "When connection-oriented WSP is claimed, classes, invoke/result/ack/abort, TID, duplicate handling, retransmission, and terminal states map to effective WTP SCR entries."
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml"
@@ -972,7 +980,7 @@
             "WTP timing, NACK, hold-off, and retry closure"
           ],
           "acceptance": [
-            "All timers and retry limits use deterministic simulated time and incorporate SIN corrections in order."
+            "When connection-oriented WSP is claimed, all WTP timers and retry limits use deterministic simulated time and incorporate SIN corrections in order."
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml"
@@ -980,7 +988,7 @@
         },
         {
           "id": "TRN-706",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wdp", "wtp"],
           "existingTickets": ["T0-22", "T0-24"],
@@ -1012,7 +1020,8 @@
         }
       ],
       "exitGates": [
-        "Selected-profile WDP/WTP mandatory SCR lines have executable evidence.",
+        "The nine-row selected WDP path and five-row selected WCMP path have executable evidence.",
+        "WTP evidence is required only when connection-oriented WSP is claimed.",
         "Timing tests are deterministic and do not require live networks.",
         "WAP 2.0 transport deltas are explicit."
       ]
@@ -1020,29 +1029,31 @@
     {
       "id": "WSP-8",
       "title": "WSP session, connectionless, headers, and host fetch",
-      "status": "todo",
+      "status": "in-progress",
       "dependsOn": ["CONF-1", "TRN-7", "WAE-6"],
       "goal": "Complete the WAP 1.2.1 session layer and make it the real desktop ingress path.",
       "workItems": [
         {
           "id": "WSP-801",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wsp"],
           "existingTickets": ["T0-09", "T0-11", "T0-20"],
           "outputs": [
-            "Effective WSP PDU, primitive, and method matrix"
+            "Effective WSP PDU, primitive, and method matrix",
+            "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
           ],
           "acceptance": [
-            "Connection-oriented and connectionless applicability, client methods, replies, aborts, redirects, and errors map to effective WSP SCR lines."
+            "All 109 WSP rows retain exact source disposition and the eight-row selected connectionless path maps to implementation evidence or corrective work."
           ],
           "evidence": [
-            "cargo test --manifest-path transport-rust/Cargo.toml"
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
           ]
         },
         {
           "id": "WSP-802",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wsp", "general-formats"],
           "existingTickets": ["T0-10", "T0-20"],
@@ -1053,7 +1064,8 @@
             "Known tokens, code pages, text fallbacks, unknown policy, encoding versions, and round trips match the WAP 1.2.1 effective set."
           ],
           "evidence": [
-            "cargo test --manifest-path transport-rust/Cargo.toml"
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs"
           ]
         },
         {
@@ -1074,9 +1086,9 @@
         },
         {
           "id": "WSP-804",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "browser", "qa"],
-          "sourceFamilies": ["wsp", "wdp", "wtp"],
+          "sourceFamilies": ["wsp", "wdp"],
           "existingTickets": ["T0-27", "T0-28", "T0-29"],
           "outputs": [
             "Native WAP transport desktop GET ingress"
@@ -1092,15 +1104,15 @@
         },
         {
           "id": "WSP-805",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["transport-rust", "browser", "engine-wasm", "qa"],
-          "sourceFamilies": ["wsp", "wml", "wae"],
+          "sourceFamilies": ["wsp", "wdp", "wml", "wae"],
           "existingTickets": ["T0-30", "R0-06"],
           "outputs": [
             "Native WSP form POST ingress"
           ],
           "acceptance": [
-            "Effective WML form data crosses engine, host, WSP, WTP, and WDP with exact method/content/request-policy semantics."
+            "Effective WML form data crosses engine, host, connectionless WSP, and WDP with exact method/content/request-policy semantics; WTP is activated only for connection-oriented WSP."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
@@ -1126,7 +1138,8 @@
         }
       ],
       "exitGates": [
-        "Selected-profile WSP mandatory SCR lines have executable evidence.",
+        "The eight-row selected connectionless WSP path has executable evidence.",
+        "Connection-oriented WSP and WTP remain separately capability-gated.",
         "Desktop GET and POST use the native stack with explicit fallback.",
         "Generated Rust/TypeScript transport contracts have no drift."
       ]

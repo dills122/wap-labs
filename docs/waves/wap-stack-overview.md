@@ -10,15 +10,19 @@ Grounding:
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md`
 - `docs/waves/DEFERRED_CAPABILITY_SPEC_TRACEABILITY.md`
-- Source references: `WAP-230`, `WAP-224`, `OMA-WAP-224_002`, `WAP-259`, `WAP-261`, `WAP-199`
+- Strict source references: effective `WAP-200`, `WAP-202`, and effective
+  `WAP-203`
+- Conditional/context references: effective `WAP-201`, `WAP-259`, `WAP-224`,
+  `WAP-230`, OMA corrections, `WAP-261`, and `WAP-199`
 
 ## 1) Definition objective
 
 Deliver a deterministic, spec-driven transport stack that can provide:
 
 - WDP datagram service abstraction over UDP (MVP), with bearer profiles defined for future SMS/GSM/USSD and packet-borne bearers.
-- WTP transaction semantics for connection-oriented request/response and one-way reliable flows.
-- WSP session and connectionless HTTP-like transaction/session services used by browser engine runtime.
+- WCMP selected error and diagnostic message behavior.
+- Connectionless WSP GET/POST/REPLY services used by the browser runtime.
+- Optional WTP and connection-oriented WSP transaction/session behavior.
 - Optional WTLS shim path that can evolve into real WTLS without changing the transport public APIs.
 
 ## 2) Core network abstraction model
@@ -32,15 +36,20 @@ Scope note: transport stack must not parse/render WBXML or WML; those stay in `t
 Profile posture:
 
 1. `gateway-bridged`: legacy gateway path retained as rollback and comparison lane.
-2. `wap-net-core`: active native protocol path promoted by `T0-14` gate closure.
-3. `wap-net-ext`: future optional CL/push-advanced extension profile.
+2. `wap-net-core`: active native WDP/UDP -> connectionless WSP path.
+3. `wap-net-ext`: future additional-bearer, connection-oriented WSP/WTP,
+   Push, and advanced-session profile.
 
 ## 3) Layer contract and boundaries
 
-- `transport-rust/src/wap/wdp/`: datagram transport abstraction and address/port semantics.
-- `transport-rust/src/wap/wtp/`: deterministic state machines, retransmission logic, duplicate and TID policy.
-- `transport-rust/src/wap/wsp/`: PDU codec, service state, session/capability state, method/push dispatch.
-- `transport-rust/src/wap/wtls/`: record/security façade (phase-1 shim, phase-2 real protocol).
+- `transport-rust/src/network/wdp/`: datagram transport abstraction and address/port semantics.
+- `transport-rust/src/network/wcmp/`: selected control-message codec and policy
+  target.
+- `transport-rust/src/network/wsp/`: PDU codec and connectionless method
+  dispatch; optional session/capability breadth.
+- `transport-rust/src/network/wtp/`: conditional state machines,
+  retransmission logic, duplicate and TID policy.
+- `transport-rust/src/network/wtls/`: record/security façade.
 - `browser/contracts/transport.ts`: browser transport entry surface.
 - `engine-wasm/contracts/wml-engine.ts`: render/runtime contract unchanged by transport choices.
 
@@ -51,24 +60,30 @@ Contracts:
 
 ## 4) Data and control flow (stack profile)
 
-### 4.1 Connection-mode path (browser to HTTP origin via WSP/WTP/WDP)
-
-`Engine/browser -> transport facade -> WSP session -> WTP class-2 -> (optional WTLS) -> WDP -> UDP`.
-
-### 4.2 Connectionless path (WSP-CL)
+### 4.1 Strict connectionless path
 
 `Engine/browser -> WSP-CL codec -> WDP transport -> UDP`.
 
-### 4.3 Push path
+WCMP supplies the selected control/error side path.
+
+### 4.2 Conditional connection-mode path
+
+`Engine/browser -> transport facade -> WSP session -> WTP class-2 -> WDP`.
+
+This path is not part of the initial selected Class C profile.
+
+### 4.3 Conditional Push path
 
 WAP PUSH is inbound only to UA session context:
 `WDP <- WSP PUSH/ConfirmedPush <- WTP <- WTLS <- Network` then dispatched as transport event into browser host and engine.
 
 ## 5) Profiles and mandatory support lanes
 
-- `MVP-NET-CORE`: WDP/UDP + WTP class 2 + WSP connection-mode GET/POST/REPLY + PUSH decode + optional WTLS shim.
-- `MVP-NET-BRIDGE`: enable WSP connectionless GET/POST for gateway parity.
-- `MVP-NET-EXT`: WTLS real implementation, session resume, SAR/ESAR, confirmed push retries.
+- `MVP-NET-CORE`: WDP/UDP + selected WCMP + connectionless WSP
+  GET/POST/REPLY.
+- `MVP-NET-BRIDGE`: legacy gateway fallback/comparison path.
+- `MVP-NET-EXT`: connection-oriented WSP/WTP, additional bearers, Push,
+  session resume, SAR/ESAR, and later security choices.
 
 Transport feature gate should be explicit (for testability and CI matrix).
 
@@ -85,22 +100,30 @@ pub trait DatagramTransport {
 }
 ```
 
-### 6.2 Transaction layer (WTP)
+### 6.2 Control-message layer (WCMP)
+
+Required strict artifacts:
+
+- destination-unreachable, message-too-big, and echo-reply structures,
+- error-generation guardrails,
+- deterministic malformed-message handling.
+
+### 6.3 Conditional transaction layer (WTP)
 
 Required types and policies:
 - `TransactionManager::send_invoke` with class and policy validation.
 - deterministic retransmission policy and bounded timer strategy.
 - `DuplicateTracker`, `TidPolicy`, `SarPolicy` (opt-in).
 
-### 6.3 Session layer (WSP)
+### 6.4 WSP layer
 
 Required artifacts:
 - strict codec registry from assigned-number tables,
-- session context including capability state,
-- method/push dispatch state,
+- connectionless GET/POST/REPLY method dispatch,
+- conditional session/capability/push state,
 - abort/abort-code handling.
 
-### 6.4 Security layer (WTLS)
+### 6.5 Security layer (WTLS)
 
 `TlsRecordLayer` shim initially, then real `handshake|record|alert|session|alert` state machine under feature gate.
 
@@ -108,19 +131,22 @@ Required artifacts:
 
 ### Milestone 0: parser foundation
 
-- Parse and encode all WDP/WTP/WSP structures with deterministic roundtrip tests.
+- Close all 22 selected WDP/WCMP/WSP rows with source-derived deterministic
+  fixtures.
 
-### Milestone 1: transport and session core
+### Milestone 1: strict transport core
 
-- WDP UDP implementation + WTP class-2 and class-1 behavior + WSP connect/disconnect/get/post/reply.
+- WDP UDP implementation + selected WCMP behavior + connectionless WSP
+  GET/POST/REPLY.
 
 ### Milestone 2: browser integration
 
 - `transport-rust` emits contract-shaped `WAPResult` responses into `browser/contracts/transport.ts` and engine handoff path.
 
-### Milestone 3: resilience and push
+### Milestone 3: optional transport breadth
 
-- deterministic retries, duplicate filtering, pending transaction abort on disconnect/suspend, push event sinks, profile gating.
+- connection-oriented WSP/WTP, deterministic retries, duplicate filtering,
+  session teardown, Push event sinks, and profile gating.
 
 ### Milestone 4: security gate
 
@@ -129,5 +155,6 @@ Required artifacts:
 ## 8) Traceability and tests
 
 - Requirements map: `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md` (`RQ-TRN-001`..`019`).
+- Exact ledgers: `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`.
 - Coverage map: `docs/waves/SPEC_TEST_COVERAGE.md` (transport section).
 - Implementation work-items: `docs/waves/WORK_ITEMS.md` transport lanes `T0-08`..`T0-14`.

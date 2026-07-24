@@ -1292,9 +1292,14 @@
       "historicalDocuments": [],
       "relationships": [],
       "scrExtraction": {
-        "status": "pending-line-item-ledger",
+        "status": "line-item-ledger-complete-class-c-applied",
         "governingDocument": "WAP-221-CREQ-20010425-a",
-        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WCMP:MCF",
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
       },
       "successorEvidence": [],
       "documents": [
@@ -1391,9 +1396,14 @@
         }
       ],
       "scrExtraction": {
-        "status": "pending-line-item-ledger",
+        "status": "line-item-ledger-complete-class-c-applied",
         "governingDocument": "WAP-221-CREQ-20010425-a",
-        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WDP:MCF",
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
       },
       "successorEvidence": [
         {
@@ -2007,9 +2017,14 @@
         }
       ],
       "scrExtraction": {
-        "status": "pending-line-item-ledger",
+        "status": "line-item-ledger-complete-class-c-applied",
         "governingDocument": "WAP-221-CREQ-20010425-a",
-        "note": "SCR tables and SIN changes require line-item extraction; this graph establishes source precedence only."
+        "governingClassProfileDocument": "WAP-215-ClassConform-20001213-a",
+        "ledger": "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json",
+        "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
+        "selectedProfile": "CCR-CLASSC-C-001",
+        "selectedFeatureGroup": "WSP:MCF",
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
       },
       "successorEvidence": [
         {

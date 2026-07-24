@@ -34,8 +34,8 @@ requireMatch(
 );
 requireMatch(
   docs.checklist,
-  /WAP-120.*deferred/i,
-  'WAP-120 deferred rationale in checklist'
+  /WAP-120.*mandatory|WAP-120.*WAE-603/is,
+  'WAP-120 transport-boundary and active compliance owner in checklist'
 );
 requireMatch(
   docs.checklist,
@@ -56,8 +56,8 @@ requireMatch(
 );
 requireMatch(
   docs.outOfScope,
-  /WAP-120.*deferred/i,
-  'WAP-120 out-of-scope rationale'
+  /WAP-120.*WAE-603/is,
+  'WAP-120 transport-boundary and active compliance owner'
 );
 requireMatch(
   docs.outOfScope,
@@ -104,4 +104,4 @@ requireMatch(
   'T0-17 ticket block in work list'
 );
 
-console.log('Scope-lock check OK: adjacent transport scope deferrals are documented in canonical artifacts.');
+console.log('Scope-lock check OK: adjacent transport deferrals and WAP-120 ownership are documented.');

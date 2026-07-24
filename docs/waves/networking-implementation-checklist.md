@@ -9,15 +9,20 @@ For `transport-rust`, the current network goal is deterministic, in-process prot
 
 Current implementation posture for now:
 
-1. `profile_mode=bridge-first` with protocol-parity lanes for replay, verification, and decode fixtures.
+1. `profile_mode=wap-net-core` with the gateway bridge retained as explicit
+   fallback and comparison lane.
 2. `WDP` over UDP core implementation must be operational and deterministic.
-3. `WTP` and `WSP` behavior implemented behind feature gates and gradually promoted as gate requirements pass.
+3. Connectionless `WSP` is the strict native method path; `WTP` and
+   connection-oriented WSP remain separately gated capabilities.
 4. `WTLS` remains phased with explicit feature flag and deterministic no-op path.
 
 Target implementation posture:
 
-1. full `WDP -> WTP -> WSP` stack operation from transport-rust without mandatory external protocol dependency.
+1. full strict WDP/WCMP/connectionless-WSP operation from `transport-rust`
+   without a mandatory external protocol dependency.
 2. Explicit transport profile declaration with migration gates in `docs/waves/WORK_ITEMS.md` and `docs/waves/TECHNICAL_ARCHITECTURE.md`.
+3. Optional connection-oriented WSP/WTP remains modular and cannot replace
+   the strict connectionless path.
 
 ## 2) Architecture contract gates
 
@@ -30,8 +35,12 @@ All network paths must satisfy these invariant rules:
 
 Traceability requirement:
 
-1. each new transport behavior must map to at least one existing `RQ-TRN-*` or `RQ-TRX-*` ID.
-2. each `Rq-*` mapping must include a test-location in `docs/waves/SPEC_TEST_COVERAGE.md`.
+1. each new transport behavior must map to an exact WDP/WCMP/WSP source row
+   when it affects the strict profile, plus an existing thematic `RQ-TRN-*` or
+   `RQ-TRX-*` owner.
+2. each mapping must include a test location in
+   `docs/waves/SPEC_TEST_COVERAGE.md`; direct normative evidence must be
+   distinguished from provisional project-authored tests.
 
 ## 3) Immediate implementation checklist
 
@@ -46,9 +55,13 @@ Execution priority override (`2026-03-08` refresh):
 ### F0: Foundation and policy
 
 1. confirm `spec-processing/source-material` has canonical transport corpus:
-   - `WAP-259`, `WAP-224`, `OMA-WAP-224_002`, `WAP-230`, `OMA-WAP-TS-WSP`
-   - `WAP-202`, `WAP-225`, `WAP-229*`, `WAP-223*`, `WAP-159`
-   - parsed markdown artifacts for this lane are available in `tmp/docling-new-source-material/` before canonical replacement
+   - strict authority: effective `WAP-200`, `WAP-202`, and effective
+     `WAP-203`
+   - conditional WTP authority: effective `WAP-201`
+   - successor context: `WAP-259`, `WAP-224`, `OMA-WAP-224_002`,
+     `WAP-230`, and `OMA-WAP-TS-WSP`
+   - exact WDP/WCMP/WSP manifests pass
+     `node scripts/check-wap-transport-conformance-ledgers.mjs`
 2. add/verify parser modules for deterministic PDU roundtrip:
    - `wdp`, `wtp`, `wsp` codecs + validation stubs
 3. lock transport profile constants:
@@ -69,29 +82,39 @@ Execution priority override (`2026-03-08` refresh):
 5. acceptance:
    - `RQ-TRN-001..004` fully traceable and no regressions in request-policy flow.
 
-### F2: WTP transaction core
+### F2: WCMP selected core
 
-1. implement deterministic state machine types for class-0/class-1/class-2.
-2. implement TID lifecycle and replay-window policy for initiator and responder.
-3. implement bounded retransmission + abort path + duplicate filtering policy.
+1. implement the selected general-WCMP path.
+2. implement destination-unreachable, message-too-big, and echo-reply message
+   structures.
+3. enforce deterministic error-generation and payload rules.
 4. test gates:
-   - TID table fixtures for cache/no-cache/replay
-   - retransmission bound and timer trace assertions
+   - direct WAP-202 fixtures for all five selected rows
+   - malformed message and no-error-in-response-to-error assertions
 5. acceptance:
-   - `RQ-TRN-005..009` and `RQ-TRN-016`
+   - `TRN-703`, exact WCMP ledger, and thematic `RQ-TRX-006..008`
 
-### F3: WSP service/session
+### F3: WSP connectionless service
 
-1. implement protocol-mode gating and profile validation (`connection-oriented`, `connectionless`, both).
+1. make connectionless mode the explicit strict profile and keep
+   connection-oriented mode capability-gated.
 2. implement method invoke/reply primitives and primitive transition validation.
 3. implement header/token registries and deterministic unknown-token policy.
-4. implement capability negotiation and cap bound handling.
+4. close all eight selected WAP-203 rows before extending optional breadth.
 5. test gates:
-   - primitive matrix fixtures
-   - assigned-number roundtrip fixtures
-   - cap overrun / conflict fixtures
+   - source-derived GET/POST/REPLY fixtures
+   - selected header-encoding and encoding-version fixtures
 6. acceptance:
-   - `RQ-TRN-010..015`, `RQ-TRN-017..019`
+   - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`
+
+### F3a: Conditional connection-oriented WSP/WTP
+
+1. activate only when the profile explicitly claims connection-oriented WSP.
+2. extract the exact effective WAP-201 ledger before making a conformance
+   claim.
+3. reuse existing WTP transaction/replay evidence as provisional input.
+4. acceptance:
+   - dependency-closed WAP-201/WAP-203 rows and direct normative fixtures
 
 ### F4: Security path and gateway bridge bridge
 
@@ -116,7 +139,9 @@ Execution priority override (`2026-03-08` refresh):
    - `browser -> host transport -> Kannel -> WML server`
    - canonical record: `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 5. acceptance:
-   - all `T0-08..T0-26` gates with explicit owner and artifact.
+   - implementation gates `T0-08..T0-26` retain explicit owners/artifacts
+   - exact closure gates `TRN-701`, `TRN-703`, and
+     `WSP-801`/`802`/`804`/`805` pass
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
 
 ### F6: Native desktop fetch activation
@@ -133,7 +158,8 @@ Execution priority override (`2026-03-08` refresh):
 ## 4) Known adjacent-but-deferred transport context
 
 1. `WAP-204-WAPOverGSMUSSD` and `WAP-204_103` are deferred: transport-rewrite scope is currently protocol-layer only and these docs are bearer-adaptation specific (`docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md` + `T0-14`).
-2. `WAP-120-WAPCachingMod` is deferred: caching-control semantics are out of protocol rewrite scope until a dedicated transport-cache ticket lands (`WAP-227/WAP-231` context reviewed in `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`, locked by `T0-17`).
+2. `WAP-120-WAPCachingMod` is outside the transport layer but mandatory for
+   the selected user-agent profile; exact closure is owned by `WAE-603`.
 3. `WAP-213*` pictogram/display adjuncts are deferred: adjacent rendering/content behavior is UX-adjacent and intentionally excluded from core WSP/WTP/WDP path (`T0-16` canonicalization + `T0-17`).
 4. `WAP-175`, `WAP-227`, `WAP-231`, and `WAP-204` messaging/cache-adjacent families stay out of scope for now because they add profile-adapter behavior not yet required by transport milestones (`T0-14` profile gates + `T0-17` scope lock).
 5. Bearer adaptation beyond UDP (`SMS`/`packet tunnel` variants) is deferred to gateway/adapter modules with explicit `deferred/out-of-scope` flags and not-implemented stubs.

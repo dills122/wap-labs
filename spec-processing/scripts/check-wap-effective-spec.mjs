@@ -155,6 +155,9 @@ for (const [
   selectedFeatureGroup
 ] of [
   ['caching', 'WAPCachingMod:MCF'],
+  ['wdp', 'WDP:MCF'],
+  ['wcmp', 'WCMP:MCF'],
+  ['wsp', 'WSP:MCF'],
   ['wmlscript', 'WMLScript:MCF'],
   ['wmlscript-libraries', 'WMLScriptLibs:MCF']
 ]) {

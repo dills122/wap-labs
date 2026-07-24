@@ -31,7 +31,7 @@ Legend:
 | `OMA-WAP-224_002-WTP-SIN-20020827-a.PDF` | `transport` | `deep-extracted` | covered by TRANSPORT_SPEC_TRACEABILITY |
 | `OMA-WAP-260_100-WIM-SIN-20010725-a.pdf` | `security-pki` | `deep-extracted` | covered by SECURITY_PKI_SPEC_TRACEABILITY |
 | `OMA-WAP-260_101-WIM-SIN-20020107-a.pdf` | `security-pki` | `deep-extracted` | covered by SECURITY_PKI_SPEC_TRACEABILITY |
-| `WAP-120-WAPCachingMod-20010413-a.pdf` | `misc` | `deep-extracted` | covered by OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW |
+| `WAP-120-WAPCachingMod-20010413-a.pdf` | `misc` | `deep-extracted` | strict target closure is tracked by WAP_1_2_1_CACHING_SCR_LEDGER and WAE-603 |
 | `WAP-159-WDPWCMPAdapt-20010713-a.pdf` | `transport-adjacent` | `deep-extracted` | covered by TRANSPORT_ADJACENT_SPEC_TRACEABILITY |
 | `WAP-161-WMLScriptCrypto-20010620-a.pdf` | `deferred` | `deep-extracted` | covered by DEFERRED_CAPABILITY_SPEC_TRACEABILITY |
 | `WAP-161_101-WMLScriptCrypto-20010730-a.pdf` | `deferred` | `deep-extracted` | covered by DEFERRED_CAPABILITY_SPEC_TRACEABILITY |

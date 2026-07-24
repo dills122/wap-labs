@@ -30,9 +30,10 @@ node scripts/check-wap-wae-conformance-ledger.mjs
 node scripts/check-wap-wbxml-conformance-ledger.mjs
 node scripts/check-wap-wmlscript-conformance-ledger.mjs
 node scripts/check-wap-caching-conformance-ledger.mjs
+node scripts/check-wap-transport-conformance-ledgers.mjs
 ```
 
-The first six `CONF-1` family increments are complete at SCR level:
+All nine selected Class C family increments are complete at SCR level:
 
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
@@ -74,13 +75,24 @@ The first six `CONF-1` family increments are complete at SCR level:
 - the selected caching audit is 0 implemented, 3 partial, and 2 missing, with
   zero direct normative WAP-120 tests; the current no-storage behavior is
   treated only as a provisional zero-byte-cache profile.
+- 317 effective WDP/WCMP/WSP SCR rows are extracted with all actor, M/O,
+  source-order, and dependency expressions preserved;
+- the selected connectionless transport path resolves to 22 rows: 9 WDP
+  using CDPD-shaped UDP/IPv4, 5 general-WCMP rows, and 8 connectionless WSP
+  rows;
+- the selected transport audit is 0 implemented, 17 partial, and 5 missing,
+  with zero direct WAP-200/WAP-202/WAP-203 normative tests;
+- connection-oriented WSP and WTP remain a separately activated capability;
+  the selected CDPD `TIAEIA-732` citation remains an external-source
+  normalization gap.
 
 See `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md` and
 `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`, and
 `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`,
 `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`, and
 `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`, and
-`docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`.
+`docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`, and
+`docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`.
 
 ## Compatibility and enhancement policy
 
@@ -126,7 +138,7 @@ adds work only for uncovered obligations.
 | `REN-4` | Historical layout, focus, keypad, and softkeys | `WML-2`, `WML-3` | Observable device interaction is reproducible |
 | `WMLS-5` | WMLScript language, bytecode, VM, and libraries | `CONF-1`, `WML-3` | Script execution and failure behavior are bounded and compliant |
 | `WAE-6` | WAE integration, caching, formats, and content behavior | `CONF-1`, `WML-3`, `REN-4`, `WMLS-5` | Browser-environment behavior closes across engine features |
-| `TRN-7` | WDP, WCMP, and WTP core | `CONF-1` | Protocol PDUs, state, bounds, and errors meet vectors |
+| `TRN-7` | WDP, WCMP, and conditional WTP core | `CONF-1` | Protocol PDUs, state, bounds, and errors meet vectors |
 | `WSP-8` | WSP session/connectionless behavior and host fetch | `CONF-1`, `TRN-7`, `WAE-6` | Native transport reaches the browser contract correctly |
 | `INT-9` | Native/WASM parity and end-to-end interoperability | Runtime and transport sprints | Cross-layer strict scenarios have auditable evidence |
 | `REL-10` | Strict Class C-compatible release gate | `INT-9` | No mandatory obligation is unmapped and all build gates pass |
@@ -152,14 +164,15 @@ closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
 
-1. Finish `SRC-0` by locking normative external dependencies and resolving
-   the remaining redistribution blocker.
-2. Continue `CONF-1` ledgers from the completed WML, WAE, WBXML, WMLScript,
-   WMLScript Libraries, and caching increments into WSP, WDP, and WCMP, with
-   WTP added only for the connection-mode WSP capability.
-3. Continue the completed first-pass WML reconciliation into nested clauses
-   and other families. Do not reopen completed tickets; add narrowly scoped
-   gap work.
+1. Finish `SRC-0` by normalizing the selected `TIAEIA-732` bearer reference,
+   locking remaining normative external dependencies, and resolving the
+   redistribution blocker.
+2. Treat `CONF-002` family-level SCR extraction as complete. Continue
+   `CONF-003` nested-clause extraction across all nine selected families; add
+   WTP only when connection-oriented WSP is claimed.
+3. Continue the completed first-pass implementation audits into exact
+   source-derived fixtures. Do not reopen completed tickets; add narrowly
+   scoped gap work.
 4. Refresh the master priority plan from the reconciled obligation ledger.
 5. Execute the runtime and protocol sprints in dependency order, then close
    cross-layer and release evidence.

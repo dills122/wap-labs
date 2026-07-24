@@ -76,7 +76,9 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 
 ### T0-17 (`Owner`: docs + transport)
 
-- `Done-1`: non-core adjacencies (`WAP-204*`, `WAP-120*`, `WAP-213*`) remain explicitly deferred.
+- `Done-1`: non-core transport adjacencies (`WAP-204*`, `WAP-213*`) remain
+  explicitly deferred; WAP-120 stays outside transport ownership but active
+  under the WAE compliance lane.
 - `Done-2`: `TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md` and `OUT_OF_SCOPE...` are aligned on transport-adjacent deferrals.
 - `Done-3`: migration profile promotion criteria references `T0-17` as scope-lock check.
 
@@ -88,7 +90,9 @@ Promotion from `bridge-first` to stronger protocol layers requires:
 
 ### T0-19 (`Owner`: transport-rust)
 
-- `Done-1`: WDP datagram trait is the protocol-native ingress to WTP/WSP in `wap-net-core`.
+- `Done-1`: WDP datagram trait is the protocol-native ingress to
+  connectionless WSP in `wap-net-core` and to WTP only in a separately
+  activated connection-oriented extension.
 - `Done-2`: UDP mapping for `9200..9203` is deterministic and fixture-covered.
 - `Done-3`: SAR behavior is documented and profile-gated (`off` default unless explicitly enabled).
 

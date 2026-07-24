@@ -74,14 +74,16 @@ Preliminary planning classification:
 
 | Source class | Members | Meaning |
 |---|---:|---|
-| `core-mandatory` | 29 | Defines the strict WAE/WML/WMLScript/WBXML/WDP/WTP/WSP behavior floor |
-| `core-optional` | 7 | Core release capability that is conditional or optional, currently WTLS/WCMP |
+| `core-mandatory` | 29 | Initial corpus-priority bucket; exact selected-profile status comes from WAP-215 and the effective SCR ledgers |
+| `core-optional` | 7 | Initial corpus-priority bucket for conditional/optional review, not a conformance verdict |
 | `dependency` | 6 | Architecture, overview, formats, caching, or adaptation material needed to interpret core behavior |
 | `profile-optional` | 53 | Push, telephony, identity, bearer, and other optional profiles |
 | `historical` | 2 | Proposed documents retained for release history, not approved normative behavior |
 
-These classes are project planning labels. WAP SCR/CCR extraction and the
-effective-spec graph can refine them.
+These classes are project planning labels. The completed WAP-215 selection and
+effective SCR graph supersede them for conformance: WCMP is mandatory in the
+selected Class C client path, while WTP is conditional on claiming
+connection-oriented WSP.
 
 ## Local preservation status
 
@@ -151,7 +153,7 @@ together, in publication order:
 - WSP: `WAP-203` + SINs `001`, `003`, `005`
 - WTLS: `WAP-199` + SINs `102` through `106`
 
-The first six effective family SCR ledgers are now complete at feature
+All nine selected Class C family SCR ledgers are now complete at feature
 level:
 
 - WML: 76 active rows; `WML:MCF` selects 39 mandatory user-agent rows.
@@ -167,10 +169,17 @@ level:
 - Caching: 11 active rows; `WAPCachingMod:MCF` selects five mandatory
   user-agent rows and keeps optional time synchronization plus all gateway
   rows outside the selected client profile.
+- WDP: 146 active rows; the selected nine-row path resolves `WDP:MCF` through
+  CDPD-shaped UDP/IPv4.
+- WCMP: 62 active rows; the selected five-row path resolves `WCMP:MCF`
+  through the general WCMP message structure.
+- WSP: 109 active rows; the selected eight-row path resolves `WSP:MCF`
+  through connectionless WSP.
 
-Nested normative-clause extraction remains open for all six families. WSP,
-WDP, and WCMP are the three remaining selected Class C family ledgers. WTP is
-additionally required if connection-mode WSP is claimed.
+Nested normative-clause extraction remains open for all nine families. WTP is
+additionally required only if connection-oriented WSP is claimed. The
+selected CDPD bearer also leaves `TIAEIA-732` as an explicit external-source
+normalization gap.
 
 The WAP 2.0-era WAE (`WAP-236`), WDP (`WAP-259`), WTP (`WAP-224`), WSP
 (`WAP-230`), WTLS (`WAP-261`), and architecture (`WAP-210`) documents are

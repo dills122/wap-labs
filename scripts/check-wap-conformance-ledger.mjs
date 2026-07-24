@@ -459,3 +459,15 @@ const cachingCheck = spawnSync(
 if (cachingCheck.status !== 0) {
   process.exit(cachingCheck.status ?? 1);
 }
+
+const transportCheck = spawnSync(
+  process.execPath,
+  ['scripts/check-wap-transport-conformance-ledgers.mjs'],
+  {
+    cwd: root,
+    stdio: 'inherit'
+  }
+);
+if (transportCheck.status !== 0) {
+  process.exit(transportCheck.status ?? 1);
+}
