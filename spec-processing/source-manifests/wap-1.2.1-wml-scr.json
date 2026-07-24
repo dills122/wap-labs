@@ -1,0 +1,3554 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "wap-1.2.1",
+  "family": "wml",
+  "target": {
+    "stack": "WAP 1.2.1",
+    "markup": "WML 1.3",
+    "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
+  },
+  "recordedOn": "2026-07-24",
+  "authority": {
+    "effectiveSequence": [
+      "WAP-191-WML",
+      "WAP-191_102-WML",
+      "WAP-191_104-WML",
+      "WAP-191_105-WML"
+    ],
+    "extractionSources": [
+      {
+        "documentId": "WAP-191_104-WML",
+        "filename": "WAP-191_104-WML-20010718-a.pdf",
+        "sha256": "4c4a616f14204556045b9cbcebfdbc9a2408ae843e047b0730382abfbc8493f0",
+        "role": "effective-wml-1.3-section-15"
+      },
+      {
+        "documentId": "WAP-191_105-WML",
+        "filename": "WAP-191_105-WML-20020212-a.pdf",
+        "sha256": "3d803628d1cc67a6e08ce4e0d1f6e82f44651eb3a1bfa5160d7f98206bea4cc3",
+        "role": "adds-wml-c-76-and-amends-wml-1.3"
+      }
+    ],
+    "classProfileSource": {
+      "documentId": "WAP-215-ClassConform-20001213-a",
+      "sha256": "af578cd57a7e043b693e0b0dd5ef59b27f8e778e481831ec8737337ee8e44f9d",
+      "selectedIdentifier": "CCR-CLASSC-C-001",
+      "selectedRequirement": "WML:MCF",
+      "ledger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+    },
+    "interpretation": "WAP-191_104 supplies the effective 75-row WML 1.3 SCR; WAP-191_105 section 3.3 adds WML-C-76. WAP-215 CCR-CLASSC-C-001 selects WML:MCF for the client, making the 39 mandatory WML user-agent rows required. Optional client rows remain declared capabilities, and encoder/server rows are outside this client profile."
+  },
+  "summary": {
+    "itemCount": 76,
+    "mandatoryCount": 47,
+    "optionalCount": 29,
+    "selectedClassCRequiredCount": 39,
+    "selectedClassCOptionalCount": 27,
+    "selectedClassCNotApplicableCount": 10,
+    "byActor": {
+      "wml-document-client": 5,
+      "wml-document-server": 6,
+      "wml-encoder": 4,
+      "wml-user-agent": 61
+    },
+    "byImplementationDomain": {
+      "context-and-variable-runtime": 4,
+      "deck-parser-and-form-runtime": 13,
+      "navigation-and-event-runtime": 13,
+      "parsing-and-character-processing": 6,
+      "rendering-and-media": 20,
+      "user-agent-policy-and-navigation": 5,
+      "wbxml-encoding-and-validation": 4,
+      "wml-document-validation": 11
+    },
+    "testEvidenceLinkedCount": 25,
+    "mandatoryImplementationStatus": {
+      "implemented": 2,
+      "missing": 22,
+      "partial": 23
+    }
+  },
+  "obligations": [
+    {
+      "id": "WML-C-01",
+      "ordinal": 1,
+      "actor": "wml-user-agent",
+      "feature": "UTF-8 Encoding",
+      "referencedSection": "6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "parsing-and-character-processing",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-02",
+      "ordinal": 2,
+      "actor": "wml-user-agent",
+      "feature": "UTF-16 Encoding",
+      "referencedSection": "6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "parsing-and-character-processing",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-03",
+      "ordinal": 3,
+      "actor": "wml-user-agent",
+      "feature": "UCS-4 Encoding",
+      "referencedSection": "6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "parsing-and-character-processing",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-04",
+      "ordinal": 4,
+      "actor": "wml-user-agent",
+      "feature": "Other character encoding",
+      "referencedSection": "6",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "parsing-and-character-processing",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-05",
+      "ordinal": 5,
+      "actor": "wml-user-agent",
+      "feature": "Reference processing",
+      "referencedSection": "6.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "parsing-and-character-processing",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/responses.rs",
+            "symbol": "decode_textual_wml_payload"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/fetch_mapping.rs",
+            "test": "transport_map_success_payload_utf16le_textual_wml_maps_ok",
+            "command": "cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-06",
+      "ordinal": 6,
+      "actor": "wml-user-agent",
+      "feature": "Character entities",
+      "referencedSection": "6.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "parsing-and-character-processing",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
+            "symbol": "decode_general_entity"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "decodes_entities_and_uses_href_as_fallback_link_text",
+            "command": "cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-07",
+      "ordinal": 7,
+      "actor": "wml-user-agent",
+      "feature": "History",
+      "referencedSection": "9.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.2",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-WAE-016"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-03"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Card history push/pop and deterministic empty-history behavior exist; full WML request identity and context semantics remain broader than the engine stack.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "navigate_back_internal"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "navigate_back_restores_previous_card",
+            "command": "cd engine-wasm/engine && cargo test navigate_back_restores_previous_card"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-08",
+      "ordinal": 8,
+      "actor": "wml-user-agent",
+      "feature": "Card/Deck task shadowing",
+      "referencedSection": "9.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.2",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The parser does not retain template-level event bindings or perform card/deck task shadowing.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-09",
+      "ordinal": 9,
+      "actor": "wml-user-agent",
+      "feature": "Intrinsic Events",
+      "referencedSection": "9.10",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.2",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-004"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "onenterforward, onenterbackward, and ontimer execute, but the full intrinsic-event model and binding rules are incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_onevent_action_xml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "navigate_runs_onenterforward_action",
+            "command": "cd engine-wasm/engine && cargo test navigate_runs_onenterforward_action"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-10",
+      "ordinal": 10,
+      "actor": "wml-user-agent",
+      "feature": "Browser context",
+      "referencedSection": "10.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "context-and-variable-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-03"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "The engine holds variables, navigation history, and runtime state together, but the complete browser-context lifecycle is not modeled.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/lib.rs",
+            "symbol": "WmlEngine"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/traces_public_api.rs",
+            "test": "m1_02_load_deck_context_public_api_sets_metadata_and_state",
+            "command": "cd engine-wasm/engine && cargo test m1_02_load_deck_context_public_api_sets_metadata_and_state"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-11",
+      "ordinal": 11,
+      "actor": "wml-user-agent",
+      "feature": "Initialisation (newcontext)",
+      "referencedSection": "10.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "context-and-variable-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-03"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The WML card newcontext attribute is not parsed or applied during go traversal; WMLScript newContext support is not a substitute.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-12",
+      "ordinal": 12,
+      "actor": "wml-user-agent",
+      "feature": "Variables",
+      "referencedSection": "10.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "context-and-variable-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-03"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Runtime variables and input/select commits exist, but general PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution are incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_public_api.rs",
+            "symbol": "set_var"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "focused_input_edit_commit_updates_render_and_runtime_var",
+            "command": "cd engine-wasm/engine && cargo test focused_input_edit_commit_updates_render_and_runtime_var"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-13",
+      "ordinal": 13,
+      "actor": "wml-user-agent",
+      "feature": "Context restrictions",
+      "referencedSection": "10.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "context-and-variable-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-03"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Independent user navigation does not establish a separately modeled WML browser context.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-14",
+      "ordinal": 14,
+      "actor": "wml-user-agent",
+      "feature": "Deck access control",
+      "referencedSection": "12.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "user-agent-policy-and-navigation",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "R0-01",
+          "R0-07"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Deck access, domain, path, and sendreferer enforcement is not implemented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-15",
+      "ordinal": 15,
+      "actor": "wml-user-agent",
+      "feature": "Low-memory behaviour",
+      "referencedSection": "12.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "user-agent-policy-and-navigation",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "R0-01",
+          "R0-07"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-16",
+      "ordinal": 16,
+      "actor": "wml-user-agent",
+      "feature": "Error handling",
+      "referencedSection": "12.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "user-agent-policy-and-navigation",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "workItems": [
+          "R0-01",
+          "R0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Parsing and task failures are surfaced deterministically with rollback in covered paths, but all WML-defined error conditions are not enforced.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "navigate_to_card_internal"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "fixture_accept_failure_rolls_back_and_trace_order_is_deterministic",
+            "command": "cd engine-wasm/engine && cargo test fixture_accept_failure_rolls_back_and_trace_order_is_deterministic"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-17",
+      "ordinal": 17,
+      "actor": "wml-user-agent",
+      "feature": "Unknown DTD handling",
+      "referencedSection": "12.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "user-agent-policy-and-navigation",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-009"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-07"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Unknown wrappers are ignored while inline child content is retained, but alternate-DTD policy and all card-level fallback cases are not fully asserted.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "map_inline_nodes_recursive"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers",
+            "command": "cd engine-wasm/engine && cargo test helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-18",
+      "ordinal": 18,
+      "actor": "wml-user-agent",
+      "feature": "Inter-card navigation",
+      "referencedSection": "12.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "user-agent-policy-and-navigation",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Covered go/prev/noop/refresh and rollback paths are ordered deterministically, but setvar, access, newcontext, fetched-deck, and complete fragment-fallback steps remain open.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "fixture_accept_go_trace_order_is_deterministic",
+            "command": "cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-19",
+      "ordinal": 19,
+      "actor": "wml-user-agent",
+      "feature": "a",
+      "referencedSection": "9.9",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-006"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "map_inline_nodes_recursive"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "enter_navigates_to_fragment_card",
+            "command": "cd engine-wasm/engine && cargo test enter_navigates_to_fragment_card"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-20",
+      "ordinal": 20,
+      "actor": "wml-user-agent",
+      "feature": "anchor",
+      "referencedSection": "9.8",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-006"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The anchor element and its nested task/setvar model are not represented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-21",
+      "ordinal": 21,
+      "actor": "wml-user-agent",
+      "feature": "access",
+      "referencedSection": "11.3.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The access element is not retained and no deck access-control policy is enforced.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-22",
+      "ordinal": 22,
+      "actor": "wml-user-agent",
+      "feature": "b",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-23",
+      "ordinal": 23,
+      "actor": "wml-user-agent",
+      "feature": "big",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-24",
+      "ordinal": 24,
+      "actor": "wml-user-agent",
+      "feature": "br",
+      "referencedSection": "11.8.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Card-level br emits a break, while inline br currently collapses to a space and therefore does not yet satisfy all hard-line-break behavior.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "map_card_level_nodes"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "helper_parse_card_nodes_parses_mixed_content_paths",
+            "command": "cd engine-wasm/engine && cargo test helper_parse_card_nodes_parses_mixed_content_paths"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-25",
+      "ordinal": 25,
+      "actor": "wml-user-agent",
+      "feature": "card",
+      "referencedSection": "11.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Card identity, ordering, and content are parsed; mandatory card attributes and lifecycle semantics are only partially retained.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
+            "symbol": "parse_wml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "parses_cards_and_links",
+            "command": "cd engine-wasm/engine && cargo test parses_cards_and_links"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-26",
+      "ordinal": 26,
+      "actor": "wml-user-agent",
+      "feature": "do",
+      "referencedSection": "9.7",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "accept do tasks execute, but the full do type/name/label/optional/template precedence model is not implemented.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_do_accept_action_xml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "enter_triggers_accept_do_action_when_no_links_exist",
+            "command": "cd engine-wasm/engine && cargo test enter_triggers_accept_do_action_when_no_links_exist"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-27",
+      "ordinal": 27,
+      "actor": "wml-user-agent",
+      "feature": "em",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-28",
+      "ordinal": 28,
+      "actor": "wml-user-agent",
+      "feature": "fieldset",
+      "referencedSection": "11.6.4",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-29",
+      "ordinal": 29,
+      "actor": "wml-user-agent",
+      "feature": "go",
+      "referencedSection": "9.5.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Fragment, external, GET/POST, and script href paths exist, but the complete section 12.5 go process is not implemented.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_action_href"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "fixture_accept_go_trace_order_is_deterministic",
+            "command": "cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-30",
+      "ordinal": 30,
+      "actor": "wml-user-agent",
+      "feature": "head",
+      "referencedSection": "11.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The head element and its metadata/access contents are not retained in the runtime deck.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-31",
+      "ordinal": 31,
+      "actor": "wml-user-agent",
+      "feature": "i",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-32",
+      "ordinal": 32,
+      "actor": "wml-user-agent",
+      "feature": "img",
+      "referencedSection": "11.9",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "all-of",
+        "scrIds": [
+          "WML-C-54"
+        ]
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The img element has no parser/runtime/render representation.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-33",
+      "ordinal": 33,
+      "actor": "wml-user-agent",
+      "feature": "input",
+      "referencedSection": "11.6.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Text/password input, value commit, and maxlength exist; format, emptyok, size, tabindex, and full initialization/validation semantics remain incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "parse_input_inline_node"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "focused_input_edit_commit_updates_render_and_runtime_var",
+            "command": "cd engine-wasm/engine && cargo test focused_input_edit_commit_updates_render_and_runtime_var"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-34",
+      "ordinal": 34,
+      "actor": "wml-user-agent",
+      "feature": "meta",
+      "referencedSection": "11.3.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-35",
+      "ordinal": 35,
+      "actor": "wml-user-agent",
+      "feature": "noop",
+      "referencedSection": "9.5.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "Noop is parsed as a task action and performs no navigation or state mutation beyond deterministic tracing.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "CardTaskAction::Noop"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "enter_accept_noop_action_keeps_current_card_and_history",
+            "command": "cd engine-wasm/engine && cargo test enter_accept_noop_action_keeps_current_card_and_history"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-36",
+      "ordinal": 36,
+      "actor": "wml-user-agent",
+      "feature": "p",
+      "referencedSection": "11.8.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Paragraph grouping and baseline wrapping exist, but align, wrap/nowrap inheritance, nbsp, shy, and horizontal-view behavior are incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "map_card_level_nodes"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "preserves_inline_text_and_link_order_in_paragraph",
+            "command": "cd engine-wasm/engine && cargo test preserves_inline_text_and_link_order_in_paragraph"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-37",
+      "ordinal": 37,
+      "actor": "wml-user-agent",
+      "feature": "postfield",
+      "referencedSection": "9.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Postfield name/value collection and URL-form payload generation exist, but complete variable-conversion, ordering, and task-failure semantics are not closed.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "collect_post_fields_xml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "enter_accept_post_action_sets_external_navigation_post_context",
+            "command": "cd engine-wasm/engine && cargo test enter_accept_post_action_sets_external_navigation_post_context"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-38",
+      "ordinal": 38,
+      "actor": "wml-user-agent",
+      "feature": "prev",
+      "referencedSection": "9.5.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Prev pops card history and executes backward-entry behavior; originating setvar and full fetched-resource identity semantics are absent.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "CardTaskAction::Prev"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "enter_accept_prev_action_navigates_back_when_history_exists",
+            "command": "cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-39",
+      "ordinal": 39,
+      "actor": "wml-user-agent",
+      "feature": "onevent",
+      "referencedSection": "9.10.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-004"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Three card intrinsic onevent bindings parse and execute; conflict, template, shadowing, and complete event rules are absent.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_onevent_action_xml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "navigate_runs_onenterforward_action",
+            "command": "cd engine-wasm/engine && cargo test navigate_runs_onenterforward_action"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-40",
+      "ordinal": 40,
+      "actor": "wml-user-agent",
+      "feature": "optgroup",
+      "referencedSection": "11.6.2.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-41",
+      "ordinal": 41,
+      "actor": "wml-user-agent",
+      "feature": "option",
+      "referencedSection": "11.6.2.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Option label/value/selected state is represented, while onpick, title, xml:lang, and full selection initialization rules are incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "parse_select_inline_node"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "select_control_renders_default_selected_option",
+            "command": "cd engine-wasm/engine && cargo test select_control_renders_default_selected_option"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-42",
+      "ordinal": 42,
+      "actor": "wml-user-agent",
+      "feature": "refresh",
+      "referencedSection": "9.5.3",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Refresh retains the current card/history and resumes timers, but setvar/substitution and full redisplay semantics remain incomplete.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "CardTaskAction::Refresh"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "enter_accept_refresh_action_keeps_current_card_and_history",
+            "command": "cd engine-wasm/engine && cargo test enter_accept_refresh_action_keeps_current_card_and_history"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-43",
+      "ordinal": 43,
+      "actor": "wml-user-agent",
+      "feature": "select",
+      "referencedSection": "11.6.2.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Single-choice selection and variable commit exist; multiple, iname/ivalue, tabindex, and complete initialization semantics are absent.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "parse_select_inline_node"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "focused_select_edit_cycle_commit_updates_render_and_runtime_var",
+            "command": "cd engine-wasm/engine && cargo test focused_select_edit_cycle_commit_updates_render_and_runtime_var"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-44",
+      "ordinal": 44,
+      "actor": "wml-user-agent",
+      "feature": "small",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-45",
+      "ordinal": 45,
+      "actor": "wml-user-agent",
+      "feature": "strong",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-46",
+      "ordinal": 46,
+      "actor": "wml-user-agent",
+      "feature": "table",
+      "referencedSection": "11.8.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Table structure, column normalization, alignment, and layout are not represented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-47",
+      "ordinal": 47,
+      "actor": "wml-user-agent",
+      "feature": "template",
+      "referencedSection": "11.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Template content, event inheritance, and card-level shadowing are not represented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-48",
+      "ordinal": 48,
+      "actor": "wml-user-agent",
+      "feature": "timer",
+      "referencedSection": "11.7",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-004"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "partial",
+        "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior are not closed.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/timers.rs",
+            "symbol": "advance_time_ms_internal"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "timer_non_zero_expires_after_deterministic_advance",
+            "command": "cd engine-wasm/engine && cargo test timer_non_zero_expires_after_deterministic_advance"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-49",
+      "ordinal": 49,
+      "actor": "wml-user-agent",
+      "feature": "td",
+      "referencedSection": "11.8.7",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Table cell structure and significant empty-cell behavior are not represented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-50",
+      "ordinal": 50,
+      "actor": "wml-user-agent",
+      "feature": "tr",
+      "referencedSection": "11.8.6",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Table row structure and significant empty-row behavior are not represented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-51",
+      "ordinal": 51,
+      "actor": "wml-user-agent",
+      "feature": "u",
+      "referencedSection": "11.8.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-52",
+      "ordinal": 52,
+      "actor": "wml-user-agent",
+      "feature": "setvar",
+      "referencedSection": "9.4",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "navigation-and-event-runtime",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Markup setvar children of go/prev/refresh are not parsed or applied; WMLScript setVar is a separate feature.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-53",
+      "ordinal": 53,
+      "actor": "wml-user-agent",
+      "feature": "wml",
+      "referencedSection": "11.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "implemented",
+        "assessmentNote": "The parser requires a wml root and constructs the ordered deck from its card children.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
+            "symbol": "parse_wml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "rejects_document_without_wml_root",
+            "command": "cd engine-wasm/engine && cargo test rejects_document_without_wml_root"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
+      }
+    },
+    {
+      "id": "WML-C-54",
+      "ordinal": 54,
+      "actor": "wml-user-agent",
+      "feature": "Display of alt attribute of <img>",
+      "referencedSection": "11.9",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.6",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "required-by-class-c-client-mcf",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "Image alt content has no parser or renderer path because img is not represented.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-55",
+      "ordinal": 55,
+      "actor": "wml-user-agent",
+      "feature": "Support for vspace hint",
+      "referencedSection": "11.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.6",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-56",
+      "ordinal": 56,
+      "actor": "wml-user-agent",
+      "feature": "Support for hspace hint",
+      "referencedSection": "11.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.6",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-57",
+      "ordinal": 57,
+      "actor": "wml-user-agent",
+      "feature": "Support for <img> align",
+      "referencedSection": "11.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.6",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-58",
+      "ordinal": 58,
+      "actor": "wml-user-agent",
+      "feature": "Support for <img> height",
+      "referencedSection": "11.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.6",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-59",
+      "ordinal": 59,
+      "actor": "wml-user-agent",
+      "feature": "Support for <img> width",
+      "referencedSection": "11.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.6",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-006",
+          "RQ-WAE-018"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-S-60",
+      "ordinal": 60,
+      "actor": "wml-encoder",
+      "feature": "WML token table",
+      "referencedSection": "14",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.2.1",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbxml-encoding-and-validation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "The project invokes an external WBXML decoder but does not implement the WML encoder/token table required by this actor.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-61",
+      "ordinal": 61,
+      "actor": "wml-encoder",
+      "feature": "XML Well-formed",
+      "referencedSection": "14.2.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.2.2",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbxml-encoding-and-validation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No WML encoder/tokenizer path performs the actor-specific XML well-formedness gate.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-62",
+      "ordinal": 62,
+      "actor": "wml-encoder",
+      "feature": "XML Validation",
+      "referencedSection": "14.2.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.2.2",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbxml-encoding-and-validation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-S-63",
+      "ordinal": 63,
+      "actor": "wml-encoder",
+      "feature": "WML Validation",
+      "referencedSection": "15.3",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.2.2",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wbxml-encoding-and-validation",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-S-64",
+      "ordinal": 64,
+      "actor": "wml-document-server",
+      "feature": "Variable references may only occur in vdata attribute values",
+      "referencedSection": "7.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-005"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No server-document authoring validator restricts variable references to vdata attribute values.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-65",
+      "ordinal": 65,
+      "actor": "wml-document-server",
+      "feature": "Variable references must match the production rule var",
+      "referencedSection": "10.3.1",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-005"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No server-document validator enforces the complete var production.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-66",
+      "ordinal": 66,
+      "actor": "wml-document-server",
+      "feature": "Two or more do elements with the same name must not be present in a single card or in the template element",
+      "referencedSection": "9.7",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No server-document validator rejects duplicate effective do names in a card or template.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-67",
+      "ordinal": 67,
+      "actor": "wml-document-server",
+      "feature": "A meta element must not contain more than one attribute of name and http-equiv",
+      "referencedSection": "11.3.2",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No server-document validator enforces mutual exclusion of meta name and http-equiv.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-68",
+      "ordinal": 68,
+      "actor": "wml-document-server",
+      "feature": "The number of columns in a table must not be set to zero",
+      "referencedSection": "11.8.5",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No server-document validator rejects table columns equal to zero.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-S-69",
+      "ordinal": 69,
+      "actor": "wml-document-server",
+      "feature": "Event bindings must not conflict",
+      "referencedSection": "9.10",
+      "specificationStatus": "mandatory",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.3",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "required-for-claimed-actor",
+        "classCProfile": "not-applicable-to-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-004"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "missing",
+        "assessmentNote": "No server-document validator rejects conflicting event bindings.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "gap-work-item-mapped"
+      }
+    },
+    {
+      "id": "WML-C-70",
+      "ordinal": 70,
+      "actor": "wml-document-client",
+      "feature": "Variable references must match the production rule var",
+      "referencedSection": "10.3.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-005"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-71",
+      "ordinal": 71,
+      "actor": "wml-document-client",
+      "feature": "Two or more do elements with the same name must not be present in a single card or in the template element",
+      "referencedSection": "9.7",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-72",
+      "ordinal": 72,
+      "actor": "wml-document-client",
+      "feature": "A meta element must not contain more than one attribute of name and http-equiv",
+      "referencedSection": "11.3.2",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-73",
+      "ordinal": 73,
+      "actor": "wml-document-client",
+      "feature": "The number of columns in a table must not be set to zero",
+      "referencedSection": "11.8.5",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-74",
+      "ordinal": 74,
+      "actor": "wml-document-client",
+      "feature": "Event bindings must not conflict",
+      "referencedSection": "9.10",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.4",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "wml-document-validation",
+        "ownerLayers": [
+          "transport-rust",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-004"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-75",
+      "ordinal": 75,
+      "actor": "wml-user-agent",
+      "feature": "pre",
+      "referencedSection": "11.8.9",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_104-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": null
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "rendering-and-media",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-05"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    },
+    {
+      "id": "WML-C-76",
+      "ordinal": 76,
+      "actor": "wml-user-agent",
+      "feature": "tabindex support",
+      "referencedSection": "11.6.1",
+      "specificationStatus": "optional",
+      "dependencyExpression": {
+        "type": "none",
+        "scrIds": []
+      },
+      "sourceAnchor": {
+        "documentId": "WAP-191_105-WML",
+        "staticConformanceSection": "15.1.5",
+        "changeSection": "3.3"
+      },
+      "disposition": {
+        "strict": "declare-implemented-or-deferred",
+        "classCProfile": "optional-not-required-by-class-c-client",
+        "enhancementMayReplaceStrictBehavior": false
+      },
+      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "mapping": {
+        "implementationDomain": "deck-parser-and-form-runtime",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04"
+        ],
+        "implementationStatus": "not-assessed",
+        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
+        "implementationEvidence": [],
+        "testEvidence": [],
+        "evidenceState": "optional-not-assessed"
+      }
+    }
+  ]
+}
