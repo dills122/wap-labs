@@ -1,5 +1,9 @@
 import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
-import type { EngineRuntimeSnapshot, RenderList } from '../../../contracts/engine';
+import type {
+  EngineRuntimeSnapshot,
+  RenderList,
+  ScriptDialogRequestSnapshot
+} from '../../../contracts/engine';
 import {
   appendTimelineEntry,
   buildTimelineExport as buildTimelineExportPayload,
@@ -27,7 +31,10 @@ export class BrowserPresenter {
   private timelineState = createTimelineState();
 
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
+  private toastShowing = false;
+  private toastQueue: Array<{ message: string; tone: 'error' | 'ok'; ttlMs: number }> = [];
   private hasRenderedContent = false;
+  private announcedDialogRequests: readonly ScriptDialogRequestSnapshot[] = [];
   private latestSnapshot: EngineRuntimeSnapshot | null = null;
   private latestTransportResponse: FetchResponse | null = null;
   private sessionStateText = '';
@@ -129,27 +136,57 @@ export class BrowserPresenter {
 
     this.refs.viewportEl.classList.remove('viewport-skeleton');
     this.refs.viewportEl.setAttribute('aria-busy', 'false');
+    if (!this.hasRenderedContent) {
+      // Nothing has ever successfully rendered yet, so the viewport still
+      // contains the injected skeleton placeholder markup (shimmering bars +
+      // "waiting for first render" hint). Removing just the CSS class above
+      // does not stop that markup from sitting there indefinitely if the
+      // load that was supposed to replace it instead failed. Clear it so a
+      // failed first load doesn't leave a frozen "still loading" viewport
+      // behind the real error, which is surfaced via status/toast instead.
+      this.refs.viewportEl.innerHTML = '';
+    }
   }
 
   showToast(
     message: string,
     tone: 'error' | 'ok' = 'error',
-    ttlMs = WAVES_CONFIG.toastTtlMs
+    ttlMs: number = WAVES_CONFIG.toastTtlMs
   ): void {
+    if (this.toastShowing) {
+      this.toastQueue.push({ message, tone, ttlMs });
+      return;
+    }
+    this.presentToast(message, tone, ttlMs);
+  }
+
+  private presentToast(message: string, tone: 'error' | 'ok', ttlMs: number): void {
+    this.toastShowing = true;
+    this.refs.toastEl.textContent = message;
+    this.refs.toastEl.className = `toast toast-${tone}`;
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
     }
-    this.refs.toastEl.textContent = message;
-    this.refs.toastEl.className = `toast toast-${tone}`;
     this.toastTimer = setTimeout(() => {
-      this.refs.toastEl.className = 'toast toast-hidden';
+      this.dismissToastAndShowNext();
     }, ttlMs);
+  }
+
+  private dismissToastAndShowNext(): void {
+    this.refs.toastEl.className = 'toast toast-hidden';
+    this.toastShowing = false;
+    this.toastTimer = undefined;
+    const next = this.toastQueue.shift();
+    if (next) {
+      this.presentToast(next.message, next.tone, next.ttlMs);
+    }
   }
 
   setSnapshot(snapshot: EngineRuntimeSnapshot): void {
     this.latestSnapshot = snapshot;
     this.snapshotDirty = true;
     this.flushDeveloperPanels();
+    this.announceScriptDialogRequests(snapshot.lastScriptDialogRequests);
   }
 
   getSnapshot(): EngineRuntimeSnapshot | null {
@@ -229,6 +266,27 @@ export class BrowserPresenter {
     }
   }
 
+  // Waves' WMLScript runtime resolves confirm()/prompt()/alert() calls to a
+  // deterministic default (see engine-wasm/engine/src/wavescript/stdlib/dialogs.rs)
+  // rather than blocking for real interactive input - there is no modal to show.
+  // The frontend previously only used `lastScriptDialogRequests` for
+  // change-detection and never surfaced it, so a script-triggered dialog was
+  // invisible. Announce it via toast instead of building an interactive
+  // dialog subsystem, which would be scope creep beyond this deterministic MVP.
+  private announceScriptDialogRequests(requests: readonly ScriptDialogRequestSnapshot[]): void {
+    if (requests.length === 0) {
+      this.announcedDialogRequests = requests;
+      return;
+    }
+    if (dialogRequestListsEqual(requests, this.announcedDialogRequests)) {
+      return;
+    }
+    this.announcedDialogRequests = requests;
+    for (const request of requests) {
+      this.showToast(describeScriptDialogRequest(request), 'ok');
+    }
+  }
+
   private writeTextIfChanged<T extends HTMLElement>(
     element: T,
     currentText: string,
@@ -249,3 +307,40 @@ const escapeHtml = (input: string): string =>
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+
+const dialogRequestListsEqual = (
+  a: readonly ScriptDialogRequestSnapshot[],
+  b: readonly ScriptDialogRequestSnapshot[]
+): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (a.length !== b.length) {
+    return false;
+  }
+  return a.every((request, index) => {
+    const other = b[index];
+    return (
+      other !== undefined &&
+      request.type === other.type &&
+      request.message === other.message &&
+      ('defaultValue' in request ? request.defaultValue : undefined) ===
+        ('defaultValue' in other ? other.defaultValue : undefined)
+    );
+  });
+};
+
+// Mirrors the engine's deterministic dialog resolution
+// (engine-wasm/engine/src/wavescript/stdlib/dialogs.rs): confirm() always
+// resolves to false/Cancel and prompt() always resolves to its declared
+// default value (or empty string). Describing the resolved value here keeps
+// the announcement accurate without the engine needing to round-trip it.
+const describeScriptDialogRequest = (request: ScriptDialogRequestSnapshot): string => {
+  if (request.type === 'alert') {
+    return WAVES_COPY.status.scriptDialogAlert(request.message);
+  }
+  if (request.type === 'confirm') {
+    return WAVES_COPY.status.scriptDialogConfirm(request.message);
+  }
+  return WAVES_COPY.status.scriptDialogPrompt(request.message, request.defaultValue ?? '');
+};
