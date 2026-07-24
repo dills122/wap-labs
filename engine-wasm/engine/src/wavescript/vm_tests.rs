@@ -199,6 +199,54 @@ fn execute_call_depth_limit_traps() {
     assert_eq!(err, VmTrap::CallDepthExceeded { limit: 1 });
 }
 
+/// Pins the exact off-by-one boundary of `max_call_depth`: a call chain that
+/// reaches exactly `limit` total frames (root + `limit - 1` nested calls)
+/// must succeed, while a chain needing one more frame than the configured
+/// limit must trap. Before the `>=` fix, `max_call_depth` allowed one extra
+/// frame beyond the configured limit (e.g. 17 frames when limit=16).
+#[test]
+fn execute_call_depth_limit_is_the_true_frame_maximum() {
+    let limits = ExecutionLimits {
+        max_steps: 64,
+        max_stack_size: 16,
+        max_call_depth: 3,
+    };
+
+    // Chain of 2 calls (main -> f1 -> f2) reaches exactly 3 total frames
+    // (root + f1 + f2), which must be allowed when max_call_depth == 3.
+    // main:  call f1@5
+    //  f1@5: call f2@10; ret
+    //  f2@10: push 99; ret
+    let at_limit = decode_compilation_unit(&[
+        0x12, 5, 0, 0, 0x00, // main: call f1@5; halt (return target)
+        0x12, 10, 0, 0, 0x13, // f1: call f2@10; ret
+        0x01, 99, 0x13, // f2: push 99; ret
+    ])
+    .expect("unit decode");
+    let value = Vm::new(limits)
+        .execute(&at_limit)
+        .expect("depth exactly at the configured limit must still execute");
+    assert_eq!(value, ScriptValue::Int32(99));
+
+    // One more nesting level (main -> f1 -> f2 -> f3) needs 4 total frames,
+    // which must trap when max_call_depth == 3.
+    // main:  call f1@5
+    //  f1@5:  call f2@10; ret
+    //  f2@10: call f3@15; ret
+    //  f3@15: push 99; ret
+    let over_limit = decode_compilation_unit(&[
+        0x12, 5, 0, 0, 0x00, // main: call f1@5; halt (return target)
+        0x12, 10, 0, 0, 0x13, // f1: call f2@10; ret
+        0x12, 15, 0, 0, 0x13, // f2: call f3@15; ret
+        0x01, 99, 0x13, // f3: push 99; ret
+    ])
+    .expect("unit decode");
+    let err = Vm::new(limits)
+        .execute(&over_limit)
+        .expect_err("one level past the configured limit must trap");
+    assert_eq!(err, VmTrap::CallDepthExceeded { limit: 3 });
+}
+
 #[test]
 fn execute_invalid_local_index_traps() {
     let vm = Vm::default();
