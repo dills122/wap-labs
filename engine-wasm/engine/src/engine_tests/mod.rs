@@ -1,9 +1,9 @@
 use super::{
-    classify_vm_trap, classify_vm_trap_category, convert_script_call_args, parse_script_href,
-    ParsedScriptRef, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
-    ScriptErrorClassLiteral, ScriptNavigationIntentLiteral, ScriptTimerRequestLiteral,
-    ScriptValueLiteral, WmlEngine, MAX_DECK_RAW_BYTES_BASE64_BYTES, MAX_DECK_WML_XML_BYTES,
-    MAX_TRACE_ENTRIES,
+    catch_engine_panic, classify_vm_trap, classify_vm_trap_category, convert_script_call_args,
+    parse_script_href, ParsedScriptRef, ScriptCallArgLiteral, ScriptDialogRequestLiteral,
+    ScriptErrorCategoryLiteral, ScriptErrorClassLiteral, ScriptNavigationIntentLiteral,
+    ScriptTimerRequestLiteral, ScriptValueLiteral, WmlEngine, MAX_DECK_RAW_BYTES_BASE64_BYTES,
+    MAX_DECK_WML_XML_BYTES, MAX_TRACE_ENTRIES,
 };
 use crate::render::render_list::DrawCmd;
 use crate::wavescript::value::ScriptValue;
@@ -89,5 +89,6 @@ fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
 
 mod actions_timers;
 mod navigation_metadata;
+mod panic_containment;
 mod script_runtime;
 mod traces_public_api;

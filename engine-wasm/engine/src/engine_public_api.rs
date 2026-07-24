@@ -23,6 +23,7 @@ impl WmlEngine {
             trace_entries: Vec::new(),
             next_trace_seq: 1,
             timer_dispatch_depth: 0,
+            nav_dispatch_depth: 0,
             active_timer: None,
             active_input_edit: None,
             active_select_edit: None,
@@ -35,7 +36,23 @@ impl WmlEngine {
     }
 
     /// Load a WML deck with explicit transport metadata for traceability.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]):
+    /// this parses untrusted, network-delivered WML, so a defensive-programming
+    /// bug here should degrade to a typed error, not crash the host.
     pub fn load_deck_context(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+    ) -> Result<(), String> {
+        catch_engine_panic(|| {
+            self.load_deck_context_bounded(wml_xml, base_url, content_type, raw_bytes_base64)
+        })?
+    }
+
+    fn load_deck_context_bounded(
         &mut self,
         wml_xml: &str,
         base_url: &str,
@@ -101,7 +118,16 @@ impl WmlEngine {
     }
 
     /// Render active card into draw commands for the current viewport width.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]):
+    /// layout is parity-critical and driven by deck content, so a
+    /// defensive-programming bug here should degrade to a typed error, not
+    /// crash the host.
     pub fn render(&self) -> Result<RenderList, String> {
+        catch_engine_panic(|| self.render_bounded())?
+    }
+
+    fn render_bounded(&self) -> Result<RenderList, String> {
         let card = self.active_card_internal()?;
         let mut runtime_card = card.clone();
         if let Some(edit) = &self.active_input_edit {
@@ -115,23 +141,45 @@ impl WmlEngine {
     }
 
     /// Handle one input key (`up`, `down`, `enter`).
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]):
+    /// this can trigger navigation and script invocation, so a
+    /// defensive-programming bug here should degrade to a typed error, not
+    /// crash the host.
     pub fn handle_key(&mut self, key: String) -> Result<(), String> {
-        self.handle_key_internal(&key)
+        catch_engine_panic(|| self.handle_key_internal(&key))?
     }
 
     /// Navigate directly to a card id and push history.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn navigate_to_card(&mut self, id: String) -> Result<(), String> {
-        self.navigate_to_card_internal(&id)
+        catch_engine_panic(|| self.navigate_to_card_internal(&id))?
     }
 
     /// Navigate back in history. Returns `false` when history is empty.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
+    /// This method has no `Result` in its public signature (kept stable per
+    /// the existing contract), so a contained panic is recorded as a trace
+    /// entry and reported as `false` (navigation did not happen), the same
+    /// observable outcome as the existing empty-history and
+    /// dispatch-depth-exceeded cases.
     pub fn navigate_back(&mut self) -> bool {
-        self.navigate_back_internal()
+        match catch_engine_panic(|| self.navigate_back_internal()) {
+            Ok(handled) => handled,
+            Err(message) => {
+                self.push_trace("ENGINE_PANIC_CONTAINED", message);
+                false
+            }
+        }
     }
 
     /// Advance simulated runtime clock for card timer lifecycle behavior.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn advance_time_ms(&mut self, delta_ms: u32) -> Result<(), String> {
-        self.advance_time_ms_internal(delta_ms)
+        catch_engine_panic(|| self.advance_time_ms_internal(delta_ms))?
     }
 
     /// Set viewport width in columns.
@@ -140,8 +188,10 @@ impl WmlEngine {
     }
 
     /// Start edit session for the currently focused input control.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn begin_focused_input_edit(&mut self) -> Result<bool, String> {
-        self.begin_focused_input_edit_internal()
+        catch_engine_panic(|| self.begin_focused_input_edit_internal())?
     }
 
     /// Replace edit-session draft value for the focused input.
@@ -164,8 +214,10 @@ impl WmlEngine {
     }
 
     /// Commit active focused-input edit session.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn commit_focused_input_edit(&mut self) -> Result<bool, String> {
-        self.commit_focused_input_edit_internal()
+        catch_engine_panic(|| self.commit_focused_input_edit_internal())?
     }
 
     /// Cancel active focused-input edit session.
@@ -178,8 +230,10 @@ impl WmlEngine {
     }
 
     /// Start edit session for the currently focused select control.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn begin_focused_select_edit(&mut self) -> Result<bool, String> {
-        self.begin_focused_select_edit_internal()
+        catch_engine_panic(|| self.begin_focused_select_edit_internal())?
     }
 
     /// Move the draft selection for the active focused-select edit session.
@@ -206,8 +260,10 @@ impl WmlEngine {
     }
 
     /// Commit active focused-select edit session.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn commit_focused_select_edit(&mut self) -> Result<bool, String> {
-        self.commit_focused_select_edit_internal()
+        catch_engine_panic(|| self.commit_focused_select_edit_internal())?
     }
 
     /// Cancel active focused-select edit session.
@@ -320,8 +376,15 @@ impl WmlEngine {
     }
 
     /// Execute script reference without applying deferred runtime effects.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
+    /// This method has no `Result` in its public signature (kept stable per
+    /// the existing contract); a contained panic is reported through the
+    /// same `ScriptExecutionOutcome::fatal` shape already used for VM traps
+    /// (see `classify_vm_trap_outcome`), not a bespoke error shape.
     pub fn execute_script_ref(&mut self, src: String) -> ScriptExecutionOutcome {
-        let outcome = self.execute_script_ref_internal(&src, "main");
+        let outcome = catch_engine_panic(|| self.execute_script_ref_internal(&src, "main"))
+            .unwrap_or_else(contained_panic_script_outcome);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_dialog_requests.clear();
@@ -330,12 +393,15 @@ impl WmlEngine {
     }
 
     /// Execute script function without applying deferred runtime effects.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn execute_script_ref_function(
         &mut self,
         src: String,
         function_name: String,
     ) -> ScriptExecutionOutcome {
-        let outcome = self.execute_script_ref_internal(&src, &function_name);
+        let outcome = catch_engine_panic(|| self.execute_script_ref_internal(&src, &function_name))
+            .unwrap_or_else(contained_panic_script_outcome);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_dialog_requests.clear();
@@ -344,6 +410,8 @@ impl WmlEngine {
     }
 
     /// Execute script function call without applying deferred runtime effects.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn execute_script_ref_call(
         &mut self,
         src: String,
@@ -351,7 +419,10 @@ impl WmlEngine {
         args: Vec<ScriptCallArgLiteral>,
     ) -> ScriptExecutionOutcome {
         let vm_args = convert_script_call_args(&args);
-        let outcome = self.execute_script_ref_call_internal(&src, &function_name, &vm_args);
+        let outcome = catch_engine_panic(|| {
+            self.execute_script_ref_call_internal(&src, &function_name, &vm_args)
+        })
+        .unwrap_or_else(contained_panic_script_outcome);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_dialog_requests.clear();
@@ -360,20 +431,29 @@ impl WmlEngine {
     }
 
     /// Invoke script reference and apply deferred runtime effects at boundary.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]):
+    /// this drives the WMLScript VM and can re-enter navigation, so a
+    /// defensive-programming bug here should degrade to a typed error, not
+    /// crash the host.
     pub fn invoke_script_ref(&mut self, src: String) -> Result<ScriptInvocationOutcome, String> {
-        self.invoke_script_ref_internal(&src, "main", &[])
+        catch_engine_panic(|| self.invoke_script_ref_internal(&src, "main", &[]))?
     }
 
     /// Invoke script function and apply deferred runtime effects at boundary.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn invoke_script_ref_function(
         &mut self,
         src: String,
         function_name: String,
     ) -> Result<ScriptInvocationOutcome, String> {
-        self.invoke_script_ref_internal(&src, &function_name, &[])
+        catch_engine_panic(|| self.invoke_script_ref_internal(&src, &function_name, &[]))?
     }
 
     /// Invoke script function call and apply deferred runtime effects.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn invoke_script_ref_call(
         &mut self,
         src: String,
@@ -381,7 +461,7 @@ impl WmlEngine {
         args: Vec<ScriptCallArgLiteral>,
     ) -> Result<ScriptInvocationOutcome, String> {
         let vm_args = convert_script_call_args(&args);
-        self.invoke_script_ref_internal(&src, &function_name, &vm_args)
+        catch_engine_panic(|| self.invoke_script_ref_internal(&src, &function_name, &vm_args))?
     }
 
     /// Read last script trap message, if any.
@@ -457,4 +537,15 @@ fn wrap_select_index(current: usize, delta: i32, len: usize) -> usize {
     let current = current as i32;
     let next = (current + delta).rem_euclid(len);
     next as usize
+}
+
+/// Builds the `ScriptExecutionOutcome` reported for a panic caught by
+/// [`catch_engine_panic`] on the `execute_script_ref*` family. Reuses the
+/// existing fatal-outcome shape (`ScriptErrorCategoryLiteral::Resource`,
+/// the same category already used for `VmTrap::StackOverflow`,
+/// `CallDepthExceeded`, and `ExecutionLimitExceeded`) so hosts see one
+/// consistent shape for "the engine hit an internal resource limit or bug"
+/// instead of a bespoke error type.
+fn contained_panic_script_outcome(message: String) -> ScriptExecutionOutcome {
+    ScriptExecutionOutcome::fatal(message, ScriptErrorCategoryLiteral::Resource)
 }

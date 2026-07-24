@@ -3,6 +3,8 @@ use quick_xml::Reader;
 use quick_xml::XmlVersion;
 use std::collections::HashMap;
 
+use super::MAX_PARSE_TREE_DEPTH;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) enum XmlNode {
     Element(XmlElement),
@@ -30,6 +32,18 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
     loop {
         match reader.read_event() {
             Ok(Event::Start(start)) => {
+                // Enforce the nesting-depth budget while the tree is being
+                // built, not only afterward in the semantic walkers
+                // (`parse_card_actions`/`parse_card_nodes_xml`). Bailing out
+                // here means a pathologically deep-but-well-formed tag tree
+                // is never fully constructed, which also prevents the
+                // compiler-derived recursive `Drop` on `XmlElement`/`XmlNode`
+                // from overflowing the stack when the tree goes out of scope.
+                if stack.len() >= MAX_PARSE_TREE_DEPTH {
+                    return Err(format!(
+                        "Parse limit exceeded: nesting depth in xml tree traversal (max {MAX_PARSE_TREE_DEPTH})"
+                    ));
+                }
                 stack.push(start_to_element(&start)?);
             }
             Ok(Event::Empty(start)) => {
