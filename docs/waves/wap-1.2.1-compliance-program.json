@@ -327,7 +327,7 @@
         },
         {
           "id": "CONF-007",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": [
             "documentation",
             "qa",
@@ -346,7 +346,9 @@
           ],
           "existingTickets": [],
           "outputs": [
-            "Unified WAP 1.2.1-to-successor implementation delta register"
+            "Unified WAP 1.2.1-to-successor implementation delta register",
+            "spec-processing/source-manifests/wap-1.2.1-successor-delta.json",
+            "docs/waves/WAP_1_2_1_SUCCESSOR_DELTA_REGISTER.md"
           ],
           "acceptance": [
             "Every selected-row behavior implemented from successor-era material is classified as compatible, strict correction required, or successor-only.",

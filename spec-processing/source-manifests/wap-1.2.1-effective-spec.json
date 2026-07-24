@@ -1030,7 +1030,7 @@
         {
           "documentId": "WAP-236-WAESpec-20020207-a",
           "role": "delta-evidence-only",
-          "deltaStatus": "selected-mcf-concept-delta-complete"
+          "deltaStatus": "selected-profile-delta-complete"
         },
         {
           "documentId": "WAP-237-WAEMT-20010515-a",
@@ -1409,7 +1409,7 @@
         {
           "documentId": "WAP-259-WDP-20010614-a",
           "role": "delta-evidence-only",
-          "deltaStatus": "pending"
+          "deltaStatus": "selected-profile-delta-complete"
         }
       ],
       "documents": [
@@ -1726,7 +1726,7 @@
         {
           "documentId": "WAP-238-WML-20010911-a",
           "role": "delta-evidence-only",
-          "deltaStatus": "pending"
+          "deltaStatus": "selected-profile-delta-complete"
         }
       ],
       "documents": [
@@ -2030,7 +2030,7 @@
         {
           "documentId": "WAP-230-WSP-20010705-a",
           "role": "delta-evidence-only",
-          "deltaStatus": "pending"
+          "deltaStatus": "selected-profile-delta-complete"
         },
         {
           "documentId": "OMA-WAP-TS-WSP-V1_0-20020920-C",

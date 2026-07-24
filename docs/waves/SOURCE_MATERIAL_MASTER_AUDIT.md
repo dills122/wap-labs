@@ -149,9 +149,8 @@ Supplemental-source precedence:
   (WML 1.3, WAE, WBXML, WMLScript, WMLScript Libraries, caching, WDP, WCMP,
   and WSP complete at SCR/source-work-item and nested-clause planning level;
   direct test evidence remains pending)
-- WAP 1.2.1-to-WAP 2.0 delta records for areas implemented from successor
-  documents (selected WAE Class C concepts complete; broader/other-family
-  deltas pending)
+- WAP 1.2.1-to-successor delta records cover all 201 selected Class C rows;
+  optional-media and later OMA follow-on deltas remain separately pending
 
 Cross-source selected-profile accounting is now executable:
 
@@ -225,12 +224,11 @@ WTP is additionally conditional on connection-oriented WSP.
 
 ## Immediate next audit tasks
 
-1. Complete `CONF-003`: extract and deduplicate nested normative clauses
-   beneath all 201 selected rows.
+1. Treat `CONF-003..007` selected-profile planning and governance as complete.
 2. Promote direct, source-derived fixtures and executable evidence through
    the mapped runtime, transport, integration, and release sprints.
-3. Complete `CONF-007`, the unified WAP 1.2.1-to-successor delta register,
-   including code built from later WMLScript, WDP, WSP, and related materials.
+3. Keep optional WAP-237 media and later OMA follow-on deltas separate from
+   the closed selected-profile gate.
 4. Extract an effective WAP-201/WTP ledger only before claiming the optional
    connection-oriented WSP/WTP module.
 5. Obtain redistribution guidance before promoting the 76 privately recovered

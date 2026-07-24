@@ -274,9 +274,13 @@ const families = [...grouped.entries()]
           documentId,
           role: 'delta-evidence-only',
           deltaStatus:
-            family === 'wae' &&
-            documentId === 'WAP-236-WAESpec-20020207-a'
-              ? 'selected-mcf-concept-delta-complete'
+            [
+              'WAP-236-WAESpec-20020207-a',
+              'WAP-238-WML-20010911-a',
+              'WAP-259-WDP-20010614-a',
+              'WAP-230-WSP-20010705-a'
+            ].includes(documentId)
+              ? 'selected-profile-delta-complete'
               : family === 'wae' &&
                   documentId === 'WAP-237-WAEMT-20010515-a'
                 ? 'optional-media-delta-pending'

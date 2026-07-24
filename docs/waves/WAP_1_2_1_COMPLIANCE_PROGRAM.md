@@ -47,6 +47,9 @@ All nine selected Class C family increments are complete at SCR level:
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
   rollups are now guarded by a deterministic drift check;
+- `CONF-007` is complete for all 201 selected rows: 17 implementation
+  foundations are successor-derived or cross-checked, of which two are
+  compatible and 15 require strict target correction;
 - 76 effective WML 1.3 SCR rows are extracted;
 - 47 are mandatory and 29 optional;
 - the selected Class C client scope is 39 required, 27 optional, and 10
@@ -187,8 +190,8 @@ closes `SRC-004` without changing the redistribution boundary.
 2. Treat `CONF-002` family-level SCR extraction and `CONF-003` nested-clause
    planning plus `CONF-004..006` governance controls as complete. Add WTP only
    when connection-oriented WSP is claimed.
-3. Complete `CONF-007`, the unified WAP 1.2.1-to-successor implementation
-   delta register, using the family-specific WAE/transport registers as inputs.
+3. Treat `CONF-007`, the unified selected-profile successor delta register, as
+   complete. Keep optional-media and later OMA follow-on deltas separate.
 4. Continue the completed first-pass implementation audits into exact
    source-derived fixtures. Do not reopen completed tickets; add narrowly
    scoped gap work.

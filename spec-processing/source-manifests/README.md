@@ -143,6 +143,16 @@ node scripts/check-wap-wbxml-conformance-ledger.mjs
 node scripts/check-wap-wmlscript-conformance-ledger.mjs
 node scripts/check-wap-caching-conformance-ledger.mjs
 node scripts/check-wap-transport-conformance-ledgers.mjs
+node scripts/check-wap-delta-register.mjs
+```
+
+Generate the selected-profile successor delta register from the completed
+family and normative-clause ledgers plus hash-locked local successor sources:
+
+```sh
+node spec-processing/scripts/generate-wap-delta-register.mjs \
+  --recorded-on YYYY-MM-DD
+node scripts/check-wap-delta-register.mjs
 ```
 
 Generate the WML SCR ledger from private text extractions:

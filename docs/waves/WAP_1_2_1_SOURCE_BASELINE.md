@@ -189,6 +189,11 @@ The WAP 2.0-era WAE (`WAP-236`), WDP (`WAP-259`), WTP (`WAP-224`), WSP
 successor/delta evidence. They must not silently replace the WAP 1.2.1
 effective specification in strict-mode requirements.
 
+Selected-profile implementation deltas are classified at
+`spec-processing/source-manifests/wap-1.2.1-successor-delta.json`. The
+register covers all 201 selected rows and does not treat planning
+compatibility as direct conformance evidence.
+
 ## Associated and governing sources
 
 The official WAP Forum June 2000 release page lists these supporting assets:

@@ -53,6 +53,11 @@ Status: Active
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
   - all 781 direct fixtures planned; clause implementation status not assessed
+- Selected-profile successor delta register:
+  - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
+  - all 201 selected rows classified
+  - 17 successor-derived foundations: 2 compatible / 15 strict correction
+  - 184 selected rows have no identified successor-derived implementation basis
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`

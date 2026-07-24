@@ -128,10 +128,10 @@ if (
   waeFamily?.scrExtraction?.selectedFeatureGroup !== 'WAESpec:MCF' ||
   waeFamily?.successorEvidence?.find(
     (source) => source.documentId === 'WAP-236-WAESpec-20020207-a'
-  )?.deltaStatus !== 'selected-mcf-concept-delta-complete'
+  )?.deltaStatus !== 'selected-profile-delta-complete'
 ) {
   failures.push(
-    'WAE family must apply the selected WAP-215 Class C profile and retain the completed WAP-236 selected-concept delta'
+    'WAE family must apply the selected WAP-215 Class C profile and retain the completed WAP-236 selected-profile delta'
   );
 }
 const wbxmlFamily = graph.families?.find(

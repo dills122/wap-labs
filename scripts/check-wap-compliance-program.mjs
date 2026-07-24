@@ -213,9 +213,12 @@ const conf007 = conformanceSprint?.workItems.find(
   (workItem) => workItem.id === 'CONF-007'
 );
 if (
-  conf007?.status !== 'todo' ||
+  conf007?.status !== 'done' ||
   !conf007?.outputs?.includes(
     'Unified WAP 1.2.1-to-successor implementation delta register'
+  ) ||
+  !conf007?.outputs?.includes(
+    'spec-processing/source-manifests/wap-1.2.1-successor-delta.json'
   ) ||
   !conf007?.acceptance?.some((line) =>
     line.includes('successor-era material')
@@ -223,7 +226,7 @@ if (
   !conf007?.evidence?.includes('node scripts/check-wap-delta-register.mjs')
 ) {
   failures.push(
-    'CONF-007 must retain the cross-family successor delta-register plan'
+    'CONF-007 must retain the completed cross-family successor delta register'
   );
 }
 const conf003 = conformanceSprint?.workItems.find(
