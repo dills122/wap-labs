@@ -246,7 +246,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-08 Split high-churn files into boundary modules
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Files`:
 - `engine-wasm/engine/src/lib.rs` (done)
 - `engine-wasm/engine/src/engine_runtime_internal.rs` + `engine_runtime_internal/*` (done)
@@ -254,6 +254,7 @@ Completed maintenance tickets are archived in:
 - `browser/frontend/src/main.ts` (done)
 - `browser/src-tauri/src/lib.rs` + `browser/src-tauri/src/engine_bridge/*` + `browser/src-tauri/src/tests/*` (baseline split done)
 - `transport-rust/src/lib.rs` + `transport-rust/src/fetch_runtime/*` + `transport-rust/src/tests/*` (baseline split done)
+- `browser/frontend/src/app/browser-controller.ts` + `browser/frontend/src/app/shell-event-bindings.ts` + `browser/frontend/src/app/keyboard-intent-router.ts` (residual split done)
 3. `Build`:
 - Move code into boundary modules (`api`, `state`, `actions`, `mapping`, `ui`) without broad behavior changes.
 4. `Tests`:
@@ -264,6 +265,18 @@ Completed maintenance tickets are archived in:
 - Engine-side decomposition has landed and merged.
 - Browser and transport boundary decomposition baselines have landed.
 - Browser-side follow-up landed additional probe/timer/focused-edit coordinators in `#109`.
+- Residual cleanup landed: `browser-controller.ts` (1021 lines) still mixed shell/DOM
+  event-listener binding, run-mode orchestration, keyboard-intent routing/queueing, and
+  transport-URL loading. Extracted two more boundary modules following the existing
+  constructor-injected coordinator pattern: `ShellEventBindings` (DOM listener wiring --
+  binds/unbinds all shell button/input/window event listeners against a caller-supplied
+  action map, owns the `#btn-back` element directly) and `KeyboardIntentRouter`
+  (keyboard-intent resolution/routing plus the serialized keyboard action queue that
+  guards against interleaving with a concurrent engine timer tick). BrowserController
+  still defines what each routed action does and owns run-mode orchestration and
+  transport-URL loading directly; it is now 764 lines. Both new modules have their own
+  isolated unit tests (`shell-event-bindings.test.ts`, `keyboard-intent-router.test.ts`).
+  No behavior changes; this was a pure structural extraction.
 - Remaining scope is residual opportunistic cleanup only if new hot files emerge or a boundary proves unstable under feature work; do not let this preempt active compliance/runtime tickets.
 
 ### M1-09 Engine-host frame interface migration execution

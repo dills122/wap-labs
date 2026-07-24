@@ -145,8 +145,10 @@ describe('BrowserController select edit keyboard routing', () => {
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
-    (controller as any).handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
-    await (controller as any).keyboardActionQueue;
+    (controller as any).keyboardIntentRouter.handleWindowKeydown(
+      new KeyboardEvent('keydown', { key: 'Enter' })
+    );
+    await (controller as any).keyboardIntentRouter.actionQueue;
 
     expect(engineBeginFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineCommitFocusedSelectEdit).not.toHaveBeenCalled();
@@ -227,8 +229,10 @@ describe('BrowserController select edit keyboard routing', () => {
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
-    (controller as any).handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
-    await (controller as any).keyboardActionQueue;
+    (controller as any).keyboardIntentRouter.handleWindowKeydown(
+      new KeyboardEvent('keydown', { key: 'Enter' })
+    );
+    await (controller as any).keyboardIntentRouter.actionQueue;
 
     expect(engineCommitFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineHandleKey).not.toHaveBeenCalled();

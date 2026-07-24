@@ -6,11 +6,12 @@ import type {
 import type { EngineFrame, EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { EngineTimerRuntime } from './engine-timer-runtime';
-import { FocusedControlEditController, type ControlEditDisposition } from './focused-control-edit';
-import { resolveKeyboardIntent } from './keyboard';
+import { FocusedControlEditController } from './focused-control-edit';
 import { createNavigationStateMachine, type NavigationErrorKind } from './navigation-state';
 import { canHistoryBack } from '../session-history';
 import { StartupNetworkProbeController } from './startup-network-probe';
+import { KeyboardIntentRouter } from './keyboard-intent-router';
+import { ShellEventBindings } from './shell-event-bindings';
 import { defaultStartUrl } from './defaults';
 import type { BrowserPresenter } from './browser-presenter';
 import type { BrowserShellRefs } from './browser-shell-template';
@@ -38,13 +39,14 @@ export class BrowserController {
   private readonly startupProbe: StartupNetworkProbeController;
   private readonly timerRuntime: EngineTimerRuntime;
   private readonly focusedControlEdit: FocusedControlEditController;
+  // M1-08 residual: DOM listener wiring and keyboard-intent routing/queueing
+  // were split out of this controller into their own boundary modules (see
+  // shell-event-bindings.ts and keyboard-intent-router.ts). BrowserController
+  // still owns run-mode orchestration and transport-URL loading directly, and
+  // supplies the action bodies the two extracted modules call back into.
+  private readonly shellEventBindings: ShellEventBindings;
+  private readonly keyboardIntentRouter: KeyboardIntentRouter;
 
-  private readonly listenerCleanup: Array<() => void> = [];
-
-  private listenersBound = false;
-  private keyboardActionInFlight = false;
-  private keyboardActionsPending = 0;
-  private keyboardActionQueue: Promise<void> = Promise.resolve();
   private bootDeckReadyEmitted = false;
   private runMode: RunMode = 'local';
   private activeLocalExampleKey = defaultLocalDeckExample().key;
@@ -61,7 +63,6 @@ export class BrowserController {
   // engine deck load (which always clears the engine's nav stack) and set
   // true whenever a forward card change is observed while in local mode.
   private localBackAvailable = false;
-  private backBtnEl: HTMLButtonElement | null = null;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -124,7 +125,7 @@ export class BrowserController {
       wait
     });
     this.timerRuntime = new EngineTimerRuntime({
-      canTick: () => !this.keyboardActionInFlight,
+      canTick: () => !this.keyboardIntentRouter.isActionInFlight(),
       getRunMode: () => this.runMode,
       advanceLocal: (deltaMs) => this.hostClient.engineAdvanceTimeMs({ deltaMs }),
       advanceNetwork: (deltaMs) => this.navigation.applyEngineTimerTick(deltaMs),
@@ -169,6 +170,39 @@ export class BrowserController {
       commitFocusedSelectEdit: () => this.hostClient.engineCommitFocusedSelectEditFrame(),
       cancelFocusedSelectEdit: () => this.hostClient.engineCancelFocusedSelectEditFrame()
     });
+    this.keyboardIntentRouter = new KeyboardIntentRouter({
+      runAction: this.withAction,
+      toggleDeveloperTools: () => {
+        this.refs.devDrawerEl.open = !this.refs.devDrawerEl.open;
+        return this.refs.devDrawerEl.open;
+      },
+      applyFocusedControlEditKey: (key) => this.focusedControlEdit.applyKey(key),
+      applyEngineKey: (key) => this.applyEngineKey(key),
+      navigateBackWithFallback: () => this.navigateBackWithFallback(),
+      setStatus: (message) => this.presenter.setStatus(message)
+    });
+    this.shellEventBindings = new ShellEventBindings({
+      refs: this.refs,
+      runAction: this.withAction,
+      onWindowKeydown: this.keyboardIntentRouter.handleWindowKeydown,
+      actions: {
+        health: this.handleHealthClick,
+        loadRawWml: this.handleLoadRawWmlClick,
+        fetchUrl: this.handleFetchUrlClick,
+        fetchUrlEnter: this.handleFetchUrlClick,
+        reload: this.handleReloadClick,
+        changeMode: this.handleChangeModeClick,
+        selectLocalExample: this.handleSelectLocalExampleClick,
+        loadLocalExample: this.handleLoadLocalExampleClick,
+        render: this.handleRenderClick,
+        navigateBack: this.handleNavigateBackClick,
+        snapshot: this.handleSnapshotClick,
+        clearExternalIntent: this.handleClearExternalIntentClick,
+        exportTimeline: this.handleExportTimelineClick,
+        clearTimeline: this.handleClearTimelineClick,
+        handleKey: this.handleKeyButtonPress
+      }
+    });
   }
 
   async init(sampleWml: string): Promise<void> {
@@ -186,12 +220,9 @@ export class BrowserController {
     });
     this.presenter.setStatus(WAVES_COPY.status.bootShellReady);
 
-    if (this.listenersBound) {
-      this.unbindListeners();
-    }
     this.populateLocalExampleOptions();
     this.renderActiveLocalExampleNotes();
-    this.bindListeners();
+    this.shellEventBindings.bind();
     this.timerRuntime.start();
     this.presenter.setBootPhase('engine-ready');
     const selectedMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
@@ -201,270 +232,147 @@ export class BrowserController {
   dispose(): void {
     this.startupProbe.cancel();
     this.timerRuntime.stop();
-    this.unbindListeners();
+    this.shellEventBindings.unbind();
     this.presenter.dispose();
   }
 
-  private bindListeners(): void {
-    const healthBtn = document.querySelector<HTMLButtonElement>('#btn-health');
-    if (healthBtn) {
-      this.bindEvent(
-        healthBtn,
-        'click',
-        this.withAction('health', async () => {
-          const message = await this.hostClient.health();
-          this.presenter.setStatus(WAVES_COPY.status.health(message));
-        })
-      );
-    }
+  // -- Shell click/keyboard action handlers ---------------------------------
+  // The bodies below are the action implementations wired up to DOM events by
+  // ShellEventBindings (see the `actions` object passed to it above). Kept as
+  // bound arrow properties so they can be handed off by reference while still
+  // resolving `this` correctly.
 
-    const loadContextBtn = document.querySelector<HTMLButtonElement>('#btn-load-context');
-    if (loadContextBtn) {
-      this.bindEvent(
-        loadContextBtn,
-        'click',
-        this.withAction('load-raw-wml', async () => {
-          await this.setViewportCols();
-          this.timerRuntime.resetScriptTimers();
-          const frame = await this.hostClient.engineLoadDeckContextFrame({
-            wmlXml: this.refs.wmlInput.value,
-            baseUrl: this.refs.baseUrlInput.value,
-            contentType: 'text/vnd.wap.wml'
-          });
-          const snapshot = frame.snapshot;
-          this.applyFrame(frame);
-          // This always loads directly through the engine, clearing its nav
-          // stack regardless of which mode is active (see U3).
-          this.localBackAvailable = false;
-          this.updateBackButtonAvailability();
-          this.presenter.patchSessionState({
-            navigationStatus: 'loaded',
-            requestedUrl: this.refs.baseUrlInput.value,
-            finalUrl: this.refs.baseUrlInput.value,
-            contentType: 'text/vnd.wap.wml',
-            activeCardId: snapshot.activeCardId,
-            focusedLinkIndex: snapshot.focusedLinkIndex,
-            externalNavigationIntent: snapshot.externalNavigationIntent,
-            lastError: undefined
-          });
-          this.presenter.setStatus(WAVES_COPY.status.rawWmlLoaded);
-        })
-      );
-    }
+  private readonly handleHealthClick = async (): Promise<void> => {
+    const message = await this.hostClient.health();
+    this.presenter.setStatus(WAVES_COPY.status.health(message));
+  };
 
-    const fetchUrlBtn = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
-    if (fetchUrlBtn) {
-      this.bindEvent(
-        fetchUrlBtn,
-        'click',
-        this.withAction('fetch-url', async () => {
-          if (this.runMode === 'local') {
-            await this.loadSelectedLocalDeck();
-            return;
-          }
-          await this.loadTransportUrl(
-            this.refs.fetchUrlInput.value,
-            'user',
-            true,
-            true,
-            undefined,
-            this.defaultNavigationHeaders()
-          );
-        })
-      );
-    }
-
-    const reloadBtn = document.querySelector<HTMLButtonElement>('#btn-reload');
-    if (reloadBtn) {
-      this.bindEvent(
-        reloadBtn,
-        'click',
-        this.withAction('reload', async () => {
-          if (this.runMode === 'local') {
-            await this.loadSelectedLocalDeck();
-            return;
-          }
-          const state = this.presenter.getSessionState();
-          const reloadUrl = state.finalUrl ?? state.requestedUrl ?? this.refs.fetchUrlInput.value;
-          this.refs.fetchUrlInput.value = reloadUrl;
-          await this.loadTransportUrl(
-            reloadUrl,
-            'reload',
-            true,
-            false,
-            undefined,
-            this.defaultNavigationHeaders()
-          );
-        })
-      );
-    }
-
-    this.bindEvent(
-      this.refs.fetchUrlInput,
-      'keydown',
-      this.withAction('fetch-url-enter', async (event?: Event) => {
-        if (event instanceof KeyboardEvent && event.key === 'Enter') {
-          event.preventDefault();
-          if (this.runMode === 'local') {
-            await this.loadSelectedLocalDeck();
-            return;
-          }
-          await this.loadTransportUrl(
-            this.refs.fetchUrlInput.value,
-            'user',
-            true,
-            true,
-            undefined,
-            this.defaultNavigationHeaders()
-          );
-        }
-      })
-    );
-
-    this.bindEvent(
-      this.refs.runModeSelectEl,
-      'change',
-      this.withAction('change-mode', async () => {
-        const nextMode: RunMode =
-          this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
-        await this.setRunMode(nextMode, { loadLocalOnEnter: false });
-      })
-    );
-
-    this.bindEvent(
-      this.refs.localExampleSelectEl,
-      'change',
-      this.withAction('select-local-example', async () => {
-        this.activeLocalExampleKey = this.refs.localExampleSelectEl.value;
-        this.renderActiveLocalExampleNotes();
-        if (this.runMode === 'local') {
-          await this.loadSelectedLocalDeck();
-        }
-      })
-    );
-
-    this.bindEvent(
-      this.refs.loadLocalBtnEl,
-      'click',
-      this.withAction('load-local-example', async () => {
-        await this.loadSelectedLocalDeck();
-      })
-    );
-
-    const renderBtn = document.querySelector<HTMLButtonElement>('#btn-render');
-    if (renderBtn) {
-      this.bindEvent(
-        renderBtn,
-        'click',
-        this.withAction('render', async () => {
-          await this.renderAndSnapshot();
-          this.presenter.setStatus(WAVES_COPY.status.renderedCurrentCard);
-        })
-      );
-    }
-
-    this.bindKeyButton('#btn-up', 'up');
-    this.bindKeyButton('#btn-down', 'down');
-    this.bindKeyButton('#btn-enter', 'enter');
-
-    const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
-    if (backBtn) {
-      this.backBtnEl = backBtn;
-      this.bindEvent(
-        backBtn,
-        'click',
-        this.withAction('navigate-back', async () => {
-          const mode = await this.navigateBackWithFallback();
-          if (mode === 'engine') {
-            this.presenter.setStatus(WAVES_COPY.status.navigateBackEngine);
-          } else if (mode === 'host') {
-            this.presenter.setStatus(WAVES_COPY.status.navigateBackBrowser);
-          } else {
-            this.presenter.setStatus(WAVES_COPY.status.navigateBackNone);
-          }
-        })
-      );
-    }
-    this.updateBackButtonAvailability();
-
-    const snapshotBtn = document.querySelector<HTMLButtonElement>('#btn-snapshot');
-    if (snapshotBtn) {
-      this.bindEvent(
-        snapshotBtn,
-        'click',
-        this.withAction('snapshot', async () => {
-          await this.renderAndSnapshot();
-          this.presenter.setStatus(WAVES_COPY.status.snapshotRefreshed);
-        })
-      );
-    }
-
-    const clearIntentBtn = document.querySelector<HTMLButtonElement>('#btn-clear-intent');
-    if (clearIntentBtn) {
-      this.bindEvent(
-        clearIntentBtn,
-        'click',
-        this.withAction('clear-external-intent', async () => {
-          const snapshot = await this.hostClient.engineClearExternalNavigationIntent();
-          this.presenter.setSnapshot(snapshot);
-          this.presenter.patchSessionState({
-            externalNavigationIntent: snapshot.externalNavigationIntent
-          });
-          this.presenter.setStatus(WAVES_COPY.status.clearedExternalIntent);
-        })
-      );
-    }
-
-    const exportTimelineBtn = document.querySelector<HTMLButtonElement>('#btn-export-timeline');
-    if (exportTimelineBtn) {
-      this.bindEvent(
-        exportTimelineBtn,
-        'click',
-        this.withAction('export-timeline', async () => {
-          if (this.presenter.timelineLength() === 0) {
-            throw new Error(WAVES_COPY.status.noTimelineToExport);
-          }
-          this.presenter.exportTimeline();
-          this.presenter.setStatus(WAVES_COPY.status.exportedTimeline);
-        })
-      );
-    }
-
-    const clearTimelineBtn = document.querySelector<HTMLButtonElement>('#btn-clear-timeline');
-    if (clearTimelineBtn) {
-      this.bindEvent(
-        clearTimelineBtn,
-        'click',
-        this.withAction('clear-timeline', async () => {
-          this.presenter.clearTimeline();
-          this.presenter.setStatus(WAVES_COPY.status.clearedTimeline);
-        })
-      );
-    }
-
-    this.bindEvent(window, 'keydown', this.handleWindowKeydown);
-    this.listenersBound = true;
-  }
-
-  private unbindListeners(): void {
-    while (this.listenerCleanup.length > 0) {
-      const dispose = this.listenerCleanup.pop();
-      dispose?.();
-    }
-    this.listenersBound = false;
-  }
-
-  private bindEvent(
-    target: EventTarget,
-    eventType: string,
-    handler: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
-  ): void {
-    target.addEventListener(eventType, handler, options);
-    this.listenerCleanup.push(() => {
-      target.removeEventListener(eventType, handler, options);
+  private readonly handleLoadRawWmlClick = async (): Promise<void> => {
+    await this.setViewportCols();
+    this.timerRuntime.resetScriptTimers();
+    const frame = await this.hostClient.engineLoadDeckContextFrame({
+      wmlXml: this.refs.wmlInput.value,
+      baseUrl: this.refs.baseUrlInput.value,
+      contentType: 'text/vnd.wap.wml'
     });
-  }
+    const snapshot = frame.snapshot;
+    this.applyFrame(frame);
+    // This always loads directly through the engine, clearing its nav
+    // stack regardless of which mode is active (see U3).
+    this.localBackAvailable = false;
+    this.updateBackButtonAvailability();
+    this.presenter.patchSessionState({
+      navigationStatus: 'loaded',
+      requestedUrl: this.refs.baseUrlInput.value,
+      finalUrl: this.refs.baseUrlInput.value,
+      contentType: 'text/vnd.wap.wml',
+      activeCardId: snapshot.activeCardId,
+      focusedLinkIndex: snapshot.focusedLinkIndex,
+      externalNavigationIntent: snapshot.externalNavigationIntent,
+      lastError: undefined
+    });
+    this.presenter.setStatus(WAVES_COPY.status.rawWmlLoaded);
+  };
+
+  private readonly handleFetchUrlClick = async (): Promise<void> => {
+    if (this.runMode === 'local') {
+      await this.loadSelectedLocalDeck();
+      return;
+    }
+    await this.loadTransportUrl(
+      this.refs.fetchUrlInput.value,
+      'user',
+      true,
+      true,
+      undefined,
+      this.defaultNavigationHeaders()
+    );
+  };
+
+  private readonly handleReloadClick = async (): Promise<void> => {
+    if (this.runMode === 'local') {
+      await this.loadSelectedLocalDeck();
+      return;
+    }
+    const state = this.presenter.getSessionState();
+    const reloadUrl = state.finalUrl ?? state.requestedUrl ?? this.refs.fetchUrlInput.value;
+    this.refs.fetchUrlInput.value = reloadUrl;
+    await this.loadTransportUrl(
+      reloadUrl,
+      'reload',
+      true,
+      false,
+      undefined,
+      this.defaultNavigationHeaders()
+    );
+  };
+
+  private readonly handleChangeModeClick = async (): Promise<void> => {
+    const nextMode: RunMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
+    await this.setRunMode(nextMode, { loadLocalOnEnter: false });
+  };
+
+  private readonly handleSelectLocalExampleClick = async (): Promise<void> => {
+    this.activeLocalExampleKey = this.refs.localExampleSelectEl.value;
+    this.renderActiveLocalExampleNotes();
+    if (this.runMode === 'local') {
+      await this.loadSelectedLocalDeck();
+    }
+  };
+
+  private readonly handleLoadLocalExampleClick = async (): Promise<void> => {
+    await this.loadSelectedLocalDeck();
+  };
+
+  private readonly handleRenderClick = async (): Promise<void> => {
+    await this.renderAndSnapshot();
+    this.presenter.setStatus(WAVES_COPY.status.renderedCurrentCard);
+  };
+
+  private readonly handleNavigateBackClick = async (): Promise<void> => {
+    const mode = await this.navigateBackWithFallback();
+    if (mode === 'engine') {
+      this.presenter.setStatus(WAVES_COPY.status.navigateBackEngine);
+    } else if (mode === 'host') {
+      this.presenter.setStatus(WAVES_COPY.status.navigateBackBrowser);
+    } else {
+      this.presenter.setStatus(WAVES_COPY.status.navigateBackNone);
+    }
+  };
+
+  private readonly handleSnapshotClick = async (): Promise<void> => {
+    await this.renderAndSnapshot();
+    this.presenter.setStatus(WAVES_COPY.status.snapshotRefreshed);
+  };
+
+  private readonly handleClearExternalIntentClick = async (): Promise<void> => {
+    const snapshot = await this.hostClient.engineClearExternalNavigationIntent();
+    this.presenter.setSnapshot(snapshot);
+    this.presenter.patchSessionState({
+      externalNavigationIntent: snapshot.externalNavigationIntent
+    });
+    this.presenter.setStatus(WAVES_COPY.status.clearedExternalIntent);
+  };
+
+  private readonly handleExportTimelineClick = async (): Promise<void> => {
+    if (this.presenter.timelineLength() === 0) {
+      throw new Error(WAVES_COPY.status.noTimelineToExport);
+    }
+    this.presenter.exportTimeline();
+    this.presenter.setStatus(WAVES_COPY.status.exportedTimeline);
+  };
+
+  private readonly handleClearTimelineClick = async (): Promise<void> => {
+    this.presenter.clearTimeline();
+    this.presenter.setStatus(WAVES_COPY.status.clearedTimeline);
+  };
+
+  private readonly handleKeyButtonPress = async (key: EngineKey): Promise<void> => {
+    await this.applyEngineKey(key);
+    this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
+  };
+
+  // ---------------------------------------------------------------------
 
   private populateLocalExampleOptions(): void {
     this.refs.localExampleSelectEl.replaceChildren();
@@ -503,15 +411,11 @@ export class BrowserController {
   // requiring a click + status-message read to discover there's nowhere to
   // go back to.
   private updateBackButtonAvailability(): void {
-    if (!this.backBtnEl) {
-      return;
-    }
     const available =
       this.runMode === 'local'
         ? this.localBackAvailable
         : canHistoryBack(this.navigation.getHistoryState());
-    this.backBtnEl.disabled = !available;
-    this.backBtnEl.setAttribute('aria-disabled', String(!available));
+    this.shellEventBindings.setBackButtonAvailable(available);
   }
 
   // See localBackAvailable above: a forward card change while in local mode
@@ -680,112 +584,6 @@ export class BrowserController {
     });
   }
 
-  private readonly handleWindowKeydown = (event: Event): void => {
-    if (!(event instanceof KeyboardEvent)) {
-      return;
-    }
-    const intent = resolveKeyboardIntent(
-      event.key,
-      event.ctrlKey,
-      event.shiftKey,
-      this.isTextEntryTarget(event.target)
-    );
-
-    if (intent.type === 'none') {
-      if (this.shouldRouteKeyToControlEdit(event)) {
-        event.preventDefault();
-        this.enqueueKeyboardAction(async () => {
-          await this.withAction('keyboard-control-edit', async () => {
-            const handled = await this.applyFocusedControlEditKey(event.key);
-            if (handled) {
-              this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
-            }
-          })();
-        });
-      }
-      return;
-    }
-    event.preventDefault();
-
-    if (intent.type === 'toggle-dev-tools') {
-      this.refs.devDrawerEl.open = !this.refs.devDrawerEl.open;
-      this.presenter.setStatus(
-        this.refs.devDrawerEl.open
-          ? WAVES_COPY.status.developerToolsOpened
-          : WAVES_COPY.status.developerToolsHidden
-      );
-      return;
-    }
-
-    if (intent.type === 'engine-key') {
-      this.enqueueKeyboardAction(async () => {
-        await this.withAction(`keyboard-${intent.key}`, async () => {
-          if (this.shouldRouteKeyToControlEdit(event)) {
-            const disposition = await this.applyFocusedControlEditKey(event.key);
-            if (disposition === 'handled-stop') {
-              this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
-              return;
-            }
-            if (disposition === 'handled' && intent.key !== 'enter') {
-              this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
-              return;
-            }
-          }
-          await this.applyEngineKey(intent.key);
-          this.presenter.setStatus(WAVES_COPY.status.keyboard(intent.key));
-        })();
-      });
-      return;
-    }
-
-    if (intent.type === 'navigate-back') {
-      this.enqueueKeyboardAction(async () => {
-        await this.withAction('keyboard-backspace', async () => {
-          if (this.shouldRouteKeyToControlEdit(event)) {
-            const handled = await this.applyFocusedControlEditKey(event.key);
-            if (handled) {
-              this.presenter.setStatus(WAVES_COPY.status.keyboard(event.key));
-              return;
-            }
-          }
-          const mode = await this.navigateBackWithFallback();
-          if (mode === 'engine') {
-            this.presenter.setStatus(WAVES_COPY.status.keyboardBackEngine);
-          } else if (mode === 'host') {
-            this.presenter.setStatus(WAVES_COPY.status.keyboardBackBrowser);
-          } else {
-            this.presenter.setStatus(WAVES_COPY.status.keyboardBackNone);
-          }
-        })();
-      });
-    }
-  };
-
-  private enqueueKeyboardAction(action: () => Promise<void>): void {
-    // Flip the in-flight flag synchronously, before any await, so the timer
-    // runtime's canTick() check (which polls this flag) can never observe a
-    // false "not busy" reading between this keydown and the queued action
-    // actually starting. A pending counter (rather than a plain boolean) is
-    // used so overlapping queued actions don't clear the flag early while a
-    // later action is still waiting its turn.
-    this.keyboardActionsPending += 1;
-    this.keyboardActionInFlight = true;
-    this.keyboardActionQueue = this.keyboardActionQueue
-      .then(async () => {
-        try {
-          await action();
-        } finally {
-          this.keyboardActionsPending = Math.max(0, this.keyboardActionsPending - 1);
-          this.keyboardActionInFlight = this.keyboardActionsPending > 0;
-        }
-      })
-      .catch(() => {
-        // The action's own finally above already accounted for the pending
-        // count; this catch exists only to keep the queue promise resolved
-        // so subsequent actions can still run after a rejection.
-      });
-  }
-
   private async renderAndSnapshot(): Promise<EngineRuntimeSnapshot> {
     const frame = await this.hostClient.engineRenderFrame();
     this.applyFrame(frame);
@@ -815,23 +613,6 @@ export class BrowserController {
       }
     };
 
-  private isTextEntryTarget(target: EventTarget | null): boolean {
-    if (!(target instanceof Element)) {
-      return false;
-    }
-    if (target instanceof HTMLInputElement) {
-      const type = target.type.toLowerCase();
-      return type === 'text' || type === 'search' || type === 'url' || type === 'number';
-    }
-    if (target instanceof HTMLTextAreaElement) {
-      return true;
-    }
-    if (target instanceof HTMLSelectElement) {
-      return true;
-    }
-    return target.getAttribute('contenteditable') === 'true';
-  }
-
   private async applyEngineKey(key: EngineKey): Promise<void> {
     const previousActiveCardId = this.presenter.getSessionState().activeCardId;
     const localFrame =
@@ -858,29 +639,6 @@ export class BrowserController {
         );
       }
     }
-  }
-
-  private shouldRouteKeyToControlEdit(event: KeyboardEvent): boolean {
-    if (event.ctrlKey || event.metaKey || event.altKey) {
-      return false;
-    }
-    if (this.isTextEntryTarget(event.target)) {
-      return false;
-    }
-    if (
-      event.key === 'Enter' ||
-      event.key === 'Escape' ||
-      event.key === 'Backspace' ||
-      event.key === 'ArrowUp' ||
-      event.key === 'ArrowDown'
-    ) {
-      return true;
-    }
-    return event.key.length === 1;
-  }
-
-  private async applyFocusedControlEditKey(key: string): Promise<ControlEditDisposition> {
-    return this.focusedControlEdit.applyKey(key);
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {
@@ -986,21 +744,6 @@ export class BrowserController {
 
   private async tickEngineTimerRuntime(): Promise<void> {
     await this.timerRuntime.tick();
-  }
-
-  private bindKeyButton(id: string, key: EngineKey): void {
-    const button = document.querySelector<HTMLButtonElement>(id);
-    if (!button) {
-      return;
-    }
-    this.bindEvent(
-      button,
-      'click',
-      this.withAction(`handle-key-${key}`, async () => {
-        await this.applyEngineKey(key);
-        this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
-      })
-    );
   }
 
   private defaultNavigationHeaders(): Record<string, string> {
