@@ -99,7 +99,7 @@ The source table contains one explicit SCR dependency:
 - Enhancements are never allowed to replace strict behavior.
 - Every mandatory row maps to a substantive implementation work item in
   addition to `R0-01`.
-- Direct executable evidence is linked for `25/76` rows. Existing thematic
+- Direct executable evidence is linked for `27/76` rows. Existing thematic
   tests are counted only when their path, test name, command, code symbol, and
   limitation are reviewed against the exact SCR feature.
 
@@ -107,15 +107,19 @@ The source table contains one explicit SCR dependency:
 
 | Assessment | Mandatory rows | Meaning |
 |---|---:|---|
-| `implemented` | 2 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
-| `partial` | 23 | Direct behavior exists, but the cited clause has known uncovered semantics |
-| `missing` | 22 | No conforming implementation path exists; a substantive Phase R work item is attached |
+| `implemented` | 3 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
+| `partial` | 24 | Direct behavior exists, but the cited clause has known uncovered semantics |
+| `missing` | 20 | No conforming implementation path exists; a substantive Phase R work item is attached |
 
-The two implemented rows are `WML-C-35` (`noop`) and `WML-C-53` (`wml`
-root). Across the 39 required Class C client rows, the audit currently records
-2 implemented, 23 partial, and 14 missing. This is not a compliance
-percentage: nested normative clauses, optional capabilities, cross-target
-parity, and release evidence still have separate gates.
+The three implemented rows are `WML-C-30` (`head`), `WML-C-35` (`noop`), and
+`WML-C-53` (`wml` root). `WML-C-21` (`access`) moved from missing to partial:
+the element's `domain`/`path` attributes are parsed and retained on the deck
+model, but enforcing the access-control policy against a referring URI is a
+host-boundary concern (`R0-07`), not yet implemented. Across the 39 required
+Class C client rows, the audit currently records 3 implemented, 24 partial,
+and 12 missing. This is not a compliance percentage: nested normative
+clauses, optional capabilities, cross-target parity, and release evidence
+still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 174
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
@@ -123,11 +127,10 @@ owner/work mapping and a planned direct fixture. Clause implementation status
 remains `not-assessed`, so these records improve planning completeness without
 raising the implementation audit.
 
-The 14 missing required Class C client rows are:
+The 12 missing required Class C client rows are:
 
 - context/policy: `WML-C-11`, `WML-C-13`, `WML-C-14`;
-- task/structure: `WML-C-08`, `WML-C-20`, `WML-C-21`, `WML-C-30`,
-  `WML-C-47`, `WML-C-52`;
+- task/structure: `WML-C-08`, `WML-C-20`, `WML-C-47`, `WML-C-52`;
 - rendering/media: `WML-C-32`, `WML-C-46`, `WML-C-49`, `WML-C-50`,
   `WML-C-54`;
 

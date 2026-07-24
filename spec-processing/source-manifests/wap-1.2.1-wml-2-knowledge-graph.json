@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "d15b8f0828ade4c360f16de427ba6794d839360b40785d045c1b93de651a4502"
+        "sha256": "9d95cfdfe37c5f89656e5f1fadff88ea8172662dd1b010f8c3e78d3d9ef7dc0f"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."

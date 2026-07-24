@@ -1821,7 +1821,7 @@ Reference:
 
 ### R0-04 Parser semantic completeness for structure/task/form elements
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `M1-07`
 3. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/*`
@@ -1837,6 +1837,10 @@ Reference:
 - Core WML element families in section `11` are represented or explicitly profile-gated.
 7. `Spec`:
 - `WML-21`, `WML-25`, `WML-26`, `WML-33`, `WML-34`, `WML-39`, `WML-40`, `WML-41`, `WML-43`, `WML-47`, `WML-48`, `WML-52`, `WML-53`, `WML-66`, `WML-67`, `WML-69`
+8. `Notes`:
+- `head` (`WML-C-30`) and `access` (`WML-C-21`) landed: the parser now recognizes deck-level `<head>` (not mistaken for a card) and extracts `<access domain= path=>` onto the deck model, rejecting a deck with more than one `<access>` element per section `11.3.1`. `access` is `partial`, not `implemented`, in the compliance ledger - parsing/storage is done, but enforcing the access-control policy against a referring URI is a host-boundary concern (`R0-07`). `meta` (`WML-C-34`, optional) is not yet represented.
+- `template` (`WML-C-47`) split out to `R0-12`: it is spec-inseparable from card/deck task shadowing (`WML-C-08`, section `9.6`) and requires a real named `do`/`onevent` binding model this codebase doesn't have yet, not a small addition alongside `head`/`access`.
+- Remaining scope: `do`/`onevent`/`select`/`option`/`optgroup`/`input`/`fieldset`/`timer` validity constraints beyond what's already parsed.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 
@@ -1984,6 +1988,33 @@ Reference:
 - Cross-layer behavioral regressions are detectable in one reproducible replay lane with stable fixture outputs.
 7. `Spec`:
 - `WML-07`, `WML-18`, `RQ-WAE-008`, `RQ-WAE-016`, `RQ-TRN-004`
+
+### R0-12 Template element and card/deck task shadowing (`WML-C-47`, `WML-C-08`)
+
+1. `Status`: `todo`
+2. `Depends On`: `R0-02`, `R0-04`
+3. `Files`:
+- `engine-wasm/engine/src/runtime/card.rs`
+- `engine-wasm/engine/src/runtime/deck.rs`
+- `engine-wasm/engine/src/parser/wml_parser/mod.rs`
+- `engine-wasm/engine/src/parser/wml_parser/actions.rs`
+- `engine-wasm/engine/src/parser/wml_parser/tests.rs`
+- `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md`
+- `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
+- `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
+4. `Build`:
+- Introduce a named `do[name]`/`onevent[type]` binding model (the current `Card` struct only has four special-cased single actions: `accept`, `onenterforward`, `onenterbackward`, `ontimer`) so deck-level (`template`) and card-level bindings can be represented independently.
+- Parse `<template>` at deck level (`do`/`onevent` children) per section `11.4`.
+- Implement card/deck task shadowing per section `9.6`: a card-level binding of a given name/type overrides ("shadows") a deck-level binding of the same name/type; a shadowing card-level binding that binds `noop` masks the event entirely (no side effects on either the card- or deck-level binding); an unshadowed deck-level binding stays active for cards that don't override it; an unshadowed binding that itself binds `noop` is also masked.
+5. `Tests`:
+- Fixture matrix covering: card overrides deck binding; card shadows deck binding with `noop` (fully masked); deck-level binding stays active when not shadowed; unshadowed `noop` binding (masked, no shadowing partner) - matching the three-card `<do>` example in section `9.6`.
+6. `Accept`:
+- `WML-C-47` (`template`) and `WML-C-08` (card/deck task shadowing) have direct code/test evidence, and the compliance ledger reflects it: obligation status in `wap-1.2.1-wml-scr.json`, parent-status mirrors in `wap-1.2.1-selected-normative-clauses.json`, and the drift-guard snapshots in `scripts/check-wap-conformance-ledger.mjs`/`scripts/check-requirement-status-drift.mjs`, following the same update pattern `R0-04`'s `head`/`access` slice used.
+7. `Spec`:
+- `WML-08`, `WML-47`, section `9.6`, section `9.7`, section `11.4`, section `11.5.1`
+8. `Notes`:
+- Split out of `R0-04`'s "parser semantic completeness" scope: `template`/shadowing turned out to need a real named-binding model and merge algorithm, not a small addition alongside `head`/`access`.
+- `WML-C-08` (shadowing) is formally covered by `R0-02`, which is `done` - per `AGENT_STANDARDS.md`'s backlog lifecycle policy, `R0-02`'s status is not reopened for this. This ticket is the scoped corrective follow-up for a gap the newer clause-level ledger (`CONF-003`) found in `R0-02`'s original coverage, not a reversal of `R0-02`'s completion.
 
 ## Phase S (Archived)
 
