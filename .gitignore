@@ -155,6 +155,14 @@ tmp
 _site
 
 **/fuzz/corpus/**
+# Curated regression seeds are tracked deliberately (unlike ad-hoc/mutated
+# corpus entries discovered by running the fuzzer locally): they pin
+# specific crash classes (deep nesting, navigation cycles) for permanent
+# fuzz coverage. Keep this scoped to the `seed-*` naming convention so
+# fuzzer-generated corpus growth stays untracked.
+!engine-wasm/engine/fuzz/corpus/
+!engine-wasm/engine/fuzz/corpus/*/
+!engine-wasm/engine/fuzz/corpus/*/seed-*
 
 # Local AI Central links (repo-owned Codex files remain tracked)
 .codex/skills/

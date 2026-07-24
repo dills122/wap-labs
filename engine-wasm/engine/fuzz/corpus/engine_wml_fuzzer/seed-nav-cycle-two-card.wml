@@ -1,0 +1,25 @@
+<wml>
+  <card id="home">
+    <a href="#a">Start</a>
+  </card>
+  <card id="a">
+    <onevent type="onenterforward">
+      <go href="#b"/>
+    </onevent>
+    <onevent type="onenterbackward">
+      <prev/>
+    </onevent>
+    <a href="#b">To b</a>
+    <p>A</p>
+  </card>
+  <card id="b">
+    <onevent type="onenterforward">
+      <go href="#a"/>
+    </onevent>
+    <onevent type="onenterbackward">
+      <prev/>
+    </onevent>
+    <a href="#a">To a</a>
+    <p>B</p>
+  </card>
+</wml>

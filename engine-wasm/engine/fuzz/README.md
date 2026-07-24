@@ -31,11 +31,18 @@ To replay a crash:
 cargo +nightly fuzz run engine_wml_fuzzer fuzz/artifacts/engine_wml_fuzzer/crash-<hash>
 ```
 
-Seeds are stored under:
+Curated regression seeds are stored under `fuzz/corpus/engine_wml_fuzzer/` with a
+`seed-` prefix (see `.gitignore` at the repo root — the corpus directory is untracked
+by default so ad-hoc/mutated corpus entries discovered by running the fuzzer locally
+don't get committed, but the `seed-*` naming convention is carved out and tracked
+deliberately):
 
-- `fuzz/corpus/engine_wml_fuzzer/basic.wml`
-- `fuzz/corpus/engine_wml_fuzzer/two_cards.wml`
-- `fuzz/corpus/engine_wml_fuzzer/malformed_unclosed.wml`
+- `seed-nav-cycle-two-card.wml` — a 2-card deck whose `onenterforward` actions target
+  each other (and whose `onenterbackward` actions both use `<prev/>`), pinning the
+  unbounded-navigation-recursion crash class for permanent fuzz coverage.
+- `seed-deep-nesting-near-depth-limit.wml` — a WML fragment nested just past
+  `MAX_PARSE_TREE_DEPTH` (128, see `engine-wasm/engine/src/parser/wml_parser/mod.rs`),
+  pinning the parse-tree-depth-budget boundary for permanent fuzz coverage.
 
 ## Target behavior
 
