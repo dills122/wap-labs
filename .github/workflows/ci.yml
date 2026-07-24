@@ -70,6 +70,8 @@ jobs:
             docs_portal:
               - "docs-portal/**"
               - "docs/**"
+              - "scripts/check-wap-knowledge-graph.mjs"
+              - "spec-processing/scripts/generate-wap-knowledge-graph.mjs"
               - "spec-processing/source-manifests/**"
               - "pnpm-lock.yaml"
               - "pnpm-workspace.yaml"
@@ -346,6 +348,9 @@ jobs:
 
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Validate knowledge graph
+        run: pnpm wap-graph:check
 
       - name: Build project Atlas
         run: pnpm --dir docs-portal run build
