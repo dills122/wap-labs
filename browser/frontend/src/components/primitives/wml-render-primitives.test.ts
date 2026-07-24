@@ -28,4 +28,19 @@ describe('wml-render-primitives', () => {
     expect(html).toContain('is-focused');
     expect(html).toContain('&lt;unsafe&gt;');
   });
+
+  it('marks the focused link with role="link" and aria-current for assistive tech', () => {
+    const html = renderWmlViewportHtml({
+      draw: [
+        { type: 'link', x: 0, y: 0, text: 'Focused', focused: true, href: '#home' },
+        { type: 'link', x: 0, y: 1, text: 'Unfocused', focused: false, href: '#other' }
+      ]
+    });
+
+    expect(html).toContain('role="link" aria-current="true"');
+    const unfocusedMatch = html.match(/<span class="wml-segment wml-segment-link"[^>]*>Unfocused/);
+    expect(unfocusedMatch).toBeTruthy();
+    expect(unfocusedMatch?.[0]).toContain('role="link"');
+    expect(unfocusedMatch?.[0]).not.toContain('aria-current');
+  });
 });

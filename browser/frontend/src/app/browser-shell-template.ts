@@ -52,7 +52,7 @@ const browserShellTemplate = () => `
           <div class="skeleton-line"></div>
           <div class="skeleton-hint">${WAVES_COPY.shell.firstRenderPending}</div>
         </div>
-        <div class="softkey-row">
+        <div class="softkey-row" role="group" aria-label="Softkey navigation">
           <button id="btn-up" class="btn">${WAVES_COPY.shell.up}</button>
           <button id="btn-enter" class="btn">${WAVES_COPY.shell.select}</button>
           <button id="btn-down" class="btn">${WAVES_COPY.shell.down}</button>

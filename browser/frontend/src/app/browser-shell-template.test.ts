@@ -14,5 +14,9 @@ describe('mountBrowserShell', () => {
     expect(document.querySelectorAll('#fetch-url')).toHaveLength(1);
     expect(document.querySelectorAll('#base-url')).toHaveLength(1);
     expect(refs.viewportEl.getAttribute('tabindex')).toBe('0');
+
+    const softkeyRow = document.querySelector('.softkey-row');
+    expect(softkeyRow?.getAttribute('role')).toBe('group');
+    expect(softkeyRow?.getAttribute('aria-label')).toBeTruthy();
   });
 });

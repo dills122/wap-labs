@@ -20,6 +20,22 @@ describe('WvStatusPanel', () => {
     el.remove();
   });
 
+  it('exposes the status text as a polite live region for screen readers', async () => {
+    if (!customElements.get(TAG)) {
+      customElements.define(TAG, WvStatusPanel);
+    }
+    const el = document.createElement(TAG) as WvStatusPanel;
+    document.body.appendChild(el);
+
+    el.setStatus('Ready.', 'ok');
+    await el.updateComplete;
+    const root = el.shadowRoot?.querySelector<HTMLDivElement>('#status-root');
+    expect(root?.getAttribute('aria-live')).toBe('polite');
+    expect(root?.getAttribute('role')).toBe('status');
+
+    el.remove();
+  });
+
   it('reacts to attribute updates', async () => {
     if (!customElements.get(TAG)) {
       customElements.define(TAG, WvStatusPanel);

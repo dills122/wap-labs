@@ -60,7 +60,14 @@ export class WvStatusPanel extends LitElement {
   }
 
   override render() {
-    return html`<div class=${`status status-${this.tone}`} id="status-root">${this.message}</div>`;
+    return html`<div
+      class=${`status status-${this.tone}`}
+      id="status-root"
+      role="status"
+      aria-live="polite"
+    >
+      ${this.message}
+    </div>`;
   }
 }
 

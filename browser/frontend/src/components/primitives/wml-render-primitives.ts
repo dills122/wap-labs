@@ -42,10 +42,16 @@ export const renderWmlViewportHtml = (renderList: RenderList): string => {
       const segmentHtml = segments
         .map((segment) => {
           const classes = ['wml-segment', `wml-segment-${segment.kind}`];
+          const attrs: string[] = [];
+          if (segment.kind === 'link') {
+            attrs.push('role="link"');
+          }
           if (segment.focused) {
             classes.push('is-focused');
+            attrs.push('aria-current="true"');
           }
-          return `<span class="${classes.join(' ')}">${escapeHtml(segment.text)}</span>`;
+          const attrHtml = attrs.length > 0 ? ` ${attrs.join(' ')}` : '';
+          return `<span class="${classes.join(' ')}"${attrHtml}>${escapeHtml(segment.text)}</span>`;
         })
         .join('');
       return `<div class="line">${segmentHtml}</div>`;
