@@ -4,6 +4,9 @@ Use the generated WAP knowledge graph as bounded evidence for compliance impleme
 planning, review, and test work. It supplements the canonical manifests; it does not replace
 them.
 
+When beginning a compliance implementation slice that is not yet represented, first follow
+`docs/knowledge-graph/SLICE_ADOPTION.md` to add the minimum required graph support.
+
 ## When to retrieve a context pack
 
 Retrieve a pack before acting when a task:
@@ -55,3 +58,5 @@ pnpm wap-graph:check
 ```
 
 Run the relevant family validators and implementation tests in addition to these graph checks.
+Record implementation and fixture evidence in the canonical inputs before treating a slice as
+done.

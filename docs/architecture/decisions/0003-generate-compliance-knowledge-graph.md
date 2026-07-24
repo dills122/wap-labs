@@ -1,7 +1,7 @@
 # ADR 0003: Generate the Compliance Knowledge Graph from Canonical Manifests
 
 Date: 2026-07-24
-Status: proposed
+Status: accepted
 
 ## Context
 
@@ -47,8 +47,9 @@ Adopt a repository-derived knowledge graph with three generated projections.
    promote or duplicate restricted source payloads.
 8. Generated graph and vault artifacts are committed because they are reviewable planning
    products; drift checks compare them with canonical inputs.
-9. The initial pilot is limited to `WML-2`. Expansion to the complete compliance program requires
-   a separate review of graph size, retrieval quality, and maintenance cost.
+9. The initial pilot is limited to `WML-2`. Later coverage is added when its implementation slice
+   begins, following `docs/knowledge-graph/SLICE_ADOPTION.md`; the project will not run a separate
+   speculative bulk migration.
 
 ## Why
 
@@ -109,6 +110,6 @@ shows work items with family ownership but no direct nested-clause mapping.
 - [x] The pilot emits a bounded `WML-2` AI context pack.
 - [x] A checker validates graph integrity and generated-artifact drift.
 - [x] Work items without direct clause mappings are reported explicitly.
+- [x] Incremental, implementation-coupled expansion is approved after the pilot review.
 - [ ] A real implementation task uses the context pack and records whether retrieval was
       sufficient.
-- [ ] Full-program expansion is approved after the pilot review.

@@ -16,6 +16,10 @@ See
 [`docs/architecture/decisions/0003-generate-compliance-knowledge-graph.md`](../architecture/decisions/0003-generate-compliance-knowledge-graph.md)
 for the decision and boundaries.
 
+The operational expansion policy is
+[`docs/knowledge-graph/SLICE_ADOPTION.md`](SLICE_ADOPTION.md): extend the graph when a compliance
+implementation slice begins, not through a separate bulk migration.
+
 ## WML-2 pilot
 
 The pilot selects the `WML-2` compliance sprint and generates:
@@ -67,7 +71,8 @@ node scripts/wap-context-pack.mjs WML-203
 The supported retrieval targets are `WML-2` and `WML-201` through `WML-205`. A work-item target
 keeps sprint dependencies and conformance governance in view while limiting work-item details,
 direct obligations, mapping gaps, and source documents to the selected slice. Other targets
-remain rejected so graph expansion is explicit and reviewable.
+remain rejected until their implementation slice starts, so graph expansion is explicit and
+reviewable.
 
 ## Graph contract
 
