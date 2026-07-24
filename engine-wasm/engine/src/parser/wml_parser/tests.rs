@@ -705,14 +705,14 @@ fn xml_tree_build_allows_depth_at_the_budget_and_rejects_one_level_more() {
 
     let mut ok_xml = String::from("<wml>");
     ok_xml.push_str(&"<a>".repeat(at_limit));
-    ok_xml.push_str("x");
+    ok_xml.push('x');
     ok_xml.push_str(&"</a>".repeat(at_limit));
     ok_xml.push_str("</wml>");
     parse_xml_root(&ok_xml).expect("nesting exactly at the depth budget must still be accepted");
 
     let mut over_xml = String::from("<wml>");
     over_xml.push_str(&"<a>".repeat(at_limit + 1));
-    over_xml.push_str("x");
+    over_xml.push('x');
     over_xml.push_str(&"</a>".repeat(at_limit + 1));
     over_xml.push_str("</wml>");
     let err = parse_xml_root(&over_xml)
