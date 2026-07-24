@@ -5,6 +5,7 @@ import { BrowserController } from './browser-controller';
 import { BrowserPresenter } from './browser-presenter';
 import { defaultLocalDeckExample } from './local-examples';
 import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
+import { WAVES_COPY } from './waves-copy';
 
 const flushAsyncWork = async (): Promise<void> => {
   await Promise.resolve();
@@ -273,6 +274,26 @@ describe('BrowserController behavior coverage', () => {
     );
   });
 
+  it('renders directly from the local engine-key frame without a fallback render call', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineHandleKeyFrame).mockClear();
+    vi.mocked(hostClient.engineRenderFrame).mockClear();
+
+    document.querySelector<HTMLButtonElement>('#btn-up')?.click();
+    await flushAsyncWork();
+
+    expect(hostClient.engineHandleKeyFrame).toHaveBeenCalledTimes(1);
+    // applyEngineKey renders using the frame the key handler already
+    // returned; it must not fall back to a redundant engineRenderFrame call.
+    expect(hostClient.engineRenderFrame).not.toHaveBeenCalled();
+    expect(presenter.getSessionState()).toMatchObject({ activeCardId: 'key-home' });
+  });
+
   it('uses the local back flow when back is triggered in local mode', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
@@ -300,5 +321,69 @@ describe('BrowserController behavior coverage', () => {
       activeCardId: 'previous-card',
       finalUrl: 'http://local.test/previous.wml'
     });
+  });
+
+  it('does not re-render when a local-mode back press is a no-op for the engine', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    // The engine reports the exact same card/focus back -- it did not
+    // actually navigate anywhere.
+    vi.mocked(hostClient.engineNavigateBackFrame).mockResolvedValue(
+      frame({
+        activeCardId: 'current-card',
+        focusedLinkIndex: 1,
+        baseUrl: 'http://local.test/current.wml'
+      })
+    );
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    presenter.setSessionState({
+      ...presenter.getSessionState(),
+      activeCardId: 'current-card',
+      focusedLinkIndex: 1
+    });
+    const drawRenderListSpy = vi.spyOn(presenter, 'drawRenderList');
+    const setSnapshotSpy = vi.spyOn(presenter, 'setSnapshot');
+
+    document.querySelector<HTMLButtonElement>('#btn-back')?.click();
+    await flushAsyncWork();
+
+    expect(hostClient.engineNavigateBackFrame).toHaveBeenCalledTimes(1);
+    // The engine call itself is unavoidable (it's how we detect the no-op),
+    // but nothing should be rendered since the engine didn't move anywhere.
+    expect(drawRenderListSpy).not.toHaveBeenCalled();
+    expect(setSnapshotSpy).not.toHaveBeenCalled();
+    expect(refs.statusMessages.at(-1)).toBe(WAVES_COPY.status.navigateBackNone);
+  });
+
+  it('marks a keyboard action in-flight synchronously so a concurrent timer tick cannot interleave', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineAdvanceTimeMs).mockClear();
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+
+    // The keydown handler enqueues the action synchronously; the in-flight
+    // flag must already be set here -- before the queued action has even
+    // had a chance to run its own engine IPC call -- so a timer tick
+    // landing in this window cannot interleave with it.
+    await (
+      controller as unknown as { tickEngineTimerRuntime(): Promise<void> }
+    ).tickEngineTimerRuntime();
+    expect(hostClient.engineAdvanceTimeMs).not.toHaveBeenCalled();
+
+    await flushAsyncWork();
+
+    // Once the queued action has fully completed, ticks are allowed again.
+    await (
+      controller as unknown as { tickEngineTimerRuntime(): Promise<void> }
+    ).tickEngineTimerRuntime();
+    expect(hostClient.engineAdvanceTimeMs).toHaveBeenCalledTimes(1);
   });
 });

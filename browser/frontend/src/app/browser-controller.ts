@@ -42,6 +42,7 @@ export class BrowserController {
 
   private listenersBound = false;
   private keyboardActionInFlight = false;
+  private keyboardActionsPending = 0;
   private keyboardActionQueue: Promise<void> = Promise.resolve();
   private bootDeckReadyEmitted = false;
   private runMode: RunMode = 'local';
@@ -692,17 +693,27 @@ export class BrowserController {
   };
 
   private enqueueKeyboardAction(action: () => Promise<void>): void {
+    // Flip the in-flight flag synchronously, before any await, so the timer
+    // runtime's canTick() check (which polls this flag) can never observe a
+    // false "not busy" reading between this keydown and the queued action
+    // actually starting. A pending counter (rather than a plain boolean) is
+    // used so overlapping queued actions don't clear the flag early while a
+    // later action is still waiting its turn.
+    this.keyboardActionsPending += 1;
+    this.keyboardActionInFlight = true;
     this.keyboardActionQueue = this.keyboardActionQueue
       .then(async () => {
-        this.keyboardActionInFlight = true;
         try {
           await action();
         } finally {
-          this.keyboardActionInFlight = false;
+          this.keyboardActionsPending = Math.max(0, this.keyboardActionsPending - 1);
+          this.keyboardActionInFlight = this.keyboardActionsPending > 0;
         }
       })
       .catch(() => {
-        this.keyboardActionInFlight = false;
+        // The action's own finally above already accounted for the pending
+        // count; this catch exists only to keep the queue promise resolved
+        // so subsequent actions can still run after a rejection.
       });
   }
 
@@ -756,8 +767,8 @@ export class BrowserController {
     const localFrame =
       this.runMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
     const snapshot = localFrame ? localFrame.snapshot : await this.navigation.applyEngineKey(key);
-    if (this.runMode === 'local') {
-      this.applyFrame(localFrame ?? (await this.hostClient.engineRenderFrame()), snapshot);
+    if (this.runMode === 'local' && localFrame) {
+      this.applyFrame(localFrame, snapshot);
       this.syncLocalSessionFromSnapshot(snapshot);
     }
     this.timerRuntime.applySnapshot(snapshot);
@@ -809,12 +820,15 @@ export class BrowserController {
       };
       const frame = await this.hostClient.engineNavigateBackFrame();
       const after = frame.snapshot;
-      this.applyFrame(frame);
-      this.syncLocalSessionFromSnapshot(after);
       const engineHandled =
         before.activeCardId !== after.activeCardId ||
         before.focusedLinkIndex !== after.focusedLinkIndex;
-      return engineHandled ? 'engine' : 'none';
+      if (!engineHandled) {
+        return 'none';
+      }
+      this.applyFrame(frame);
+      this.syncLocalSessionFromSnapshot(after);
+      return 'engine';
     }
 
     const mode = await this.navigation.navigateBackWithFallback();
