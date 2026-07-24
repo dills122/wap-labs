@@ -318,12 +318,20 @@ describe('BrowserController behavior coverage', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
+    const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
+    // Fresh boot: no forward navigation has happened yet, so back starts
+    // disabled (see U3) -- a plain forward key press establishes history.
+    expect(backBtn?.disabled).toBe(true);
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    await flushAsyncWork();
+    expect(backBtn?.disabled).toBe(false);
+
     presenter.setSessionState({
       ...presenter.getSessionState(),
       activeCardId: 'current-card',
       focusedLinkIndex: 1
     });
-    document.querySelector<HTMLButtonElement>('#btn-back')?.click();
+    backBtn?.click();
     await flushAsyncWork();
 
     expect(hostClient.engineNavigateBackFrame).toHaveBeenCalledTimes(1);
@@ -349,6 +357,10 @@ describe('BrowserController behavior coverage', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
+    // Establish forward history first so the back button isn't disabled
+    // (see U3) and the click below actually reaches the handler.
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    await flushAsyncWork();
     presenter.setSessionState({
       ...presenter.getSessionState(),
       activeCardId: 'current-card',
@@ -366,6 +378,9 @@ describe('BrowserController behavior coverage', () => {
     expect(drawRenderListSpy).not.toHaveBeenCalled();
     expect(setSnapshotSpy).not.toHaveBeenCalled();
     expect(refs.statusMessages.at(-1)).toBe(WAVES_COPY.status.navigateBackNone);
+    // The engine just proved there is no history; the button should reflect
+    // that definitively rather than staying enabled (see U3).
+    expect(document.querySelector<HTMLButtonElement>('#btn-back')?.disabled).toBe(true);
   });
 
   it('marks a keyboard action in-flight synchronously so a concurrent timer tick cannot interleave', async () => {
@@ -438,5 +453,132 @@ describe('BrowserController behavior coverage', () => {
     expect(refs.toastEl.className).toBe('toast toast-error');
     // Status panel behavior is preserved, not replaced.
     expect(presenter.getSessionState().lastError).toBe('gateway timed out');
+  });
+
+  it('words a malformed-deck-payload failure distinctly from a network failure', async () => {
+    // U2: a fetch that succeeded but returned no usable WML must not read
+    // like a network-layer "fetch failed" -- both toast and status text
+    // should say "Deck parse failed" instead.
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    vi.mocked(hostClient.fetchDeck).mockResolvedValue({
+      ok: true,
+      status: 200,
+      finalUrl: 'http://example.test/network.wml',
+      contentType: 'text/vnd.wap.wml',
+      wml: undefined,
+      timingMs: { encode: 0, udpRtt: 0, decode: 0 },
+      engineDeckInput: undefined
+    } as never);
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+
+    refs.fetchUrlInput.value = 'http://example.test/network.wml';
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+
+    const expectedMessage = WAVES_COPY.status.deckParseFailed(
+      'Fetch succeeded but returned no WML payload.'
+    );
+    expect(refs.toastEl.textContent).toBe(expectedMessage);
+    expect(refs.statusMessages.at(-1)).toBe(expectedMessage);
+  });
+
+  it('shows a delayed in-progress hint for a slow network navigation but not for the enabling mode-switch load', async () => {
+    // U1: repeat navigations (not just the very first render) get an
+    // in-progress indicator once they run past the short delay threshold.
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      const hostClient = createHostClient();
+      const controller = new BrowserController(hostClient as never, presenter, refs);
+
+      await controller.init('<wml><card id="seed"/></wml>');
+      // The periodic engine timer tick is irrelevant to this test and its
+      // mocked engineAdvanceTimeMs response would otherwise trigger an
+      // unrelated re-render mid-delay, incidentally canceling the pending
+      // indicator this test is trying to observe.
+      (controller as any).timerRuntime.stop();
+      await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+      // setRunMode kicks off the startup network probe, which also calls
+      // hostClient.fetchDeck -- let that settle against the default (fast,
+      // successful) mock before installing the pending mock below, so it
+      // doesn't steal the mockImplementationOnce meant for the button click.
+      await vi.advanceTimersByTimeAsync(0);
+
+      let resolveFetch: (() => void) | undefined;
+      vi.mocked(hostClient.fetchDeck).mockImplementationOnce(
+        (request: { url: string }) =>
+          new Promise((resolve) => {
+            resolveFetch = () =>
+              resolve({
+                ok: true,
+                status: 200,
+                finalUrl: request.url,
+                contentType: 'text/vnd.wap.wml',
+                wml: '<wml><card id="home"><p>ok</p></card></wml>',
+                timingMs: { encode: 0, udpRtt: 0, decode: 0 },
+                engineDeckInput: {
+                  wmlXml: '<wml><card id="home"><p>ok</p></card></wml>',
+                  baseUrl: request.url,
+                  contentType: 'text/vnd.wap.wml'
+                }
+              });
+          })
+      );
+
+      refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+      document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+      // Flush the microtask/zero-delay-timer chain up to (but not through)
+      // the still-pending fetchDeck call, so beginNavigationProgress() has
+      // already been invoked and its delay timer scheduled.
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Still well under the delay threshold: no indicator yet.
+      await vi.advanceTimersByTimeAsync(50);
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+
+      // Past the delay threshold and the fetch still hasn't resolved.
+      await vi.advanceTimersByTimeAsync(200);
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(true);
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).not.toBeNull();
+
+      resolveFetch?.();
+      // Still under fake timers here -- flushAsyncWork's real setTimeout(0)
+      // would never fire, so drain via the fake-timer equivalent instead.
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('tracks back-button availability from host history in network mode', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+    const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
+    // No page has been fetched yet in this mode -- nothing to go back to.
+    expect(backBtn?.disabled).toBe(true);
+
+    refs.fetchUrlInput.value = 'http://example.test/page-one.wml';
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+    // Still the first page fetched in this mode -- nothing before it yet.
+    expect(backBtn?.disabled).toBe(true);
+
+    refs.fetchUrlInput.value = 'http://example.test/page-two.wml';
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+    expect(backBtn?.disabled).toBe(false);
   });
 });

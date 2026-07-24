@@ -32,6 +32,7 @@ const locale = {
     runtimeSnapshot: 'Runtime Snapshot',
     eventTimeline: 'Event Timeline',
     firstRenderPending: 'Waiting for first deck render...',
+    navigationPending: 'Loading next page...',
     mode: 'Mode',
     localMode: 'Local',
     networkMode: 'Network',
@@ -100,6 +101,16 @@ const locale = {
     followingExternalIntent: (url: string) => `Following external intent: ${url}`,
     loadingPreviousPage: (url: string) => `Loading previous page: ${url}`,
     fetchFailed: (message: string) => `Fetch failed: ${message}`,
+    // Distinct from fetchFailed: the transport request itself succeeded, but the
+    // payload it returned could not be parsed/used as a WML deck. Kept as
+    // separate wording so users (and anyone debugging a deck) don't confuse a
+    // malformed-content failure with a network-layer one (see U2).
+    deckParseFailed: (message: string) => `Deck parse failed: ${message}`,
+    // Distinct wording for a WMLScript fatal trap, using the engine's own
+    // error-category taxonomy so it reads differently from both a network
+    // failure and a deck-parse failure (see U2).
+    scriptExecutionFailed: (categoryLabel: string, message: string) =>
+      `Script error (${categoryLabel}): ${message}`,
     fetchedAndLoadedDeck: (url: string) => `Fetched and loaded deck from ${url}`,
     networkUnavailableToast: 'No network available currently. WAP server/gateway is unreachable.',
     networkUnavailable: 'No network available currently. Could not reach WAP server/gateway.',

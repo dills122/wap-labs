@@ -21,6 +21,8 @@ import { renderWmlViewportHtml } from '../components/primitives/wml-render-primi
 
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
+const REPEAT_NAV_HINT_CLASS = 'viewport-navigation-hint';
+
 export class BrowserPresenter {
   private readonly refs: BrowserShellRefs;
 
@@ -35,6 +37,11 @@ export class BrowserPresenter {
   private toastQueue: Array<{ message: string; tone: 'error' | 'ok'; ttlMs: number }> = [];
   private hasRenderedContent = false;
   private announcedDialogRequests: readonly ScriptDialogRequestSnapshot[] = [];
+  private announcedScriptFailure: {
+    trap: string | undefined;
+    errorClass: string | undefined;
+    errorCategory: string | undefined;
+  } | null = null;
   private latestSnapshot: EngineRuntimeSnapshot | null = null;
   private latestTransportResponse: FetchResponse | null = null;
   private sessionStateText = '';
@@ -45,14 +52,33 @@ export class BrowserPresenter {
   private timelineDirty = true;
   private snapshotDirty = true;
   private transportResponseDirty = true;
+  private navigationProgressTimer: ReturnType<typeof setTimeout> | undefined;
+  private readonly handleDevDrawerToggle = (): void => {
+    this.flushDeveloperPanels();
+  };
 
   constructor(refs: BrowserShellRefs, initialSession: HostSessionState, maxTimelineEvents: number) {
     this.refs = refs;
     this.maxTimelineEvents = maxTimelineEvents;
     this.hostSessionState = initialSession;
-    this.refs.devDrawerEl.addEventListener('toggle', () => {
-      this.flushDeveloperPanels();
-    });
+    this.refs.devDrawerEl.addEventListener('toggle', this.handleDevDrawerToggle);
+  }
+
+  // U6: mirrors the listener registered in the constructor so BrowserController
+  // (which owns this presenter) has a symmetric teardown to call from its own
+  // dispose(). Currently harmless because mountBrowserShell replaces #app's
+  // innerHTML wholesale on every bootstrap/HMR cycle (dropping the old
+  // listener with the old DOM), but the class should not rely on that.
+  dispose(): void {
+    this.refs.devDrawerEl.removeEventListener('toggle', this.handleDevDrawerToggle);
+    if (this.navigationProgressTimer) {
+      clearTimeout(this.navigationProgressTimer);
+      this.navigationProgressTimer = undefined;
+    }
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+      this.toastTimer = undefined;
+    }
   }
 
   getSessionState(): HostSessionState {
@@ -130,6 +156,12 @@ export class BrowserPresenter {
           <div class="skeleton-line"></div>
           <div class="skeleton-hint">${escapeHtml(WAVES_COPY.shell.firstRenderPending)}</div>
         `;
+      } else {
+        // A repeat navigation (link click, reload, back/forward, external
+        // intent) -- content is already on screen, so don't wipe it. Append a
+        // small non-destructive hint reusing the existing skeleton-hint style
+        // instead of building a separate progress affordance (see U1).
+        this.showRepeatNavigationHint();
       }
       return;
     }
@@ -145,7 +177,62 @@ export class BrowserPresenter {
       // failed first load doesn't leave a frozen "still loading" viewport
       // behind the real error, which is surfaced via status/toast instead.
       this.refs.viewportEl.innerHTML = '';
+    } else {
+      this.hideRepeatNavigationHint();
     }
+  }
+
+  // U1: shows a lightweight in-progress indicator for any navigation beyond
+  // the very first deck render, gated behind a short delay so instant
+  // local-mode loads never flash it. The very first render keeps its
+  // existing immediate, full-skeleton behavior. Returns a callback the
+  // caller must invoke (typically from a `finally`) once the navigation
+  // settles, which cancels the pending delay or clears the indicator if it
+  // already appeared. Callers are expected to run one navigation at a time
+  // (already true for every current call site), so this does not attempt to
+  // coordinate overlapping in-flight calls.
+  beginNavigationProgress(delayMs: number = WAVES_CONFIG.navigationProgressDelayMs): () => void {
+    if (!this.hasRenderedContent) {
+      this.setViewportSkeleton(true);
+      return () => {
+        this.setViewportSkeleton(false);
+      };
+    }
+
+    if (this.navigationProgressTimer) {
+      clearTimeout(this.navigationProgressTimer);
+      this.navigationProgressTimer = undefined;
+    }
+    let fired = false;
+    this.navigationProgressTimer = setTimeout(() => {
+      this.navigationProgressTimer = undefined;
+      fired = true;
+      this.setViewportSkeleton(true);
+    }, delayMs);
+
+    return () => {
+      if (this.navigationProgressTimer) {
+        clearTimeout(this.navigationProgressTimer);
+        this.navigationProgressTimer = undefined;
+      }
+      if (fired) {
+        this.setViewportSkeleton(false);
+      }
+    };
+  }
+
+  private showRepeatNavigationHint(): void {
+    if (this.refs.viewportEl.querySelector(`.${REPEAT_NAV_HINT_CLASS}`)) {
+      return;
+    }
+    const hint = document.createElement('div');
+    hint.className = `skeleton-hint ${REPEAT_NAV_HINT_CLASS}`;
+    hint.textContent = WAVES_COPY.shell.navigationPending;
+    this.refs.viewportEl.append(hint);
+  }
+
+  private hideRepeatNavigationHint(): void {
+    this.refs.viewportEl.querySelector(`.${REPEAT_NAV_HINT_CLASS}`)?.remove();
   }
 
   showToast(
@@ -187,6 +274,7 @@ export class BrowserPresenter {
     this.snapshotDirty = true;
     this.flushDeveloperPanels();
     this.announceScriptDialogRequests(snapshot.lastScriptDialogRequests);
+    this.announceScriptExecutionFailure(snapshot);
   }
 
   getSnapshot(): EngineRuntimeSnapshot | null {
@@ -201,6 +289,12 @@ export class BrowserPresenter {
 
   drawRenderList(renderList: RenderList): void {
     this.hasRenderedContent = true;
+    // Real content just landed -- cancel any pending delayed in-progress
+    // indicator so it can't appear after the fact (see beginNavigationProgress).
+    if (this.navigationProgressTimer) {
+      clearTimeout(this.navigationProgressTimer);
+      this.navigationProgressTimer = undefined;
+    }
     this.setViewportSkeleton(false);
     this.refs.viewportEl.innerHTML = renderWmlViewportHtml(renderList);
   }
@@ -287,6 +381,39 @@ export class BrowserPresenter {
     }
   }
 
+  // U2: the engine already classifies script failures via lastScriptExecutionOk
+  // / lastScriptExecutionTrap / lastScriptExecutionErrorClass /
+  // lastScriptExecutionErrorCategory (see EngineRuntimeSnapshot in
+  // navigation-state.ts), but until now the frontend only read those fields
+  // for render change-detection and never surfaced them -- so a WMLScript
+  // fatal trap produced no visible message distinct from a normal action.
+  // `lastScriptExecutionOk` is sticky on the engine side (it reflects the
+  // *last* script that ran, not "this render"), so track what was already
+  // announced and only toast again when the trap actually changes -- the same
+  // dedup shape as announceScriptDialogRequests above.
+  private announceScriptExecutionFailure(snapshot: EngineRuntimeSnapshot): void {
+    if (snapshot.lastScriptExecutionOk !== false) {
+      return;
+    }
+    const current = {
+      trap: snapshot.lastScriptExecutionTrap,
+      errorClass: snapshot.lastScriptExecutionErrorClass,
+      errorCategory: snapshot.lastScriptExecutionErrorCategory
+    };
+    if (
+      this.announcedScriptFailure &&
+      this.announcedScriptFailure.trap === current.trap &&
+      this.announcedScriptFailure.errorClass === current.errorClass &&
+      this.announcedScriptFailure.errorCategory === current.errorCategory
+    ) {
+      return;
+    }
+    this.announcedScriptFailure = current;
+    const categoryLabel = describeScriptErrorCategory(current.errorCategory);
+    const message = current.trap ?? WAVES_COPY.errors.unknownTransportFailure;
+    this.showToast(WAVES_COPY.status.scriptExecutionFailed(categoryLabel, message), 'error');
+  }
+
   private writeTextIfChanged<T extends HTMLElement>(
     element: T,
     currentText: string,
@@ -329,6 +456,18 @@ const dialogRequestListsEqual = (
     );
   });
 };
+
+// Mirrors the engine's ScriptErrorCategoryLiteral taxonomy
+// (engine-wasm/engine/src/engine_script_types.rs) into user-facing wording.
+const SCRIPT_ERROR_CATEGORY_LABELS: Record<string, string> = {
+  computational: 'computation error',
+  integrity: 'data integrity error',
+  resource: 'resource limit error',
+  'host-binding': 'host binding error'
+};
+
+const describeScriptErrorCategory = (category: string | undefined): string =>
+  (category && SCRIPT_ERROR_CATEGORY_LABELS[category]) || 'script error';
 
 // Mirrors the engine's deterministic dialog resolution
 // (engine-wasm/engine/src/wavescript/stdlib/dialogs.rs): confirm() always

@@ -26,7 +26,7 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U1 No progress indication on repeat navigations
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P2`
 3. `Files`:
 - `browser/frontend/src/app/browser-controller.ts` (navigation trigger sites)
@@ -42,7 +42,7 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U2 Deck-parse and script-trap errors are indistinguishable from network errors
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P2`
 3. `Files`:
 - `browser/frontend/src/app/navigation-state.ts` (`EngineRuntimeSnapshot` fields: `lastScriptExecutionOk`, `lastScriptExecutionTrap`, `lastScriptExecutionErrorClass`, `lastScriptExecutionErrorCategory`)
@@ -57,7 +57,7 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U3 Back button never reflects "no history" state
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `browser/frontend/src/app/browser-controller.ts`
@@ -71,7 +71,7 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U4 Color palette hardcoded and duplicated, no shared design tokens
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `browser/frontend/src/styles.css`
@@ -100,7 +100,7 @@ acceptance. Pull one into a branch when picked up; update status in place.
 
 ### U6 `BrowserPresenter` has no `dispose()` lifecycle symmetry
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `browser/frontend/src/app/browser-presenter.ts`

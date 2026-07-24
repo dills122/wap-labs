@@ -28,6 +28,14 @@ import { WAVES_COPY } from './waves-copy';
 
 export type BackNavigationMode = 'engine' | 'host' | 'none';
 
+// Distinguishes *why* loadTransportUrl failed so callers can word the
+// status/toast message differently instead of a single generic "fetch
+// failed" for every case (see U2 in USABILITY_RESILIENCE_BACKLOG.md):
+// 'network' covers transport-layer failures (timeout, non-200, protocol
+// error, TRANSPORT_UNAVAILABLE, external-intent hop limit); 'parse' covers a
+// transport response that succeeded but carried no usable WML payload.
+export type NavigationErrorKind = 'network' | 'parse';
+
 export interface NavigationHostClient {
   fetchDeck(request: FetchRequest): Promise<FetchResponse>;
   engineLoadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;
@@ -61,7 +69,7 @@ export interface NavigationHooks {
    * consistent, visible failure indicator (e.g. a toast) regardless of which
    * failure kind occurred, instead of only the quieter status-panel text.
    */
-  onNavigationError?(message: string): void;
+  onNavigationError?(message: string, kind: NavigationErrorKind): void;
   onStateEvent?(action: string, details?: Record<string, unknown>): void;
 }
 
@@ -222,7 +230,7 @@ export const createNavigationStateMachine = (
       if (transport.error?.code === 'TRANSPORT_UNAVAILABLE') {
         hooks.onNetworkUnavailable?.();
       }
-      hooks.onNavigationError?.(errorMessage);
+      hooks.onNavigationError?.(errorMessage, 'network');
       return null;
     }
 
@@ -240,7 +248,7 @@ export const createNavigationStateMachine = (
         contentType: transport.contentType,
         lastError: WAVES_COPY.errors.missingWmlPayload
       });
-      hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload);
+      hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload, 'parse');
       return null;
     }
 
@@ -314,7 +322,7 @@ export const createNavigationStateMachine = (
         if (hop === maxExternalIntentHops) {
           const message = `External intent hop limit reached (${maxExternalIntentHops}).`;
           mergeSessionState({ navigationStatus: 'error', lastError: message });
-          hooks.onNavigationError?.(message);
+          hooks.onNavigationError?.(message, 'network');
         }
       }
     }

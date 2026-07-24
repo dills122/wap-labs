@@ -181,7 +181,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-19 `fetch_policy.rs` pre-flight destination check is shallow relative to the enforced check (2026-07-24)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `transport-rust/src/fetch_policy.rs` (`classify_destination_host`, `validate_fetch_destination`)
@@ -193,10 +193,12 @@ Completed maintenance tickets are archived in:
 - Add a regression test (or an inline invariant comment referencing the resolution-time check) that fails loudly if `validate_fetch_destination` is ever called as the sole gate without the resolver-level check also running.
 6. `Accept`:
 - A future refactor that removes the resolution-time check without also updating the pre-flight check fails a test, rather than silently reopening the class of bug.
+7. `Resolution`:
+- Added `transport_resolution_time_check_blocks_private_answer_that_shallow_preflight_alone_would_allow` in `transport-rust/src/tests/fetch_mapping.rs`, which asserts the shallow pre-flight (`classify_destination_host`/`validate_fetch_destination`) passes a non-localhost domain, then asserts `validate_resolved_destination_addresses` (the shared function backing both `PolicyDnsResolver` and the native path) independently rejects a simulated private DNS answer for that same host. Combined with the pre-existing `http_client_rejects_private_dns_answer` (execution.rs) and `resolve_destination_socket_addr_rejects_private_peer_under_public_only` (native_fetch.rs) wiring tests, a removal of either resolution-time call site now fails a test. No enforcement logic changed.
 
 ### M1-20 Gateway-bridged fetch profile force-sets `AllowPrivate` with no invariant test
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `transport-rust/src/fetch_runtime/execution.rs` (`destination_policy` override for `wap://`/`waps://` traffic)
@@ -207,10 +209,12 @@ Completed maintenance tickets are archived in:
 - Add a test asserting `GATEWAY_HTTP_BASE` is read only from process environment/config, never from request-supplied data, so a future change can't silently make it attacker-influenced without breaking a test.
 6. `Accept`:
 - A regression test exists that would fail if `GATEWAY_HTTP_BASE` (or its equivalent) became derivable from untrusted input.
+7. `Resolution`:
+- Added `transport_build_gateway_request_ignores_request_supplied_gateway_base_overrides` in `transport-rust/src/tests/request_gateway_policy.rs`. It calls `build_gateway_request` with headers and URL path/query attempting to smuggle an alternate base (`GATEWAY_HTTP_BASE`/`X-Gateway-Http-Base`/`X-Forwarded-Host`/`Host` headers, matching query key) and asserts the resolved gateway URL is unaffected — first against the default base, then against an operator-configured `GATEWAY_HTTP_BASE` env value, confirming the env value always wins over any request-supplied data. No enforcement logic changed.
 
 ### M1-21 `fetch_host.rs` gateway-transport-fallback host scope unconfirmed
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `browser/src-tauri/src/fetch_host.rs` (`default_fetch_transport_fallback`)
@@ -221,6 +225,8 @@ Completed maintenance tickets are archived in:
 - Confirm (with a test, not just a read-through) that the gateway transport path is constrained the same way `native_fetch` is — i.e. it can't be pointed at an arbitrary host via this fallback env var.
 6. `Accept`:
 - A test demonstrates the gateway-fallback path cannot be redirected to an arbitrary non-configured host.
+7. `Resolution`: **Invariant confirmed to hold — no gap found.**
+- `WAVES_FETCH_TRANSPORT_FALLBACK` is a strict two-value enum switch (`disabled` | `gateway-bridged`) parsed in `default_fetch_transport_fallback()`; it carries no host/URL value itself and cannot smuggle one. When it selects the fallback, `fetch_deck_with_transport_executor` always retries with the hardcoded `FetchTransportProfile::GatewayBridged`, which routes through the same `build_gateway_request`/`GATEWAY_HTTP_BASE` machinery pinned by the M1-20 test — never a value derived from the fallback env var, request headers, or the original `wap://` URL's own host/port. Added `fetch_deck_command_gateway_fallback_cannot_be_redirected_by_fallback_env_value` in `browser/src-tauri/src/tests/fetch_commands.rs`, an end-to-end test using the real (unmocked) transport: a native attempt to an unreachable loopback port triggers the fallback, and the fallback is proven to land only on a local TCP listener bound to the test's `GATEWAY_HTTP_BASE`, receiving the original wap path unchanged. No enforcement logic changed.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 

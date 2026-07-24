@@ -349,6 +349,129 @@ fn fetch_deck_command_retries_native_wap_request_with_gateway_fallback_when_conf
 }
 
 #[test]
+fn fetch_deck_command_gateway_fallback_cannot_be_redirected_by_fallback_env_value() {
+    // M1-21 regression: `WAVES_FETCH_TRANSPORT_FALLBACK` (default_fetch_transport_fallback in
+    // fetch_host.rs) only selects *whether* the gateway-bridged fallback runs -- it is a strict
+    // enum toggle ("disabled" | "gateway-bridged") and carries no host/URL value of its own.
+    // The actual destination for the fallback leg is enforced entirely inside
+    // transport-rust (gateway::gateway_http_base / build_gateway_request, pinned by the
+    // transport-rust M1-20 regression test). This test exercises the REAL transport end to
+    // end (no mocked fetch_impl) to confirm the fallback path can only ever land on the
+    // operator-configured `GATEWAY_HTTP_BASE` -- never on a host derived from the fallback
+    // env var, from request headers, or from the original wap:// URL's own host/port.
+    let _guard = env_lock().lock().expect("env lock should succeed");
+    let previous_profile = std::env::var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV).ok();
+    let previous_fallback = std::env::var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV).ok();
+    let previous_destination =
+        std::env::var(super::waves_config::FETCH_DESTINATION_POLICY_ENV).ok();
+    let previous_gateway_base = std::env::var("GATEWAY_HTTP_BASE").ok();
+
+    let listener =
+        std::net::TcpListener::bind("127.0.0.1:0").expect("bind local gateway stand-in listener");
+    let listener_addr = listener.local_addr().expect("read listener address");
+
+    let captured_request_line = std::sync::Arc::new(std::sync::Mutex::new(None::<String>));
+    let captured_for_thread = std::sync::Arc::clone(&captured_request_line);
+    let server = std::thread::spawn(move || {
+        use std::io::{BufRead, BufReader, Write};
+        let (stream, _) = listener
+            .accept()
+            .expect("accept gateway stand-in connection");
+        let mut reader = BufReader::new(stream.try_clone().expect("clone stream for reading"));
+        let mut request_line = String::new();
+        reader
+            .read_line(&mut request_line)
+            .expect("read request line from gateway stand-in connection");
+        *captured_for_thread
+            .lock()
+            .expect("captured request line lock should succeed") = Some(request_line);
+        let mut writer = stream;
+        let body = BASIC_NAV_WML;
+        let response = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: text/vnd.wap.wml\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        writer
+            .write_all(response.as_bytes())
+            .expect("write gateway stand-in response");
+    });
+
+    std::env::set_var(
+        super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
+        super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE,
+    );
+    std::env::set_var(
+        super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV,
+        super::waves_config::FETCH_TRANSPORT_FALLBACK_GATEWAY_BRIDGED,
+    );
+    std::env::set_var(
+        super::waves_config::FETCH_DESTINATION_POLICY_ENV,
+        super::waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+    );
+    std::env::set_var("GATEWAY_HTTP_BASE", format!("http://{listener_addr}"));
+
+    // The native leg deliberately targets a port nothing listens on (matches the
+    // "127.0.0.1:9" convention used elsewhere in this suite) so it fails fast with
+    // TRANSPORT_UNAVAILABLE and triggers the gateway-bridged fallback.
+    let response = fetch_deck(FetchDeckRequest {
+        url: "wap://127.0.0.1:9/private-marker.wml".to_string(),
+        method: Some("GET".to_string()),
+        headers: None,
+        timeout_ms: Some(500),
+        retries: Some(0),
+        request_id: Some("req-fallback-host-scope".to_string()),
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: None,
+        }),
+    });
+
+    server
+        .join()
+        .expect("gateway stand-in server thread should exit");
+
+    if let Some(old) = previous_profile {
+        std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV);
+    }
+    if let Some(old) = previous_fallback {
+        std::env::set_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV);
+    }
+    if let Some(old) = previous_destination {
+        std::env::set_var(super::waves_config::FETCH_DESTINATION_POLICY_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_DESTINATION_POLICY_ENV);
+    }
+    if let Some(old) = previous_gateway_base {
+        std::env::set_var("GATEWAY_HTTP_BASE", old);
+    } else {
+        std::env::remove_var("GATEWAY_HTTP_BASE");
+    }
+
+    assert!(
+        response.ok,
+        "expected gateway-bridged fallback to succeed against the configured gateway base: {:?}",
+        response.error
+    );
+    let request_line = captured_request_line
+        .lock()
+        .expect("captured request line lock should succeed")
+        .clone()
+        .expect("gateway stand-in listener should have received a request");
+    assert!(
+        request_line.starts_with("GET /private-marker.wml"),
+        "gateway fallback should target GATEWAY_HTTP_BASE with the original wap path, got: {request_line}"
+    );
+}
+
+#[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
 fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
     let _guard = env_lock().lock().expect("env lock should succeed");

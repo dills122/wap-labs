@@ -6,6 +6,29 @@
   --motion-base: 180ms;
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --waves-teal: #008080;
+
+  /* Shared win95-style chrome tones (panel borders/background/heading) used
+     by wv-status-panel and wv-surface-panel. */
+  --panel-border-mid: #808080;
+  --panel-border-dark: #000000;
+  --panel-bg: #c0c0c0;
+  --panel-heading-text: #ffffff;
+  --panel-heading-gradient-start: #000080;
+  --panel-heading-gradient-end: #1084d0;
+
+  /* Status-panel semantic tones */
+  --status-idle-bg: #ffffff;
+  --status-idle-text: #222222;
+  --status-loading-bg: #ffffcc;
+  --status-loading-text: #222222;
+  --status-ok-bg: #ccffcc;
+  --status-ok-text: #222222;
+  --status-error-bg: #ffcccc;
+  --status-error-text: #222222;
+
+  /* Toast semantic tones */
+  --toast-ok-bg: #d8f8d8;
+  --toast-error-bg: #ffd6d6;
 }
 
 * {
@@ -188,11 +211,11 @@ textarea.form-95 {
 }
 
 .toast-error {
-  background: #ffd6d6;
+  background: var(--toast-error-bg);
 }
 
 .toast-ok {
-  background: #d8f8d8;
+  background: var(--toast-ok-bg);
 }
 
 .toast-hidden {

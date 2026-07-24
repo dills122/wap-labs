@@ -137,6 +137,62 @@ fn transport_build_gateway_request_keeps_existing_host_header() {
 }
 
 #[test]
+fn transport_build_gateway_request_ignores_request_supplied_gateway_base_overrides() {
+    // M1-20 regression: `GATEWAY_HTTP_BASE` (transport-rust/src/gateway.rs::gateway_http_base)
+    // must be sourced only from process environment/config, never from request-supplied data
+    // (URL path/query, headers). This is what makes force-setting `AllowPrivate` for the
+    // gateway-bridged upstream target safe -- the actual upstream host is never
+    // attacker-influenced. Try every request-supplied surface `build_gateway_request` sees
+    // to smuggle an alternate base and confirm none of it changes the resolved gateway host.
+    with_env_removed_locked("GATEWAY_HTTP_BASE", || {
+        let mut headers = HashMap::new();
+        headers.insert(
+            "GATEWAY_HTTP_BASE".to_string(),
+            "http://evil.test".to_string(),
+        );
+        headers.insert(
+            "X-Gateway-Http-Base".to_string(),
+            "http://evil.test".to_string(),
+        );
+        headers.insert("X-Forwarded-Host".to_string(), "evil.test".to_string());
+        headers.insert("Host".to_string(), "evil.test".to_string());
+
+        let (gateway_url, _) = build_gateway_request(
+            "wap://example.test/home.wml?GATEWAY_HTTP_BASE=http://evil.test&host=evil.test",
+            "GET",
+            &headers,
+        )
+        .expect("gateway mapping should succeed");
+
+        assert!(
+            gateway_url.starts_with("http://localhost:13002"),
+            "gateway URL must stay pinned to the default GATEWAY_HTTP_BASE regardless of \
+             request-supplied headers/query, got: {gateway_url}"
+        );
+    });
+
+    // Same smuggling attempt, but with an operator-configured base present: the env value
+    // must still win over anything in the request.
+    with_env_var_locked("GATEWAY_HTTP_BASE", "http://127.0.0.1:19202", || {
+        let mut headers = HashMap::new();
+        headers.insert(
+            "GATEWAY_HTTP_BASE".to_string(),
+            "http://evil.test".to_string(),
+        );
+
+        let (gateway_url, _) =
+            build_gateway_request("wap://example.test/home.wml", "GET", &headers)
+                .expect("gateway mapping should succeed");
+
+        assert!(
+            gateway_url.starts_with("http://127.0.0.1:19202"),
+            "gateway URL must follow the operator-configured GATEWAY_HTTP_BASE, not \
+             request-supplied data, got: {gateway_url}"
+        );
+    });
+}
+
+#[test]
 fn apply_request_policy_adds_no_cache_headers_and_referer() {
     let mut headers = HashMap::new();
     headers.insert("X-Test".to_string(), "yes".to_string());
