@@ -21,7 +21,12 @@
       "wtls"
     ],
     "rule": "Pin the historical version actually cited by the effective WAP 1.2.1 base/SIN chain. A current successor may be recorded as status context but cannot replace the cited version.",
-    "claim": "This is an authority lock in progress, not a complete external-dependency or implementation-conformance claim."
+    "claim": "Selected Class C dependency classification is complete. Historical and non-selected profile source acquisition remains in progress; neither state is an implementation-conformance claim.",
+    "selectedProfileClosure": {
+      "status": "complete",
+      "blockingOpenCitationLabels": 0,
+      "rule": "An unresolved citation label may remain only when its group is explicitly non-blocking for CCR-CLASSC-C-001, names its activation trigger, and retains an owning future work item."
+    }
   },
   "dependencies": [
     {
@@ -567,27 +572,57 @@
       ],
       "citationLabels": ["UNICODE"],
       "reviewState": "verified-primary-metadata"
+    },
+    {
+      "id": "ietf-draft-murata-xml-02",
+      "title": "XML Media Types",
+      "version": "Internet-Draft draft-murata-xml-02, December 1999",
+      "authority": "Internet Engineering Task Force",
+      "sourceUrl": "https://datatracker.ietf.org/doc/html/draft-murata-xml-02/",
+      "referenceDisposition": "informative-successor-context",
+      "applicability": "non-selected-successor-wsp-context",
+      "citedByFamilies": ["wsp"],
+      "citationLabels": ["MEDIATYPE"],
+      "reviewState": "verified-primary-artifact",
+      "scopeNote": "WAP-230 lists this archived draft as informative. WAP-230 is successor delta context for the strict WAP-203 target, so this source does not create a CCR-CLASSC-C-001 requirement. RFC 3023 is the later publication and must not replace draft revision 02 when historical WAP-230 behavior is examined."
+    },
+    {
+      "id": "w3c-note-ccpp-19990727",
+      "title": "Composite Capability/Preference Profiles (CC/PP): A user side framework for content negotiation",
+      "version": "W3C Note, 27 July 1999",
+      "authority": "World Wide Web Consortium",
+      "sourceUrl": "https://www.w3.org/TR/NOTE-CCPP/",
+      "referenceDisposition": "informative-successor-context",
+      "applicability": "non-selected-successor-wsp-context",
+      "citedByFamilies": ["wsp"],
+      "citationLabels": ["CCPPEx"],
+      "reviewState": "verified-primary-artifact",
+      "scopeNote": "WAP-230 labels this citation CCPPEx but identifies the dated CC/PP framework Note and places it in informative references. The label/usage ambiguity must be re-reviewed only if successor WSP or the optional UAProf profile is activated."
     }
   ],
   "openCitationGroups": [
     {
-      "id": "legacy-uri-and-http-context",
-      "reason": "Effective normative versus informative use still needs source-by-source/SIN review.",
-      "labels": ["MEDIATYPE"]
-    },
-    {
       "id": "legacy-content-and-language-context",
-      "reason": "WAE content-type support and informative language lineage need feature-level applicability review.",
+      "reason": "The vCard/vCalendar source payloads are optional content formats and the JavaScript book is language-lineage context; exact historical payload acquisition remains useful for future optional-profile work.",
+      "selectedProfileDisposition": "optional-or-informative-not-selected",
+      "selectedProfileBlocking": false,
+      "activationTrigger": "Activate when vCard/vCalendar exchange, successor WAE media capabilities, or non-ECMA JavaScript lineage is claimed.",
+      "ownerWorkItems": ["OPT-1106"],
+      "nextAction": "Recover or license the exact IMC payloads and retain the JavaScript citation as informative bibliography without substituting successor formats.",
       "labels": [
         "VCARD",
         "VCAL",
-        "CCPPEx",
         "JavaScript"
       ]
     },
     {
       "id": "bearer-and-radio-standards",
       "reason": "WDP/WTP/WCMP list many bearer-specific standards; exact mandatory status depends on the selected bearer and CCR/SCR dependency expressions.",
+      "selectedProfileDisposition": "bearer-conditional-not-selected",
+      "selectedProfileBlocking": false,
+      "activationTrigger": "Activate the relevant label when a bearer other than the selected CDPD/IPv4 path is claimed.",
+      "ownerWorkItems": ["TRN-701", "OPT-1106"],
+      "nextAction": "Resolve only the authority/version set for each newly declared bearer; do not import the full bearer catalog into the strict Class C floor.",
       "labels": [
         "ANSI136",
         "DECT",
@@ -639,6 +674,11 @@
     {
       "id": "wtls-cryptographic-standards",
       "reason": "WTLS is an optional first-release profile; base plus SIN changes must be reconciled before algorithm-level dependency claims.",
+      "selectedProfileDisposition": "profile-conditional-not-selected",
+      "selectedProfileBlocking": false,
+      "activationTrigger": "Activate all applicable labels when the optional WTLS profile is claimed.",
+      "ownerWorkItems": ["OPT-1101"],
+      "nextAction": "Reconcile WTLS base/SIN algorithm suites, acquire exact historical authorities, and keep modern secure mode distinct from the legacy interoperability profile.",
       "labels": [
         "3DES",
         "DES",
@@ -670,8 +710,9 @@
     }
   ],
   "summary": {
-    "authorityLockedDependencies": 41,
-    "openCitationGroups": 4,
-    "openCitationLabels": 62
+    "authorityLockedDependencies": 43,
+    "openCitationGroups": 3,
+    "openCitationLabels": 60,
+    "selectedProfileBlockingOpenCitationLabels": 0
   }
 }

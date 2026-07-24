@@ -26,10 +26,11 @@ strict browser profile. The recovered source remains metadata-only.
 private text extractions were hash/size inspected without recording local
 machine paths or promoting recovered artifacts into Git.
 
-`wap-1.2.1-external-dependencies.json` is the in-progress historical lock for
-normatively cited RFC, W3C, Ecma, IEEE, ISO, IANA, and Unicode material. Its
-open citation groups are intentional blockers against falsely declaring the
-external source set complete.
+`wap-1.2.1-external-dependencies.json` is the historical lock for cited RFC,
+W3C, Ecma, IEEE, ISO, IANA, Unicode, and selected TIA material. Selected
+Class C dependency classification is complete. Its residual citation groups
+are explicit activation gates against claiming optional WTLS, additional
+bearers, or optional media/history coverage before their sources are pinned.
 
 `wap-1.2.1-external-ingestion-status.json` records acquisition evidence for
 every authority-locked external dependency. It distinguishes complete primary

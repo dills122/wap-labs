@@ -103,6 +103,21 @@ for (const sprint of program.sprints ?? []) {
     continue;
   }
 
+  const workStatuses = sprint.workItems.map((item) => item.status);
+  const expectedSprintStatus = workStatuses.every((status) => status === 'done')
+    ? 'done'
+    : workStatuses.some((status) => status === 'in-progress')
+      ? 'in-progress'
+      : workStatuses.some((status) => status === 'blocked') &&
+          workStatuses.every((status) => ['done', 'blocked'].includes(status))
+        ? 'blocked'
+        : 'todo';
+  if (sprint.status !== expectedSprintStatus) {
+    failures.push(
+      `${sprint.id}: status=${sprint.status}; expected ${expectedSprintStatus} from work items`
+    );
+  }
+
   for (const item of sprint.workItems) {
     if (workItemIds.has(item.id)) {
       failures.push(`duplicate work item ID: ${item.id}`);

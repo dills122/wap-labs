@@ -1,6 +1,6 @@
 # WAP 1.2.1 Source Recovery and Permission Runbook
 
-Version: v0.3
+Version: v0.4
 Status: active; WAP-215 and private research ingestion complete, public
 promotion pending
 
@@ -25,8 +25,8 @@ certification claim.
 | Associated release DTDs | 6/6 | 6/6 hash-verified | Metadata-only |
 | General conformance sources | WAP-215, WAP-221, and WAP-273 | 3/3 hash-verified | Metadata-only |
 | WAP-215 class requirements | Official live WAP Forum object | 47,936-byte approved PDF and text extraction verified | Exact six-profile ledger recorded; source/derivative held |
-| Locked external dependencies | 41/41 acquisition records | 34 full, 2 partial, 5 licensed-payload metadata-only | Metadata-only |
-| Remaining external citation labels | 62 labels in four groups | Not yet complete | Explicit open queue |
+| Locked external dependencies | 43/43 acquisition records | 36 full, 2 partial, 5 licensed-payload metadata-only | Metadata-only |
+| Remaining external citation labels | 60 labels in three groups | Selected Class C non-blocking; affected profiles remain gated | Explicit owned queue |
 
 Machine-readable evidence:
 
@@ -37,8 +37,8 @@ Machine-readable evidence:
 - `spec-processing/source-manifests/wap-1.2.1-external-dependencies.json`
 
 The WAP release ingestion covers 2,270 PDF pages, 9,988,119 PDF bytes, and
-5,703,023 extracted-text bytes. The external acquisition ledger covers 46
-artifacts totaling 14,440,993 bytes.
+5,703,023 extracted-text bytes. The external acquisition ledger covers 48
+artifacts totaling 14,588,705 bytes.
 
 ## Why some WAP documents look locked
 
@@ -230,13 +230,14 @@ the sender, date, scope, restrictions, and whether it covers derivatives.
 
 ## Remaining acquisition gaps
 
-1. Resolve the remaining 63 external labels:
-   - one legacy media-type draft;
-   - vCard/vCalendar, CC/PP exchange, and JavaScript-book context;
-   - 46 bearer/radio labels;
+1. Resolve the remaining 60 external labels before claiming their affected
+   profiles:
+   - vCard/vCalendar and JavaScript-book context (three labels);
+   - 45 bearer/radio labels;
    - 12 optional WTLS cryptographic labels.
 2. Acquire or formally waive the historical IEEE 754-1985, ISO/IEC
-   10646-1:1993, ISO 8879:1986, and ISO/TR 8509:1987 payloads.
+   10646-1:1993, ISO 8879:1986, ISO/TR 8509:1987, and selected TIA/EIA/IS-732
+   payloads.
 3. Recover a WBXML-era IANA character-set registry snapshot.
 4. Decide whether the official Unicode 2.0 UCD component set is sufficient
    implementation evidence where the cited paper standard is unavailable.

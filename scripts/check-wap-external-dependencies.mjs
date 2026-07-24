@@ -20,9 +20,20 @@ const graph = JSON.parse(
     'utf8'
   )
 );
+const program = JSON.parse(
+  fs.readFileSync(
+    path.join(root, 'docs/waves/wap-1.2.1-compliance-program.json'),
+    'utf8'
+  )
+);
 
 const failures = [];
 const ids = new Set();
+const workItemIds = new Set(
+  program.sprints.flatMap((sprint) =>
+    sprint.workItems.map((workItem) => workItem.id)
+  )
+);
 const familyIds = new Set(graph.families.map((family) => family.family));
 const requiredFamilyIds = new Set(
   graph.families
@@ -34,6 +45,7 @@ const requiredFamilyIds = new Set(
     .map((family) => family.family)
 );
 const primaryHosts = new Set([
+  'datatracker.ietf.org',
   'www.rfc-editor.org',
   'www.w3.org',
   'ecma-international.org',
@@ -49,6 +61,14 @@ if (manifest.schemaVersion !== 1 || manifest.releaseId !== 'wap-1.2.1') {
 }
 if (manifest.status !== 'in-progress-reference-classification') {
   failures.push('status must remain in-progress until all open citation groups close');
+}
+if (
+  manifest.scope?.selectedProfileClosure?.status !== 'complete' ||
+  manifest.scope?.selectedProfileClosure?.blockingOpenCitationLabels !== 0
+) {
+  failures.push(
+    'selected Class C dependency closure must remain complete with zero blocking open labels'
+  );
 }
 const scopedFamilies = new Set(manifest.scope?.sourceFamilies ?? []);
 for (const family of requiredFamilyIds) {
@@ -127,6 +147,14 @@ for (const id of expectedRfcIds) {
     failures.push(`missing reviewed RFC dependency: ${id}`);
   }
 }
+for (const id of [
+  'ietf-draft-murata-xml-02',
+  'w3c-note-ccpp-19990727'
+]) {
+  if (!ids.has(id)) {
+    failures.push(`missing resolved historical dependency: ${id}`);
+  }
+}
 for (const invalidId of ['rfc-2068616', 'rfc-2616068', 'iso-07498']) {
   if (ids.has(invalidId)) {
     failures.push(`OCR artifact became a dependency: ${invalidId}`);
@@ -135,11 +163,47 @@ for (const invalidId of ['rfc-2068616', 'rfc-2616068', 'iso-07498']) {
 
 const groups = manifest.openCitationGroups ?? [];
 const openLabels = groups.flatMap((group) => group.labels ?? []);
+const lockedLabels = new Set(
+  (manifest.dependencies ?? []).flatMap(
+    (dependency) => dependency.citationLabels ?? []
+  )
+);
 if (groups.length === 0 || openLabels.length === 0) {
   failures.push('open citation groups cannot disappear before reviewed entries replace them');
 }
 if (new Set(openLabels).size !== openLabels.length) {
   failures.push('open citation labels must be unique across groups');
+}
+for (const group of groups) {
+  for (const field of [
+    'reason',
+    'selectedProfileDisposition',
+    'activationTrigger',
+    'nextAction'
+  ]) {
+    if (!group[field]) {
+      failures.push(`${group.id}: missing ${field}`);
+    }
+  }
+  if (group.selectedProfileBlocking !== false) {
+    failures.push(`${group.id}: residual label group must be non-blocking`);
+  }
+  if (
+    !Array.isArray(group.ownerWorkItems) ||
+    group.ownerWorkItems.length === 0
+  ) {
+    failures.push(`${group.id}: ownerWorkItems must be non-empty`);
+  }
+  for (const workItemId of group.ownerWorkItems ?? []) {
+    if (!workItemIds.has(workItemId)) {
+      failures.push(`${group.id}: unknown ownerWorkItem=${workItemId}`);
+    }
+  }
+  for (const label of group.labels ?? []) {
+    if (lockedLabels.has(label)) {
+      failures.push(`${group.id}: locked citation label remains open: ${label}`);
+    }
+  }
 }
 
 if (manifest.summary?.authorityLockedDependencies !== ids.size) {
@@ -150,6 +214,13 @@ if (manifest.summary?.openCitationGroups !== groups.length) {
 }
 if (manifest.summary?.openCitationLabels !== openLabels.length) {
   failures.push('summary.openCitationLabels does not match group labels');
+}
+if (
+  manifest.summary?.selectedProfileBlockingOpenCitationLabels !== 0
+) {
+  failures.push(
+    'summary.selectedProfileBlockingOpenCitationLabels must remain zero'
+  );
 }
 
 if (failures.length > 0) {
@@ -163,8 +234,9 @@ if (failures.length > 0) {
 console.log('==> WAP 1.2.1 external dependency lock');
 console.log(`PASS ${ids.size} authority-locked dependencies`);
 console.log(
-  `PASS ${groups.length} explicit open groups containing ${openLabels.length} unique citation labels`
+  `PASS ${groups.length} explicitly dispositioned residual groups containing ${openLabels.length} unique citation labels`
 );
+console.log('PASS selected Class C dependency closure has zero blocking open labels');
 console.log(
   `PASS all ${requiredFamilyIds.size} required families plus primary-host, historical-version, and OCR guardrails`
 );

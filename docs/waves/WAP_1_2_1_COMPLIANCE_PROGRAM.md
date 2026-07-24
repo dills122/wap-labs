@@ -171,12 +171,14 @@ Source Sprint `SRC-0` now has reproducible research-access evidence:
 
 - 97/97 technical release PDFs and 97/97 text extractions are hash/size
   recorded in `wap-1.2.1-ingestion-status.json`;
-- 41/41 locked external dependencies have acquisition records backed by 46
+- 43/43 locked external dependencies have acquisition records backed by 48
   artifacts;
-- 34 external dependencies have full primary artifacts, two have partial
+- 36 external dependencies have full primary artifacts, two have partial
   historical evidence, and five licensed IEEE/ISO/TIA payloads remain
   metadata-only;
-- the external open-label queue is reduced from 69 to 62.
+- the external open-label queue is reduced from 69 to 60; all three residual
+  groups have non-blocking selected-profile dispositions, activation
+  triggers, and future work owners.
 
 WAP-215 has also been recovered from the official live WAP Forum directory,
 hash-locked, and extracted into exact Class A/B/C client/server graphs. This
@@ -200,6 +202,12 @@ closes `SRC-004` without changing the redistribution boundary.
    cross-layer and release evidence.
 7. Start optional profiles and Waves enhancements only after their declared
    strict gates.
+
+The program status now reflects those facts directly: `CONF-1` is complete;
+`SRC-0` is blocked only by `SRC-006`; runtime sprints are `todo` or
+`in-progress` according to their child work items. The validator derives and
+checks each sprint status so planning rollups cannot drift from work-item
+state.
 
 ## Source blockers
 

@@ -11,12 +11,12 @@
     "note": "Hashes prove research acquisition only. Artifact licenses and the project redistribution policy must be reviewed before repository promotion."
   },
   "summary": {
-    "dependencyCount": 41,
-    "artifactCount": 46,
-    "artifactBytesTotal": 14440993,
+    "dependencyCount": 43,
+    "artifactCount": 48,
+    "artifactBytesTotal": 14588705,
     "byAcquisitionState": {
       "metadata-only-licensed-payload": 5,
-      "verified-private-full-artifact": 34,
+      "verified-private-full-artifact": 36,
       "verified-private-partial-artifact": 2
     }
   },
@@ -969,6 +969,50 @@
           "cacheRef": "private-research-cache/wap-1.2.1/external/unicode/NamesList-1.txt",
           "bytes": 357667,
           "sha256": "91f206273602a1241fb31fc351030b703fc68826c1d02c9f588d3bfb493a0ce6",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "ietf-draft-murata-xml-02",
+      "title": "XML Media Types",
+      "version": "Internet-Draft draft-murata-xml-02, December 1999",
+      "authority": "Internet Engineering Task Force",
+      "authorityRecordUrl": "https://datatracker.ietf.org/doc/html/draft-murata-xml-02/",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "The IETF Datatracker's archived revision-02 rendering is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "ietf-draft-murata-xml-02-html",
+          "sourceUrl": "https://datatracker.ietf.org/doc/html/draft-murata-xml-02/",
+          "mediaType": "text/html",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/ietf/draft-murata-xml-02.html",
+          "bytes": 110526,
+          "sha256": "fa607b62cacc6e52081632073479082b2dc00797591bb4876cfe2ec48a3b9aab",
+          "checksumAlgorithm": "sha256"
+        }
+      ]
+    },
+    {
+      "dependencyId": "w3c-note-ccpp-19990727",
+      "title": "Composite Capability/Preference Profiles (CC/PP): A user side framework for content negotiation",
+      "version": "W3C Note, 27 July 1999",
+      "authority": "World Wide Web Consortium",
+      "authorityRecordUrl": "https://www.w3.org/TR/NOTE-CCPP/",
+      "acquisitionState": "verified-private-full-artifact",
+      "note": "The W3C canonical URI serves the cited dated Note and is hash-locked in the private research cache; repository promotion is not implied.",
+      "artifacts": [
+        {
+          "id": "w3c-note-ccpp-19990727-html",
+          "sourceUrl": "https://www.w3.org/TR/NOTE-CCPP/",
+          "mediaType": "text/html",
+          "retrievedOn": "2026-07-24",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/w3c/NOTE-CCPP-19990727.html",
+          "bytes": 37186,
+          "sha256": "6105b6f252a55a819825daea2c3952441e31925c05ddea0a1ff6a7bbace2e0f5",
           "checksumAlgorithm": "sha256"
         }
       ]
