@@ -77,9 +77,9 @@ const shippingNow = [
       </a>
 
       <nav class="site-nav" aria-label="On this page">
-        <a href="#why">Why Waves</a>
-        <a href="#stack">The Stack</a>
-        <a href="#shipping">Shipping</a>
+        <a href="#why" data-section-link>Why Waves</a>
+        <a href="#stack" data-section-link>The Stack</a>
+        <a href="#shipping" data-section-link>Shipping</a>
       </nav>
 
       <p class="build-label"><span aria-hidden="true"></span> Experimental build</p>
@@ -156,11 +156,11 @@ const shippingNow = [
       </aside>
 
       <section class="manifesto section-block" id="why" aria-labelledby="why-title">
-        <div class="section-heading">
+        <div class="section-heading" data-reveal>
           <p class="section-number">01 / Why it exists</p>
           <h2 id="why-title">Old protocol.<br />Serious tooling.</h2>
         </div>
-        <div class="manifesto-copy">
+        <div class="manifesto-copy" data-reveal>
           <p class="statement">
             Most WAP tooling is either inaccurate, unfinished, or painful to work with.
           </p>
@@ -176,7 +176,7 @@ const shippingNow = [
       </section>
 
       <section class="stack-section section-block" id="stack" aria-labelledby="stack-title">
-        <div class="section-heading section-heading-wide">
+        <div class="section-heading section-heading-wide" data-reveal>
           <p class="section-number">02 / The system</p>
           <h2 id="stack-title">Layered on purpose.</h2>
           <p>Each part of the stack does one job, with the browser sitting at the top—not swallowing the layers below.</p>
@@ -184,8 +184,8 @@ const shippingNow = [
 
         <ol class="architecture-list">
           {
-            architectureLayers.map((layer) => (
-              <li>
+            architectureLayers.map((layer, index) => (
+              <li data-reveal style={`--reveal-order: ${index}`}>
                 <span class="architecture-number">{layer.number}</span>
                 <div>
                   <h3>{layer.name}</h3>
@@ -199,14 +199,14 @@ const shippingNow = [
       </section>
 
       <section class="capabilities section-block" aria-labelledby="capabilities-title">
-        <div class="section-heading">
+        <div class="section-heading" data-reveal>
           <p class="section-number">03 / In practice</p>
           <h2 id="capabilities-title">A browser,<br />not just a harness.</h2>
         </div>
         <ol class="capability-list">
           {
             capabilities.map(([title, detail], index) => (
-              <li>
+              <li data-reveal style={`--reveal-order: ${index}`}>
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <h3>{title}</h3>
                 <p>{detail}</p>
@@ -217,7 +217,7 @@ const shippingNow = [
       </section>
 
       <section class="shipping section-block" id="shipping" aria-labelledby="shipping-title">
-        <div class="section-heading">
+        <div class="section-heading" data-reveal>
           <p class="section-number">04 / Shipping now</p>
           <h2 id="shipping-title">Core flows, turned into day-to-day tools.</h2>
           <p>Open a deck, interact, inspect, and continue in one stable loop—even when the network slows down or fails.</p>
@@ -231,7 +231,7 @@ const shippingNow = [
         <ol class="shipping-list">
           {
             shippingNow.map((item, index) => (
-              <li>
+              <li data-reveal style={`--reveal-order: ${index}`}>
                 <span class="shipping-index">{String(index + 1).padStart(2, '0')}</span>
                 <div>
                   <p class="shipping-label">{item.label}</p>
@@ -246,12 +246,12 @@ const shippingNow = [
       </section>
 
       <section class="final-cta" aria-labelledby="cta-title">
-        <div class="final-cta-copy">
+        <div class="final-cta-copy" data-reveal>
           <p class="section-number">Your next transmission</p>
           <h2 id="cta-title">Try the browser.<br />Then open the stack.</h2>
           <p>Start in the simulator, then inspect the browser internals and source from the same workflow.</p>
         </div>
-        <div class="final-cta-actions">
+        <div class="final-cta-actions" data-reveal>
           <a class="button button-light" href="./simulator/">
             <span>Open simulator</span><span aria-hidden="true">→</span>
           </a>
@@ -270,3 +270,56 @@ const shippingNow = [
     </footer>
   </div>
 </Layout>
+
+<script>
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealItems = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+
+  if (!reducedMotion && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('motion-ready');
+
+    const revealObserver = new IntersectionObserver(
+      (entries, observer) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.12 }
+    );
+
+    for (const item of revealItems) revealObserver.observe(item);
+  } else {
+    for (const item of revealItems) item.classList.add('is-visible');
+  }
+
+  const sectionLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('[data-section-link]')
+  );
+  const linkedSections = sectionLinks
+    .map((link) => {
+      const id = link.hash.slice(1);
+      return id ? document.getElementById(id) : null;
+    })
+    .filter((section): section is HTMLElement => section !== null);
+
+  if ('IntersectionObserver' in window) {
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const activeSection = entries.find((entry) => entry.isIntersecting);
+        if (!activeSection) return;
+
+        for (const link of sectionLinks) {
+          const isActive = link.hash === `#${activeSection.target.id}`;
+          link.classList.toggle('is-active', isActive);
+          if (isActive) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        }
+      },
+      { rootMargin: '-24% 0px -62% 0px', threshold: 0 }
+    );
+
+    for (const section of linkedSections) sectionObserver.observe(section);
+  }
+</script>
