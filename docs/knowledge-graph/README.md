@@ -33,11 +33,12 @@ The current graph contains the target sprint, its direct dependency/downstream s
 work items, source families/documents, directly mapped SCR rows and clauses, planned fixtures,
 requirements, owner layers, and legacy ticket links.
 
-The pilot intentionally reports two gap levels:
+The pilot intentionally reports remaining gap levels:
 
-- `WML-202`, `WML-204`, and `WML-205` do not yet have any direct nested-clause mappings;
-- all five work items declare WML scope without directly mapped WML clauses, even though
-  `WML-201` has WAE clauses and `WML-203` has WBXML clauses.
+- `WML-202` now directly maps the nine template/task-shadowing clauses adopted by `R0-12`;
+- `WML-204` also has direct WML clause mappings, while `WML-205` remains a zero-clause gap;
+- declared source families without direct clauses remain explicit rather than inferred from broad
+  ownership or adjacent work.
 
 Broad family ownership and cross-family clauses remain valid planning context, but neither is
 treated as direct clause coverage for a different family.

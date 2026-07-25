@@ -548,7 +548,7 @@ fn validate_optional_nmtoken(element: &XmlElement, attr: &str) -> Result<(), Str
     validate_nmtoken(&element.name, attr, value)
 }
 
-fn validate_nmtoken(element_name: &str, attr: &str, value: &str) -> Result<(), String> {
+pub(super) fn validate_nmtoken(element_name: &str, attr: &str, value: &str) -> Result<(), String> {
     if !value.is_empty() && value.chars().all(is_xml_name_char) {
         return Ok(());
     }

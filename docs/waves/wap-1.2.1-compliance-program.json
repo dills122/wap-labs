@@ -392,10 +392,10 @@
         },
         {
           "id": "WML-202",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "qa"],
           "sourceFamilies": ["wml"],
-          "existingTickets": ["R0-04", "C5-03"],
+          "existingTickets": ["R0-04", "R0-12", "C5-03"],
           "outputs": [
             "Complete deck/head/template/card/access/meta parser model"
           ],
@@ -403,7 +403,14 @@
             "Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "pnpm test:story WML-202",
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/check-wap-selected-normative-clauses.mjs"
+          ],
+          "notes": [
+            "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
+            "WML-202 remains in progress because the broader deck/card/meta grammar and metadata-retention acceptance is not complete."
           ]
         },
         {

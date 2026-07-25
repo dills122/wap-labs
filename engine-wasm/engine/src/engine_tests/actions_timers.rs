@@ -98,10 +98,8 @@ fn focused_input_commit_feeds_accept_postfield_payload_resolution() {
         .expect("commit focused input should succeed"));
 
     let accept_action = engine
-        .active_card_internal()
+        .active_do_action_internal("accept")
         .expect("active card")
-        .accept_action
-        .clone()
         .expect("accept action should exist");
     engine
         .execute_card_task_action(&accept_action)
@@ -325,10 +323,8 @@ fn wml_fx_variable_commit_before_task_commits_active_input_before_accept() {
     assert!(engine.set_focused_input_edit_draft("1220".to_string()));
 
     let accept_action = engine
-        .active_card_internal()
+        .active_do_action_internal("accept")
         .expect("active card")
-        .accept_action
-        .clone()
         .expect("accept action should exist");
     engine
         .execute_card_task_action(&accept_action)
@@ -372,10 +368,8 @@ fn invalid_masked_input_blocks_task_without_navigation_side_effects() {
     assert!(engine.set_focused_input_edit_draft("12ab".to_string()));
 
     let accept_action = engine
-        .active_card_internal()
+        .active_do_action_internal("accept")
         .expect("active card")
-        .accept_action
-        .clone()
         .expect("accept action should exist");
     let err = engine
         .execute_card_task_action(&accept_action)
@@ -418,10 +412,8 @@ fn wml_fx_variable_commit_before_task_commits_active_select_before_accept() {
     assert!(engine.move_focused_select_edit(1));
 
     let accept_action = engine
-        .active_card_internal()
+        .active_do_action_internal("accept")
         .expect("active card")
-        .accept_action
-        .clone()
         .expect("accept action should exist");
     engine
         .execute_card_task_action(&accept_action)
@@ -681,7 +673,7 @@ fn enter_accept_refresh_action_keeps_current_card_and_history() {
 }
 
 #[test]
-fn enter_accept_noop_action_keeps_current_card_and_history() {
+fn enter_accept_noop_binding_is_inactive_and_keeps_current_card_and_history() {
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -707,7 +699,11 @@ fn enter_accept_noop_action_keeps_current_card_and_history() {
         .expect("accept noop should succeed");
     assert_eq!(engine.active_card_id().expect("active card"), "mid");
     assert_eq!(engine.nav_stack.len(), 1);
-    assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_NOOP"]);
+    assert_trace_kinds_subsequence(&engine, &["KEY"]);
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| matches!(entry.kind.as_str(), "ACTION_ACCEPT" | "ACTION_NOOP")));
 }
 
 #[test]
@@ -848,7 +844,7 @@ fn onenterforward_failure_rolls_back_navigation_state() {
 }
 
 #[test]
-fn onenterforward_noop_keeps_deterministic_navigation_state() {
+fn onenterforward_noop_binding_is_inactive_and_keeps_navigation_state() {
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -869,7 +865,11 @@ fn onenterforward_noop_keeps_deterministic_navigation_state() {
         .expect("onenterforward noop should succeed");
     assert_eq!(engine.active_card_id().expect("active card"), "mid");
     assert_eq!(engine.nav_stack.len(), 1);
-    assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_FRAGMENT", "ACTION_NOOP"]);
+    assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_FRAGMENT"]);
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| entry.kind == "ACTION_NOOP"));
 }
 
 #[test]
@@ -1190,6 +1190,246 @@ fn navigate_runs_onenterforward_action() {
         .handle_key("enter".to_string())
         .expect("enter should navigate and run onenterforward");
     assert_eq!(engine.active_card_id().expect("active card"), "next");
+}
+
+#[test]
+fn wml_202_template_do_shadowing_and_noop_masking_cover_all_active_set_cases() {
+    let inherited = r##"
+        <wml>
+          <template><do type="accept" name="primary"><go href="#deck"/></do></template>
+          <card id="home"><p>Home</p></card>
+          <card id="deck"><p>Deck</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(inherited).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("template do should run");
+    assert_eq!(engine.active_card_id().expect("active card"), "deck");
+
+    let overridden = r##"
+        <wml>
+          <template><do type="accept" name="primary"><go href="#deck"/></do></template>
+          <card id="home">
+            <do type="accept" name="primary"><go href="#card"/></do>
+            <p>Home</p>
+          </card>
+          <card id="deck"><p>Deck</p></card>
+          <card id="card"><p>Card</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(overridden).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("card do should run");
+    assert_eq!(engine.active_card_id().expect("active card"), "card");
+
+    let card_masked = r##"
+        <wml>
+          <template><do type="accept" name="primary"><go href="#deck"/></do></template>
+          <card id="home"><do type="accept" name="primary"><noop/></do><p>Home</p></card>
+          <card id="deck"><p>Deck</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(card_masked).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("masked enter should be a no-op");
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| entry.kind == "ACTION_NOOP"));
+
+    let unshadowed_noop = r#"
+        <wml>
+          <template><do type="accept" name="primary"><noop/></do></template>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "#;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(unshadowed_noop).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("inactive noop should be ignored");
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| entry.kind == "ACTION_NOOP"));
+}
+
+#[test]
+fn wml_202_active_do_order_is_card_then_template_document_order() {
+    let xml = r##"
+        <wml>
+          <template>
+            <do type="accept" name="template-first"><go href="#template-first"/></do>
+            <do type="accept" name="template-second"><go href="#template-second"/></do>
+          </template>
+          <card id="home">
+            <do type="accept" name="card-first"><go href="#card-first"/></do>
+            <p>Home</p>
+          </card>
+          <card id="card-first"><p>Card first</p></card>
+          <card id="template-first"><p>Template first</p></card>
+          <card id="template-second"><p>Template second</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(xml).expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("first active accept should run");
+    assert_eq!(engine.active_card_id().expect("active card"), "card-first");
+}
+
+#[test]
+fn wml_202_template_bindings_persist_across_navigation_and_back() {
+    let xml = r##"
+        <wml>
+          <template><do type="accept" name="primary"><go href="#deck"/></do></template>
+          <card id="home">
+            <do type="accept" name="primary"><go href="#override"/></do>
+            <p>Home</p>
+          </card>
+          <card id="override"><p>Override</p></card>
+          <card id="deck"><p>Deck</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(xml).expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("card override should run");
+    assert_eq!(engine.active_card_id().expect("active card"), "override");
+    engine
+        .handle_key("enter".to_string())
+        .expect("template do should run");
+    assert_eq!(engine.active_card_id().expect("active card"), "deck");
+    assert!(engine.navigate_back());
+    assert_eq!(engine.active_card_id().expect("active card"), "override");
+    engine
+        .handle_key("enter".to_string())
+        .expect("template do should still run");
+    assert_eq!(engine.active_card_id().expect("active card"), "deck");
+}
+
+#[test]
+fn wml_202_card_intrinsic_binding_masks_or_overrides_template_binding() {
+    let xml = r##"
+        <wml>
+          <template><onevent type="onenterforward"><go href="#template-target"/></onevent></template>
+          <card id="home"><a href="#masked">Masked</a></card>
+          <card id="masked"><onevent type="onenterforward"><noop/></onevent><p>Masked</p></card>
+          <card id="plain"><p>Plain</p></card>
+          <card id="template-target">
+            <onevent type="onenterforward"><noop/></onevent>
+            <p>Template target</p>
+          </card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(xml).expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("card noop should mask template event");
+    assert_eq!(engine.active_card_id().expect("active card"), "masked");
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| entry.kind == "ACTION_NOOP"));
+
+    engine
+        .navigate_to_card("plain".to_string())
+        .expect("plain card should be addressable");
+    assert_eq!(
+        engine.active_card_id().expect("active card"),
+        "template-target"
+    );
+}
+
+#[test]
+fn wml_202_do_shadowing_uses_effective_name_instead_of_do_type() {
+    let xml = r##"
+        <wml>
+          <template><do type="accept"><go href="#deck"/></do></template>
+          <card id="home">
+            <do type="options" name="accept"><noop/></do>
+            <p>Home</p>
+          </card>
+          <card id="deck"><p>Deck</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(xml).expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("effective-name mask should be inactive");
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| matches!(entry.kind.as_str(), "ACTION_ACCEPT" | "ACTION_NOOP")));
+}
+
+#[test]
+fn wml_202_card_attribute_overrides_template_onevent_element() {
+    let xml = r##"
+        <wml>
+          <template><onevent type="onenterforward"><go href="#deck"/></onevent></template>
+          <card id="home"><a href="#card">Card</a></card>
+          <card id="card" onenterforward="#card-target"><p>Card</p></card>
+          <card id="card-target" onenterforward="#final"><p>Card target</p></card>
+          <card id="deck"><p>Deck</p></card>
+          <card id="final"><onevent type="onenterforward"><noop/></onevent><p>Final</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(xml).expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("card attribute event should override template element event");
+    assert_eq!(engine.active_card_id().expect("active card"), "final");
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| entry.kind == "ACTION_FRAGMENT" && entry.detail == "deck"));
+}
+
+#[test]
+fn wml_202_template_ontimer_binding_applies_to_unshadowed_card() {
+    let xml = r##"
+        <wml>
+          <template><onevent type="ontimer"><go href="#expired"/></onevent></template>
+          <card id="home"><timer value="1"/><p>Home</p></card>
+          <card id="expired"><p>Expired</p></card>
+        </wml>
+        "##;
+    let mut engine = WmlEngine::new();
+    engine.load_deck(xml).expect("deck should load");
+
+    engine
+        .advance_time_ms(100)
+        .expect("template timer task should run");
+    assert_eq!(engine.active_card_id().expect("active card"), "expired");
+    assert_trace_kinds_subsequence(
+        &engine,
+        &[
+            "TIMER_START",
+            "TIMER_TICK",
+            "TIMER_EXPIRE",
+            "ACTION_ONTIMER",
+        ],
+    );
 }
 
 #[test]

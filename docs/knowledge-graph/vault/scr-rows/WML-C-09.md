@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wml|wml]]
+- `refines` ← [[clauses/WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE]]
 - `refines` ← [[clauses/WML-CL-OPTION-ONPICK-MULTI|WML-CL-OPTION-ONPICK-MULTI]]
 - `refines` ← [[clauses/WML-CL-OPTION-ONPICK-SINGLE|WML-CL-OPTION-ONPICK-SINGLE]]
 

@@ -13,12 +13,12 @@
 
 ## Graph summary
 
-- Nodes: 212
-- Edges: 534
+- Nodes: 236
+- Edges: 595
 - Selected work items: 5
-- Direct normative clauses: 75
-- Work items without direct clause mappings: 2
-- Work items with unmapped declared normative families: 3
+- Direct normative clauses: 84
+- Work items without direct clause mappings: 1
+- Work items with unmapped declared normative families: 2
 
 ## Execution target
 
@@ -60,11 +60,11 @@ Evidence commands:
 
 ### WML-202: Complete deck/head/template/card/access/meta parser model
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
-- Existing tickets: `R0-04`, `C5-03`
-- Direct normative clauses: 0
+- Existing tickets: `R0-04`, `R0-12`, `C5-03`
+- Direct normative clauses: 9
 
 Outputs:
 
@@ -77,6 +77,9 @@ Acceptance:
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `pnpm test:story WML-202`
+- `node scripts/check-wap-conformance-ledger.mjs`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
 
 ### WML-203: WML 1.3 DTD validation policy
 
@@ -167,6 +170,63 @@ Evidence commands:
   - Parents: `WAESpec-C-016`, `WAESpec-C-017`
   - Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
   - Fixture: `WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE` (`runtime`, `planned`)
+
+### WML-202
+
+- **WML-CL-DO-EFFECTIVE-NAME** — Use the declared do name for binding identity and default a missing name to the type value.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
+  - Parents: `WML-C-26`, `WML-C-08`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-DO-EFFECTIVE-NAME` (`runtime`, `implemented`)
+- **WML-CL-DO-INACTIVE-HIDDEN** — Do not expose an inactive do in a form the user can activate.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
+  - Parents: `WML-C-26`, `WML-C-08`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-DO-INACTIVE-HIDDEN` (`rendering`, `implemented`)
+- **WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE** — Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.10.2 (9.10.2 Card/Deck Intrinsic Events)
+  - Parents: `WML-C-08`, `WML-C-09`, `WML-C-47`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-004`
+  - Fixture: `WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE` (`runtime`, `implemented`)
+- **WML-CL-SHADOW-ACTIVE-SET** — Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.6 (9.6 Card/Deck Task Shadowing)
+  - Parents: `WML-C-08`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-SHADOW-ACTIVE-SET` (`runtime`, `implemented`)
+- **WML-CL-SHADOW-CARD-PRECEDENCE** — A matching card-level event binding overrides its template-level binding.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.6 (9.6 Card/Deck Task Shadowing)
+  - Parents: `WML-C-08`, `WML-C-47`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-002`
+  - Fixture: `WML-FX-SHADOW-CARD-PRECEDENCE` (`runtime`, `implemented`)
+- **WML-CL-SHADOW-MATCHING** — Match card and template onevent bindings by event type and do bindings by effective name for shadowing.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.6 (9.6 Card/Deck Task Shadowing)
+  - Parents: `WML-C-08`, `WML-C-47`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-002`
+  - Fixture: `WML-FX-SHADOW-MATCHING` (`runtime`, `implemented`)
+- **WML-CL-SHADOW-NOOP-MASK** — A noop binding masks its event without exposing an activatable action or producing task side effects.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.6 (9.6 Card/Deck Task Shadowing)
+  - Parents: `WML-C-08`, `WML-C-35`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-SHADOW-NOOP-MASK` (`runtime`, `implemented`)
+- **WML-CL-TEMPLATE-APPLIES-ALL-CARDS** — Apply each template event binding as though it were declared in every card unless shadowed.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.4 (11.4 The Template Element)
+  - Parents: `WML-C-47`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-TEMPLATE-APPLIES-ALL-CARDS` (`runtime`, `implemented`)
+- **WML-CL-TEMPLATE-STRUCTURE** — Parse template as zero or more do or onevent bindings plus card-event attributes.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.4 (11.4 The Template Element)
+  - Parents: `WML-C-47`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-TEMPLATE-STRUCTURE` (`parser`, `implemented`)
 
 ### WML-203
 
@@ -608,13 +668,11 @@ Evidence commands:
 
 ## Explicit mapping gaps
 
-- `WML-202` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `WML-205` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
 - `WML-201` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `WML-202` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-205` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents

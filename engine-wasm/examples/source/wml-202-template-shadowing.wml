@@ -1,0 +1,33 @@
+<!--
+label: WML Template Task Shadowing
+work-items: R0-12, WML-202
+spec-items: WML-C-08, WML-C-47
+description: A deck-level accept binding is inherited, overridden, and then masked by card-level bindings with the same effective name.
+goal: Verify deterministic template inheritance, card precedence, and inactive noop masking across card navigation.
+testing-ac:
+- Load the example and activate Enter on inherited; the unshadowed template binding navigates to override.
+- Activate Enter on override; the same-named card binding replaces the template task and navigates to masked.
+- Activate Enter on masked; the card-level noop masks both bindings and produces no task action.
+-->
+<wml>
+  <template>
+    <do type="accept" name="primary" label="Deck next">
+      <go href="#override"/>
+    </do>
+  </template>
+  <card id="inherited">
+    <p>The template accept task is active on this card.</p>
+  </card>
+  <card id="override">
+    <do type="accept" name="primary" label="Card next">
+      <go href="#masked"/>
+    </do>
+    <p>The card accept task shadows the template task.</p>
+  </card>
+  <card id="masked">
+    <do type="accept" name="primary">
+      <noop/>
+    </do>
+    <p>The same-named noop masks both accept tasks.</p>
+  </card>
+</wml>

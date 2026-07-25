@@ -199,6 +199,17 @@ const allowedFixtureKinds = new Set([
   'rendering',
   'binary-decoder'
 ]);
+const wml202ClauseIds = new Set([
+  'WML-CL-DO-EFFECTIVE-NAME',
+  'WML-CL-DO-INACTIVE-HIDDEN',
+  'WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE',
+  'WML-CL-SHADOW-ACTIVE-SET',
+  'WML-CL-SHADOW-CARD-PRECEDENCE',
+  'WML-CL-SHADOW-MATCHING',
+  'WML-CL-SHADOW-NOOP-MASK',
+  'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
+  'WML-CL-TEMPLATE-STRUCTURE'
+]);
 const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
@@ -225,7 +236,8 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-INPUT-PASSWORD-DISPLAY',
   'WML-CL-INPUT-FORMAT-LITERALS',
   'WML-CL-INPUT-MAXLENGTH',
-  'WML-CL-BR-LINE-BREAK'
+  'WML-CL-BR-LINE-BREAK',
+  ...wml202ClauseIds
 ]);
 const deferredWbxmlClauseIds = new Set();
 const hashPattern = /^[a-f0-9]{64}$/;
@@ -478,6 +490,7 @@ for (const family of ledger.families ?? []) {
     const expectedWorkItems = [
       ...new Set([
         ...parents.flatMap((parent) => parent.mapping.workItems),
+        ...(wml202ClauseIds.has(candidate.id) ? ['WML-202'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
         ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -485,6 +498,7 @@ for (const family of ledger.families ?? []) {
       ])
     ].sort();
     const expectedDirectWorkItems = [
+      ...(wml202ClauseIds.has(candidate.id) ? ['WML-202'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),

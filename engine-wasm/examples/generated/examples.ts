@@ -2230,6 +2230,111 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh policy demo (no navigation).</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml202TemplateShadowing",
+    "label": "WML Template Task Shadowing",
+    "description": "A deck-level accept binding is inherited, overridden, and then masked by card-level bindings with the same effective name.",
+    "goal": "Verify deterministic template inheritance, card precedence, and inactive noop masking across card navigation.",
+    "workItems": [
+      "R0-12",
+      "WML-202"
+    ],
+    "specItems": [
+      "WML-C-08",
+      "WML-C-47"
+    ],
+    "testingAc": [
+      "Load the example and activate Enter on inherited; the unshadowed template binding navigates to override.",
+      "Activate Enter on override; the same-named card binding replaces the template task and navigates to masked.",
+      "Activate Enter on masked; the card-level noop masks both bindings and produces no task action."
+    ],
+    "flows": [
+      {
+        "id": "template-inherit-override-and-noop-mask",
+        "title": "Template accept inheritance yields to card override and noop mask",
+        "target": "host-sample",
+        "workItems": [
+          "R0-12",
+          "WML-202"
+        ],
+        "specItems": [
+          "WML-C-08",
+          "WML-C-47"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "inherited",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "override",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "masked",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT",
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "masked",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT",
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT",
+                "KEY"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<wml>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml203WbxmlParity",
     "label": "WML 1.3 WBXML Structural Parity",
     "description": "Canonical WML 1.3 text matching the transport decoder's binary-basic-deck output.",

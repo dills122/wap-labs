@@ -26,7 +26,7 @@ const familyDefinitions = [
     expectedRows: 76,
     expectedSelected: 39,
     expectedClauses: 174,
-    expectedStatus: { implemented: 4, partial: 23, missing: 12 },
+    expectedStatus: { implemented: 6, partial: 23, missing: 10 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 17, blocked: 1, 'in-progress': 12, todo: 49 })
+  JSON.stringify({ done: 17, blocked: 1, 'in-progress': 13, todo: 48 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 761 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 20, partial: 77, missing: 101 })
+  JSON.stringify({ implemented: 22, partial: 77, missing: 99 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -368,14 +368,14 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '131 fixture-backed clauses assessed'
+      '141 fixture-backed clauses assessed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **761** | **20** | **77** | **101** |',
+      '| **Total** | **198** | **761** | **22** | **77** | **99** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -390,8 +390,8 @@ const requiredDocumentFragments = new Map([
   [
     'README.md',
     [
-      '20/198 selected parent rows are implemented',
-      '131/761 clauses are directly assessed'
+      '22/198 selected parent rows are implemented',
+      '141/761 clauses are directly assessed'
     ]
   ]
 ]);

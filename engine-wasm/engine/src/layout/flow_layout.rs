@@ -248,10 +248,7 @@ mod tests {
                     href: "#next".to_string(),
                 },
             ])],
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
+            event_bindings: vec![],
             timer_value_ds: None,
         };
 
@@ -278,10 +275,7 @@ mod tests {
                 InlineNode::Break,
                 InlineNode::Text("after".to_string()),
             ])],
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
+            event_bindings: vec![],
             timer_value_ds: None,
         };
 
@@ -311,10 +305,7 @@ mod tests {
             nodes: vec![Node::Paragraph(vec![InlineNode::Text(
                 "supercalifragilistic".to_string(),
             )])],
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
+            event_bindings: vec![],
             timer_value_ds: None,
         };
 
@@ -340,10 +331,7 @@ mod tests {
                 text: "abcdefghijkl".to_string(),
                 href: "#next".to_string(),
             }])],
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
+            event_bindings: vec![],
             timer_value_ds: None,
         };
 
@@ -412,10 +400,7 @@ mod tests {
                     selected_indices: vec![1],
                 },
             ])],
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
+            event_bindings: vec![],
             timer_value_ds: None,
         };
 

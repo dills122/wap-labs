@@ -139,7 +139,7 @@ impl WmlEngine {
             let card = self.active_card_internal()?;
             (
                 layout_card(card, self.viewport_cols, self.focused_link_idx),
-                card.accept_action.clone(),
+                self.active_do_action_internal("accept")?,
             )
         };
         let target_total = layout.focus_targets.len();
