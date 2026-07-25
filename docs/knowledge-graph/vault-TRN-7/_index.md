@@ -15,7 +15,7 @@ Target: [[sprints/TRN-7|TRN-7]]
 ## Graph summary
 
 - Nodes: 214
-- Edges: 613
+- Edges: 624
 
 - `clause`: 77
 - `fixture`: 77
@@ -33,10 +33,9 @@ Target: [[sprints/TRN-7|TRN-7]]
 
 - [[work-items/TRN-704|TRN-704]]
 - [[work-items/TRN-705|TRN-705]]
-- [[work-items/TRN-706|TRN-706]]
 - [[work-items/TRN-707|TRN-707]]
 
 ## Declared normative families without direct clause mappings
 
-- [[work-items/TRN-706|TRN-706]]: `wdp`
+- [[work-items/TRN-706|TRN-706]]: `wtp`
 - [[work-items/TRN-707|TRN-707]]: `wcmp`, `wdp`

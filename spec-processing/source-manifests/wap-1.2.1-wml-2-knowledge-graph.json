@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "6497a1802b8ea8661aff21b847cd754564b305d5245e41c653b7cb9df6cd9865"
+        "sha256": "92b8d3321d22f08832d37c7c43af7771c1f7ff9941b47800b8e9de3d15bc0f6d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "3e51cf531c278871d4fd0948017950c3a3992f152960a8e0f43e39dadf8d8740"
+        "sha256": "903e469345d86c37a7b76d7a8f17085be518747d553ef85d54dffb14d91ae32b"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."

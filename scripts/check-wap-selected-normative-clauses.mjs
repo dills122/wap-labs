@@ -150,6 +150,19 @@ const trn702ClauseIds = new Set([
   'WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY',
   'WDP-CL-IPV4-DONT-FRAGMENT'
 ]);
+const trn706ClauseIds = new Set([
+  'WDP-CL-CDPD-UDP-IP-PROFILE',
+  'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+  'WDP-CL-IP-MAPPING-FRAGMENTATION',
+  'WDP-CL-UDP-HEADER-LAYOUT',
+  'WDP-CL-UDP-LENGTH-BOUNDS',
+  'WDP-CL-IPV4-HEADER-LAYOUT',
+  'WDP-CL-IPV4-BASELINE-RECEIVE-SIZE',
+  'WDP-CL-IPV4-FRAGMENTATION-LOCATION',
+  'WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY',
+  'WDP-CL-IPV4-HEADER-CHECKSUM',
+  'WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS'
+]);
 const allowedFixtureKinds = new Set([
   'parser',
   'transport-boundary',
@@ -437,9 +450,14 @@ for (const family of ledger.families ?? []) {
     const expectedWorkItems = [
       ...new Set([
         ...parents.flatMap((parent) => parent.mapping.workItems),
-        ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : [])
+        ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
+        ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : [])
       ])
     ].sort();
+    const expectedDirectWorkItems = [
+      ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
+      ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : [])
+    ];
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
     ].sort();
@@ -457,7 +475,7 @@ for (const family of ledger.families ?? []) {
     if (
       JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
       JSON.stringify(candidate.directWorkItems ?? []) !==
-        JSON.stringify(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []) ||
+        JSON.stringify(expectedDirectWorkItems) ||
       JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
       JSON.stringify(candidate.mapping?.requirementIds) !== JSON.stringify(expectedRequirements) ||
       JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !==

@@ -1,4 +1,8 @@
-use lowband_transport_rust::network::wdp::{WdpAddress, WdpDatagram, WdpServicePort};
+use lowband_transport_rust::network::wdp::{
+    decode_cdpd_ipv4_udp, encode_cdpd_ipv4_udp, CdpdIpv4SendPolicy, Ipv4Reassembler,
+    Ipv4ReassemblyOutcome, Ipv4ReassemblyPolicy, UdpChecksumPolicy, WdpAddress, WdpDatagram,
+    WdpServicePort,
+};
 use lowband_transport_rust::network::wsp::{
     decode_wsp_session_event, WspEncodingVersion, WspHeaderBlockDecodePolicy, WspMethod,
     WspSessionEvent, WspSessionMode,
@@ -14,6 +18,10 @@ use serde::Deserialize;
 use std::fs;
 use std::net::IpAddr;
 use std::path::{Path, PathBuf};
+
+const CLAUSE_LEDGER_SOURCE: &str = include_str!(
+    "../../spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+);
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -32,6 +40,15 @@ struct ReplayCorpus {
     provenance: String,
     legal_reuse: String,
     derived_from: String,
+    profile: Option<String>,
+    source_documents: Option<Vec<ReplaySourceDocument>>,
+    clause_ids: Option<Vec<String>>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ReplaySourceDocument {
+    id: String,
+    sections: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -42,6 +59,8 @@ struct ReplayCase {
     datagrams: Option<Vec<ReplayDatagram>>,
     retransmission_steps: Option<Vec<ReplayRetransmissionStep>>,
     duplicate_steps: Option<Vec<ReplayDuplicateStep>>,
+    wdp_steps: Option<Vec<ReplayWdpStep>>,
+    wdp_reassembly_policy: Option<ReplayWdpReassemblyPolicy>,
     expected_events: Vec<ExpectedReplayEvent>,
     expected_transaction_outcomes: Vec<ExpectedTransactionOutcome>,
 }
@@ -81,6 +100,71 @@ struct ReplayDuplicateStep {
     tid: u16,
     is_terminal_result: bool,
     policy: ReplayDuplicatePolicy,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayWdpDatagram {
+    src_addr: String,
+    dst_addr: String,
+    src_port: u16,
+    dst_port: u16,
+    payload: ReplayPayload,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(tag = "kind", rename_all = "camelCase")]
+enum ReplayPayload {
+    Bytes { bytes: Vec<u8> },
+    Repeat { byte: u8, length: usize },
+}
+
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayWdpSendPolicy {
+    identification: u16,
+    time_to_live: u8,
+    dont_fragment: bool,
+    path_mtu: Option<usize>,
+    destination_accepts_large_datagrams: bool,
+    udp_checksum: ReplayUdpChecksumPolicy,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+enum ReplayUdpChecksumPolicy {
+    Generate,
+    Omit,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ReplayWdpReassemblyPolicy {
+    max_datagram_bytes: usize,
+    max_pending_datagrams: usize,
+    max_buffered_payload_bytes: usize,
+    timeout_ticks: u64,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(tag = "kind", rename_all = "camelCase")]
+enum ReplayWdpStep {
+    RoundTrip {
+        datagram: ReplayWdpDatagram,
+        send_policy: ReplayWdpSendPolicy,
+        expected_packet: Option<Vec<u8>>,
+        expected_packet_len: usize,
+    },
+    Decode {
+        packet: Vec<u8>,
+    },
+    Fragment {
+        tick: u64,
+        packet: Vec<u8>,
+    },
+    Expire {
+        tick: u64,
+    },
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -182,6 +266,31 @@ enum ExpectedReplayEvent {
         tid: u16,
         cache_size: usize,
     },
+    WdpAccepted {
+        src_addr: Vec<u8>,
+        dst_addr: Vec<u8>,
+        src_port: u16,
+        dst_port: u16,
+        packet_len: usize,
+        payload_len: usize,
+    },
+    WdpRejected {
+        error: String,
+    },
+    WdpFragmentPending {
+        duplicate: bool,
+        buffered_payload_bytes: usize,
+        expected_payload_bytes: Option<usize>,
+        expires_at_tick: u64,
+    },
+    WdpReassembled {
+        packet_len: usize,
+        payload_len: usize,
+    },
+    WdpIncompleteExpired {
+        count: usize,
+        buffered_payload_bytes: usize,
+    },
 }
 
 #[derive(Debug, Deserialize)]
@@ -211,6 +320,13 @@ enum ExpectedTransactionOutcome {
         replayed_terminal: usize,
         dropped_duplicates: usize,
         final_cache_size: usize,
+    },
+    WdpReplaySummary {
+        accepted_datagrams: usize,
+        rejected_packets: usize,
+        duplicate_fragments: usize,
+        completed_reassemblies: usize,
+        expired_assemblies: usize,
     },
 }
 
@@ -262,6 +378,31 @@ enum ReplayEvent {
         tid: u16,
         cache_size: usize,
     },
+    WdpAccepted {
+        src_addr: Vec<u8>,
+        dst_addr: Vec<u8>,
+        src_port: u16,
+        dst_port: u16,
+        packet_len: usize,
+        payload_len: usize,
+    },
+    WdpRejected {
+        error: String,
+    },
+    WdpFragmentPending {
+        duplicate: bool,
+        buffered_payload_bytes: usize,
+        expected_payload_bytes: Option<usize>,
+        expires_at_tick: u64,
+    },
+    WdpReassembled {
+        packet_len: usize,
+        payload_len: usize,
+    },
+    WdpIncompleteExpired {
+        count: usize,
+        buffered_payload_bytes: usize,
+    },
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -290,6 +431,13 @@ enum ReplayTransactionOutcome {
         replayed_terminal: usize,
         dropped_duplicates: usize,
         final_cache_size: usize,
+    },
+    WdpReplaySummary {
+        accepted_datagrams: usize,
+        rejected_packets: usize,
+        duplicate_fragments: usize,
+        completed_reassemblies: usize,
+        expired_assemblies: usize,
     },
 }
 
@@ -337,7 +485,7 @@ fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
     assert!(
         matches!(
             fixture.corpus.source_class.as_str(),
-            "interop-reference" | "heuristic"
+            "normative" | "interop-reference" | "heuristic"
         ),
         "fixture '{}' uses invalid source class '{}'",
         path.display(),
@@ -352,6 +500,58 @@ fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
         path.display(),
         fixture.corpus.legal_reuse
     );
+    if let Some(source_documents) = &fixture.corpus.source_documents {
+        assert!(
+            !source_documents.is_empty()
+                && source_documents
+                    .iter()
+                    .all(|source| !source.id.is_empty() && !source.sections.is_empty()),
+            "fixture '{}' must include anchored source documents",
+            path.display()
+        );
+    }
+    if let Some(clause_ids) = &fixture.corpus.clause_ids {
+        assert!(
+            !clause_ids.is_empty(),
+            "fixture '{}' must include at least one mapped clause",
+            path.display()
+        );
+        let ledger: serde_json::Value =
+            serde_json::from_str(CLAUSE_LEDGER_SOURCE).expect("clause ledger should parse");
+        let mapped = ledger["families"]
+            .as_array()
+            .expect("families should be an array")
+            .iter()
+            .find(|family| family["family"] == "wdp")
+            .expect("WDP family should exist")["clauses"]
+            .as_array()
+            .expect("WDP clauses should be an array")
+            .iter()
+            .filter(|clause| {
+                clause["mapping"]["workItems"]
+                    .as_array()
+                    .is_some_and(|items| items.iter().any(|item| item == "TRN-706"))
+            })
+            .map(|clause| {
+                clause["id"]
+                    .as_str()
+                    .expect("mapped clause should have an ID")
+                    .to_string()
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            clause_ids.as_slice(),
+            mapped.as_slice(),
+            "fixture '{}' clause mapping must match canonical TRN-706 mappings",
+            path.display()
+        );
+        assert_eq!(
+            fixture.corpus.profile.as_deref(),
+            Some("wap-net-core-selected-wdp-only"),
+            "fixture '{}' must retain its selected WDP-only profile boundary",
+            path.display()
+        );
+    }
     for case in &fixture.cases {
         assert!(
             !case.capture.capture_id.is_empty()
@@ -364,7 +564,7 @@ fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
         assert!(
             matches!(
                 case.capture.source_family.as_str(),
-                "synthetic-seed" | "kannel" | "wireshark"
+                "synthetic-seed" | "wap-1.2.1-selected-wdp" | "kannel" | "wireshark"
             ),
             "fixture '{}' case '{}' uses unsupported source family '{}'",
             path.display(),
@@ -397,6 +597,17 @@ fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
             path.display(),
             case.name
         );
+        if let Some(steps) = &case.wdp_steps {
+            assert!(
+                !steps.is_empty()
+                    && case.datagrams.is_none()
+                    && case.retransmission_steps.is_none()
+                    && case.duplicate_steps.is_none(),
+                "fixture '{}' case '{}' must keep the WDP replay lane typed and separate",
+                path.display(),
+                case.name
+            );
+        }
     }
 }
 
@@ -417,6 +628,46 @@ fn to_datagram(input: &ReplayDatagram) -> WdpDatagram {
         src_port: input.src_port,
         dst_port: input.dst_port,
         payload: input.payload.clone(),
+    }
+}
+
+fn replay_payload(input: &ReplayPayload) -> Vec<u8> {
+    match input {
+        ReplayPayload::Bytes { bytes } => bytes.clone(),
+        ReplayPayload::Repeat { byte, length } => vec![*byte; *length],
+    }
+}
+
+fn to_wdp_datagram(input: &ReplayWdpDatagram) -> WdpDatagram {
+    WdpDatagram {
+        src_addr: parse_addr(&input.src_addr),
+        dst_addr: parse_addr(&input.dst_addr),
+        src_port: input.src_port,
+        dst_port: input.dst_port,
+        payload: replay_payload(&input.payload),
+    }
+}
+
+fn to_wdp_send_policy(input: ReplayWdpSendPolicy) -> CdpdIpv4SendPolicy {
+    CdpdIpv4SendPolicy {
+        identification: input.identification,
+        time_to_live: input.time_to_live,
+        dont_fragment: input.dont_fragment,
+        path_mtu: input.path_mtu,
+        destination_accepts_large_datagrams: input.destination_accepts_large_datagrams,
+        udp_checksum: match input.udp_checksum {
+            ReplayUdpChecksumPolicy::Generate => UdpChecksumPolicy::Generate,
+            ReplayUdpChecksumPolicy::Omit => UdpChecksumPolicy::Omit,
+        },
+    }
+}
+
+fn to_wdp_reassembly_policy(input: ReplayWdpReassemblyPolicy) -> Ipv4ReassemblyPolicy {
+    Ipv4ReassemblyPolicy {
+        max_datagram_bytes: input.max_datagram_bytes,
+        max_pending_datagrams: input.max_pending_datagrams,
+        max_buffered_payload_bytes: input.max_buffered_payload_bytes,
+        timeout_ticks: input.timeout_ticks,
     }
 }
 
@@ -591,6 +842,117 @@ fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
         }
     }
 
+    if let Some(steps) = &case.wdp_steps {
+        let mut reassembler = case
+            .wdp_reassembly_policy
+            .map(to_wdp_reassembly_policy)
+            .map(Ipv4Reassembler::new)
+            .transpose()
+            .unwrap_or_else(|error| panic!("case '{}' has invalid policy: {error}", case.name));
+
+        for step in steps {
+            match step {
+                ReplayWdpStep::RoundTrip {
+                    datagram,
+                    send_policy,
+                    expected_packet,
+                    expected_packet_len,
+                } => {
+                    let input = to_wdp_datagram(datagram);
+                    let packet = encode_cdpd_ipv4_udp(&input, to_wdp_send_policy(*send_policy))
+                        .unwrap_or_else(|error| {
+                            panic!("case '{}' WDP encode failed: {error}", case.name)
+                        });
+                    assert_eq!(
+                        packet.len(),
+                        *expected_packet_len,
+                        "case '{}' encoded packet length",
+                        case.name
+                    );
+                    if let Some(expected) = expected_packet {
+                        assert_eq!(
+                            packet.as_slice(),
+                            expected.as_slice(),
+                            "case '{}' encoded packet bytes",
+                            case.name
+                        );
+                    }
+                    let decoded = decode_cdpd_ipv4_udp(&packet).unwrap_or_else(|error| {
+                        panic!("case '{}' WDP decode failed: {error}", case.name)
+                    });
+                    assert_eq!(
+                        decoded, input,
+                        "case '{}' WDP round trip changed the datagram",
+                        case.name
+                    );
+                    out.push(ReplayEvent::WdpAccepted {
+                        src_addr: decoded.src_addr.value,
+                        dst_addr: decoded.dst_addr.value,
+                        src_port: decoded.src_port,
+                        dst_port: decoded.dst_port,
+                        packet_len: packet.len(),
+                        payload_len: decoded.payload.len(),
+                    });
+                }
+                ReplayWdpStep::Decode { packet } => {
+                    let error = decode_cdpd_ipv4_udp(packet)
+                        .expect_err("malformed WDP replay packet should be rejected");
+                    out.push(ReplayEvent::WdpRejected {
+                        error: error.to_string(),
+                    });
+                }
+                ReplayWdpStep::Fragment { tick, packet } => {
+                    let active = reassembler.as_mut().unwrap_or_else(|| {
+                        panic!(
+                            "case '{}' fragment step requires a reassembly policy",
+                            case.name
+                        )
+                    });
+                    match active.ingest(packet, *tick).unwrap_or_else(|error| {
+                        panic!("case '{}' fragment replay failed: {error}", case.name)
+                    }) {
+                        Ipv4ReassemblyOutcome::Pending(pending) => {
+                            out.push(ReplayEvent::WdpFragmentPending {
+                                duplicate: pending.duplicate,
+                                buffered_payload_bytes: pending.buffered_payload_bytes,
+                                expected_payload_bytes: pending.expected_payload_bytes,
+                                expires_at_tick: pending.expires_at_tick,
+                            });
+                        }
+                        Ipv4ReassemblyOutcome::Complete(packet) => {
+                            let decoded = decode_cdpd_ipv4_udp(&packet).unwrap_or_else(|error| {
+                                panic!(
+                                    "case '{}' reassembled WDP decode failed: {error}",
+                                    case.name
+                                )
+                            });
+                            out.push(ReplayEvent::WdpReassembled {
+                                packet_len: packet.len(),
+                                payload_len: decoded.payload.len(),
+                            });
+                        }
+                    }
+                }
+                ReplayWdpStep::Expire { tick } => {
+                    let active = reassembler.as_mut().unwrap_or_else(|| {
+                        panic!(
+                            "case '{}' expire step requires a reassembly policy",
+                            case.name
+                        )
+                    });
+                    let expired = active.expire(*tick);
+                    out.push(ReplayEvent::WdpIncompleteExpired {
+                        count: expired.len(),
+                        buffered_payload_bytes: expired
+                            .iter()
+                            .map(|assembly| assembly.buffered_payload_bytes)
+                            .sum(),
+                    });
+                }
+            }
+        }
+    }
+
     out
 }
 
@@ -698,6 +1060,49 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
                 decision: decision.clone(),
                 tid: *tid,
                 cache_size: *cache_size,
+            },
+            ExpectedReplayEvent::WdpAccepted {
+                src_addr,
+                dst_addr,
+                src_port,
+                dst_port,
+                packet_len,
+                payload_len,
+            } => ReplayEvent::WdpAccepted {
+                src_addr: src_addr.clone(),
+                dst_addr: dst_addr.clone(),
+                src_port: *src_port,
+                dst_port: *dst_port,
+                packet_len: *packet_len,
+                payload_len: *payload_len,
+            },
+            ExpectedReplayEvent::WdpRejected { error } => ReplayEvent::WdpRejected {
+                error: error.clone(),
+            },
+            ExpectedReplayEvent::WdpFragmentPending {
+                duplicate,
+                buffered_payload_bytes,
+                expected_payload_bytes,
+                expires_at_tick,
+            } => ReplayEvent::WdpFragmentPending {
+                duplicate: *duplicate,
+                buffered_payload_bytes: *buffered_payload_bytes,
+                expected_payload_bytes: *expected_payload_bytes,
+                expires_at_tick: *expires_at_tick,
+            },
+            ExpectedReplayEvent::WdpReassembled {
+                packet_len,
+                payload_len,
+            } => ReplayEvent::WdpReassembled {
+                packet_len: *packet_len,
+                payload_len: *payload_len,
+            },
+            ExpectedReplayEvent::WdpIncompleteExpired {
+                count,
+                buffered_payload_bytes,
+            } => ReplayEvent::WdpIncompleteExpired {
+                count: *count,
+                buffered_payload_bytes: *buffered_payload_bytes,
             },
         })
         .collect()
@@ -821,6 +1226,59 @@ fn derive_transaction_outcomes(events: &[ReplayEvent]) -> Vec<ReplayTransactionO
         });
     }
 
+    let accepted_datagrams = events
+        .iter()
+        .filter(|event| matches!(event, ReplayEvent::WdpAccepted { .. }))
+        .count();
+    let rejected_packets = events
+        .iter()
+        .filter(|event| matches!(event, ReplayEvent::WdpRejected { .. }))
+        .count();
+    let duplicate_fragments = events
+        .iter()
+        .filter(|event| {
+            matches!(
+                event,
+                ReplayEvent::WdpFragmentPending {
+                    duplicate: true,
+                    ..
+                }
+            )
+        })
+        .count();
+    let completed_reassemblies = events
+        .iter()
+        .filter(|event| matches!(event, ReplayEvent::WdpReassembled { .. }))
+        .count();
+    let expired_assemblies = events
+        .iter()
+        .filter_map(|event| match event {
+            ReplayEvent::WdpIncompleteExpired { count, .. } => Some(*count),
+            _ => None,
+        })
+        .sum();
+    if accepted_datagrams
+        + rejected_packets
+        + duplicate_fragments
+        + completed_reassemblies
+        + expired_assemblies
+        > 0
+        || events.iter().any(|event| {
+            matches!(
+                event,
+                ReplayEvent::WdpFragmentPending { .. } | ReplayEvent::WdpIncompleteExpired { .. }
+            )
+        })
+    {
+        out.push(ReplayTransactionOutcome::WdpReplaySummary {
+            accepted_datagrams,
+            rejected_packets,
+            duplicate_fragments,
+            completed_reassemblies,
+            expired_assemblies,
+        });
+    }
+
     out
 }
 
@@ -874,12 +1332,25 @@ fn expected_transaction_outcomes(case: &ReplayCase) -> Vec<ReplayTransactionOutc
                 dropped_duplicates: *dropped_duplicates,
                 final_cache_size: *final_cache_size,
             },
+            ExpectedTransactionOutcome::WdpReplaySummary {
+                accepted_datagrams,
+                rejected_packets,
+                duplicate_fragments,
+                completed_reassemblies,
+                expired_assemblies,
+            } => ReplayTransactionOutcome::WdpReplaySummary {
+                accepted_datagrams: *accepted_datagrams,
+                rejected_packets: *rejected_packets,
+                duplicate_fragments: *duplicate_fragments,
+                completed_reassemblies: *completed_reassemblies,
+                expired_assemblies: *expired_assemblies,
+            },
         })
         .collect()
 }
 
 #[test]
-fn interop_replay_fixture_get_reply_paths_are_deterministic() {
+fn interop_replay_fixture_paths_are_deterministic() {
     let root = interop_fixture_root();
     assert!(
         root.is_dir(),

@@ -14,10 +14,10 @@
 ## Graph summary
 
 - Nodes: 214
-- Edges: 613
+- Edges: 624
 - Selected work items: 7
-- Direct normative clauses: 86
-- Work items without direct clause mappings: 4
+- Direct normative clauses: 97
+- Work items without direct clause mappings: 3
 - Work items with unmapped declared normative families: 2
 
 ## Execution target
@@ -157,19 +157,24 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wdp`, `wtp`
 - Existing tickets: `T0-22`, `T0-24`
-- Direct normative clauses: 0
+- Direct normative clauses: 11
 
 Outputs:
 
 - WDP/WTP packet and replay golden corpus
+- transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json
 
 Acceptance:
 
-- Positive, boundary, malformed, duplicate, timeout, and abort traces replay identically and cite exact effective source features.
+- The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses.
+- WTP duplicate, retransmission, timeout, and abort families remain conditional on a future connection-oriented WSP/WTP claim and do not close TRN-706 in the strict connectionless profile.
 
 Evidence commands:
 
 - `cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/wap-context-pack.mjs TRN-706`
+- `node scripts/check-wap-knowledge-graph.mjs`
 
 ### TRN-707: WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register
 
@@ -718,16 +723,84 @@ Evidence commands:
   - Requirements: `RQ-TRX-006`
   - Fixture: `WCMP-FX-SINGLE-BEARER-FRAGMENT` (`transport-boundary`, `implemented`)
 
+### TRN-706
+
+- **WDP-CL-CDPD-UDP-IP-PROFILE** — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.4.3 (5.4.3 WDP over CDPD)
+  - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-CDPD-UDP-IP-PROFILE` (`transport-boundary`, `implemented`)
+- **WDP-CL-IP-MAPPING-FRAGMENTATION** — Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §7.2 (7.2 Mapping of WDP for IP)
+  - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IP-MAPPING-FRAGMENTATION` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-BASELINE-RECEIVE-SIZE** — Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-BASELINE-RECEIVE-SIZE` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY** — Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-791` §3.2 (3.2.  Discussion)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY` (`binary-decoder`, `implemented`)
+- **WDP-CL-IPV4-FRAGMENTATION-LOCATION** — Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-791` §3.2 (3.2.  Discussion)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-FRAGMENTATION-LOCATION` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-HEADER-CHECKSUM** — Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-HEADER-CHECKSUM` (`binary-decoder`, `implemented`)
+- **WDP-CL-IPV4-HEADER-LAYOUT** — Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.
+  - Family: `wdp`; force: `grammar`; level: `required`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-HEADER-LAYOUT` (`binary-decoder`, `implemented`)
+- **WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS** — Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.
+  - Family: `wdp`; force: `table`; level: `required`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-PF-C-001`, `WDP-PF-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS` (`binary-decoder`, `implemented`)
+- **WDP-CL-UDP-HEADER-LAYOUT** — Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.
+  - Family: `wdp`; force: `grammar`; level: `required`
+  - Source: `rfc-768` §format (Format)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-006`, `WDP-NA-C-007`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-UDP-HEADER-LAYOUT` (`binary-decoder`, `implemented`)
+- **WDP-CL-UDP-LENGTH-BOUNDS** — Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-768` §fields (Fields)
+  - Parents: `WDP-CORE-C-001`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-UDP-LENGTH-BOUNDS` (`binary-decoder`, `implemented`)
+- **WDP-CL-UNITDATA-CONTENT-TRANSPARENCY** — Transmit and deliver the complete service data unit without manipulating its content.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
+  - Parents: `WDP-CORE-C-001`, `WDP-PF-C-001`, `WDP-PF-C-002`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `implemented`)
+
 ## Explicit mapping gaps
 
 - `TRN-704` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-705` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
-- `TRN-706` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-707` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
-- `TRN-706` declares `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `TRN-706` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-707` declares `wcmp`, `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents

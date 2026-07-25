@@ -46,6 +46,8 @@ Fixture lane:
 - `transport-rust/src/wsp_capability.rs` (capability-bound fixtures)
 - `transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/`
   (bounded CDPD/IPv4 payload and lower-IP reassembly replay lane)
+- `transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json`
+  (directly mapped TRN-706 selected-profile WDP replay lane)
 - `transport-rust/tests/network/interop/` (promotion replay lane; tracked by `T0-22` and `T0-24`)
 
 ### `wap-net-ext` (target, gated)

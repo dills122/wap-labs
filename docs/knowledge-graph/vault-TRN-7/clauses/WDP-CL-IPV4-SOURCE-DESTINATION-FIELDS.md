@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `maps-to` → [[requirements/RQ-TRN-003|RQ-TRN-003]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-706|TRN-706]]
 - `refines` → [[scr-rows/WDP-NA-C-003|WDP-NA-C-003]]
 - `refines` → [[scr-rows/WDP-PF-C-001|WDP-PF-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-002|WDP-PF-C-002]]
@@ -45,7 +46,8 @@ tags:
   "obligationSynopsis": "Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-706"
   ],
   "ownerLayers": [
     "transport-rust"
