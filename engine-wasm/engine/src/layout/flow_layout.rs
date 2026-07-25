@@ -32,6 +32,15 @@ impl FocusTarget {
     }
 }
 
+/// Intermediate form of one `InlineNode` while building a paragraph's render output: either a
+/// text/link/input/select segment to be word-wrapped, or an explicit inline `<br/>` that must
+/// advance the line directly instead of going through the word-wrapper (see the comment at the
+/// `ParagraphPart::Break` match arm below for why).
+enum ParagraphPart {
+    Segment(String, Option<FocusTarget>),
+    Break,
+}
+
 pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -> LayoutResult {
     let mut result = LayoutResult::default();
     let mut line = 0u32;
@@ -42,12 +51,18 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                 line += 1;
             }
             Node::Paragraph(inline) => {
-                let mut parts: Vec<(String, Option<FocusTarget>)> = Vec::new();
+                let mut parts: Vec<ParagraphPart> = Vec::new();
                 for entry in inline {
                     match entry {
-                        InlineNode::Text(text) => parts.push((text.clone(), None)),
+                        InlineNode::Break => parts.push(ParagraphPart::Break),
+                        InlineNode::Text(text) => {
+                            parts.push(ParagraphPart::Segment(text.clone(), None));
+                        }
                         InlineNode::Link { text, href } => {
-                            parts.push((text.clone(), Some(FocusTarget::Link(href.clone()))));
+                            parts.push(ParagraphPart::Segment(
+                                text.clone(),
+                                Some(FocusTarget::Link(href.clone())),
+                            ));
                         }
                         InlineNode::Input {
                             name,
@@ -62,7 +77,10 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                                 value.clone()
                             };
                             let rendered = format!("[{name}: {display_value}]");
-                            parts.push((rendered, Some(FocusTarget::Input(name.clone()))));
+                            parts.push(ParagraphPart::Segment(
+                                rendered,
+                                Some(FocusTarget::Input(name.clone())),
+                            ));
                         }
                         InlineNode::Select {
                             control_id,
@@ -89,12 +107,29 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             // Selects are looked up by `control_id` everywhere downstream
                             // (WML-204 select semantics allow duplicate/absent `name`), so
                             // the focus target must carry `control_id`, not `name`.
-                            parts.push((rendered, Some(FocusTarget::Select(control_id.clone()))));
+                            parts.push(ParagraphPart::Segment(
+                                rendered,
+                                Some(FocusTarget::Select(control_id.clone())),
+                            ));
                         }
                     }
                 }
 
-                for (segment, target) in parts {
+                for part in parts {
+                    let (segment, target) = match part {
+                        // WAP-191_104-WML SS11.8.4: `br` forces a line break wherever it
+                        // occurs, including nested inline content -- this must advance the
+                        // line directly rather than going through `wrap_text`, which drops
+                        // whitespace-only segments entirely (`str::split_whitespace` yields no
+                        // words for a blank string) and would otherwise silently swallow the
+                        // break.
+                        ParagraphPart::Break => {
+                            line += 1;
+                            continue;
+                        }
+                        ParagraphPart::Segment(segment, target) => (segment, target),
+                    };
+
                     let chunks = wrap_text(&segment, viewport_cols);
                     let focus_index = target.as_ref().map(|target| {
                         let idx = result.focus_targets.len();
@@ -226,6 +261,47 @@ mod tests {
             cmd,
             crate::render::render_list::DrawCmd::Link { focused: true, .. }
         )));
+    }
+
+    #[test]
+    fn inline_break_forces_a_hard_line_break_between_segments() {
+        // WAP-191_104-WML SS11.8.4: `br` must force a line break wherever it occurs, including
+        // nested inline content. Regression coverage for a real bug: `wrap_text` on a
+        // whitespace-only segment returns zero chunks (`str::split_whitespace` yields no words
+        // for an all-blank string), so mapping inline `<br/>` to `InlineNode::Text(" ")` made
+        // the break silently vanish -- no line advance, no rendered break -- rather than
+        // "collapse to a space" as it might appear from the WML source alone.
+        let card = Card {
+            id: "home".to_string(),
+            nodes: vec![Node::Paragraph(vec![
+                InlineNode::Text("before".to_string()),
+                InlineNode::Break,
+                InlineNode::Text("after".to_string()),
+            ])],
+            accept_action: None,
+            onenterforward_action: None,
+            onenterbackward_action: None,
+            ontimer_action: None,
+            timer_value_ds: None,
+        };
+
+        let out = layout_card(&card, 20, 0);
+        let lines: Vec<(u32, String)> = out
+            .render_list
+            .draw
+            .iter()
+            .filter_map(|cmd| match cmd {
+                DrawCmd::Text { y, text, .. } => Some((*y, text.clone())),
+                _ => None,
+            })
+            .collect();
+
+        assert_eq!(
+            lines,
+            vec![(0, "before".to_string()), (2, "after".to_string())],
+            "the br must consume its own line slot (y=1, left blank between the two text \
+             segments) rather than being skipped entirely -- got {lines:?}"
+        );
     }
 
     #[test]

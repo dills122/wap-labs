@@ -898,7 +898,12 @@ fn parses_mixed_inline_text_links_break_and_unknown_wrappers() {
         InlineNode::Link { text, href } if text == "A" && href == "#a"
     ));
     assert!(matches!(&items[2], InlineNode::Text(t) if t == "mid"));
-    assert!(matches!(&items[3], InlineNode::Text(t) if t == " "));
+    assert!(
+        matches!(&items[3], InlineNode::Break),
+        "inline br must produce a real break node, not collapse to whitespace text \
+         (WAP-191_104-WML SS11.8.4 requires it to force a line break wherever it occurs); got {:?}",
+        items[3]
+    );
     assert!(matches!(&items[4], InlineNode::Text(t) if t == "wrapped"));
     assert!(matches!(&items[5], InlineNode::Text(t) if t == "post"));
 }

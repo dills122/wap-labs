@@ -141,7 +141,10 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
             mask,
             empty_ok: *empty_ok,
         }),
-        InlineNode::Text(_) | InlineNode::Link { .. } | InlineNode::Select { .. } => None,
+        InlineNode::Text(_)
+        | InlineNode::Break
+        | InlineNode::Link { .. }
+        | InlineNode::Select { .. } => None,
     }
 }
 
@@ -161,7 +164,10 @@ fn as_input_mut(item: &mut InlineNode) -> Option<InputMut<'_>> {
             mask: &*mask,
             empty_ok: *empty_ok,
         }),
-        InlineNode::Text(_) | InlineNode::Link { .. } | InlineNode::Select { .. } => None,
+        InlineNode::Text(_)
+        | InlineNode::Break
+        | InlineNode::Link { .. }
+        | InlineNode::Select { .. } => None,
     }
 }
 
@@ -183,7 +189,10 @@ fn as_select(item: &InlineNode) -> Option<SelectRef<'_>> {
             options,
             selected_indices,
         }),
-        InlineNode::Text(_) | InlineNode::Link { .. } | InlineNode::Input { .. } => None,
+        InlineNode::Text(_)
+        | InlineNode::Break
+        | InlineNode::Link { .. }
+        | InlineNode::Input { .. } => None,
     }
 }
 
@@ -209,7 +218,10 @@ fn as_select_mut(item: &mut InlineNode) -> Option<SelectMut<'_>> {
             options: options.as_slice(),
             selected_indices,
         }),
-        InlineNode::Text(_) | InlineNode::Link { .. } | InlineNode::Input { .. } => None,
+        InlineNode::Text(_)
+        | InlineNode::Break
+        | InlineNode::Link { .. }
+        | InlineNode::Input { .. } => None,
     }
 }
 

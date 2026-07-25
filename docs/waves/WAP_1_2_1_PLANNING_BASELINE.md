@@ -43,7 +43,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 174 | 3 | 24 | 12 |
+| WML | 39 | 174 | 4 | 23 | 12 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 23 | 18 |
@@ -52,7 +52,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 5 | 28 | 5 | 0 | 0 |
 | WSP | 8 | 57 | 0 | 8 | 0 |
-| **Total** | **201** | **780** | **22** | **78** | **101** |
+| **Total** | **201** | **780** | **23** | **77** | **101** |
 
 Parent-row status is not a substitute for direct clause evidence. With 149 of
 780 clauses assessed, the project remains `pre-conformance` until every

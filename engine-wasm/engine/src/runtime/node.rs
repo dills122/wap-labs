@@ -16,6 +16,12 @@ pub struct SelectOption {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum InlineNode {
     Text(String),
+    /// An explicit `<br/>` occurring inside a paragraph's inline content (as opposed to
+    /// card-level `Node::Break`, e.g. text mixed with a link or input on the same paragraph).
+    /// WAP-191_104-WML §11.8.4 requires `br` to force a line break regardless of nesting
+    /// position; this variant lets the layout engine honor that instead of the element being
+    /// silently dropped or mapped to ordinary whitespace.
+    Break,
     Link {
         text: String,
         href: String,

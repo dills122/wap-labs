@@ -166,7 +166,7 @@ fn map_inline_nodes_recursive(
                     // so inline ordering is preserved.
                     flush_pending_inline_text(pending_text, out);
                     match outcome {
-                        InlineTagOutcome::Break => out.push(InlineNode::Text(" ".to_string())),
+                        InlineTagOutcome::Break => out.push(InlineNode::Break),
                         InlineTagOutcome::Node(inline) => out.push(inline),
                         InlineTagOutcome::Skip => {}
                     }
