@@ -20,7 +20,7 @@ Status: Active
   - nine mandatory feature families
   - 712 effective source rows
   - 201 selected strict rows
-  - implementation audit: 7 implemented, 84 partial, 110 missing
+  - implementation audit: 22 implemented, 78 partial, 101 missing
   - all 201 selected rows have owner/work-item mappings
 - Important: `deep-extracted` describes review of the current WAP 2.0-heavy
   local corpus. It is not evidence that the WAP 1.2.1 target source set or
@@ -54,7 +54,7 @@ Status: Active
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - all 781 direct fixtures planned; clause implementation status not assessed
+  - 77 fixture-backed clauses assessed; 704 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
   - all 201 selected rows classified
@@ -107,9 +107,10 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
   - 317 source rows and 22 selected connectionless Class C rows
-  - selected audit: 5 implemented, 17 partial, 0 missing
-  - direct normative evidence: 5/22, all on the selected WAP-202 WCMP path
-  - direct normative test evidence: 0/22
+  - selected audit: 14 implemented, 8 partial, 0 missing
+  - direct normative evidence: 14/22 across the selected WAP-200 WDP and
+    WAP-202 WCMP paths
+  - direct normative test evidence: 14/22
 - Conditional target source:
   - `WAP-201-WTP` plus approved SINs, only when connection-oriented WSP is
     claimed
@@ -229,8 +230,8 @@ Status: Active
 
 2. Transport bedrock conformance closure (`WAP-200`, `WAP-202`, `WAP-203`)
 - Status: in progress (exact SCR extraction, selected-path resolution, and
-  implementation audit plus 134 nested clauses complete; direct fixtures and
-  implementation closure pending)
+  implementation audit plus 134 nested clauses complete; WDP/WCMP fixtures
+  are direct, while WSP implementation closure remains pending)
 - Deliverables:
   - `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`
   - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
@@ -240,8 +241,8 @@ Status: Active
   - program work items `TRN-701`, `TRN-703`, `WSP-801`, `WSP-802`,
     `WSP-804`, and `WSP-805`
 - Priority closure focus:
-  - nine selected WDP rows, including the CDPD/IPv4 bearer declaration
-  - five selected WCMP general-message rows
+  - preserve the completed nine-row WDP CDPD/IPv4 evidence
+  - preserve the completed five-row WCMP general-message evidence
   - eight selected connectionless WSP rows and exact WAP-203 registries
   - browser GET/POST ingress through the selected connectionless path
   - retain the normalized, licensed-payload `TIAEIA-732` capability metadata

@@ -15,6 +15,13 @@ const records = [
     flows: [
       {
         id: 'smoke',
+        target: 'host-sample',
+        workItems: ['R0-10'],
+        specItems: ['WML-R-007']
+      },
+      {
+        id: 'waves-smoke',
+        target: 'waves-browser',
         workItems: ['R0-10'],
         specItems: ['WML-R-007']
       }
@@ -28,8 +35,13 @@ const records = [
 ];
 
 test('selects executable stories by work item or spec item, case-insensitively', () => {
-  assert.equal(selectExecutableStories(records, 'r0-10').length, 1);
-  assert.equal(selectExecutableStories(records, 'WML-R-007').length, 1);
+  assert.equal(selectExecutableStories(records, 'r0-10').length, 2);
+  assert.equal(selectExecutableStories(records, 'WML-R-007').length, 2);
+});
+
+test('selects fast target-specific story lanes', () => {
+  assert.equal(selectExecutableStories(records, 'host-sample').length, 1);
+  assert.equal(selectExecutableStories(records, 'waves').length, 1);
 });
 
 test('reports an explicit metadata-only coverage gap', () => {
@@ -76,5 +88,36 @@ test('asserts structured runtime state and trace evidence', () => {
   assert.throws(
     () => assertStoryExpectation(evidence, { state: { activeCardId: 'home' } }, 'test'),
     /snapshot.activeCardId/
+  );
+});
+
+test('asserts Waves host session, status, and semantic render evidence', () => {
+  const evidence = {
+    snapshot: {
+      activeCardId: 'home',
+      focusedLinkIndex: 0
+    },
+    traceEntries: [],
+    session: {
+      runMode: 'network',
+      navigationStatus: 'error'
+    },
+    status: 'Error: card not found',
+    render: {
+      draw: [{ type: 'link', x: 0, y: 0, text: 'Broken target', focused: true, href: '#missing' }]
+    }
+  };
+
+  assert.doesNotThrow(() =>
+    assertStoryExpectation(
+      evidence,
+      {
+        state: { activeCardId: 'home' },
+        session: { navigationStatus: 'error' },
+        statusIncludes: 'card not found',
+        render: { textIncludes: ['Broken target'] }
+      },
+      'waves'
+    )
   );
 });

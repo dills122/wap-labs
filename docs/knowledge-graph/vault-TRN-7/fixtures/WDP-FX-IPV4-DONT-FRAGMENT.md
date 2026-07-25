@@ -4,7 +4,7 @@ key: "WDP-FX-IPV4-DONT-FRAGMENT"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "error-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

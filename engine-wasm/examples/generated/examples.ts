@@ -5,17 +5,37 @@
 export interface StoryStateExpectation {
   activeCardId?: string;
   focusedLinkIndex?: number;
+  focusedInputEditName?: string | null;
+  focusedInputEditValue?: string | null;
+  focusedSelectEditName?: string | null;
+  focusedSelectEditValue?: string | null;
   externalNavigationIntent?: string | null;
   nextCardVar?: string | null;
+}
+
+export interface StorySessionExpectation {
+  runMode?: 'local' | 'network';
+  navigationStatus?: string;
+  requestedUrl?: string | null;
+  finalUrl?: string | null;
+  activeCardId?: string | null;
+  focusedLinkIndex?: number;
+  externalNavigationIntent?: string | null;
+  lastError?: string | null;
 }
 
 export interface StoryExpectation {
   state: StoryStateExpectation;
   traceKinds?: string[];
+  session?: StorySessionExpectation;
+  statusIncludes?: string;
+  render?: { textIncludes: string[] };
 }
 
 export type StoryAction =
   | { type: 'key'; key: 'up' | 'down' | 'enter' }
+  | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
+  | { type: 'type-text'; text: string }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
@@ -28,6 +48,8 @@ export interface StoryStep {
 export interface ExecutableStoryFlow {
   id: string;
   title: string;
+  target: 'host-sample' | 'waves-browser';
+  setup?: { runMode: 'local' | 'network' };
   workItems: string[];
   specItems: string[];
   initial: StoryExpectation;
@@ -189,6 +211,7 @@ export const EXAMPLES: HostExample[] = [
       {
         "id": "fragment-and-external-intent",
         "title": "Fragment navigation and external intent stay separate",
+        "target": "host-sample",
         "workItems": [
           "A2-01",
           "A2-02"
@@ -252,6 +275,103 @@ export const EXAMPLES: HostExample[] = [
             "action": {
               "type": "key",
               "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": "http://example.com/other.wml"
+              },
+              "traceKinds": [
+                "ACTION_EXTERNAL"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-fragment-and-external-intent",
+        "title": "Waves UI drives fragment navigation and captures external intent",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "A2-01",
+          "A2-02"
+        ],
+        "specItems": [
+          "WML-R-006",
+          "WML-R-007"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "local",
+            "navigationStatus": "loaded"
+          },
+          "render": {
+            "textIncludes": [
+              "WaveNav Host Harness",
+              "Go to next card"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Second card loaded.",
+                  "Return home"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
             },
             "expect": {
               "state": {
@@ -370,6 +490,147 @@ export const EXAMPLES: HostExample[] = [
       "Re-enter Country edit, change the draft option, then press Escape and confirm the original committed option remains visible.",
       "Submit the card and confirm Waves captures the local-mode external intent without fetching."
     ],
+    "flows": [
+      {
+        "id": "waves-merged-select-and-input-edit",
+        "title": "Waves combines softkey focus with keyboard select and input editing",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "A5-05",
+          "A5-06"
+        ],
+        "specItems": [
+          "WML-R-019",
+          "RQ-RMK-003",
+          "RQ-RMK-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "profile",
+            "focusedLinkIndex": 0,
+            "focusedInputEditName": null,
+            "focusedSelectEditName": null
+          },
+          "render": {
+            "textIncludes": [
+              "Help",
+              "Jordan",
+              "PIN:",
+              "Review"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedSelectEditName": "Country",
+                "focusedSelectEditValue": "Jordan"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": "Country",
+                "focusedSelectEditValue": "France"
+              },
+              "render": {
+                "textIncludes": [
+                  "France"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedSelectEditName": null,
+                "focusedSelectEditValue": null
+              },
+              "render": {
+                "textIncludes": [
+                  "France"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "12"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "pin",
+                "focusedInputEditValue": "12"
+              },
+              "render": {
+                "textIncludes": [
+                  "**"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null
+              },
+              "render": {
+                "textIncludes": [
+                  "**"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"profile\" title=\"Select Navigation\">\n    <p><a href=\"#help\">Help</a></p>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n        <option value=\"Japan\">Japan</option>\n      </select>\n    </p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <p><a href=\"#review\">Review</a></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n  </card>\n  <card id=\"help\" title=\"Help\">\n    <p>Use Enter to begin or commit select edit.</p>\n    <p>Use Escape to cancel select edit.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n  <card id=\"review\" title=\"Review\">\n    <p>Review card reached through normal focus navigation.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
@@ -435,6 +696,7 @@ export const EXAMPLES: HostExample[] = [
       {
         "id": "fragment-back-and-empty-history",
         "title": "Fragment history pops once and then reports empty",
+        "target": "host-sample",
         "workItems": [
           "A2-03"
         ],
@@ -495,6 +757,82 @@ export const EXAMPLES: HostExample[] = [
             }
           }
         ]
+      },
+      {
+        "id": "waves-fragment-back-and-empty-history",
+        "title": "Waves keyboard back pops fragment history and reports empty history",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "A2-03"
+        ],
+        "specItems": [
+          "WML-R-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "History baseline demo.",
+              "Go to next"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "render": {
+                "textIncludes": [
+                  "Second card reached by fragment navigation."
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ],
+              "statusIncludes": "engine history"
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_BACK_EMPTY"
+              ],
+              "statusIncludes": "no back history"
+            }
+          }
+        ]
       }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>History baseline demo.</p>\n    <a href=\"#next\">Go to next</a>\n  </card>\n  <card id=\"next\">\n    <p>Second card reached by fragment navigation.</p>\n    <a href=\"#home\">Return home via link</a>\n  </card>\n</wml>\n"
@@ -515,6 +853,65 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"Broken target\".",
       "Confirm status shows a key error and activeCardId remains home.",
       "Confirm focusedLinkIndex remains stable after the failed navigation."
+    ],
+    "flows": [
+      {
+        "id": "waves-network-missing-fragment-error",
+        "title": "Waves fixture fetch preserves state when fragment navigation fails",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "network"
+        },
+        "workItems": [
+          "A2-01"
+        ],
+        "specItems": [
+          "WML-R-006"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "session": {
+            "runMode": "network",
+            "navigationStatus": "loaded",
+            "finalUrl": "http://fixtures.test/examples/missingFragment.wml"
+          },
+          "render": {
+            "textIncludes": [
+              "Missing fragment test",
+              "Broken target"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY"
+              ],
+              "session": {
+                "navigationStatus": "error"
+              },
+              "statusIncludes": "Error:",
+              "render": {
+                "textIncludes": [
+                  "Broken target"
+                ]
+              }
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Missing fragment test</p>\n    <a href=\"#missing\">Broken target</a>\n  </card>\n</wml>\n"
   },
@@ -615,6 +1012,7 @@ export const EXAMPLES: HostExample[] = [
       {
         "id": "zero-timer-dispatch",
         "title": "Zero-value timer dispatches ontimer during card entry",
+        "target": "host-sample",
         "workItems": [
           "A5-03"
         ],
@@ -755,6 +1153,7 @@ export const EXAMPLES: HostExample[] = [
       {
         "id": "initialization-and-user-commit",
         "title": "Select initialization and committed user state stay deterministic",
+        "target": "host-sample",
         "workItems": [
           "R0-04",
           "C5-05",

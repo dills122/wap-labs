@@ -55,12 +55,15 @@ companion into `examples.ts`. A version 1 companion contains:
 
 - `example`: the generated example key (`basic`, `historyBackStack`, and so on)
 - one or more lower-kebab-case `flows`
+- optional `target`: `host-sample` (default) or `waves-browser`
+- optional Waves-only `setup.runMode`: `local` or `network`
 - exact `workItems` and `specItems` mappings; the union across flows must match the WML metadata
 - an `initial` expectation and one or more action/expectation steps
 - actions: `key` (`up`, `down`, `enter`), `back`, `tick` (`100` or `1000` ms), and
-  `clear-intent`
-- state assertions: `activeCardId`, `focusedLinkIndex`, `externalNavigationIntent`, and
-  `nextCardVar`
+  `clear-intent`; Waves flows can also use real `keyboard` presses and `type-text`
+- runtime state assertions including card/focus, focused input/select edit state, external intent,
+  and `nextCardVar`
+- Waves-only semantic `session`, `statusIncludes`, and rendered `textIncludes` assertions
 - optional `traceKinds`, matched as an ordered subsequence of engine trace entries
 
 Unknown example references/actions, malformed values, missing mappings, extra mappings, and stale
@@ -85,18 +88,27 @@ pnpm --dir engine-wasm/host-sample exec playwright install chromium
 pnpm test:story list
 pnpm test:story WML-R-007
 pnpm test:story A2-03
+pnpm test:story host-sample
+pnpm test:story:waves
 pnpm test:story all
 ```
 
-The command generates/validates the shared manifest, builds the production host sample, reserves an
-ephemeral localhost port, manages the Vite preview lifecycle, and drives the real WASM host through
-Playwright. No manual server setup is required.
+The command generates/validates the shared manifest and builds only the targets selected by the
+flow. `host-sample` drives the production engine sample. `waves-browser` builds a dedicated
+ordinary-browser entry that composes the real Waves frontend with the real WaveNav WASM engine and
+an in-memory deterministic fixture fetch adapter. Production Tauri startup still uses the generated
+Tauri host client.
+
+Each selected target receives an ephemeral localhost port and a unique temporary build directory,
+so concurrent worktrees and CI jobs do not share servers or build output. No manual server setup is
+required.
 
 Every run writes a stable summary under
 `engine-wasm/host-sample/test-results/story/<selector>/summary.json`. Failed flows also receive
-`failure.png`, `trace.zip`, and structured `evidence.json` containing runtime snapshots, engine
-trace entries, host events, and browser diagnostics. Override the root with
-`WAVES_STORY_OUTPUT_DIR`.
+`failure.png`, `trace.zip`, and structured `evidence.json` containing runtime snapshots, semantic
+render output, engine trace entries, host session state, and browser diagnostics. Override the root
+with a per-job `WAVES_STORY_OUTPUT_DIR` when intentionally running concurrent selectors in the same
+checkout.
 
 Exit codes are `0` for pass/list, `1` for assertion failures, `2` for usage or environment errors,
 and `3` when the requested ID has no executable coverage.

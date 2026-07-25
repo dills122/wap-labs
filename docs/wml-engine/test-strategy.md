@@ -53,12 +53,15 @@ Use `engine-wasm/host-sample` for manual or story-driven automated smoke:
 
 Executable acceptance flows are optional `engine-wasm/examples/source/*.flow.json` companions to
 the canonical WML examples. Run `pnpm test:story <work-item-or-spec-id>` from the repository root,
-or use `list`/`all`. The runner owns its production Vite server lifecycle, uses an ephemeral port,
-asserts structured runtime state and ordered trace evidence, and writes failure artifacts under
+or use `list`, `host-sample`, `waves`, or `all`. The runner owns each production Vite server
+lifecycle, uses ephemeral ports and unique temporary build directories, asserts structured runtime
+state and ordered trace evidence, and writes failure artifacts under
 `engine-wasm/host-sample/test-results/story/`.
 
-This lane currently covers representative fragment/external-intent, history-back, and immediate
-timer flows. It does not yet replay transport or native Tauri behavior.
+The Waves target composes the real frontend with the real WASM engine in an ordinary browser. It
+covers representative fragment/external-intent, history-back/error, and merged input/select
+behavior using semantic render/runtime evidence. Network-mode stories use deterministic canonical
+fixture fetching; native Tauri behavior and the Rust transport stack remain outside this lane.
 
 ## 4. Definition of Done for Each Ticket
 

@@ -19,6 +19,8 @@ Implemented now:
   - generator: `scripts/generate-contract-wrappers.mjs`
   - output: `contracts/generated/tauri-host-client.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
+- Ordinary-browser Waves story entry backed by the real WaveNav WASM engine and deterministic
+  canonical fixture fetching (`pnpm test:story:waves`)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
 - Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)

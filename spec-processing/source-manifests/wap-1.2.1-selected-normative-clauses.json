@@ -43,7 +43,7 @@
     "recommendedClauseCount": 31,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 781,
-    "assessedClauseCount": 0
+    "assessedClauseCount": 89
   },
   "families": [
     {
@@ -19636,9 +19636,9 @@
     },
     {
       "family": "wdp",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
-      "parentLedgerSha256": "438645d590712a6a2b65f798e7eee52526854d5bd86f12ba2ecc545c70df7226",
+      "parentLedgerSha256": "900f30373d63b8ba7764ded3211fe8074010f191a7f8119031f6be677be03253",
       "effectiveSequence": [
         "WAP-200-WDP",
         "WAP-200_001-WDP",
@@ -19686,7 +19686,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19716,7 +19716,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19759,7 +19759,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19787,7 +19787,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19814,7 +19814,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19840,7 +19840,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19864,7 +19864,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19912,7 +19912,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19942,7 +19942,7 @@
             "documentId": "WAP-200_005-WDP",
             "staticConformanceSection": "Appendix E"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19985,8 +19985,13 @@
           "fixturePlan": {
             "id": "WDP-FX-CONSISTENT-TRANSPORT-SERVICE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations."
+            "status": "implemented",
+            "assertion": "Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20000,10 +20005,10 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CORE-C-001": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20027,8 +20032,13 @@
           "fixturePlan": {
             "id": "WDP-FX-APPLICATION-PORT-ADDRESSING",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Provide source and destination port addressing for the higher-layer protocol or application above WDP."
+            "status": "implemented",
+            "assertion": "Provide source and destination port addressing for the higher-layer protocol or application above WDP.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20043,11 +20053,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20070,8 +20080,13 @@
           "fixturePlan": {
             "id": "WDP-FX-BEARER-TRANSPARENCY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently."
+            "status": "implemented",
+            "assertion": "Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20085,10 +20100,10 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CORE-C-001": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20113,8 +20128,13 @@
           "fixturePlan": {
             "id": "WDP-FX-SIMULTANEOUS-INSTANCES",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service."
+            "status": "implemented",
+            "assertion": "Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20129,12 +20149,12 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20157,8 +20177,13 @@
           "fixturePlan": {
             "id": "WDP-FX-ADAPTATION-LAYER-BOUNDARY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Terminate bearer-specific adaptation at the WDP boundary without changing the service presented to WSP or other upper layers."
+            "status": "implemented",
+            "assertion": "Terminate bearer-specific adaptation at the WDP boundary without changing the service presented to WSP or other upper layers.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20173,10 +20198,10 @@
               "RQ-TRN-002"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CT-C-002": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CT-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20200,8 +20225,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IP-BEARER-REQUIRES-UDP",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Use UDP as the WDP protocol whenever the selected bearer provides IP."
+            "status": "implemented",
+            "assertion": "Use UDP as the WDP protocol whenever the selected bearer provides IP.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20217,11 +20247,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CT-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CT-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20244,8 +20274,13 @@
           "fixturePlan": {
             "id": "WDP-FX-CDPD-UDP-IP-PROFILE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4."
+            "status": "implemented",
+            "assertion": "Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20260,10 +20295,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CT-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CT-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20285,8 +20320,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UNITDATA-REQUEST-ANYTIME",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Allow T-DUnitdata.request without establishing a prior transport connection."
+            "status": "implemented",
+            "assertion": "Allow T-DUnitdata.request without establishing a prior transport connection.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20300,9 +20340,9 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial"
+              "WDP-PF-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20329,8 +20369,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UNITDATA-REQUEST-PARAMETERS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request."
+            "status": "implemented",
+            "assertion": "Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20345,14 +20390,14 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-PF-C-001": "partial",
-              "WDP-NA-C-000": "partial",
-              "WDP-NA-C-003": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-PF-C-001": "implemented",
+              "WDP-NA-C-000": "implemented",
+              "WDP-NA-C-003": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20379,8 +20424,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UNITDATA-INDICATION-PARAMETERS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available."
+            "status": "implemented",
+            "assertion": "Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20395,14 +20445,14 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-000": "partial",
-              "WDP-NA-C-003": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-000": "implemented",
+              "WDP-NA-C-003": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20427,8 +20477,13 @@
           "fixturePlan": {
             "id": "WDP-FX-DESTINATION-ADDRESS-SEMANTICS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Treat the destination address as the network identity of the receiving device for the submitted user data."
+            "status": "implemented",
+            "assertion": "Treat the destination address as the network identity of the receiving device for the submitted user data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20443,12 +20498,12 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial",
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-000": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-PF-C-001": "implemented",
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-000": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20473,8 +20528,13 @@
           "fixturePlan": {
             "id": "WDP-FX-SOURCE-ADDRESS-SEMANTICS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Treat the source address as the unique network identity of the device issuing the transport request."
+            "status": "implemented",
+            "assertion": "Treat the source address as the unique network identity of the device issuing the transport request.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20489,12 +20549,12 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial",
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-000": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-PF-C-001": "implemented",
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-000": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20518,8 +20578,13 @@
           "fixturePlan": {
             "id": "WDP-FX-DESTINATION-PORT-SEMANTICS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Bind the destination port to the destination application or upper-layer protocol for that communication instance."
+            "status": "implemented",
+            "assertion": "Bind the destination port to the destination application or upper-layer protocol for that communication instance.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20534,11 +20599,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial",
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-006": "partial"
+              "WDP-PF-C-001": "implemented",
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20562,8 +20627,13 @@
           "fixturePlan": {
             "id": "WDP-FX-SOURCE-PORT-SEMANTICS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Bind the source port to the requesting application or upper-layer protocol for that communication instance."
+            "status": "implemented",
+            "assertion": "Bind the source port to the requesting application or upper-layer protocol for that communication instance.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20578,11 +20648,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial",
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-PF-C-001": "implemented",
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20606,8 +20676,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UNITDATA-CONTENT-TRANSPARENCY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Transmit and deliver the complete service data unit without manipulating its content."
+            "status": "implemented",
+            "assertion": "Transmit and deliver the complete service data unit without manipulating its content.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20621,11 +20696,11 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-PF-C-001": "partial",
-              "WDP-PF-C-002": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-PF-C-001": "implemented",
+              "WDP-PF-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20649,8 +20724,13 @@
           "fixturePlan": {
             "id": "WDP-FX-PROTOCOL-REQUIRED-PORT-FIELDS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Carry both destination and source port fields in the selected WDP protocol mapping."
+            "status": "implemented",
+            "assertion": "Carry both destination and source port fields in the selected WDP protocol mapping.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20665,11 +20745,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20693,8 +20773,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IP-MAPPING-IS-UDP",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Map WDP directly to UDP for every selected bearer on which IP routing is available."
+            "status": "implemented",
+            "assertion": "Map WDP directly to UDP for every selected bearer on which IP routing is available.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20710,11 +20795,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CT-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CT-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20738,8 +20823,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IP-MAPPING-FRAGMENTATION",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path."
+            "status": "implemented",
+            "assertion": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20755,11 +20845,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CT-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CT-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20782,8 +20872,13 @@
           "fixturePlan": {
             "id": "WDP-FX-WAP-PORT-REGISTRY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services."
+            "status": "implemented",
+            "assertion": "Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20797,10 +20892,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20823,8 +20918,13 @@
           "fixturePlan": {
             "id": "WDP-FX-SELECTED-WSP-PORT",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service."
+            "status": "implemented",
+            "assertion": "Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20839,10 +20939,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-NA-C-006": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-NA-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20865,8 +20965,13 @@
           "fixturePlan": {
             "id": "WDP-FX-SELECTED-BEARER-ASSIGNMENT",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried."
+            "status": "implemented",
+            "assertion": "Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20881,10 +20986,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CT-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CT-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20907,8 +21012,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-UNRELIABLE-DATAGRAMS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression."
+            "status": "implemented",
+            "assertion": "Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20922,10 +21032,10 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CORE-C-001": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20949,8 +21059,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-HEADER-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data."
+            "status": "implemented",
+            "assertion": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -20965,11 +21080,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -20991,8 +21106,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-SOURCE-PORT-ZERO",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port."
+            "status": "implemented",
+            "assertion": "Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21006,9 +21126,9 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-007": "partial"
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21031,8 +21151,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-DESTINATION-PORT-CONTEXT",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Interpret a UDP destination port within the context of its destination IPv4 address."
+            "status": "implemented",
+            "assertion": "Interpret a UDP destination port within the context of its destination IPv4 address.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21046,10 +21171,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21071,8 +21196,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-LENGTH-BOUNDS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header."
+            "status": "implemented",
+            "assertion": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21086,9 +21216,9 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial"
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21111,8 +21241,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-CHECKSUM-COVERAGE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic."
+            "status": "implemented",
+            "assertion": "Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21127,10 +21262,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21152,8 +21287,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-CHECKSUM-PADDING",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet."
+            "status": "implemented",
+            "assertion": "Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21167,9 +21307,9 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial"
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21191,8 +21331,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-CHECKSUM-ZERO-ENCODING",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Transmit an arithmetically computed zero UDP checksum as all one bits."
+            "status": "implemented",
+            "assertion": "Transmit an arithmetically computed zero UDP checksum as all one bits.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21206,9 +21351,9 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial"
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21230,8 +21375,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-CHECKSUM-OMISSION",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum."
+            "status": "implemented",
+            "assertion": "Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21245,9 +21395,9 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial"
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21271,8 +21421,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-RECEIVE-INTERFACE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Provide receive-port creation and return received data with its source IPv4 address and source port."
+            "status": "implemented",
+            "assertion": "Provide receive-port creation and return received data with its source IPv4 address and source port.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21287,11 +21442,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-003": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-003": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21316,8 +21471,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-SEND-INTERFACE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses."
+            "status": "implemented",
+            "assertion": "Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21332,12 +21492,12 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial",
-              "WDP-NA-C-003": "partial",
-              "WDP-NA-C-006": "partial",
-              "WDP-NA-C-007": "partial"
+              "WDP-PF-C-001": "implemented",
+              "WDP-NA-C-003": "implemented",
+              "WDP-NA-C-006": "implemented",
+              "WDP-NA-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21360,8 +21520,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-IP-INTERFACE-METADATA",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary."
+            "status": "implemented",
+            "assertion": "Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21376,10 +21541,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21402,8 +21567,13 @@
           "fixturePlan": {
             "id": "WDP-FX-UDP-IP-PROTOCOL-NUMBER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Identify UDP with IPv4 protocol number 17."
+            "status": "implemented",
+            "assertion": "Identify UDP with IPv4 protocol number 17.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21418,10 +21588,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CT-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CT-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21445,8 +21615,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-INDEPENDENT-DATAGRAMS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Treat each IPv4 datagram independently without a transport connection or logical circuit."
+            "status": "implemented",
+            "assertion": "Treat each IPv4 datagram independently without a transport connection or logical circuit.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21461,11 +21636,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21488,8 +21663,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-FIXED-ADDRESS-SIZE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Represent each selected IPv4 source or destination address as four octets."
+            "status": "implemented",
+            "assertion": "Represent each selected IPv4 source or destination address as four octets.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21503,10 +21683,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-000": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-000": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21528,8 +21708,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-HEADER-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP."
+            "status": "implemented",
+            "assertion": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21543,9 +21728,9 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21567,8 +21752,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-VERSION-AND-IHL",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five."
+            "status": "implemented",
+            "assertion": "Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21582,9 +21772,9 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21607,8 +21797,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-TOTAL-LENGTH",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535."
+            "status": "implemented",
+            "assertion": "Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21623,10 +21818,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21649,8 +21844,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-BASELINE-RECEIVE-SIZE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments."
+            "status": "implemented",
+            "assertion": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21665,10 +21865,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21691,8 +21891,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-LARGE-SEND-GUARD",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it."
+            "status": "implemented",
+            "assertion": "Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21707,10 +21912,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21733,8 +21938,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-FRAGMENTATION-LOCATION",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP."
+            "status": "implemented",
+            "assertion": "Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21749,10 +21959,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21775,8 +21985,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker."
+            "status": "implemented",
+            "assertion": "Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21791,10 +22006,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21817,8 +22032,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-DONT-FRAGMENT",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact."
+            "status": "implemented",
+            "assertion": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21833,10 +22053,10 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-CORE-C-001": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-CORE-C-001": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21858,8 +22078,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-TTL-ZERO",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Destroy an IPv4 datagram when its time-to-live value reaches zero."
+            "status": "implemented",
+            "assertion": "Destroy an IPv4 datagram when its time-to-live value reaches zero.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21873,9 +22098,9 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21897,8 +22122,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-HEADER-CHECKSUM",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails."
+            "status": "implemented",
+            "assertion": "Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21912,9 +22142,9 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21938,8 +22168,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary."
+            "status": "implemented",
+            "assertion": "Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21954,11 +22189,11 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-PF-C-001": "partial",
-              "WDP-PF-C-002": "partial",
-              "WDP-NA-C-003": "partial"
+              "WDP-PF-C-001": "implemented",
+              "WDP-PF-C-002": "implemented",
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21980,8 +22215,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-ROBUST-INTEROPERATION",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely."
+            "status": "implemented",
+            "assertion": "Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21995,9 +22235,9 @@
               "RQ-TRN-003"
             ],
             "parentImplementationSnapshot": {
-              "WDP-NA-C-003": "partial"
+              "WDP-NA-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -22020,8 +22260,13 @@
           "fixturePlan": {
             "id": "WDP-FX-IPV4-NO-RELIABILITY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer."
+            "status": "implemented",
+            "assertion": "Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
+              "testPath": "transport-rust/src/network/wdp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -22035,10 +22280,10 @@
               "RQ-TRN-001"
             ],
             "parentImplementationSnapshot": {
-              "WDP-C-001": "partial",
-              "WDP-CORE-C-001": "partial"
+              "WDP-C-001": "implemented",
+              "WDP-CORE-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         }

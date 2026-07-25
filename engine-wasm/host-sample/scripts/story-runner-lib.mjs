@@ -17,6 +17,12 @@ export function selectExecutableStories(records, selector) {
   if (selector === 'all') {
     return stories;
   }
+  if (selector === 'waves' || selector === 'waves-browser') {
+    return stories.filter((story) => story.flow.target === 'waves-browser');
+  }
+  if (selector === 'host-sample') {
+    return stories.filter((story) => (story.flow.target ?? 'host-sample') === 'host-sample');
+  }
 
   const normalized = selector.toUpperCase();
   const selected = stories.filter((story) =>
@@ -51,6 +57,7 @@ export function traceContainsSubsequence(actualKinds, expectedKinds) {
 }
 
 export function assertStoryExpectation(evidence, expectation, label) {
+  assert.ok(evidence.snapshot, `${label}: runtime snapshot is unavailable`);
   for (const [key, expected] of Object.entries(expectation.state)) {
     const actual = evidence.snapshot[key] ?? null;
     assert.deepEqual(actual, expected, `${label}: snapshot.${key}`);
@@ -62,6 +69,31 @@ export function assertStoryExpectation(evidence, expectation, label) {
       `${label}: expected trace subsequence ${expectation.traceKinds.join(' -> ')}, got ${actualKinds.join(' -> ')}`
     );
   }
+  if (expectation.session) {
+    assert.ok(evidence.session, `${label}: host session evidence is unavailable`);
+    for (const [key, expected] of Object.entries(expectation.session)) {
+      const actual = evidence.session[key] ?? null;
+      assert.deepEqual(actual, expected, `${label}: session.${key}`);
+    }
+  }
+  if (expectation.statusIncludes) {
+    assert.match(
+      evidence.status ?? '',
+      new RegExp(escapeRegExp(expectation.statusIncludes)),
+      `${label}: status`
+    );
+  }
+  if (expectation.render) {
+    assert.ok(evidence.render, `${label}: semantic render evidence is unavailable`);
+    const actualText = normalizeRenderText(evidence.render.draw.map((command) => command.text));
+    for (const expectedText of expectation.render.textIncludes) {
+      const normalizedExpected = normalizeRenderText([expectedText]);
+      assert.ok(
+        actualText.includes(normalizedExpected),
+        `${label}: expected render text to include "${expectedText}", got "${actualText}"`
+      );
+    }
+  }
 }
 
 export function storyListLines(records) {
@@ -71,6 +103,9 @@ export function storyListLines(records) {
   }
   return stories.map(
     ({ example, flow }) =>
-      `${example.key}/${flow.id} | ${[...flow.workItems, ...flow.specItems].join(', ')} | ${flow.title}`
+      `${example.key}/${flow.id} [${flow.target ?? 'host-sample'}] | ${[...flow.workItems, ...flow.specItems].join(', ')} | ${flow.title}`
   );
 }
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const normalizeRenderText = (parts) => parts.join(' ').replace(/\s+/g, ' ').trim();

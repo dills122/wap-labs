@@ -8,11 +8,15 @@ Date: `2026-03-04`
 In this project WDP is a constrained, testable datagram abstraction for upper protocol layers.
 It maps to one transport datagram in memory and to one UDP datagram in the MVP transport.
 
-From `WAP-259`:
+For the selected WAP 1.2.1 Class C path, WAP-200 plus RFC 768 and RFC 791
+define the active behavior:
 
 - WDP is the standard datagram interface between bearer services and upper layers.
-- over IP, WDP mapping is UDP.
+- CDPD is selected as an IP-capable bearer and WDP maps directly to UDP/IPv4.
 - WSP/WTP/WTLS session identity is by address/port quadruplet (client/server address + ports).
+- the selected AMPS/CDPD/IPv4 bearer assignment is `0x0D`.
+- bearer fragmentation/reassembly terminates below WDP; no second WDP
+  segmentation header is added to this IP path.
 
 ## 2) MVP datagram model
 
@@ -31,37 +35,59 @@ pub struct WdpAddress {
 }
 ```
 
-Minimal interface required by current transport:
+The source-shaped service primitive types are:
 
 ```rust
-pub trait DatagramTransport {
-    fn send(&mut self, datagram: &WdpDatagram) -> Result<(), WdpError>;
-    fn receive(&mut self) -> Result<WdpDatagram, WdpError>;
+pub struct TDUnitdataRequest {
+    pub source_address: WdpAddress,
+    pub source_port: u16,
+    pub destination_address: WdpAddress,
+    pub destination_port: u16,
+    pub user_data: Vec<u8>,
+}
+
+pub struct TDUnitdataIndication {
+    pub source_address: WdpAddress,
+    pub source_port: u16,
+    pub destination_address: Option<WdpAddress>,
+    pub destination_port: Option<u16>,
+    pub user_data: Vec<u8>,
 }
 ```
 
 ## 3) WAP service ports in profile
 
-WAP registered datagram ports are part of service selection and must be preserved:
+The complete WAP-200 Appendix B registry is recognized:
 
-- WSP Connectionless Session Service (non-secure): `9200`.
-- WSP Session Service (non-secure): `9201`.
-- WSP Connectionless Session Service (secure): `9202`.
-- WSP Session Service (secure): `9203`.
-- Push services have additional legacy ports in WAP-259 Appendix B; only those required by enabled transport profile are part of MVP.
+- WTA secure connectionless/session: `2805`, `2923`.
+- Push connectionless/secure connectionless: `2948`, `2949`.
+- WSP connectionless/session/secure connectionless/secure session:
+  `9200..9203`.
+- vCard/vCalendar datagram and secure datagram: `9204..9207`.
 
 Transport policy:
 - server entities MUST bind well-known service ports.
 - client entities may use ephemeral source ports.
 - the profile must log/validate source/destination quadruplets for each session.
+- recognizing a registered port does not activate that optional application or
+  security profile. The selected non-secure connectionless WSP service uses
+  destination port `9200`.
 
 ## 4) Bearer implementation contracts
 
-### 4.1 UDP (`wdp over IP`) — MVP
+### 4.1 CDPD/UDP/IPv4 — selected strict path
 
-- map WDP datagram `payload` 1:1 to UDP payload.
-- use 16-bit port fields.
-- map receive errors into typed `WdpError` values.
+- addresses are exactly four octets and UDP is IPv4 protocol `17`;
+- map WDP user data 1:1 to UDP data with 16-bit source and destination ports;
+- encode and validate IPv4 and UDP lengths and checksums, including odd-octet
+  checksum padding, computed-zero encoding as `0xFFFF`, and permitted
+  all-zero UDP checksum omission;
+- accept IPv4 datagrams through the 576-octet baseline and require explicit
+  destination assurance for larger sends;
+- discard TTL-zero, bad-header-checksum, malformed-length, bad non-zero UDP
+  checksum, unsupported-protocol, and DF/path-MTU failures deterministically;
+- return unreassembled IPv4 fragments as an explicit lower-layer reassembly
+  requirement keyed by identification, source, destination, and protocol.
 
 ### 4.2 SMS/USSD/other GSM bearers — deferred
 
@@ -71,11 +97,15 @@ Implementation is deferred but reserved in model:
 - bearer-specific maximum payload sizes,
 - optional sequence numbers/retry semantics.
 
-## 5) Segmentation policy
+## 5) Segmentation boundary
 
-- no automatic segmentation in core MVP service layer.
-- higher layer may enforce MTU via capability/SDU checks.
-- if bearer segmenting is enabled, use WTP SAR/ESAR policy where the WTP layer explicitly requests grouping and recovery.
+- the selected CDPD/IP path adds no WDP segmentation header;
+- IPv4 gateways may fragment and the destination IP module reassembles before
+  delivery to WDP;
+- the codec does not perform fragment collection or reassembly;
+- `TRN-702` remains a declared zero-clause mapping gap for the broader
+  constrained-payload and segmentation/reassembly policy and is not closed by
+  the `TRN-701` evidence.
 
 ## 6) Error taxonomy
 
@@ -94,7 +124,15 @@ Minimum errors expected by upper layers:
 - expose only transport-visible fields and typed errors.
 - ensure all parse/codec methods stay stateless to keep replayability in tests.
 
-## 8) Pending precision
+## 8) Evidence
 
-- WAP-259 bearer-specific checksum requirements are profile-dependent.
-- keep a deferred issue for explicit bearer obligations per profile until bearer adapter is in-scope.
+The direct fixture
+`transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`
+links the nine selected SCR rows and all 49 mapped TRN-701 clauses to exact
+profile constants, registered ports, positive wire packets, and deterministic
+malformed outcomes. Validate it with:
+
+```sh
+cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp
+node scripts/check-wap-transport-conformance-ledgers.mjs
+```

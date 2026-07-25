@@ -35,8 +35,9 @@ Fixture lane:
 Current caveat:
 
 - Native GET/POST ingress and smoke slices are landed, but exact
-  WAP-200/WAP-202/WAP-203 conformance remains open under `TRN-701`,
-  `TRN-703`, and `WSP-801`/`802`/`804`/`805`.
+  WAP-203 connectionless conformance remains open under
+  `WSP-801`/`802`/`804`/`805`; the selected WAP-200 and WAP-202 rows are
+  directly evidenced by `TRN-701` and `TRN-703`.
 
 Fixture lane:
 

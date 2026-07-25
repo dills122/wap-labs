@@ -38,12 +38,12 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 201 selected strict
   rows;
-- the selected implementation audit is 13 implemented, 87 partial, and 101
+- the selected implementation audit is 22 implemented, 78 partial, and 101
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 201 selected parent rows
-  expand into 781 deduplicated, source-anchored clauses with planned direct
-  fixtures;
+  expand into 781 deduplicated, source-anchored clauses; the selected WDP and
+  WCMP paths contribute 77 assessed, direct fixture-backed clauses;
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
   rollups are now guarded by a deterministic drift check;

@@ -429,7 +429,7 @@ fn mode_for_datagram(datagram: &WdpDatagram) -> Option<(WspSessionMode, u16)> {
             Some(WdpServicePort::Session | WdpServicePort::SecureSession) => {
                 return Some((WspSessionMode::ConnectionOriented, port));
             }
-            None => {}
+            Some(_) | None => {}
         }
     }
     None

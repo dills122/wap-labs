@@ -152,7 +152,7 @@ Supplemental-source precedence:
 - one-to-one mandatory/optional obligation ledgers for the WAP 1.2.1 target
   (WML 1.3, WAE, WBXML, WMLScript, WMLScript Libraries, caching, WDP, WCMP,
   and WSP complete at SCR/source-work-item and nested-clause planning level;
-  direct test evidence remains pending)
+  the 77 selected WDP/WCMP clauses now have direct fixture evidence)
 - WAP 1.2.1-to-successor delta records cover all 201 selected Class C rows;
   optional-media and later OMA follow-on deltas remain separately pending
 
@@ -161,13 +161,13 @@ Cross-source selected-profile accounting is now executable:
 - 712 effective SCR/source rows across the nine mandatory feature families;
 - 201 rows selected by the exact Class C client profile and transport
   dependency path;
-- 7 implemented, 84 partial, and 110 missing in the conservative
+- 22 implemented, 78 partial, and 101 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
 - all 201 selected rows now expand into 781 deduplicated nested clauses with
-  source anchors and planned direct fixtures;
-- direct conformance fixture implementation and execution remain the
-  principal evidence gap.
+  source anchors and fixture plans;
+- 77 WDP/WCMP clauses are directly fixture-backed; direct conformance fixture
+  implementation remains the principal evidence gap for the other 704.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes

@@ -950,7 +950,7 @@
       "workItems": [
         {
           "id": "TRN-701",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wdp", "wdp-wcmp-adaptation"],
           "existingTickets": ["T0-19"],

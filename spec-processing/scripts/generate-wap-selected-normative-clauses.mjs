@@ -890,7 +890,21 @@ function clause(
   obligationSynopsis,
   anchorFamily = family
 ) {
-  const directFixtureImplemented = family === 'wcmp';
+  const directFixtureImplemented = family === 'wcmp' || family === 'wdp';
+  const evidence =
+    family === 'wdp'
+      ? {
+          path: 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
+          testPath: 'transport-rust/src/network/wdp/tests.rs',
+          command:
+            'cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp'
+        }
+      : {
+          path: 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+          testPath: 'transport-rust/src/network/wcmp/tests.rs',
+          command:
+            'cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp'
+        };
   clauseRows.push({
     id: `${family.toUpperCase()}-CL-${key.toUpperCase().replaceAll('_', '-')}`,
     family,
@@ -911,12 +925,7 @@ function clause(
       assertion: obligationSynopsis,
       ...(directFixtureImplemented
         ? {
-            evidence: {
-              path: 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
-              testPath: 'transport-rust/src/network/wcmp/tests.rs',
-              command:
-                'cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp'
-            }
+            evidence
           }
         : {})
     }
@@ -2384,7 +2393,9 @@ const families = familyDefinitions.map((definition) => {
         ])
       ),
       clauseImplementationStatus:
-        definition.family === 'wcmp' ? 'implemented' : 'not-assessed',
+        definition.family === 'wcmp' || definition.family === 'wdp'
+          ? 'implemented'
+          : 'not-assessed',
       evidenceGate:
         'A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.'
     };
@@ -2416,7 +2427,7 @@ const families = familyDefinitions.map((definition) => {
   return {
     family: definition.family,
     status:
-      definition.family === 'wcmp'
+      definition.family === 'wcmp' || definition.family === 'wdp'
         ? 'nested-clauses-fixture-backed'
         : 'nested-clauses-anchored-fixtures-planned',
     parentLedger: definition.ledgerPath,
@@ -2528,7 +2539,10 @@ const ledger = {
     recommendedClauseCount,
     permittedClauseCount,
     plannedFixtureCount: clauseCount,
-    assessedClauseCount: 0
+    assessedClauseCount: clauseRows.filter(
+      (candidate) =>
+        candidate.mapping.clauseImplementationStatus === 'implemented'
+    ).length
   },
   families
 };

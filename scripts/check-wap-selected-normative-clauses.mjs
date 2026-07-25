@@ -247,7 +247,7 @@ for (const family of ledger.families ?? []) {
     (candidate) => candidate.family === family.family
   );
   const expectedFamilyStatus =
-    family.family === 'wcmp'
+    family.family === 'wcmp' || family.family === 'wdp'
       ? 'nested-clauses-fixture-backed'
       : family.family === 'wml'
         ? 'nested-clauses-partially-fixture-backed'
@@ -416,7 +416,9 @@ for (const family of ledger.families ?? []) {
       parents.map((parent) => [parent.id, parent.mapping.implementationStatus])
     );
     const directFixtureImplemented =
-      candidate.family === 'wcmp' || implementedWmlClauseIds.has(candidate.id);
+      candidate.family === 'wcmp' ||
+      candidate.family === 'wdp' ||
+      implementedWmlClauseIds.has(candidate.id);
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -437,12 +439,18 @@ for (const family of ledger.families ?? []) {
       candidate.fixturePlan.status !== expectedFixtureStatus ||
       !allowedFixtureKinds.has(candidate.fixturePlan.kind) ||
       candidate.fixturePlan.assertion !== candidate.obligationSynopsis ||
-      (directFixtureImplemented &&
-        candidate.family === 'wcmp' &&
+      ((candidate.family === 'wcmp' || candidate.family === 'wdp') &&
         (candidate.fixturePlan.evidence?.path !==
-          'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
-          candidate.fixturePlan.evidence?.testPath !== 'transport-rust/src/network/wcmp/tests.rs' ||
-          !candidate.fixturePlan.evidence?.command?.includes('network::wcmp'))) ||
+          (candidate.family === 'wdp'
+            ? 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json'
+            : 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json') ||
+          candidate.fixturePlan.evidence?.testPath !==
+            (candidate.family === 'wdp'
+              ? 'transport-rust/src/network/wdp/tests.rs'
+              : 'transport-rust/src/network/wcmp/tests.rs') ||
+          !candidate.fixturePlan.evidence?.command?.includes(
+            candidate.family === 'wdp' ? 'network::wdp' : 'network::wcmp'
+          ))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
         (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
           !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
@@ -474,7 +482,7 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 0
+  assessedClauseCount: 89
 };
 if (
   selectedParentCount !== 201 ||

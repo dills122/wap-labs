@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "example": "missingFragment",
+  "flows": [
+    {
+      "id": "waves-network-missing-fragment-error",
+      "title": "Waves fixture fetch preserves state when fragment navigation fails",
+      "target": "waves-browser",
+      "setup": { "runMode": "network" },
+      "workItems": ["A2-01"],
+      "specItems": ["WML-R-006"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0
+        },
+        "session": {
+          "runMode": "network",
+          "navigationStatus": "loaded",
+          "finalUrl": "http://fixtures.test/examples/missingFragment.wml"
+        },
+        "render": {
+          "textIncludes": ["Missing fragment test", "Broken target"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0
+            },
+            "session": {
+              "navigationStatus": "error"
+            },
+            "statusIncludes": "Error:",
+            "render": {
+              "textIncludes": ["Broken target"]
+            },
+            "traceKinds": ["KEY"]
+          }
+        }
+      ]
+    }
+  ]
+}
