@@ -77,7 +77,7 @@ Canonical sprint priority rule:
 3. Section-level lists below are lane-local or dated context and must not
    override either authority.
 
-## Next In Line (WAP Compliance Rebase - 2026-07-24)
+## Next In Line (WAP Compliance Sync - 2026-07-25)
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 761 planned clauses into direct
@@ -85,18 +85,24 @@ evidence.
 
 Current priority order is:
 
-1. Continue active `WML-2` parser/deck/validation work: preserve the
-   profile-correct 49/49 mapped `WML-203` evidence, preserve the 23/23 mapped
-   `WML-204` clause evidence, and adopt direct mappings before new
-   `WML-202`/`WML-205` implementation.
-2. Continue `TRN-7` replay/delta evidence in parallel. `TRN-701`,
-   `TRN-702`, and `TRN-703` are complete for the selected WDP,
-   constrained-payload, and WCMP slices.
-3. Complete `WML-3`, then `REN-4` and `WMLS-5`.
-4. Treat existing WAE/WSP work as foundations until their upstream gates
-   close.
-5. Keep `D0-01`, frame migration, generators, and maintenance non-preemptive
-   unless they directly unblock a strict obligation.
+1. Close `WML-201`'s declared WML-family mapping gap and link direct evidence
+   to the already complete 76-row SCR matrix.
+2. Start `WML-205` with its missing direct WML-family graph mapping, then
+   implement its deterministic parse/error taxonomy.
+3. Close the residual `WML-202` deck/head/access/meta gate and then the
+   residual `WML-204` field/control validation gate. Preserve their completed
+   9/9 and 23/23 direct-clause slices; the remaining work shares engine parser
+   and runtime tests, so keep it in one serial lane.
+4. Continue `TRN-706` selected-WDP replay evidence in parallel. Keep the
+   conditional WTP mapping gap explicit; `TRN-707`'s bounded WDP/WCMP audit is
+   complete but intentionally remains open while its declared WTP family is
+   inactive and unmapped.
+5. Add cross-layer binary-WBXML-to-engine parity evidence for the broader
+   `WML-203` gate after the transport fixture shape is stable.
+6. Treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
+   until `TRN-7` and `WAE-6` close. Keep `D0-01`, frame migration, generators,
+   and maintenance non-preemptive unless they directly unblock a strict
+   obligation.
 
 Planning assessment:
 
