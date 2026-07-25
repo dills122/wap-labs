@@ -43,7 +43,7 @@
     "recommendedClauseCount": 31,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 781,
-    "assessedClauseCount": 144
+    "assessedClauseCount": 148
   },
   "families": [
     {
@@ -10457,7 +10457,7 @@
       "family": "wbxml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
-      "parentLedgerSha256": "3b1aac8b9a4d76ae3a1dc419e2e31a87a47265ff48318484dd295d9f2988ffb7",
+      "parentLedgerSha256": "32d1e9a3af7fbc6e911e29aa240bd45b99403b9885dd5914ef16421949f42deb",
       "effectiveSequence": [
         "WAP-192-WBXML",
         "WAP-192_105-WBXML"
@@ -10819,7 +10819,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE",
             "kind": "transport-boundary",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol."
           },
           "mapping": {
@@ -10838,7 +10838,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12461,7 +12461,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-EXTERNAL-TOKEN-TYPING",
             "kind": "transport-boundary",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Use an external typing system to associate an XML document family with its WBXML token values."
           },
           "mapping": {
@@ -12480,7 +12480,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-011": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12502,7 +12502,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-MIME-TOKEN-TYPING",
             "kind": "transport-boundary",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key."
           },
           "mapping": {
@@ -12521,7 +12521,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-011": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12543,7 +12543,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-BINARY-LITERAL-EQUIVALENCE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value."
           },
           "mapping": {
@@ -12562,7 +12562,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-011": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         }
@@ -12573,13 +12573,16 @@
         "commands": [
           "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_001_binary_structure_fixtures",
           "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_010_default_attribute_fixtures",
-          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_section_5_direct_clause_inventory_is_fixed_outcome_backed"
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_011_binary_literal_equivalence_fixtures",
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_page_zero_binary_literal_equivalence_is_exhaustive"
         ],
         "implementedClauseIds": [
           "WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
           "WBXML-CL-ATTRIBUTE-SEQUENCE",
           "WBXML-CL-ATTRIBUTE-START-RANGE",
           "WBXML-CL-ATTRIBUTE-VALUE-RANGE",
+          "WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+          "WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
           "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
           "WBXML-CL-CHARSET-MIBENUM",
           "WBXML-CL-CHARSET-STRING-TERMINATION",
@@ -12592,6 +12595,7 @@
           "WBXML-CL-ENTITY-UCS4",
           "WBXML-CL-EXTENSION-SWITCH-CONTEXT",
           "WBXML-CL-EXTENSION-TOKEN-FORMS",
+          "WBXML-CL-EXTERNAL-TOKEN-TYPING",
           "WBXML-CL-GLOBAL-TOKEN-INVARIANCE",
           "WBXML-CL-INLINE-STRING",
           "WBXML-CL-LITERAL-NAME-STATE",
@@ -12599,6 +12603,7 @@
           "WBXML-CL-MULTIBYTE-CONTINUATION",
           "WBXML-CL-MULTIBYTE-GROUP-ORDER",
           "WBXML-CL-MULTIBYTE-UNUSED-ZERO",
+          "WBXML-CL-MIME-TOKEN-TYPING",
           "WBXML-CL-NETWORK-BYTE-ORDER",
           "WBXML-CL-OPAQUE-LENGTH",
           "WBXML-CL-PARSER-STATE-PAGES",

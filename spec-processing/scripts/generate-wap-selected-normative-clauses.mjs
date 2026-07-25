@@ -879,6 +879,10 @@ for (const [anchorFamily, definition] of Object.entries(sectionDefinitions)) {
 }
 
 const clauseRows = [];
+const deferredWbxmlClauseKeys = new Set([
+  'charset_unrepresentable_name',
+  'token_code_pages'
+]);
 
 function clause(
   family,
@@ -891,10 +895,20 @@ function clause(
   anchorFamily = family,
   directWorkItems = []
 ) {
-  const directFixtureImplemented = family === 'wcmp' || family === 'wdp';
+  const directFixtureImplemented =
+    family === 'wcmp' ||
+    family === 'wdp' ||
+    (family === 'wbxml' && !deferredWbxmlClauseKeys.has(key));
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const evidence =
-    isTrn702Clause
+    family === 'wbxml'
+      ? {
+          path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
+          testPath: 'transport-rust/src/tests/wbxml_conformance.rs',
+          command:
+            'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_'
+        }
+      : isTrn702Clause
       ? {
           path: 'transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json',
           testPath: 'transport-rust/tests/wdp_constrained_replay.rs',
@@ -933,7 +947,7 @@ function clause(
       kind: fixtureKind,
       status: directFixtureImplemented ? 'implemented' : 'planned',
       assertion: obligationSynopsis,
-      ...(directFixtureImplemented
+      ...(directFixtureImplemented && family !== 'wbxml'
         ? {
             evidence
           }
@@ -2406,7 +2420,7 @@ const families = familyDefinitions.map((definition) => {
         ])
       ),
       clauseImplementationStatus:
-        definition.family === 'wcmp' || definition.family === 'wdp'
+        candidate.fixturePlan.status === 'implemented'
           ? 'implemented'
           : 'not-assessed',
       evidenceGate:
@@ -2440,8 +2454,11 @@ const families = familyDefinitions.map((definition) => {
   return {
     family: definition.family,
     status:
-      definition.family === 'wcmp' || definition.family === 'wdp'
+      definition.family === 'wcmp' ||
+      definition.family === 'wdp'
         ? 'nested-clauses-fixture-backed'
+        : definition.family === 'wbxml'
+          ? 'nested-clauses-partially-fixture-backed'
         : 'nested-clauses-anchored-fixtures-planned',
     parentLedger: definition.ledgerPath,
     parentLedgerSha256: sha256(
@@ -2479,7 +2496,30 @@ const families = familyDefinitions.map((definition) => {
     selectedParentCount: parents.length,
     clauseCount: familyClauses.length,
     parents,
-    clauses: familyClauses
+    clauses: familyClauses,
+    ...(definition.family === 'wbxml'
+      ? {
+          directEvidence: {
+            corpusPath:
+              'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
+            testPath: 'transport-rust/src/tests/wbxml_conformance.rs',
+            commands: [
+              'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_001_binary_structure_fixtures',
+              'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_010_default_attribute_fixtures',
+              'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_011_binary_literal_equivalence_fixtures',
+              'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_page_zero_binary_literal_equivalence_is_exhaustive'
+            ],
+            implementedClauseIds: familyClauses
+              .filter(
+                (candidate) =>
+                  candidate.mapping.clauseImplementationStatus ===
+                  'implemented'
+              )
+              .map((candidate) => candidate.id)
+              .sort()
+          }
+        }
+      : {})
   };
 });
 
@@ -2543,7 +2583,7 @@ const ledger = {
     deduplication:
       'One clause may map to multiple selected SCR parents when a single normative behavior is cross-referenced by those features.',
     implementationAssessment:
-      'Parent implementation statuses are snapshots from the family SCR ledgers. Clause status remains not-assessed until direct source-derived fixture evidence is reviewed.'
+      'Parent implementation statuses are snapshots from the family SCR ledgers. Clause status remains not-assessed until direct source-derived fixture evidence is reviewed; reviewed fixture-backed families record implemented clauses explicitly.'
   },
   summary: {
     selectedParentCount,

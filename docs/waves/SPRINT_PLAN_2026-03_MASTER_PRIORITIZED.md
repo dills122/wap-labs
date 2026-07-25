@@ -35,7 +35,7 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 201 selected parent rows, 781 planned clause fixtures, and a
 13-sprint/78-item execution program. The conservative implementation snapshot
 is 22 implemented, 78 partial, and 101 missing parent rows; clause-level
-assessment is 144/781.
+assessment is 148/781.
 
 Use this order for new completion work:
 
@@ -216,7 +216,7 @@ Implementation reference:
 
 Current recommendation after the compliance rebase:
 
-1. Continue the active `WML-2` lane: close the six explicit `WML-203` WBXML
+1. Continue the active `WML-2` lane: close the two explicit `WML-203` WBXML
    gaps, retain the fully fixture-backed `WML-204` subset, and adopt direct
    clause mappings before starting `WML-202` or `WML-205`.
 2. Continue `TRN-7` with `TRN-706` replay-corpus and `TRN-707` delta work.

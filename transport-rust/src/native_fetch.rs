@@ -12,7 +12,7 @@ use crate::network::wsp::header_registry::DEFAULT_HEADER_CODE_PAGE;
 use crate::request_meta::log_transport_event;
 use crate::responses::{
     invalid_request_response, map_success_payload_response, map_terminal_send_error,
-    normalize_content_type, FetchAttemptFailure, SuccessPayloadParams,
+    FetchAttemptFailure, SuccessPayloadParams,
 };
 use crate::{FetchDeckResponse, FetchDestinationPolicy};
 use std::collections::HashMap;
@@ -239,7 +239,7 @@ pub(crate) fn execute_native_wap_request_with_transport(
                     request_url: &plan.request_url,
                     upstream_url: &plan.request_url,
                     final_url: plan.request_url.clone(),
-                    content_type: normalize_content_type(Some(reply.content_type.as_str())),
+                    content_type: reply.content_type,
                     body: &reply.body,
                     attempt,
                     elapsed_ms,

@@ -75,8 +75,8 @@ The selected-row audit is:
 These are feature-level evidence counts, not a WBXML compliance percentage.
 The three rows expand into 48 deduplicated clauses covering section 5 and its
 subsections plus sections 6.3 and 6.4. The WML-203 direct-evidence tranche now
-records 35 fixed-outcome fixtures citing 44 clauses and promotes 42 clauses to
-`implemented`. Six remain `not-assessed`; all three parent rows stay
+records 36 fixed-outcome fixtures citing 47 clauses and promotes 46 clauses to
+`implemented`. Two remain `not-assessed`; all three parent rows stay
 `partial`.
 
 ## Current implementation evidence
@@ -87,7 +87,9 @@ architecture:
 - `map_success_payload_response` recognizes
   `application/vnd.wap.wmlc`;
 - `decode_wmlc` invokes the built-in, pinned
-  `lowband-wml13-wbxml/0.1.0` decoder;
+  `lowband-wml13-wbxml/0.2.0` decoder;
+- WML token-table selection is keyed by the carrying MIME media type, and
+  carrying-protocol charset metadata takes precedence over the WBXML header;
 - decoder output and element nesting are bounded;
 - header order, WBXML 1.3 version and WML 1.3 public identifiers, multi-byte
   integers (including legal leading zero-valued groups), supported charset
@@ -96,6 +98,8 @@ architecture:
   structure, and malformed input have deterministic outcomes;
 - every default and fixed attribute in the selected WML 1.3 DTD is
   reconstructed before textual handoff;
+- every assigned WML page-zero tag, attribute-start, and attribute-value token
+  has a generated binary/literal equivalence pair;
 - original WBXML bytes and the WMLC media type are preserved on success;
 - failures use the structured `WBXML_DECODE_FAILED` path.
 
@@ -105,24 +109,16 @@ Direct source-derived evidence is in
 corpus now has fixed failure expectations under the pinned decoder and remains
 robustness-only evidence.
 
-The six unpromoted clauses are:
+The two unpromoted clauses are:
 
-- `WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE`: carrying-protocol precedence is not
-  modeled;
 - `WBXML-CL-CHARSET-UNREPRESENTABLE-NAME`: this is an encoder/tokeniser error
   condition, not yet direct decoder evidence;
 - `WBXML-CL-TOKEN-CODE-PAGES`: the selected WML table implements page zero,
-  while broader page-table support remains open;
-- `WBXML-CL-BINARY-LITERAL-EQUIVALENCE`: representative pairs exist, but not
-  an exhaustive pair for every assigned tag, attribute start, and attribute
-  value;
-- `WBXML-CL-EXTERNAL-TOKEN-TYPING` and
-  `WBXML-CL-MIME-TOKEN-TYPING`: external/generic typing integration remains
-  open.
+  while broader non-page-zero document tables remain open.
 
 The parent rows also retain broader limitations: externally supplied implied
-attribute values, non-WML document families, and exhaustive token-pair
-breadth. Generic `application/vnd.wap.wbxml` routing remains a separate WAE
+attribute values and non-WML document families. Generic
+`application/vnd.wap.wbxml` routing remains a separate WAE
 gap.
 
 ## Server and encoder rows

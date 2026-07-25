@@ -261,7 +261,7 @@ const selectedAudit = new Map([
     {
       status: 'partial',
       note:
-        'The pinned built-in WML 1.3 decoder and source-derived corpus directly cover header order, multi-byte integers, string tables, parser pages, core global tokens, binary tokens, literals, and deterministic malformed input. Broader charset termination, external charset precedence, processing-instruction, opaque/application-extension, and full token-table fixture breadth remain open.',
+        'The pinned built-in WML 1.3 decoder and 36-fixture source-derived corpus directly implement 41 of 43 mapped section 5 clauses, including carrying-protocol charset precedence across HTTP/MIME and connectionless WSP. Encoder-side unrepresentable-name tokenisation and non-page-zero document tables remain open.',
       workItems: ['WML-203', 'R0-08', 'T0-07'],
       implementationEvidence: [
         {
@@ -282,7 +282,7 @@ const selectedAudit = new Map([
           fixture:
             'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
-            'This bounded baseline does not yet execute every one of the 43 nested WBXML-C-001 clauses.'
+            'This tranche leaves encoder-side unrepresentable-name tokenisation and non-page-zero document-table breadth unpromoted.'
         }
       ],
       evidenceState: 'direct-normative-fixture-linked-partial'
@@ -321,7 +321,7 @@ const selectedAudit = new Map([
     {
       status: 'partial',
       note:
-        'The pinned decoder implements the WML 1.3 page-zero tag, attribute-start, and attribute-value tables and a direct fixture proves equivalent textual output for representative binary and literal tag, attribute-name, and string-value encodings. Exhaustive per-token equivalence cases and MIME typing integration remain open.',
+        'The pinned decoder uses the WMLC MIME media type as its external token-table key and exhaustively pairs all 36 WML 1.3 page-zero tags, 85 attribute starts, and 27 attribute values with literal forms. The row remains partial for non-WML document families and generic WBXML routing.',
       workItems: ['WML-203', 'R0-08', 'T0-07'],
       implementationEvidence: [
         {
@@ -338,7 +338,18 @@ const selectedAudit = new Map([
           fixture:
             'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
-            'Representative equivalence is direct, but every assigned token has not yet received a paired fixture.'
+            'The selected WML page-zero table is exhaustive; non-WML token tables and generic application/vnd.wap.wbxml routing remain outside this tranche.'
+        },
+        {
+          path: 'transport-rust/src/tests/wbxml_conformance.rs',
+          test:
+            'transport_wbxml_page_zero_binary_literal_equivalence_is_exhaustive',
+          command:
+            'cd transport-rust && cargo test --lib transport_wbxml_page_zero_binary_literal_equivalence_is_exhaustive',
+          fixture:
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
+          limitation:
+            'The matrix covers every assignment in the selected WML 1.3 page-zero token table only.'
         }
       ],
       evidenceState: 'direct-normative-fixture-linked-partial'
@@ -526,7 +537,10 @@ const ledger = {
     selectedDirectNormativeTestEvidenceCount: selectedRequired.filter(
       (obligation) => obligation.mapping.testEvidence.length > 0
     ).length,
-    selectedBoundaryTestEvidenceCount: 0
+    selectedBoundaryTestEvidenceCount: 0,
+    selectedImplementedClauseCount: 46,
+    selectedNotAssessedClauseCount: 2,
+    fixedOutcomeFixtureCount: 36
   },
   obligations
 };

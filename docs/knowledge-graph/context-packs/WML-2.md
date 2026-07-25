@@ -199,13 +199,13 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
   - Parents: `WBXML-C-011`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-BINARY-LITERAL-EQUIVALENCE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-BINARY-LITERAL-EQUIVALENCE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE** — When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.
   - Family: `wbxml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE` (`transport-boundary`, `planned`)
+  - Fixture: `WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE` (`transport-boundary`, `implemented`)
 - **WBXML-CL-CHARSET-INTERNAL-DEFAULT** — Without external charset metadata, present strings using the encoding named by the WBXML charset field.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
@@ -289,7 +289,7 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
   - Parents: `WBXML-C-011`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-EXTERNAL-TOKEN-TYPING` (`transport-boundary`, `planned`)
+  - Fixture: `WBXML-FX-EXTERNAL-TOKEN-TYPING` (`transport-boundary`, `implemented`)
 - **WBXML-CL-GLOBAL-TOKEN-INVARIANCE** — Give each global token the same structure and meaning in every code space and page.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4 (5.8.4. Global Tokens)
@@ -319,7 +319,7 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
   - Parents: `WBXML-C-011`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-MIME-TOKEN-TYPING` (`transport-boundary`, `planned`)
+  - Fixture: `WBXML-FX-MIME-TOKEN-TYPING` (`transport-boundary`, `implemented`)
 - **WBXML-CL-MULTIBYTE-CONTINUATION** — Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.1 (5.1. Multi-byte Integers)
