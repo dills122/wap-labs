@@ -65,6 +65,20 @@ const directWorkItemClauseIds = new Map([
       'WDP-CL-IPV4-HEADER-CHECKSUM',
       'WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS'
     ])
+  ],
+  [
+    'TRN-707',
+    new Set([
+      'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+      'WDP-CL-IP-BEARER-REQUIRES-UDP',
+      'WDP-CL-CDPD-UDP-IP-PROFILE',
+      'WDP-CL-UNITDATA-REQUEST-ANYTIME',
+      'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+      'WDP-CL-SELECTED-WSP-PORT',
+      'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
+      'WCMP-CL-CLIENT-GENERAL-PROFILE',
+      'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+    ])
   ]
 ]);
 const configuredDirectWorkItemIds = new Set(directWorkItemClauseIds.keys());
@@ -77,21 +91,26 @@ function directWorkItemsForClause(clauseId) {
 
 if (refreshDirectWorkItems) {
   const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-  for (const candidate of manifest.families.flatMap((family) => family.clauses)) {
-    const directWorkItems = directWorkItemsForClause(candidate.id);
-    if (directWorkItems.length) {
-      candidate.directWorkItems = directWorkItems;
-    } else {
-      delete candidate.directWorkItems;
+  for (const family of manifest.families) {
+    family.parentLedgerSha256 = sha256(
+      fs.readFileSync(family.parentLedger, 'utf8')
+    );
+    for (const candidate of family.clauses) {
+      const directWorkItems = directWorkItemsForClause(candidate.id);
+      if (directWorkItems.length) {
+        candidate.directWorkItems = directWorkItems;
+      } else {
+        delete candidate.directWorkItems;
+      }
+      candidate.mapping.workItems = [
+        ...new Set([
+          ...candidate.mapping.workItems.filter(
+            (workItem) => !configuredDirectWorkItemIds.has(workItem)
+          ),
+          ...directWorkItems
+        ])
+      ].sort();
     }
-    candidate.mapping.workItems = [
-      ...new Set([
-        ...candidate.mapping.workItems.filter(
-          (workItem) => !configuredDirectWorkItemIds.has(workItem)
-        ),
-        ...directWorkItems
-      ])
-    ].sort();
   }
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(
@@ -947,10 +966,6 @@ for (const [anchorFamily, definition] of Object.entries(sectionDefinitions)) {
 }
 
 const clauseRows = [];
-const deferredWbxmlClauseKeys = new Set([
-  'charset_unrepresentable_name',
-  'token_code_pages'
-]);
 
 function clause(
   family,
@@ -967,7 +982,7 @@ function clause(
   const directFixtureImplemented =
     family === 'wcmp' ||
     family === 'wdp' ||
-    (family === 'wbxml' && !deferredWbxmlClauseKeys.has(key));
+    family === 'wbxml';
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const evidence =
     family === 'wbxml'
@@ -2337,7 +2352,6 @@ clause('wbxml', 'multibyte_unused_zero', ['WBXML-C-001'], '5.1', 'explicit-must'
 clause('wbxml', 'charset_internal_default', ['WBXML-C-001'], '5.2', 'explicit-must', 'binary-decoder', 'Without external charset metadata, present strings using the encoding named by the WBXML charset field.');
 clause('wbxml', 'charset_external_precedence', ['WBXML-C-001'], '5.2', 'explicit-should', 'transport-boundary', 'When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.');
 clause('wbxml', 'charset_string_termination', ['WBXML-C-001'], '5.2', 'explicit-must', 'binary-decoder', 'Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.');
-clause('wbxml', 'charset_unrepresentable_name', ['WBXML-C-001'], '5.2', 'error-condition', 'binary-decoder', 'Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.');
 clause('wbxml', 'document_header_order', ['WBXML-C-001'], '5.3', 'grammar', 'binary-decoder', 'Decode each document in version, public identifier, charset, string-table, then body order.');
 clause('wbxml', 'document_body_grammar', ['WBXML-C-001'], '5.3', 'grammar', 'binary-decoder', 'Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.');
 clause('wbxml', 'version_byte', ['WBXML-C-001'], '5.4', 'implicit-must', 'binary-decoder', 'Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.');

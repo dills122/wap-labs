@@ -433,6 +433,41 @@ describe('BrowserPresenter', () => {
     }
   });
 
+  it.each([
+    ['computational', 'computation error'],
+    ['integrity', 'data integrity error'],
+    ['resource', 'resource limit error'],
+    ['host-binding', 'host binding error'],
+    ['none', 'script error'],
+    ['future-category', 'script error'],
+    [undefined, 'script error']
+  ])('preserves the script error label for category %s', (category, expectedLabel) => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+      presenter.setSnapshot({
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        baseUrl: 'http://local.test/start.wml',
+        contentType: 'text/vnd.wap.wml',
+        lastScriptDialogRequests: [],
+        lastScriptTimerRequests: [],
+        lastScriptExecutionOk: false,
+        lastScriptExecutionTrap: 'vm: test trap',
+        lastScriptExecutionErrorClass: 'fatal',
+        lastScriptExecutionErrorCategory: category
+      });
+
+      expect(refs.toastEl.textContent).toBe(
+        WAVES_COPY.status.scriptExecutionFailed(expectedLabel, 'vm: test trap')
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('does not re-announce the same sticky script trap across repeated snapshots', () => {
     vi.useFakeTimers();
     try {

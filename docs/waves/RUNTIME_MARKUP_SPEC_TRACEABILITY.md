@@ -164,10 +164,13 @@ Legend:
 - Status:
   - `partial`: the pinned built-in decoder and direct source-derived corpus
     establish direct evidence for all three selected rows. The bounded tranche
-    promotes 46/48 nested clauses. Carrying-protocol charset precedence,
+    promotes all 47 client-applicable nested clauses. Carrying-protocol charset precedence,
     WMLC MIME typing, and exhaustive WML page-zero token/literal equivalence
-    are direct-evidence-backed; non-page-zero tables and encoder/tokenizer
-    unrepresentable-name behavior remain open.
+    are direct-evidence-backed. Full-range code-page indices have deterministic
+    assigned, unassigned, and implementation-specific outcomes; non-WML token
+    tables and generic WBXML routing remain outside this tranche. The
+    unrepresentable-name tokenisation error is preserved in the unselected
+    server/encoder profile.
 - AC:
   - Evidence: [x] `transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json`
     and the three exact `transport_wbxml_c_*` tests provide direct parent-row

@@ -38,6 +38,7 @@ const allowedRelations = new Set([
   'selected-from',
   'sourced-from',
   'targets-profile',
+  'uses-context',
   'verified-by'
 ]);
 
@@ -198,10 +199,11 @@ if (
   trnGraph.target.profile !== 'CCR-CLASSC-C-001' ||
   !trnNodeIds.has('work-item:TRN-702') ||
   !trnNodeIds.has('work-item:TRN-703') ||
-  !trnNodeIds.has('work-item:TRN-706')
+  !trnNodeIds.has('work-item:TRN-706') ||
+  !trnNodeIds.has('work-item:TRN-707')
 ) {
   failures.push(
-    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703/TRN-706 work items'
+    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703/TRN-706/TRN-707 work items'
   );
 }
 for (const row of selectedWcmpRows) {
@@ -243,6 +245,24 @@ if (
 ) {
   failures.push(
     'TRN-706 context rendering must remain bounded to its eleven selected WDP clauses and preserve the conditional WTP family gap'
+  );
+}
+const trn707Pack = renderContextPack(trnGraph, 'TRN-707');
+if (
+  !trn707Pack.startsWith('# TRN-707 AI Context Pack') ||
+  !trn707Pack.includes('### TRN-707:') ||
+  trn707Pack.includes('### TRN-706:') ||
+  !trn707Pack.includes('- Direct normative clauses: 9') ||
+  !trn707Pack.includes('`WAP-259-WDP-20010614-a`') ||
+  !trn707Pack.includes('additive TRN-708') ||
+  trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-707') ||
+  JSON.stringify(trnGraph.summary.directClauseFamiliesByWorkItem['TRN-707']) !==
+    JSON.stringify(['wcmp', 'wdp']) ||
+  JSON.stringify(trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-707']) !==
+    JSON.stringify(['wtp'])
+) {
+  failures.push(
+    'TRN-707 context rendering must expose nine WDP/WCMP comparison clauses, WAP-259 context, and the conditional WTP family gap'
   );
 }
 

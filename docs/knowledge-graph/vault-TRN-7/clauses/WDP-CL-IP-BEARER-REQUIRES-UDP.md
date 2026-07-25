@@ -19,6 +19,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRN-002|RQ-TRN-002]]
 - `maps-to` → [[requirements/RQ-TRN-003|RQ-TRN-003]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-707|TRN-707]]
 - `refines` → [[scr-rows/WDP-C-001|WDP-C-001]]
 - `refines` → [[scr-rows/WDP-CT-C-002|WDP-CT-C-002]]
 - `refines` → [[scr-rows/WDP-NA-C-003|WDP-NA-C-003]]
@@ -46,7 +47,8 @@ tags:
   "obligationSynopsis": "Use UDP as the WDP protocol whenever the selected bearer provides IP.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-707"
   ],
   "ownerLayers": [
     "transport-rust"

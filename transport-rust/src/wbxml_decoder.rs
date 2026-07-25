@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::fmt::Write as _;
 
-pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.2.0";
+pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.3.0";
 
 const WBXML_VERSION_1_3: u8 = 0x03;
 const WML_1_3_PUBLIC_ID: u32 = 0x0a;
@@ -28,6 +28,7 @@ const EXT_1: u8 = 0xc1;
 const EXT_2: u8 = 0xc2;
 const OPAQUE: u8 = 0xc3;
 const LITERAL_AC: u8 = 0xc4;
+const IMPLEMENTATION_SPECIFIC_CODE_PAGE: u8 = 0xff;
 
 #[derive(Clone, Copy)]
 enum Charset {
@@ -77,13 +78,98 @@ struct Header<'a> {
     string_table: &'a [u8],
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct CodePage(u8);
+
+impl CodePage {
+    const ZERO: Self = Self(0);
+
+    fn index(self) -> u8 {
+        self.0
+    }
+}
+
+#[derive(Clone, Copy)]
+struct RegisteredCodePage<T> {
+    page: CodePage,
+    table: T,
+}
+
+type TagTokenTable = fn(u8) -> Option<&'static str>;
+
+#[derive(Clone, Copy)]
+struct AttributeTokenTable {
+    start: fn(u8) -> Option<(&'static str, &'static str)>,
+    value: fn(u8) -> Option<&'static str>,
+}
+
+const WML13_TAG_CODE_PAGES: &[RegisteredCodePage<TagTokenTable>] = &[RegisteredCodePage {
+    page: CodePage::ZERO,
+    table: page_zero_tag_name,
+}];
+const WML13_ATTRIBUTE_CODE_PAGES: &[RegisteredCodePage<AttributeTokenTable>] =
+    &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: AttributeTokenTable {
+            start: page_zero_attribute_start,
+            value: page_zero_attribute_value,
+        },
+    }];
+
+struct Wml13TokenRegistry;
+
+const WML13_TOKEN_REGISTRY: Wml13TokenRegistry = Wml13TokenRegistry;
+
+impl Wml13TokenRegistry {
+    fn tag_name(&self, page: CodePage, token: u8) -> Result<Option<&'static str>, String> {
+        let table = self.table(CodeSpace::Tag, page, WML13_TAG_CODE_PAGES)?;
+        Ok((table)(token))
+    }
+
+    fn attribute_start(
+        &self,
+        page: CodePage,
+        token: u8,
+    ) -> Result<Option<(&'static str, &'static str)>, String> {
+        let table = self.table(CodeSpace::Attribute, page, WML13_ATTRIBUTE_CODE_PAGES)?;
+        Ok((table.start)(token))
+    }
+
+    fn attribute_value(&self, page: CodePage, token: u8) -> Result<Option<&'static str>, String> {
+        let table = self.table(CodeSpace::Attribute, page, WML13_ATTRIBUTE_CODE_PAGES)?;
+        Ok((table.value)(token))
+    }
+
+    fn table<'a, T>(
+        &self,
+        code_space: CodeSpace,
+        page: CodePage,
+        pages: &'a [RegisteredCodePage<T>],
+    ) -> Result<&'a T, String> {
+        if let Some(registered) = pages.iter().find(|registered| registered.page == page) {
+            return Ok(&registered.table);
+        }
+        if page.index() == IMPLEMENTATION_SPECIFIC_CODE_PAGE {
+            return Err(format!(
+                "implementation-specific WML {} code page 255 is not registered",
+                code_space.label()
+            ));
+        }
+        Err(format!(
+            "unassigned WML {} code page {}",
+            code_space.label(),
+            page.index()
+        ))
+    }
+}
+
 struct Decoder<'a> {
     bytes: &'a [u8],
     position: usize,
     charset: Charset,
     string_table: &'a [u8],
-    tag_page: u8,
-    attribute_page: u8,
+    tag_page: CodePage,
+    attribute_page: CodePage,
     output: String,
     max_output_bytes: usize,
     external_charset: Option<Charset>,
@@ -111,8 +197,8 @@ pub(crate) fn decode_wml13_with_charset(
         position: 0,
         charset: Charset::Utf8,
         string_table: &[],
-        tag_page: 0,
-        attribute_page: 0,
+        tag_page: CodePage::ZERO,
+        attribute_page: CodePage::ZERO,
         output: String::new(),
         max_output_bytes,
         external_charset: external_charset
@@ -238,11 +324,12 @@ impl<'a> Decoder<'a> {
                     ));
                 }
                 let identity = token & 0x3f;
-                let name = tag_name(self.tag_page, identity)
+                let name = WML13_TOKEN_REGISTRY
+                    .tag_name(self.tag_page, identity)?
                     .ok_or_else(|| {
                         format!(
                             "unknown WML tag token 0x{identity:02x} on code page {}",
-                            self.tag_page
+                            self.tag_page.index()
                         )
                     })?
                     .to_string();
@@ -310,11 +397,12 @@ impl<'a> Decoder<'a> {
                 if token >= 0x80 || is_global_token(token) {
                     return Err(format!("token 0x{token:02x} cannot begin a WML attribute"));
                 }
-                let (name, prefix) =
-                    attribute_start(self.attribute_page, token).ok_or_else(|| {
+                let (name, prefix) = WML13_TOKEN_REGISTRY
+                    .attribute_start(self.attribute_page, token)?
+                    .ok_or_else(|| {
                         format!(
                             "unknown WML attribute-start token 0x{token:02x} on code page {}",
-                            self.attribute_page
+                            self.attribute_page.index()
                         )
                     })?;
                 (name.to_string(), prefix.to_string())
@@ -380,12 +468,14 @@ impl<'a> Decoder<'a> {
                 ))
             }
             _ if token >= 0x80 => {
-                let fragment = attribute_value(self.attribute_page, token).ok_or_else(|| {
-                    format!(
-                        "unknown WML attribute-value token 0x{token:02x} on code page {}",
-                        self.attribute_page
-                    )
-                })?;
+                let fragment = WML13_TOKEN_REGISTRY
+                    .attribute_value(self.attribute_page, token)?
+                    .ok_or_else(|| {
+                        format!(
+                            "unknown WML attribute-value token 0x{token:02x} on code page {}",
+                            self.attribute_page.index()
+                        )
+                    })?;
                 value.push_str(fragment);
             }
             _ => {
@@ -491,16 +581,10 @@ impl<'a> Decoder<'a> {
     fn consume_page_switches(&mut self, state: ParserState) -> Result<(), String> {
         while self.peek() == Some(SWITCH_PAGE) {
             self.position += 1;
-            let page = self.read_byte("code-page index")?;
+            let page = CodePage(self.read_byte("code-page index")?);
             match state {
                 ParserState::Tag => self.tag_page = page,
                 ParserState::Attribute => self.attribute_page = page,
-            }
-            if page != 0 {
-                return Err(format!(
-                    "unsupported WML {} code page {page}; only page 0 is assigned",
-                    state.label()
-                ));
             }
         }
         Ok(())
@@ -628,7 +712,13 @@ enum ParserState {
     Attribute,
 }
 
-impl ParserState {
+#[derive(Clone, Copy)]
+enum CodeSpace {
+    Tag,
+    Attribute,
+}
+
+impl CodeSpace {
     fn label(self) -> &'static str {
         match self {
             Self::Tag => "tag",
@@ -689,10 +779,7 @@ fn is_global_token(token: u8) -> bool {
     )
 }
 
-fn tag_name(page: u8, token: u8) -> Option<&'static str> {
-    if page != 0 {
-        return None;
-    }
+fn page_zero_tag_name(token: u8) -> Option<&'static str> {
     match token {
         0x1b => Some("pre"),
         0x1c => Some("a"),
@@ -734,10 +821,7 @@ fn tag_name(page: u8, token: u8) -> Option<&'static str> {
     }
 }
 
-fn attribute_start(page: u8, token: u8) -> Option<(&'static str, &'static str)> {
-    if page != 0 {
-        return None;
-    }
+fn page_zero_attribute_start(token: u8) -> Option<(&'static str, &'static str)> {
     match token {
         0x05 => Some(("accept-charset", "")),
         0x06 => Some(("align", "bottom")),
@@ -828,10 +912,7 @@ fn attribute_start(page: u8, token: u8) -> Option<(&'static str, &'static str)> 
     }
 }
 
-fn attribute_value(page: u8, token: u8) -> Option<&'static str> {
-    if page != 0 {
-        return None;
-    }
+fn page_zero_attribute_value(token: u8) -> Option<&'static str> {
     match token {
         0x85 => Some(".com/"),
         0x86 => Some(".edu/"),
@@ -936,4 +1017,53 @@ fn validate_xml_name(name: &str) -> Result<(), String> {
 
 fn decode_error(detail: &str) -> String {
     format!("WBXML decode failed: {detail}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn wml13_registry_classifies_all_256_pages_per_code_space() {
+        let mut registered = 0;
+        let mut unassigned = 0;
+        let mut implementation_specific = 0;
+
+        for page_index in 0..=u8::MAX {
+            let page = CodePage(page_index);
+            for result in [
+                WML13_TOKEN_REGISTRY
+                    .table(CodeSpace::Tag, page, WML13_TAG_CODE_PAGES)
+                    .map(|_| ()),
+                WML13_TOKEN_REGISTRY
+                    .table(CodeSpace::Attribute, page, WML13_ATTRIBUTE_CODE_PAGES)
+                    .map(|_| ()),
+            ] {
+                match (page_index, result) {
+                    (0, Ok(())) => registered += 1,
+                    (IMPLEMENTATION_SPECIFIC_CODE_PAGE, Err(error))
+                        if error.contains("implementation-specific") =>
+                    {
+                        implementation_specific += 1;
+                    }
+                    (1..=254, Err(error)) if error.contains("unassigned") => {
+                        unassigned += 1;
+                    }
+                    (_, outcome) => {
+                        panic!("unexpected code-page classification for {page_index}: {outcome:?}")
+                    }
+                }
+            }
+        }
+
+        assert_eq!(registered, 2, "page zero is registered in both code spaces");
+        assert_eq!(
+            unassigned, 508,
+            "pages 1 through 254 are unassigned in both code spaces"
+        );
+        assert_eq!(
+            implementation_specific, 2,
+            "page 255 is reserved in both code spaces"
+        );
+    }
 }

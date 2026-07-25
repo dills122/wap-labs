@@ -63,7 +63,7 @@ const familyDefinitions = new Map([
       ledgerFile: 'wap-1.2.1-wbxml-scr.json',
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 3,
-      expectedClauses: 48
+      expectedClauses: 47
     }
   ],
   [
@@ -163,6 +163,17 @@ const trn706ClauseIds = new Set([
   'WDP-CL-IPV4-HEADER-CHECKSUM',
   'WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS'
 ]);
+const trn707ClauseIds = new Set([
+  'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+  'WDP-CL-IP-BEARER-REQUIRES-UDP',
+  'WDP-CL-CDPD-UDP-IP-PROFILE',
+  'WDP-CL-UNITDATA-REQUEST-ANYTIME',
+  'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+  'WDP-CL-SELECTED-WSP-PORT',
+  'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
+  'WCMP-CL-CLIENT-GENERAL-PROFILE',
+  'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+]);
 const allowedFixtureKinds = new Set([
   'parser',
   'transport-boundary',
@@ -200,10 +211,7 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-INPUT-FORMAT-LITERALS',
   'WML-CL-INPUT-MAXLENGTH'
 ]);
-const deferredWbxmlClauseIds = new Set([
-  'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
-  'WBXML-CL-TOKEN-CODE-PAGES'
-]);
+const deferredWbxmlClauseIds = new Set();
 const hashPattern = /^[a-f0-9]{64}$/;
 const releaseById = new Map(release.members.map((member) => [member.documentId, member]));
 const ingestionById = new Map(ingestion.members.map((member) => [member.documentId, member]));
@@ -451,12 +459,14 @@ for (const family of ledger.families ?? []) {
       ...new Set([
         ...parents.flatMap((parent) => parent.mapping.workItems),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
-        ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : [])
+        ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
+        ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : [])
       ])
     ].sort();
     const expectedDirectWorkItems = [
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
-      ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : [])
+      ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
+      ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : [])
     ];
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
@@ -575,11 +585,11 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 148
+  assessedClauseCount: 149
 };
 if (
   selectedParentCount !== 201 ||
-  clauseCount !== 781 ||
+  clauseCount !== 780 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);

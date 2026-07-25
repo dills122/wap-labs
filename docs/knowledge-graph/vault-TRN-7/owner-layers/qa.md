@@ -22,6 +22,7 @@ tags:
 - `owned-by` ← [[work-items/TRN-705|TRN-705]]
 - `owned-by` ← [[work-items/TRN-706|TRN-706]]
 - `owned-by` ← [[work-items/TRN-707|TRN-707]]
+- `owned-by` ← [[work-items/TRN-708|TRN-708]]
 
 ## Data
 

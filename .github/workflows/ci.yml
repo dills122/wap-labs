@@ -374,7 +374,7 @@ jobs:
   docs-portal:
     name: Project Atlas Build
     needs: [changes]
-    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.docs_portal == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.docs_portal == 'true' || needs.changes.outputs.rust_transport == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -395,6 +395,9 @@ jobs:
 
       - name: Validate knowledge graph
         run: pnpm wap-graph:check
+
+      - name: Validate transport conformance evidence
+        run: node scripts/check-wap-transport-conformance-ledgers.mjs
 
       - name: Build project Atlas
         run: pnpm --dir docs-portal run build

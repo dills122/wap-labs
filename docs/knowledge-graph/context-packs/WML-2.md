@@ -13,10 +13,10 @@
 
 ## Graph summary
 
-- Nodes: 214
-- Edges: 540
+- Nodes: 212
+- Edges: 534
 - Selected work items: 5
-- Direct normative clauses: 76
+- Direct normative clauses: 75
 - Work items without direct clause mappings: 2
 - Work items with unmapped declared normative families: 3
 
@@ -84,7 +84,7 @@ Evidence commands:
 - Owner layers: `engine-wasm`, `transport-rust`, `qa`
 - Source families: `wml`, `wbxml`, `associated-assets`
 - Existing tickets: `R0-08`, `T0-07`
-- Direct normative clauses: 50
+- Direct normative clauses: 49
 
 Outputs:
 
@@ -224,12 +224,6 @@ Evidence commands:
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
   - Fixture: `WBXML-FX-CHARSET-STRING-TERMINATION` (`binary-decoder`, `implemented`)
-- **WBXML-CL-CHARSET-UNREPRESENTABLE-NAME** — Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.
-  - Family: `wbxml`; force: `error-condition`; level: `required`
-  - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
-  - Parents: `WBXML-C-001`
-  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-CHARSET-UNREPRESENTABLE-NAME` (`binary-decoder`, `planned`)
 - **WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED** — Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.
   - Family: `wbxml`; force: `explicit-may`; level: `permitted`
   - Source: `WAP-192-WBXML` §6.3 (6.3. Encoding Default Attribute Values)
@@ -439,7 +433,7 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §5.8 (5.8. Token Structure)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TOKEN-CODE-PAGES` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TOKEN-CODE-PAGES` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES** — Distinguish fixed global tokens from context-dependent application tokens.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8 (5.8. Token Structure)

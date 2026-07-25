@@ -370,9 +370,10 @@ if (
   ledger.summary?.selectedClassCNotApplicableCount !== 12 ||
   ledger.summary?.selectedDirectNormativeTestEvidenceCount !== 3 ||
   ledger.summary?.selectedBoundaryTestEvidenceCount !== 0 ||
-  ledger.summary?.selectedImplementedClauseCount !== 46 ||
-  ledger.summary?.selectedNotAssessedClauseCount !== 2 ||
-  ledger.summary?.fixedOutcomeFixtureCount !== 36
+  ledger.summary?.selectedImplementedClauseCount !== 47 ||
+  ledger.summary?.selectedNotAssessedClauseCount !== 0 ||
+  ledger.summary?.fixedOutcomeFixtureCount !== 42 ||
+  ledger.summary?.unselectedEncoderClauseCount !== 1
 ) {
   failures.push('WBXML summary counts drift');
 }
@@ -380,6 +381,28 @@ if (
 const wbxmlClauseFamily = selectedNormativeClauses.families?.find(
   (family) => family.family === 'wbxml'
 );
+const unselectedEncoderClauses = ledger.unselectedEncoderClauses ?? [];
+const unrepresentableName = unselectedEncoderClauses.find(
+  (clause) => clause.id === 'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME'
+);
+if (
+  unselectedEncoderClauses.length !== 1 ||
+  unrepresentableName?.actor !== 'wbxml-server-encoder' ||
+  JSON.stringify(unrepresentableName?.parentRows) !==
+    JSON.stringify(['WBXML-S-001']) ||
+  unrepresentableName?.sourceAnchor?.documentId !== 'WAP-192-WBXML' ||
+  unrepresentableName?.sourceAnchor?.section !== '5.2' ||
+  unrepresentableName?.disposition?.classCProfile !==
+    'not-applicable-to-class-c-client' ||
+  unrepresentableName?.implementationStatus !== 'not-assessed' ||
+  (wbxmlClauseFamily?.clauses ?? []).some(
+    (clause) => clause.id === 'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME'
+  )
+) {
+  failures.push(
+    'encoder-only unrepresentable-name clause profile disposition drift'
+  );
+}
 const canonicalClauseIds = new Set(
   (wbxmlClauseFamily?.clauses ?? []).map((clause) => clause.id)
 );
@@ -400,7 +423,7 @@ const implementedClauseIds = new Set(
 
 if (
   conformanceCorpus.schemaVersion !== 2 ||
-  conformanceCorpus.decoder !== 'lowband-wml13-wbxml/0.2.0' ||
+  conformanceCorpus.decoder !== 'lowband-wml13-wbxml/0.3.0' ||
   JSON.stringify(conformanceCorpus.sourceDocuments) !==
     JSON.stringify(['WAP-192-WBXML', 'WAP-191_104-WML'])
 ) {
@@ -475,9 +498,9 @@ for (const fixture of corpusFixtures) {
 }
 
 if (
-  corpusFixtures.length !== 36 ||
+  corpusFixtures.length !== 42 ||
   citedClauseIds.size !== 47 ||
-  implementedClauseIds.size !== 46 ||
+  implementedClauseIds.size !== 47 ||
   JSON.stringify([...corpusScrIds].sort()) !==
     JSON.stringify([...expectedSelectedIds].sort())
 ) {
@@ -502,15 +525,7 @@ const deferredClauseIds = new Set(
     .filter((clause) => !implementedClauseIds.has(clause.id))
     .map((clause) => clause.id)
 );
-if (
-  JSON.stringify([...deferredClauseIds].sort()) !==
-  JSON.stringify(
-    [
-      'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
-      'WBXML-CL-TOKEN-CODE-PAGES'
-    ].sort()
-  )
-) {
+if (deferredClauseIds.size !== 0) {
   failures.push('WBXML deferred clause set drift');
 }
 const basicDeckOutputs = equivalenceGroups.get('basic-deck') ?? [];
@@ -566,7 +581,8 @@ console.log('==> WAP 1.2.1 WBXML SCR ledger');
 console.log('PASS 15 effective rows (11 mandatory / 4 optional)');
 console.log('PASS WBXML:MCF selects 3 mandatory client rows');
 console.log('PASS selected implementation audit: 0 implemented / 3 partial / 0 missing');
-console.log('PASS 36 fixed-outcome fixtures cite 47 canonical nested clauses');
-console.log('PASS 46 implemented / 2 conservatively unpromoted nested clauses');
+console.log('PASS 42 fixed-outcome fixtures cite 47 canonical nested clauses');
+console.log('PASS all 47 selected client clauses have direct evidence');
+console.log('PASS encoder-only unrepresentable-name clause remains outside the selected client profile');
 console.log('PASS exhaustive WML page-zero inventory: 36 tags / 85 attribute starts / 27 values');
 console.log('PASS source locks, mappings, and direct evidence links');

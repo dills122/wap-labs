@@ -1,4 +1,5 @@
 import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
+import { SCRIPT_ERROR_CATEGORY_LABELS } from '../../../contracts/engine';
 import type {
   EngineRuntimeSnapshot,
   RenderList,
@@ -504,15 +505,6 @@ const dialogRequestListsEqual = (
         ('defaultValue' in other ? other.defaultValue : undefined)
     );
   });
-};
-
-// Mirrors the engine's ScriptErrorCategoryLiteral taxonomy
-// (engine-wasm/engine/src/engine_script_types.rs) into user-facing wording.
-const SCRIPT_ERROR_CATEGORY_LABELS: Record<string, string> = {
-  computational: 'computation error',
-  integrity: 'data integrity error',
-  resource: 'resource limit error',
-  'host-binding': 'host binding error'
 };
 
 const describeScriptErrorCategory = (category: string | undefined): string =>

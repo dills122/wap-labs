@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "decoder": "lowband-wml13-wbxml/0.2.0",
+  "decoder": "lowband-wml13-wbxml/0.3.0",
   "sourceDocuments": [
     "WAP-192-WBXML",
     "WAP-191_104-WML"
@@ -49,6 +49,7 @@
     "WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT",
     "WBXML-CL-TAG-CONTENT-BIT",
     "WBXML-CL-TAG-IDENTITY-BITS",
+    "WBXML-CL-TOKEN-CODE-PAGES",
     "WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES",
     "WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES",
     "WBXML-CL-VERSION-BYTE"
@@ -804,7 +805,7 @@
       "expectedErrorContains": "string-table offset 2 is outside"
     },
     {
-      "id": "malformed-unsupported-code-page",
+      "id": "unassigned-tag-code-page-one",
       "scr": [
         "WBXML-C-001"
       ],
@@ -818,7 +819,113 @@
         "WAP-192-WBXML §5.8.1"
       ],
       "bytesHex": "03 0a 6a 00 00 01 3f",
-      "expectedErrorContains": "unsupported WML tag code page 1"
+      "expectedErrorContains": "unassigned WML tag code page 1"
+    },
+    {
+      "id": "global-token-on-unassigned-tag-page",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-GLOBAL-TOKEN-INVARIANCE",
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN",
+        "WBXML-CL-TOKEN-CODE-PAGES"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-192-WBXML §5.8.1",
+        "WAP-192-WBXML §5.8.4"
+      ],
+      "bytesHex": "03 0a 6a 00 7f 00 fe 03 78 00 01",
+      "expectedXml": "<wml>x</wml>"
+    },
+    {
+      "id": "global-token-on-unassigned-attribute-page",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-GLOBAL-TOKEN-INVARIANCE",
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN",
+        "WBXML-CL-TOKEN-CODE-PAGES"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-192-WBXML §5.8.1",
+        "WAP-192-WBXML §5.8.4"
+      ],
+      "bytesHex": "03 0a 6a 00 bf 55 00 fe 03 78 00 01",
+      "expectedXml": "<wml id=\"x\"/>"
+    },
+    {
+      "id": "unassigned-tag-code-page-254",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN",
+        "WBXML-CL-TOKEN-CODE-PAGES"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-192-WBXML §5.8.1"
+      ],
+      "bytesHex": "03 0a 6a 00 00 fe 3f",
+      "expectedErrorContains": "unassigned WML tag code page 254"
+    },
+    {
+      "id": "reserved-tag-code-page-255",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN",
+        "WBXML-CL-TOKEN-CODE-PAGES"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-192-WBXML §5.8.1"
+      ],
+      "bytesHex": "03 0a 6a 00 00 ff 3f",
+      "expectedErrorContains": "implementation-specific WML tag code page 255 is not registered"
+    },
+    {
+      "id": "unassigned-attribute-code-page-254",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN",
+        "WBXML-CL-TOKEN-CODE-PAGES"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-192-WBXML §5.8.1"
+      ],
+      "bytesHex": "03 0a 6a 00 bf 00 fe 55 01",
+      "expectedErrorContains": "unassigned WML attribute code page 254"
+    },
+    {
+      "id": "reserved-attribute-code-page-255",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN",
+        "WBXML-CL-TOKEN-CODE-PAGES"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-192-WBXML §5.8.1"
+      ],
+      "bytesHex": "03 0a 6a 00 bf 00 ff 55 01",
+      "expectedErrorContains": "implementation-specific WML attribute code page 255 is not registered"
     },
     {
       "id": "malformed-truncated-opaque",

@@ -1843,12 +1843,12 @@
         "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
         "implementationEvidence": [
           {
-            "path": "transport-rust/src/native_fetch.rs",
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
             "symbol": "encode_connectionless_request"
           },
           {
-            "path": "transport-rust/src/native_fetch.rs",
-            "symbol": "decode_connectionless_wsp_reply"
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
+            "symbol": "decode_connectionless_reply"
           }
         ],
         "testEvidence": [
@@ -1899,12 +1899,12 @@
         "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
         "implementationEvidence": [
           {
-            "path": "transport-rust/src/native_fetch.rs",
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
             "symbol": "encode_connectionless_request"
           },
           {
-            "path": "transport-rust/src/native_fetch.rs",
-            "symbol": "decode_connectionless_wsp_reply"
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
+            "symbol": "decode_connectionless_reply"
           }
         ],
         "testEvidence": [
@@ -1955,12 +1955,12 @@
         "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
         "implementationEvidence": [
           {
-            "path": "transport-rust/src/native_fetch.rs",
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
             "symbol": "encode_connectionless_request"
           },
           {
-            "path": "transport-rust/src/native_fetch.rs",
-            "symbol": "decode_connectionless_wsp_reply"
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
+            "symbol": "decode_connectionless_reply"
           }
         ],
         "testEvidence": [
@@ -2011,12 +2011,12 @@
         "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
         "implementationEvidence": [
           {
-            "path": "transport-rust/src/native_fetch.rs",
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
             "symbol": "encode_connectionless_request"
           },
           {
-            "path": "transport-rust/src/native_fetch.rs",
-            "symbol": "decode_connectionless_wsp_reply"
+            "path": "transport-rust/src/network/wsp/connectionless.rs",
+            "symbol": "decode_connectionless_reply"
           }
         ],
         "testEvidence": [

@@ -297,6 +297,85 @@ if (
   failures.push('WML/WSP conservative successor-correction boundary drift');
 }
 
+const expectedTrn707ClauseIds = [
+  'WCMP-CL-CLIENT-GENERAL-PROFILE',
+  'WCMP-CL-SELECTED-TYPE-CODE-VALUES',
+  'WDP-CL-CDPD-UDP-IP-PROFILE',
+  'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+  'WDP-CL-IP-BEARER-REQUIRES-UDP',
+  'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
+  'WDP-CL-SELECTED-WSP-PORT',
+  'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+  'WDP-CL-UNITDATA-REQUEST-ANYTIME'
+];
+const transportAudit = register.transportSuccessorAudit;
+const auditClassifications = transportAudit?.classifications ?? [];
+const auditedClauseIds = [
+  ...new Set(
+    auditClassifications.flatMap((classification) => classification.targetClauseIds ?? [])
+  )
+].sort((left, right) => left.localeCompare(right));
+const mappedTrn707ClauseIds = selectedClauses.families
+  .flatMap((family) => family.clauses)
+  .filter((clause) => clause.mapping.workItems.includes('TRN-707'))
+  .map((clause) => clause.id)
+  .sort((left, right) => left.localeCompare(right));
+if (
+  transportAudit?.workItemId !== 'TRN-707' ||
+  transportAudit?.status !==
+    'strict-connectionless-audit-complete-wcmp-correction-open-conditional-wtp-open' ||
+  transportAudit?.scope?.connectionOrientedWspActivated !== false ||
+  transportAudit?.scope?.wtpActivated !== false ||
+  !transportAudit?.scope?.scopeLimitation?.includes('no whole-document equivalence') ||
+  transportAudit?.successorContext?.documentId !== 'WAP-259-WDP-20010614-a' ||
+  transportAudit?.successorContext?.role !== 'delta-evidence-only' ||
+  auditClassifications.length !== 3 ||
+  auditClassifications.some(
+    (classification) =>
+      !['compatible', 'strict-correction-required'].includes(
+        classification.disposition
+      ) ||
+      !classification.finding ||
+      !classification.fixture ||
+      !classification.implementationEvidence?.length ||
+      !classification.tests?.length
+  ) ||
+  auditClassifications.filter(
+    (classification) => classification.disposition === 'compatible'
+  ).length !== 2 ||
+  auditClassifications.find(
+    (classification) => classification.id === 'TRN-707-WCMP-TARGET-DELEGATION'
+  )?.disposition !== 'strict-correction-required' ||
+  JSON.stringify(auditedClauseIds) !== JSON.stringify(expectedTrn707ClauseIds) ||
+  JSON.stringify(mappedTrn707ClauseIds) !== JSON.stringify(expectedTrn707ClauseIds) ||
+  JSON.stringify(transportAudit?.strictCorrectionWorkItems) !==
+    JSON.stringify(['TRN-708'])
+) {
+  failures.push('TRN-707 WDP/WCMP successor-compatibility audit drift');
+}
+const wtpGap = transportAudit?.explicitGaps?.find((gap) => gap.family === 'wtp');
+if (
+  transportAudit?.explicitGaps?.length !== 1 ||
+  wtpGap?.status !== 'conditional-not-activated-unmapped' ||
+  !wtpGap?.activationCondition?.includes('connection-oriented WSP') ||
+  !wtpGap?.policy?.includes('do not activate WTP')
+) {
+  failures.push('TRN-707 conditional WTP boundary drift');
+}
+const transportSelectedEntries = (register.entries ?? []).filter((entry) =>
+  ['wdp', 'wcmp'].includes(entry.family)
+);
+if (
+  transportSelectedEntries.length !== 14 ||
+  transportSelectedEntries.some(
+    (entry) =>
+      entry.successorDerivedImplementation ||
+      entry.disposition !== 'not-successor-derived'
+  )
+) {
+  failures.push('TRN-707 must not rewrite WDP/WCMP foundations as successor-derived');
+}
+
 const successorOnlyCapabilities =
   register.successorOnlyCapabilities ?? [];
 if (
@@ -361,12 +440,49 @@ if (
 ) {
   failures.push('CONF-007 program completion/evidence drift');
 }
+const trn707 = program.sprints
+  .flatMap((sprint) => sprint.workItems)
+  .find((workItem) => workItem.id === 'TRN-707');
+if (
+  trn707?.status !== 'in-progress' ||
+  JSON.stringify(trn707?.contextDocuments) !==
+    JSON.stringify(['WAP-259-WDP-20010614-a']) ||
+  JSON.stringify(trn707?.explicitUnmappedFamilies) !== JSON.stringify(['wtp']) ||
+  JSON.stringify(trn707?.followUpWorkItems) !== JSON.stringify(['TRN-708']) ||
+  !trn707?.outputs?.includes(
+    'TRN-707 transport-specific audit in spec-processing/source-manifests/wap-1.2.1-successor-delta.json'
+  ) ||
+  !trn707?.evidence?.includes('node scripts/wap-context-pack.mjs TRN-707') ||
+  !trn707?.acceptance?.some((item) => item.includes('WTP and connection-oriented WSP remain inactive'))
+) {
+  failures.push('TRN-707 compliance-program posture drift');
+}
+const trn708 = program.sprints
+  .flatMap((sprint) => sprint.workItems)
+  .find((workItem) => workItem.id === 'TRN-708');
+if (
+  trn708?.status !== 'todo' ||
+  JSON.stringify(trn708?.dependsOn) !== JSON.stringify(['TRN-703', 'T0-17']) ||
+  !trn708?.notes?.some((item) => item.includes('Preserve completed TRN-703/T0-17')) ||
+  !trn708?.specReferences?.some((item) => item.includes('section 5.3')) ||
+  !trn708?.acceptance?.some(
+    (item) =>
+      item.includes('strict CDPD/IPv4 profile') &&
+      item.includes('ICMPv4 path')
+  ) ||
+  !trn708?.acceptance?.some((item) => item.includes('No WTP'))
+) {
+  failures.push('TRN-708 additive WCMP correction ticket drift');
+}
 
 if (
   !deltaDocument.includes('201/201 selected rows') ||
   !deltaDocument.includes('17 successor-derived implementation foundations') ||
   !deltaDocument.includes('15 require strict correction') ||
-  !deltaDocument.includes('planning classification, not conformance evidence')
+  !deltaDocument.includes('planning classification, not conformance evidence') ||
+  !deltaDocument.includes('TRN-707 transport audit') ||
+  !deltaDocument.includes('TRN-708') ||
+  !deltaDocument.includes('WTP remains conditional and unmapped')
 ) {
   failures.push('successor delta human rollup drift');
 }

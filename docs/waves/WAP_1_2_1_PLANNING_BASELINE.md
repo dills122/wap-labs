@@ -26,9 +26,9 @@ explicit capability/mode.
 | Class selection | WAP-215's six Class A/B/C client/server graphs are extracted; `CCR-CLASSC-C-001` is the declared first-release profile |
 | Effective specifications | Every selected family has an ordered base/SIN chain and successor sources cannot silently replace the target release |
 | Selected obligations | 712 effective source rows reduce to 201 selected parent rows across nine mandatory families |
-| Nested clauses | The 201 parents expand into 781 clauses: 738 required, 31 recommended, and 12 permitted |
+| Nested clauses | The 201 parents expand into 780 clauses: 737 required, 31 recommended, and 12 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 781 clause fixtures have target locations; 148 clauses now have direct conformance assessment and 633 remain unassessed |
+| Fixtures | All 780 clause fixtures have target locations; 149 clauses now have direct conformance assessment and 631 remain unassessed |
 | Successor delta | All 201 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 78 unique work items with machine-checked rollups |
@@ -45,17 +45,17 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 |---|---:|---:|---:|---:|---:|
 | WML | 39 | 174 | 3 | 24 | 12 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
-| WBXML | 3 | 48 | 0 | 3 | 0 |
+| WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 23 | 18 |
 | WMLScript Libraries | 80 | 211 | 0 | 14 | 66 |
 | Caching | 5 | 68 | 0 | 3 | 2 |
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 5 | 28 | 5 | 0 | 0 |
 | WSP | 8 | 57 | 0 | 8 | 0 |
-| **Total** | **201** | **781** | **22** | **78** | **101** |
+| **Total** | **201** | **780** | **22** | **78** | **101** |
 
-Parent-row status is not a substitute for direct clause evidence. With 144 of
-781 clauses assessed, the project remains `pre-conformance` until every
+Parent-row status is not a substitute for direct clause evidence. With 149 of
+780 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
 

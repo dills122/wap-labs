@@ -42,7 +42,7 @@ All nine selected Class C family increments are complete at SCR level:
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 201 selected parent rows
-  expand into 781 deduplicated, source-anchored clauses; the selected WDP and
+  expand into 780 deduplicated, source-anchored clauses; the selected WDP and
   WCMP paths contribute 77 assessed, direct fixture-backed clauses;
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
@@ -73,9 +73,10 @@ All nine selected Class C family increments are complete at SCR level:
 - `WBXML:MCF` selects exactly three mandatory client rows and leaves 12
   server/document/encoder rows outside the selected client profile;
 - the selected WBXML audit is 0 implemented, 3 partial, and 0 missing; a
-  pinned built-in decoder and 36-case source-derived corpus link direct
-  normative tests to all 3 rows, with 46/48 nested clauses implemented and two
-  explicit gaps retained.
+  pinned built-in decoder and 42-case source-derived corpus link direct
+  normative tests to all 3 rows, with all 47 selected client clauses
+  implemented. The encoder-only unrepresentable-name clause remains preserved
+  outside the selected client profile.
 - 112 effective WMLScript rows are extracted from the consolidated
   WAP-193_101 table; `WMLScript:MCF` selects 41 mandatory interpreter rows;
 - the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,
@@ -147,7 +148,7 @@ executable evidence.
 
 ## Dependency-ordered program
 
-The program contains 13 sprints and 78 unique work items. Existing completed
+The program contains 13 sprints and 79 unique work items. Existing completed
 tickets remain historical facts; the program maps to them where relevant and
 adds work only for uncovered obligations.
 

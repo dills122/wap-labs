@@ -45,7 +45,7 @@ const familyDefinitions = [
     selectedDisposition: 'required-by-class-c-client-mcf',
     expectedRows: 15,
     expectedSelected: 3,
-    expectedClauses: 48,
+    expectedClauses: 47,
     expectedStatus: { implemented: 0, partial: 3, missing: 0 },
     activeDoc: 'docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md'
   },
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 15, blocked: 1, 'in-progress': 11, todo: 51 })
+  JSON.stringify({ done: 15, blocked: 1, 'in-progress': 12, todo: 51 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -322,7 +322,7 @@ if (
   selectedClauses.scope?.remainingSelectedParentCount !== 0 ||
   aggregateRows !== 712 ||
   aggregateSelected !== 201 ||
-  aggregateClauses !== 781 ||
+  aggregateClauses !== 780 ||
   JSON.stringify(aggregateStatus) !==
   JSON.stringify({ implemented: 22, partial: 78, missing: 101 })
 ) {
@@ -346,7 +346,7 @@ const requiredDocumentFragments = new Map([
   [
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
-      'all 201 selected rows now expand into 781',
+      'all 201 selected rows now expand into 780',
       '77 WDP/WCMP clauses are directly fixture-backed'
     ]
   ],
@@ -354,7 +354,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_NORMATIVE_CLAUSE_LEDGER.md',
     [
       'covers all 201 selected Class C parent rows',
-      'The 781 clauses are classified as 738 required'
+      'The 780 clauses are classified as 737 required'
     ]
   ],
   [
@@ -368,14 +368,14 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '148 fixture-backed clauses assessed'
+      '149 fixture-backed clauses assessed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **201** | **781** | **22** | **78** | **101** |',
+      '| **Total** | **201** | **780** | **22** | **78** | **101** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -391,7 +391,7 @@ const requiredDocumentFragments = new Map([
     'README.md',
     [
       '22/201 selected parent rows are implemented',
-      '148/781 clauses are directly assessed'
+      '149/780 clauses are directly assessed'
     ]
   ]
 ]);
@@ -448,7 +448,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 requirement/status drift');
 console.log(
-  'PASS 712 source rows / 201 selected rows / 781 clauses remain synchronized'
+  'PASS 712 source rows / 201 selected rows / 780 clauses remain synchronized'
 );
 console.log(
   `PASS ${seenRequirementIds.size} requirement IDs, active additive work, evidence states, and strict guards`
