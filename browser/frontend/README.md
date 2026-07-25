@@ -10,6 +10,11 @@ Current responsibilities:
 - local/network mode orchestration
 - integration glue to invoke Tauri host commands
 
+The production entry remains `src/main.ts`, which composes the shell with the generated Tauri host
+client. `browser-story.html` is a separate test-only entry that uses the same controller, presenter,
+and DOM shell with a WASM-backed host client. Only that entry installs
+`window.__WAVENAV_STORY_EVIDENCE__`; production builds do not expose the observation bridge.
+
 Current backend harness commands are available in Tauri (`src-tauri/src/lib.rs`) for
 frontend integration:
 
@@ -96,7 +101,23 @@ pnpm --dir browser/frontend lint
 pnpm --dir browser/frontend typecheck
 pnpm --dir browser/frontend test
 pnpm --dir browser/frontend test:coverage
+pnpm --dir browser/frontend build
 ```
+
+Fast ordinary-browser story lane from the repository root:
+
+```bash
+cd engine-wasm/engine
+wasm-pack build --target web --out-dir ../pkg
+cd ../..
+pnpm test:story:waves
+```
+
+The lane drives the real Waves controls with softkey clicks and browser keyboard events. Its
+primary oracle is the test-only semantic bridge: runtime snapshots, engine traces, host session
+state, and render-list text. Playwright screenshots and traces are retained only for failed-flow
+debugging. Network-mode stories use an in-memory fixture adapter restricted to canonical
+`engine-wasm/examples` decks; they do not exercise native Tauri or Rust transport behavior.
 
 Run from `browser/`:
 

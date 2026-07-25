@@ -13,11 +13,28 @@ const ID_PATTERN = /^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/;
 const STATE_KEYS = new Set([
   'activeCardId',
   'focusedLinkIndex',
+  'focusedInputEditName',
+  'focusedInputEditValue',
+  'focusedSelectEditName',
+  'focusedSelectEditValue',
   'externalNavigationIntent',
   'nextCardVar'
 ]);
-const ACTION_TYPES = new Set(['key', 'back', 'tick', 'clear-intent']);
+const SESSION_KEYS = new Set([
+  'runMode',
+  'navigationStatus',
+  'requestedUrl',
+  'finalUrl',
+  'activeCardId',
+  'focusedLinkIndex',
+  'externalNavigationIntent',
+  'lastError'
+]);
+const ACTION_TYPES = new Set(['key', 'keyboard', 'type-text', 'back', 'tick', 'clear-intent']);
 const KEY_NAMES = new Set(['up', 'down', 'enter']);
+const KEYBOARD_NAMES = new Set(['ArrowUp', 'ArrowDown', 'Enter', 'Backspace', 'Escape']);
+const STORY_TARGETS = new Set(['host-sample', 'waves-browser']);
+const WAVES_RUN_MODES = new Set(['local', 'network']);
 
 function toCamelCase(value) {
   return value.replace(/[-_]+([a-zA-Z0-9])/g, (_, c) => c.toUpperCase());
@@ -175,10 +192,49 @@ function parseExpectedState(value, filename, location) {
   return state;
 }
 
+function parseExpectedSession(value, filename, location) {
+  const session = requireRecord(value, filename, location);
+  validateKeys(session, SESSION_KEYS, filename, location);
+  if (Object.keys(session).length === 0) {
+    throw new Error(`${filename}: ${location} needs at least one session assertion`);
+  }
+  for (const [key, expected] of Object.entries(session)) {
+    if (key === 'focusedLinkIndex') {
+      if (!Number.isInteger(expected) || expected < 0) {
+        throw new Error(`${filename}: ${location}.${key} must be a non-negative integer`);
+      }
+      continue;
+    }
+    if (expected !== null && typeof expected !== 'string') {
+      throw new Error(`${filename}: ${location}.${key} must be a string or null`);
+    }
+  }
+  return session;
+}
+
+function parseRenderExpectation(value, filename, location) {
+  const render = requireRecord(value, filename, location);
+  validateKeys(render, new Set(['textIncludes']), filename, location);
+  if (
+    !Array.isArray(render.textIncludes) ||
+    render.textIncludes.length === 0 ||
+    render.textIncludes.some((text) => typeof text !== 'string' || !text)
+  ) {
+    throw new Error(`${filename}: ${location}.textIncludes must be non-empty strings`);
+  }
+  return { textIncludes: render.textIncludes };
+}
+
 function parseExpectation(value, filename, location) {
   const expectation = requireRecord(value, filename, location);
-  validateKeys(expectation, new Set(['state', 'traceKinds']), filename, location);
+  validateKeys(
+    expectation,
+    new Set(['state', 'traceKinds', 'session', 'statusIncludes', 'render']),
+    filename,
+    location
+  );
   const state = parseExpectedState(expectation.state, filename, `${location}.state`);
+  const parsed = { state };
   let traceKinds;
   if (expectation.traceKinds !== undefined) {
     if (
@@ -189,13 +245,27 @@ function parseExpectation(value, filename, location) {
       throw new Error(`${filename}: ${location}.traceKinds must be non-empty trace kind strings`);
     }
     traceKinds = expectation.traceKinds.map((kind) => kind.trim());
+    parsed.traceKinds = traceKinds;
   }
-  return traceKinds ? { state, traceKinds } : { state };
+  if (expectation.session !== undefined) {
+    parsed.session = parseExpectedSession(expectation.session, filename, `${location}.session`);
+  }
+  if (expectation.statusIncludes !== undefined) {
+    parsed.statusIncludes = requireString(
+      expectation.statusIncludes,
+      filename,
+      `${location}.statusIncludes`
+    );
+  }
+  if (expectation.render !== undefined) {
+    parsed.render = parseRenderExpectation(expectation.render, filename, `${location}.render`);
+  }
+  return parsed;
 }
 
 function parseAction(value, filename, location) {
   const action = requireRecord(value, filename, location);
-  validateKeys(action, new Set(['type', 'key', 'ms']), filename, location);
+  validateKeys(action, new Set(['type', 'key', 'ms', 'text']), filename, location);
   if (!ACTION_TYPES.has(action.type)) {
     throw new Error(`${filename}: ${location}.type has unknown action "${String(action.type)}"`);
   }
@@ -204,14 +274,34 @@ function parseAction(value, filename, location) {
     if (!KEY_NAMES.has(action.key)) {
       throw new Error(`${filename}: ${location}.key must be up, down, or enter`);
     }
-    if (action.ms !== undefined) {
-      throw new Error(`${filename}: ${location}.ms is only valid for tick actions`);
+    if (action.ms !== undefined || action.text !== undefined) {
+      throw new Error(`${filename}: ${location} key actions only accept type and key`);
     }
     return { type: action.type, key: action.key };
   }
 
-  if (action.key !== undefined) {
-    throw new Error(`${filename}: ${location}.key is only valid for key actions`);
+  if (action.type === 'keyboard') {
+    if (!KEYBOARD_NAMES.has(action.key)) {
+      throw new Error(
+        `${filename}: ${location}.key must be ArrowUp, ArrowDown, Enter, Backspace, or Escape`
+      );
+    }
+    if (action.ms !== undefined || action.text !== undefined) {
+      throw new Error(`${filename}: ${location} keyboard actions only accept type and key`);
+    }
+    return { type: action.type, key: action.key };
+  }
+
+  if (action.type === 'type-text') {
+    const text = requireString(action.text, filename, `${location}.text`);
+    if (action.key !== undefined || action.ms !== undefined) {
+      throw new Error(`${filename}: ${location} type-text actions only accept type and text`);
+    }
+    return { type: action.type, text };
+  }
+
+  if (action.key !== undefined || action.text !== undefined) {
+    throw new Error(`${filename}: ${location} only key/keyboard/type-text actions accept input`);
   }
   if (action.type === 'tick') {
     if (action.ms !== 100 && action.ms !== 1000) {
@@ -223,6 +313,21 @@ function parseAction(value, filename, location) {
     throw new Error(`${filename}: ${location}.ms is only valid for tick actions`);
   }
   return { type: action.type };
+}
+
+function parseStorySetup(value, target, filename, location) {
+  if (value === undefined) {
+    return undefined;
+  }
+  const setup = requireRecord(value, filename, location);
+  validateKeys(setup, new Set(['runMode']), filename, location);
+  if (target !== 'waves-browser') {
+    throw new Error(`${filename}: ${location} is only valid for waves-browser flows`);
+  }
+  if (!WAVES_RUN_MODES.has(setup.runMode)) {
+    throw new Error(`${filename}: ${location}.runMode must be local or network`);
+  }
+  return { runMode: setup.runMode };
 }
 
 export function parseExecutableFlow(source, filename, expectedExampleKey) {
@@ -253,7 +358,7 @@ export function parseExecutableFlow(source, filename, expectedExampleKey) {
     const flow = requireRecord(rawFlow, filename, location);
     validateKeys(
       flow,
-      new Set(['id', 'title', 'workItems', 'specItems', 'initial', 'steps']),
+      new Set(['id', 'title', 'target', 'setup', 'workItems', 'specItems', 'initial', 'steps']),
       filename,
       location
     );
@@ -266,6 +371,11 @@ export function parseExecutableFlow(source, filename, expectedExampleKey) {
     }
     seenFlowIds.add(id);
     const title = requireString(flow.title, filename, `${location}.title`);
+    const target = flow.target ?? 'host-sample';
+    if (!STORY_TARGETS.has(target)) {
+      throw new Error(`${filename}: ${location}.target must be host-sample or waves-browser`);
+    }
+    const setup = parseStorySetup(flow.setup, target, filename, `${location}.setup`);
     const workItems = validateIdList(flow.workItems, filename, `${location}.workItems`);
     const specItems = validateIdList(flow.specItems, filename, `${location}.specItems`);
     const initial = parseExpectation(flow.initial, filename, `${location}.initial`);
@@ -281,7 +391,7 @@ export function parseExecutableFlow(source, filename, expectedExampleKey) {
         expect: parseExpectation(step.expect, filename, `${stepLocation}.expect`)
       };
     });
-    return { id, title, workItems, specItems, initial, steps };
+    return { id, title, target, ...(setup ? { setup } : {}), workItems, specItems, initial, steps };
   });
 
   return { version: 1, example, flows };
@@ -369,17 +479,37 @@ export function renderManifest(records) {
 export interface StoryStateExpectation {
   activeCardId?: string;
   focusedLinkIndex?: number;
+  focusedInputEditName?: string | null;
+  focusedInputEditValue?: string | null;
+  focusedSelectEditName?: string | null;
+  focusedSelectEditValue?: string | null;
   externalNavigationIntent?: string | null;
   nextCardVar?: string | null;
+}
+
+export interface StorySessionExpectation {
+  runMode?: 'local' | 'network';
+  navigationStatus?: string;
+  requestedUrl?: string | null;
+  finalUrl?: string | null;
+  activeCardId?: string | null;
+  focusedLinkIndex?: number;
+  externalNavigationIntent?: string | null;
+  lastError?: string | null;
 }
 
 export interface StoryExpectation {
   state: StoryStateExpectation;
   traceKinds?: string[];
+  session?: StorySessionExpectation;
+  statusIncludes?: string;
+  render?: { textIncludes: string[] };
 }
 
 export type StoryAction =
   | { type: 'key'; key: 'up' | 'down' | 'enter' }
+  | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
+  | { type: 'type-text'; text: string }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
@@ -392,6 +522,8 @@ export interface StoryStep {
 export interface ExecutableStoryFlow {
   id: string;
   title: string;
+  target: 'host-sample' | 'waves-browser';
+  setup?: { runMode: 'local' | 'network' };
   workItems: string[];
   specItems: string[];
   initial: StoryExpectation;

@@ -58,6 +58,72 @@
           }
         }
       ]
+    },
+    {
+      "id": "waves-fragment-and-external-intent",
+      "title": "Waves UI drives fragment navigation and captures external intent",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["A2-01", "A2-02"],
+      "specItems": ["WML-R-006", "WML-R-007"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "session": {
+          "runMode": "local",
+          "navigationStatus": "loaded"
+        },
+        "render": {
+          "textIncludes": ["WaveNav Host Harness", "Go to next card"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            },
+            "render": {
+              "textIncludes": ["Second card loaded.", "Return home"]
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": "http://example.com/other.wml"
+            },
+            "traceKinds": ["ACTION_EXTERNAL"]
+          }
+        }
+      ]
     }
   ]
 }

@@ -64,6 +64,36 @@ test('rejects unknown executable actions deterministically', () => {
   );
 });
 
+test('parses waves-browser target setup, keyboard actions, and semantic expectations', () => {
+  const document = validFlow({
+    target: 'waves-browser',
+    setup: { runMode: 'network' },
+    initial: {
+      state: { activeCardId: 'home' },
+      session: { navigationStatus: 'loaded' },
+      render: { textIncludes: ['Home'] }
+    },
+    steps: [
+      {
+        action: { type: 'keyboard', key: 'Enter' },
+        expect: {
+          state: { activeCardId: 'home' },
+          statusIncludes: 'loaded'
+        }
+      }
+    ]
+  });
+
+  const parsed = parseExecutableFlow(
+    JSON.stringify(document),
+    'test-example.flow.json',
+    'testExample'
+  );
+  assert.equal(parsed.flows[0].target, 'waves-browser');
+  assert.deepEqual(parsed.flows[0].setup, { runMode: 'network' });
+  assert.deepEqual(parsed.flows[0].initial.render, { textIncludes: ['Home'] });
+});
+
 test('rejects flow companions for examples that do not exist', async () => {
   const examplesDir = await mkdtemp(path.join(os.tmpdir(), 'wavenav-examples-'));
   await writeFile(path.join(examplesDir, 'unknown.flow.json'), JSON.stringify(validFlow()), 'utf8');

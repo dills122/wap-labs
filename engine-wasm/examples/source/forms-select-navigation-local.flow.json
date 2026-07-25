@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "example": "formsSelectNavigationLocal",
+  "flows": [
+    {
+      "id": "waves-merged-select-and-input-edit",
+      "title": "Waves combines softkey focus with keyboard select and input editing",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["A5-05", "A5-06"],
+      "specItems": ["WML-R-019", "RQ-RMK-003", "RQ-RMK-008"],
+      "initial": {
+        "state": {
+          "activeCardId": "profile",
+          "focusedLinkIndex": 0,
+          "focusedInputEditName": null,
+          "focusedSelectEditName": null
+        },
+        "render": {
+          "textIncludes": ["Help", "Jordan", "PIN:", "Review"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1,
+              "focusedSelectEditName": "Country",
+              "focusedSelectEditValue": "Jordan"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": "Country",
+              "focusedSelectEditValue": "France"
+            },
+            "render": {
+              "textIncludes": ["France"]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1,
+              "focusedSelectEditName": null,
+              "focusedSelectEditValue": null
+            },
+            "render": {
+              "textIncludes": ["France"]
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 2
+            }
+          }
+        },
+        {
+          "action": { "type": "type-text", "text": "12" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "pin",
+              "focusedInputEditValue": "12"
+            },
+            "render": {
+              "textIncludes": ["**"]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": null,
+              "focusedInputEditValue": null
+            },
+            "render": {
+              "textIncludes": ["**"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

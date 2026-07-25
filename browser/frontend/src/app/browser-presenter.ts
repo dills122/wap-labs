@@ -48,6 +48,8 @@ export class BrowserPresenter {
   private timelineText = '';
   private snapshotText = '';
   private transportResponseText = '';
+  private statusText = '';
+  private latestRenderList: RenderList | null = null;
   private sessionStateDirty = true;
   private timelineDirty = true;
   private snapshotDirty = true;
@@ -139,9 +141,14 @@ export class BrowserPresenter {
   }
 
   setStatus(message: string): void {
+    this.statusText = message;
     const tone = inferStatusTone(message);
     this.refs.statusEl.setStatus(message, tone);
     uiEvents.emit('status', { message, tone });
+  }
+
+  getStatus(): string {
+    return this.statusText;
   }
 
   setBootPhase(phase: BootPhase): void {
@@ -300,6 +307,9 @@ export class BrowserPresenter {
   }
 
   drawRenderList(renderList: RenderList): void {
+    this.latestRenderList = {
+      draw: renderList.draw.map((command) => ({ ...command }))
+    };
     this.hasRenderedContent = true;
     // Real content just landed -- cancel any pending delayed in-progress
     // indicator so it can't appear after the fact (see beginNavigationProgress).
@@ -309,6 +319,15 @@ export class BrowserPresenter {
     }
     this.setViewportSkeleton(false);
     this.refs.viewportEl.innerHTML = renderWmlViewportHtml(renderList);
+  }
+
+  getRenderList(): RenderList | null {
+    if (!this.latestRenderList) {
+      return null;
+    }
+    return {
+      draw: this.latestRenderList.draw.map((command) => ({ ...command }))
+    };
   }
 
   exportTimeline(): void {

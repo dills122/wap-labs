@@ -66,6 +66,8 @@ jobs:
               - "engine-wasm/engine/**"
               - "engine-wasm/examples/**"
               - "engine-wasm/pkg/**"
+              - "browser/frontend/**"
+              - "browser/contracts/**"
             marketing_site:
               - "marketing-site/**"
             docs_portal:
@@ -299,7 +301,10 @@ jobs:
         run: pnpm --dir engine-wasm/host-sample exec playwright install --with-deps chromium
 
       - name: Host-sample executable stories
-        run: pnpm test:story all
+        run: pnpm test:story host-sample
+
+      - name: Waves browser executable stories
+        run: pnpm test:story:waves
 
       - name: Upload story failure evidence
         if: failure()
