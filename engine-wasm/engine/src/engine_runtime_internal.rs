@@ -1,6 +1,7 @@
 use crate::*;
 
 mod navigation;
+mod node_lookup;
 mod script_effects;
 mod timers;
 mod trace;
@@ -276,76 +277,49 @@ impl WmlEngine {
             .and_then(|deck| deck.cards.get_mut(self.active_card_idx))
             .ok_or_else(|| "Active card not found".to_string())?;
 
-        for node in &mut card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
+        for input in node_lookup::inputs_mut(card) {
+            let valid_existing = vars
+                .get(input.name)
+                .cloned()
+                .filter(|candidate| input_value_is_valid(input.mask, input.empty_ok, candidate));
+            let initial_value = if let Some(existing) = valid_existing {
+                Some(existing)
+            } else {
+                vars.remove(input.name);
+                input
+                    .default_value
+                    .as_deref()
+                    .map(|candidate| evaluate_vdata(candidate, vars))
+                    .filter(|candidate| input_value_is_valid(input.mask, input.empty_ok, candidate))
             };
-            for item in items {
-                match item {
-                    runtime::node::InlineNode::Input {
-                        name,
-                        value,
-                        default_value,
-                        mask,
-                        empty_ok,
-                        ..
-                    } => {
-                        let valid_existing = vars
-                            .get(name)
-                            .cloned()
-                            .filter(|candidate| input_value_is_valid(mask, *empty_ok, candidate));
-                        let initial_value = if let Some(existing) = valid_existing {
-                            Some(existing)
-                        } else {
-                            vars.remove(name);
-                            default_value
-                                .as_deref()
-                                .map(|candidate| evaluate_vdata(candidate, vars))
-                                .filter(|candidate| {
-                                    input_value_is_valid(mask, *empty_ok, candidate)
-                                })
-                        };
 
-                        if let Some(initial_value) = initial_value {
-                            vars.insert(name.clone(), initial_value.clone());
-                            *value = initial_value;
-                        } else {
-                            vars.remove(name);
-                            value.clear();
-                        }
-                    }
-                    runtime::node::InlineNode::Select {
-                        name,
-                        iname,
-                        default_value,
-                        default_index_value,
-                        multiple,
-                        options,
-                        selected_indices,
-                        ..
-                    } => {
-                        *selected_indices = initial_select_indices(
-                            name.as_deref(),
-                            iname.as_deref(),
-                            default_value.as_deref(),
-                            default_index_value.as_deref(),
-                            *multiple,
-                            options,
-                            vars,
-                        );
-                        sync_select_variables(
-                            vars,
-                            name.as_deref(),
-                            iname.as_deref(),
-                            *multiple,
-                            options,
-                            selected_indices,
-                        );
-                    }
-                    runtime::node::InlineNode::Text(_) | runtime::node::InlineNode::Link { .. } => {
-                    }
-                }
+            if let Some(initial_value) = initial_value {
+                vars.insert(input.name.to_string(), initial_value.clone());
+                *input.value = initial_value;
+            } else {
+                vars.remove(input.name);
+                input.value.clear();
             }
+        }
+
+        for select in node_lookup::selects_mut(card) {
+            *select.selected_indices = initial_select_indices(
+                select.name,
+                select.iname,
+                select.default_value,
+                select.default_index_value,
+                select.multiple,
+                select.options,
+                vars,
+            );
+            sync_select_variables(
+                vars,
+                select.name,
+                select.iname,
+                select.multiple,
+                select.options,
+                select.selected_indices,
+            );
         }
         Ok(())
     }
@@ -432,19 +406,7 @@ impl WmlEngine {
 
     fn input_value_on_active_card(&self, input_name: &str) -> Option<String> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Input { name, value, .. } = item {
-                    if name == input_name {
-                        return Some(value.clone());
-                    }
-                }
-            }
-        }
-        None
+        node_lookup::find_input(card, input_name).map(|input| input.value.to_string())
     }
 
     fn set_input_value_on_active_card(
@@ -453,30 +415,11 @@ impl WmlEngine {
         value: &str,
     ) -> Result<bool, String> {
         let card = self.active_card_internal_mut()?;
-        let mut updated = false;
-        for node in &mut card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Input {
-                    name,
-                    value: current_value,
-                    ..
-                } = item
-                {
-                    if name == input_name {
-                        *current_value = value.to_string();
-                        updated = true;
-                        break;
-                    }
-                }
-            }
-            if updated {
-                break;
-            }
-        }
-        Ok(updated)
+        let Some(input) = node_lookup::find_input_mut(card, input_name) else {
+            return Ok(false);
+        };
+        *input.value = value.to_string();
+        Ok(true)
     }
 
     pub(crate) fn apply_input_value_to_card(
@@ -485,68 +428,20 @@ impl WmlEngine {
         input_name: &str,
         value: &str,
     ) {
-        for node in &mut card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Input {
-                    name,
-                    value: current_value,
-                    ..
-                } = item
-                {
-                    if name == input_name {
-                        *current_value = value.to_string();
-                        return;
-                    }
-                }
-            }
+        if let Some(input) = node_lookup::find_input_mut(card, input_name) {
+            *input.value = value.to_string();
         }
     }
 
     pub(crate) fn select_selected_index_on_active_card(&self, select_name: &str) -> Option<usize> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    selected_indices,
-                    ..
-                } = item
-                {
-                    if control_id == select_name {
-                        return Some(selected_indices.first().copied().unwrap_or(0));
-                    }
-                }
-            }
-        }
-        None
+        node_lookup::find_select(card, select_name)
+            .map(|select| select.selected_indices.first().copied().unwrap_or(0))
     }
 
     pub(crate) fn select_option_count_on_active_card(&self, select_name: &str) -> Option<usize> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    options,
-                    ..
-                } = item
-                {
-                    if control_id == select_name {
-                        return Some(options.len());
-                    }
-                }
-            }
-        }
-        None
+        node_lookup::find_select(card, select_name).map(|select| select.options.len())
     }
 
     pub(crate) fn select_value_on_active_card(
@@ -555,26 +450,10 @@ impl WmlEngine {
         selected_index: usize,
     ) -> Option<String> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    options,
-                    ..
-                } = item
-                {
-                    if control_id == select_name {
-                        return options
-                            .get(selected_index)
-                            .map(|option| evaluate_vdata(&option.value, &self.vars));
-                    }
-                }
-            }
-        }
-        None
+        node_lookup::find_select(card, select_name)?
+            .options
+            .get(selected_index)
+            .map(|option| evaluate_vdata(&option.value, &self.vars))
     }
 
     pub(crate) fn set_select_selected_indices_on_active_card(
@@ -583,33 +462,16 @@ impl WmlEngine {
         selected_indices: &[usize],
     ) -> Result<bool, String> {
         let card = self.active_card_internal_mut()?;
-        let mut updated = false;
-        for node in &mut card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    options,
-                    selected_indices: current_indices,
-                    ..
-                } = item
-                {
-                    if control_id == select_name
-                        && selected_indices.iter().all(|index| *index < options.len())
-                    {
-                        *current_indices = selected_indices.to_vec();
-                        updated = true;
-                        break;
-                    }
-                }
-            }
-            if updated {
-                break;
+        for select in node_lookup::selects_with_control_id_mut(card, select_name) {
+            if selected_indices
+                .iter()
+                .all(|index| *index < select.options.len())
+            {
+                *select.selected_indices = selected_indices.to_vec();
+                return Ok(true);
             }
         }
-        Ok(updated)
+        Ok(false)
     }
 
     pub(crate) fn apply_select_index_to_card(
@@ -618,25 +480,11 @@ impl WmlEngine {
         select_name: &str,
         selected_index: usize,
     ) {
-        for node in &mut card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    options,
-                    multiple,
-                    selected_indices,
-                    ..
-                } = item
-                {
-                    if control_id == select_name && !*multiple && selected_index < options.len() {
-                        selected_indices.clear();
-                        selected_indices.push(selected_index);
-                        return;
-                    }
-                }
+        for select in node_lookup::selects_with_control_id_mut(card, select_name) {
+            if !select.multiple && selected_index < select.options.len() {
+                select.selected_indices.clear();
+                select.selected_indices.push(selected_index);
+                return;
             }
         }
     }
@@ -647,27 +495,13 @@ impl WmlEngine {
         selected_index: usize,
     ) -> Option<(bool, Vec<usize>, Option<String>)> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    multiple,
-                    options,
-                    selected_indices,
-                    ..
-                } = item
-                {
-                    if control_id == select_name {
-                        let option = options.get(selected_index)?;
-                        return Some((*multiple, selected_indices.clone(), option.onpick.clone()));
-                    }
-                }
-            }
-        }
-        None
+        let select = node_lookup::find_select(card, select_name)?;
+        let option = select.options.get(selected_index)?;
+        Some((
+            select.multiple,
+            select.selected_indices.to_vec(),
+            option.onpick.clone(),
+        ))
     }
 
     pub(crate) fn sync_select_variables_on_active_card(
@@ -679,36 +513,18 @@ impl WmlEngine {
             .as_ref()
             .and_then(|deck| deck.cards.get(self.active_card_idx))
             .ok_or_else(|| "Active card not found".to_string())?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    control_id,
-                    name,
-                    iname,
-                    multiple,
-                    options,
-                    selected_indices,
-                    ..
-                } = item
-                {
-                    if control_id == select_name {
-                        sync_select_variables(
-                            vars,
-                            name.as_deref(),
-                            iname.as_deref(),
-                            *multiple,
-                            options,
-                            selected_indices,
-                        );
-                        return Ok(());
-                    }
-                }
-            }
-        }
-        Err(format!("Select '{select_name}' not found"))
+        let Some(select) = node_lookup::find_select(card, select_name) else {
+            return Err(format!("Select '{select_name}' not found"));
+        };
+        sync_select_variables(
+            vars,
+            select.name,
+            select.iname,
+            select.multiple,
+            select.options,
+            select.selected_indices,
+        );
+        Ok(())
     }
 
     pub(crate) fn sync_all_select_variables_on_active_card(&mut self) -> Result<(), String> {
@@ -717,52 +533,22 @@ impl WmlEngine {
             .as_ref()
             .and_then(|deck| deck.cards.get(self.active_card_idx))
             .ok_or_else(|| "Active card not found".to_string())?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Select {
-                    name,
-                    iname,
-                    multiple,
-                    options,
-                    selected_indices,
-                    ..
-                } = item
-                {
-                    sync_select_variables(
-                        vars,
-                        name.as_deref(),
-                        iname.as_deref(),
-                        *multiple,
-                        options,
-                        selected_indices,
-                    );
-                }
-            }
+        for select in node_lookup::selects(card) {
+            sync_select_variables(
+                vars,
+                select.name,
+                select.iname,
+                select.multiple,
+                select.options,
+                select.selected_indices,
+            );
         }
         Ok(())
     }
 
     pub(crate) fn input_max_len_on_active_card(&self, input_name: &str) -> Option<usize> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Input {
-                    name, max_length, ..
-                } = item
-                {
-                    if name == input_name {
-                        return *max_length;
-                    }
-                }
-            }
-        }
-        None
+        node_lookup::find_input(card, input_name).and_then(|input| input.max_length)
     }
 
     fn input_constraints_on_active_card(
@@ -770,25 +556,7 @@ impl WmlEngine {
         input_name: &str,
     ) -> Option<(runtime::input_mask::InputMask, bool)> {
         let card = self.active_card_internal().ok()?;
-        for node in &card.nodes {
-            let runtime::node::Node::Paragraph(items) = node else {
-                continue;
-            };
-            for item in items {
-                if let runtime::node::InlineNode::Input {
-                    name,
-                    mask,
-                    empty_ok,
-                    ..
-                } = item
-                {
-                    if name == input_name {
-                        return Some((mask.clone(), *empty_ok));
-                    }
-                }
-            }
-        }
-        None
+        node_lookup::find_input(card, input_name).map(|input| (input.mask.clone(), input.empty_ok))
     }
 }
 

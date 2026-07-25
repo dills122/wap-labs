@@ -137,14 +137,12 @@ export interface DrawLink {
   href: string;
 }
 
-export interface WmlEngineWasm {
+// Target-agnostic engine surface. Every method here must behave identically on
+// the WASM and native targets (see `WmlEngineCompatibilityRules`); only the
+// `loadDeckContext` argument shape is allowed to diverge, and that divergence
+// lives in the two target interfaces below.
+export interface WmlEngineCommon {
   loadDeck(xml: string): void;
-  loadDeckContext(
-    wmlXml: string,
-    baseUrl: string,
-    contentType: string,
-    rawBytesBase64?: string
-  ): void;
   render(): RenderList;
   handleKey(key: EngineKey): void;
   advanceTimeMs(deltaMs: number): void;
@@ -208,70 +206,20 @@ export interface WmlEngineWasm {
   clearTraceEntries(): void;
 }
 
-export interface WmlEngineNative {
-  loadDeck(xml: string): void;
+// WASM target: `loadDeckContext` takes positional arguments because the
+// wasm-bindgen boundary does not carry a structured input object.
+export interface WmlEngineWasm extends WmlEngineCommon {
+  loadDeckContext(
+    wmlXml: string,
+    baseUrl: string,
+    contentType: string,
+    rawBytesBase64?: string
+  ): void;
+}
+
+// Native target: `loadDeckContext` takes the structured `WmlDeckInput`.
+export interface WmlEngineNative extends WmlEngineCommon {
   loadDeckContext(input: WmlDeckInput): void;
-  render(): RenderList;
-  handleKey(key: EngineKey): void;
-  advanceTimeMs(deltaMs: number): void;
-  navigateToCard(id: string): void;
-  navigateBack(): boolean;
-  setViewportCols(cols: number): void;
-  activeCardId(): string;
-  focusedLinkIndex(): number;
-  baseUrl(): string;
-  contentType(): string;
-  getVar(name: string): string | undefined;
-  setVar(name: string, value: string): boolean;
-  beginFocusedInputEdit(): boolean;
-  setFocusedInputEditDraft(value: string): boolean;
-  commitFocusedInputEdit(): boolean;
-  cancelFocusedInputEdit(): boolean;
-  focusedInputEditName(): string | undefined;
-  focusedInputEditValue(): string | undefined;
-  beginFocusedSelectEdit(): boolean;
-  moveFocusedSelectEdit(delta: number): boolean;
-  commitFocusedSelectEdit(): boolean;
-  cancelFocusedSelectEdit(): boolean;
-  focusedSelectEditName(): string | undefined;
-  focusedSelectEditValue(): string | undefined;
-  externalNavigationIntent(): string | undefined;
-  externalNavigationRequestPolicy(): WmlGoRequestPolicy | undefined;
-  clearExternalNavigationIntent(): void;
-  executeScriptUnit(bytes: Uint8Array): ScriptExecutionOutcome;
-  registerScriptUnit(src: string, bytes: Uint8Array): void;
-  clearScriptUnits(): void;
-  registerScriptEntryPoint(src: string, functionName: string, entryPc: number): void;
-  clearScriptEntryPoints(): void;
-  invokeScriptRef(src: string): ScriptInvocationOutcome;
-  invokeScriptRefFunction(src: string, functionName: string): ScriptInvocationOutcome;
-  invokeScriptRefCall(
-    src: string,
-    functionName: string,
-    args: ScriptValueLiteral[]
-  ): ScriptInvocationOutcome;
-  executeScriptRef(src: string): ScriptExecutionOutcome;
-  executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
-  executeScriptRefCall(
-    src: string,
-    functionName: string,
-    args: ScriptValueLiteral[]
-  ): ScriptExecutionOutcome;
-  lastScriptExecutionTrap(): string | undefined;
-  lastScriptExecutionOk(): boolean | undefined;
-  lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
-  lastScriptExecutionErrorCategory():
-    | 'none'
-    | 'computational'
-    | 'integrity'
-    | 'resource'
-    | 'host-binding'
-    | undefined;
-  lastScriptRequiresRefresh(): boolean | undefined;
-  lastScriptDialogRequests(): ScriptDialogRequest[];
-  lastScriptTimerRequests(): ScriptTimerRequest[];
-  traceEntries(): EngineTraceEntry[];
-  clearTraceEntries(): void;
 }
 
 export interface WmlEngineCompatibilityRules {

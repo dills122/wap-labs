@@ -40,15 +40,6 @@ impl ParseBudget {
     }
 }
 
-#[cfg(test)]
-use actions::{
-    parse_do_accept_action, parse_first_task_action, parse_onevent_action, parse_timer_value_ds,
-};
-#[cfg(test)]
-use nodes::{parse_card_nodes, parse_inline_nodes};
-#[cfg(test)]
-use xml::extract_wml_body;
-
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     let root = parse_xml_root(xml).map_err(map_xml_parse_error)?;
     if root.name != "wml" {

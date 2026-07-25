@@ -1,15 +1,9 @@
 use super::decoder::DecodedUnit;
+use super::opcodes::{
+    ADD_I32_OPCODE, CALL_HOST_OPCODE, CALL_OPCODE, HALT_OPCODE, LOAD_LOCAL_OPCODE,
+    PUSH_INT8_OPCODE, PUSH_STRING8_OPCODE, RET_OPCODE, STORE_LOCAL_OPCODE,
+};
 use super::value::ScriptValue;
-
-const HALT_OPCODE: u8 = 0x00;
-const PUSH_INT8_OPCODE: u8 = 0x01;
-const ADD_I32_OPCODE: u8 = 0x02;
-const PUSH_STRING8_OPCODE: u8 = 0x03;
-const STORE_LOCAL_OPCODE: u8 = 0x10;
-const LOAD_LOCAL_OPCODE: u8 = 0x11;
-const CALL_OPCODE: u8 = 0x12;
-const RET_OPCODE: u8 = 0x13;
-const CALL_HOST_OPCODE: u8 = 0x20;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ExecutionLimits {
@@ -192,7 +186,7 @@ impl Vm {
                 STORE_LOCAL_OPCODE => {
                     let idx = usize::from(read_u8(unit.bytes(), &mut pc, opcode)?);
                     let value = stack.pop().ok_or(VmTrap::StackUnderflow)?;
-                    let current = current_frame_mut(&mut frames);
+                    let current = current_frame_mut(&mut frames, idx)?;
                     let local = current
                         .locals
                         .get_mut(idx)
@@ -201,7 +195,7 @@ impl Vm {
                 }
                 LOAD_LOCAL_OPCODE => {
                     let idx = usize::from(read_u8(unit.bytes(), &mut pc, opcode)?);
-                    let current = current_frame(&frames);
+                    let current = current_frame(&frames, idx)?;
                     let value = current
                         .locals
                         .get(idx)
@@ -293,16 +287,31 @@ fn read_bytes<'a>(
     Ok(&bytes[start..start + len])
 }
 
-fn current_frame(frames: &[CallFrame]) -> &CallFrame {
+/// Borrow the active call frame for a local-slot access.
+///
+/// Execution always pushes a root frame before the dispatch loop starts and
+/// `RET_OPCODE` refuses to pop it, so an empty frame stack is an internal
+/// invariant break rather than something untrusted bytecode can request.
+/// Per the panic-vs-`Result` guidance in `docs/agents/RUST_ENGINE_STEERING.md`,
+/// this path is reachable from untrusted script execution and therefore
+/// degrades to a typed trap instead of panicking: with no frame the requested
+/// local slot is simply unresolvable, which is exactly what
+/// [`VmTrap::InvalidLocalIndex`] already reports.
+fn current_frame(frames: &[CallFrame], local_index: usize) -> Result<&CallFrame, VmTrap> {
     frames
         .last()
-        .expect("vm must always contain at least root call frame")
+        .ok_or(VmTrap::InvalidLocalIndex { index: local_index })
 }
 
-fn current_frame_mut(frames: &mut [CallFrame]) -> &mut CallFrame {
+/// Mutable counterpart of [`current_frame`]; see it for the invariant and the
+/// rationale for trapping rather than panicking.
+fn current_frame_mut(
+    frames: &mut [CallFrame],
+    local_index: usize,
+) -> Result<&mut CallFrame, VmTrap> {
     frames
         .last_mut()
-        .expect("vm must always contain at least root call frame")
+        .ok_or(VmTrap::InvalidLocalIndex { index: local_index })
 }
 
 fn push_stack(

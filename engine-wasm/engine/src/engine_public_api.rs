@@ -376,16 +376,23 @@ impl WmlEngine {
         self.script_entrypoints.clear();
     }
 
-    /// Execute script reference without applying deferred runtime effects.
+    /// Run a script-execution entry point and settle the shared post-execution
+    /// state.
     ///
-    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
-    /// This method has no `Result` in its public signature (kept stable per
-    /// the existing contract); a contained panic is reported through the
-    /// same `ScriptExecutionOutcome::fatal` shape already used for VM traps
-    /// (see `classify_vm_trap_outcome`), not a bespoke error shape.
-    pub fn execute_script_ref(&mut self, src: String) -> ScriptExecutionOutcome {
-        let outcome = catch_engine_panic(|| self.execute_script_ref_internal(&src, "main"))
-            .unwrap_or_else(contained_panic_script_outcome);
+    /// Shared by every `execute_script_ref*` method: run `execute` inside the
+    /// panic-containment boundary (see [`catch_engine_panic`]), record the
+    /// outcome, and drop the deferred effects that the non-applying `execute_*`
+    /// family deliberately does not run. These methods have no `Result` in
+    /// their public signature (kept stable per the existing contract); a
+    /// contained panic is reported through the same
+    /// `ScriptExecutionOutcome::fatal` shape already used for VM traps (see
+    /// `classify_vm_trap_outcome`), not a bespoke error shape.
+    fn execute_script_contained(
+        &mut self,
+        execute: impl FnOnce(&mut Self) -> ScriptExecutionOutcome,
+    ) -> ScriptExecutionOutcome {
+        let outcome =
+            catch_engine_panic(|| execute(self)).unwrap_or_else(contained_panic_script_outcome);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_dialog_requests.clear();
@@ -393,26 +400,37 @@ impl WmlEngine {
         outcome
     }
 
-    /// Execute script function without applying deferred runtime effects.
+    /// Run a script invocation inside the panic-containment boundary.
     ///
-    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
+    /// Shared by every `invoke_script_ref*` method. Unlike
+    /// [`Self::execute_script_contained`], the invoking family applies its
+    /// deferred runtime effects internally, so this only owns panic
+    /// containment: a defensive-programming bug in the VM or in re-entrant
+    /// navigation degrades to a typed error instead of crashing the host.
+    fn invoke_script_contained(
+        &mut self,
+        invoke: impl FnOnce(&mut Self) -> Result<ScriptInvocationOutcome, String>,
+    ) -> Result<ScriptInvocationOutcome, String> {
+        catch_engine_panic(|| invoke(self))?
+    }
+
+    /// Execute script reference without applying deferred runtime effects.
+    pub fn execute_script_ref(&mut self, src: String) -> ScriptExecutionOutcome {
+        self.execute_script_contained(|engine| engine.execute_script_ref_internal(&src, "main"))
+    }
+
+    /// Execute script function without applying deferred runtime effects.
     pub fn execute_script_ref_function(
         &mut self,
         src: String,
         function_name: String,
     ) -> ScriptExecutionOutcome {
-        let outcome = catch_engine_panic(|| self.execute_script_ref_internal(&src, &function_name))
-            .unwrap_or_else(contained_panic_script_outcome);
-        self.last_script_outcome = Some(outcome.clone());
-        self.pending_script_effects = ScriptRuntimeEffects::default();
-        self.last_script_dialog_requests.clear();
-        self.last_script_timer_requests.clear();
-        outcome
+        self.execute_script_contained(|engine| {
+            engine.execute_script_ref_internal(&src, &function_name)
+        })
     }
 
     /// Execute script function call without applying deferred runtime effects.
-    ///
-    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn execute_script_ref_call(
         &mut self,
         src: String,
@@ -420,41 +438,28 @@ impl WmlEngine {
         args: Vec<ScriptCallArgLiteral>,
     ) -> ScriptExecutionOutcome {
         let vm_args = convert_script_call_args(&args);
-        let outcome = catch_engine_panic(|| {
-            self.execute_script_ref_call_internal(&src, &function_name, &vm_args)
+        self.execute_script_contained(|engine| {
+            engine.execute_script_ref_call_internal(&src, &function_name, &vm_args)
         })
-        .unwrap_or_else(contained_panic_script_outcome);
-        self.last_script_outcome = Some(outcome.clone());
-        self.pending_script_effects = ScriptRuntimeEffects::default();
-        self.last_script_dialog_requests.clear();
-        self.last_script_timer_requests.clear();
-        outcome
     }
 
     /// Invoke script reference and apply deferred runtime effects at boundary.
-    ///
-    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]):
-    /// this drives the WMLScript VM and can re-enter navigation, so a
-    /// defensive-programming bug here should degrade to a typed error, not
-    /// crash the host.
     pub fn invoke_script_ref(&mut self, src: String) -> Result<ScriptInvocationOutcome, String> {
-        catch_engine_panic(|| self.invoke_script_ref_internal(&src, "main", &[]))?
+        self.invoke_script_contained(|engine| engine.invoke_script_ref_internal(&src, "main", &[]))
     }
 
     /// Invoke script function and apply deferred runtime effects at boundary.
-    ///
-    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn invoke_script_ref_function(
         &mut self,
         src: String,
         function_name: String,
     ) -> Result<ScriptInvocationOutcome, String> {
-        catch_engine_panic(|| self.invoke_script_ref_internal(&src, &function_name, &[]))?
+        self.invoke_script_contained(|engine| {
+            engine.invoke_script_ref_internal(&src, &function_name, &[])
+        })
     }
 
     /// Invoke script function call and apply deferred runtime effects.
-    ///
-    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn invoke_script_ref_call(
         &mut self,
         src: String,
@@ -462,7 +467,9 @@ impl WmlEngine {
         args: Vec<ScriptCallArgLiteral>,
     ) -> Result<ScriptInvocationOutcome, String> {
         let vm_args = convert_script_call_args(&args);
-        catch_engine_panic(|| self.invoke_script_ref_internal(&src, &function_name, &vm_args))?
+        self.invoke_script_contained(|engine| {
+            engine.invoke_script_ref_internal(&src, &function_name, &vm_args)
+        })
     }
 
     /// Read last script trap message, if any.
