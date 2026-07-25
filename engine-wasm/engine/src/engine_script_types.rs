@@ -214,26 +214,64 @@ impl ScriptErrorClassLiteral {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "kebab-case")]
-pub enum ScriptErrorCategoryLiteral {
-    None,
-    Computational,
-    Integrity,
-    Resource,
-    HostBinding,
+macro_rules! define_script_error_categories {
+    (
+        fallback $fallback_variant:ident => $fallback_literal:literal;
+        $(
+            $variant:ident => {
+                literal: $literal:literal,
+                label: $label:expr
+            }
+        ),+ $(,)?
+    ) => {
+        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+        pub enum ScriptErrorCategoryLiteral {
+            #[serde(rename = $fallback_literal)]
+            $fallback_variant,
+            $(
+                #[serde(rename = $literal)]
+                $variant,
+            )+
+        }
+
+        impl ScriptErrorCategoryLiteral {
+            pub(crate) fn as_str(&self) -> &'static str {
+                match self {
+                    Self::$fallback_variant => $fallback_literal,
+                    $(
+                        Self::$variant => $literal,
+                    )+
+                }
+            }
+        }
+
+        pub const SCRIPT_ERROR_CATEGORY_METADATA: &[(&str, Option<&str>)] = &[
+            ($fallback_literal, None),
+            $(
+                ($literal, $label),
+            )+
+        ];
+    };
 }
 
-impl ScriptErrorCategoryLiteral {
-    pub(crate) fn as_str(&self) -> &'static str {
-        match self {
-            Self::None => "none",
-            Self::Computational => "computational",
-            Self::Integrity => "integrity",
-            Self::Resource => "resource",
-            Self::HostBinding => "host-binding",
-        }
-    }
+define_script_error_categories! {
+    fallback None => "none";
+    Computational => {
+        literal: "computational",
+        label: Some("computation error")
+    },
+    Integrity => {
+        literal: "integrity",
+        label: Some("data integrity error")
+    },
+    Resource => {
+        literal: "resource",
+        label: Some("resource limit error")
+    },
+    HostBinding => {
+        literal: "host-binding",
+        label: Some("host binding error")
+    },
 }
 
 pub(crate) fn classify_vm_trap_outcome(

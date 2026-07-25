@@ -37,6 +37,13 @@ export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | 
 
 export type RenderList = { draw: Array<DrawCmd>, };
 
+export const SCRIPT_ERROR_CATEGORY_LABELS: Readonly<Record<string, string>> = {
+  "computational": "computation error",
+  "integrity": "data integrity error",
+  "resource": "resource limit error",
+  "host-binding": "host binding error",
+};
+
 export interface EngineHostClient {
     loadDeck(request: LoadDeckRequest): Promise<EngineRuntimeSnapshot>;
     loadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;

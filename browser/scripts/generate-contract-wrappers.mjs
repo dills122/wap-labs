@@ -51,6 +51,22 @@ function collectExportedTypeNames(filePath) {
   return exported.sort();
 }
 
+function collectExportedValueNames(filePath) {
+  const source = readSourceFile(filePath);
+  const exported = [];
+  for (const stmt of source.statements) {
+    if (!hasExportModifier(stmt) || !ts.isVariableStatement(stmt)) {
+      continue;
+    }
+    for (const declaration of stmt.declarationList.declarations) {
+      if (ts.isIdentifier(declaration.name)) {
+        exported.push(declaration.name.text);
+      }
+    }
+  }
+  return exported.sort();
+}
+
 function ensureRequired(name, values, required) {
   const missing = required.filter((item) => !values.includes(item));
   if (missing.length) {
@@ -138,6 +154,16 @@ function exportTypeFrom(names, modulePath) {
   return factory.createExportDeclaration(
     undefined,
     true,
+    factory.createNamedExports(names.map((name) => factory.createExportSpecifier(false, undefined, id(name)))),
+    factory.createStringLiteral(modulePath),
+    undefined
+  );
+}
+
+function exportValueFrom(names, modulePath) {
+  return factory.createExportDeclaration(
+    undefined,
+    false,
     factory.createNamedExports(names.map((name) => factory.createExportSpecifier(false, undefined, id(name)))),
     factory.createStringLiteral(modulePath),
     undefined
@@ -346,8 +372,9 @@ function generateTauriClient(filePath) {
   );
 }
 
-function generateEngineWrapper(filePath, engineExportedTypes) {
+function generateEngineWrapper(filePath, engineExportedTypes, engineExportedValues) {
   const statements = [
+    exportValueFrom(engineExportedValues, './generated/engine-host'),
     exportTypeFrom(engineExportedTypes, './generated/engine-host'),
     factory.createTypeAliasDeclaration(
       [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -418,6 +445,7 @@ const engineWrapperPath = path.join(contractsDir, 'engine.ts');
 const transportWrapperPath = path.join(contractsDir, 'transport.ts');
 
 const engineExportedTypes = collectExportedTypeNames(engineGeneratedPath);
+const engineExportedValues = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypes = collectExportedTypeNames(transportGeneratedPath);
 
 ensureRequired('engine-host.ts', engineExportedTypes, [
@@ -426,6 +454,7 @@ ensureRequired('engine-host.ts', engineExportedTypes, [
   'ScriptDialogRequestSnapshot',
   'ScriptTimerRequestSnapshot'
 ]);
+ensureRequired('engine-host.ts values', engineExportedValues, ['SCRIPT_ERROR_CATEGORY_LABELS']);
 ensureRequired('transport-host.ts', transportExportedTypes, ['FetchDeckRequest']);
 
 appendInterfaces(engineGeneratedPath, [
@@ -474,8 +503,13 @@ appendInterfaces(transportGeneratedPath, [
 ]);
 
 const engineExportedTypesWithInterfaces = collectExportedTypeNames(engineGeneratedPath);
+const engineExportedValuesWithInterfaces = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypesWithInterfaces = collectExportedTypeNames(transportGeneratedPath);
 
 generateTauriClient(tauriClientPath);
-generateEngineWrapper(engineWrapperPath, engineExportedTypesWithInterfaces);
+generateEngineWrapper(
+  engineWrapperPath,
+  engineExportedTypesWithInterfaces,
+  engineExportedValuesWithInterfaces
+);
 generateTransportWrapper(transportWrapperPath, transportExportedTypesWithInterfaces);

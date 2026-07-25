@@ -42,7 +42,7 @@ pub use engine_script_types::{
     ScriptErrorClassLiteral, ScriptExecutionOutcome, ScriptInvocationOutcome,
     ScriptNavigationCacheControlPolicyLiteral, ScriptNavigationIntentLiteral,
     ScriptNavigationPostContextLiteral, ScriptNavigationRequestPolicyLiteral,
-    ScriptTimerRequestLiteral, ScriptValueLiteral,
+    ScriptTimerRequestLiteral, ScriptValueLiteral, SCRIPT_ERROR_CATEGORY_METADATA,
 };
 pub use render::render_list::{DrawCmd, RenderList};
 
