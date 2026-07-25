@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "example": "wml204SelectSemantics",
+  "flows": [
+    {
+      "id": "initialization-and-user-commit",
+      "title": "Select initialization and committed user state stay deterministic",
+      "workItems": ["R0-04", "C5-05", "WML-204"],
+      "specItems": ["WML-C-41", "WML-C-43"],
+      "initial": {
+        "state": {
+          "activeCardId": "select-semantics",
+          "focusedLinkIndex": 0,
+          "nextCardVar": "France",
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "select-semantics",
+              "focusedLinkIndex": 0,
+              "nextCardVar": "France"
+            },
+            "traceKinds": ["SELECT_EDIT_START"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "select-semantics",
+              "focusedLinkIndex": 0,
+              "nextCardVar": "France"
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "select-semantics",
+              "focusedLinkIndex": 0,
+              "nextCardVar": "Germany",
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["SELECT_EDIT_START", "SELECT_EDIT_COMMIT"]
+          }
+        }
+      ]
+    }
+  ]
+}

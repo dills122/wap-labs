@@ -1655,7 +1655,7 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, and literal name/value initialization in document order. Invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values. Size/tabindex behavior, vdata expansion, language-aware non-Basic-Latin mask repertoires, and interleaved select initialization remain incomplete.",
+        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, and name/value initialization interleaved with select controls in document order. Invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values. Size/tabindex behavior, general vdata validation/conversion, and language-aware non-Basic-Latin mask repertoires remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -1669,10 +1669,10 @@
             "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
             "symbol": "commit_focused_input_edit_internal"
           },
-          {
-            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
-            "symbol": "initialize_inputs_on_active_card"
-          }
+      {
+        "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+        "symbol": "initialize_controls_on_active_card"
+      }
         ],
         "testEvidence": [
           {
@@ -1714,6 +1714,11 @@
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
             "test": "invalid_masked_input_blocks_task_without_navigation_side_effects",
             "command": "cd engine-wasm/engine && cargo test invalid_masked_input_blocks_task_without_navigation_side_effects"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_select_init_order_precedence_validation_and_serialization",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_select_init_order_precedence_validation_and_serialization"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2104,7 +2109,7 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Option content and allowed attributes now receive deterministic DTD-derived syntax validation, and empty or text labels plus value are represented. Onpick execution, title/xml:lang retention, and full selection initialization rules remain incomplete.",
+        "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; text labels, explicit empty values, evaluated value references, and onpick dispatch for single selection plus multiple selection/deselection are represented. Option title/xml:lang retention, onevent task forms, and general HREF conversion remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -2121,6 +2126,21 @@
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_fx_select_structure_rejects_invalid_syntax_deterministically",
             "command": "cd engine-wasm/engine && cargo test wml_fx_select_structure_rejects_invalid_syntax_deterministically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_option_onpick_single_updates_state_before_only_selected_task",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_option_onpick_single_updates_state_before_only_selected_task"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_option_onpick_multi_fires_for_deselection_after_state_update",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_option_onpick_multi_fires_for_deselection_after_state_update"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2215,7 +2235,7 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Select now has deterministic DTD-derived child-content, allowed-attribute, NMTOKEN, boolean, and numeric syntax validation; single-choice selection commits to its name variable before card task execution. Optional optgroup modeling and multiple, iname/ivalue, tabindex, and complete initialization/runtime semantics remain absent.",
+        "assessmentNote": "Select has deterministic DTD-derived syntax validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, evaluated option values, task-time variable synchronization, and onpick dispatch. General vdata/HREF validation and conversion, tabindex behavior, no-implicit-refresh direct evidence, and optional optgroup capability declaration remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -2224,6 +2244,14 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "execute_card_task_action"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "initial_select_indices"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "sync_select_variables"
           }
         ],
         "testEvidence": [
@@ -2241,6 +2269,21 @@
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
             "test": "wml_fx_variable_commit_before_task_commits_active_select_before_accept",
             "command": "cd engine-wasm/engine && cargo test wml_fx_variable_commit_before_task_commits_active_select_before_accept"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_select_default_precedence_covers_every_source_and_fallback",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_select_default_precedence_covers_every_source_and_fallback"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_select_init_order_precedence_validation_and_serialization",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_select_init_order_precedence_validation_and_serialization"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_select_variables_are_resynchronized_before_link_task_execution",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_select_variables_are_resynchronized_before_link_task_execution"
           }
         ],
         "evidenceState": "direct-test-linked"

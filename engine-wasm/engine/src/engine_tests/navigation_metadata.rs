@@ -673,7 +673,10 @@ fn focused_select_edit_cancel_keeps_original_value() {
     );
     assert!(engine.cancel_focused_select_edit());
     assert_eq!(engine.focused_select_edit_name(), None);
-    assert_eq!(engine.get_var("Country".to_string()), None);
+    assert_eq!(
+        engine.get_var("Country".to_string()),
+        Some("Jordan".to_string())
+    );
     let lines = render_snapshot_lines(&engine);
     assert!(lines
         .iter()

@@ -93,4 +93,5 @@ mod actions_timers;
 mod navigation_metadata;
 mod panic_containment;
 mod script_runtime;
+mod select_semantics;
 mod traces_public_api;

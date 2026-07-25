@@ -1,0 +1,344 @@
+use super::*;
+
+#[test]
+fn wml_fx_select_init_order_precedence_validation_and_serialization() {
+    // WML-CL-SELECT-INIT-ORDER, WML-CL-SELECT-DEFAULT-PRECEDENCE,
+    // WML-CL-SELECT-INDEX-VALIDATION, WML-CL-SELECT-VARIABLE-INITIALIZATION,
+    // WML-CL-SELECT-PRESELECTION, and WML-CL-SELECT-MULTI-SERIALIZATION.
+    // WAP-191_104-WML section 11.6.2.1.
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="start">
+            <p>Start</p>
+          </card>
+          <card id="controls">
+            <input name="default-index" value="3;2"/>
+            <select
+              name="choices"
+              iname="choice-indexes"
+              value="fallback"
+              ivalue="$(default-index)"
+              multiple="true"
+              title="Choices"
+            >
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+              <option value="gamma">Gamma</option>
+            </select>
+            <select
+              name="ordered-choices"
+              iname="ordered-indexes"
+              ivalue="$(default-index)"
+              multiple="true"
+            >
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+              <option value="gamma">Gamma</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    assert!(engine.set_var("choice-indexes".to_string(), "bad;2;2;8;1".to_string()));
+    assert!(engine.set_var("choices".to_string(), "gamma".to_string()));
+    engine
+        .navigate_to_card("controls".to_string())
+        .expect("controls should initialize");
+
+    assert_eq!(
+        engine.get_var("choice-indexes".to_string()),
+        Some("2;1".to_string())
+    );
+    assert_eq!(
+        engine.get_var("choices".to_string()),
+        Some("beta;alpha".to_string())
+    );
+    assert_eq!(
+        engine.get_var("ordered-indexes".to_string()),
+        Some("3;2".to_string())
+    );
+    assert_eq!(
+        engine.get_var("ordered-choices".to_string()),
+        Some("gamma;beta".to_string())
+    );
+
+    engine.set_viewport_cols(80);
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=select:choices:text=[Choices: Beta; Alpha]")));
+}
+
+#[test]
+fn wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment() {
+    // WML-CL-OPTION-VALUE-EVALUATION and WML-CL-SELECT-DEFAULT-PRECEDENCE,
+    // WAP-191_104-WML sections 11.6.2.1-11.6.2.2.
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="start"><p>Start</p></card>
+          <card id="controls">
+            <select
+              name="values"
+              iname="indexes"
+              ivalue="$(initial-indexes)"
+              multiple="true"
+            >
+              <option value="$(shared-value)">First</option>
+              <option value="$(shared-value)">Second</option>
+              <option value="">Empty</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    assert!(engine.set_var("initial-indexes".to_string(), "1;2;3".to_string()));
+    assert!(engine.set_var("shared-value".to_string(), "duplicate".to_string()));
+    engine
+        .navigate_to_card("controls".to_string())
+        .expect("controls should initialize");
+
+    assert_eq!(
+        engine.get_var("indexes".to_string()),
+        Some("1;2;3".to_string())
+    );
+    assert_eq!(
+        engine.get_var("values".to_string()),
+        Some("duplicate;duplicate".to_string())
+    );
+}
+
+#[test]
+fn wml_fx_select_default_precedence_covers_every_source_and_fallback() {
+    // WML-CL-SELECT-DEFAULT-PRECEDENCE and WML-CL-SELECT-INDEX-VALIDATION,
+    // WAP-191_104-WML section 11.6.2.1 step 1.
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="start"><p>Start</p></card>
+          <card id="controls">
+            <input name="default-value" value="beta"/>
+            <select name="from-iname" iname="index-a" ivalue="2" value="alpha">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+              <option value="gamma">Gamma</option>
+            </select>
+            <select name="from-ivalue" iname="index-b" ivalue="2" value="alpha">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+            <select name="from-name" value="alpha">
+              <option value="alpha">Alpha</option>
+              <option value="gamma">Gamma</option>
+            </select>
+            <select name="from-value" value="$(default-value)">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+            <select name="single-fallback">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+            <select name="multi-fallback" iname="multi-index" multiple="true">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    assert!(engine.set_var("index-a".to_string(), "3".to_string()));
+    assert!(engine.set_var("from-iname".to_string(), "alpha".to_string()));
+    assert!(engine.set_var("index-b".to_string(), "1;2".to_string()));
+    assert!(engine.set_var("from-ivalue".to_string(), "alpha".to_string()));
+    assert!(engine.set_var("from-name".to_string(), "gamma".to_string()));
+    engine
+        .navigate_to_card("controls".to_string())
+        .expect("controls should initialize");
+
+    assert_eq!(
+        engine.get_var("from-iname".to_string()),
+        Some("gamma".to_string())
+    );
+    assert_eq!(engine.get_var("index-a".to_string()), Some("3".to_string()));
+    assert_eq!(
+        engine.get_var("from-ivalue".to_string()),
+        Some("beta".to_string())
+    );
+    assert_eq!(engine.get_var("index-b".to_string()), Some("2".to_string()));
+    assert_eq!(
+        engine.get_var("from-name".to_string()),
+        Some("gamma".to_string())
+    );
+    assert_eq!(
+        engine.get_var("from-value".to_string()),
+        Some("beta".to_string())
+    );
+    assert_eq!(
+        engine.get_var("single-fallback".to_string()),
+        Some("alpha".to_string())
+    );
+    assert_eq!(engine.get_var("multi-fallback".to_string()), None);
+    assert_eq!(
+        engine.get_var("multi-index".to_string()),
+        Some("0".to_string())
+    );
+}
+
+#[test]
+fn wml_fx_select_variables_are_resynchronized_before_link_task_execution() {
+    // WML-CL-SELECT-USER-UPDATE and WML-CL-VARIABLE-COMMIT-BEFORE-TASK,
+    // WAP-191_104-WML sections 10.3.4 and 11.6.2.1.
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="controls">
+            <select name="choice" iname="choice-index">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+            <a href="/submit">Submit</a>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    assert!(engine.set_var("choice".to_string(), "tampered".to_string()));
+    assert!(engine.set_var("choice-index".to_string(), "99".to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("focus should move to the task");
+    engine
+        .handle_key("enter".to_string())
+        .expect("link task should execute");
+
+    assert_eq!(
+        engine.get_var("choice".to_string()),
+        Some("alpha".to_string())
+    );
+    assert_eq!(
+        engine.get_var("choice-index".to_string()),
+        Some("1".to_string())
+    );
+    assert_eq!(
+        engine.external_navigation_intent(),
+        Some("/submit".to_string())
+    );
+}
+
+#[test]
+fn wml_fx_option_onpick_single_updates_state_before_only_selected_task() {
+    // WML-CL-SELECT-USER-UPDATE and WML-CL-OPTION-ONPICK-SINGLE,
+    // WAP-191_104-WML sections 11.6.2.1-11.6.2.2.
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="controls">
+            <select name="choice" iname="choice-index" ivalue="1">
+              <option value="alpha" onpick="#wrong">Alpha</option>
+              <option value="beta" onpick="#picked">Beta</option>
+            </select>
+          </card>
+          <card id="wrong"><p>Wrong</p></card>
+          <card id="picked"><p>Picked</p></card>
+        </wml>
+        "##;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    assert!(engine.move_focused_select_edit(1));
+    engine
+        .commit_focused_select_edit()
+        .expect("select commit and onpick should succeed");
+
+    assert_eq!(engine.active_card_id().expect("active card"), "picked");
+    assert_eq!(
+        engine.get_var("choice".to_string()),
+        Some("beta".to_string())
+    );
+    assert_eq!(
+        engine.get_var("choice-index".to_string()),
+        Some("2".to_string())
+    );
+}
+
+#[test]
+fn wml_fx_option_onpick_multi_fires_for_deselection_after_state_update() {
+    // WML-CL-SELECT-SINGLE-MULTI-MODE, WML-CL-SELECT-USER-UPDATE, and
+    // WML-CL-OPTION-ONPICK-MULTI, WAP-191_104-WML sections 11.6.2.1-11.6.2.2.
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="controls">
+            <select
+              name="choices"
+              iname="choice-indexes"
+              ivalue="1"
+              multiple="true"
+            >
+              <option value="alpha" onpick="#toggled">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+          </card>
+          <card id="toggled"><p>Toggled</p></card>
+        </wml>
+        "##;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    engine
+        .commit_focused_select_edit()
+        .expect("deselect and onpick should succeed");
+
+    assert_eq!(engine.active_card_id().expect("active card"), "toggled");
+    assert_eq!(engine.get_var("choices".to_string()), None);
+    assert_eq!(
+        engine.get_var("choice-indexes".to_string()),
+        Some("0".to_string())
+    );
+}
+
+#[test]
+fn wml_fx_option_onpick_failure_is_deterministic_after_committing_user_state() {
+    // WML-CL-SELECT-USER-UPDATE and WML-CL-OPTION-ONPICK-SINGLE.
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="controls">
+            <select name="choice" iname="choice-index" ivalue="1">
+              <option value="alpha">Alpha</option>
+              <option value="beta" onpick="#missing">Beta</option>
+            </select>
+          </card>
+        </wml>
+        "##;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    assert!(engine.move_focused_select_edit(1));
+    assert_eq!(
+        engine.commit_focused_select_edit(),
+        Err("Card id not found".to_string())
+    );
+
+    assert_eq!(engine.active_card_id().expect("active card"), "controls");
+    assert_eq!(engine.focused_select_edit_name(), None);
+    assert_eq!(
+        engine.get_var("choice".to_string()),
+        Some("beta".to_string())
+    );
+    assert_eq!(
+        engine.get_var("choice-index".to_string()),
+        Some("2".to_string())
+    );
+}

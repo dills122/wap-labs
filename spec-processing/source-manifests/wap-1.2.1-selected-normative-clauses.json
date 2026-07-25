@@ -43,14 +43,14 @@
     "recommendedClauseCount": 31,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 781,
-    "assessedClauseCount": 77
+    "assessedClauseCount": 89
   },
   "families": [
     {
       "family": "wml",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "173ca35025962f3a18737a02c3b66e4d25ce6faae1d727048b2c98f89d5546ec",
+      "parentLedgerSha256": "8564469f6b7f9ec54d72d387c655953f9ebbb029af71e45651fe9b28231d5d0a",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -2864,8 +2864,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Commit input and selection variables before invoking any task."
+            "status": "implemented",
+            "assertion": "Commit input and selection variables before invoking any task.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_variables_are_resynchronized_before_link_task_execution"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2888,7 +2893,7 @@
               "WML-C-33": "partial",
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6144,8 +6149,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-STRUCTURE",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Require one or more option or optgroup children in each select element."
+            "status": "implemented",
+            "assertion": "Require one or more option or optgroup children in each select element.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_structure_flattens_nested_optgroups_in_document_order"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6162,7 +6172,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6184,8 +6194,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-SINGLE-MULTI-MODE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Allow one selected option by default and multiple selections only when multiple is true."
+            "status": "implemented",
+            "assertion": "Allow one selected option by default and multiple selections only when multiple is true.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_default_precedence_covers_every_source_and_fallback"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6202,7 +6217,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6225,8 +6240,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-INIT-ORDER",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Initialize input and select controls in document order when entering the card."
+            "status": "implemented",
+            "assertion": "Initialize input and select controls in document order when entering the card.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6244,7 +6264,7 @@
               "WML-C-43": "partial",
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6266,8 +6286,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-INDEX-VALIDATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates."
+            "status": "implemented",
+            "assertion": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6284,7 +6309,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6306,8 +6331,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-DEFAULT-PRECEDENCE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order."
+            "status": "implemented",
+            "assertion": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_default_precedence_covers_every_source_and_fallback"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6324,7 +6354,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6346,8 +6376,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-VARIABLE-INITIALIZATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Initialize name from selected option values and iname from the validated selected indices."
+            "status": "implemented",
+            "assertion": "Initialize name from selected option values and iname from the validated selected indices.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6364,7 +6399,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6386,8 +6421,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-PRESELECTION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Deselect all options and then select every positive validated default index."
+            "status": "implemented",
+            "assertion": "Deselect all options and then select every positive validated default index.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6404,7 +6444,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6426,8 +6466,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-USER-UPDATE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Update name and iname after user selection changes and again before every task invocation."
+            "status": "implemented",
+            "assertion": "Update name and iname after user selection changes and again before every task invocation.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_variables_are_resynchronized_before_link_task_execution"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6444,7 +6489,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6506,8 +6551,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-MULTI-SERIALIZATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries."
+            "status": "implemented",
+            "assertion": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6524,7 +6574,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6589,8 +6639,13 @@
           "fixturePlan": {
             "id": "WML-FX-OPTION-ONPICK-MULTI",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "For multiple selection, dispatch onpick whenever the option is selected or deselected."
+            "status": "implemented",
+            "assertion": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_option_onpick_multi_fires_for_deselection_after_state_update"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6611,7 +6666,7 @@
               "WML-C-41": "partial",
               "WML-C-09": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6634,8 +6689,13 @@
           "fixturePlan": {
             "id": "WML-FX-OPTION-ONPICK-SINGLE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection."
+            "status": "implemented",
+            "assertion": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_option_onpick_single_updates_state_before_only_selected_task"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6656,7 +6716,7 @@
               "WML-C-41": "partial",
               "WML-C-09": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },

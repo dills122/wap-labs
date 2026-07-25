@@ -434,13 +434,15 @@
           "sourceFamilies": ["wml"],
           "existingTickets": ["R0-04", "B5-01", "C5-05"],
           "outputs": [
-            "Complete field/control syntax and attribute validation"
+            "Complete field/control syntax and attribute validation",
+            "Source-derived select initialization, selection, serialization, and onpick runtime evidence"
           ],
           "acceptance": [
             "Input/select/option/optgroup/fieldset constraints, masks, defaults, and validation failures are deterministic."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "pnpm test:story WML-204"
           ]
         },
         {

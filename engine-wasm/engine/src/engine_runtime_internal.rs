@@ -269,9 +269,9 @@ impl WmlEngine {
         Ok(true)
     }
 
-    pub(crate) fn initialize_inputs_on_active_card(&mut self) -> Result<(), String> {
-        let card = self
-            .deck
+    pub(crate) fn initialize_controls_on_active_card(&mut self) -> Result<(), String> {
+        let (deck, vars) = (&mut self.deck, &mut self.vars);
+        let card = deck
             .as_mut()
             .and_then(|deck| deck.cards.get_mut(self.active_card_idx))
             .ok_or_else(|| "Active card not found".to_string())?;
@@ -281,38 +281,66 @@ impl WmlEngine {
                 continue;
             };
             for item in items {
-                let runtime::node::InlineNode::Input {
-                    name,
-                    value,
-                    default_value,
-                    mask,
-                    empty_ok,
-                    ..
-                } = item
-                else {
-                    continue;
-                };
+                match item {
+                    runtime::node::InlineNode::Input {
+                        name,
+                        value,
+                        default_value,
+                        mask,
+                        empty_ok,
+                        ..
+                    } => {
+                        let valid_existing = vars
+                            .get(name)
+                            .cloned()
+                            .filter(|candidate| input_value_is_valid(mask, *empty_ok, candidate));
+                        let initial_value = if let Some(existing) = valid_existing {
+                            Some(existing)
+                        } else {
+                            vars.remove(name);
+                            default_value.clone().filter(|candidate| {
+                                input_value_is_valid(mask, *empty_ok, candidate)
+                            })
+                        };
 
-                let valid_existing = self
-                    .vars
-                    .get(name)
-                    .cloned()
-                    .filter(|candidate| input_value_is_valid(mask, *empty_ok, candidate));
-                let initial_value = if let Some(existing) = valid_existing {
-                    Some(existing)
-                } else {
-                    self.vars.remove(name);
-                    default_value
-                        .clone()
-                        .filter(|candidate| input_value_is_valid(mask, *empty_ok, candidate))
-                };
-
-                if let Some(initial_value) = initial_value {
-                    self.vars.insert(name.clone(), initial_value.clone());
-                    *value = initial_value;
-                } else {
-                    self.vars.remove(name);
-                    value.clear();
+                        if let Some(initial_value) = initial_value {
+                            vars.insert(name.clone(), initial_value.clone());
+                            *value = initial_value;
+                        } else {
+                            vars.remove(name);
+                            value.clear();
+                        }
+                    }
+                    runtime::node::InlineNode::Select {
+                        name,
+                        iname,
+                        default_value,
+                        default_index_value,
+                        multiple,
+                        options,
+                        selected_indices,
+                        ..
+                    } => {
+                        *selected_indices = initial_select_indices(
+                            name.as_deref(),
+                            iname.as_deref(),
+                            default_value.as_deref(),
+                            default_index_value.as_deref(),
+                            *multiple,
+                            options,
+                            vars,
+                        );
+                        sync_select_variables(
+                            vars,
+                            name.as_deref(),
+                            iname.as_deref(),
+                            *multiple,
+                            options,
+                            selected_indices,
+                        );
+                    }
+                    runtime::node::InlineNode::Text(_) | runtime::node::InlineNode::Link { .. } => {
+                    }
                 }
             }
         }
@@ -329,7 +357,6 @@ impl WmlEngine {
         self.active_input_edit = None;
         self.active_select_edit = Some(SelectEditState {
             select_name: select_name.clone(),
-            original_index: current_index,
             draft_index: current_index,
         });
         self.push_trace("SELECT_EDIT_START", select_name);
@@ -340,16 +367,37 @@ impl WmlEngine {
         let Some(edit) = self.active_select_edit.clone() else {
             return Ok(false);
         };
+        let Some((multiple, mut selected_indices, onpick)) =
+            self.select_state_on_active_card(&edit.select_name, edit.draft_index)
+        else {
+            return Ok(false);
+        };
+        if multiple {
+            if let Some(position) = selected_indices
+                .iter()
+                .position(|index| *index == edit.draft_index)
+            {
+                selected_indices.remove(position);
+            } else {
+                selected_indices.push(edit.draft_index);
+            }
+        } else {
+            selected_indices.clear();
+            selected_indices.push(edit.draft_index);
+        }
         let committed =
-            self.set_select_selected_index_on_active_card(&edit.select_name, edit.draft_index)?;
+            self.set_select_selected_indices_on_active_card(&edit.select_name, &selected_indices)?;
         if !committed {
             return Ok(false);
         }
-        if let Some(value) = self.select_value_on_active_card(&edit.select_name, edit.draft_index) {
-            self.set_var(edit.select_name.clone(), value);
-        }
+        self.sync_select_variables_on_active_card(&edit.select_name)?;
         self.active_select_edit = None;
-        self.push_trace("SELECT_EDIT_COMMIT", edit.select_name);
+        self.push_trace("SELECT_EDIT_COMMIT", edit.select_name.clone());
+        if let Some(onpick) = onpick {
+            let onpick = evaluate_vdata(&onpick, &self.vars);
+            self.push_trace("ACTION_ONPICK", onpick.clone());
+            self.execute_action_href(&onpick, None, &[])?;
+        }
         Ok(true)
     }
 
@@ -462,13 +510,13 @@ impl WmlEngine {
             };
             for item in items {
                 if let runtime::node::InlineNode::Select {
-                    name,
-                    selected_index,
+                    control_id,
+                    selected_indices,
                     ..
                 } = item
                 {
-                    if name == select_name {
-                        return Some(*selected_index);
+                    if control_id == select_name {
+                        return Some(selected_indices.first().copied().unwrap_or(0));
                     }
                 }
             }
@@ -483,8 +531,13 @@ impl WmlEngine {
                 continue;
             };
             for item in items {
-                if let runtime::node::InlineNode::Select { name, options, .. } = item {
-                    if name == select_name {
+                if let runtime::node::InlineNode::Select {
+                    control_id,
+                    options,
+                    ..
+                } = item
+                {
+                    if control_id == select_name {
                         return Some(options.len());
                     }
                 }
@@ -504,12 +557,16 @@ impl WmlEngine {
                 continue;
             };
             for item in items {
-                if let runtime::node::InlineNode::Select { name, options, .. } = item {
-                    if name == select_name {
+                if let runtime::node::InlineNode::Select {
+                    control_id,
+                    options,
+                    ..
+                } = item
+                {
+                    if control_id == select_name {
                         return options
                             .get(selected_index)
-                            .or_else(|| options.first())
-                            .map(|option| option.value.clone());
+                            .map(|option| evaluate_vdata(&option.value, &self.vars));
                     }
                 }
             }
@@ -517,10 +574,10 @@ impl WmlEngine {
         None
     }
 
-    pub(crate) fn set_select_selected_index_on_active_card(
+    pub(crate) fn set_select_selected_indices_on_active_card(
         &mut self,
         select_name: &str,
-        selected_index: usize,
+        selected_indices: &[usize],
     ) -> Result<bool, String> {
         let card = self.active_card_internal_mut()?;
         let mut updated = false;
@@ -530,14 +587,16 @@ impl WmlEngine {
             };
             for item in items {
                 if let runtime::node::InlineNode::Select {
-                    name,
+                    control_id,
                     options,
-                    selected_index: current_index,
+                    selected_indices: current_indices,
                     ..
                 } = item
                 {
-                    if name == select_name && selected_index < options.len() {
-                        *current_index = selected_index;
+                    if control_id == select_name
+                        && selected_indices.iter().all(|index| *index < options.len())
+                    {
+                        *current_indices = selected_indices.to_vec();
                         updated = true;
                         break;
                     }
@@ -562,19 +621,125 @@ impl WmlEngine {
             };
             for item in items {
                 if let runtime::node::InlineNode::Select {
-                    name,
+                    control_id,
                     options,
-                    selected_index: current_index,
+                    multiple,
+                    selected_indices,
                     ..
                 } = item
                 {
-                    if name == select_name && selected_index < options.len() {
-                        *current_index = selected_index;
+                    if control_id == select_name && !*multiple && selected_index < options.len() {
+                        selected_indices.clear();
+                        selected_indices.push(selected_index);
                         return;
                     }
                 }
             }
         }
+    }
+
+    fn select_state_on_active_card(
+        &self,
+        select_name: &str,
+        selected_index: usize,
+    ) -> Option<(bool, Vec<usize>, Option<String>)> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select {
+                    control_id,
+                    multiple,
+                    options,
+                    selected_indices,
+                    ..
+                } = item
+                {
+                    if control_id == select_name {
+                        let option = options.get(selected_index)?;
+                        return Some((*multiple, selected_indices.clone(), option.onpick.clone()));
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    pub(crate) fn sync_select_variables_on_active_card(
+        &mut self,
+        select_name: &str,
+    ) -> Result<(), String> {
+        let (deck, vars) = (&self.deck, &mut self.vars);
+        let card = deck
+            .as_ref()
+            .and_then(|deck| deck.cards.get(self.active_card_idx))
+            .ok_or_else(|| "Active card not found".to_string())?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select {
+                    control_id,
+                    name,
+                    iname,
+                    multiple,
+                    options,
+                    selected_indices,
+                    ..
+                } = item
+                {
+                    if control_id == select_name {
+                        sync_select_variables(
+                            vars,
+                            name.as_deref(),
+                            iname.as_deref(),
+                            *multiple,
+                            options,
+                            selected_indices,
+                        );
+                        return Ok(());
+                    }
+                }
+            }
+        }
+        Err(format!("Select '{select_name}' not found"))
+    }
+
+    pub(crate) fn sync_all_select_variables_on_active_card(&mut self) -> Result<(), String> {
+        let (deck, vars) = (&self.deck, &mut self.vars);
+        let card = deck
+            .as_ref()
+            .and_then(|deck| deck.cards.get(self.active_card_idx))
+            .ok_or_else(|| "Active card not found".to_string())?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Select {
+                    name,
+                    iname,
+                    multiple,
+                    options,
+                    selected_indices,
+                    ..
+                } = item
+                {
+                    sync_select_variables(
+                        vars,
+                        name.as_deref(),
+                        iname.as_deref(),
+                        *multiple,
+                        options,
+                        selected_indices,
+                    );
+                }
+            }
+        }
+        Ok(())
     }
 
     pub(crate) fn input_max_len_on_active_card(&self, input_name: &str) -> Option<usize> {
@@ -634,4 +799,184 @@ fn input_value_is_valid(
     } else {
         mask.accepts(value)
     }
+}
+
+fn initial_select_indices(
+    name: Option<&str>,
+    iname: Option<&str>,
+    default_value: Option<&str>,
+    default_index_value: Option<&str>,
+    multiple: bool,
+    options: &[runtime::node::SelectOption],
+    vars: &HashMap<String, String>,
+) -> Vec<usize> {
+    let mut indices = iname
+        .and_then(|variable| vars.get(variable))
+        .map(|value| validate_select_indices(value, multiple, options.len()))
+        .unwrap_or_default();
+    if indices.is_empty() {
+        indices = default_index_value
+            .map(|value| evaluate_vdata(value, vars))
+            .map(|value| validate_select_indices(&value, multiple, options.len()))
+            .unwrap_or_default();
+    }
+    if indices.is_empty() {
+        indices = name
+            .and_then(|variable| vars.get(variable))
+            .map(|value| select_indices_for_values(value, multiple, options, vars))
+            .unwrap_or_default();
+    }
+    if indices.is_empty() {
+        indices = default_value
+            .map(|value| evaluate_vdata(value, vars))
+            .map(|value| select_indices_for_values(&value, multiple, options, vars))
+            .unwrap_or_default();
+    }
+    if indices.is_empty() && !multiple && !options.is_empty() {
+        indices.push(0);
+    }
+    indices
+}
+
+fn validate_select_indices(raw: &str, multiple: bool, option_count: usize) -> Vec<usize> {
+    let candidates = if multiple {
+        raw.split(';').collect::<Vec<_>>()
+    } else {
+        vec![raw]
+    };
+    let mut indices = Vec::new();
+    for candidate in candidates {
+        let candidate = candidate.trim();
+        if candidate.is_empty() || !candidate.bytes().all(|byte| byte.is_ascii_digit()) {
+            continue;
+        }
+        let Ok(index) = candidate.parse::<usize>() else {
+            continue;
+        };
+        if index == 0 || index > option_count {
+            continue;
+        }
+        let zero_based = index - 1;
+        if !indices.contains(&zero_based) {
+            indices.push(zero_based);
+        }
+    }
+    indices
+}
+
+fn select_indices_for_values(
+    raw: &str,
+    multiple: bool,
+    options: &[runtime::node::SelectOption],
+    vars: &HashMap<String, String>,
+) -> Vec<usize> {
+    let values = if multiple {
+        raw.split(';').collect::<Vec<_>>()
+    } else {
+        vec![raw]
+    };
+    let mut indices = Vec::new();
+    for value in values {
+        if let Some(index) = options
+            .iter()
+            .position(|option| evaluate_vdata(&option.value, vars) == value)
+        {
+            if !indices.contains(&index) {
+                indices.push(index);
+            }
+        }
+    }
+    indices
+}
+
+fn sync_select_variables(
+    vars: &mut HashMap<String, String>,
+    name: Option<&str>,
+    iname: Option<&str>,
+    multiple: bool,
+    options: &[runtime::node::SelectOption],
+    selected_indices: &[usize],
+) {
+    if let Some(name) = name {
+        let values = selected_indices
+            .iter()
+            .filter_map(|index| options.get(*index))
+            .map(|option| evaluate_vdata(&option.value, vars))
+            .filter(|value| !value.is_empty())
+            .collect::<Vec<_>>();
+        if values.is_empty() {
+            vars.remove(name);
+        } else {
+            vars.insert(
+                name.to_string(),
+                values.join(if multiple { ";" } else { "" }),
+            );
+        }
+    }
+    if let Some(iname) = iname {
+        let serialized = if selected_indices.is_empty() {
+            "0".to_string()
+        } else {
+            selected_indices
+                .iter()
+                .map(|index| (index + 1).to_string())
+                .collect::<Vec<_>>()
+                .join(if multiple { ";" } else { "" })
+        };
+        vars.insert(iname.to_string(), serialized);
+    }
+}
+
+fn evaluate_vdata(raw: &str, vars: &HashMap<String, String>) -> String {
+    let mut out = String::new();
+    let chars = raw.char_indices().collect::<Vec<_>>();
+    let mut cursor = 0usize;
+    while cursor < chars.len() {
+        let (byte_index, ch) = chars[cursor];
+        if ch != '$' {
+            out.push(ch);
+            cursor += 1;
+            continue;
+        }
+        if chars.get(cursor + 1).is_some_and(|(_, next)| *next == '$') {
+            out.push('$');
+            cursor += 2;
+            continue;
+        }
+        if chars.get(cursor + 1).is_some_and(|(_, next)| *next == '(') {
+            let Some(close_offset) = raw[byte_index + 2..].find(')') else {
+                out.push('$');
+                cursor += 1;
+                continue;
+            };
+            let close = byte_index + 2 + close_offset;
+            let variable = raw[byte_index + 2..close]
+                .split(':')
+                .next()
+                .unwrap_or_default();
+            out.push_str(vars.get(variable).map(String::as_str).unwrap_or_default());
+            cursor = chars
+                .iter()
+                .position(|(index, _)| *index > close)
+                .unwrap_or(chars.len());
+            continue;
+        }
+        let variable_start = byte_index + 1;
+        let variable_end = raw[variable_start..]
+            .find(|ch: char| !(ch == '_' || ch.is_ascii_alphanumeric()))
+            .map(|offset| variable_start + offset)
+            .unwrap_or(raw.len());
+        if variable_end == variable_start {
+            out.push('$');
+            cursor += 1;
+            continue;
+        }
+        let variable = &raw[variable_start..variable_end];
+        out.push_str(vars.get(variable).map(String::as_str).unwrap_or_default());
+        cursor = chars
+            .iter()
+            .position(|(index, _)| *index >= variable_end)
+            .unwrap_or(chars.len());
+    }
+    out
 }

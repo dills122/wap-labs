@@ -299,3 +299,50 @@ fn wasm_wml_204_input_initialization_matches_native_state() {
         Some("1234".to_string())
     );
 }
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_select_initialization_and_commit_match_native_state() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r#"
+              <wml>
+                <card id="home">
+                  <select
+                    name="Choices"
+                    iname="ChoiceIndexes"
+                    ivalue="2;2;8;1"
+                    multiple="true"
+                  >
+                    <option value="alpha">Alpha</option>
+                    <option value="beta">Beta</option>
+                  </select>
+                </card>
+              </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(
+        engine.get_var_wasm("Choices".to_string()),
+        Some("beta;alpha".to_string())
+    );
+    assert_eq!(
+        engine.get_var_wasm("ChoiceIndexes".to_string()),
+        Some("2;1".to_string())
+    );
+    assert!(engine
+        .begin_focused_select_edit_wasm()
+        .expect("select edit should begin"));
+    assert!(engine
+        .commit_focused_select_edit_wasm()
+        .expect("multiple selection should toggle"));
+    assert_eq!(
+        engine.get_var_wasm("Choices".to_string()),
+        Some("alpha".to_string())
+    );
+    assert_eq!(
+        engine.get_var_wasm("ChoiceIndexes".to_string()),
+        Some("1".to_string())
+    );
+}

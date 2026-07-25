@@ -43,7 +43,7 @@ impl WmlEngine {
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
-        if let Err(err) = self.initialize_inputs_on_active_card() {
+        if let Err(err) = self.initialize_controls_on_active_card() {
             self.active_card_idx = previous_idx;
             self.focused_link_idx = previous_focus;
             self.nav_stack.truncate(previous_stack_len);
@@ -101,7 +101,7 @@ impl WmlEngine {
         self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
-        if let Err(err) = self.initialize_inputs_on_active_card() {
+        if let Err(err) = self.initialize_controls_on_active_card() {
             self.push_trace("INPUT_INIT_ERROR", err);
             self.active_card_idx = rollback_active_idx;
             self.focused_link_idx = rollback_focus;
@@ -153,6 +153,7 @@ impl WmlEngine {
         if self.active_select_edit.is_some() {
             self.commit_focused_select_edit_internal()?;
         }
+        self.sync_all_select_variables_on_active_card()?;
 
         match action {
             CardTaskAction::Go {
@@ -167,7 +168,7 @@ impl WmlEngine {
             }
             CardTaskAction::Refresh => {
                 self.push_trace("ACTION_REFRESH", String::new());
-                self.initialize_inputs_on_active_card()?;
+                self.initialize_controls_on_active_card()?;
                 self.start_or_resume_timer_for_active_card(true)?;
                 Ok(())
             }
@@ -184,6 +185,14 @@ impl WmlEngine {
         method: Option<&str>,
         post_fields: &[CardPostField],
     ) -> Result<(), String> {
+        if self.active_input_edit.is_some() {
+            self.commit_focused_input_edit_internal()?;
+        }
+        if self.active_select_edit.is_some() {
+            self.commit_focused_select_edit_internal()?;
+        }
+        self.sync_all_select_variables_on_active_card()?;
+
         if let Some(script_ref) = parse_script_href(href) {
             let function_name = script_ref.function_name.unwrap_or("main");
             self.push_trace(
