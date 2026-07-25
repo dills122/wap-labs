@@ -102,6 +102,8 @@ Prefer work that improves:
   - suggested branch name
   - suggested PR title/message
 - Also include a concise commit message recommendation when the change is ready to land.
+- For GitHub authentication, duplicate-PR checks, and PR creation fallback behavior, follow
+  `docs/agents/AGENT_STANDARDS.md` under **GitHub Authentication and PR Publishing**.
 
 ## Repo conventions
 
