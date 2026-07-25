@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "example": "formsTextSubmitLocal",
+  "flows": [
+    {
+      "id": "waves-text-edit-and-local-submit-intent",
+      "title": "Waves commits text and password edits into a captured local POST intent",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["A5-04", "A5-06"],
+      "specItems": ["WML-R-019", "RQ-RMK-008"],
+      "initial": {
+        "state": {
+          "activeCardId": "login",
+          "focusedLinkIndex": 0,
+          "focusedInputEditName": null,
+          "externalNavigationIntent": null
+        },
+        "session": { "runMode": "local", "navigationStatus": "loaded" },
+        "render": { "textIncludes": ["AHMED", "PIN:"] }
+      },
+      "steps": [
+        {
+          "action": { "type": "type-text", "text": "BOB" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 0,
+              "focusedInputEditName": "username",
+              "focusedInputEditValue": "AHMEDBOB"
+            },
+            "render": { "textIncludes": ["AHMEDBOB"] }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1,
+              "focusedInputEditName": null,
+              "focusedInputEditValue": null
+            },
+            "traceKinds": ["INPUT_EDIT_START", "INPUT_EDIT_COMMIT"]
+          }
+        },
+        {
+          "action": { "type": "type-text", "text": "42" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1,
+              "focusedInputEditName": "pin",
+              "focusedInputEditValue": "42"
+            },
+            "render": { "textIncludes": ["**"] }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "login",
+              "focusedInputEditName": null,
+              "focusedInputEditValue": null,
+              "externalNavigationIntent": "http://local.test/login",
+              "externalNavigationRequestPolicy": {
+                "refererUrl": "http://local.test/examples/formsTextSubmitLocal.wml",
+                "postContext": {
+                  "sameDeck": false,
+                  "contentType": "application/x-www-form-urlencoded",
+                  "payload": "username=AHMEDBOB&pin=42"
+                }
+              }
+            },
+            "session": {
+              "runMode": "local",
+              "navigationStatus": "loaded",
+              "externalNavigationIntent": "http://local.test/login"
+            },
+            "statusIncludes": "Local mode captured external intent",
+            "traceKinds": ["INPUT_EDIT_COMMIT", "ACTION_ACCEPT", "ACTION_EXTERNAL"],
+            "render": { "textIncludes": ["AHMEDBOB", "**"] }
+          }
+        }
+      ]
+    }
+  ]
+}

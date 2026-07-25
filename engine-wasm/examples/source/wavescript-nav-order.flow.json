@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "example": "wavescriptNavOrder",
+  "flows": [
+    {
+      "id": "script-navigation-order-and-external-outcome",
+      "title": "Script navigation is last-call-wins for cancel, fragment, and external outcomes",
+      "workItems": ["W0-04"],
+      "specItems": ["RQ-WMLS-018"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null,
+              "lastScriptExecutionOk": true
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null,
+              "lastScriptExecutionOk": true
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": "http://local.test/next.wml?from=script",
+              "lastScriptExecutionOk": true
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        }
+      ]
+    }
+  ]
+}

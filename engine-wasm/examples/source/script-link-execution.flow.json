@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "example": "scriptLinkExecution",
+  "flows": [
+    {
+      "id": "script-link-success-and-navigation-continuity",
+      "title": "A script link succeeds without disrupting subsequent navigation",
+      "workItems": ["W0-01", "W0-03"],
+      "specItems": ["RQ-WMLS-001", "RQ-WMLS-008"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "lastScriptExecutionOk": null,
+          "lastScriptExecutionTrap": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "lastScriptExecutionOk": true,
+              "lastScriptExecutionTrap": null
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "done", "focusedLinkIndex": 0 },
+            "traceKinds": ["SCRIPT_OK", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

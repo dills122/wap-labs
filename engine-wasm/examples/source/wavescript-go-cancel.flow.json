@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "example": "wavescriptGoCancel",
+  "flows": [
+    {
+      "id": "script-go-cancel-clears-pending-navigation",
+      "title": "Script go followed by cancel leaves navigation unchanged",
+      "workItems": ["W0-04"],
+      "specItems": ["RQ-WMLS-018"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null,
+          "lastScriptExecutionOk": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null,
+              "lastScriptExecutionOk": true,
+              "lastScriptExecutionTrap": null
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        }
+      ]
+    }
+  ]
+}

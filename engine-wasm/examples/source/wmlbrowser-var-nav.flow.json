@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "example": "wmlbrowserVarNav",
+  "flows": [
+    {
+      "id": "variable-fragment-and-prev-effects",
+      "title": "WMLBrowser variable, go, and prev effects apply after script invocation",
+      "workItems": ["W0-04"],
+      "specItems": ["RQ-WMLS-017", "RQ-WMLS-018"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "nextCardVar": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0,
+              "nextCardVar": "#next",
+              "lastScriptExecutionOk": true
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "nextCardVar": "#next",
+              "lastScriptExecutionOk": true
+            },
+            "traceKinds": ["ACTION_SCRIPT", "ACTION_BACK", "SCRIPT_OK"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "example": "actionsTaskOrderRollback",
+  "flows": [
+    {
+      "id": "accept-go-prev-refresh-and-rollback",
+      "title": "Accept tasks preserve go, prev, refresh, and rollback ordering",
+      "workItems": ["A5-02"],
+      "specItems": ["WML-R-012", "WML-R-015", "WML-R-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": { "state": { "activeCardId": "accept-go", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "target", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": { "state": { "activeCardId": "accept-go", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": { "state": { "activeCardId": "accept-prev", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_PREV", "ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 2 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": { "state": { "activeCardId": "accept-refresh", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "accept-refresh", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_REFRESH"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 2 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 3 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": { "state": { "activeCardId": "accept-broken", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "accept-broken", "focusedLinkIndex": 0 },
+            "statusIncludes": "Key error (enter):",
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_FRAGMENT", "ACTION_BACK"]
+          }
+        }
+      ]
+    }
+  ]
+}

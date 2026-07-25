@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "example": "wavescriptRefreshPolicy",
+  "flows": [
+    {
+      "id": "script-refresh-without-navigation",
+      "title": "Script variable mutation requests refresh without navigation",
+      "workItems": ["W0-04"],
+      "specItems": ["RQ-WMLS-017", "RQ-WMLS-021"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "nextCardVar": null,
+          "externalNavigationIntent": null,
+          "lastScriptRequiresRefresh": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "nextCardVar": "updated",
+              "externalNavigationIntent": null,
+              "lastScriptExecutionOk": true,
+              "lastScriptRequiresRefresh": true
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        }
+      ]
+    }
+  ]
+}

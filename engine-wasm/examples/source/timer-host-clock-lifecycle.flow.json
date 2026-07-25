@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "example": "timerHostClockLifecycle",
+  "flows": [
+    {
+      "id": "nonzero-timer-host-clock-expiry",
+      "title": "A nonzero timer advances through host ticks and expires once",
+      "workItems": ["A5-03"],
+      "specItems": ["WML-R-014"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "timed", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_FRAGMENT", "TIMER_START"]
+          }
+        },
+        {
+          "action": { "type": "tick", "ms": 1000 },
+          "expect": {
+            "state": { "activeCardId": "timed", "focusedLinkIndex": 0 },
+            "traceKinds": ["TIMER_START", "TIMER_TICK"]
+          }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": { "state": { "activeCardId": "timed", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": { "state": { "activeCardId": "timed", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": { "state": { "activeCardId": "timed", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": { "state": { "activeCardId": "timed", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": {
+            "state": { "activeCardId": "done", "focusedLinkIndex": 0 },
+            "traceKinds": ["TIMER_TICK", "TIMER_EXPIRE", "ACTION_ONTIMER", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -18,7 +18,11 @@ const STATE_KEYS = new Set([
   'focusedSelectEditName',
   'focusedSelectEditValue',
   'externalNavigationIntent',
+  'externalNavigationRequestPolicy',
   'lastScriptDialogRequests',
+  'lastScriptExecutionOk',
+  'lastScriptExecutionTrap',
+  'lastScriptRequiresRefresh',
   'nextCardVar'
 ]);
 const SESSION_KEYS = new Set([
@@ -201,6 +205,58 @@ function parseExpectedState(value, filename, location) {
         throw new Error(
           `${filename}: ${location}.${key} must contain valid dialog request objects`
         );
+      }
+      continue;
+    }
+    if (key === 'externalNavigationRequestPolicy') {
+      if (expected === null) {
+        continue;
+      }
+      const policy = requireRecord(expected, filename, `${location}.${key}`);
+      validateKeys(
+        policy,
+        new Set(['cacheControl', 'refererUrl', 'postContext']),
+        filename,
+        `${location}.${key}`
+      );
+      if (
+        policy.cacheControl !== undefined &&
+        policy.cacheControl !== 'default' &&
+        policy.cacheControl !== 'no-cache'
+      ) {
+        throw new Error(`${filename}: ${location}.${key}.cacheControl must be default or no-cache`);
+      }
+      if (policy.refererUrl !== undefined && typeof policy.refererUrl !== 'string') {
+        throw new Error(`${filename}: ${location}.${key}.refererUrl must be a string`);
+      }
+      if (policy.postContext !== undefined) {
+        const postContext = requireRecord(
+          policy.postContext,
+          filename,
+          `${location}.${key}.postContext`
+        );
+        validateKeys(
+          postContext,
+          new Set(['sameDeck', 'contentType', 'payload']),
+          filename,
+          `${location}.${key}.postContext`
+        );
+        if (postContext.sameDeck !== undefined && typeof postContext.sameDeck !== 'boolean') {
+          throw new Error(`${filename}: ${location}.${key}.postContext.sameDeck must be boolean`);
+        }
+        for (const field of ['contentType', 'payload']) {
+          if (postContext[field] !== undefined && typeof postContext[field] !== 'string') {
+            throw new Error(
+              `${filename}: ${location}.${key}.postContext.${field} must be a string`
+            );
+          }
+        }
+      }
+      continue;
+    }
+    if (key === 'lastScriptExecutionOk' || key === 'lastScriptRequiresRefresh') {
+      if (expected !== null && typeof expected !== 'boolean') {
+        throw new Error(`${filename}: ${location}.${key} must be a boolean or null`);
       }
       continue;
     }
@@ -503,11 +559,19 @@ export interface StoryStateExpectation {
   focusedSelectEditName?: string | null;
   focusedSelectEditValue?: string | null;
   externalNavigationIntent?: string | null;
+  externalNavigationRequestPolicy?: {
+    cacheControl?: 'default' | 'no-cache';
+    refererUrl?: string;
+    postContext?: { sameDeck?: boolean; contentType?: string; payload?: string };
+  } | null;
   lastScriptDialogRequests?: Array<
     | { type: 'alert'; message: string }
     | { type: 'confirm'; message: string }
     | { type: 'prompt'; message: string; defaultValue?: string }
   >;
+  lastScriptExecutionOk?: boolean | null;
+  lastScriptExecutionTrap?: string | null;
+  lastScriptRequiresRefresh?: boolean | null;
   nextCardVar?: string | null;
 }
 
