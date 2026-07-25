@@ -31,7 +31,7 @@ explicit capability/mode.
 | Fixtures | All 780 clause fixtures have target locations; 149 clauses now have direct conformance assessment and 631 remain unassessed |
 | Successor delta | All 201 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
-| Execution program | 13 dependency-ordered sprints contain 78 unique work items with machine-checked rollups |
+| Execution program | 13 dependency-ordered sprints contain 79 unique work items with machine-checked rollups |
 
 `SRC-006` is the only blocked source item. It prevents public promotion of
 recovered source binaries/derivatives, not internal evidence use,
@@ -61,12 +61,12 @@ gap.
 
 ## Work-program state
 
-The 78 work items currently roll up to:
+The 79 work items currently roll up to:
 
-- 15 done (source/profile/governance planning plus the first direct WDP/WCMP slices);
+- 16 done (source/profile/governance planning, the first direct WDP/WCMP slices, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 11 in progress (WML evidence plus existing runtime, WAE, transport, and WSP foundations);
-- 51 todo.
+- 12 in progress (WML evidence plus existing runtime, WAE, transport, and WSP foundations);
+- 50 todo.
 
 New completion claims should follow the machine dependency graph:
 

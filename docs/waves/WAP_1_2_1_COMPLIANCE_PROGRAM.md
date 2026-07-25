@@ -246,9 +246,11 @@ and Wayback procedure are in
 6. a compatibility statement that identifies `CCR-CLASSC-C-001`, discloses
    optional and conditional profiles, and does not imply formal certification.
 
-The currently known frontend CSS-minification defect is an explicit release
-work item (`REL-1004`), so a green unit-test count cannot conceal a red
-production build.
+The frontend CSS-minification defect tracked by `REL-1004` is closed: the
+vendored WebKit scrollbar selector is valid, and clean frontend and Tauri
+production builds pass under the declared Node and pnpm toolchain. Production
+builds remain explicit release evidence, so a green unit-test count cannot
+conceal a red build.
 
 ## Planning relationship
 

@@ -1429,7 +1429,7 @@
         },
         {
           "id": "REL-1004",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["browser", "qa"],
           "sourceFamilies": ["conformance-governance"],
           "existingTickets": [],
@@ -1440,7 +1440,8 @@
             "The malformed WebKit scrollbar selector no longer blocks CSS minification and a clean worktree production build succeeds under the declared Node/pnpm runtime."
           ],
           "evidence": [
-            "pnpm --dir browser run build"
+            "pnpm --dir browser run build",
+            "pnpm --dir browser run tauri:build"
           ]
         },
         {

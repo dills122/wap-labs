@@ -119,7 +119,7 @@ Scrollbar (only chrome & safari)
 ::-webkit-scrollbar-corner:vertical {
   background-color: #000;
 }
-:-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment {
   display: block;
 }
