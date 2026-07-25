@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "ecc532a8e6974a0ac19d0f6307f742be037c63b2e6905ce1e6d1451f89fc2d45"
+        "sha256": "412ce8db546268e168b82819b2d249b6a9d1f8c77d47faf33c5843fe7e91fffc"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
