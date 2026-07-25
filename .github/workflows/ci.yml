@@ -24,6 +24,7 @@ jobs:
   changes:
     name: Detect Changed Areas
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       full_ci: ${{ steps.scope.outputs.full_ci }}
       ci: ${{ steps.filter.outputs.ci }}
@@ -39,11 +40,13 @@ jobs:
       - name: Determine CI scope
         id: scope
         env:
-          FULL_CI: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.login == 'dependabot[bot]' }}
+          FULL_CI: ${{ github.event_name != 'pull_request' || (github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) }}
         run: echo "full_ci=${FULL_CI}" >> "${GITHUB_OUTPUT}"
 
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Detect changes
         id: filter
@@ -99,9 +102,12 @@ jobs:
   repo-hygiene:
     name: Repo Hygiene
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
@@ -172,9 +178,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.rust_engine == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
@@ -218,9 +227,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.rust_transport == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
@@ -258,9 +270,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.host_sample == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
@@ -351,9 +366,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.marketing_site == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
@@ -366,7 +384,7 @@ jobs:
           cache-dependency-path: marketing-site/pnpm-lock.yaml
 
       - name: Install marketing-site deps
-        run: pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile
+        run: pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile --ignore-scripts
 
       - name: Build marketing-site
         run: pnpm --dir marketing-site --ignore-workspace run build
@@ -376,9 +394,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.docs_portal == 'true' || needs.changes.outputs.rust_transport == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
@@ -407,9 +428,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.browser_shell == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Install Linux system deps for Tauri
         run: |
@@ -475,9 +499,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.wml_server == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -487,7 +514,7 @@ jobs:
           cache-dependency-path: wml-server/package-lock.json
 
       - name: Install wml-server deps
-        run: npm --prefix wml-server ci
+        run: npm --prefix wml-server ci --ignore-scripts
 
       - name: Node syntax check
         run: node --check wml-server/server.js
@@ -497,9 +524,12 @@ jobs:
     needs: [changes]
     if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.browser_frontend == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
@@ -520,6 +550,8 @@ jobs:
   ci-gate:
     name: CI Required Gate
     if: ${{ always() }}
+    permissions: {}
+    timeout-minutes: 5
     needs:
       - changes
       - repo-hygiene

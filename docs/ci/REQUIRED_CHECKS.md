@@ -71,8 +71,14 @@ In **Settings > General > Pull Requests**:
 
 In **Settings > Actions > General > Workflow permissions**:
 
-- Keep the default `GITHUB_TOKEN` permission read-only. The auto-merge workflow requests only
-  `contents: write` and `pull-requests: write` for its gated Dependabot job.
+- Keep the default `GITHUB_TOKEN` permission read-only.
+- Do not enable **Send write tokens to workflows from pull requests**.
+- PR validation workflows explicitly use read-only permissions and disable persisted checkout
+  credentials. Dependency Review does not receive PR write permission because comment summaries
+  are not enabled.
+- The auto-merge workflow defaults to no permissions, reads Dependabot metadata in a read-only
+  job, and requests `contents: write` plus `pull-requests: write` only in the final gated job.
+  That final job does not check out or execute pull-request code.
 - The setting that lets Actions create and approve pull requests is not required; this workflow
   neither creates nor approves pull requests.
 

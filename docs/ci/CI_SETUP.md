@@ -35,8 +35,14 @@ Core behavior:
 - Derives `full_ci` from the event and pull-request author.
 - Forces the complete validation matrix for Dependabot-authored PRs, pushes to `main`, and manual
   runs while preserving path filtering for ordinary PRs.
+- Requires a Dependabot-authored PR to use a repository-owned head branch before granting it
+  full-matrix treatment.
 - Runs repository-wide hygiene checks and layer-specific Rust/Node checks.
 - Reports the stable aggregate check `CI Required Gate`.
+- Keeps PR validation read-only, does not persist checkout credentials for later build steps, and
+  does not expose a write token or repository secrets to checked-out PR code.
+- Sets explicit job timeouts so a hung build or dependency cannot consume the default six-hour
+  GitHub-hosted runner window.
 
 Jobs:
 
@@ -63,6 +69,7 @@ Jobs:
   - uploads screenshots, traces, and structured evidence when a story fails
   - host-sample typecheck/lint/format checks
 - `Marketing Site Build`
+  - installs with lifecycle scripts disabled
   - builds the marketing site when selected by path filtering or full CI
 - `Project Atlas Build`
   - validates the WAP knowledge graph
@@ -76,7 +83,7 @@ Jobs:
 - `Browser Frontend Unit Tests`
   - runs the browser frontend unit suite and coverage gate
 - `WML Server Sanity`
-  - installs `wml-server` deps and runs Node syntax check
+  - installs `wml-server` deps with lifecycle scripts disabled and runs Node syntax check
 - `CI Required Gate`
   - runs with `always()` after all validation jobs
   - fails on failed/cancelled prerequisites
@@ -106,6 +113,7 @@ Jobs:
 
 - `Dependency Review`
   - PR-only
+  - read-only; it does not post PR comments
   - runs `actions/dependency-review-action`
 - `Rust Advisory Audit`
   - runs `cargo audit` in:
@@ -280,6 +288,8 @@ Grouping and cadence:
 Auto-merge behavior:
 
 - The workflow runs on `pull_request`, not `pull_request_target`.
+- The workflow defaults to no token permissions and first evaluates repository-owned Dependabot
+  PR metadata in a read-only job.
 - `dependabot/fetch-metadata` is pinned to a full commit SHA and verifies that the PR and commits
   are Dependabot-owned.
 - Only patch and minor updates have auto-merge enabled. The metadata action reports the highest
@@ -291,6 +301,9 @@ Auto-merge behavior:
 - The workflow uses `gh pr merge --auto --squash`, so GitHub queues the merge and waits for every
   required ruleset check. It does not merge around CI, security, CodeQL, review, or signature
   requirements.
+- Only the final, policy-approved job receives `contents: write` and `pull-requests: write`. That
+  job does not check out or execute PR code, and the write token is not passed to the metadata
+  action.
 - On Dependabot rebases/synchronizations, the workflow re-runs and re-enables auto-merge for the updated head.
 
 Lockfile ownership:
@@ -301,6 +314,9 @@ Lockfile ownership:
   changes.
 - pnpm frozen installs, `npm ci`, and `cargo metadata --locked` verify that Dependabot supplied a
   usable lockfile without mutating the PR.
+- Node package installation uses `--ignore-scripts` in PR CI. Later build and test commands still
+  execute the checked-in project scripts and dependency binaries required for validation, but
+  only with read-only job permissions and without persisted checkout credentials.
 
 Repository setting prerequisites are documented in `docs/ci/REQUIRED_CHECKS.md`.
 
