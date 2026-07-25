@@ -1100,11 +1100,11 @@
           "R0-04"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The access element's domain/path attributes are now parsed and retained on the deck model (engine-wasm). Enforcement of the access-control policy (suffix/prefix matching against a referring URI) is a host-boundary concern and remains R0-07's scope; this obligation is partial until that lands.",
+        "assessmentNote": "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
-            "symbol": "parse_deck_access_control"
+            "symbol": "parse_access"
           },
           {
             "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -1114,13 +1114,13 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parse_wml_populates_deck_access_control_from_head",
-            "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+            "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+            "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
           },
           {
-            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
-            "test": "more_than_one_access_element_is_a_parse_error",
-            "command": "cd engine-wasm/engine && cargo test more_than_one_access_element_is_a_parse_error"
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -1558,23 +1558,23 @@
           "R0-04"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "The head element is recognized at the deck level (not mistaken for a card) and its access child is extracted onto the deck model. The meta child (WML-C-34, optional) is not yet represented and is tolerated as an unimplemented-optional element, consistent with this parser's existing handling of other unsupported optional constructs.",
+        "assessmentNote": "The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
-            "symbol": "parse_wml"
+            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
+            "symbol": "parse_deck_head"
           }
         ],
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parse_wml_populates_deck_access_control_from_head",
-            "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+            "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+            "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
           },
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parse_wml_honors_only_first_head_when_deck_has_more_than_one",
-            "command": "cd engine-wasm/engine && cargo test parse_wml_honors_only_first_head_when_deck_has_more_than_one"
+            "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2803,7 +2803,7 @@
           "R0-04"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "The parser requires a wml root and constructs the ordered deck from its card children.",
+        "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
@@ -2813,8 +2813,8 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "rejects_document_without_wml_root",
-            "command": "cd engine-wasm/engine && cargo test rejects_document_without_wml_root"
+            "test": "wml_202_rejects_invalid_wml_root_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically"
           }
         ],
         "evidenceState": "direct-test-linked"

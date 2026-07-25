@@ -47,23 +47,23 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The head element is recognized at the deck level (not mistaken for a card) and its access child is extracted onto the deck model. The meta child (WML-C-34, optional) is not yet represented and is tolerated as an unimplemented-optional element, consistent with this parser's existing handling of other unsupported optional constructs.",
+  "assessmentNote": "The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.",
   "implementationEvidence": [
     {
-      "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
-      "symbol": "parse_wml"
+      "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
+      "symbol": "parse_deck_head"
     }
   ],
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "parse_wml_populates_deck_access_control_from_head",
-      "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+      "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+      "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
     },
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "parse_wml_honors_only_first_head_when_deck_has_more_than_one",
-      "command": "cd engine-wasm/engine && cargo test parse_wml_honors_only_first_head_when_deck_has_more_than_one"
+      "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
+      "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
     }
   ],
   "ownerLayers": [

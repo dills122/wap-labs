@@ -53,11 +53,11 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The access element's domain/path attributes are now parsed and retained on the deck model (engine-wasm). Enforcement of the access-control policy (suffix/prefix matching against a referring URI) is a host-boundary concern and remains R0-07's scope; this obligation is partial until that lands.",
+  "assessmentNote": "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
-      "symbol": "parse_deck_access_control"
+      "symbol": "parse_access"
     },
     {
       "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -67,13 +67,13 @@ tags:
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "parse_wml_populates_deck_access_control_from_head",
-      "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+      "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+      "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
     },
     {
-      "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
-      "test": "more_than_one_access_element_is_a_parse_error",
-      "command": "cd engine-wasm/engine && cargo test more_than_one_access_element_is_a_parse_error"
+      "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+      "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
+      "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
     }
   ],
   "ownerLayers": [

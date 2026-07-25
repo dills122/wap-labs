@@ -424,7 +424,8 @@
           ],
           "notes": [
             "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
-            "WML-202 remains in progress because the broader deck/card/meta grammar and metadata-retention acceptance is not complete."
+            "R0-04/C5-03 now close five directly mapped root/head/access clauses and retain validated ordered meta records across the shared native/WASM parser path.",
+            "WML-202 remains in progress because referring-URI access policy, root language metadata, and card context/grammar acceptance are not complete."
           ]
         },
         {

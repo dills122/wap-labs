@@ -490,7 +490,10 @@ fn validate_option_element(element: &XmlElement) -> Result<(), String> {
     Ok(())
 }
 
-fn validate_allowed_attributes(element: &XmlElement, allowed: &[&str]) -> Result<(), String> {
+pub(super) fn validate_allowed_attributes(
+    element: &XmlElement,
+    allowed: &[&str],
+) -> Result<(), String> {
     let mut unexpected = element
         .attrs
         .keys()
@@ -506,7 +509,7 @@ fn validate_allowed_attributes(element: &XmlElement, allowed: &[&str]) -> Result
     Ok(())
 }
 
-fn validate_optional_enum(
+pub(super) fn validate_optional_enum(
     element: &XmlElement,
     attr: &str,
     allowed: &[&str],

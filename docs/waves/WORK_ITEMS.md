@@ -89,9 +89,9 @@ Current priority order is:
    174/174 direct WML-clause mapping.
 2. Start `WML-205` with its missing direct WML-family graph mapping, then
    implement its deterministic parse/error taxonomy.
-3. Close the residual `WML-202` deck/head/access/meta gate and then the
+3. Close the remaining `WML-202` access-policy/card-context gate and then the
    residual `WML-204` field/control validation gate. Preserve their completed
-   9/9 and 23/23 direct-clause slices; the remaining work shares engine parser
+   14/14 and 23/23 direct-clause slices; the remaining work shares engine parser
    and runtime tests, so keep it in one serial lane.
 4. Preserve `TRN-706`'s completed schema-v2 selected-WDP replay boundary and
    keep the conditional WTP mapping gap explicit under additive
@@ -1869,7 +1869,7 @@ Reference:
 7. `Spec`:
 - `WML-21`, `WML-25`, `WML-26`, `WML-33`, `WML-34`, `WML-39`, `WML-40`, `WML-41`, `WML-43`, `WML-47`, `WML-48`, `WML-52`, `WML-53`, `WML-66`, `WML-67`, `WML-69`
 8. `Notes`:
-- `head` (`WML-C-30`) and `access` (`WML-C-21`) landed: the parser now recognizes deck-level `<head>` (not mistaken for a card) and extracts `<access domain= path=>` onto the deck model, rejecting a deck with more than one `<access>` element per section `11.3.1`. `access` is `partial`, not `implemented`, in the compliance ledger - parsing/storage is done, but enforcing the access-control policy against a referring URI is a host-boundary concern (`R0-07`). `meta` (`WML-C-34`, optional) is not yet represented.
+- `head` (`WML-C-30`) and `access` (`WML-C-21`) landed: the parser enforces ordered, unique deck-level `<head>`, extracts authored `<access domain= path=>` values, and rejects more than one access element per section `11.3.1`. Ordered `meta` (`WML-C-34`, optional) records now retain name/http-equiv identity, content, forua, and scheme with deterministic EMPTY/attribute validation. `access` remains `partial`: defaults, relative-path resolution, and referring-URI policy enforcement are the cross-boundary `R0-07` scope.
 - `template` (`WML-C-47`) split out to `R0-12`: it is spec-inseparable from card/deck task shadowing (`WML-C-08`, section `9.6`) and requires a real named `do`/`onevent` binding model this codebase doesn't have yet, not a small addition alongside `head`/`access`.
 - Mandatory `input`/`select`/`option` syntax validation for `WML-C-33`, `WML-C-41`, and `WML-C-43` now rejects invalid DTD content, undeclared attributes, and invalid NMTOKEN/enum/boolean/number values deterministically. Nested `optgroup` content is accepted and flattened in document order; an optional-capability declaration remains unmodeled.
 - Input commit now enforces valid Basic Latin format codes, escaped literals, invalid-mask fallback, `emptyok` precedence, and `maxlength`. Rejection returns a deterministic host-visible error while preserving the prior variable and active draft for retry; password rendering conceals entered characters without replacing the real variable and preserves visible format literals.
@@ -2067,7 +2067,7 @@ Reference:
 - Added ordered, independent card/template `do[name]` and `onevent[type]` bindings in the shared Rust deck model, including effective-name matching, cross-syntax intrinsic precedence, and inactive `noop` masking.
 - Added deterministic parser rejection for duplicate templates, misplaced/invalid template content, duplicate effective do names, and conflicting intrinsic bindings.
 - Added native parser/runtime tests, a WASM boundary parity test, and executable `wml-202-template-shadowing.wml` + `.flow.json` evidence (`pnpm test:story WML-202`).
-- Direct evidence closes `WML-C-08` and `WML-C-47`; the broader `WML-202` deck/card/meta completion gate remains open.
+- Direct evidence closes the 14 mapped WML-202 root/head/access, template, and task-shadowing clauses. Optional `WML-C-34`/`WML-C-72` behavior has parser tests but remains `optional-not-assessed` until the capability pass; the broader gate also remains open for access-policy enforcement, root language metadata, and card context/grammar completion.
 
 ## Phase S (Archived)
 

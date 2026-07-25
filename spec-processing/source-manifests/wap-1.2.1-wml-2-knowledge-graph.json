@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "f11d6dae41993f410059ed88af30c274452686b39ec61018d1a4fa0fadc30a1a"
+        "sha256": "1b9242799d00664a34079c455681ca43fb1422b9a529cad4fdcb78c33c37762a"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,20 +25,20 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "8593ebeb09a4d46f196e16e5375c7d839610885cdb63b696b46a0384828223c5"
+        "sha256": "429837834a7b7fd5bea164d8b010a4bc205d81e6a1a0d76aea3f3d41fc6d03dc"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "42e99a41505304fada032ea07c796d39a65051f625e7688c7043a28fb94d8dcc"
+        "sha256": "6efde57306a5413da8c00b9c778af47cb774cbb00c4d5f4e448fe571ae3458c3"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
     "nodeCount": 588,
-    "edgeCount": 1679,
+    "edgeCount": 1684,
     "nodesByType": {
       "clause": 224,
       "fixture": 224,
@@ -62,7 +62,7 @@
       "effective-document": 12,
       "maps-to": 370,
       "owned-by": 11,
-      "planned-by": 343,
+      "planned-by": 348,
       "refines": 291,
       "relates-to": 10,
       "requires-family": 3,
@@ -73,7 +73,7 @@
     },
     "directClauseCountsByWorkItem": {
       "WML-201": 177,
-      "WML-202": 9,
+      "WML-202": 14,
       "WML-203": 49,
       "WML-204": 23,
       "WML-205": 0
@@ -2249,7 +2249,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-202"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2257,7 +2258,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4225,7 +4226,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-202"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4233,7 +4235,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4260,7 +4262,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-202"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4268,7 +4271,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8332,7 +8335,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-202"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -8340,7 +8344,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8402,7 +8406,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-202"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -8410,7 +8415,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9118,7 +9123,7 @@
       "title": "Reject a deck containing more than one access element.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reject a deck containing more than one access element.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9754,7 +9759,7 @@
       "title": "Treat head children as metadata and access-control information for the whole deck.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat head children as metadata and access-control information for the whole deck.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9766,7 +9771,7 @@
       "title": "When head is present, require one or more access or meta children.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When head is present, require one or more access or meta children.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11074,7 +11079,7 @@
       "title": "Treat the wml element as the enclosing scope for every card and all deck-level information.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat the wml element as the enclosing scope for every card and all deck-level information.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11098,7 +11103,7 @@
       "title": "Require a wml root containing optional head, optional template, and one or more cards in that order.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require a wml root containing optional head, optional template, and one or more cards in that order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12739,11 +12744,11 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The access element's domain/path attributes are now parsed and retained on the deck model (engine-wasm). Enforcement of the access-control policy (suffix/prefix matching against a referring URI) is a host-boundary concern and remains R0-07's scope; this obligation is partial until that lands.",
+        "assessmentNote": "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
-            "symbol": "parse_deck_access_control"
+            "symbol": "parse_access"
           },
           {
             "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -12753,13 +12758,13 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parse_wml_populates_deck_access_control_from_head",
-            "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+            "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+            "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
           },
           {
-            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
-            "test": "more_than_one_access_element_is_a_parse_error",
-            "command": "cd engine-wasm/engine && cargo test more_than_one_access_element_is_a_parse_error"
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
           }
         ],
         "ownerLayers": [
@@ -13260,23 +13265,23 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The head element is recognized at the deck level (not mistaken for a card) and its access child is extracted onto the deck model. The meta child (WML-C-34, optional) is not yet represented and is tolerated as an unimplemented-optional element, consistent with this parser's existing handling of other unsupported optional constructs.",
+        "assessmentNote": "The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
-            "symbol": "parse_wml"
+            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
+            "symbol": "parse_deck_head"
           }
         ],
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parse_wml_populates_deck_access_control_from_head",
-            "command": "cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head"
+            "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+            "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
           },
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parse_wml_honors_only_first_head_when_deck_has_more_than_one",
-            "command": "cd engine-wasm/engine && cargo test parse_wml_honors_only_first_head_when_deck_has_more_than_one"
+            "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
           }
         ],
         "ownerLayers": [
@@ -14666,7 +14671,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The parser requires a wml root and constructs the ordered deck from its card children.",
+        "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
@@ -14676,8 +14681,8 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "rejects_document_without_wml_root",
-            "command": "cd engine-wasm/engine && cargo test rejects_document_without_wml_root"
+            "test": "wml_202_rejects_invalid_wml_root_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically"
           }
         ],
         "ownerLayers": [
@@ -16242,7 +16247,8 @@
         ],
         "notes": [
           "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
-          "WML-202 remains in progress because the broader deck/card/meta grammar and metadata-retention acceptance is not complete."
+          "R0-04/C5-03 now close five directly mapped root/head/access clauses and retain validated ordered meta records across the shared native/WASM parser path.",
+          "WML-202 remains in progress because referring-URI access policy, root language metadata, and card context/grammar acceptance are not complete."
         ],
         "existingTickets": [
           "R0-04",
@@ -19535,6 +19541,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-ACCESS-SINGLE-ELEMENT|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-ACCESS-SINGLE-ELEMENT",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-ACCESS-SINGLE-ELEMENT|refines|scr-row:WML-C-21",
       "from": "clause:WML-CL-ACCESS-SINGLE-ELEMENT",
       "relation": "refines",
@@ -22307,6 +22322,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-HEAD-DECK-SCOPE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-HEAD-DECK-SCOPE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-HEAD-DECK-SCOPE|refines|scr-row:WML-C-30",
       "from": "clause:WML-CL-HEAD-DECK-SCOPE",
       "relation": "refines",
@@ -22347,6 +22371,15 @@
       "from": "clause:WML-CL-HEAD-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HEAD-STRUCTURE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-HEAD-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -28553,6 +28586,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-WML-ROOT-DECK-SCOPE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-WML-ROOT-DECK-SCOPE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-WML-ROOT-DECK-SCOPE|refines|scr-row:WML-C-53",
       "from": "clause:WML-CL-WML-ROOT-DECK-SCOPE",
       "relation": "refines",
@@ -28638,6 +28680,15 @@
       "from": "clause:WML-CL-WML-ROOT-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-WML-ROOT-STRUCTURE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-WML-ROOT-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

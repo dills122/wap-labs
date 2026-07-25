@@ -1,15 +1,21 @@
 <!--
-label: WML Template Task Shadowing
-work-items: R0-12, WML-202
-spec-items: WML-C-08, WML-C-47
-description: A deck-level accept binding is inherited, overridden, and then masked by card-level bindings with the same effective name.
-goal: Verify deterministic template inheritance, card precedence, and inactive noop masking across card navigation.
+label: WML Deck Head Metadata and Template Task Shadowing
+work-items: R0-04, R0-12, C5-03, WML-202
+spec-items: WML-C-08, WML-C-21, WML-C-30, WML-C-34, WML-C-47, WML-C-53
+description: Ordered deck access/meta data coexists with a deck-level accept binding that is inherited, overridden, and then masked by card-level bindings with the same effective name.
+goal: Verify a stable deck/head/access/meta parse path plus deterministic template inheritance, card precedence, and inactive noop masking across card navigation.
 testing-ac:
+- Load the example; its ordered head access/meta model is accepted without changing the first-card render.
 - Load the example and activate Enter on inherited; the unshadowed template binding navigates to override.
 - Activate Enter on override; the same-named card binding replaces the template task and navigates to masked.
 - Activate Enter on masked; the card-level noop masks both bindings and produces no task action.
 -->
 <wml>
+  <head>
+    <meta name="scenario" content="wml-202" scheme="work-item"/>
+    <access domain="example.test" path="/examples"/>
+    <meta http-equiv="Cache-Control" content="max-age=60" forua="true"/>
+  </head>
   <template>
     <do type="accept" name="primary" label="Deck next">
       <go href="#override"/>

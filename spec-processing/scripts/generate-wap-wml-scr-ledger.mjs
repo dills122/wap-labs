@@ -472,11 +472,11 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-21': {
       status: 'partial',
       note:
-        "The access element's domain/path attributes are now parsed and retained on the deck model (engine-wasm). Enforcement of the access-control policy (suffix/prefix matching against a referring URI) is a host-boundary concern and remains R0-07's scope; this obligation is partial until that lands.",
+        "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/head.rs',
-          'parse_deck_access_control'
+          'parse_access'
         ),
         codeEvidence(
           'engine-wasm/engine/src/runtime/deck.rs',
@@ -486,11 +486,11 @@ const mandatoryImplementationAudit = new Map(
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'parse_wml_populates_deck_access_control_from_head'
+          'wml_202_retains_access_and_ordered_meta_for_the_whole_deck'
         ),
         engineTest(
-          'engine-wasm/engine/src/parser/wml_parser/head.rs',
-          'more_than_one_access_element_is_a_parse_error'
+          'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+          'wml_202_rejects_invalid_head_access_and_meta_structure_deterministically'
         )
       ]
     },
@@ -581,21 +581,21 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-30': {
       status: 'implemented',
       note:
-        'The head element is recognized at the deck level (not mistaken for a card) and its access child is extracted onto the deck model. The meta child (WML-C-34, optional) is not yet represented and is tolerated as an unimplemented-optional element, consistent with this parser\'s existing handling of other unsupported optional constructs.',
+        'The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.',
       implementationEvidence: [
         codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/mod.rs',
-          'parse_wml'
+          'engine-wasm/engine/src/parser/wml_parser/head.rs',
+          'parse_deck_head'
         )
       ],
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'parse_wml_populates_deck_access_control_from_head'
+          'wml_202_retains_access_and_ordered_meta_for_the_whole_deck'
         ),
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'parse_wml_honors_only_first_head_when_deck_has_more_than_one'
+          'wml_202_rejects_invalid_head_access_and_meta_structure_deterministically'
         )
       ]
     },
@@ -940,7 +940,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-53': {
       status: 'implemented',
       note:
-        'The parser requires a wml root and constructs the ordered deck from its card children.',
+        'The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/mod.rs',
@@ -950,7 +950,7 @@ const mandatoryImplementationAudit = new Map(
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'rejects_document_without_wml_root'
+          'wml_202_rejects_invalid_wml_root_structure_deterministically'
         )
       ]
     },

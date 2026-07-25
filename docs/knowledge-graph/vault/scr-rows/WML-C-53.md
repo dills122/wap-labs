@@ -48,7 +48,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The parser requires a wml root and constructs the ordered deck from its card children.",
+  "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
@@ -58,8 +58,8 @@ tags:
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "rejects_document_without_wml_root",
-      "command": "cd engine-wasm/engine && cargo test rejects_document_without_wml_root"
+      "test": "wml_202_rejects_invalid_wml_root_structure_deterministically",
+      "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically"
     }
   ],
   "ownerLayers": [

@@ -133,11 +133,16 @@ still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 174
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. Thirty-five clauses now have
+owner/work mapping and a direct fixture plan. Forty clauses now have
 reviewed direct evidence, including the `WML-C-24` line-break clause, the two `WML-C-17` unknown-DTD clauses,
-the 11-clause WML-204 input tranche, and the nine-clause WML-202 template and
-task-shadowing tranche; the remaining clauses stay `not-assessed`. The
+the 11-clause WML-204 input tranche, and the 14-clause WML-202 root/head/access,
+template, and task-shadowing tranche; the remaining clauses stay `not-assessed`. The
 parent-row implementation audit remains conservative.
+
+Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the
+`WML-C-72` mutually exclusive property identity rule now have parser tests.
+Their ledger states remain `optional-not-assessed` until the separate
+capability-declaration pass activates the broader optional-profile gate.
 
 The 10 missing required Class C client rows are:
 

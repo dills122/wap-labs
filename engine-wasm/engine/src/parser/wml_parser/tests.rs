@@ -1,5 +1,6 @@
 use super::{parse_wml, parse_xml_root, MAX_PARSE_TREE_DEPTH};
 use crate::runtime::card::{Card, CardEventBindingKind, CardPostField, CardTaskAction};
+use crate::runtime::deck::DeckMetaProperty;
 use crate::runtime::node::{InlineNode, Node};
 
 fn go_action(href: &str) -> CardTaskAction {
@@ -1188,7 +1189,7 @@ fn parse_wml_propagates_duplicate_access_element_error() {
 }
 
 #[test]
-fn parse_wml_honors_only_first_head_when_deck_has_more_than_one() {
+fn wml_202_rejects_more_than_one_head() {
     let xml = r#"
         <wml>
           <head><access domain="first.com"/></head>
@@ -1197,9 +1198,152 @@ fn parse_wml_honors_only_first_head_when_deck_has_more_than_one() {
         </wml>
         "#;
 
-    let deck = parse_wml(xml).expect("deck should parse");
-    let access_control = deck
+    let err = parse_wml(xml).expect_err("duplicate <head> must be rejected");
+    assert!(
+        err.contains("only one <head>"),
+        "unexpected error message: {err}"
+    );
+}
+
+#[test]
+fn wml_202_retains_access_and_ordered_meta_for_the_whole_deck() {
+    let xml = r#"
+        <wml>
+          <head>
+            <meta name="author" content="WAP Forum" scheme="directory"/>
+            <access domain="wapforum.org" path="/cbb"/>
+            <meta http-equiv="Cache-Control" content="max-age=60" forua="true"/>
+          </head>
+          <card id="one"><p>One</p></card>
+          <card id="two"><p>Two</p></card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("valid deck metadata should parse");
+    assert_eq!(deck.cards.len(), 2);
+    assert_eq!(
+        deck.access_control
+            .as_ref()
+            .and_then(|access| access.domain.as_deref()),
+        Some("wapforum.org")
+    );
+    assert_eq!(
+        deck.access_control
+            .as_ref()
+            .and_then(|access| access.path.as_deref()),
+        Some("/cbb")
+    );
+    assert_eq!(deck.metadata.len(), 2);
+    assert_eq!(
+        deck.metadata[0].property,
+        DeckMetaProperty::Name("author".to_string())
+    );
+    assert_eq!(deck.metadata[0].content, "WAP Forum");
+    assert_eq!(deck.metadata[0].scheme.as_deref(), Some("directory"));
+    assert!(!deck.metadata[0].for_user_agent);
+    assert_eq!(
+        deck.metadata[1].property,
+        DeckMetaProperty::HttpEquiv("Cache-Control".to_string())
+    );
+    assert_eq!(deck.metadata[1].content, "max-age=60");
+    assert_eq!(deck.metadata[1].scheme, None);
+    assert!(deck.metadata[1].for_user_agent);
+}
+
+#[test]
+fn wml_202_preserves_explicit_empty_access_values() {
+    let deck = parse_wml(
+        r#"<wml><head><access domain="" path=""/></head><card id="home"><p>Hi</p></card></wml>"#,
+    )
+    .expect("empty CDATA access values are valid and distinct from omission");
+
+    let access = deck
         .access_control
-        .expect("access control should be present");
-    assert_eq!(access_control.domain.as_deref(), Some("first.com"));
+        .expect("access element should be retained");
+    assert_eq!(access.domain.as_deref(), Some(""));
+    assert_eq!(access.path.as_deref(), Some(""));
+}
+
+#[test]
+fn wml_202_rejects_invalid_wml_root_structure_deterministically() {
+    let cases = [
+        (
+            r#"<wml><template/><head><meta name="x" content="y"/></head><card/></wml>"#,
+            "<head> must precede <template>",
+        ),
+        (
+            r#"<wml><card/><head><meta name="x" content="y"/></head></wml>"#,
+            "<head> must precede <template> and all <card>",
+        ),
+        (
+            r#"<wml><card/><template/></wml>"#,
+            "<template> must precede all <card>",
+        ),
+        (
+            r#"<wml>deck text<card/></wml>"#,
+            "text content is not allowed",
+        ),
+    ];
+
+    for (xml, expected) in cases {
+        let err = parse_wml(xml).expect_err("invalid root content model must be rejected");
+        assert!(
+            err.contains(expected),
+            "expected {expected:?}, got {err:?} for {xml}"
+        );
+    }
+}
+
+#[test]
+fn wml_202_rejects_invalid_head_access_and_meta_structure_deterministically() {
+    let cases = [
+        (
+            r#"<wml><head/><card/></wml>"#,
+            "expected at least one <access> or <meta>",
+        ),
+        (
+            r#"<wml><head>metadata</head><card/></wml>"#,
+            "text content is not allowed",
+        ),
+        (
+            r#"<wml><head><vendor/></head><card/></wml>"#,
+            "expected at least one <access> or <meta>",
+        ),
+        (
+            r#"<wml><head><access><meta name="x" content="y"/></access></head><card/></wml>"#,
+            "<access> element must be empty",
+        ),
+        (
+            r#"<wml><head><access domain="a"/><access domain="b"/></head><card/></wml>"#,
+            "more than one <access>",
+        ),
+        (
+            r#"<wml><head><meta content="y"/></head><card/></wml>"#,
+            "exactly one of 'name' or 'http-equiv'",
+        ),
+        (
+            r#"<wml><head><meta name="x" http-equiv="X" content="y"/></head><card/></wml>"#,
+            "exactly one of 'name' or 'http-equiv'",
+        ),
+        (
+            r#"<wml><head><meta name="x"/></head><card/></wml>"#,
+            "missing required 'content'",
+        ),
+        (
+            r#"<wml><head><meta name="x" content="y" forua="yes"/></head><card/></wml>"#,
+            "attribute 'forua' must be 'true' or 'false'",
+        ),
+        (
+            r#"<wml><head><meta name="x" content="y">text</meta></head><card/></wml>"#,
+            "<meta> element must be empty",
+        ),
+    ];
+
+    for (xml, expected) in cases {
+        let err = parse_wml(xml).expect_err("invalid head content must be rejected");
+        assert!(
+            err.contains(expected),
+            "expected {expected:?}, got {err:?} for {xml}"
+        );
+    }
 }
