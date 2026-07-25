@@ -87,20 +87,17 @@ const configs = [
       clientCount: 31,
       serverCount: 31,
       mandatoryClientCount: 1,
-      selectedClassCTransportPathCount: 5,
-      selectedDirectNormativeTestEvidenceCount: 5,
+      selectedClassCTransportPathCount: 2,
+      selectedDirectNormativeTestEvidenceCount: 2,
       selectedProvisionalTestEvidenceCount: 0,
       orderedIdsSha256:
         'b1a481f22af82ba4bd69c433d692f714ba236a680c4ae318629c0d87ceb0e285'
     },
     selectedIds: [
       'WCMP-C-001',
-      'WCMP-SP-C-002',
-      'WCMP-GEN-C-001',
-      'WCMP-GEN-C-003',
-      'WCMP-GEN-C-006'
+      'WCMP-SP-C-001'
     ],
-    selectedStatus: { implemented: 5 }
+    selectedStatus: { implemented: 2 }
   },
   {
     family: 'wsp',
@@ -262,8 +259,12 @@ for (const config of configs) {
     ) {
       failures.push(`${config.family}: ${row.id} optimistic selected status`);
     }
+    const isImplementedNonIpCapability =
+      row.disposition?.classCProfile === 'capability-gated-non-ip-bearer' &&
+      row.mapping?.implementationStatus === 'implemented';
     if (
       !isSelected &&
+      !isImplementedNonIpCapability &&
       row.mapping?.implementationStatus !== 'not-assessed'
     ) {
       failures.push(`${config.family}: ${row.id} unselected audit drift`);
@@ -406,6 +407,32 @@ for (const dependencyId of [
   ) {
     failures.push(`${dependencyId}: WDP external source lock drift`);
   }
+}
+
+const rfc792Snapshot = wcmp.authority?.selectedExternalDependencies?.find(
+  (entry) => entry.id === 'rfc-792'
+);
+const rfc792Metadata = externalDependencies.dependencies.find(
+  (entry) => entry.id === 'rfc-792'
+);
+const rfc792Acquisition = externalIngestion.dependencies.find(
+  (entry) => entry.dependencyId === 'rfc-792'
+);
+if (
+  rfc792Snapshot?.sourceUrl !== rfc792Metadata?.sourceUrl ||
+  rfc792Snapshot?.referenceDisposition !== rfc792Metadata?.referenceDisposition ||
+  rfc792Snapshot?.acquisitionState !== rfc792Acquisition?.acquisitionState ||
+  JSON.stringify(rfc792Snapshot?.artifacts) !==
+    JSON.stringify(
+      rfc792Acquisition?.artifacts.map((artifact) => ({
+        id: artifact.id,
+        sourceUrl: artifact.sourceUrl,
+        bytes: artifact.bytes,
+        sha256: artifact.sha256
+      }))
+    )
+) {
+  failures.push('rfc-792: WCMP external source lock drift');
 }
 const openLabels = new Set(
   externalDependencies.openCitationGroups.flatMap((group) => group.labels)

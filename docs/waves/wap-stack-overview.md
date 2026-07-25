@@ -131,7 +131,7 @@ Required artifacts:
 
 ### Milestone 0: parser foundation
 
-- Close all 22 selected WDP/WCMP/WSP rows with source-derived deterministic
+- Close all 19 selected WDP/WCMP/WSP rows with source-derived deterministic
   fixtures.
 
 ### Milestone 1: strict transport core

@@ -1,0 +1,43 @@
+{
+  "sourceDocuments": [
+    {"id": "WAP-202-WCMP", "sections": ["5.3"]},
+    {"id": "rfc-792", "sections": ["Destination Unreachable Message", "Echo or Echo Reply Message"]}
+  ],
+  "supplementalDocuments": [
+    {"id": "rfc-1191", "sections": ["4"], "purpose": "Next-Hop MTU interoperability clarification for type 3 code 4"}
+  ],
+  "selectedRows": ["WCMP-C-001", "WCMP-SP-C-001"],
+  "clauseIds": [
+    "WCMP-CL-IP-NETWORKS-USE-ICMP",
+    "WCMP-CL-CDPD-USES-ICMP",
+    "WCMP-CL-ICMPV4-PROTOCOL",
+    "WCMP-CL-ICMPV4-CHECKSUM",
+    "WCMP-CL-ICMPV4-DESTINATION-UNREACHABLE-LAYOUT",
+    "WCMP-CL-ICMPV4-PORT-UNREACHABLE",
+    "WCMP-CL-ICMPV4-FRAGMENTATION-NEEDED",
+    "WCMP-CL-ICMPV4-ERROR-QUOTE",
+    "WCMP-CL-ICMPV4-ECHO-ROUNDTRIP"
+  ],
+  "quotedDatagrams": {
+    "udp": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51],
+    "udpDf": [69, 0, 0, 33, 18, 52, 64, 0, 64, 17, 164, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51]
+  },
+  "cases": [
+    {
+      "name": "destination-port-unreachable",
+      "encoded": [3, 3, 31, 203, 0, 0, 0, 0, 69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51]
+    },
+    {
+      "name": "fragmentation-needed-mtu-576",
+      "encoded": [3, 4, 29, 138, 0, 0, 2, 64, 69, 0, 0, 33, 18, 52, 64, 0, 64, 17, 164, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51]
+    },
+    {
+      "name": "echo-request",
+      "encoded": [8, 0, 72, 44, 18, 52, 0, 2, 222, 173, 190, 239]
+    },
+    {
+      "name": "echo-reply",
+      "encoded": [0, 0, 80, 44, 18, 52, 0, 2, 222, 173, 190, 239]
+    }
+  ]
+}

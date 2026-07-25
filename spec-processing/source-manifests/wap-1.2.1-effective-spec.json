@@ -1299,7 +1299,7 @@
         "classProfileLedger": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json",
         "selectedProfile": "CCR-CLASSC-C-001",
         "selectedFeatureGroup": "WCMP:MCF",
-        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through the general message structure, and WSP through the connectionless mode; connection-oriented WSP and WTP remain conditional."
+        "note": "The effective actor-specific SCR is source-extracted with exact dependency expressions. The selected Class C transport path resolves WDP through CDPD-shaped UDP/IPv4, WCMP through RFC 792 ICMP as required by WAP-202 section 5.3, and WSP through the connectionless mode; general WCMP is an explicit non-IP capability, while connection-oriented WSP and WTP remain conditional."
       },
       "successorEvidence": [],
       "documents": [

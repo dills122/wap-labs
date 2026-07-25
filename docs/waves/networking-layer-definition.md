@@ -78,7 +78,8 @@ Create golden fixtures for:
 
 - the eight selected WSP connectionless rows and source-derived
   GET/POST/REPLY encodings,
-- the five selected WCMP message rows,
+- the two selected ICMP-backed WCMP rows, with the general-WCMP codec gated to
+  explicitly selected non-IP bearers,
 - `WDP` UDP receive/send roundtrip with `9200`/`9201`/`9202`/`9203` mapping,
 - transport profile gating for `connectionless_only`, conditional
   `connection_mode`, `wtls_optional`, and `push_enabled`.

@@ -10,7 +10,7 @@ const FIXTURE_SOURCE: &str =
 struct WcmpFixture {
     source_document_id: String,
     source_sections: Vec<String>,
-    selected_rows: Vec<String>,
+    capability_rows: Vec<String>,
     address_profile: FixtureAddressProfile,
     cases: Vec<FixtureCase>,
     malformed: Vec<MalformedCase>,
@@ -87,7 +87,7 @@ fn expected_message(fixture: &WcmpFixture, name: &str) -> WcmpMessage {
 }
 
 #[test]
-fn source_derived_fixture_covers_selected_class_c_rows() {
+fn source_derived_fixture_covers_non_ip_general_wcmp_capability_rows() {
     let fixture = fixture();
     assert_eq!(fixture.source_document_id, "WAP-202-WCMP");
     assert_eq!(
@@ -95,7 +95,7 @@ fn source_derived_fixture_covers_selected_class_c_rows() {
         ["5.1", "5.2", "5.4", "5.5.1", "5.5.2", "5.5.3.1", "5.5.3.3", "5.5.3.5"]
     );
     assert_eq!(
-        fixture.selected_rows,
+        fixture.capability_rows,
         [
             "WCMP-C-001",
             "WCMP-SP-C-002",

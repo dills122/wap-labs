@@ -41,6 +41,7 @@ node spec-processing/scripts/generate-wap-selected-normative-clauses.mjs \
   --wmlscript-libraries-text /absolute/path/WAP-194-WMLScriptLibraries-20000925-a.txt \
   --rfc-768-text /absolute/path/rfc768.txt \
   --rfc-791-text /absolute/path/rfc791.txt \
+  --rfc-792-text /absolute/path/rfc792.txt \
   --rfc-2396-text /absolute/path/rfc2396.txt \
   --rfc-2616-text /absolute/path/rfc2616.txt \
   --rfc-2617-text /absolute/path/rfc2617.txt \
@@ -52,7 +53,7 @@ ingestion lock.
 
 ## Current slices
 
-The current artifact covers all 201 selected Class C parent rows:
+The current artifact covers all 198 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
@@ -60,14 +61,14 @@ The current artifact covers all 201 selected Class C parent rows:
 | WAE | 11 | 39 |
 | WBXML | 3 | 47 |
 | Caching | 5 | 68 |
-| WCMP | 5 | 28 |
+| WCMP | 2 | 9 |
 | WSP | 8 | 57 |
 | WDP | 9 | 49 |
 | WMLScript | 41 | 107 |
 | WMLScript Libraries | 80 | 211 |
-| **Total** | **201** | **780** |
+| **Total** | **198** | **761** |
 
-The 780 clauses are classified as 737 required, 31 recommended, and 12
+The 761 clauses are classified as 721 required, 29 recommended, and 11
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,

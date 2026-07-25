@@ -172,12 +172,13 @@ level:
   rows outside the selected client profile.
 - WDP: 146 active rows; the selected nine-row path resolves `WDP:MCF` through
   CDPD-shaped UDP/IPv4.
-- WCMP: 62 active rows; the selected five-row path resolves `WCMP:MCF`
-  through the general WCMP message structure.
+- WCMP: 62 active rows; the selected two-row path resolves `WCMP:MCF`
+  through RFC 792 ICMP for CDPD/IPv4. General WCMP remains an explicit non-IP
+  capability.
 - WSP: 109 active rows; the selected eight-row path resolves `WSP:MCF`
   through connectionless WSP.
 
-Nested normative-clause extraction is complete for all 201 selected parents
+Nested normative-clause extraction is complete for all 198 selected parents
 across WML, WAE, WBXML, caching, WCMP, the selected connectionless WSP path,
 the selected CDPD/UDP/IPv4 WDP path, WMLScript, and WMLScript Libraries. WTP is
 additionally required
@@ -192,7 +193,7 @@ effective specification in strict-mode requirements.
 
 Selected-profile implementation deltas are classified at
 `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`. The
-register covers all 201 selected rows and does not treat planning
+register covers all 198 selected rows and does not treat planning
 compatibility as direct conformance evidence.
 
 ## Associated and governing sources

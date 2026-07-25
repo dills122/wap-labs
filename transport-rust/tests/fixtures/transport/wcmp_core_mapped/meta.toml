@@ -1,5 +1,5 @@
 name = "wcmp-core-mapped"
-description = "Source-derived WAP-202 general-WCMP byte vectors, bounded generation, handling, and deterministic error outcomes."
+description = "Source-derived WAP-202 general-WCMP byte vectors, explicitly gated to a synthetic non-IP bearer capability."
 mode = "mapped"
 work_items = ["TRN-703", "TRN-707", "T0-17"]
 spec_items = [
@@ -19,5 +19,5 @@ testing_ac = [
   "Suppresses error-to-error, repeated fragmented-datagram, and congestion responses.",
   "Rejects oversized messages and truncates only Echo Reply data to the return-path fragment limit.",
   "Rejects malformed, truncated, invalid-code, and unsupported/reserved messages deterministically.",
-  "Proves the WAP-202 general-WCMP branch audited by TRN-707; TRN-708 must capability-gate it from the strict CDPD/IPv4 ICMP profile.",
+  "Proves the WAP-202 general-WCMP branch audited by TRN-707 remains available only behind an explicit non-IP capability and cannot satisfy strict CDPD/IPv4.",
 ]

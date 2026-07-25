@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "releaseId": "wap-1.2.1",
   "family": "wcmp",
-  "recordedOn": "2026-07-24",
+  "recordedOn": "2026-07-25",
   "target": {
     "stack": "WAP 1.2.1",
     "markup": "WML 1.3",
     "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)",
     "selectedRequirement": "WCMP:MCF",
-    "transportPath": "WCMP-C-001 plus the general WCMP message-structure alternative WCMP-SP-C-002 and its three dependency rows. The RFC ICMP alternative remains capability-declared but unselected."
+    "transportPath": "WCMP-C-001 plus the RFC 792 ICMP alternative WCMP-SP-C-001 for the selected CDPD/IPv4 bearer. The section 5.4/5.5 general-WCMP alternative WCMP-SP-C-002 remains implemented only as an explicit non-IP bearer capability."
   },
   "authority": {
     "effectiveSequence": [
@@ -26,7 +26,27 @@
         "textExtractionSha256": "b66ab9bdae87752b43e6607c273f2d9d37a6b933df3d59fb1ade663068d70db6"
       }
     ],
-    "selectedExternalDependencies": [],
+    "selectedExternalDependencies": [
+      {
+        "id": "rfc-792",
+        "title": "Internet Control Message Protocol",
+        "version": "RFC 792, September 1981",
+        "authority": "RFC Editor",
+        "authorityRecordUrl": "https://www.rfc-editor.org/rfc/rfc792.html",
+        "sourceUrl": "https://www.rfc-editor.org/rfc/rfc792.html",
+        "referenceDisposition": "effective-normative",
+        "applicability": "selected-ip-control",
+        "acquisitionState": "verified-private-full-artifact",
+        "artifacts": [
+          {
+            "id": "rfc-792-text",
+            "sourceUrl": "https://www.rfc-editor.org/rfc/rfc792.txt",
+            "bytes": 29186,
+            "sha256": "58714393ded142bacf188d7e8977eef98f4110c4c87ac94595f750df5664c2c6"
+          }
+        ]
+      }
+    ],
     "governingSource": {
       "documentId": "WAP-221-CREQ-20010425-a",
       "sha256": "d8713c9148db06d03365c361350eac8282f6b2f5ea6314ac80d728d57b8ac905",
@@ -49,11 +69,11 @@
     "clientCount": 31,
     "serverCount": 31,
     "mandatoryClientCount": 1,
-    "selectedClassCTransportPathCount": 5,
+    "selectedClassCTransportPathCount": 2,
     "selectedImplementationStatus": {
-      "implemented": 5
+      "implemented": 2
     },
-    "selectedDirectNormativeTestEvidenceCount": 5,
+    "selectedDirectNormativeTestEvidenceCount": 2,
     "selectedProvisionalTestEvidenceCount": 0,
     "orderedIdsSha256": "b1a481f22af82ba4bd69c433d692f714ba236a680c4ae318629c0d87ceb0e285"
   },
@@ -83,27 +103,28 @@
           "transport-rust"
         ],
         "requirementIds": [
-          "RQ-TRX-006"
+          "RQ-TRX-006",
+          "RQ-TRX-007",
+          "RQ-TRX-008"
         ],
         "workItems": [
-          "TRN-703",
-          "T0-17"
+          "TRN-708"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "The transport-owned WCMP module provides bounded selected-profile generation, handling, suppression, and explicit WDP error mapping with source-derived executable evidence.",
+        "assessmentNote": "The strict CDPD/IPv4 profile routes WDP control traffic through RFC 792 ICMP. The completed general-WCMP codec is reachable only through an explicit non-IP bearer profile.",
         "implementationEvidence": [
           {
-            "path": "transport-rust/src/network/wcmp/handler.rs",
-            "symbol": "pub fn handle_wcmp"
+            "path": "transport-rust/src/network/wcmp/profile.rs",
+            "symbol": "pub enum WdpControlProfile"
           }
         ],
         "testEvidence": [
           {
-            "path": "transport-rust/src/network/wcmp/tests.rs",
-            "test": "source_derived_fixture_covers_selected_class_c_rows",
-            "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+            "path": "transport-rust/tests/wcmp_cdpd_icmp_profile.rs",
+            "test": "general_wcmp_is_available_only_with_the_explicit_non_ip_profile",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+            "limitation": "Proves the strict profile rejects general WCMP and the non-IP profile retains it; it does not activate any additional bearer by default."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -123,28 +144,60 @@
         "staticConformanceSection": "Appendix A"
       },
       "disposition": {
-        "strict": "optional-or-alternate-wcmp-protocol-path",
-        "classCProfile": "optional-or-alternate-wcmp-protocol-path",
+        "strict": "required-for-selected-transport-path",
+        "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-not-selected-path",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-client-profile",
         "ownerLayers": [
           "transport-rust"
         ],
         "requirementIds": [
-          "RQ-TRX-006"
+          "RQ-TRX-006",
+          "RQ-TRX-007",
+          "RQ-TRX-008"
         ],
         "workItems": [
-          "TRN-703",
-          "T0-17"
+          "TRN-708"
         ],
-        "implementationStatus": "not-assessed",
-        "assessmentNote": "Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "not-assessed"
+        "implementationStatus": "implemented",
+        "assessmentNote": "Selected for the strict CDPD/IPv4 bearer by WAP-202 section 5.3. The RFC 792 codec maps type 3 codes 3 and 4 plus echo at the WDP error boundary; RFC 1191 clarifies the code 4 Next-Hop MTU field.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/icmpv4.rs",
+            "symbol": "pub fn decode_icmpv4"
+          },
+          {
+            "path": "transport-rust/src/network/wcmp/icmpv4.rs",
+            "symbol": "pub fn generate_icmpv4_error"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/tests/wcmp_cdpd_icmp_profile.rs",
+            "test": "destination_port_unreachable_maps_at_the_wdp_boundary",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Covers the selected client-side strict CDPD/IPv4 error boundary; no WCMP server claim is made."
+          },
+          {
+            "path": "transport-rust/tests/wcmp_cdpd_icmp_profile.rs",
+            "test": "fragmentation_needed_preserves_df_and_next_hop_mtu",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Covers the selected client-side strict CDPD/IPv4 error boundary; no WCMP server claim is made."
+          },
+          {
+            "path": "transport-rust/tests/wcmp_cdpd_icmp_profile.rs",
+            "test": "echo_request_and_reply_are_byte_exact_and_correlated",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Covers the selected client-side strict CDPD/IPv4 diagnostic boundary; no WCMP server claim is made."
+          }
+        ],
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -161,11 +214,11 @@
         "staticConformanceSection": "Appendix A"
       },
       "disposition": {
-        "strict": "required-for-selected-transport-path",
-        "classCProfile": "required-by-selected-class-c-transport-path",
+        "strict": "optional-non-ip-bearer-capability",
+        "classCProfile": "capability-gated-non-ip-bearer",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
+      "reviewState": "source-extracted-non-ip-capability-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-client-profile",
         "ownerLayers": [
@@ -179,7 +232,7 @@
           "T0-17"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "The general WCMP Type/Code/data structure is encoded and decoded in network order with deterministic malformed and unsupported-type outcomes.",
+        "assessmentNote": "The general WCMP Type/Code/data structure remains implemented and directly evidenced for explicitly selected non-IP bearers; it is not evidence for the strict CDPD/IPv4 claim.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wcmp/codec.rs",
@@ -192,7 +245,7 @@
             "test": "selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip",
             "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+            "limitation": "Closes only the capability-gated non-IP general-WCMP branch; it does not satisfy or execute in the strict CDPD/IPv4 profile."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -288,11 +341,11 @@
         "staticConformanceSection": "Appendix A"
       },
       "disposition": {
-        "strict": "required-for-selected-transport-path",
-        "classCProfile": "required-by-selected-class-c-transport-path",
+        "strict": "optional-non-ip-bearer-capability",
+        "classCProfile": "capability-gated-non-ip-bearer",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
+      "reviewState": "source-extracted-non-ip-capability-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-message-types",
         "ownerLayers": [
@@ -306,7 +359,7 @@
           "T0-17"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Destination Unreachable type 51, selected codes, original ports, CDPD/IPv4 address information, generation suppression, and WDP error mapping have byte-exact fixtures.",
+        "assessmentNote": "General-WCMP Destination Unreachable type 51 and selected codes retain byte-exact evidence for explicit non-IP bearers only; strict CDPD/IPv4 uses ICMP type 3 under TRN-708.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wcmp/handler.rs",
@@ -319,7 +372,7 @@
             "test": "generation_maps_port_and_buffer_failures_to_selected_messages",
             "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+            "limitation": "Closes only the capability-gated non-IP general-WCMP branch; it does not satisfy or execute in the strict CDPD/IPv4 profile."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -377,11 +430,11 @@
         "staticConformanceSection": "Appendix A"
       },
       "disposition": {
-        "strict": "required-for-selected-transport-path",
-        "classCProfile": "required-by-selected-class-c-transport-path",
+        "strict": "optional-non-ip-bearer-capability",
+        "classCProfile": "capability-gated-non-ip-bearer",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
+      "reviewState": "source-extracted-non-ip-capability-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-message-types",
         "ownerLayers": [
@@ -395,7 +448,7 @@
           "T0-17"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Message Too Big type 60 code 0, original ports, CDPD/IPv4 address information, buffer limit, and constrained-fragment rejection have byte-exact fixtures.",
+        "assessmentNote": "General-WCMP Message Too Big type 60 retains byte-exact evidence for explicit non-IP bearers only; strict CDPD/IPv4 uses ICMP type 3 code 4 under TRN-708.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wcmp/handler.rs",
@@ -408,7 +461,7 @@
             "test": "generation_maps_port_and_buffer_failures_to_selected_messages",
             "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+            "limitation": "Closes only the capability-gated non-IP general-WCMP branch; it does not satisfy or execute in the strict CDPD/IPv4 profile."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -504,11 +557,11 @@
         "staticConformanceSection": "Appendix A"
       },
       "disposition": {
-        "strict": "required-for-selected-transport-path",
-        "classCProfile": "required-by-selected-class-c-transport-path",
+        "strict": "optional-non-ip-bearer-capability",
+        "classCProfile": "capability-gated-non-ip-bearer",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
+      "reviewState": "source-extracted-non-ip-capability-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-message-types",
         "ownerLayers": [
@@ -522,7 +575,7 @@
           "T0-17"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Echo Reply type 179 code 0 preserves correlation and data, truncates only data to the return-path fragment limit, and exposes explicit rate limiting.",
+        "assessmentNote": "General-WCMP Echo Reply type 179 retains byte-exact evidence for explicit non-IP bearers only; strict CDPD/IPv4 uses ICMP echo types 8 and 0 under TRN-708.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wcmp/handler.rs",
@@ -535,7 +588,7 @@
             "test": "echo_request_generates_exact_reply_and_preserves_correlation",
             "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+            "limitation": "Closes only the capability-gated non-IP general-WCMP branch; it does not satisfy or execute in the strict CDPD/IPv4 profile."
           }
         ],
         "evidenceState": "direct-normative-test-linked"

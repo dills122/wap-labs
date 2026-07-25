@@ -259,9 +259,9 @@
             "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
           ],
           "acceptance": [
-            "All 201 selected rows across the nine mandatory Class C families have nested normative clauses anchored and deduplicated.",
+            "All 198 selected rows across the nine mandatory Class C families have nested normative clauses anchored and deduplicated.",
             "Normative text is not reduced to keyword search: implicit MUST rules and clauses within each SCR feature are anchored and deduplicated.",
-            "The completed ledger declares all nine covered families, zero remaining selected rows, and a closed 201-row gate."
+            "The completed ledger declares all nine covered families, zero remaining selected rows, and a closed 198-row gate."
           ],
           "evidence": [
             "node scripts/check-wap-selected-normative-clauses.mjs",
@@ -1000,7 +1000,7 @@
             "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json"
           ],
           "acceptance": [
-            "The five selected general-WCMP dependency rows are implemented and tested; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity."
+            "The five general-WCMP dependency rows are implemented and tested as an explicit non-IP capability; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity."
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml",
@@ -1079,8 +1079,8 @@
           "acceptance": [
             "Current successor-spec implementation assumptions are either proven compatible or ticketed as strict-mode corrections.",
             "The selected WDP CDPD/UDP/IPv4 service, primitive, port, and bearer assumptions are compared clause-by-clause against effective WAP-200 and WAP-259 without treating the successor as normative.",
-            "The selected general-WCMP implementation remains governed by WAP-202; WAP-259 delegates WCMP behavior to that specification and does not replace its exact message fixtures.",
-            "WAP-202 section 5.3 assigns CDPD/IP to ICMP; additive TRN-708 owns the strict-profile correction and capability-gates the completed TRN-703 general-WCMP branch.",
+            "The selected ICMP-backed WCMP implementation remains governed by WAP-202; WAP-259 delegates WCMP behavior to that specification rather than redefining it.",
+            "WAP-202 section 5.3 assigns CDPD/IP to ICMP; TRN-708 closes the strict-profile correction and capability-gates the completed TRN-703 general-WCMP branch.",
             "WTP and connection-oriented WSP remain inactive, and the missing WTP clause mapping remains explicit until a future capability claim activates the effective WAP-201/SIN closure."
           ],
           "evidence": [
@@ -1095,7 +1095,7 @@
         },
         {
           "id": "TRN-708",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["documentation", "transport-rust", "qa"],
           "sourceFamilies": ["wdp", "wcmp"],
           "existingTickets": [],
@@ -1111,7 +1111,8 @@
             "WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)"
           ],
           "outputs": [
-            "Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use"
+            "Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use",
+            "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json"
           ],
           "acceptance": [
             "The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the section 5.4 general-WCMP wire format.",
@@ -1123,12 +1124,14 @@
             "cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile",
             "node scripts/check-wap-transport-conformance-ledgers.mjs",
             "node scripts/check-wap-selected-normative-clauses.mjs",
-            "node scripts/check-requirement-status-drift.mjs"
+            "node scripts/check-requirement-status-drift.mjs",
+            "node scripts/wap-context-pack.mjs TRN-708",
+            "node scripts/check-wap-knowledge-graph.mjs"
           ]
         }
       ],
       "exitGates": [
-        "The nine-row selected WDP path and five-row selected WCMP path have executable evidence.",
+        "The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.",
         "WTP evidence is required only when connection-oriented WSP is claimed.",
         "Timing tests are deterministic and do not require live networks.",
         "WAP 2.0 transport deltas are explicit."

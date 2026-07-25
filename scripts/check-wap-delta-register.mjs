@@ -94,7 +94,7 @@ const familyDefinitions = [
     family: 'wcmp',
     ledgerFile: 'wap-1.2.1-wcmp-scr.json',
     selectedDisposition: 'required-by-selected-class-c-transport-path',
-    expectedSelected: 5,
+    expectedSelected: 2,
     expectedDerived: 0
   },
   {
@@ -298,8 +298,8 @@ if (
 }
 
 const expectedTrn707ClauseIds = [
-  'WCMP-CL-CLIENT-GENERAL-PROFILE',
-  'WCMP-CL-SELECTED-TYPE-CODE-VALUES',
+  'WCMP-CL-CDPD-USES-ICMP',
+  'WCMP-CL-IP-NETWORKS-USE-ICMP',
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
   'WDP-CL-IP-BEARER-REQUIRES-UDP',
@@ -323,7 +323,7 @@ const mappedTrn707ClauseIds = selectedClauses.families
 if (
   transportAudit?.workItemId !== 'TRN-707' ||
   transportAudit?.status !==
-    'strict-connectionless-audit-complete-wcmp-correction-open-conditional-wtp-open' ||
+    'strict-connectionless-audit-complete-wcmp-correction-complete-conditional-wtp-open' ||
   transportAudit?.scope?.connectionOrientedWspActivated !== false ||
   transportAudit?.scope?.wtpActivated !== false ||
   !transportAudit?.scope?.scopeLimitation?.includes('no whole-document equivalence') ||
@@ -332,9 +332,7 @@ if (
   auditClassifications.length !== 3 ||
   auditClassifications.some(
     (classification) =>
-      !['compatible', 'strict-correction-required'].includes(
-        classification.disposition
-      ) ||
+      classification.disposition !== 'compatible' ||
       !classification.finding ||
       !classification.fixture ||
       !classification.implementationEvidence?.length ||
@@ -342,13 +340,14 @@ if (
   ) ||
   auditClassifications.filter(
     (classification) => classification.disposition === 'compatible'
-  ).length !== 2 ||
+  ).length !== 3 ||
   auditClassifications.find(
     (classification) => classification.id === 'TRN-707-WCMP-TARGET-DELEGATION'
-  )?.disposition !== 'strict-correction-required' ||
+  )?.disposition !== 'compatible' ||
   JSON.stringify(auditedClauseIds) !== JSON.stringify(expectedTrn707ClauseIds) ||
   JSON.stringify(mappedTrn707ClauseIds) !== JSON.stringify(expectedTrn707ClauseIds) ||
-  JSON.stringify(transportAudit?.strictCorrectionWorkItems) !==
+  JSON.stringify(transportAudit?.strictCorrectionWorkItems) !== JSON.stringify([]) ||
+  JSON.stringify(transportAudit?.completedStrictCorrectionWorkItems) !==
     JSON.stringify(['TRN-708'])
 ) {
   failures.push('TRN-707 WDP/WCMP successor-compatibility audit drift');
@@ -366,7 +365,7 @@ const transportSelectedEntries = (register.entries ?? []).filter((entry) =>
   ['wdp', 'wcmp'].includes(entry.family)
 );
 if (
-  transportSelectedEntries.length !== 14 ||
+  transportSelectedEntries.length !== 11 ||
   transportSelectedEntries.some(
     (entry) =>
       entry.successorDerivedImplementation ||
@@ -402,14 +401,14 @@ const expectedSummary = {
   successorOnlyCapabilityCount: successorOnlyCapabilities.length
 };
 if (
-  expectedEntryCount !== 201 ||
+  expectedEntryCount !== 198 ||
   actualDerivedCount !== 17 ||
   JSON.stringify(actualDispositionCounts) !==
     JSON.stringify({
       compatible: 2,
       'strict-correction-required': 15,
       'successor-only': 0,
-      'not-successor-derived': 184
+      'not-successor-derived': 181
     }) ||
   JSON.stringify(register.summary) !== JSON.stringify(expectedSummary)
 ) {
@@ -461,7 +460,7 @@ const trn708 = program.sprints
   .flatMap((sprint) => sprint.workItems)
   .find((workItem) => workItem.id === 'TRN-708');
 if (
-  trn708?.status !== 'todo' ||
+  trn708?.status !== 'done' ||
   JSON.stringify(trn708?.dependsOn) !== JSON.stringify(['TRN-703', 'T0-17']) ||
   !trn708?.notes?.some((item) => item.includes('Preserve completed TRN-703/T0-17')) ||
   !trn708?.specReferences?.some((item) => item.includes('section 5.3')) ||
@@ -476,7 +475,7 @@ if (
 }
 
 if (
-  !deltaDocument.includes('201/201 selected rows') ||
+  !deltaDocument.includes('198/198 selected rows') ||
   !deltaDocument.includes('17 successor-derived implementation foundations') ||
   !deltaDocument.includes('15 require strict correction') ||
   !deltaDocument.includes('planning classification, not conformance evidence') ||
@@ -497,10 +496,10 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 successor delta register');
 console.log(
-  'PASS 201/201 selected rows classified; 17 successor-derived foundations'
+  'PASS 198/198 selected rows classified; 17 successor-derived foundations'
 );
 console.log(
-  'PASS 2 compatible / 15 strict-correction-required / 184 not successor-derived'
+  'PASS 2 compatible / 15 strict-correction-required / 181 not successor-derived'
 );
 console.log(
   'PASS four hash-locked authorities and five successor-only capability boundaries'

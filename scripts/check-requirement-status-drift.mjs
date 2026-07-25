@@ -95,9 +95,9 @@ const familyDefinitions = [
     ledgerFile: 'wap-1.2.1-wcmp-scr.json',
     selectedDisposition: 'required-by-selected-class-c-transport-path',
     expectedRows: 62,
-    expectedSelected: 5,
-    expectedClauses: 28,
-    expectedStatus: { implemented: 5, partial: 0, missing: 0 },
+    expectedSelected: 2,
+    expectedClauses: 9,
+    expectedStatus: { implemented: 2, partial: 0, missing: 0 },
     activeDoc: 'docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 16, blocked: 1, 'in-progress': 12, todo: 50 })
+  JSON.stringify({ done: 17, blocked: 1, 'in-progress': 12, todo: 49 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -321,10 +321,10 @@ if (
   selectedClauses.scope?.status !== 'complete' ||
   selectedClauses.scope?.remainingSelectedParentCount !== 0 ||
   aggregateRows !== 712 ||
-  aggregateSelected !== 201 ||
-  aggregateClauses !== 780 ||
+  aggregateSelected !== 198 ||
+  aggregateClauses !== 761 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 23, partial: 77, missing: 101 })
+  JSON.stringify({ implemented: 20, partial: 77, missing: 101 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -346,36 +346,36 @@ const requiredDocumentFragments = new Map([
   [
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
-      'all 201 selected rows now expand into 780',
-      '77 WDP/WCMP clauses are directly fixture-backed'
+      'all 198 selected rows now expand into 761',
+      '58 WDP/WCMP clauses are directly fixture-backed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_NORMATIVE_CLAUSE_LEDGER.md',
     [
-      'covers all 201 selected Class C parent rows',
-      'The 780 clauses are classified as 737 required'
+      'covers all 198 selected Class C parent rows',
+      'The 761 clauses are classified as 721 required'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
     [
       '`CONF-003` is complete',
-      'all nine families and all 201 selected parent rows'
+      'all nine families and all 198 selected parent rows'
     ]
   ],
   [
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '149 fixture-backed clauses assessed'
+      '131 fixture-backed clauses assessed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **201** | **780** | **23** | **77** | **101** |',
+      '| **Total** | **198** | **761** | **20** | **77** | **101** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -383,15 +383,15 @@ const requiredDocumentFragments = new Map([
   [
     'docs/waves/TRANSPORT_SPEC_TRACEABILITY.md',
     [
-      '14 implemented / 8 partial / 0 missing',
-      '14/22 direct normative tests'
+      '11 implemented / 8 partial / 0 missing',
+      '11/19 direct normative tests'
     ]
   ],
   [
     'README.md',
     [
-      '23/201 selected parent rows are implemented',
-      '149/780 clauses are directly assessed'
+      '20/198 selected parent rows are implemented',
+      '131/761 clauses are directly assessed'
     ]
   ]
 ]);
@@ -448,7 +448,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 requirement/status drift');
 console.log(
-  'PASS 712 source rows / 201 selected rows / 780 clauses remain synchronized'
+  'PASS 712 source rows / 198 selected rows / 761 clauses remain synchronized'
 );
 console.log(
   `PASS ${seenRequirementIds.size} requirement IDs, active additive work, evidence states, and strict guards`

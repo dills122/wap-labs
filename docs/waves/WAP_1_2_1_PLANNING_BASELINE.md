@@ -25,11 +25,11 @@ explicit capability/mode.
 | Release source | 97/97 technical members have verified private PDFs and non-empty text extractions; 21 are already canonical and 76 remain outside Git pending redistribution guidance |
 | Class selection | WAP-215's six Class A/B/C client/server graphs are extracted; `CCR-CLASSC-C-001` is the declared first-release profile |
 | Effective specifications | Every selected family has an ordered base/SIN chain and successor sources cannot silently replace the target release |
-| Selected obligations | 712 effective source rows reduce to 201 selected parent rows across nine mandatory families |
-| Nested clauses | The 201 parents expand into 780 clauses: 737 required, 31 recommended, and 12 permitted |
+| Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
+| Nested clauses | The 198 parents expand into 761 clauses: 721 required, 29 recommended, and 11 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 780 clause fixtures have target locations; 149 clauses now have direct conformance assessment and 631 remain unassessed |
-| Successor delta | All 201 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
+| Fixtures | All 761 clause fixtures have target locations; 131 clauses now have direct conformance assessment and 630 remain unassessed |
+| Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 79 unique work items with machine-checked rollups |
 
@@ -50,12 +50,12 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WMLScript Libraries | 80 | 211 | 0 | 14 | 66 |
 | Caching | 5 | 68 | 0 | 3 | 2 |
 | WDP | 9 | 49 | 9 | 0 | 0 |
-| WCMP | 5 | 28 | 5 | 0 | 0 |
+| WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 0 | 8 | 0 |
-| **Total** | **201** | **780** | **23** | **77** | **101** |
+| **Total** | **198** | **761** | **20** | **77** | **101** |
 
-Parent-row status is not a substitute for direct clause evidence. With 149 of
-780 clauses assessed, the project remains `pre-conformance` until every
+Parent-row status is not a substitute for direct clause evidence. With 131 of
+761 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
 
@@ -63,10 +63,10 @@ gap.
 
 The 79 work items currently roll up to:
 
-- 16 done (source/profile/governance planning, the first direct WDP/WCMP slices, and the frontend production-build defect closure);
+- 17 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
 - 12 in progress (WML evidence plus existing runtime, WAE, transport, and WSP foundations);
-- 50 todo.
+- 49 todo.
 
 New completion claims should follow the machine dependency graph:
 

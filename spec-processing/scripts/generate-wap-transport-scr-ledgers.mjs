@@ -134,13 +134,10 @@ const configs = [
     },
     selectedIds: [
       'WCMP-C-001',
-      'WCMP-SP-C-002',
-      'WCMP-GEN-C-001',
-      'WCMP-GEN-C-003',
-      'WCMP-GEN-C-006'
+      'WCMP-SP-C-001'
     ],
     selectedPath:
-      'WCMP-C-001 plus the general WCMP message-structure alternative WCMP-SP-C-002 and its three dependency rows. The RFC ICMP alternative remains capability-declared but unselected.',
+      'WCMP-C-001 plus the RFC 792 ICMP alternative WCMP-SP-C-001 for CDPD/IPv4. The section 5.4/5.5 general-WCMP alternative remains implemented only as an explicit non-IP bearer capability.',
     markers: [
       'Appendix A.',
       'Static Conformance Requirements',
@@ -189,6 +186,13 @@ const configs = [
     ]
   }
 ];
+
+const generalWcmpCapabilityIds = new Set([
+  'WCMP-SP-C-002',
+  'WCMP-GEN-C-001',
+  'WCMP-GEN-C-003',
+  'WCMP-GEN-C-006'
+]);
 
 if (
   classConformance.selectedTarget?.identifier !== 'CCR-CLASSC-C-001'
@@ -365,7 +369,9 @@ for (const config of configs) {
               externalDependencySnapshot('rfc-791'),
               externalDependencySnapshot('tiaeia-is-732-cdpd-set')
             ]
-          : [],
+          : config.family === 'wcmp'
+            ? [selectedWcmpRfc792Snapshot()]
+            : [],
       governingSource: {
         documentId: governing.documentId,
         sha256: governing.sha256,
@@ -444,6 +450,23 @@ function externalDependencySnapshot(id) {
       bytes: artifact.bytes,
       sha256: artifact.sha256
     }))
+  };
+}
+
+function selectedWcmpRfc792Snapshot() {
+  const snapshot = externalDependencySnapshot('rfc-792');
+  const metadata = externalDependencies.dependencies.find(
+    (entry) => entry.id === 'rfc-792'
+  );
+  const acquisition = externalIngestion.dependencies.find(
+    (entry) => entry.dependencyId === 'rfc-792'
+  );
+  return {
+    ...snapshot,
+    version: metadata.version,
+    authority: metadata.authority,
+    authorityRecordUrl: acquisition.authorityRecordUrl,
+    applicability: 'selected-ip-control'
   };
 }
 
@@ -550,8 +573,10 @@ function validateParsedRows(rows, config) {
 
 function buildObligation(config, row, ordinal, selected) {
   const isSelected = selected.has(row.id);
+  const isGeneralWcmpCapability =
+    config.family === 'wcmp' && generalWcmpCapabilityIds.has(row.id);
   const selectedStatus = selectedImplementationStatus(config.family, row.id);
-  const evidence = isSelected
+  const evidence = isSelected || isGeneralWcmpCapability
     ? selectedEvidence(config.family, row.id)
     : { implementationEvidence: [], testEvidence: [] };
   return {
@@ -575,17 +600,21 @@ function buildObligation(config, row, ordinal, selected) {
     disposition: {
       strict: isSelected
         ? 'required-for-selected-transport-path'
+        : isGeneralWcmpCapability
+          ? 'optional-non-ip-bearer-capability'
         : row.actor === 'server'
           ? 'not-applicable-to-client'
           : conditionalDisposition(config.family, row),
       classCProfile: isSelected
         ? 'required-by-selected-class-c-transport-path'
+        : isGeneralWcmpCapability
+          ? 'capability-gated-non-ip-bearer'
         : row.actor === 'server'
           ? 'server-only'
           : conditionalDisposition(config.family, row),
       enhancementMayReplaceStrictBehavior: false
     },
-    reviewState: isSelected
+    reviewState: isSelected || isGeneralWcmpCapability
       ? selectedStatus === 'implemented'
         ? 'source-extracted-class-c-path-implemented-direct-evidence'
         : 'source-extracted-class-c-path-applied-mapping-provisional'
@@ -595,13 +624,14 @@ function buildObligation(config, row, ordinal, selected) {
       ownerLayers: ['transport-rust'],
       requirementIds: requirementIds(config.family, row.id),
       workItems: workItems(config.family, row.id),
-      implementationStatus: isSelected ? selectedStatus : 'not-assessed',
-      assessmentNote: isSelected
+      implementationStatus:
+        isSelected || isGeneralWcmpCapability ? selectedStatus : 'not-assessed',
+      assessmentNote: isSelected || isGeneralWcmpCapability
         ? assessmentNote(config.family, row.id)
         : 'Preserved for source completeness; implementation is assessed when its optional, server, bearer, or alternate-mode capability is selected.',
       implementationEvidence: evidence.implementationEvidence,
       testEvidence: evidence.testEvidence,
-      evidenceState: isSelected
+      evidenceState: isSelected || isGeneralWcmpCapability
         ? selectedStatus === 'missing'
           ? 'no-implementation-or-test-evidence'
           : evidence.testEvidence.some(
@@ -625,6 +655,9 @@ function conditionalDisposition(family, row) {
     return 'optional-or-required-by-selected-bearer-address-dependency';
   }
   if (family === 'wcmp') {
+    if (generalWcmpCapabilityIds.has(row.id)) {
+      return 'capability-gated-non-ip-bearer';
+    }
     return 'optional-or-alternate-wcmp-protocol-path';
   }
   return 'optional-client-capability';
@@ -637,6 +670,9 @@ function implementationDomain(family, row) {
     return 'wdp-client-profile';
   }
   if (family === 'wcmp') {
+    if (id === 'WCMP-C-001' || id === 'WCMP-SP-C-001') {
+      return ['RQ-TRX-006', 'RQ-TRX-007', 'RQ-TRX-008'];
+    }
     if (row.id.includes('-GEN-')) return 'wcmp-message-types';
     return 'wcmp-client-profile';
   }
@@ -666,7 +702,11 @@ function requirementIds(family, id) {
 
 function workItems(family, id) {
   if (family === 'wdp') return ['TRN-701', 'T0-19'];
-  if (family === 'wcmp') return ['TRN-703', 'T0-17'];
+  if (family === 'wcmp') {
+    return id === 'WCMP-C-001' || id === 'WCMP-SP-C-001'
+      ? ['TRN-708']
+      : ['TRN-703', 'T0-17'];
+  }
   if (id === 'WSP-C-001' || id === 'WSP-CL-C-001') {
     return ['WSP-801', 'T0-09'];
   }
@@ -698,18 +738,21 @@ function assessmentNote(family, id) {
   }
   if (family === 'wcmp') {
     if (id === 'WCMP-C-001') {
-      return 'The transport-owned WCMP module provides bounded selected-profile generation, handling, suppression, and explicit WDP error mapping with source-derived executable evidence.';
+      return 'The strict CDPD/IPv4 profile routes WDP control traffic through RFC 792 ICMP while the general-WCMP codec is reachable only through an explicit non-IP bearer profile.';
+    }
+    if (id === 'WCMP-SP-C-001') {
+      return 'The RFC 792 codec maps type 3 codes 3 and 4 plus echo at the WDP error boundary; RFC 1191 clarifies the code 4 Next-Hop MTU field.';
     }
     if (id === 'WCMP-SP-C-002') {
-      return 'The general WCMP Type/Code/data structure is encoded and decoded in network order with deterministic malformed and unsupported-type outcomes.';
+      return 'The general WCMP Type/Code/data structure remains implemented and directly evidenced for explicitly selected non-IP bearers only.';
     }
     if (id === 'WCMP-GEN-C-001') {
-      return 'Destination Unreachable type 51, selected codes, original ports, CDPD/IPv4 address information, generation suppression, and WDP error mapping have byte-exact fixtures.';
+      return 'Destination Unreachable type 51 and selected codes retain byte-exact evidence for explicit non-IP bearers only.';
     }
     if (id === 'WCMP-GEN-C-003') {
-      return 'Message Too Big type 60 code 0, original ports, CDPD/IPv4 address information, buffer limit, and constrained-fragment rejection have byte-exact fixtures.';
+      return 'Message Too Big type 60 code 0 retains byte-exact evidence for explicit non-IP bearers only.';
     }
-    return 'Echo Reply type 179 code 0 preserves correlation and data, truncates only data to the return-path fragment limit, and exposes explicit rate limiting.';
+    return 'Echo Reply type 179 code 0 retains byte-exact evidence for explicit non-IP bearers only.';
   }
   if (id === 'WSP-C-001' || id === 'WSP-CL-C-001') {
     return 'Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.';
@@ -724,8 +767,12 @@ function selectedEvidence(family, id) {
   if (family === 'wcmp') {
     const evidenceById = {
       'WCMP-C-001': {
-        path: 'transport-rust/src/network/wcmp/handler.rs',
-        symbol: 'pub fn handle_wcmp'
+        path: 'transport-rust/src/network/wcmp/profile.rs',
+        symbol: 'pub enum WdpControlProfile'
+      },
+      'WCMP-SP-C-001': {
+        path: 'transport-rust/src/network/wcmp/icmpv4.rs',
+        symbol: 'pub fn decode_icmpv4'
       },
       'WCMP-SP-C-002': {
         path: 'transport-rust/src/network/wcmp/codec.rs',
@@ -745,7 +792,10 @@ function selectedEvidence(family, id) {
       }
     };
     const testById = {
-      'WCMP-C-001': 'source_derived_fixture_covers_selected_class_c_rows',
+      'WCMP-C-001':
+        'general_wcmp_is_available_only_with_the_explicit_non_ip_profile',
+      'WCMP-SP-C-001':
+        'destination_port_unreachable_maps_at_the_wdp_boundary',
       'WCMP-SP-C-002':
         'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip',
       'WCMP-GEN-C-001':
@@ -755,17 +805,22 @@ function selectedEvidence(family, id) {
       'WCMP-GEN-C-006':
         'echo_request_generates_exact_reply_and_preserves_correlation'
     };
+    const strictSelected = id === 'WCMP-C-001' || id === 'WCMP-SP-C-001';
     return {
       implementationEvidence: [evidenceById[id]],
       testEvidence: [
         {
-          path: 'transport-rust/src/network/wcmp/tests.rs',
+          path: strictSelected
+            ? 'transport-rust/tests/wcmp_cdpd_icmp_profile.rs'
+            : 'transport-rust/src/network/wcmp/tests.rs',
           test: testById[id],
-          fixture:
-            'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+          fixture: strictSelected
+            ? 'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json'
+            : 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
           evidenceClass: 'direct-normative',
-          limitation:
-            'Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed.'
+          limitation: strictSelected
+            ? 'Covers the selected client-side strict CDPD/IPv4 boundary; no WCMP server claim is made.'
+            : 'Closes only the capability-gated non-IP general-WCMP branch; it does not satisfy or execute in the strict CDPD/IPv4 profile.'
         }
       ]
     };

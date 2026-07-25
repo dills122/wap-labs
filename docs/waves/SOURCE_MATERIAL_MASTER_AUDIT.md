@@ -152,8 +152,8 @@ Supplemental-source precedence:
 - one-to-one mandatory/optional obligation ledgers for the WAP 1.2.1 target
   (WML 1.3, WAE, WBXML, WMLScript, WMLScript Libraries, caching, WDP, WCMP,
   and WSP complete at SCR/source-work-item and nested-clause planning level;
-  the 77 selected WDP/WCMP clauses now have direct fixture evidence)
-- WAP 1.2.1-to-successor delta records cover all 201 selected Class C rows;
+  the 58 selected WDP/WCMP clauses now have direct fixture evidence)
+- WAP 1.2.1-to-successor delta records cover all 198 selected Class C rows;
   optional-media and later OMA follow-on deltas remain separately pending
 
 Cross-source selected-profile accounting is now executable:
@@ -164,10 +164,10 @@ Cross-source selected-profile accounting is now executable:
 - 22 implemented, 78 partial, and 101 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
-- all 201 selected rows now expand into 780 deduplicated nested clauses with
+- all 198 selected rows now expand into 761 deduplicated nested clauses with
   source anchors and fixture plans;
-- 77 WDP/WCMP clauses are directly fixture-backed; direct conformance fixture
-  implementation remains the principal evidence gap for the other 704.
+- 58 WDP/WCMP clauses are directly fixture-backed; direct conformance fixture
+  implementation remains the principal evidence gap for the other 631.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes
@@ -184,7 +184,7 @@ line-item SCR ledgers now exist at
 `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
 `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. All selected-family
 SCR ledgers are complete. The cumulative nested normative-clause ledger covers
-all nine selected families and all 201 selected parents at
+all nine selected families and all 198 selected parents at
 `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`.
 WTP is additionally conditional on connection-oriented WSP.
 
@@ -193,7 +193,7 @@ WTP is additionally conditional on connection-oriented WSP.
 - [x] Source inventory, canonical precedence, and domain ownership.
 - [x] Effective base/SIN order for every selected family.
 - [x] Exact WAP-215 Class C profile and conditional-capability boundaries.
-- [x] Per-family SCR ledgers and all 780 selected nested clauses.
+- [x] Per-family SCR ledgers and all 761 selected nested clauses.
 - [x] Requirement, owner, work-item, and fixture-target crosswalk.
 - [x] Unified successor-delta register and deterministic drift controls.
 - [x] Dependency-ordered 13-sprint/78-item compliance program.

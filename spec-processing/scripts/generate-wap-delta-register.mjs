@@ -172,9 +172,9 @@ const selectedClauses = readJson(
 );
 if (
   selectedClauses.scope?.status !== 'complete' ||
-  selectedClauses.summary?.selectedParentCount !== 201
+  selectedClauses.summary?.selectedParentCount !== 198
 ) {
-  throw new Error('Complete 201-parent selected-clause ledger is required');
+  throw new Error('Complete 198-parent selected-clause ledger is required');
 }
 const clauseFamilyById = new Map(
   selectedClauses.families.map((family) => [family.family, family])
@@ -387,7 +387,7 @@ const successorOnlyCapabilities = [
 const transportSuccessorAudit = {
   workItemId: 'TRN-707',
   status:
-    'strict-connectionless-audit-complete-wcmp-correction-open-conditional-wtp-open',
+    'strict-connectionless-audit-complete-wcmp-correction-complete-conditional-wtp-open',
   scope: {
     activeProfile: 'wap-net-core / connectionless WSP over WDP',
     connectionOrientedWspActivated: false,
@@ -485,30 +485,31 @@ const transportSuccessorAudit = {
     {
       id: 'TRN-707-WCMP-TARGET-DELEGATION',
       family: 'wcmp',
-      disposition: 'strict-correction-required',
+      disposition: 'compatible',
       implementationBasis: 'target-era',
       targetClauseIds: [
-        'WCMP-CL-CLIENT-GENERAL-PROFILE',
-        'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+        'WCMP-CL-CDPD-USES-ICMP',
+        'WCMP-CL-IP-NETWORKS-USE-ICMP'
       ],
       targetSections: ['5.3', '5.4', '5.5.1', 'Appendix A'],
       successorSections: ['4.2.2'],
       finding:
-        'WAP-259 delegates WDP processing-error behavior to WCMP. WAP-202 section 5.3 assigns CDPD/IP to ICMP, so the current section 5.4/5.5 general-WCMP codec cannot satisfy the selected CDPD/IPv4 strict profile without capability gating and an ICMPv4 correction.',
+        'WAP-259 delegates WDP processing-error behavior to WCMP. The TRN-708 correction now follows WAP-202 section 5.3 by selecting RFC 792 ICMP for CDPD/IP and capability-gating the section 5.4/5.5 general-WCMP codec to explicit non-IP bearers.',
       implementationEvidence: [
-        'transport-rust/src/network/wcmp/message.rs::WcmpMessage',
-        'transport-rust/src/network/wcmp/codec.rs::decode_wcmp',
-        'transport-rust/src/network/wcmp/handler.rs::handle_wcmp'
+        'transport-rust/src/network/wcmp/profile.rs::WdpControlProfile',
+        'transport-rust/src/network/wcmp/icmpv4.rs::decode_icmpv4',
+        'transport-rust/src/network/wcmp/icmpv4.rs::generate_icmpv4_error'
       ],
       fixture:
-        'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+        'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json',
       tests: [
-        'network::wcmp::tests::source_derived_fixture_covers_selected_class_c_rows',
-        'network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip'
+        'wcmp_cdpd_icmp_profile::general_wcmp_is_available_only_with_the_explicit_non_ip_profile',
+        'wcmp_cdpd_icmp_profile::fragmentation_needed_preserves_df_and_next_hop_mtu'
       ]
     }
   ],
-  strictCorrectionWorkItems: ['TRN-708'],
+  strictCorrectionWorkItems: [],
+  completedStrictCorrectionWorkItems: ['TRN-708'],
   explicitGaps: [
     {
       family: 'wtp',

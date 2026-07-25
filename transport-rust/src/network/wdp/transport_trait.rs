@@ -50,6 +50,10 @@ pub enum WdpError {
         actual: usize,
         mtu: usize,
     },
+    Ipv4FragmentationNeeded {
+        actual: usize,
+        next_hop_mtu: Option<usize>,
+    },
     Ipv4FragmentMalformed {
         reason: String,
     },
@@ -158,6 +162,19 @@ impl std::fmt::Display for WdpError {
                     "IPv4 datagram size {actual} exceeds path MTU {mtu} with DF set"
                 )
             }
+            Self::Ipv4FragmentationNeeded {
+                actual,
+                next_hop_mtu,
+            } => match next_hop_mtu {
+                Some(mtu) => write!(
+                    f,
+                    "IPv4 datagram size {actual} requires fragmentation but DF is set; next-hop MTU is {mtu}"
+                ),
+                None => write!(
+                    f,
+                    "IPv4 datagram size {actual} requires fragmentation but DF is set; next-hop MTU was not reported"
+                ),
+            },
             Self::Ipv4FragmentMalformed { reason } => {
                 write!(f, "malformed IPv4 fragment: {reason}")
             }

@@ -33,11 +33,11 @@ Capture transport-adjacent requirements that affect Waves interoperability bound
 
 For the strict WAP 1.2.1 Class C target, the exact WCMP authority is
 `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`. The selected
-general-message dependency path contains `WCMP-C-001`, `WCMP-SP-C-002`,
-`WCMP-GEN-C-001`, `WCMP-GEN-C-003`, and `WCMP-GEN-C-006`; all five are
-currently missing and have no direct normative test evidence. The
-`RQ-TRX-006..008` groups below are thematic owners, not substitutes for those
-five rows.
+CDPD/IPv4 dependency path contains `WCMP-C-001` and `WCMP-SP-C-001`; both and
+their nine RFC 792/WAP-202 clauses have direct fixture evidence. The section
+5.4/5.5 general-message rows remain implemented only as an explicit non-IP
+capability. The `RQ-TRX-006..008` groups below are thematic owners, not
+substitutes for the selected source rows.
 
 ## Requirements matrix
 
@@ -112,39 +112,44 @@ Legend:
 ### RQ-TRX-006 WCMP error generation constraints
 
 - Requirement:
-  - WCMP error is not generated in response to another WCMP error.
-  - WCMP error is not generated for congestion drops.
-  - Port unreachable path generates destination-unreachable code 4.
+  - Strict CDPD/IPv4 uses ICMP rather than the general-WCMP wire format.
+  - Port unreachable generates and consumes ICMP type 3 code 3 with the
+    original IPv4/UDP quote.
 - Spec:
-  - `WAP-202` section 5.1, 5.5.3.1
+  - `WAP-202` section 5.3 and RFC 792 Destination Unreachable
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Error-generation guardrails are enforced in WCMP handling logic.
-  - [ ] Destination-unreachable code mapping includes code `4` for missing listener.
+  - Evidence: [x] `transport-rust/tests/wcmp_cdpd_icmp_profile.rs` and
+    `transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json`.
+  - [x] Profile selection rejects general WCMP in strict CDPD/IPv4.
+  - [x] Destination-unreachable code `3` maps the quoted destination port to
+    the WDP error boundary.
 
 ### RQ-TRX-007 WCMP parameter/error and MTU signaling
 
 - Requirement:
-  - Parameter-problem handling discards invalid packets and should notify source with index semantics.
-  - Message-too-big is used for first-fragment buffer-limit conditions.
+  - ICMP type 3 code 4 is used when fragmentation is required with DF set.
+  - The applicable Next-Hop MTU is preserved when present.
 - Spec:
-  - `WAP-202` section 5.5.3.2, 5.5.3.3
+  - `WAP-202` section 5.3, RFC 792 Destination Unreachable, and RFC 1191
+    section 4 as an interoperability clarification
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Parameter-problem emission includes correct index behavior (`0` when unknown).
-  - [ ] Message-too-big path is covered in segmentation/reassembly tests.
+  - Evidence: [x] `fragmentation_needed_preserves_df_and_next_hop_mtu`.
+  - [x] DF and Next-Hop MTU 576 are asserted byte-for-byte and mapped to WDP.
+  - [ ] General-WCMP Parameter Problem breadth remains an unselected non-IP
+    capability gap.
 
 ### RQ-TRX-008 WCMP echo diagnostics
 
 - Requirement:
-  - WDP node must implement WCMP echo request/reply behavior.
-  - Echo reply must return request data unmodified except path-MTU truncation cases.
+  - The selected WDP node implements ICMP echo request/reply behavior.
+  - Echo reply returns identifier, sequence number, and data unmodified.
 - Spec:
-  - `WAP-202` section 5.5.3.5
+  - `WAP-202` section 5.3 and RFC 792 Echo or Echo Reply
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Echo request/reply interop fixture exists with payload round-trip assertions.
-  - [ ] Path-MTU truncation behavior is explicitly handled.
+  - Evidence: [x] `echo_request_and_reply_are_byte_exact_and_correlated`.
+  - [x] Echo request/reply fixture has payload round-trip assertions.
+  - [x] The strict ICMP reply is deterministic and does not apply the
+    general-WCMP bearer-fragment truncation policy.
 
 ### RQ-TRX-009 Wireless Profiled TCP optimization baseline
 
@@ -186,8 +191,8 @@ Legend:
 
 ## Migration coupling
 
-- `TRN-703` owns implementation and direct fixture closure for the five-row
-  selected WCMP path.
+- `TRN-703` preserves the five-row general-WCMP capability for explicit
+  non-IP bearers; `TRN-708` owns the selected two-row ICMP-backed path.
 - `RQ-TRX-009` posture declaration is recorded via `T0-12`; protocol-level implementation beyond delegated/deferred posture remains gated by `T0-14` profile decisions.
 - `RQ-TRX-010` scope is explicitly `deferred` in `T0-13`; any future in-scope activation requires a follow-on ticket with adapter fixtures before code-path enablement.
 - `T0-17` remains the final scope lock so adjacent behavior cannot enter profile migration without explicit ticketing.

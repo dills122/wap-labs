@@ -16,10 +16,7 @@ tags:
 ## Relationships
 
 - `belongs-to` ← [[scr-rows/WCMP-C-001|WCMP-C-001]]
-- `belongs-to` ← [[scr-rows/WCMP-GEN-C-001|WCMP-GEN-C-001]]
-- `belongs-to` ← [[scr-rows/WCMP-GEN-C-003|WCMP-GEN-C-003]]
-- `belongs-to` ← [[scr-rows/WCMP-GEN-C-006|WCMP-GEN-C-006]]
-- `belongs-to` ← [[scr-rows/WCMP-SP-C-002|WCMP-SP-C-002]]
+- `belongs-to` ← [[scr-rows/WCMP-SP-C-001|WCMP-SP-C-001]]
 - `covers-family` ← [[work-items/TRN-703|TRN-703]]
 - `covers-family` ← [[work-items/TRN-707|TRN-707]]
 - `covers-family` ← [[work-items/TRN-708|TRN-708]]

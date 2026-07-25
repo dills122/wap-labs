@@ -189,10 +189,7 @@ const trnGraph = trnArtifacts.graph;
 const trnNodeIds = new Set(trnGraph.nodes.map((node) => node.id));
 const selectedWcmpRows = [
   'WCMP-C-001',
-  'WCMP-SP-C-002',
-  'WCMP-GEN-C-001',
-  'WCMP-GEN-C-003',
-  'WCMP-GEN-C-006'
+  'WCMP-SP-C-001'
 ];
 if (
   trnGraph.target.sprint !== 'TRN-7' ||
@@ -200,10 +197,11 @@ if (
   !trnNodeIds.has('work-item:TRN-702') ||
   !trnNodeIds.has('work-item:TRN-703') ||
   !trnNodeIds.has('work-item:TRN-706') ||
-  !trnNodeIds.has('work-item:TRN-707')
+  !trnNodeIds.has('work-item:TRN-707') ||
+  !trnNodeIds.has('work-item:TRN-708')
 ) {
   failures.push(
-    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703/TRN-706/TRN-707 work items'
+    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703/TRN-706/TRN-707/TRN-708 work items'
   );
 }
 for (const row of selectedWcmpRows) {
@@ -216,9 +214,14 @@ if (
   !trn703Pack.startsWith('# TRN-703 AI Context Pack') ||
   !trn703Pack.includes('### TRN-703:') ||
   trn703Pack.includes('### TRN-701:') ||
-  !trn703Pack.includes('- Direct normative clauses: 28')
+  !trn703Pack.includes('- Direct normative clauses: 0') ||
+  !trn703Pack.includes('`TRN-703` has no direct clause mapping') ||
+  JSON.stringify(trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-703']) !==
+    JSON.stringify(['wcmp'])
 ) {
-  failures.push('TRN-703 context rendering must remain bounded to its 28 direct WCMP clauses');
+  failures.push(
+    'TRN-703 context rendering must preserve its completed non-IP capability history as an explicit selected-profile mapping gap'
+  );
 }
 const trn702Pack = renderContextPack(trnGraph, 'TRN-702');
 if (
@@ -254,7 +257,7 @@ if (
   trn707Pack.includes('### TRN-706:') ||
   !trn707Pack.includes('- Direct normative clauses: 9') ||
   !trn707Pack.includes('`WAP-259-WDP-20010614-a`') ||
-  !trn707Pack.includes('additive TRN-708') ||
+  !trn707Pack.includes('TRN-708 closes') ||
   trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-707') ||
   JSON.stringify(trnGraph.summary.directClauseFamiliesByWorkItem['TRN-707']) !==
     JSON.stringify(['wcmp', 'wdp']) ||
@@ -263,6 +266,24 @@ if (
 ) {
   failures.push(
     'TRN-707 context rendering must expose nine WDP/WCMP comparison clauses, WAP-259 context, and the conditional WTP family gap'
+  );
+}
+
+const trn708Pack = renderContextPack(trnGraph, 'TRN-708');
+if (
+  !trn708Pack.startsWith('# TRN-708 AI Context Pack') ||
+  !trn708Pack.includes('### TRN-708:') ||
+  trn708Pack.includes('### TRN-707:') ||
+  !trn708Pack.includes('- Direct normative clauses: 13') ||
+  !trn708Pack.includes('`rfc-792`') ||
+  !trn708Pack.includes('WCMP-CL-CDPD-USES-ICMP') ||
+  trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-708') ||
+  JSON.stringify(trnGraph.summary.directClauseFamiliesByWorkItem['TRN-708']) !==
+    JSON.stringify(['wcmp', 'wdp']) ||
+  trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-708']
+) {
+  failures.push(
+    'TRN-708 context rendering must expose thirteen direct WDP/ICMP clauses, RFC 792, and no declared-family gap'
   );
 }
 

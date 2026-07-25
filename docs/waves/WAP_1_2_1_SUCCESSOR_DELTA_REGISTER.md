@@ -7,7 +7,7 @@ Status: `CONF-007` complete for the selected Class C profile
 
 Keep successor-era specifications useful without allowing them to redefine the
 WAP 1.2.1 / WML 1.3 compatibility floor. The register classifies all
-201/201 selected rows and distinguishes actual successor-derived implementation
+198/198 selected rows and distinguishes actual successor-derived implementation
 foundations from target-era, version-neutral, missing, and successor-only
 behavior.
 
@@ -38,8 +38,8 @@ The register identifies 17 successor-derived implementation foundations:
 |---|---:|---|
 | Compatible | 2 | Successor mapping preserves the target behavior, subject to direct target-fixture proof |
 | Strict correction required | 15 | Current successor-oriented behavior cannot close the target row without target-era correction and fixtures |
-| Not successor-derived | 184 | Missing, target-era, or version-neutral behavior; no successor substitution is claimed |
-| **Total** | **201** | **Every selected Class C row** |
+| Not successor-derived | 181 | Missing, target-era, or version-neutral behavior; no successor substitution is claimed |
+| **Total** | **198** | **Every selected Class C row** |
 
 Of the 17 successor-derived foundations, 15 require strict correction and two
 are compatible planning classifications.
@@ -62,16 +62,16 @@ code/test review establish the strict outcome.
   synthetic cases and require correction against effective WAP-203/SIN
   clauses.
 - WDP and WCMP: WAP-259 remains family delta context. Existing WDP UDP/IP
-  foundations are target-version-neutral; the selected WAP-202 general-WCMP
-  core is direct-fixture-backed, while unselected optional/server breadth
-  remains capability-gated.
+  foundations are target-version-neutral; the selected WAP-202 section 5.3
+  ICMP path is direct-fixture-backed, while general-WCMP and optional/server
+  breadth remain capability-gated.
 - WBXML, WMLScript, WMLScript Libraries, and caching: no selected-row
   successor-derived implementation basis is currently identified.
 
 ## TRN-707 transport audit
 
 TRN-707 extends the completed `CONF-007` register with transport-specific
-evidence; it does not rewrite the 201-row historical classification. The
+evidence; it does not rewrite the 198-row selected-profile classification. The
 selected WDP and WCMP implementation foundations remain
 `target-era-or-version-neutral`, and WAP-259 remains delta evidence only.
 
@@ -84,16 +84,14 @@ fixtures:
 |---|---|---|---|
 | WDP service and primitive | `WDP-CL-CONSISTENT-TRANSPORT-SERVICE`, `WDP-CL-UNITDATA-REQUEST-ANYTIME`, `WDP-CL-UNITDATA-CONTENT-TRANSPARENCY` | 4.1, 4.2, 5.3.2 | Compatible: the bearer-independent service, connectionless T-DUnitdata availability, and unchanged SDU delivery are preserved |
 | WDP CDPD/IP and registries | `WDP-CL-IP-BEARER-REQUIRES-UDP`, `WDP-CL-CDPD-UDP-IP-PROFILE`, `WDP-CL-SELECTED-WSP-PORT`, `WDP-CL-SELECTED-BEARER-ASSIGNMENT` | 4.3, 4.4.3, 6.2, Appendices B/C | Compatible: UDP/IP, port 9200, and bearer assignment `0x0D` are unchanged |
-| WCMP target delegation | `WCMP-CL-CLIENT-GENERAL-PROFILE`, `WCMP-CL-SELECTED-TYPE-CODE-VALUES` | 4.2.2 | Strict correction required: WAP-259 delegates to WAP-202, whose 5.3 assigns CDPD/IP to ICMP; the current 5.4/5.5 general-WCMP branch must be capability-gated |
+| WCMP target delegation | `WCMP-CL-CDPD-USES-ICMP`, `WCMP-CL-IP-NETWORKS-USE-ICMP` | 4.2.2 | Compatible after TRN-708: WAP-259 delegates to WAP-202, whose 5.3 assigns CDPD/IP to ICMP; strict CDPD/IPv4 selects ICMP and the general-WCMP branch is non-IP only |
 
 Direct WDP evidence remains the WAP-200/RFC fixture
 `transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`
-and is compatible. The WAP-202 fixture
-`transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json`
-proves the general-WCMP wire branch but not its use on the selected IP bearer.
-Additive follow-up `TRN-708` must select ICMPv4 for strict CDPD/IPv4 and keep
-the completed TRN-703 general-WCMP implementation behind an explicit non-IP
-capability.
+and is compatible. The focused WAP-202/RFC 792 fixture
+`transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json`
+proves the selected ICMPv4 path. TRN-708 is complete; the general-WCMP fixture
+remains preserved behind the explicit non-IP capability.
 
 WTP remains conditional and unmapped. TRN-707 does not activate WTP or
 connection-oriented WSP; a future capability claim must first map the
