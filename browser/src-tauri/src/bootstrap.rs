@@ -7,59 +7,7 @@ use lowband_transport_rust::preflight_wbxml_decoder;
 #[cfg(not(test))]
 use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
 #[cfg(not(test))]
-use tauri::path::BaseDirectory;
-#[cfg(not(test))]
 use tauri::Emitter;
-#[cfg(not(test))]
-use tauri::Manager;
-
-/// Pure path-resolution logic for the bundled wbxml2xml decoder binary,
-/// parameterized on the target OS name (as reported by
-/// `std::env::consts::OS`) so it can be exercised for every supported
-/// platform from a single test run, regardless of which platform the tests
-/// themselves execute on.
-///
-/// This function does no I/O; it only maps a platform name to the
-/// resource-relative path Tauri should resolve. It is intentionally kept
-/// out of the `#[cfg(not(test))]` boundary below so it stays covered by
-/// `cargo test`.
-pub(crate) fn bundled_wbxml_resource_relpath_for_os(os: &str) -> &'static str {
-    match os {
-        "macos" => "wbxml/macos/wbxml2xml",
-        "linux" => "wbxml/linux/wbxml2xml",
-        "windows" => "wbxml/windows/wbxml2xml.exe",
-        other => panic!("unsupported target OS for bundled wbxml decoder: {other}"),
-    }
-}
-
-pub(crate) fn bundled_wbxml_resource_relpath() -> &'static str {
-    bundled_wbxml_resource_relpath_for_os(std::env::consts::OS)
-}
-
-#[cfg(not(test))]
-fn configure_bundled_wbxml_decoder(app: &tauri::AppHandle) -> Result<(), String> {
-    let resource_path = app
-        .path()
-        .resolve(bundled_wbxml_resource_relpath(), BaseDirectory::Resource)
-        .map_err(|err| format!("failed resolving wbxml resource path: {err}"))?;
-    if !resource_path.is_file() {
-        return Ok(());
-    }
-
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mut perms = std::fs::metadata(&resource_path)
-            .map_err(|err| format!("failed reading wbxml binary metadata: {err}"))?
-            .permissions();
-        perms.set_mode(0o755);
-        std::fs::set_permissions(&resource_path, perms)
-            .map_err(|err| format!("failed making wbxml binary executable: {err}"))?;
-    }
-
-    std::env::set_var("WBXML2XML_BIN", &resource_path);
-    Ok(())
-}
 
 #[cfg(not(test))]
 fn preflight_wbxml_decoder_available() -> Result<(), String> {
@@ -173,8 +121,7 @@ pub fn run() {
                 handle_check_for_updates_menu(app);
             }
         })
-        .setup(|app| {
-            configure_bundled_wbxml_decoder(app.handle())?;
+        .setup(|_| {
             preflight_wbxml_decoder_available()?;
             Ok(())
         })

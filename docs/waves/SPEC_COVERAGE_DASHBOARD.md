@@ -41,8 +41,8 @@ Status: Active
 - WBXML ledger:
   - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
   - 15 active rows and 3 selected Class C client rows
-  - selected audit: 0 implemented, 1 partial, 2 missing
-  - direct normative test evidence: 0/3; one subprocess-boundary test linked
+  - selected audit: 0 implemented, 3 partial, 0 missing
+  - direct normative baseline tests: 3/3 selected parent rows
 - Selected normative-clause ledger:
   - `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
   - WML: 39 selected parents / 174 clauses

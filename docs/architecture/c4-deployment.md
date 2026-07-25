@@ -72,6 +72,7 @@ C4Deployment
 1. Tauri bundling is active for every supported target.
 2. Every bundled executable/resource has a recorded version, source, checksum, and license.
 3. Clean-machine tests prove no package-manager or PATH dependency.
-4. The application starts and can browse textual WML even if an optional decoder backend fails.
+4. The application starts without an external decoder and reports malformed or unsupported WMLC
+   as a request-scoped transport failure.
 5. Code signing/notarization, updater signatures, rollback, and SBOM checks are automated.
 6. No WAP/OMA specification PDF is included in customer application artifacts.

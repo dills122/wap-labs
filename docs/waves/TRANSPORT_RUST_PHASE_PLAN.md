@@ -21,7 +21,8 @@ Transport boundary ends at normalized deck payload and optional XML event stream
   protection. Pre-alpha development/interoperability profiles may keep this
   path available with an unavoidable no-WTLS warning and false protection
   state; release profiles must fail closed.
-- WBXML decode currently uses external `wbxml2xml` executable invocation.
+- WBXML decode uses the pinned built-in
+  `lowband-wml13-wbxml/0.1.0` transport decoder.
 - Retry/timeout/error mapping and coverage gate are active in Rust CI.
 
 Profile modes in use:
@@ -45,8 +46,10 @@ Objective:
 
 Scope:
 
-- Invoke a trusted, absolute `wbxml2xml` executable as an isolated subprocess.
-- Bound decoder execution time and decoded XML output.
+- Decode within the safe Rust transport boundary with explicit input-state,
+  nesting, and decoded-output limits.
+- Bound parser nesting and decoded XML output; retain the transport payload
+  limit at the request boundary.
 - Preserve existing error taxonomy (`WBXML_DECODE_FAILED`, etc.).
 - Keep all decode logic in `transport-rust` (no browser/runtime decode).
 
@@ -154,7 +157,7 @@ Immediate safety prerequisite, outside the deferred crypto implementation:
 
 Recommended now:
 
-- No native WBXML FFI dependency; package or install the isolated `wbxml2xml` decoder.
+- No native WBXML FFI dependency or decoder sidecar packaging requirement.
 
 Recommended later by phase:
 

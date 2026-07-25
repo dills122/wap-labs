@@ -10303,7 +10303,7 @@
       "family": "wbxml",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
-      "parentLedgerSha256": "24f46583d096ec9b2915d4f7042c4668ab3d23c7aec2a55dd04ba5fec617bee6",
+      "parentLedgerSha256": "77c6a4077a40867e6854499642799a432a01afc311dd66f6ee81b9a454909639",
       "effectiveSequence": [
         "WAP-192-WBXML",
         "WAP-192_105-WBXML"
@@ -10401,7 +10401,7 @@
             "staticConformanceSection": "9.2",
             "changeSection": "3.3"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -10423,7 +10423,7 @@
             "staticConformanceSection": "9.3",
             "changeSection": "3.3"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -12037,7 +12037,7 @@
             ],
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial",
-              "WBXML-C-011": "missing"
+              "WBXML-C-011": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -12080,7 +12080,7 @@
             ],
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial",
-              "WBXML-C-011": "missing"
+              "WBXML-C-011": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -12243,7 +12243,7 @@
               "RQ-RMK-010"
             ],
             "parentImplementationSnapshot": {
-              "WBXML-C-010": "missing"
+              "WBXML-C-010": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -12283,7 +12283,7 @@
               "RQ-RMK-010"
             ],
             "parentImplementationSnapshot": {
-              "WBXML-C-010": "missing"
+              "WBXML-C-010": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -12324,7 +12324,7 @@
               "RQ-RMK-010"
             ],
             "parentImplementationSnapshot": {
-              "WBXML-C-011": "missing"
+              "WBXML-C-011": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -12365,7 +12365,7 @@
               "RQ-RMK-010"
             ],
             "parentImplementationSnapshot": {
-              "WBXML-C-011": "missing"
+              "WBXML-C-011": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -12406,7 +12406,7 @@
               "RQ-RMK-010"
             ],
             "parentImplementationSnapshot": {
-              "WBXML-C-011": "missing"
+              "WBXML-C-011": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

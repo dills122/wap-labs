@@ -27,11 +27,6 @@ jobs:
           workspaces: |
             transport-rust -> target
 
-      - name: Install isolated WBXML decoder
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwbxml2-utils
-
       - name: Run WAP smoke
         run: make smoke-transport-wap
 

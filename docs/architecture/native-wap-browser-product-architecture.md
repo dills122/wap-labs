@@ -24,8 +24,9 @@ The existing native path is a constrained proof of the right architecture, not y
 - it does not establish WTLS for `waps://`;
 - it treats the URL host as the UDP WAP peer instead of separating the resource URL from the configured proxy/gateway endpoint;
 - direct HTTP currently accepts `GET`, but not WML form `POST`;
-- WBXML/WMLC decoding requires an external `wbxml2xml` executable at application startup;
-- the Tauri bundle is disabled and no platform decoder binaries are present.
+- WBXML/WMLC decoding now uses Lowband's pinned safe Rust baseline without an
+  external executable;
+- the Tauri bundle remains disabled for broader product-packaging work.
 
 The recommended target is a **library-first modular monolith**:
 
@@ -78,12 +79,12 @@ All three primary Rust packages are currently version `0.3.0`:
 | WTP Classes 0/1/2                        | Policy/state-machine fixtures only              | No production WSP connection-mode composition                                            |
 | WTLS                                     | Prototype boundary only                         | Current record/alert/handshake envelopes are not WAP-261 wire codecs and are not live    |
 | `waps://`                                | Unsafe test placeholder                         | Selects UDP port 9202 and sends unprotected WSP; warn in development and fail in release |
-| WMLC/WBXML decode                        | Functional only with external tool              | Browser startup fails if `wbxml2xml` is unavailable                                      |
+| WMLC/WBXML decode                        | Pinned built-in baseline                         | WML 1.3 page-zero structure/default/literal fixtures pass; exhaustive clause breadth remains |
 | Cookie jar and HTTP state                | Missing                                         | A new `reqwest::Client` is built for each fetch; no persistent cookie state              |
 | Cache                                    | Request directives only                         | `no-cache` headers exist, but there is no browser cache store                            |
 | Authentication and credential storage    | Missing                                         | No origin/proxy authentication lifecycle                                                 |
 | Bearer support                           | IP/UDP only                                     | No SMS, USSD, SMPP, or carrier-specific client bearer adapters                           |
-| Installable all-in-one bundle            | Missing                                         | Tauri `bundle.active` is false; decoder resource folders contain only a README           |
+| Installable all-in-one bundle            | Missing                                         | Tauri `bundle.active` is false; decoder sidecar packaging is no longer required          |
 
 ### Documentation accuracy warning
 
@@ -358,33 +359,29 @@ integration surface.
 
 ## WBXML decision
 
-The installed browser must not require users to install `wbxml2xml`.
+The installed browser does not require users to install `wbxml2xml`.
 
-### Near-term release bridge
+### Current built-in baseline
 
-Bundle a version-pinned `wbxml2xml` sidecar per target architecture:
+Lowband pins `lowband-wml13-wbxml/0.1.0` in safe Rust and keeps WBXML parsing
+inside the transport layer. The direct WML-203 corpus establishes header,
+multi-byte integer, string-table, page-zero parser-state, global-token,
+literal, default-attribute, and malformed-input behavior without FFI or a
+sidecar.
 
-- checksum and provenance every binary;
-- retain the current timeout and output limits;
-- include required LGPL notices and satisfy redistribution obligations;
-- make the Tauri bundle active;
-- add clean-machine installer tests;
-- do not fail application startup for textual-WML-only use if the optional decoder is missing.
+### Remaining SDK path
 
-Tauri 2 officially supports architecture-specific embedded sidecars. This is the shortest path
-to a single installer, but it leaves the standalone Rust SDK with a native tool dependency.
+Complete the bounded WML 1.3 WBXML codec from `WAP-192` and the WML token
+tables:
 
-### Long-term SDK path
-
-Implement a bounded WML 1.3 WBXML codec in Rust from `WAP-192` and the WML token tables:
-
-- decode and encode global tokens, literals, string tables, code pages, entities, opaque data,
-  extensions, tags, and attributes;
+- finish exhaustive global-token, literal, charset, processing-instruction,
+  opaque/application-extension, tag, and attribute fixture breadth;
 - enforce byte, nesting, string-table, token-count, and decoded-output limits;
 - preserve unknown-token behavior according to an explicit conformance policy;
 - use differential tests against libwbxml and captured WMLC fixtures;
 - fuzz the decoder as an untrusted-input boundary;
-- keep the sidecar backend temporarily available as a differential oracle.
+- use an independently pinned libwbxml executable only as a test oracle if
+  differential coverage is added.
 
 Do not link libwbxml directly into the browser process merely to remove the subprocess. That
 would trade an operational dependency for a larger unsafe native parsing boundary and still
@@ -454,9 +451,9 @@ Work:
 
 - implement direct HTTP `POST` and WML form submission;
 - add session-scoped cookie storage and the minimum WAP HTTP state profile;
-- bundle the WBXML sidecar or finish a native WML/WBXML decoder;
+- finish exhaustive native WML/WBXML decoder conformance;
 - enable and validate Tauri bundles for target platforms;
-- make decoder degradation request-scoped rather than an unconditional startup failure;
+- keep decoder failures request-scoped;
 - add profile/settings UI and direct HTTP/HTTPS/WMLC clean-machine E2E tests;
 - add user-visible certificate, content-type, and navigation errors.
 

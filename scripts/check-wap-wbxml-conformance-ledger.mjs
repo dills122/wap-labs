@@ -50,6 +50,22 @@ const classConformance = JSON.parse(
     'utf8'
   )
 );
+const selectedNormativeClauses = JSON.parse(
+  fs.readFileSync(
+    path.join(
+      root,
+      'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json'
+    ),
+    'utf8'
+  )
+);
+const conformanceCorpusPath = path.join(
+  root,
+  'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json'
+);
+const conformanceCorpus = JSON.parse(
+  fs.readFileSync(conformanceCorpusPath, 'utf8')
+);
 
 const failures = [];
 const allowedActors = new Set([
@@ -310,6 +326,14 @@ for (const obligation of obligations) {
     if (!evidence.command?.endsWith(evidence.test)) {
       failures.push(`${obligation.id}: test command is not exact`);
     }
+    if (
+      evidence.fixture &&
+      !fs.existsSync(path.join(root, evidence.fixture))
+    ) {
+      failures.push(
+        `${obligation.id}: missing fixture path ${evidence.fixture}`
+      );
+    }
   }
 }
 
@@ -332,8 +356,8 @@ const statusById = new Map(
 );
 if (
   statusById.get('WBXML-C-001') !== 'partial' ||
-  statusById.get('WBXML-C-010') !== 'missing' ||
-  statusById.get('WBXML-C-011') !== 'missing'
+  statusById.get('WBXML-C-010') !== 'partial' ||
+  statusById.get('WBXML-C-011') !== 'partial'
 ) {
   failures.push('selected WBXML implementation audit drift');
 }
@@ -344,10 +368,124 @@ if (
   ledger.summary?.selectedClassCRequiredCount !== 3 ||
   ledger.summary?.selectedClassCOptionalCount !== 0 ||
   ledger.summary?.selectedClassCNotApplicableCount !== 12 ||
-  ledger.summary?.selectedDirectNormativeTestEvidenceCount !== 0 ||
-  ledger.summary?.selectedBoundaryTestEvidenceCount !== 1
+  ledger.summary?.selectedDirectNormativeTestEvidenceCount !== 3 ||
+  ledger.summary?.selectedBoundaryTestEvidenceCount !== 0
 ) {
   failures.push('WBXML summary counts drift');
+}
+
+const wbxmlClauseFamily = selectedNormativeClauses.families?.find(
+  (family) => family.family === 'wbxml'
+);
+const canonicalClauseIds = new Set(
+  (wbxmlClauseFamily?.clauses ?? []).map((clause) => clause.id)
+);
+const parentClauseIds = new Map(
+  (wbxmlClauseFamily?.parents ?? []).map((parent) => [
+    parent.id,
+    new Set(parent.clauseIds)
+  ])
+);
+const corpusFixtures = conformanceCorpus.fixtures ?? [];
+const corpusFixtureIds = new Set();
+const corpusScrIds = new Set();
+const citedClauseIds = new Set();
+const equivalenceGroups = new Map();
+
+if (
+  conformanceCorpus.schemaVersion !== 1 ||
+  conformanceCorpus.decoder !== 'lowband-wml13-wbxml/0.1.0' ||
+  JSON.stringify(conformanceCorpus.sourceDocuments) !==
+    JSON.stringify(['WAP-192-WBXML', 'WAP-191_104-WML'])
+) {
+  failures.push('WBXML conformance corpus identity/source locks drift');
+}
+
+for (const fixture of corpusFixtures) {
+  if (!fixture.id || corpusFixtureIds.has(fixture.id)) {
+    failures.push(`invalid or duplicate WBXML fixture id=${fixture.id}`);
+  }
+  corpusFixtureIds.add(fixture.id);
+  if (
+    typeof fixture.bytesHex !== 'string' ||
+    !/^(?:[0-9a-fA-F]{2}\s*)+$/.test(fixture.bytesHex)
+  ) {
+    failures.push(`${fixture.id}: bytesHex is not a complete octet stream`);
+  }
+  const hasExpectedXml =
+    typeof fixture.expectedXml === 'string' && fixture.expectedXml.length > 0;
+  const hasExpectedError =
+    typeof fixture.expectedErrorContains === 'string' &&
+    fixture.expectedErrorContains.length > 0;
+  if (hasExpectedXml === hasExpectedError) {
+    failures.push(
+      `${fixture.id}: exactly one fixed success or failure outcome is required`
+    );
+  }
+  if (
+    !Array.isArray(fixture.scr) ||
+    fixture.scr.length === 0 ||
+    !Array.isArray(fixture.clauses) ||
+    fixture.clauses.length === 0 ||
+    !Array.isArray(fixture.sourceSections) ||
+    fixture.sourceSections.length === 0
+  ) {
+    failures.push(`${fixture.id}: source-derived fixture metadata is incomplete`);
+    continue;
+  }
+
+  const fixtureParentClauses = new Set();
+  for (const scrId of fixture.scr) {
+    corpusScrIds.add(scrId);
+    if (!expectedSelectedIds.includes(scrId)) {
+      failures.push(`${fixture.id}: non-selected SCR id=${scrId}`);
+      continue;
+    }
+    for (const clauseId of parentClauseIds.get(scrId) ?? []) {
+      fixtureParentClauses.add(clauseId);
+    }
+  }
+  for (const clauseId of fixture.clauses) {
+    citedClauseIds.add(clauseId);
+    if (
+      !canonicalClauseIds.has(clauseId) ||
+      !fixtureParentClauses.has(clauseId)
+    ) {
+      failures.push(
+        `${fixture.id}: clause ${clauseId} is not canonical for its listed SCR rows`
+      );
+    }
+  }
+  if (fixture.equivalentGroup) {
+    if (!hasExpectedXml) {
+      failures.push(
+        `${fixture.id}: equivalence groups require a successful XML outcome`
+      );
+    }
+    const outputs = equivalenceGroups.get(fixture.equivalentGroup) ?? [];
+    outputs.push(fixture.expectedXml);
+    equivalenceGroups.set(fixture.equivalentGroup, outputs);
+  }
+}
+
+if (
+  corpusFixtures.length !== 20 ||
+  citedClauseIds.size !== 39 ||
+  JSON.stringify([...corpusScrIds].sort()) !==
+    JSON.stringify([...expectedSelectedIds].sort())
+) {
+  failures.push('WBXML direct corpus coverage/count drift');
+}
+const basicDeckOutputs = equivalenceGroups.get('basic-deck') ?? [];
+const attributeFragmentOutputs =
+  equivalenceGroups.get('attribute-fragments') ?? [];
+if (
+  basicDeckOutputs.length !== 2 ||
+  new Set(basicDeckOutputs).size !== 1 ||
+  attributeFragmentOutputs.length !== 2 ||
+  new Set(attributeFragmentOutputs).size !== 1
+) {
+  failures.push('WBXML binary/literal equivalence groups drift');
 }
 
 if (failures.length > 0) {
@@ -361,5 +499,6 @@ if (failures.length > 0) {
 console.log('==> WAP 1.2.1 WBXML SCR ledger');
 console.log('PASS 15 effective rows (11 mandatory / 4 optional)');
 console.log('PASS WBXML:MCF selects 3 mandatory client rows');
-console.log('PASS selected implementation audit: 0 implemented / 1 partial / 2 missing');
+console.log('PASS selected implementation audit: 0 implemented / 3 partial / 0 missing');
+console.log('PASS 20 fixed-outcome fixtures cite 39 canonical nested clauses');
 console.log('PASS source locks, mappings, and conservative evidence links');

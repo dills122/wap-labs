@@ -95,5 +95,6 @@ boundaries.
 - [ ] Classic WAP requests accept an explicit gateway endpoint distinct from resource URI.
 - [ ] Waves, Lowband CLI, and optional service use one Lowband client facade.
 - [ ] WaveNav remains free of network and WBXML dependencies.
-- [ ] Clean-machine browser install has no external `wbxml2xml` prerequisite.
+- [x] Clean-machine browser install has no external `wbxml2xml` prerequisite;
+  Lowband contains the pinned safe Rust decoder baseline.
 - [ ] Kannel remains in compatibility smoke and conformance documentation only.

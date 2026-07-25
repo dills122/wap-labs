@@ -35,9 +35,6 @@
     "shortDescription": "WAP/WML based browser 1.x",
     "longDescription": "A WAP/WML based browser 1.x for loading and navigating WML decks.",
     "copyright": "Copyright (c) 2026 WaveNav",
-    "resources": [
-      "resources/wbxml/**/*"
-    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

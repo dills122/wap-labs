@@ -9,6 +9,11 @@ In-process Rust transport boundary used by the Waves browser host.
 - content-type normalization and WML payload mapping
 - WBXML decode path (`application/vnd.wap.wmlc` -> textual WML)
 
+The runtime decoder is built into this crate and pinned as
+`lowband-wml13-wbxml/0.1.0`; it does not require a sidecar binary or FFI
+dependency. WBXML parsing remains transport-owned, and the engine receives
+only normalized textual WML plus the original bytes as metadata.
+
 ## Engine Handoff Normalization Guarantees (`T0-02`)
 
 When `FetchDeckResponse.ok === true`, `engineDeckInput` is present and follows these rules:
@@ -60,6 +65,9 @@ When `FetchDeckResponse.ok === false`:
 
 - Unit tests in `src/lib.rs` cover normalization and mapping behavior.
 - Integration fixtures in `tests/fixtures/transport/` cover fixture-driven mapping expectations.
+- Source-derived WML 1.3 WBXML fixtures live in
+  `tests/fixtures/transport/wbxml_wml13/conformance.json` and run through the
+  three exact `transport_wbxml_c_*` tests.
 
 ## Next implementation slice
 
@@ -79,7 +87,9 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add deterministic WTP replay-window fixtures (`T0-08`)
 - [x] Add UA capability header conformance path (`T0-05`)
 - [x] Add URI-length and charset boundary conformance fixtures (`T0-06`)
-- [ ] Add WBXML token/literal compatibility conformance fixtures (`T0-07`)
+- [ ] Complete WBXML token/literal compatibility conformance (`T0-07` /
+  `R0-08`; pinned decoder and direct three-row baseline landed, exhaustive
+  clause closure remains open)
 - [x] Add WSP assigned-number registry fixture lane (`T0-10`)
 - [x] Add WSP capability negotiation/bounds fixture lane (`T0-11`)
 - [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)

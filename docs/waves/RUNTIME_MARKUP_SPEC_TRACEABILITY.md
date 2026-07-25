@@ -162,20 +162,23 @@ Legend:
   - `WAP-192_105-WBXML-20011015-a` section 3.3 and corrected section 9
   - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
 - Status:
-  - `partial/planned`: the external subprocess boundary exists, but no pinned
-    decoder or direct source-derived conformance fixtures prove the three
-    selected rows.
+  - `partial`: the pinned built-in decoder and direct source-derived corpus
+    establish a bounded baseline for all three selected rows. Exhaustive
+    clause/token, charset, PI/opaque, external typing, and deck-model parity
+    breadth remains planned.
 - AC:
-  - Evidence: [ ] Link source-derived fixtures and exact runnable tests for all
-    three selected rows.
-  - [ ] Decoder version/capability identity is pinned and available in the
+  - Evidence: [x] `transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json`
+    and the three exact `transport_wbxml_c_*` tests provide direct parent-row
+    evidence.
+  - [x] Decoder version/capability identity is pinned and available in the
     supported all-in-one packaging path.
   - [ ] Header, multi-byte integer, string-table, code-page, global-token,
     literal, entity, opaque, extension, and malformed-input behavior is
-    deterministic.
-  - [ ] Default-attribute and binary/literal equivalence fixtures reach
-    equivalent textual WML/deck outcomes where applicable.
-  - [ ] Strict decode remains in `transport-rust`; `engine-wasm` receives
+    deterministic. The baseline covers each category except successful
+    application-defined opaque handling and exhaustive extension forms.
+  - [ ] Default-attribute and binary/literal fixtures reach equivalent textual
+    WML; direct equivalent engine deck-model execution remains open.
+  - [x] Strict decode remains in `transport-rust`; `engine-wasm` receives
     normalized textual WML.
 
 ### RQ-RMK-011 Deck access-control enforcement

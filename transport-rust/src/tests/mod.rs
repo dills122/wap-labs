@@ -33,10 +33,7 @@ pub(super) use crate::responses::{
     invalid_request_response, is_supported_wml_content_type, map_success_payload_response,
     map_terminal_send_error, normalize_content_type, payload_too_large_response,
 };
-pub(super) use crate::wbxml::{
-    decode_wmlc, decode_wmlc_with_tool, decode_wmlc_with_tool_limits, resolve_wbxml_decoder_path,
-    wbxml2xml_bin,
-};
+pub(super) use crate::wbxml::decode_wmlc;
 pub(super) use base64::engine::general_purpose::STANDARD as BASE64;
 pub(super) use base64::Engine as _;
 pub(super) use serde::Deserialize;
@@ -109,31 +106,6 @@ fn with_env_removed_locked<T>(name: &str, f: impl FnOnce() -> T) -> T {
         std::env::set_var(name, old);
     }
     out
-}
-
-#[cfg(unix)]
-fn write_fake_decoder_script(xml: &str) -> PathBuf {
-    let script = format!(
-        "#!/bin/sh\nif [ \"$1\" != \"-o\" ]; then exit 2; fi\nout=\"$2\"\nprintf '%s' '{}' > \"$out\"\n",
-        xml
-    );
-    write_decoder_script(&script)
-}
-
-#[cfg(unix)]
-fn write_decoder_script(script: &str) -> PathBuf {
-    use std::os::unix::fs::PermissionsExt;
-    let dir = tempfile::tempdir().expect("tempdir should create");
-    let path = dir.path().join("fake-wbxml2xml.sh");
-    fs::write(&path, script).expect("fake decoder script should write");
-    let mut perms = fs::metadata(&path)
-        .expect("fake decoder metadata should exist")
-        .permissions();
-    perms.set_mode(0o755);
-    fs::set_permissions(&path, perms).expect("fake decoder should become executable");
-    let keep = path.clone();
-    std::mem::forget(dir);
-    keep
 }
 
 fn wbxml_sample_paths() -> Vec<PathBuf> {
@@ -589,4 +561,5 @@ fn expect_wsp_primitive_decision(expected: &str) -> WspPrimitiveDecision {
 mod fetch_mapping;
 mod replay_profiles;
 mod request_gateway_policy;
+mod wbxml_conformance;
 mod wbxml_env;
