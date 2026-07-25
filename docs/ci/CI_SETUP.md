@@ -175,14 +175,12 @@ Matrix checks:
 - `Analyze (javascript-typescript)`
 - `Analyze (rust)`
 
-Rust-specific setup:
+Build modes:
 
-- installs Tauri Linux system dependencies (GTK/GLib/WebKit)
-- creates `browser/frontend/dist/index.html` placeholder for Tauri compile-time config
-- performs `cargo check` for:
-  - `engine-wasm/engine`
-  - `transport-rust`
-  - `browser/src-tauri`
+- JavaScript/TypeScript uses `none`.
+- Rust uses `none`, the only CodeQL build mode supported for Rust. CodeQL extracts the Rust
+  source directly, so this workflow does not install Tauri system dependencies or run manual
+  Cargo builds. Compilation remains covered by the main CI workflow.
 
 All CodeQL actions are pinned to immutable commit SHAs. The repository must leave CodeQL default
 setup disabled while this advanced workflow manages the same languages.
@@ -192,10 +190,6 @@ Config:
 - `.github/codeql/codeql-config.yml`
   - includes core source paths: `browser`, `engine-wasm`, `transport-rust`, `wml-server`, `scripts`
   - excludes generated/build paths such as `target`, `dist`, `node_modules`, `engine-wasm/pkg`, and generated browser contracts
-
-Caching:
-
-- Rust build artifact cache for the Rust matrix leg
 
 ### 6) Deploy Pages (`.github/workflows/pages.yml`)
 
