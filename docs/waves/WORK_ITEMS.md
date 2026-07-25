@@ -80,7 +80,7 @@ Canonical sprint priority rule:
 ## Next In Line (WAP Compliance Rebase - 2026-07-24)
 
 The selected-profile source and planning lanes are complete. The active queue
-must now turn the 201 selected parent rows and 780 planned clauses into direct
+must now turn the 198 selected parent rows and 761 planned clauses into direct
 evidence.
 
 Current priority order is:
@@ -142,20 +142,22 @@ Source-ledger reconciliation:
 
 1. The exact WAP-200/WAP-202/WAP-203 row authority is
    `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
-   manifests. The selected connectionless Class C path is 22 rows with an
-   audit of 14 implemented / 8 partial / 0 missing and 14/22 direct normative
+   manifests. The selected connectionless Class C path is 19 rows with an
+   audit of 11 implemented / 8 partial / 0 missing and 11/19 direct normative
    tests. The nine selected WDP rows are fixture-backed under `TRN-701`, the
-   adopted constrained-payload policy is closed under `TRN-702`, and the five
-   selected WCMP rows are fixture-backed under `TRN-703`; WSP direct
+   adopted constrained-payload policy is closed under `TRN-702`, the five-row
+   general-WCMP branch is preserved as a non-IP capability under `TRN-703`,
+   and both selected ICMP-backed WCMP rows are fixture-backed under `TRN-708`; WSP direct
    normative evidence remains open.
 2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
    reopened. Their existing evidence remains useful but provisional against
    the exact target-era rows.
 3. Exact closure is owned by compliance-program work items `TRN-701`,
-   `TRN-702`, `TRN-703`, `WSP-801`, `WSP-802`, `WSP-804`, and `WSP-805`.
+   `TRN-702`, `TRN-703`, `TRN-708`, `WSP-801`, `WSP-802`, `WSP-804`, and
+   `WSP-805`.
 4. `SRC-005` has normalized the selected CDPD bearer citation `TIAEIA-732`
    with an explicit licensed-payload boundary; `CONF-003` has completed all
-   201 selected nested-clause plans, while implementation work items own
+   198 selected nested-clause plans, while implementation work items own
    direct normative fixture execution.
 5. WTP remains a conditional capability and does not gate the initial
    connectionless Class C path.

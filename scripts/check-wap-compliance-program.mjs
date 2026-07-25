@@ -261,10 +261,10 @@ if (
     'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json'
   ) ||
   !conf003?.acceptance?.some((line) =>
-    line.includes('All 201 selected rows')
+    line.includes('All 198 selected rows')
   ) ||
   !conf003?.acceptance?.some((line) =>
-    line.includes('closed 201-row gate')
+    line.includes('closed 198-row gate')
   ) ||
   !conf003?.evidence?.includes(
     'node scripts/check-wap-selected-normative-clauses.mjs'
@@ -441,7 +441,9 @@ if (
   !wdpConstrained?.evidence?.includes(
     'node scripts/wap-context-pack.mjs TRN-702'
   ) ||
-  !wcmpCore?.acceptance?.some((line) => line.includes('five selected')) ||
+  !wcmpCore?.acceptance?.some(
+    (line) => line.includes('five general-WCMP') && line.includes('non-IP capability')
+  ) ||
   replayCorpus?.status !== 'in-progress' ||
   JSON.stringify(replayCorpus?.explicitUnmappedFamilies) !==
     JSON.stringify(['wtp']) ||
@@ -471,7 +473,7 @@ if (
   !successorDeltaAudit?.evidence?.includes(
     'node scripts/wap-context-pack.mjs TRN-707'
   ) ||
-  wcmpIpProfileCorrection?.status !== 'todo' ||
+  wcmpIpProfileCorrection?.status !== 'done' ||
   JSON.stringify(wcmpIpProfileCorrection?.dependsOn) !==
     JSON.stringify(['TRN-703', 'T0-17']) ||
   !wcmpIpProfileCorrection?.specReferences?.some((line) =>
@@ -479,6 +481,12 @@ if (
   ) ||
   !wcmpIpProfileCorrection?.acceptance?.some(
     (line) => line.includes('strict CDPD/IPv4 profile') && line.includes('ICMPv4')
+  ) ||
+  !wcmpIpProfileCorrection?.outputs?.includes(
+    'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json'
+  ) ||
+  !wcmpIpProfileCorrection?.evidence?.includes(
+    'node scripts/wap-context-pack.mjs TRN-708'
   ) ||
   !transportSprint?.exitGates?.some((line) =>
     line.includes('only when connection-oriented WSP is claimed')

@@ -29,7 +29,7 @@ node scripts/wap-context-pack.mjs WML-2
 ```
 
 For a selected transport implementation slice, use the supported focused work
-item target (`TRN-702`, `TRN-703`, `TRN-706`, or `TRN-707`), or `TRN-7` only for
+item target (`TRN-702`, `TRN-703`, `TRN-706`, `TRN-707`, or `TRN-708`), or `TRN-7` only for
 sprint-wide transport planning:
 
 ```sh

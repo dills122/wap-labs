@@ -80,8 +80,8 @@ const familyDefinitions = new Map([
     {
       ledgerFile: 'wap-1.2.1-wcmp-scr.json',
       selectedDisposition: 'required-by-selected-class-c-transport-path',
-      expectedParents: 5,
-      expectedClauses: 28
+      expectedParents: 2,
+      expectedClauses: 9
     }
   ],
   [
@@ -171,8 +171,23 @@ const trn707ClauseIds = new Set([
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
   'WDP-CL-SELECTED-WSP-PORT',
   'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
-  'WCMP-CL-CLIENT-GENERAL-PROFILE',
-  'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+  'WCMP-CL-IP-NETWORKS-USE-ICMP',
+  'WCMP-CL-CDPD-USES-ICMP'
+]);
+const trn708ClauseIds = new Set([
+  'WCMP-CL-IP-NETWORKS-USE-ICMP',
+  'WCMP-CL-CDPD-USES-ICMP',
+  'WCMP-CL-ICMPV4-PROTOCOL',
+  'WCMP-CL-ICMPV4-CHECKSUM',
+  'WCMP-CL-ICMPV4-DESTINATION-UNREACHABLE-LAYOUT',
+  'WCMP-CL-ICMPV4-PORT-UNREACHABLE',
+  'WCMP-CL-ICMPV4-FRAGMENTATION-NEEDED',
+  'WCMP-CL-ICMPV4-ERROR-QUOTE',
+  'WCMP-CL-ICMPV4-ECHO-ROUNDTRIP',
+  'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+  'WDP-CL-IP-BEARER-REQUIRES-UDP',
+  'WDP-CL-CDPD-UDP-IP-PROFILE',
+  'WDP-CL-IPV4-DONT-FRAGMENT'
 ]);
 const allowedFixtureKinds = new Set([
   'parser',
@@ -247,10 +262,10 @@ if (
 }
 if (
   ledger.scope?.status !== 'complete' ||
-  ledger.scope?.selectedProfileParentCount !== 201 ||
+  ledger.scope?.selectedProfileParentCount !== 198 ||
   JSON.stringify(ledger.scope?.coveredFamilies) !== JSON.stringify(coveredFamilies) ||
   JSON.stringify(ledger.scope?.remainingFamilies) !== JSON.stringify(remainingFamilies) ||
-  ledger.scope?.coveredSelectedParentCount !== 201 ||
+  ledger.scope?.coveredSelectedParentCount !== 198 ||
   ledger.scope?.remainingSelectedParentCount !== 0 ||
   !ledger.scope?.completionRule?.includes('CONF-003 is complete')
 ) {
@@ -297,7 +312,11 @@ for (const family of ledger.families ?? []) {
     (candidate) => candidate.family === family.family
   );
   const expectedFamilyStatus =
-    family.family === 'wcmp' || family.family === 'wdp'
+    family.family === 'wcmp'
+      ? family.clauses?.every((candidate) => candidate.fixturePlan?.status === 'implemented')
+        ? 'nested-clauses-fixture-backed'
+        : 'nested-clauses-partially-fixture-backed'
+    : family.family === 'wdp'
       ? 'nested-clauses-fixture-backed'
       : family.family === 'wml' || family.family === 'wbxml'
         ? 'nested-clauses-partially-fixture-backed'
@@ -461,13 +480,15 @@ for (const family of ledger.families ?? []) {
         ...parents.flatMap((parent) => parent.mapping.workItems),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
-        ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : [])
+        ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
+        ...(trn708ClauseIds.has(candidate.id) ? ['TRN-708'] : [])
       ])
     ].sort();
     const expectedDirectWorkItems = [
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
-      ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : [])
+      ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
+      ...(trn708ClauseIds.has(candidate.id) ? ['TRN-708'] : [])
     ];
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
@@ -476,11 +497,12 @@ for (const family of ledger.families ?? []) {
       parents.map((parent) => [parent.id, parent.mapping.implementationStatus])
     );
     const directFixtureImplemented =
-      candidate.family === 'wcmp' ||
+      candidate.fixturePlan?.status === 'implemented' &&
+      (candidate.family === 'wcmp' ||
       candidate.family === 'wdp' ||
       (candidate.family === 'wbxml' &&
         !deferredWbxmlClauseIds.has(candidate.id)) ||
-      implementedWmlClauseIds.has(candidate.id);
+      implementedWmlClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -503,25 +525,26 @@ for (const family of ledger.families ?? []) {
       candidate.fixturePlan.status !== expectedFixtureStatus ||
       !allowedFixtureKinds.has(candidate.fixturePlan.kind) ||
       candidate.fixturePlan.assertion !== candidate.obligationSynopsis ||
-      ((candidate.family === 'wcmp' || candidate.family === 'wdp') &&
+      (directFixtureImplemented &&
+        (candidate.family === 'wcmp' || candidate.family === 'wdp') &&
         (candidate.fixturePlan.evidence?.path !==
           (trn702ClauseIds.has(candidate.id)
             ? 'transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json'
             : candidate.family === 'wdp'
               ? 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json'
-            : 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json') ||
+              : 'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json') ||
           candidate.fixturePlan.evidence?.testPath !==
             (trn702ClauseIds.has(candidate.id)
               ? 'transport-rust/tests/wdp_constrained_replay.rs'
               : candidate.family === 'wdp'
                 ? 'transport-rust/src/network/wdp/tests.rs'
-              : 'transport-rust/src/network/wcmp/tests.rs') ||
+                : 'transport-rust/tests/wcmp_cdpd_icmp_profile.rs') ||
           !candidate.fixturePlan.evidence?.command?.includes(
             trn702ClauseIds.has(candidate.id)
               ? 'wdp_constrained_replay'
               : candidate.family === 'wdp'
                 ? 'network::wdp'
-                : 'network::wcmp'
+                : 'wcmp_cdpd_icmp_profile'
           ))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
         (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
@@ -586,11 +609,14 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 149
+  assessedClauseCount: (ledger.families ?? [])
+    .flatMap((family) => family.clauses ?? [])
+    .filter((candidate) => candidate.mapping?.clauseImplementationStatus === 'implemented')
+    .length
 };
 if (
-  selectedParentCount !== 201 ||
-  clauseCount !== 780 ||
+  selectedParentCount !== 198 ||
+  clauseCount !== 761 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);
@@ -622,7 +648,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 selected normative clauses');
 console.log(
-  `PASS CONF-003 complete: ${selectedParentCount}/201 selected parents across all nine mandatory Class C families`
+  `PASS CONF-003 complete: ${selectedParentCount}/198 selected parents across all nine mandatory Class C families`
 );
 console.log(
   `PASS ${clauseCount} deduplicated clauses (${requiredClauseCount} required / ${recommendedClauseCount} recommended / ${permittedClauseCount} permitted)`

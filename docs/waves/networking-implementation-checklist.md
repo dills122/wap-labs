@@ -84,15 +84,15 @@ Execution priority override (`2026-03-08` refresh):
 
 ### F2: WCMP selected core
 
-1. implement the selected general-WCMP path.
-2. implement destination-unreachable, message-too-big, and echo-reply message
-   structures.
-3. enforce deterministic error-generation and payload rules.
+1. select RFC 792 ICMP for the strict CDPD/IPv4 path.
+2. implement destination-unreachable code 3, code 4 with DF/MTU, and echo
+   request/reply at the WDP boundary.
+3. keep the general-WCMP codec behind an explicit non-IP capability.
 4. test gates:
-   - direct WAP-202 fixtures for all five selected rows
-   - malformed message and no-error-in-response-to-error assertions
+   - direct WAP-202/RFC 792 fixtures for both selected rows and nine clauses
+   - malformed ICMP and profile-mismatch assertions
 5. acceptance:
-   - `TRN-703`, exact WCMP ledger, and thematic `RQ-TRX-006..008`
+   - `TRN-708`, exact WCMP ledger, and thematic `RQ-TRX-006..008`
 
 ### F3: WSP connectionless service
 

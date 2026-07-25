@@ -27,6 +27,7 @@ const wmlscriptTextPath = option('--wmlscript-text');
 const wmlscriptLibrariesTextPath = option('--wmlscript-libraries-text');
 const rfc768TextPath = option('--rfc-768-text');
 const rfc791TextPath = option('--rfc-791-text');
+const rfc792TextPath = option('--rfc-792-text');
 const rfc2396TextPath = option('--rfc-2396-text');
 const rfc2616TextPath = option('--rfc-2616-text');
 const rfc2617TextPath = option('--rfc-2617-text');
@@ -35,6 +36,164 @@ const outputPath =
   option('--output') ??
   'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json';
 const refreshDirectWorkItems = args.includes('--refresh-direct-work-items');
+const strictWcmpImplemented = true;
+const strictWcmpFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json',
+  testPath: 'transport-rust/tests/wcmp_cdpd_icmp_profile.rs',
+  command:
+    'cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile'
+};
+const strictWcmpClauseDefinitions = [
+  {
+    key: 'ip_networks_use_icmp',
+    parentRows: ['WCMP-C-001', 'WCMP-SP-C-001'],
+    section: '5.3',
+    anchorFamily: 'wcmp',
+    sourceAnchor: {
+      documentId: 'WAP-202-WCMP',
+      section: '5.3',
+      heading: '5.3. WCMP in IP Networks',
+      normalizedTextSha256: '42a64bef140a026d0a08f7ebd61d816a21ea00ec016e66004f7085b46baafa1a'
+    },
+    normativeForce: 'explicit-must',
+    fixtureKind: 'transport-boundary',
+    obligationSynopsis:
+      'Use ICMP to provide WCMP error-reporting and diagnostic functions whenever the selected bearer network is IP based.'
+  },
+  {
+    key: 'cdpd_uses_icmp',
+    parentRows: ['WCMP-C-001', 'WCMP-SP-C-001'],
+    section: '5.3',
+    anchorFamily: 'wcmp',
+    sourceAnchor: {
+      documentId: 'WAP-202-WCMP',
+      section: '5.3',
+      heading: '5.3. WCMP in IP Networks',
+      normalizedTextSha256: '42a64bef140a026d0a08f7ebd61d816a21ea00ec016e66004f7085b46baafa1a'
+    },
+    normativeForce: 'table',
+    fixtureKind: 'transport-boundary',
+    obligationSynopsis:
+      'Select the ICMP control-message path for CDPD instead of the general WCMP wire format defined for non-IP networks.'
+  },
+  {
+    key: 'icmpv4_protocol',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'message-formats',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'message-formats',
+      heading: 'Message Formats',
+      normalizedTextSha256: 'a6e92e5b0b38344f6c280c15c846d7410b3601e73aa1c89c8d2a85eccf654ab5'
+    },
+    normativeForce: 'table',
+    fixtureKind: 'binary-decoder',
+    obligationSynopsis:
+      'Carry ICMPv4 as IPv4 protocol number 1 and dispatch each control message from its leading Type field.'
+  },
+  {
+    key: 'icmpv4_checksum',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'message-formats',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'message-formats',
+      heading: 'Message Formats',
+      normalizedTextSha256: 'a6e92e5b0b38344f6c280c15c846d7410b3601e73aa1c89c8d2a85eccf654ab5'
+    },
+    normativeForce: 'grammar',
+    fixtureKind: 'binary-decoder',
+    obligationSynopsis:
+      'Encode and verify the ICMPv4 ones-complement checksum across the complete control message with the checksum field zeroed for calculation.'
+  },
+  {
+    key: 'icmpv4_destination_unreachable_layout',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'destination-unreachable',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'destination-unreachable',
+      heading: 'Destination Unreachable Message',
+      normalizedTextSha256: '380cb5a7362cd05dd7f4a7915b034f13a6d37a8409e67b590590f09bc040e8ca'
+    },
+    normativeForce: 'grammar',
+    fixtureKind: 'binary-decoder',
+    obligationSynopsis:
+      'Decode ICMPv4 Destination Unreachable as Type 3, Code, Checksum, four-octet type-specific data, and the quoted original IPv4 header plus data.'
+  },
+  {
+    key: 'icmpv4_port_unreachable',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'destination-unreachable',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'destination-unreachable',
+      heading: 'Destination Unreachable Message',
+      normalizedTextSha256: '380cb5a7362cd05dd7f4a7915b034f13a6d37a8409e67b590590f09bc040e8ca'
+    },
+    normativeForce: 'table',
+    fixtureKind: 'error-policy',
+    obligationSynopsis:
+      'Interpret ICMPv4 Destination Unreachable type 3 code 3 as an inactive destination process port and map the quoted UDP destination port at the WDP boundary.'
+  },
+  {
+    key: 'icmpv4_fragmentation_needed',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'destination-unreachable',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'destination-unreachable',
+      heading: 'Destination Unreachable Message',
+      normalizedTextSha256: '380cb5a7362cd05dd7f4a7915b034f13a6d37a8409e67b590590f09bc040e8ca'
+    },
+    normativeForce: 'table',
+    fixtureKind: 'error-policy',
+    obligationSynopsis:
+      'Interpret ICMPv4 Destination Unreachable type 3 code 4 as fragmentation needed while the original IPv4 datagram had the DF flag set, preserving the RFC 1191 Next-Hop MTU when present.'
+  },
+  {
+    key: 'icmpv4_error_quote',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'destination-unreachable',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'destination-unreachable',
+      heading: 'Destination Unreachable Message',
+      normalizedTextSha256: '380cb5a7362cd05dd7f4a7915b034f13a6d37a8409e67b590590f09bc040e8ca'
+    },
+    normativeForce: 'grammar',
+    fixtureKind: 'binary-decoder',
+    obligationSynopsis:
+      'Preserve the quoted original IPv4 header and first 64 data bits so the ICMPv4 error can be correlated with the affected WDP UDP datagram.'
+  },
+  {
+    key: 'icmpv4_echo_roundtrip',
+    parentRows: ['WCMP-SP-C-001'],
+    section: 'echo',
+    anchorFamily: 'rfc792',
+    sourceAnchor: {
+      documentId: 'rfc-792',
+      section: 'echo',
+      heading: 'Echo or Echo Reply Message',
+      normalizedTextSha256: '8650244ca95dea984ab69dfbdbcd50fd2cd0893c10bf85cc74738a69fc049597'
+    },
+    normativeForce: 'explicit-must',
+    fixtureKind: 'transport-boundary',
+    obligationSynopsis:
+      'Handle ICMPv4 Echo Request type 8 and Echo Reply type 0 with Code 0 while preserving the identifier, sequence number, and returned data.'
+  }
+];
+const strictWcmpClauseIds = new Set(
+  strictWcmpClauseDefinitions.map(
+    (definition) => `WCMP-CL-${definition.key.toUpperCase().replaceAll('_', '-')}`
+  )
+);
 const directWorkItemClauseIds = new Map([
   [
     'TRN-702',
@@ -76,8 +235,18 @@ const directWorkItemClauseIds = new Map([
       'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
       'WDP-CL-SELECTED-WSP-PORT',
       'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
-      'WCMP-CL-CLIENT-GENERAL-PROFILE',
-      'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+      'WCMP-CL-IP-NETWORKS-USE-ICMP',
+      'WCMP-CL-CDPD-USES-ICMP'
+    ])
+  ],
+  [
+    'TRN-708',
+    new Set([
+      ...strictWcmpClauseIds,
+      'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+      'WDP-CL-IP-BEARER-REQUIRES-UDP',
+      'WDP-CL-CDPD-UDP-IP-PROFILE',
+      'WDP-CL-IPV4-DONT-FRAGMENT'
     ])
   ]
 ]);
@@ -89,8 +258,148 @@ function directWorkItemsForClause(clauseId) {
     .map(([workItem]) => workItem);
 }
 
+function refreshStrictWcmpFamily(manifest) {
+  const manifestDirectory = 'spec-processing/source-manifests';
+  const ledgerPath = `${manifestDirectory}/wap-1.2.1-wcmp-scr.json`;
+  const parentLedgerText = fs.readFileSync(ledgerPath, 'utf8');
+  const parentLedger = JSON.parse(parentLedgerText);
+  const externalIngestion = readJson(
+    `${manifestDirectory}/wap-1.2.1-external-ingestion-status.json`
+  );
+  const wcmpFamily = manifest.families.find((family) => family.family === 'wcmp');
+  const selectedParents = parentLedger.obligations.filter(
+    (obligation) =>
+      obligation.disposition?.classCProfile ===
+      'required-by-selected-class-c-transport-path'
+  );
+  const parentById = new Map(selectedParents.map((parent) => [parent.id, parent]));
+  const rfc792 = externalIngestion.dependencies.find(
+    (dependency) => dependency.dependencyId === 'rfc-792'
+  );
+  const rfc792Artifact = rfc792?.artifacts.find(
+    (artifact) => artifact.id === 'rfc-792-text'
+  );
+  if (!wcmpFamily || !rfc792 || !rfc792Artifact) {
+    throw new Error('strict WCMP refresh requires the WAP-202 and RFC 792 source locks');
+  }
+
+  const clauses = strictWcmpClauseDefinitions.map((definition) => {
+    const id = `WCMP-CL-${definition.key.toUpperCase().replaceAll('_', '-')}`;
+    const parents = definition.parentRows.map((parentId) => {
+      const parent = parentById.get(parentId);
+      if (!parent) {
+        throw new Error(`${id}: selected parent ${parentId} is missing`);
+      }
+      return parent;
+    });
+    const directWorkItems = directWorkItemsForClause(id);
+    return {
+      id,
+      family: 'wcmp',
+      parentRows: definition.parentRows,
+      ...(directWorkItems.length ? { directWorkItems } : {}),
+      sourceAnchor: definition.sourceAnchor,
+      normativeForce: definition.normativeForce,
+      obligationLevel:
+        definition.normativeForce === 'explicit-should'
+          ? 'recommended'
+          : definition.normativeForce === 'explicit-may'
+            ? 'permitted'
+            : 'required',
+      obligationSynopsis: definition.obligationSynopsis,
+      fixturePlan: {
+        id: `WCMP-FX-${definition.key.toUpperCase().replaceAll('_', '-')}`,
+        kind: definition.fixtureKind,
+        status: strictWcmpImplemented ? 'implemented' : 'planned',
+        assertion: definition.obligationSynopsis,
+        ...(strictWcmpImplemented ? { evidence: strictWcmpFixtureEvidence } : {})
+      },
+      mapping: {
+        ownerLayers: [
+          ...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))
+        ].sort(),
+        workItems: [
+          ...new Set([
+            ...parents.flatMap((parent) => parent.mapping.workItems),
+            ...directWorkItems
+          ])
+        ].sort(),
+        requirementIds: [
+          ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
+        ].sort(),
+        parentImplementationSnapshot: Object.fromEntries(
+          parents.map((parent) => [parent.id, parent.mapping.implementationStatus])
+        ),
+        clauseImplementationStatus: strictWcmpImplemented
+          ? 'implemented'
+          : 'not-assessed',
+        evidenceGate:
+          'A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.'
+      }
+    };
+  });
+
+  wcmpFamily.status = strictWcmpImplemented
+    ? 'nested-clauses-fixture-backed'
+    : 'nested-clauses-partially-fixture-backed';
+  wcmpFamily.parentLedgerSha256 = sha256(parentLedgerText);
+  wcmpFamily.clauseSources = [
+    wcmpFamily.clauseSources.find((source) => source.documentId === 'WAP-202-WCMP'),
+    {
+      documentId: 'rfc-792',
+      sourceKind: 'external-dependency',
+      authority: rfc792.authority,
+      authorityRecordUrl: rfc792.authorityRecordUrl ?? rfc792.sourceUrl,
+      artifactId: rfc792Artifact.id,
+      artifactBytes: rfc792Artifact.bytes,
+      artifactSha256: rfc792Artifact.sha256
+    }
+  ];
+  wcmpFamily.selectedParentCount = selectedParents.length;
+  wcmpFamily.clauseCount = clauses.length;
+  wcmpFamily.parents = selectedParents.map((parent) => ({
+    id: parent.id,
+    feature: parent.feature,
+    referencedSection: parent.referencedSection,
+    sourceAnchor: parent.sourceAnchor,
+    implementationStatus: parent.mapping.implementationStatus,
+    ownerLayers: parent.mapping.ownerLayers,
+    workItems: parent.mapping.workItems,
+    clauseIds: clauses
+      .filter((candidate) => candidate.parentRows.includes(parent.id))
+      .map((candidate) => candidate.id)
+      .sort()
+  }));
+  wcmpFamily.clauses = clauses;
+}
+
+function refreshManifestTotals(manifest) {
+  const clauses = manifest.families.flatMap((family) => family.clauses);
+  const parentCount = manifest.families.reduce(
+    (total, family) => total + family.selectedParentCount,
+    0
+  );
+  const countLevel = (level) =>
+    clauses.filter((clause) => clause.obligationLevel === level).length;
+  const assessedClauseCount = clauses.filter(
+    (clause) => clause.mapping.clauseImplementationStatus !== 'not-assessed'
+  ).length;
+  manifest.scope.selectedProfileParentCount = parentCount;
+  manifest.scope.coveredSelectedParentCount = parentCount;
+  manifest.summary = {
+    selectedParentCount: parentCount,
+    clauseCount: clauses.length,
+    requiredClauseCount: countLevel('required'),
+    recommendedClauseCount: countLevel('recommended'),
+    permittedClauseCount: countLevel('permitted'),
+    plannedFixtureCount: clauses.length,
+    assessedClauseCount
+  };
+}
+
 if (refreshDirectWorkItems) {
   const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+  refreshStrictWcmpFamily(manifest);
   for (const family of manifest.families) {
     family.parentLedgerSha256 = sha256(
       fs.readFileSync(family.parentLedger, 'utf8')
@@ -112,6 +421,7 @@ if (refreshDirectWorkItems) {
       ].sort();
     }
   }
+  refreshManifestTotals(manifest);
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(
     `Refreshed direct work-item mappings in ${outputPath} for ${[
@@ -137,6 +447,7 @@ if (
   !wmlscriptLibrariesTextPath ||
   !rfc768TextPath ||
   !rfc791TextPath ||
+  !rfc792TextPath ||
   !rfc2396TextPath ||
   !rfc2616TextPath ||
   !rfc2617TextPath ||
@@ -159,6 +470,7 @@ if (
       '--wmlscript-libraries-text /absolute/path/WAP-194-WMLScriptLibraries-20000925-a.txt ' +
       '--rfc-768-text /absolute/path/rfc768.txt ' +
       '--rfc-791-text /absolute/path/rfc791.txt ' +
+      '--rfc-792-text /absolute/path/rfc792.txt ' +
       '--rfc-2396-text /absolute/path/rfc2396.txt ' +
       '--rfc-2616-text /absolute/path/rfc2616.txt ' +
       '--rfc-2617-text /absolute/path/rfc2617.txt ' +
@@ -309,6 +621,14 @@ const sourceInputs = new Map([
       path: rfc791TextPath,
       text: fs.readFileSync(rfc791TextPath, 'utf8'),
       externalDependencyId: 'rfc-791'
+    }
+  ],
+  [
+    'rfc-792',
+    {
+      path: rfc792TextPath,
+      text: fs.readFileSync(rfc792TextPath, 'utf8'),
+      externalDependencyId: 'rfc-792'
     }
   ],
   [
@@ -581,6 +901,7 @@ const sectionDefinitions = {
     ranges: {
       '5.1': ['5.1. General', '5.2. WCMP Conformance'],
       '5.2': ['5.2. WCMP Conformance', '5.3. WCMP in IP Networks'],
+      '5.3': ['5.3. WCMP in IP Networks', '5.4. WCMP in Non-IP Networks'],
       '5.4': ['5.4. WCMP in Non-IP Networks', '5.4.1. WCMP in GSM SMS'],
       '5.5.1': [
         '5.5.1. General Message Structure',
@@ -820,6 +1141,17 @@ const sectionDefinitions = {
       '3.2': ['3.2.  Discussion', 'APPENDIX A:  Examples & Scenarios']
     }
   },
+  rfc792: {
+    sourceDocumentId: 'rfc-792',
+    ranges: {
+      'message-formats': ['Message Formats', 'Destination Unreachable Message'],
+      'destination-unreachable': [
+        'Destination Unreachable Message',
+        'Time Exceeded Message'
+      ],
+      echo: ['Echo or Echo Reply Message', 'Timestamp or Timestamp Reply Message']
+    }
+  },
   'rfc-2396': {
     sourceDocumentId: 'rfc-2396',
     ranges: {
@@ -980,10 +1312,11 @@ function clause(
   const clauseId = `${family.toUpperCase()}-CL-${key.toUpperCase().replaceAll('_', '-')}`;
   const directWorkItems = directWorkItemsForClause(clauseId);
   const directFixtureImplemented =
-    family === 'wcmp' ||
+    (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
     family === 'wbxml';
   const isTrn702Clause = directWorkItems.includes('TRN-702');
+  const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const evidence =
     family === 'wbxml'
       ? {
@@ -999,6 +1332,8 @@ function clause(
           command:
             'cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay'
         }
+      : isStrictWcmpClause
+      ? strictWcmpFixtureEvidence
       : family === 'wdp'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
@@ -1357,38 +1692,19 @@ clause('caching', 'wml_intra_deck', ['UACache-C-004'], '4.1.2', 'implicit-must',
 clause('caching', 'cache_private_content', ['UACache-C-006'], '6', 'explicit-must', 'security-policy', 'Protect private information stored in the user-agent cache from unintended or malicious access.');
 clause('caching', 'cache_nonvolatile_boundary', ['UACache-C-006'], '6', 'implicit-must', 'security-policy', 'Apply access protection to sensitive cache data that survives in non-volatile storage, including data retained across browser restarts.');
 
-// WCMP general-encoding branch selected by the Class C connectionless path.
-clause('wcmp', 'client_general_profile', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.4', 'implicit-must', 'transport-boundary', 'Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.');
-clause('wcmp', 'error_and_diagnostic_roles', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'implicit-must', 'transport-boundary', 'Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol.');
-clause('wcmp', 'no_error_to_error', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-must', 'error-policy', 'Never generate a WCMP error message in response to another WCMP error message.');
-clause('wcmp', 'one_fragment_error', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-must', 'error-policy', 'Generate no more than one WCMP error for a fragmented datagram.');
-clause('wcmp', 'single_bearer_fragment', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-must', 'transport-boundary', 'Encode each WCMP message so it fits in one bearer-level fragment.');
-clause('wcmp', 'forged_message_caution', ['WCMP-C-001', 'WCMP-SP-C-002'], '5.1', 'explicit-should', 'security-policy', 'Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message.');
-clause('wcmp', 'general_network_order', ['WCMP-SP-C-002'], '5.5.1', 'implicit-must', 'binary-decoder', 'Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first.');
-clause('wcmp', 'general_header_order', ['WCMP-SP-C-002'], '5.5.1', 'grammar', 'binary-decoder', 'Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets.');
-clause('wcmp', 'general_type_dispatch', ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'], '5.5.1', 'implicit-must', 'binary-decoder', 'Use Type to select the message data format and Code to select the subtype-specific interpretation.');
-clause('wcmp', 'general_type_classes', ['WCMP-SP-C-002'], '5.5.1', 'implicit-must', 'binary-decoder', 'Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.');
-clause('wcmp', 'selected_type_code_values', ['WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'], '5.5.1', 'table', 'binary-decoder', 'Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.');
-
-clause('wcmp', 'destination_unreachable_layout', ['WCMP-GEN-C-001'], '5.5.3.1', 'grammar', 'binary-decoder', 'Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information.');
-clause('wcmp', 'destination_unreachable_general_generation', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-should', 'error-policy', 'Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion.');
-clause('wcmp', 'destination_unreachable_port_required', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-must', 'error-policy', 'Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port.');
-clause('wcmp', 'destination_unreachable_no_congestion', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-must', 'error-policy', 'Do not generate a Destination Unreachable message for a packet dropped because of congestion.');
-clause('wcmp', 'destination_unreachable_codes', ['WCMP-GEN-C-001'], '5.5.3.1', 'table', 'binary-decoder', 'Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively.');
-clause('wcmp', 'destination_unreachable_address', ['WCMP-GEN-C-001'], '5.5.3.1', 'implicit-must', 'binary-decoder', 'Interpret the embedded address information as the destination address of the original datagram.');
-
-clause('wcmp', 'message_too_big_layout', ['WCMP-GEN-C-003'], '5.5.3.3', 'grammar', 'binary-decoder', 'Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size.');
-clause('wcmp', 'message_too_big_buffer_notice', ['WCMP-GEN-C-003'], '5.5.3.3', 'explicit-must', 'error-policy', 'Use Message Too Big to inform a sender of the receiving node buffer-size limit.');
-clause('wcmp', 'message_too_big_first_segment', ['WCMP-GEN-C-003'], '5.5.3.3', 'explicit-must', 'error-policy', 'Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer.');
-clause('wcmp', 'message_too_big_address', ['WCMP-GEN-C-003'], '5.5.3.3', 'implicit-must', 'binary-decoder', 'Interpret Message Too Big address information as the destination address of the original datagram.');
-
-clause('wcmp', 'echo_reply_function', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-must', 'runtime', 'Receive WCMP Echo Requests and send corresponding Echo Replies.');
-clause('wcmp', 'echo_message_layout', ['WCMP-GEN-C-006'], '5.5.3.5', 'grammar', 'binary-decoder', 'Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets.');
-clause('wcmp', 'echo_reply_type', ['WCMP-GEN-C-006'], '5.5.3.5', 'table', 'binary-decoder', 'Use type 178 for Echo Request and type 179 for Echo Reply.');
-clause('wcmp', 'echo_data_identity', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-must', 'transport-boundary', 'Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU.');
-clause('wcmp', 'echo_mtu_truncation', ['WCMP-GEN-C-006'], '5.5.3.5', 'implicit-must', 'transport-boundary', 'When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit.');
-clause('wcmp', 'echo_correlation_fields', ['WCMP-GEN-C-006'], '5.5.3.5', 'implicit-must', 'state-machine', 'Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request.');
-clause('wcmp', 'echo_reply_rate_limit', ['WCMP-GEN-C-006'], '5.2', 'explicit-may', 'security-policy', 'Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic.');
+// Strict CDPD/IPv4 WCMP service implemented by RFC 792 ICMP per WAP-202 5.3.
+for (const definition of strictWcmpClauseDefinitions) {
+  clause(
+    'wcmp',
+    definition.key,
+    definition.parentRows,
+    definition.section,
+    definition.normativeForce,
+    definition.fixtureKind,
+    definition.obligationSynopsis,
+    definition.anchorFamily
+  );
+}
 
 // Connectionless WSP branch selected for the Class C browser profile.
 clause('wsp', 'device_connectionless_mode', ['WSP-C-001', 'WSP-CL-C-001'], '6.4.1', 'implicit-must', 'transport-boundary', 'Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.');
@@ -2430,7 +2746,7 @@ const familyDefinitions = [
     family: 'wcmp',
     ledgerPath: `${manifestDirectory}/wap-1.2.1-wcmp-scr.json`,
     selectedDisposition: 'required-by-selected-class-c-transport-path',
-    clauseSources: ['WAP-202-WCMP']
+    clauseSources: ['WAP-202-WCMP', 'rfc-792']
   },
   {
     family: 'wsp',
@@ -2537,8 +2853,11 @@ const families = familyDefinitions.map((definition) => {
   return {
     family: definition.family,
     status:
-      definition.family === 'wcmp' ||
-      definition.family === 'wdp'
+      definition.family === 'wcmp'
+        ? strictWcmpImplemented
+          ? 'nested-clauses-fixture-backed'
+          : 'nested-clauses-partially-fixture-backed'
+      : definition.family === 'wdp'
         ? 'nested-clauses-fixture-backed'
         : definition.family === 'wbxml'
           ? 'nested-clauses-partially-fixture-backed'

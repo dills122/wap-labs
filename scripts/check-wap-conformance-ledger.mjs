@@ -539,7 +539,7 @@ const selectedProfileLedgers = [
     file: 'wap-1.2.1-wcmp-scr.json',
     selectedDisposition: 'required-by-selected-class-c-transport-path',
     expectedRows: 62,
-    expectedSelected: 5
+    expectedSelected: 2
   },
   {
     family: 'wsp',
@@ -615,14 +615,14 @@ for (const definition of selectedProfileLedgers) {
   }
 }
 
-if (aggregateRowCount !== 712 || aggregateSelectedCount !== 201) {
+if (aggregateRowCount !== 712 || aggregateSelectedCount !== 198) {
   aggregateFailures.push(
-    `selected-profile aggregate expected 712 source rows / 201 selected; found ${aggregateRowCount} / ${aggregateSelectedCount}`
+    `selected-profile aggregate expected 712 source rows / 198 selected; found ${aggregateRowCount} / ${aggregateSelectedCount}`
   );
 }
 if (
   JSON.stringify(aggregateStatusCounts) !==
-  JSON.stringify({ implemented: 23, partial: 77, missing: 101 })
+  JSON.stringify({ implemented: 20, partial: 77, missing: 101 })
 ) {
   aggregateFailures.push(
     `selected-profile status aggregate drift: ${JSON.stringify(aggregateStatusCounts)}`

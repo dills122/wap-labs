@@ -19,9 +19,9 @@ Status: Active
 - Selected-profile SCR accounting:
   - nine mandatory feature families
   - 712 effective source rows
-  - 201 selected strict rows
-  - implementation audit: 22 implemented, 78 partial, 101 missing
-  - all 201 selected rows have owner/work-item mappings
+  - 198 selected strict rows
+  - implementation audit: 19 implemented, 78 partial, 101 missing
+  - all 198 selected rows have owner/work-item mappings
 - Important: `deep-extracted` describes review of the current WAP 2.0-heavy
   local corpus. It is not evidence that the WAP 1.2.1 target source set or
   implementation is complete.
@@ -49,17 +49,17 @@ Status: Active
   - WAE: 11 selected parents / 39 clauses
   - WBXML: 3 selected parents / 47 clauses
   - caching: 5 selected parents / 68 clauses
-  - WCMP: 5 selected parents / 28 clauses
+  - WCMP: 2 selected parents / 9 clauses
   - WSP: 8 selected parents / 57 clauses
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - 149 fixture-backed clauses assessed; 631 fixture plans remain unassessed
+  - 131 fixture-backed clauses assessed; 630 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
-  - all 201 selected rows classified
+  - all 198 selected rows classified
   - 17 successor-derived foundations: 2 compatible / 15 strict correction
-  - 184 selected rows have no identified successor-derived implementation basis
+  - 181 selected rows have no identified successor-derived implementation basis
 
 2. WMLScript runtime/VM
 - Doc: `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
@@ -106,11 +106,11 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
-  - 317 source rows and 22 selected connectionless Class C rows
-  - selected audit: 14 implemented, 8 partial, 0 missing
-  - direct normative evidence: 14/22 across the selected WAP-200 WDP and
+  - 317 source rows and 19 selected connectionless Class C rows
+  - selected audit: 11 implemented, 8 partial, 0 missing
+  - direct normative evidence: 11/19 across the selected WAP-200 WDP and
     WAP-202 WCMP paths
-  - direct normative test evidence: 14/22
+  - direct normative test evidence: 11/19
 - Conditional target source:
   - `WAP-201-WTP` plus approved SINs, only when connection-oriented WSP is
     claimed
@@ -243,7 +243,8 @@ Status: Active
     `WSP-802`, `WSP-804`, and `WSP-805`
 - Priority closure focus:
   - preserve the completed nine-row WDP CDPD/IPv4 evidence
-  - preserve the completed five-row WCMP general-message evidence
+  - preserve the completed five-row general-WCMP evidence as an explicit
+    non-IP capability and the two-row ICMP-backed selected profile
   - eight selected connectionless WSP rows and exact WAP-203 registries
   - browser GET/POST ingress through the selected connectionless path
   - retain the normalized, licensed-payload `TIAEIA-732` capability metadata

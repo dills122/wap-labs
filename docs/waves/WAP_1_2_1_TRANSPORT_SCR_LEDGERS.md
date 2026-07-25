@@ -56,21 +56,22 @@ them as follows:
 
 1. WDP uses the CDPD WDP-over-UDP/IP alternative (`WDP-CT-C-002`) with IPv4
    addressing (`WDP-NA-C-003`).
-2. WCMP uses the general WCMP message-structure alternative
-   (`WCMP-SP-C-002`) rather than delegating the requirement to host ICMP.
+2. WCMP uses RFC 792 ICMP for the CDPD/IP bearer (`WCMP-SP-C-001`) as
+   required by WAP-202 section 5.3. General WCMP (`WCMP-SP-C-002`) remains an
+   explicitly selected non-IP bearer capability only.
 3. WSP uses the connectionless alternative (`WSP-CL-C-001`), which depends on
    WDP and does not activate WTP.
 
-This produces 22 selected-path rows:
+This produces 19 selected-path rows:
 
 | Family | Selected path | Current audit | Direct normative tests |
 |---|---:|---|---:|
 | WDP | 9 | 9 implemented / 0 partial / 0 missing | 9 |
-| WCMP | 5 | 5 implemented / 0 partial / 0 missing | 5 |
+| WCMP | 2 | 2 implemented / 0 partial / 0 missing | 2 |
 | WSP | 8 | 0 implemented / 8 partial / 0 missing | 0 |
-| **Total** | **22** | **14 implemented / 8 partial / 0 missing** | **14** |
+| **Total** | **19** | **11 implemented / 8 partial / 0 missing** | **11** |
 
-The two optional WDP rows and four optional WCMP/WSP root-dependency rows are
+The two optional WDP rows and three optional WCMP/WSP root-dependency rows are
 required by the selected alternatives. Their source `O` status is preserved;
 the project profile makes them strict for this path.
 
@@ -120,26 +121,19 @@ TRN-706.
 
 ### WCMP
 
-`transport-rust/src/network/wcmp/` now owns the selected general-WCMP codec,
-generation/handling policy, constrained-fragment behavior, and explicit
-WCMP-to-WDP error mapping. The source-derived fixture at
-`transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json`
-preserves WAP-202 types `51`, `60`, `178`, and `179`, selected codes, CDPD
-IPv4 address type `0x0D`, and network-order two-octet fields.
+`transport-rust/src/network/wcmp/` now owns the selected RFC 792 ICMPv4
+codec, profile selection, and explicit ICMP-to-WDP error mapping. The focused
+fixture at
+`transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json`
+proves type 3 code 3 port-unreachable, type 3 code 4 fragmentation-needed with
+DF and Next-Hop MTU 576, and type 8/type 0 echo request/reply handling.
 
-The selected general-WCMP path requires:
-
-- `WCMP-C-001`
-- `WCMP-SP-C-002`
-- destination-unreachable message structure (`WCMP-GEN-C-001`)
-- message-too-big structure (`WCMP-GEN-C-003`)
-- echo-reply structure (`WCMP-GEN-C-006`)
-
-All five rows and their 28 source-anchored clauses are linked to direct
-fixture evidence. Tests cover byte-exact round trips, error-to-error and
-congestion suppression, one-fragment bounds, deterministic malformed input,
-Message Too Big mapping, Echo Reply correlation/data identity, MTU
-truncation, and explicit reply rate limiting.
+The selected path contains `WCMP-C-001` and `WCMP-SP-C-001`; their nine
+source-anchored clauses are directly fixture-backed. The pre-existing general
+WCMP types `51`, `60`, `178`, and `179` and their deterministic fixtures remain
+implemented through `WdpControlProfile::GeneralWcmpNonIp`. They cannot be
+emitted or consumed through `WdpControlProfile::CdpdIpv4Strict` and therefore
+do not satisfy or leak into the selected CDPD/IPv4 claim.
 
 Additional generation, processing, endpoint, and diagnostic rows remain
 optional capabilities until selected.
@@ -154,17 +148,16 @@ history and adds nine direct comparison clauses under `TRN-707`:
 - the CDPD UDP/IP profile, connectionless WSP port `9200`, and bearer
   assignment `0x0D` compare with WAP-259 sections 4.3, 4.4.3, 6.2, and
   Appendices B/C;
-- the selected general-WCMP profile and type/code table remain governed by
-  WAP-202 because WAP-259 section 4.2.2 delegates WCMP behavior to that
-  specification rather than redefining it.
+- the selected ICMP-backed WCMP profile remains governed by WAP-202 section
+  5.3 because WAP-259 section 4.2.2 delegates WCMP behavior rather than
+  redefining it.
 
 The WDP comparisons are compatible with the existing target-era fixtures.
-The WCMP comparison exposes a strict-profile mismatch: WAP-202 section 5.3
-assigns CDPD and other IP bearers to ICMP, while the current TRN-703 fixture
-implements the section 5.4/5.5 general-WCMP branch. Additive follow-up
-`TRN-708` must select ICMPv4 for strict CDPD/IPv4 and capability-gate the
-completed general-WCMP work for non-IP use. TRN-703/T0-17 remain canonical
-history and are not reopened.
+TRN-708 closes the WCMP mismatch exposed by the comparison: WAP-202 section
+5.3 assigns CDPD and other IP bearers to ICMP, and the strict profile now
+selects that path. The completed TRN-703 section 5.4/5.5 general-WCMP work is
+capability-gated for non-IP use. TRN-703/T0-17 remain canonical history and
+are not reopened.
 
 This is not a whole-document equivalence finding: WAP-259 predates the final
 WAP-200_005 overlay, and only the mapped observable assumptions are
@@ -237,17 +230,16 @@ adapter.
 - `TRN-702`: complete for the adopted nine-clause constrained-payload subset,
   deterministic lower-IPv4 reassembly policy, and direct simulated replay
   evidence; additional bearers remain unclaimed.
-- `TRN-703` / `T0-17`: complete for the five-row WCMP core; optional WCMP
-  breadth remains capability-gated.
+- `TRN-703` / `T0-17`: complete for the capability-gated five-row general-WCMP
+  core; it is not selected CDPD/IPv4 evidence.
 - `TRN-706`: in progress; the eleven-clause selected WDP replay tranche is
   directly evidenced, while the conditional WTP family and full
   timeout/abort corpus remain open.
 - `TRN-707`: in progress; the nine-clause WDP/WCMP successor comparison is
-  complete, with WDP compatible, the WCMP strict-profile correction tracked
-  by additive `TRN-708`, and the conditional WTP mapping still explicit.
-- `TRN-708`: todo; select the WAP-202 section 5.3 ICMPv4 path for strict
-  CDPD/IPv4 and capability-gate the completed general-WCMP branch without
-  activating WTP or connection-oriented WSP.
+  complete and compatible after TRN-708, while the conditional WTP mapping
+  remains explicit.
+- `TRN-708`: complete; the strict CDPD/IPv4 profile selects WAP-202 section
+  5.3 ICMPv4 and the completed general-WCMP branch is explicit non-IP only.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.

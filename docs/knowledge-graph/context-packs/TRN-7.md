@@ -13,10 +13,10 @@
 
 ## Graph summary
 
-- Nodes: 216
-- Edges: 640
+- Nodes: 176
+- Edges: 548
 - Selected work items: 8
-- Direct normative clauses: 106
+- Direct normative clauses: 91
 - Work items without direct clause mappings: 3
 - Work items with unmapped declared normative families: 3
 
@@ -31,7 +31,7 @@
 
 Exit gates:
 
-- The nine-row selected WDP path and five-row selected WCMP path have executable evidence.
+- The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.
 - WTP evidence is required only when connection-oriented WSP is claimed.
 - Timing tests are deterministic and do not require live networks.
 - WAP 2.0 transport deltas are explicit.
@@ -93,7 +93,7 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wcmp`, `wdp-wcmp-adaptation`
 - Existing tickets: `T0-17`
-- Direct normative clauses: 28
+- Direct normative clauses: 0
 
 Outputs:
 
@@ -102,7 +102,7 @@ Outputs:
 
 Acceptance:
 
-- The five selected general-WCMP dependency rows are implemented and tested; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity.
+- The five general-WCMP dependency rows are implemented and tested as an explicit non-IP capability; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity.
 
 Evidence commands:
 
@@ -193,8 +193,8 @@ Acceptance:
 
 - Current successor-spec implementation assumptions are either proven compatible or ticketed as strict-mode corrections.
 - The selected WDP CDPD/UDP/IPv4 service, primitive, port, and bearer assumptions are compared clause-by-clause against effective WAP-200 and WAP-259 without treating the successor as normative.
-- The selected general-WCMP implementation remains governed by WAP-202; WAP-259 delegates WCMP behavior to that specification and does not replace its exact message fixtures.
-- WAP-202 section 5.3 assigns CDPD/IP to ICMP; additive TRN-708 owns the strict-profile correction and capability-gates the completed TRN-703 general-WCMP branch.
+- The selected ICMP-backed WCMP implementation remains governed by WAP-202; WAP-259 delegates WCMP behavior to that specification rather than redefining it.
+- WAP-202 section 5.3 assigns CDPD/IP to ICMP; TRN-708 closes the strict-profile correction and capability-gates the completed TRN-703 general-WCMP branch.
 - WTP and connection-oriented WSP remain inactive, and the missing WTP clause mapping remains explicit until a future capability claim activates the effective WAP-201/SIN closure.
 
 Evidence commands:
@@ -209,15 +209,16 @@ Evidence commands:
 
 ### TRN-708: Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use
 
-- Status: `todo`
+- Status: `done`
 - Owner layers: `documentation`, `transport-rust`, `qa`
 - Source families: `wdp`, `wcmp`
 - Existing tickets: None
-- Direct normative clauses: 0
+- Direct normative clauses: 13
 
 Outputs:
 
 - Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use
+- transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json
 
 Acceptance:
 
@@ -232,6 +233,8 @@ Evidence commands:
 - `node scripts/check-wap-transport-conformance-ledgers.mjs`
 - `node scripts/check-wap-selected-normative-clauses.mjs`
 - `node scripts/check-requirement-status-drift.mjs`
+- `node scripts/wap-context-pack.mjs TRN-708`
+- `node scripts/check-wap-knowledge-graph.mjs`
 
 ## Direct normative obligations
 
@@ -589,177 +592,6 @@ Evidence commands:
   - Requirements: `RQ-TRN-001`
   - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `implemented`)
 
-### TRN-703
-
-- **WCMP-CL-CLIENT-GENERAL-PROFILE** — Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.4 (5.4. WCMP in Non-IP Networks)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-CLIENT-GENERAL-PROFILE` (`transport-boundary`, `implemented`)
-- **WCMP-CL-DESTINATION-UNREACHABLE-ADDRESS** — Interpret the embedded address information as the destination address of the original datagram.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.1 (5.5.3.1. Destination Unreachable)
-  - Parents: `WCMP-GEN-C-001`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-DESTINATION-UNREACHABLE-ADDRESS` (`binary-decoder`, `implemented`)
-- **WCMP-CL-DESTINATION-UNREACHABLE-CODES** — Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively.
-  - Family: `wcmp`; force: `table`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.1 (5.5.3.1. Destination Unreachable)
-  - Parents: `WCMP-GEN-C-001`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-DESTINATION-UNREACHABLE-CODES` (`binary-decoder`, `implemented`)
-- **WCMP-CL-DESTINATION-UNREACHABLE-GENERAL-GENERATION** — Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion.
-  - Family: `wcmp`; force: `explicit-should`; level: `recommended`
-  - Source: `WAP-202-WCMP` §5.5.3.1 (5.5.3.1. Destination Unreachable)
-  - Parents: `WCMP-GEN-C-001`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-DESTINATION-UNREACHABLE-GENERAL-GENERATION` (`error-policy`, `implemented`)
-- **WCMP-CL-DESTINATION-UNREACHABLE-LAYOUT** — Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information.
-  - Family: `wcmp`; force: `grammar`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.1 (5.5.3.1. Destination Unreachable)
-  - Parents: `WCMP-GEN-C-001`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-DESTINATION-UNREACHABLE-LAYOUT` (`binary-decoder`, `implemented`)
-- **WCMP-CL-DESTINATION-UNREACHABLE-NO-CONGESTION** — Do not generate a Destination Unreachable message for a packet dropped because of congestion.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.1 (5.5.3.1. Destination Unreachable)
-  - Parents: `WCMP-GEN-C-001`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-DESTINATION-UNREACHABLE-NO-CONGESTION` (`error-policy`, `implemented`)
-- **WCMP-CL-DESTINATION-UNREACHABLE-PORT-REQUIRED** — Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.1 (5.5.3.1. Destination Unreachable)
-  - Parents: `WCMP-GEN-C-001`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-DESTINATION-UNREACHABLE-PORT-REQUIRED` (`error-policy`, `implemented`)
-- **WCMP-CL-ECHO-CORRELATION-FIELDS** — Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-CORRELATION-FIELDS` (`state-machine`, `implemented`)
-- **WCMP-CL-ECHO-DATA-IDENTITY** — Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-DATA-IDENTITY` (`transport-boundary`, `implemented`)
-- **WCMP-CL-ECHO-MESSAGE-LAYOUT** — Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets.
-  - Family: `wcmp`; force: `grammar`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-MESSAGE-LAYOUT` (`binary-decoder`, `implemented`)
-- **WCMP-CL-ECHO-MTU-TRUNCATION** — When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-MTU-TRUNCATION` (`transport-boundary`, `implemented`)
-- **WCMP-CL-ECHO-REPLY-FUNCTION** — Receive WCMP Echo Requests and send corresponding Echo Replies.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-REPLY-FUNCTION` (`runtime`, `implemented`)
-- **WCMP-CL-ECHO-REPLY-RATE-LIMIT** — Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic.
-  - Family: `wcmp`; force: `explicit-may`; level: `permitted`
-  - Source: `WAP-202-WCMP` §5.2 (5.2. WCMP Conformance)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-REPLY-RATE-LIMIT` (`security-policy`, `implemented`)
-- **WCMP-CL-ECHO-REPLY-TYPE** — Use type 178 for Echo Request and type 179 for Echo Reply.
-  - Family: `wcmp`; force: `table`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)
-  - Parents: `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-008`
-  - Fixture: `WCMP-FX-ECHO-REPLY-TYPE` (`binary-decoder`, `implemented`)
-- **WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES** — Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.1 (5.1. General)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-ERROR-AND-DIAGNOSTIC-ROLES` (`transport-boundary`, `implemented`)
-- **WCMP-CL-FORGED-MESSAGE-CAUTION** — Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message.
-  - Family: `wcmp`; force: `explicit-should`; level: `recommended`
-  - Source: `WAP-202-WCMP` §5.1 (5.1. General)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-FORGED-MESSAGE-CAUTION` (`security-policy`, `implemented`)
-- **WCMP-CL-GENERAL-HEADER-ORDER** — Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets.
-  - Family: `wcmp`; force: `grammar`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
-  - Parents: `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-GENERAL-HEADER-ORDER` (`binary-decoder`, `implemented`)
-- **WCMP-CL-GENERAL-NETWORK-ORDER** — Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
-  - Parents: `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-GENERAL-NETWORK-ORDER` (`binary-decoder`, `implemented`)
-- **WCMP-CL-GENERAL-TYPE-CLASSES** — Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
-  - Parents: `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-GENERAL-TYPE-CLASSES` (`binary-decoder`, `implemented`)
-- **WCMP-CL-GENERAL-TYPE-DISPATCH** — Use Type to select the message data format and Code to select the subtype-specific interpretation.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
-  - Parents: `WCMP-SP-C-002`, `WCMP-GEN-C-001`, `WCMP-GEN-C-003`, `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
-  - Fixture: `WCMP-FX-GENERAL-TYPE-DISPATCH` (`binary-decoder`, `implemented`)
-- **WCMP-CL-MESSAGE-TOO-BIG-ADDRESS** — Interpret Message Too Big address information as the destination address of the original datagram.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.3 (5.5.3.3. Message Too Big)
-  - Parents: `WCMP-GEN-C-003`
-  - Requirements: `RQ-TRX-007`
-  - Fixture: `WCMP-FX-MESSAGE-TOO-BIG-ADDRESS` (`binary-decoder`, `implemented`)
-- **WCMP-CL-MESSAGE-TOO-BIG-BUFFER-NOTICE** — Use Message Too Big to inform a sender of the receiving node buffer-size limit.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.3 (5.5.3.3. Message Too Big)
-  - Parents: `WCMP-GEN-C-003`
-  - Requirements: `RQ-TRX-007`
-  - Fixture: `WCMP-FX-MESSAGE-TOO-BIG-BUFFER-NOTICE` (`error-policy`, `implemented`)
-- **WCMP-CL-MESSAGE-TOO-BIG-FIRST-SEGMENT** — Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.3 (5.5.3.3. Message Too Big)
-  - Parents: `WCMP-GEN-C-003`
-  - Requirements: `RQ-TRX-007`
-  - Fixture: `WCMP-FX-MESSAGE-TOO-BIG-FIRST-SEGMENT` (`error-policy`, `implemented`)
-- **WCMP-CL-MESSAGE-TOO-BIG-LAYOUT** — Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size.
-  - Family: `wcmp`; force: `grammar`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.3.3 (5.5.3.3. Message Too Big)
-  - Parents: `WCMP-GEN-C-003`
-  - Requirements: `RQ-TRX-007`
-  - Fixture: `WCMP-FX-MESSAGE-TOO-BIG-LAYOUT` (`binary-decoder`, `implemented`)
-- **WCMP-CL-NO-ERROR-TO-ERROR** — Never generate a WCMP error message in response to another WCMP error message.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.1 (5.1. General)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-NO-ERROR-TO-ERROR` (`error-policy`, `implemented`)
-- **WCMP-CL-ONE-FRAGMENT-ERROR** — Generate no more than one WCMP error for a fragmented datagram.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.1 (5.1. General)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-ONE-FRAGMENT-ERROR` (`error-policy`, `implemented`)
-- **WCMP-CL-SELECTED-TYPE-CODE-VALUES** — Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.
-  - Family: `wcmp`; force: `table`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
-  - Parents: `WCMP-GEN-C-001`, `WCMP-GEN-C-003`, `WCMP-GEN-C-006`
-  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
-  - Fixture: `WCMP-FX-SELECTED-TYPE-CODE-VALUES` (`binary-decoder`, `implemented`)
-- **WCMP-CL-SINGLE-BEARER-FRAGMENT** — Encode each WCMP message so it fits in one bearer-level fragment.
-  - Family: `wcmp`; force: `explicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.1 (5.1. General)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-SINGLE-BEARER-FRAGMENT` (`transport-boundary`, `implemented`)
-
 ### TRN-706
 
 - **WDP-CL-CDPD-UDP-IP-PROFILE** — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
@@ -831,18 +663,18 @@ Evidence commands:
 
 ### TRN-707
 
-- **WCMP-CL-CLIENT-GENERAL-PROFILE** — Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.
-  - Family: `wcmp`; force: `implicit-must`; level: `required`
-  - Source: `WAP-202-WCMP` §5.4 (5.4. WCMP in Non-IP Networks)
-  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
-  - Requirements: `RQ-TRX-006`
-  - Fixture: `WCMP-FX-CLIENT-GENERAL-PROFILE` (`transport-boundary`, `implemented`)
-- **WCMP-CL-SELECTED-TYPE-CODE-VALUES** — Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.
+- **WCMP-CL-CDPD-USES-ICMP** — Select the ICMP control-message path for CDPD instead of the general WCMP wire format defined for non-IP networks.
   - Family: `wcmp`; force: `table`; level: `required`
-  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
-  - Parents: `WCMP-GEN-C-001`, `WCMP-GEN-C-003`, `WCMP-GEN-C-006`
+  - Source: `WAP-202-WCMP` §5.3 (5.3. WCMP in IP Networks)
+  - Parents: `WCMP-C-001`, `WCMP-SP-C-001`
   - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
-  - Fixture: `WCMP-FX-SELECTED-TYPE-CODE-VALUES` (`binary-decoder`, `implemented`)
+  - Fixture: `WCMP-FX-CDPD-USES-ICMP` (`transport-boundary`, `implemented`)
+- **WCMP-CL-IP-NETWORKS-USE-ICMP** — Use ICMP to provide WCMP error-reporting and diagnostic functions whenever the selected bearer network is IP based.
+  - Family: `wcmp`; force: `explicit-must`; level: `required`
+  - Source: `WAP-202-WCMP` §5.3 (5.3. WCMP in IP Networks)
+  - Parents: `WCMP-C-001`, `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-IP-NETWORKS-USE-ICMP` (`transport-boundary`, `implemented`)
 - **WDP-CL-CDPD-UDP-IP-PROFILE** — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.4.3 (5.4.3 WDP over CDPD)
@@ -886,23 +718,105 @@ Evidence commands:
   - Requirements: `RQ-TRN-001`
   - Fixture: `WDP-FX-UNITDATA-REQUEST-ANYTIME` (`transport-boundary`, `implemented`)
 
+### TRN-708
+
+- **WCMP-CL-CDPD-USES-ICMP** — Select the ICMP control-message path for CDPD instead of the general WCMP wire format defined for non-IP networks.
+  - Family: `wcmp`; force: `table`; level: `required`
+  - Source: `WAP-202-WCMP` §5.3 (5.3. WCMP in IP Networks)
+  - Parents: `WCMP-C-001`, `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-CDPD-USES-ICMP` (`transport-boundary`, `implemented`)
+- **WCMP-CL-ICMPV4-CHECKSUM** — Encode and verify the ICMPv4 ones-complement checksum across the complete control message with the checksum field zeroed for calculation.
+  - Family: `wcmp`; force: `grammar`; level: `required`
+  - Source: `rfc-792` §message-formats (Message Formats)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-CHECKSUM` (`binary-decoder`, `implemented`)
+- **WCMP-CL-ICMPV4-DESTINATION-UNREACHABLE-LAYOUT** — Decode ICMPv4 Destination Unreachable as Type 3, Code, Checksum, four-octet type-specific data, and the quoted original IPv4 header plus data.
+  - Family: `wcmp`; force: `grammar`; level: `required`
+  - Source: `rfc-792` §destination-unreachable (Destination Unreachable Message)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-DESTINATION-UNREACHABLE-LAYOUT` (`binary-decoder`, `implemented`)
+- **WCMP-CL-ICMPV4-ECHO-ROUNDTRIP** — Handle ICMPv4 Echo Request type 8 and Echo Reply type 0 with Code 0 while preserving the identifier, sequence number, and returned data.
+  - Family: `wcmp`; force: `explicit-must`; level: `required`
+  - Source: `rfc-792` §echo (Echo or Echo Reply Message)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-ECHO-ROUNDTRIP` (`transport-boundary`, `implemented`)
+- **WCMP-CL-ICMPV4-ERROR-QUOTE** — Preserve the quoted original IPv4 header and first 64 data bits so the ICMPv4 error can be correlated with the affected WDP UDP datagram.
+  - Family: `wcmp`; force: `grammar`; level: `required`
+  - Source: `rfc-792` §destination-unreachable (Destination Unreachable Message)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-ERROR-QUOTE` (`binary-decoder`, `implemented`)
+- **WCMP-CL-ICMPV4-FRAGMENTATION-NEEDED** — Interpret ICMPv4 Destination Unreachable type 3 code 4 as fragmentation needed while the original IPv4 datagram had the DF flag set, preserving the RFC 1191 Next-Hop MTU when present.
+  - Family: `wcmp`; force: `table`; level: `required`
+  - Source: `rfc-792` §destination-unreachable (Destination Unreachable Message)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-FRAGMENTATION-NEEDED` (`error-policy`, `implemented`)
+- **WCMP-CL-ICMPV4-PORT-UNREACHABLE** — Interpret ICMPv4 Destination Unreachable type 3 code 3 as an inactive destination process port and map the quoted UDP destination port at the WDP boundary.
+  - Family: `wcmp`; force: `table`; level: `required`
+  - Source: `rfc-792` §destination-unreachable (Destination Unreachable Message)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-PORT-UNREACHABLE` (`error-policy`, `implemented`)
+- **WCMP-CL-ICMPV4-PROTOCOL** — Carry ICMPv4 as IPv4 protocol number 1 and dispatch each control message from its leading Type field.
+  - Family: `wcmp`; force: `table`; level: `required`
+  - Source: `rfc-792` §message-formats (Message Formats)
+  - Parents: `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-ICMPV4-PROTOCOL` (`binary-decoder`, `implemented`)
+- **WCMP-CL-IP-NETWORKS-USE-ICMP** — Use ICMP to provide WCMP error-reporting and diagnostic functions whenever the selected bearer network is IP based.
+  - Family: `wcmp`; force: `explicit-must`; level: `required`
+  - Source: `WAP-202-WCMP` §5.3 (5.3. WCMP in IP Networks)
+  - Parents: `WCMP-C-001`, `WCMP-SP-C-001`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-IP-NETWORKS-USE-ICMP` (`transport-boundary`, `implemented`)
+- **WDP-CL-CDPD-UDP-IP-PROFILE** — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.4.3 (5.4.3 WDP over CDPD)
+  - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-CDPD-UDP-IP-PROFILE` (`transport-boundary`, `implemented`)
+- **WDP-CL-CONSISTENT-TRANSPORT-SERVICE** — Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.1 (5.1 Reference Model)
+  - Parents: `WDP-C-001`, `WDP-CORE-C-001`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-CONSISTENT-TRANSPORT-SERVICE` (`transport-boundary`, `implemented`)
+- **WDP-CL-IP-BEARER-REQUIRES-UDP** — Use UDP as the WDP protocol whenever the selected bearer provides IP.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.3 (5.3 WDP Static Conformance Clause)
+  - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IP-BEARER-REQUIRES-UDP` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-DONT-FRAGMENT** — Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `rfc-791` §3.2 (3.2.  Discussion)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-DONT-FRAGMENT` (`error-policy`, `implemented`)
+
 ## Explicit mapping gaps
 
+- `TRN-703` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-704` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-705` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
-- `TRN-708` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
+- `TRN-703` declares `wcmp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-706` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-707` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `TRN-708` declares `wcmp`, `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents
 
 - `OMA-WAP-201_003-WTP-SIN`: Wireless Transaction Protocol — https://www.openmobilealliance.org/tech/affiliates/wap/OMA-WAP-201_003-WTP-SIN-20020904-a.PDF
 - `rfc-768`: rfc-768
 - `rfc-791`: rfc-791
+- `rfc-792`: rfc-792
 - `WAP-159-WDPWCMPAdapt`: WDP/WCMP Wireless Data Gateway Adaptation — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-159-WDPWCMPAdapt-20010713-a.pdf
 - `WAP-200_001-WDP`: Wireless Datagram Protocol — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_001-WDP-20001212-a.pdf
 - `WAP-200_002-WDP`: Wireless Datagram Protocol — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_002-WDP-20001213-a.pdf

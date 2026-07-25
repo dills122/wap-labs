@@ -38,7 +38,8 @@ Current caveat:
   WAP-203 connectionless conformance remains open under
   `WSP-801`/`802`/`804`/`805`; the selected WAP-200 and WAP-202 rows are
   directly evidenced by `TRN-701`, the narrow constrained-payload policy by
-  `TRN-702`, and the WCMP core by `TRN-703`.
+  `TRN-702`, the non-IP general-WCMP capability by `TRN-703`, and the selected
+  CDPD/IPv4 ICMP profile by `TRN-708`.
 
 Fixture lane:
 
@@ -49,6 +50,8 @@ Fixture lane:
 - `transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json`
   (directly mapped TRN-706 selected-profile WDP replay lane)
 - `transport-rust/tests/network/interop/` (promotion replay lane; tracked by `T0-22` and `T0-24`)
+- `transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/`
+  (selected CDPD/IPv4 ICMP type 3 and echo boundary)
 
 ### `wap-net-ext` (target, gated)
 

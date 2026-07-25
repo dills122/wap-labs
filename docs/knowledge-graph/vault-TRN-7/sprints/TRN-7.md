@@ -39,7 +39,7 @@ tags:
     "CONF-1"
   ],
   "exitGates": [
-    "The nine-row selected WDP path and five-row selected WCMP path have executable evidence.",
+    "The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.",
     "WTP evidence is required only when connection-oriented WSP is claimed.",
     "Timing tests are deterministic and do not require live networks.",
     "WAP 2.0 transport deltas are explicit."

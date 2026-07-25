@@ -16,13 +16,9 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wcmp|wcmp]]
-- `planned-by` → [[work-items/TRN-703|TRN-703]]
-- `refines` ← [[clauses/WCMP-CL-CLIENT-GENERAL-PROFILE|WCMP-CL-CLIENT-GENERAL-PROFILE]]
-- `refines` ← [[clauses/WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES|WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES]]
-- `refines` ← [[clauses/WCMP-CL-FORGED-MESSAGE-CAUTION|WCMP-CL-FORGED-MESSAGE-CAUTION]]
-- `refines` ← [[clauses/WCMP-CL-NO-ERROR-TO-ERROR|WCMP-CL-NO-ERROR-TO-ERROR]]
-- `refines` ← [[clauses/WCMP-CL-ONE-FRAGMENT-ERROR|WCMP-CL-ONE-FRAGMENT-ERROR]]
-- `refines` ← [[clauses/WCMP-CL-SINGLE-BEARER-FRAGMENT|WCMP-CL-SINGLE-BEARER-FRAGMENT]]
+- `planned-by` → [[work-items/TRN-708|TRN-708]]
+- `refines` ← [[clauses/WCMP-CL-CDPD-USES-ICMP|WCMP-CL-CDPD-USES-ICMP]]
+- `refines` ← [[clauses/WCMP-CL-IP-NETWORKS-USE-ICMP|WCMP-CL-IP-NETWORKS-USE-ICMP]]
 
 ## Data
 
@@ -39,8 +35,7 @@ tags:
     "transport-rust"
   ],
   "workItems": [
-    "TRN-703",
-    "T0-17"
+    "TRN-708"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

@@ -10,7 +10,7 @@
     "5.5.3.3",
     "5.5.3.5"
   ],
-  "selectedRows": [
+  "capabilityRows": [
     "WCMP-C-001",
     "WCMP-SP-C-002",
     "WCMP-GEN-C-001",
@@ -18,7 +18,7 @@
     "WCMP-GEN-C-006"
   ],
   "addressProfile": {
-    "bearer": "AMPS CDPD",
+    "bearer": "opaque legacy address vector; bearer selection is external to this codec fixture",
     "addressType": 13,
     "address": [192, 0, 2, 7]
   },

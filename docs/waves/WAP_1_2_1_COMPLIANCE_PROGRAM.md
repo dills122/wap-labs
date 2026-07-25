@@ -36,18 +36,18 @@ node scripts/check-wap-transport-conformance-ledgers.mjs
 
 All nine selected Class C family increments are complete at SCR level:
 
-- together they contain 712 effective source rows and 201 selected strict
+- together they contain 712 effective source rows and 198 selected strict
   rows;
 - the selected implementation audit is 22 implemented, 78 partial, and 101
   missing;
 - every selected row has an implementation owner and work-item mapping;
-- `CONF-003` is complete: all nine families and all 201 selected parent rows
-  expand into 780 deduplicated, source-anchored clauses; the selected WDP and
-  WCMP paths contribute 77 assessed, direct fixture-backed clauses;
+- `CONF-003` is complete: all nine families and all 198 selected parent rows
+  expand into 761 deduplicated, source-anchored clauses; the selected WDP and
+  WCMP paths contribute 58 assessed, direct fixture-backed clauses;
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
   rollups are now guarded by a deterministic drift check;
-- `CONF-007` is complete for all 201 selected rows: 17 implementation
+- `CONF-007` is complete for all 198 selected rows: 17 implementation
   foundations are successor-derived or cross-checked, of which two are
   compatible and 15 require strict target correction;
 - 76 effective WML 1.3 SCR rows are extracted;
@@ -100,10 +100,10 @@ All nine selected Class C family increments are complete at SCR level:
 - 317 effective WDP/WCMP/WSP SCR rows are extracted with all actor, M/O,
   source-order, and dependency expressions preserved;
 - the selected connectionless transport path resolves to 22 rows: 9 WDP
-  using CDPD-shaped UDP/IPv4, 5 general-WCMP rows, and 8 connectionless WSP
+  using CDPD-shaped UDP/IPv4, 2 ICMP-backed WCMP rows, and 8 connectionless WSP
   rows;
-- the selected transport audit is 14 implemented, 8 partial, and 0 missing:
-  all nine selected WDP rows and all five selected WCMP rows have direct
+- the selected transport audit is 11 implemented, 8 partial, and 0 missing:
+  all nine selected WDP rows and both selected WCMP rows have direct
   normative evidence, while the eight connectionless WSP rows remain partial;
 - connection-oriented WSP and WTP remain a separately activated capability;
   the selected CDPD `TIAEIA-732` family citation is authority-locked as a

@@ -1,0 +1,22 @@
+name = "wcmp-cdpd-icmp-profile"
+description = "RFC 792 ICMPv4 vectors and WDP boundary outcomes for the strict WAP-202 CDPD/IPv4 profile."
+mode = "mapped"
+work_items = ["TRN-708"]
+spec_items = [
+  "WCMP-C-001",
+  "WCMP-SP-C-001",
+  "WCMP-CL-CDPD-USES-ICMP",
+  "WCMP-CL-ICMPV4-PORT-UNREACHABLE",
+  "WCMP-CL-ICMPV4-FRAGMENTATION-NEEDED",
+  "WCMP-CL-ICMPV4-ECHO-ROUNDTRIP",
+  "RQ-TRX-006",
+  "RQ-TRX-007",
+  "RQ-TRX-008",
+]
+testing_ac = [
+  "Selects ICMPv4 protocol 1 for strict CDPD/IPv4 and rejects general-WCMP messages at that profile boundary.",
+  "Maps ICMPv4 Destination Unreachable type 3 code 3 to the quoted UDP destination-port WDP error.",
+  "Maps type 3 code 4 with DF set and Next-Hop MTU 576 to the WDP fragmentation-needed error.",
+  "Generates and decodes byte-exact Echo Request type 8 and Echo Reply type 0 packets while preserving correlation data.",
+  "Rejects malformed checksums, fields, codes, and quoted datagrams deterministically.",
+]

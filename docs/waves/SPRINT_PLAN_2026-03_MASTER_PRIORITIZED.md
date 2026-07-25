@@ -32,10 +32,10 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 ## WAP Compliance Rebase (2026-07-24)
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
-201 selected parent rows, 780 planned clause fixtures, and a
-13-sprint/78-item execution program. The conservative implementation snapshot
-is 22 implemented, 78 partial, and 101 missing parent rows; clause-level
-assessment is 149/780.
+198 selected parent rows, 761 planned clause fixtures, and a
+13-sprint/79-item execution program. The conservative implementation snapshot
+is 19 implemented, 78 partial, and 101 missing parent rows; clause-level
+assessment is 131/761.
 
 Use this order for new completion work:
 

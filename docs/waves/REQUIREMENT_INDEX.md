@@ -33,8 +33,8 @@ exact conformance rows. Use
 `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`,
 `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
 `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. Their selected
-connectionless Class C path contains 22 rows with an audit of 14 implemented,
-8 partial, zero missing, and 14 direct normative tests. WTP
+connectionless Class C path contains 19 rows with an audit of 11 implemented,
+8 partial, zero missing, and 11 direct normative tests. WTP
 remains conditional unless connection-oriented WSP is claimed.
 
 | Requirement ID | Owner Layer | Primary Ticket Lane | Test Status | Traceability Doc |
