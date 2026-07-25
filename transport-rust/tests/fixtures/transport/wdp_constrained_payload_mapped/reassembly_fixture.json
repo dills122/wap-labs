@@ -1,0 +1,138 @@
+{
+  "sourceDocuments": [
+    {
+      "id": "WAP-200-WDP",
+      "sections": ["6.3.1.1", "7.2"]
+    },
+    {
+      "id": "rfc-768",
+      "sections": ["fields"]
+    },
+    {
+      "id": "rfc-791",
+      "sections": ["3.1", "3.2"]
+    }
+  ],
+  "clauseIds": [
+    "WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+    "WDP-CL-IP-MAPPING-FRAGMENTATION",
+    "WDP-CL-UDP-LENGTH-BOUNDS",
+    "WDP-CL-IPV4-TOTAL-LENGTH",
+    "WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+    "WDP-CL-IPV4-LARGE-SEND-GUARD",
+    "WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+    "WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+    "WDP-CL-IPV4-DONT-FRAGMENT"
+  ],
+  "profile": {
+    "bearer": "AMPS/CDPD/IPv4",
+    "ipv4BaselineDatagramBytes": 576,
+    "ipv4ProtocolMaximumDatagramBytes": 65535,
+    "udpMaximumPayloadBytes": 65507,
+    "wdpSegmentationHeaderPresent": false,
+    "oversizePolicy": "reject",
+    "truncationPolicy": "never-truncate-wdp-unitdata",
+    "reassemblyOwner": "destination-ip-module-below-wdp",
+    "maxPendingDatagrams": 8,
+    "maxBufferedPayloadBytes": 4608,
+    "timeoutTicks": 30
+  },
+  "completePacket": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+  "expectedUserData": [222, 173, 190, 239, 1],
+  "replayCases": [
+    {
+      "name": "out-of-order-complete",
+      "steps": [
+        {
+          "tick": 0,
+          "packet": [69, 0, 0, 25, 18, 52, 0, 1, 64, 17, 228, 141, 192, 0, 2, 10, 192, 0, 2, 7, 222, 173, 190, 239, 1],
+          "expected": "pending",
+          "duplicate": false
+        },
+        {
+          "tick": 1,
+          "packet": [69, 0, 0, 28, 18, 52, 32, 0, 64, 17, 196, 139, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51],
+          "expected": "complete"
+        }
+      ]
+    },
+    {
+      "name": "duplicate-is-idempotent",
+      "steps": [
+        {
+          "tick": 2,
+          "packet": [69, 0, 0, 28, 18, 52, 32, 0, 64, 17, 196, 139, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51],
+          "expected": "pending",
+          "duplicate": false
+        },
+        {
+          "tick": 3,
+          "packet": [69, 0, 0, 28, 18, 52, 32, 0, 64, 17, 196, 139, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51],
+          "expected": "pending",
+          "duplicate": true
+        },
+        {
+          "tick": 4,
+          "packet": [69, 0, 0, 25, 18, 52, 0, 1, 64, 17, 228, 141, 192, 0, 2, 10, 192, 0, 2, 7, 222, 173, 190, 239, 1],
+          "expected": "complete"
+        }
+      ]
+    },
+    {
+      "name": "incomplete-expires",
+      "steps": [
+        {
+          "tick": 10,
+          "packet": [69, 0, 0, 28, 18, 52, 32, 0, 64, 17, 196, 139, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51],
+          "expected": "pending",
+          "duplicate": false
+        }
+      ],
+      "expireBeforeTick": 39,
+      "expireAtTick": 40,
+      "expectedExpiredBufferedBytes": 8
+    },
+    {
+      "name": "overlap-rejected-and-discarded",
+      "steps": [
+        {
+          "tick": 0,
+          "packet": [69, 0, 0, 36, 51, 51, 32, 0, 64, 17, 163, 132, 192, 0, 2, 10, 192, 0, 2, 7, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "expected": "pending",
+          "duplicate": false
+        },
+        {
+          "tick": 1,
+          "packet": [69, 0, 0, 28, 51, 51, 0, 1, 64, 17, 195, 139, 192, 0, 2, 10, 192, 0, 2, 7, 100, 101, 102, 103, 104, 105, 106, 107],
+          "expected": "error",
+          "error": "malformed IPv4 fragment: overlapping fragments are rejected"
+        }
+      ],
+      "expectedPendingAfterError": 0
+    },
+    {
+      "name": "implied-reassembly-size-rejected",
+      "steps": [
+        {
+          "tick": 0,
+          "packet": [69, 0, 0, 21, 34, 34, 0, 70, 64, 17, 212, 94, 192, 0, 2, 10, 192, 0, 2, 7, 170],
+          "expected": "error",
+          "error": "IPv4 reassembly size 581 exceeds configured limit 576"
+        }
+      ],
+      "expectedPendingAfterError": 0
+    },
+    {
+      "name": "truncated-fragment-rejected",
+      "steps": [
+        {
+          "tick": 0,
+          "packet": [69, 0, 0, 28, 18, 52, 32, 0, 64, 17, 196, 139, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249],
+          "expected": "error",
+          "error": "invalid IPv4 total length 28 for header 20 and packet 27"
+        }
+      ],
+      "expectedPendingAfterError": 0
+    }
+  ]
+}

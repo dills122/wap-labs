@@ -192,7 +192,7 @@
             "test": "source_derived_fixture_covers_selected_class_c_rows_and_clauses",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -281,7 +281,7 @@
             "test": "selected_cdpd_ipv4_profile_preserves_exact_udp_ipv4_bytes",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -370,7 +370,7 @@
             "test": "td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -421,7 +421,7 @@
             "test": "td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -662,7 +662,7 @@
             "test": "registered_port_and_bearer_profile_are_exact",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -1549,7 +1549,7 @@
             "test": "td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -1676,7 +1676,7 @@
             "test": "selected_cdpd_ipv4_profile_preserves_exact_udp_ipv4_bytes",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -1803,7 +1803,7 @@
             "test": "registered_port_and_bearer_profile_are_exact",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"
@@ -1854,7 +1854,7 @@
             "test": "udp_source_port_zero_and_computed_zero_checksum_follow_rfc_768_encoding",
             "fixture": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed."
+            "limitation": "Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed."
           }
         ],
         "evidenceState": "direct-normative-test-linked"

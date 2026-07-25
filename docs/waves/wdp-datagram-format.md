@@ -84,10 +84,13 @@ Transport policy:
   all-zero UDP checksum omission;
 - accept IPv4 datagrams through the 576-octet baseline and require explicit
   destination assurance for larger sends;
+- treat `65,535` octets as the IPv4 protocol maximum and `65,507` octets as
+  the corresponding no-options UDP payload maximum;
 - discard TTL-zero, bad-header-checksum, malformed-length, bad non-zero UDP
   checksum, unsupported-protocol, and DF/path-MTU failures deterministically;
-- return unreassembled IPv4 fragments as an explicit lower-layer reassembly
-  requirement keyed by identification, source, destination, and protocol.
+- keep the stateless WDP/UDP decoder restricted to complete IPv4 datagrams;
+- collect fragments in the explicit destination-IP boundary below WDP,
+  keyed by identification, source, destination, and protocol.
 
 ### 4.2 SMS/USSD/other GSM bearers — deferred
 
@@ -102,10 +105,21 @@ Implementation is deferred but reserved in model:
 - the selected CDPD/IP path adds no WDP segmentation header;
 - IPv4 gateways may fragment and the destination IP module reassembles before
   delivery to WDP;
-- the codec does not perform fragment collection or reassembly;
-- `TRN-702` remains a declared zero-clause mapping gap for the broader
-  constrained-payload and segmentation/reassembly policy and is not closed by
-  the `TRN-701` evidence.
+- the stateless codec still returns `Ipv4FragmentRequiresReassembly` when it
+  is called directly with a fragment, preserving the `TRN-701` boundary;
+- `Ipv4Reassembler` owns bounded fragment collection at the destination-IP
+  boundary, outside the WDP datagram service;
+- the selected strict receive policy accepts complete/reassembled datagrams
+  through 576 octets, rejects larger units without truncating WDP user data,
+  and can be widened only by an explicit destination capability;
+- pending assemblies are bounded by datagram count, buffered bytes, total
+  datagram size, and deterministic simulated-time expiry;
+- duplicate fragments are idempotent, while conflicting overlaps, malformed
+  flags/lengths, oversize extents, and incomplete expiry are explicit outcomes.
+
+The optional generic `WdpSarPolicy::Enabled` path remains an inactive future
+bearer capability. It is not used to manufacture a WDP segmentation layer for
+CDPD/IPv4.
 
 ## 6) Error taxonomy
 
@@ -115,6 +129,10 @@ Minimum errors expected by upper layers:
 - `WdpError::AddressTypeUnsupported`
 - `WdpError::AddressUnresolvable`
 - `WdpError::PayloadOversize`
+- `WdpError::Ipv4FragmentMalformed`
+- `WdpError::Ipv4ReassemblyOversize`
+- `WdpError::Ipv4ReassemblyCapacityExceeded`
+- `WdpError::Ipv4ReassemblyBufferExceeded`
 - `WdpError::Timeout`
 - `WdpError::CorruptOrMalformed`
 
@@ -130,9 +148,18 @@ The direct fixture
 `transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`
 links the nine selected SCR rows and all 49 mapped TRN-701 clauses to exact
 profile constants, registered ports, positive wire packets, and deterministic
-malformed outcomes. Validate it with:
+malformed outcomes.
+
+The additive TRN-702 fixture
+`transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json`
+maps the narrow nine-clause payload/fragment subset to whole, out-of-order,
+duplicate, malformed, overlap, oversize, and incomplete-expiry replays. This
+does not claim broader TRN-706 replay-corpus closure. Validate both with:
 
 ```sh
 cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp
+cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay
 node scripts/check-wap-transport-conformance-ledgers.mjs
+node scripts/check-wap-selected-normative-clauses.mjs
+node scripts/wap-context-pack.mjs TRN-702
 ```

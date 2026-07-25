@@ -3,6 +3,7 @@ use crate::network::wdp::datagram::{WdpAddressType, WdpServicePort};
 pub const WDP_CDPD_IPV4_BEARER_TYPE: u8 = 0x0D;
 pub const WDP_UDP_IPV4_PROTOCOL_NUMBER: u8 = 17;
 pub const WDP_IPV4_BASELINE_DATAGRAM_BYTES: usize = 576;
+pub const WDP_IPV4_MAX_DATAGRAM_BYTES: usize = 65_535;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CdpdIpv4Profile;
@@ -14,4 +15,5 @@ impl CdpdIpv4Profile {
     pub const IP_PROTOCOL: u8 = WDP_UDP_IPV4_PROTOCOL_NUMBER;
     pub const SELECTED_CONNECTIONLESS_WSP_PORT: u16 = WdpServicePort::Connectionless as u16;
     pub const WDP_SEGMENTATION_HEADER_PRESENT: bool = false;
+    pub const BASELINE_REASSEMBLY_LIMIT_BYTES: usize = WDP_IPV4_BASELINE_DATAGRAM_BYTES;
 }

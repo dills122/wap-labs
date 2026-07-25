@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `maps-to` → [[requirements/RQ-TRN-003|RQ-TRN-003]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-702|TRN-702]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `refines` → [[scr-rows/WDP-NA-C-003|WDP-NA-C-003]]
 - `sourced-from` → [[source-documents/rfc-791|rfc-791]]
@@ -43,7 +44,8 @@ tags:
   "obligationSynopsis": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-702"
   ],
   "ownerLayers": [
     "transport-rust"

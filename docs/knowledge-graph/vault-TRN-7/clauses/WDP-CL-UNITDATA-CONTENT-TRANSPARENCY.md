@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-702|TRN-702]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-001|WDP-PF-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-002|WDP-PF-C-002]]
@@ -44,7 +45,8 @@ tags:
   "obligationSynopsis": "Transmit and deliver the complete service data unit without manipulating its content.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-702"
   ],
   "ownerLayers": [
     "transport-rust"

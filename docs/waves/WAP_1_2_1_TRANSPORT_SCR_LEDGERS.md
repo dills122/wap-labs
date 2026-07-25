@@ -95,10 +95,19 @@ WDP path:
 All nine selected rows and their 49 source-anchored WAP-200, RFC 768, and
 RFC 791 clauses link to the direct fixture at
 `transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`.
-IPv4 fragments are rejected with their reassembly key and must be reassembled
-by the destination IP module below WDP. This proves the TRN-701 adaptation
-boundary; it does not implement or close the separately unmapped TRN-702
-segmentation/reassembly policy.
+The stateless codec continues to reject raw IPv4 fragments with their
+reassembly key, preserving the TRN-701 adaptation boundary.
+
+TRN-702 adopts the narrow nine-clause subset governing content transparency,
+UDP/IPv4 length bounds, the 576-octet receive baseline, larger-send assurance,
+DF handling, and IPv4 fragmentation/reassembly location and identity. The
+bounded `Ipv4Reassembler` collects whole/out-of-order/duplicate fragments at
+the destination-IP module below WDP, rejects malformed/overlap/oversize input
+without truncating WDP unit data, and expires incomplete assemblies using
+simulated ticks. Direct replay evidence is in
+`transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json`.
+No WDP segmentation header is introduced, and broader TRN-706 corpus status
+remains unchanged.
 
 ### WCMP
 
@@ -186,8 +195,9 @@ adapter.
 
 - `TRN-701` / `T0-19`: complete for the nine selected WDP rows, CDPD/IPv4
   capability declaration, and source-derived datagram fixtures.
-- `TRN-702`: remains open with no direct clause mapping; constrained-payload
-  and segmentation/reassembly policy must be adopted and evidenced separately.
+- `TRN-702`: complete for the adopted nine-clause constrained-payload subset,
+  deterministic lower-IPv4 reassembly policy, and direct simulated replay
+  evidence; additional bearers remain unclaimed.
 - `TRN-703` / `T0-17`: implement and test the five-row WCMP core, then
   capability-gate optional WCMP breadth.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row

@@ -37,12 +37,15 @@ Current caveat:
 - Native GET/POST ingress and smoke slices are landed, but exact
   WAP-203 connectionless conformance remains open under
   `WSP-801`/`802`/`804`/`805`; the selected WAP-200 and WAP-202 rows are
-  directly evidenced by `TRN-701` and `TRN-703`.
+  directly evidenced by `TRN-701`, the narrow constrained-payload policy by
+  `TRN-702`, and the WCMP core by `TRN-703`.
 
 Fixture lane:
 
 - `transport-rust/src/wsp_registry.rs` (assigned-number policy fixtures)
 - `transport-rust/src/wsp_capability.rs` (capability-bound fixtures)
+- `transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/`
+  (bounded CDPD/IPv4 payload and lower-IP reassembly replay lane)
 - `transport-rust/tests/network/interop/` (promotion replay lane; tracked by `T0-22` and `T0-24`)
 
 ### `wap-net-ext` (target, gated)

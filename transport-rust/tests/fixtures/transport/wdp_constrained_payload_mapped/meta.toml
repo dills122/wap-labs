@@ -1,0 +1,21 @@
+name = "wdp-constrained-payload-mapped"
+description = "Source-derived WAP-200 and RFC 791 evidence for the TRN-702 CDPD/IPv4 constrained-payload and lower-layer reassembly policy."
+mode = "mapped"
+work_items = ["TRN-702"]
+spec_items = [
+  "WDP-CORE-C-001",
+  "WDP-PF-C-001",
+  "WDP-PF-C-002",
+  "WDP-CT-C-002",
+  "WDP-NA-C-003",
+  "RQ-TRN-001",
+  "RQ-TRN-002",
+  "RQ-TRN-003",
+]
+testing_ac = [
+  "Keeps the selected CDPD/IPv4 WDP mapping as one UDP datagram with no WDP segmentation header.",
+  "Accepts complete or reassembled IPv4 datagrams through the 576-octet baseline and rejects larger unassured receive units without truncation.",
+  "Reassembles IPv4 fragments below WDP by identification, source, destination, protocol, offset, and final-fragment marker.",
+  "Delivers only complete UDP payloads to WDP and reports pending, expired-incomplete, malformed, overlap, and oversize outcomes deterministically.",
+  "Uses bounded pending-datagram, buffered-byte, datagram-size, and simulated-time policies without live-network dependencies.",
+]

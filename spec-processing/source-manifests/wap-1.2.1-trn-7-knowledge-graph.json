@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "5e76a03c6bdfb6790c219ca7758b308e6ad9a3ded50c92cbd417773f3bc1a572"
+        "sha256": "9890f45f67c2b6739941a87bdd88f111ba7d81d4560657090b0dced677ed1ada"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,14 +25,14 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "c7e24ece1cdce7ad2f2fcce71cfe0b97528d1522f35955f2f56f873eb2b4d1ae"
+        "sha256": "fcb5278951c6cf0d1d1f03ca379b256bbd1610de8359c2615928ea498c3cf45c"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
     "nodeCount": 214,
-    "edgeCount": 604,
+    "edgeCount": 613,
     "nodesByType": {
       "clause": 77,
       "fixture": 77,
@@ -56,7 +56,7 @@
       "effective-document": 12,
       "maps-to": 114,
       "owned-by": 15,
-      "planned-by": 91,
+      "planned-by": 100,
       "refines": 154,
       "relates-to": 8,
       "requires-family": 2,
@@ -67,7 +67,7 @@
     },
     "directClauseCountsByWorkItem": {
       "TRN-701": 49,
-      "TRN-702": 0,
+      "TRN-702": 9,
       "TRN-703": 28,
       "TRN-704": 0,
       "TRN-705": 0,
@@ -78,7 +78,9 @@
       "TRN-701": [
         "wdp"
       ],
-      "TRN-702": [],
+      "TRN-702": [
+        "wdp"
+      ],
       "TRN-703": [
         "wcmp"
       ],
@@ -88,9 +90,6 @@
       "TRN-707": []
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "TRN-702": [
-        "wdp"
-      ],
       "TRN-706": [
         "wdp"
       ],
@@ -100,7 +99,6 @@
       ]
     },
     "workItemsWithoutDirectClauses": [
-      "TRN-702",
       "TRN-704",
       "TRN-705",
       "TRN-706",
@@ -1390,7 +1388,8 @@
         "obligationSynopsis": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1465,7 +1464,8 @@
         "obligationSynopsis": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1501,7 +1501,8 @@
         "obligationSynopsis": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1572,7 +1573,8 @@
         "obligationSynopsis": "Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1608,7 +1610,8 @@
         "obligationSynopsis": "Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1749,7 +1752,8 @@
         "obligationSynopsis": "Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1891,7 +1895,8 @@
         "obligationSynopsis": "Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -2498,7 +2503,8 @@
         "obligationSynopsis": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -2678,7 +2684,8 @@
         "obligationSynopsis": "Transmit and deliver the complete service data unit without manipulating its content.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-702"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -4668,7 +4675,7 @@
       "type": "work-item",
       "title": "WDP constrained-payload and segmentation/reassembly policy",
       "properties": {
-        "status": "todo",
+        "status": "done",
         "ownerLayers": [
           "transport-rust",
           "qa"
@@ -4680,13 +4687,20 @@
           "T0-19"
         ],
         "outputs": [
-          "WDP constrained-payload and segmentation/reassembly policy"
+          "WDP constrained-payload and segmentation/reassembly policy",
+          "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json"
         ],
         "acceptance": [
-          "Payload limits, truncation/rejection, segmentation applicability, and reassembly failure are deterministic for the selected bearer."
+          "The nine adopted WAP-200 and RFC 791/768 obligations directly evidence deterministic payload limits, rejection without WDP unit-data truncation, no WDP segmentation header on CDPD/IPv4, and destination-IP reassembly below WDP.",
+          "Whole, fragmented, out-of-order, duplicate, malformed, overlapping, oversize, and incomplete-expiry inputs produce bounded deterministic outcomes for the selected 576-octet baseline profile."
         ],
         "evidence": [
-          "cargo test --manifest-path transport-rust/Cargo.toml"
+          "cargo test --manifest-path transport-rust/Cargo.toml",
+          "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay",
+          "node scripts/check-wap-selected-normative-clauses.mjs",
+          "node scripts/check-wap-transport-conformance-ledgers.mjs",
+          "node scripts/wap-context-pack.mjs TRN-702",
+          "node scripts/check-wap-knowledge-graph.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -6819,6 +6833,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION|refines|scr-row:WDP-C-001",
       "from": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION",
       "relation": "refines",
@@ -6972,6 +6995,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE|refines|scr-row:WDP-CORE-C-001",
       "from": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
       "relation": "refines",
@@ -7030,6 +7062,15 @@
       "from": "clause:WDP-CL-IPV4-DONT-FRAGMENT",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-DONT-FRAGMENT|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IPV4-DONT-FRAGMENT",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7152,6 +7193,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY|refines|scr-row:WDP-CORE-C-001",
       "from": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
       "relation": "refines",
@@ -7210,6 +7260,15 @@
       "from": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7435,6 +7494,15 @@
       "from": "clause:WDP-CL-IPV4-LARGE-SEND-GUARD",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-LARGE-SEND-GUARD|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IPV4-LARGE-SEND-GUARD",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7669,6 +7737,15 @@
       "from": "clause:WDP-CL-IPV4-TOTAL-LENGTH",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-TOTAL-LENGTH|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-IPV4-TOTAL-LENGTH",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8700,6 +8777,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-UDP-LENGTH-BOUNDS|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-UDP-LENGTH-BOUNDS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-UDP-LENGTH-BOUNDS|refines|scr-row:WDP-CORE-C-001",
       "from": "clause:WDP-CL-UDP-LENGTH-BOUNDS",
       "relation": "refines",
@@ -8992,6 +9078,15 @@
       "from": "clause:WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-UNITDATA-CONTENT-TRANSPARENCY|planned-by|work-item:TRN-702",
+      "from": "clause:WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+      "relation": "planned-by",
+      "to": "work-item:TRN-702",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

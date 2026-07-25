@@ -888,11 +888,20 @@ function clause(
   normativeForce,
   fixtureKind,
   obligationSynopsis,
-  anchorFamily = family
+  anchorFamily = family,
+  directWorkItems = []
 ) {
   const directFixtureImplemented = family === 'wcmp' || family === 'wdp';
+  const isTrn702Clause = directWorkItems.includes('TRN-702');
   const evidence =
-    family === 'wdp'
+    isTrn702Clause
+      ? {
+          path: 'transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json',
+          testPath: 'transport-rust/tests/wdp_constrained_replay.rs',
+          command:
+            'cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay'
+        }
+      : family === 'wdp'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
           testPath: 'transport-rust/src/network/wdp/tests.rs',
@@ -909,6 +918,7 @@ function clause(
     id: `${family.toUpperCase()}-CL-${key.toUpperCase().replaceAll('_', '-')}`,
     family,
     parentRows,
+    ...(directWorkItems.length ? { directWorkItems } : {}),
     sourceAnchor: sectionAnchors.get(`${anchorFamily}:${section}`),
     normativeForce,
     obligationLevel:
@@ -1360,10 +1370,10 @@ clause('wdp', 'destination_address_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 
 clause('wdp', 'source_address_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-000', 'WDP-NA-C-003'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Treat the source address as the unique network identity of the device issuing the transport request.');
 clause('wdp', 'destination_port_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-006'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Bind the destination port to the destination application or upper-layer protocol for that communication instance.');
 clause('wdp', 'source_port_semantics', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-007'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Bind the source port to the requesting application or upper-layer protocol for that communication instance.');
-clause('wdp', 'unitdata_content_transparency', ['WDP-CORE-C-001', 'WDP-PF-C-001', 'WDP-PF-C-002'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Transmit and deliver the complete service data unit without manipulating its content.');
+clause('wdp', 'unitdata_content_transparency', ['WDP-CORE-C-001', 'WDP-PF-C-001', 'WDP-PF-C-002'], '6.3.1.1', 'implicit-must', 'transport-boundary', 'Transmit and deliver the complete service data unit without manipulating its content.', 'wdp', ['TRN-702']);
 clause('wdp', 'protocol_required_port_fields', ['WDP-CORE-C-001', 'WDP-NA-C-006', 'WDP-NA-C-007'], '7.1', 'implicit-must', 'binary-decoder', 'Carry both destination and source port fields in the selected WDP protocol mapping.');
 clause('wdp', 'ip_mapping_is_udp', ['WDP-C-001', 'WDP-CT-C-002', 'WDP-NA-C-003'], '7.2', 'implicit-must', 'transport-boundary', 'Map WDP directly to UDP for every selected bearer on which IP routing is available.');
-clause('wdp', 'ip_mapping_fragmentation', ['WDP-C-001', 'WDP-CT-C-002', 'WDP-NA-C-003'], '7.2', 'implicit-must', 'transport-boundary', 'Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.');
+clause('wdp', 'ip_mapping_fragmentation', ['WDP-C-001', 'WDP-CT-C-002', 'WDP-NA-C-003'], '7.2', 'implicit-must', 'transport-boundary', 'Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.', 'wdp', ['TRN-702']);
 clause('wdp', 'wap_port_registry', ['WDP-NA-C-006', 'WDP-NA-C-007'], 'appendix-b', 'table', 'transport-boundary', 'Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.');
 clause('wdp', 'selected_wsp_port', ['WDP-C-001', 'WDP-NA-C-006'], 'appendix-b', 'table', 'transport-boundary', 'Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.');
 clause('wdp', 'selected_bearer_assignment', ['WDP-CT-C-002', 'WDP-NA-C-003'], 'appendix-c', 'table', 'transport-boundary', 'Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.');
@@ -1372,7 +1382,7 @@ clause('wdp', 'udp_unreliable_datagrams', ['WDP-C-001', 'WDP-CORE-C-001'], 'intr
 clause('wdp', 'udp_header_layout', ['WDP-CORE-C-001', 'WDP-NA-C-006', 'WDP-NA-C-007'], 'format', 'grammar', 'binary-decoder', 'Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.', 'rfc-768');
 clause('wdp', 'udp_source_port_zero', ['WDP-NA-C-007'], 'fields', 'table', 'binary-decoder', 'Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port.', 'rfc-768');
 clause('wdp', 'udp_destination_port_context', ['WDP-NA-C-006', 'WDP-NA-C-003'], 'fields', 'implicit-must', 'transport-boundary', 'Interpret a UDP destination port within the context of its destination IPv4 address.', 'rfc-768');
-clause('wdp', 'udp_length_bounds', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.', 'rfc-768');
+clause('wdp', 'udp_length_bounds', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.', 'rfc-768', ['TRN-702']);
 clause('wdp', 'udp_checksum_coverage', ['WDP-CORE-C-001', 'WDP-NA-C-003'], 'fields', 'implicit-must', 'binary-decoder', 'Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic.', 'rfc-768');
 clause('wdp', 'udp_checksum_padding', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.', 'rfc-768');
 clause('wdp', 'udp_checksum_zero_encoding', ['WDP-CORE-C-001'], 'fields', 'implicit-must', 'binary-decoder', 'Transmit an arithmetically computed zero UDP checksum as all one bits.', 'rfc-768');
@@ -1386,12 +1396,12 @@ clause('wdp', 'ipv4_independent_datagrams', ['WDP-C-001', 'WDP-CORE-C-001', 'WDP
 clause('wdp', 'ipv4_fixed_address_size', ['WDP-NA-C-000', 'WDP-NA-C-003'], '2.3', 'implicit-must', 'binary-decoder', 'Represent each selected IPv4 source or destination address as four octets.', 'rfc-791');
 clause('wdp', 'ipv4_header_layout', ['WDP-NA-C-003'], '3.1', 'grammar', 'binary-decoder', 'Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.', 'rfc-791');
 clause('wdp', 'ipv4_version_and_ihl', ['WDP-NA-C-003'], '3.1', 'table', 'binary-decoder', 'Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five.', 'rfc-791');
-clause('wdp', 'ipv4_total_length', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'implicit-must', 'binary-decoder', 'Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.', 'rfc-791');
-clause('wdp', 'ipv4_baseline_receive_size', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'explicit-must', 'transport-boundary', 'Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.', 'rfc-791');
-clause('wdp', 'ipv4_large_send_guard', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'explicit-should', 'transport-boundary', 'Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.', 'rfc-791');
-clause('wdp', 'ipv4_fragmentation_location', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'implicit-must', 'transport-boundary', 'Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.', 'rfc-791');
-clause('wdp', 'ipv4_fragment_reassembly_key', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'implicit-must', 'binary-decoder', 'Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.', 'rfc-791');
-clause('wdp', 'ipv4_dont_fragment', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'explicit-must', 'error-policy', 'Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.', 'rfc-791');
+clause('wdp', 'ipv4_total_length', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'implicit-must', 'binary-decoder', 'Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.', 'rfc-791', ['TRN-702']);
+clause('wdp', 'ipv4_baseline_receive_size', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'explicit-must', 'transport-boundary', 'Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.', 'rfc-791', ['TRN-702']);
+clause('wdp', 'ipv4_large_send_guard', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.1', 'explicit-should', 'transport-boundary', 'Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.', 'rfc-791', ['TRN-702']);
+clause('wdp', 'ipv4_fragmentation_location', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'implicit-must', 'transport-boundary', 'Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.', 'rfc-791', ['TRN-702']);
+clause('wdp', 'ipv4_fragment_reassembly_key', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'implicit-must', 'binary-decoder', 'Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.', 'rfc-791', ['TRN-702']);
+clause('wdp', 'ipv4_dont_fragment', ['WDP-CORE-C-001', 'WDP-NA-C-003'], '3.2', 'explicit-must', 'error-policy', 'Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.', 'rfc-791', ['TRN-702']);
 clause('wdp', 'ipv4_ttl_zero', ['WDP-NA-C-003'], '3.1', 'explicit-must', 'error-policy', 'Destroy an IPv4 datagram when its time-to-live value reaches zero.', 'rfc-791');
 clause('wdp', 'ipv4_header_checksum', ['WDP-NA-C-003'], '3.1', 'explicit-must', 'binary-decoder', 'Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.', 'rfc-791');
 clause('wdp', 'ipv4_source_destination_fields', ['WDP-PF-C-001', 'WDP-PF-C-002', 'WDP-NA-C-003'], '3.1', 'table', 'binary-decoder', 'Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.', 'rfc-791');
@@ -2381,7 +2391,10 @@ const families = familyDefinitions.map((definition) => {
         ...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))
       ].sort(),
       workItems: [
-        ...new Set(parents.flatMap((parent) => parent.mapping.workItems))
+        ...new Set([
+          ...parents.flatMap((parent) => parent.mapping.workItems),
+          ...candidate.directWorkItems
+        ])
       ].sort(),
       requirementIds: [
         ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))

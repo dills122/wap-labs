@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-702|TRN-702]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `sourced-from` → [[source-documents/rfc-768|rfc-768]]
 - `verified-by` → [[fixtures/WDP-FX-UDP-LENGTH-BOUNDS|WDP-FX-UDP-LENGTH-BOUNDS]]
@@ -40,7 +41,8 @@ tags:
   "obligationSynopsis": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-702"
   ],
   "ownerLayers": [
     "transport-rust"

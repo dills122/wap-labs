@@ -50,6 +50,22 @@ pub enum WdpError {
         actual: usize,
         mtu: usize,
     },
+    Ipv4FragmentMalformed {
+        reason: String,
+    },
+    Ipv4ReassemblyOversize {
+        actual: usize,
+        max: usize,
+    },
+    Ipv4ReassemblyCapacityExceeded {
+        actual: usize,
+        max: usize,
+    },
+    Ipv4ReassemblyBufferExceeded {
+        actual: usize,
+        max: usize,
+    },
+    Ipv4ReassemblyPolicyInvalid,
     UdpLengthInvalid {
         declared: usize,
         actual: usize,
@@ -141,6 +157,30 @@ impl std::fmt::Display for WdpError {
                     f,
                     "IPv4 datagram size {actual} exceeds path MTU {mtu} with DF set"
                 )
+            }
+            Self::Ipv4FragmentMalformed { reason } => {
+                write!(f, "malformed IPv4 fragment: {reason}")
+            }
+            Self::Ipv4ReassemblyOversize { actual, max } => {
+                write!(
+                    f,
+                    "IPv4 reassembly size {actual} exceeds configured limit {max}"
+                )
+            }
+            Self::Ipv4ReassemblyCapacityExceeded { actual, max } => {
+                write!(
+                    f,
+                    "IPv4 pending reassembly count {actual} exceeds configured limit {max}"
+                )
+            }
+            Self::Ipv4ReassemblyBufferExceeded { actual, max } => {
+                write!(
+                    f,
+                    "IPv4 reassembly buffer size {actual} exceeds configured limit {max}"
+                )
+            }
+            Self::Ipv4ReassemblyPolicyInvalid => {
+                write!(f, "invalid IPv4 reassembly policy")
             }
             Self::UdpLengthInvalid { declared, actual } => {
                 write!(
