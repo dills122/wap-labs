@@ -134,7 +134,7 @@ VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
 
 Current priority follows the main Waves board:
 
-1. `A5-01` history/session fidelity follow-up
-2. `W0-05` timer/dialog integration baseline
-3. `D0-01` debug connector contract/architecture definition
+1. `D0-01` debug connector contract/architecture definition
+2. `W1-06` fatal/non-fatal script taxonomy closure
+3. Preserve the completed `W0-05` timer/dialog baseline
 4. `M1-09` frame migration only after those stabilize

@@ -1498,7 +1498,7 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W0-05 Timer/dialog integration baseline
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-04`
 3. `Files`:
 - `engine-wasm/engine/src/wavescript/stdlib/dialogs.rs`
@@ -1511,15 +1511,23 @@ Completed `W0-01` through `W0-04` are archived in:
 4. `Build`:
 - Add timer/event plumbing and dialog hostcall path.
 5. `Tests`:
-- `ontimer` and dialog invocation trace tests.
+- `engine-wasm/engine/src/engine_tests/actions_timers.rs`
+  (`timer_expiry_invokes_script_and_publishes_dialog_in_order`)
+- `engine-wasm/examples/source/timer-script-dialog.wml`
+- `engine-wasm/examples/source/timer-script-dialog.flow.json`
+- `pnpm test:story W0-05`
 6. `Accept`:
-- Timer-triggered script flow works with deterministic host/runtime behavior.
+- [x] Timer-triggered script flow works with deterministic host/runtime behavior.
 7. `Spec`:
 - `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017`
 8. `Architecture Compliance`:
-- [ ] Dialog/timer features are host capability calls only.
-- [ ] Timer semantics remain runtime-owned and deterministic.
-- [ ] Host integration cannot bypass runtime error/trap handling model.
+- [x] Dialog/timer features are host capability calls only.
+- [x] Timer semantics remain runtime-owned and deterministic.
+- [x] Host integration cannot bypass runtime error/trap handling model.
+9. `Closure Boundary`:
+- This closes the project baseline only. Strict WAP Dialogs library/function
+  identifiers, interactive dialog result round-trips, and full `WMLS-5`
+  conformance remain in `WMLS-504`/`WMLS-505` and `W1-05..W1-07`.
 
 ### W0-06 Bytecode verification gates follow-up
 

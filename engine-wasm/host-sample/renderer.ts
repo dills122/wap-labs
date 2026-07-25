@@ -2,6 +2,7 @@ import init, { WmlEngine } from '../pkg/wavenav_engine.js';
 import type {
   DrawCmd,
   EngineTraceEntry,
+  ScriptDialogRequest,
   WmlGoRequestPolicy,
   ScriptExecutionOutcome,
   ScriptInvocationOutcome
@@ -29,6 +30,7 @@ export interface EngineSnapshot {
   nextCardVar?: string;
   externalNavigationIntent?: string;
   externalNavigationRequestPolicy?: WmlGoRequestPolicy;
+  lastScriptDialogRequests: ScriptDialogRequest[];
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
   lastScriptExecutionErrorClass?: ScriptErrorClass;
@@ -149,6 +151,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         externalNavigationIntent: engine.externalNavigationIntent(),
         externalNavigationRequestPolicy:
           diagnostics.externalNavigationRequestPolicy?.() ?? undefined,
+        lastScriptDialogRequests: engine.lastScriptDialogRequests(),
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),
         lastScriptExecutionErrorClass: diagnostics.lastScriptExecutionErrorClass?.() ?? undefined,
@@ -359,6 +362,31 @@ function registerBuiltInScriptUnits(engine: WmlEngine): void {
   engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'readNext', 35);
   engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'readCurrentCard', 49);
   engine.registerScriptEntryPoint('wmlbrowser-demo.wmlsc', 'newContextPrev', 66);
+  engine.registerScriptUnit(
+    'timer-dialog.wmlsc',
+    new Uint8Array([
+      0x03,
+      0x0d,
+      0x54,
+      0x69,
+      0x6d,
+      0x65,
+      0x72,
+      0x20,
+      0x65,
+      0x78,
+      0x70,
+      0x69,
+      0x72,
+      0x65,
+      0x64, // "Timer expired"
+      0x20,
+      0x05,
+      0x01, // alert(message)
+      0x00 // halt
+    ])
+  );
+  engine.registerScriptEntryPoint('timer-dialog.wmlsc', 'showExpiryAlert', 0);
   engine.registerScriptUnit(
     'wavescript-fixtures.wmlsc',
     new Uint8Array([

@@ -28,9 +28,9 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 After the completed forms/browser responsiveness slice, current aligned engine priorities are:
 
-1. `W0-05` timer/dialog integration baseline.
-2. `D0-01` debug connector contract and architecture baseline.
-3. `W1-06` fatal/non-fatal script taxonomy closure.
+1. `D0-01` debug connector contract and architecture baseline.
+2. `W1-06` fatal/non-fatal script taxonomy closure.
+3. Preserve the completed `W0-05` timer/dialog baseline.
 4. `M1-03` engine API generator design/bootstrap (non-priority track).
 
 Source of truth for these items:
