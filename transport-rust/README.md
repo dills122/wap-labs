@@ -75,10 +75,10 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Finish the selected-WDP replay boundary for `TRN-706` while keeping its
-   conditional WTP family gap explicit and inactive.
-2. Support binary-WBXML-to-engine parity evidence for the broader `WML-203`
-   gate after the replay fixture shape is stable.
+1. Consume the stable schema-v2 WDP delivery fixture in binary-WBXML-to-engine
+   parity evidence for the broader `WML-203` gate.
+2. Keep the completed selected-WDP replay boundary for `TRN-706` distinct from
+   the work item's conditional WTP family gap.
 3. Keep WTP inactive unless connection-oriented WSP is explicitly claimed;
    treat `WSP-801`/`WSP-802` as downstream foundation work and `M1-03` as a
    non-priority follow-up.

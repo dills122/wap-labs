@@ -93,12 +93,13 @@ Current priority order is:
    residual `WML-204` field/control validation gate. Preserve their completed
    9/9 and 23/23 direct-clause slices; the remaining work shares engine parser
    and runtime tests, so keep it in one serial lane.
-4. Continue `TRN-706` selected-WDP replay evidence in parallel. Keep the
-   conditional WTP mapping gap explicit; `TRN-707`'s bounded WDP/WCMP audit is
+4. Preserve `TRN-706`'s completed schema-v2 selected-WDP replay boundary and
+   keep the conditional WTP mapping gap explicit under additive
+   `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
    complete but intentionally remains open while its declared WTP family is
    inactive and unmapped.
-5. Add cross-layer binary-WBXML-to-engine parity evidence for the broader
-   `WML-203` gate after the transport fixture shape is stable.
+5. Consume the stable WDP delivery fixture in cross-layer
+   binary-WBXML-to-engine parity evidence for the broader `WML-203` gate.
 6. Treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
    until `TRN-7` and `WAE-6` close. Keep `D0-01`, frame migration, generators,
    and maintenance non-preemptive unless they directly unblock a strict

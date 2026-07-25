@@ -162,11 +162,11 @@ Evidence commands:
 Outputs:
 
 - WDP/WTP packet and replay golden corpus
-- transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json
+- schema-v2 exact WDP delivery evidence in transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json
 
 Acceptance:
 
-- The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses.
+- The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses; schema-v2 accepted and reassembled delivery events assert exact addresses, ports, and service-data-unit bytes.
 - WTP duplicate, retransmission, timeout, and abort families remain conditional on a future connection-oriented WSP/WTP claim and do not close TRN-706 in the strict connectionless profile.
 
 Evidence commands:

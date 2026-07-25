@@ -267,12 +267,8 @@ enum ExpectedReplayEvent {
         cache_size: usize,
     },
     WdpAccepted {
-        src_addr: Vec<u8>,
-        dst_addr: Vec<u8>,
-        src_port: u16,
-        dst_port: u16,
         packet_len: usize,
-        payload_len: usize,
+        datagram: ReplayWdpDatagram,
     },
     WdpRejected {
         error: String,
@@ -285,7 +281,7 @@ enum ExpectedReplayEvent {
     },
     WdpReassembled {
         packet_len: usize,
-        payload_len: usize,
+        datagram: ReplayWdpDatagram,
     },
     WdpIncompleteExpired {
         count: usize,
@@ -379,12 +375,8 @@ enum ReplayEvent {
         cache_size: usize,
     },
     WdpAccepted {
-        src_addr: Vec<u8>,
-        dst_addr: Vec<u8>,
-        src_port: u16,
-        dst_port: u16,
         packet_len: usize,
-        payload_len: usize,
+        datagram: WdpDatagram,
     },
     WdpRejected {
         error: String,
@@ -397,7 +389,7 @@ enum ReplayEvent {
     },
     WdpReassembled {
         packet_len: usize,
-        payload_len: usize,
+        datagram: WdpDatagram,
     },
     WdpIncompleteExpired {
         count: usize,
@@ -467,9 +459,8 @@ fn load_fixture(path: &Path) -> ReplayFixture {
 }
 
 fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
-    assert_eq!(
-        fixture.schema_version,
-        1,
+    assert!(
+        matches!(fixture.schema_version, 1 | 2),
         "fixture '{}' uses unsupported schema version {}",
         path.display(),
         fixture.schema_version
@@ -511,6 +502,12 @@ fn validate_fixture_metadata(path: &Path, fixture: &ReplayFixture) {
         );
     }
     if let Some(clause_ids) = &fixture.corpus.clause_ids {
+        assert_eq!(
+            fixture.schema_version,
+            2,
+            "fixture '{}' must use schema version 2 for exact WDP delivery evidence",
+            path.display()
+        );
         assert!(
             !clause_ids.is_empty(),
             "fixture '{}' must include at least one mapped clause",
@@ -886,12 +883,8 @@ fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
                         case.name
                     );
                     out.push(ReplayEvent::WdpAccepted {
-                        src_addr: decoded.src_addr.value,
-                        dst_addr: decoded.dst_addr.value,
-                        src_port: decoded.src_port,
-                        dst_port: decoded.dst_port,
                         packet_len: packet.len(),
-                        payload_len: decoded.payload.len(),
+                        datagram: decoded,
                     });
                 }
                 ReplayWdpStep::Decode { packet } => {
@@ -928,7 +921,7 @@ fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
                             });
                             out.push(ReplayEvent::WdpReassembled {
                                 packet_len: packet.len(),
-                                payload_len: decoded.payload.len(),
+                                datagram: decoded,
                             });
                         }
                     }
@@ -1062,19 +1055,11 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
                 cache_size: *cache_size,
             },
             ExpectedReplayEvent::WdpAccepted {
-                src_addr,
-                dst_addr,
-                src_port,
-                dst_port,
                 packet_len,
-                payload_len,
+                datagram,
             } => ReplayEvent::WdpAccepted {
-                src_addr: src_addr.clone(),
-                dst_addr: dst_addr.clone(),
-                src_port: *src_port,
-                dst_port: *dst_port,
                 packet_len: *packet_len,
-                payload_len: *payload_len,
+                datagram: to_wdp_datagram(datagram),
             },
             ExpectedReplayEvent::WdpRejected { error } => ReplayEvent::WdpRejected {
                 error: error.clone(),
@@ -1092,10 +1077,10 @@ fn expected_events(case: &ReplayCase) -> Vec<ReplayEvent> {
             },
             ExpectedReplayEvent::WdpReassembled {
                 packet_len,
-                payload_len,
+                datagram,
             } => ReplayEvent::WdpReassembled {
                 packet_len: *packet_len,
-                payload_len: *payload_len,
+                datagram: to_wdp_datagram(datagram),
             },
             ExpectedReplayEvent::WdpIncompleteExpired {
                 count,

@@ -48,7 +48,8 @@ Fixture lane:
 - `transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/`
   (bounded CDPD/IPv4 payload and lower-IP reassembly replay lane)
 - `transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json`
-  (directly mapped TRN-706 selected-profile WDP replay lane)
+  (schema-v2 directly mapped TRN-706 selected-profile WDP replay lane with
+  exact accepted/reassembled datagram delivery assertions)
 - `transport-rust/tests/network/interop/` (promotion replay lane; tracked by `T0-22` and `T0-24`)
 - `transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/`
   (selected CDPD/IPv4 ICMP type 3 and echo boundary)
