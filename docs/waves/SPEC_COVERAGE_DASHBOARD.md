@@ -238,8 +238,8 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
   - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
-  - program work items `TRN-701`, `TRN-703`, `WSP-801`, `WSP-802`,
-    `WSP-804`, and `WSP-805`
+  - program work items `TRN-701`, `TRN-702`, `TRN-703`, `WSP-801`,
+    `WSP-802`, `WSP-804`, and `WSP-805`
 - Priority closure focus:
   - preserve the completed nine-row WDP CDPD/IPv4 evidence
   - preserve the completed five-row WCMP general-message evidence

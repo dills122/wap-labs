@@ -369,7 +369,7 @@
     {
       "id": "WML-2",
       "title": "WML parser, deck model, and validation baseline",
-      "status": "todo",
+      "status": "in-progress",
       "dependsOn": ["CONF-1"],
       "goal": "Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.",
       "workItems": [
@@ -408,7 +408,7 @@
         },
         {
           "id": "WML-203",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "transport-rust", "qa"],
           "sourceFamilies": ["wml", "wbxml", "associated-assets"],
           "existingTickets": ["R0-08", "T0-07"],
@@ -429,7 +429,7 @@
         },
         {
           "id": "WML-204",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "qa"],
           "sourceFamilies": ["wml"],
           "existingTickets": ["R0-04", "B5-01", "C5-05"],

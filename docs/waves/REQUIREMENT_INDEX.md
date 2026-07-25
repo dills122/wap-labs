@@ -33,8 +33,8 @@ exact conformance rows. Use
 `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`,
 `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`, and
 `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`. Their selected
-connectionless Class C path contains 22 rows with an audit of five
-implemented, 17 partial, zero missing, and five direct normative tests. WTP
+connectionless Class C path contains 22 rows with an audit of 14 implemented,
+8 partial, zero missing, and 14 direct normative tests. WTP
 remains conditional unless connection-oriented WSP is claimed.
 
 | Requirement ID | Owner Layer | Primary Ticket Lane | Test Status | Traceability Doc |
@@ -51,7 +51,7 @@ remains conditional unless connection-oriented WSP is claimed.
 | `RQ-RMK-007` | engine-wasm (+ browser integration) | `R0-*` (plus `T0-04` for `RQ-RMK-008`) | `covered` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-RMK-008` | engine-wasm (+ browser integration) | `R0-*` (plus `T0-04` for `RQ-RMK-008`) | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-RMK-009` | engine-wasm (+ browser integration) | `R0-*` (plus `T0-04` for `RQ-RMK-008`) | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
-| `RQ-RMK-010` | transport-rust | `WML-203`, `R0-08` | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
+| `RQ-RMK-010` | transport-rust | `WML-203`, `R0-08` | `partial` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-RMK-011` | engine-wasm + browser policy | `R0-07` | `missing/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-RMK-012` | engine-wasm + browser policy | `R0-07` | `partial/planned` | `RUNTIME_MARKUP_SPEC_TRACEABILITY.md` |
 | `RQ-SEC-001` | transport-rust + security policy/docs | `T0-21` (+ policy docs) | `planned/deferred` | `SECURITY_BOUNDARY_TRACEABILITY.md` |

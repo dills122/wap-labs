@@ -56,7 +56,10 @@ const layers = [
   <section class="signal-band" aria-label="Project facts">
     <div><strong>{releaseManifest.summary.memberCount}</strong><span>release sources locked</span></div>
     <div><strong>{effectiveSpec.summary.familyCount}</strong><span>specification families</span></div>
-    <div><strong>{clauseManifest.summary.clauseCount}</strong><span>normative clauses planned</span></div>
+    <div>
+      <strong>{clauseManifest.summary.assessedClauseCount}/{clauseManifest.summary.clauseCount}</strong>
+      <span>normative clauses assessed</span>
+    </div>
     <div><strong>{workItems.length}</strong><span>work items</span></div>
   </section>
 

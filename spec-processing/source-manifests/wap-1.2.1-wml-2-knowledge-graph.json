@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "9890f45f67c2b6739941a87bdd88f111ba7d81d4560657090b0dced677ed1ada"
+        "sha256": "6497a1802b8ea8661aff21b847cd754564b305d5245e41c653b7cb9df6cd9865"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -4635,7 +4635,7 @@
       "type": "sprint",
       "title": "WML parser, deck model, and validation baseline",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "goal": "Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.",
         "dependsOn": [
           "CONF-1"
@@ -4725,7 +4725,7 @@
       "type": "work-item",
       "title": "WML 1.3 DTD validation policy",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "transport-rust",
@@ -4763,7 +4763,7 @@
       "type": "work-item",
       "title": "Complete field/control syntax and attribute validation",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "qa"

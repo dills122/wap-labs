@@ -191,8 +191,9 @@ Expected sprint outcome:
   `wap-net-core`.
 - The strict profile is native WDP/UDP -> connectionless WSP with selected
   WCMP behavior; connection-oriented WSP/WTP is conditional extension scope.
-- Exact source-row closure remains open under `TRN-701`, `TRN-703`, and
-  `WSP-801`/`802`/`804`/`805`.
+- `TRN-701`, `TRN-702`, and `TRN-703` now directly evidence the selected WDP,
+  constrained-payload, and WCMP slices. Exact connectionless WSP closure
+  remains open under `WSP-801`/`802`/`804`/`805`.
 
 ### Rerun delta check (remaining 35-file wave)
 

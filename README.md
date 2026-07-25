@@ -20,6 +20,8 @@ The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`,
 - Transport phase roadmap (`A-D`): `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md`
 - Frame-interface migration plan: `docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`
 - Frame-interface phase board (`F0-F4`): `docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`
+- Project Atlas (generated planning/compliance portal): `docs-portal/README.md`
+- WAP 1.2.1 compliance program: `docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md`
 - Development prerequisites + bootstrap: `docs/development-prerequisites.md`
 - Documentation index: `docs/README.md`
 
@@ -32,13 +34,17 @@ Secondary docs:
 
 ## Progress Snapshot
 
-Status source: `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`, `docs/wml-engine/work-items.md`, `.github/workflows/engine-fuzz.yml` (updated 2026-03-15).
+Status source: `docs/waves/wap-1.2.1-compliance-program.json`,
+`docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`,
+`docs/wml-engine/work-items.md`, and `.github/workflows/engine-fuzz.yml`
+(updated 2026-07-24).
 
 | Track | Implemented | Roadmap / In Progress |
 |---|---|---|
-| Waves desktop app (`browser/`) | Desktop shell is usable end-to-end: network/local mode, runtime deck navigation, focused text/select editing, browser back/reload flow, debug/timeline surfaces, and reduced UI blocking on failed/slow network paths | History/session fidelity follow-up, timer/dialog runtime completion, and debug connector contract work |
-| WaveNav runtime (`engine-wasm/`) | Runtime covers deck/card parsing, navigation, focus, text-input editing, select interaction, deterministic render output, and native/wasm parity-critical behavior | History fidelity, timer/dialog semantics, and deeper spec-conformance follow-ups |
-| Lowband transport (`transport-rust/`) | Native/browser fetch pipeline is stable with request-policy controls, explicit payload guardrails, and real Kannel-backed smoke coverage | Additional conformance fixtures, remaining high-value cleanup, and future protocol breadth only when it serves active priorities |
+| Waves desktop app (`browser/`) | Desktop shell is usable end-to-end: network/local mode, runtime deck navigation, focused text/select editing, browser back/reload flow, debug/timeline surfaces, and an ordinary-browser story adapter backed by the real WASM engine | Broaden spec-driven Waves stories as stable runtime behavior lands; keep timer/dialog and debug-connector work dependency-gated |
+| WaveNav runtime (`engine-wasm/`) | Runtime covers deck/card parsing, navigation, focus, input/select semantics, deterministic render output, native/WASM parity checks, and 23/23 mapped WML-204 clause fixtures | Finish the remaining WML-2 parser/DTD/error gaps before advancing WML-3 runtime breadth |
+| Lowband transport (`transport-rust/`) | The selected WDP path is 9/9 rows implemented, WCMP is 5/5, TRN-702 constrained-payload/reassembly behavior is direct-fixture-backed, and the pinned WBXML decoder has 42/48 selected WBXML clauses implemented | Close the six explicit WBXML gaps, the selected connectionless WSP evidence, and the TRN-706/707 replay and delta work; activate WTP only with connection-oriented WSP |
+| WAP evidence program | 22/201 selected parent rows are implemented and 144/781 clauses are directly assessed; Atlas renders the canonical program and active documents | 78 partial and 101 missing parents remain, so the project stays explicitly pre-conformance |
 | Frame-based render/input migration | Additive frame-oriented host commands are already in place for the hot browser paths | Finish the deliberate `M1-09` migration only after the current runtime/debug boundary work settles |
 | Fuzz hardening (`engine-wasm/engine/fuzz`) | Cargo-fuzz scaffold with `engine_wml_fuzzer`, starter corpus seeds, and scheduled weekly CI run | Add target coverage for transport/protocol surfaces, grow dictionaries/corpus, and tune campaign budgets |
 | Legacy/demo stack (`gateway-kannel/`, `wml-server/`) | Still available for compatibility smoke checks | Maintenance only; not the main build track |
@@ -93,6 +99,9 @@ Quality checks:
 make ci-local
 make lint-rust-transport
 make test-rust-transport
+pnpm test:story all
+pnpm wap-graph:check
+pnpm --dir docs-portal run build
 cd engine-wasm/engine && cargo +nightly fuzz run engine_wml_fuzzer -- -runs=200
 ```
 
@@ -177,10 +186,12 @@ Node version note:
 ## GitHub Pages
 
 - Deployment workflow: `.github/workflows/pages.yml`
-- Trigger: pushes to `main` that modify `marketing-site/**` or `engine-wasm/host-sample/**`
+- Trigger: pushes to `main` that modify the marketing site, simulator, Atlas,
+  active docs/manifests, workspace locks, or the Pages workflow
 - Published routes:
   - `/` -> marketing site
   - `/simulator/` -> host sample simulator
+  - `/atlas/` -> canonical project Atlas
 
 ## Contributor Docs
 

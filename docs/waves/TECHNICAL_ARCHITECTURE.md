@@ -145,9 +145,9 @@ Transport profile decision rules:
 4. profile moves require `docs/waves/networking-migration-readiness-checklist.md` gate completion for the relevant `T0-08..T0-17` items
 5. protocol-native readiness uses `T0-18..T0-24` implementation evidence,
    while exact WDP/WCMP/connectionless-WSP conformance remains gated by
-   `TRN-701`, `TRN-703`, and `WSP-801`/`802`/`804`/`805`; WTP evidence becomes
-   release-gating only when the extension profile claims connection-oriented
-   WSP
+   `TRN-701`, `TRN-702`, `TRN-703`, and `WSP-801`/`802`/`804`/`805`; WTP
+   evidence becomes release-gating only when the extension profile claims
+   connection-oriented WSP
 6. transport-adjacent TCP posture for `RQ-TRX-009` is declaration-gated in `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md` and tracked by `T0-12`
 7. SMPP adaptation (`RQ-TRX-010`, `WAP-159`) is currently deferred by `T0-13`; no transport-rust SMPP mapping path is active in MVP profile
 8. canonical profile-state and rollback criteria are defined in `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` and validated by `node scripts/check-networking-profile-gates.mjs`

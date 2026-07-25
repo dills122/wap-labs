@@ -74,8 +74,7 @@ When `FetchDeckResponse.ok === false`:
 ## Next implementation slice
 
 1. Support the active cross-lane runtime fidelity work without reopening completed transport lanes.
-2. Keep residual `M1-08` transport cleanup opportunistic only if a new hotspot emerges.
-3. Keep `T0-07`, broader conformance fixtures, and `M1-03` as follow-on work rather than current priority drivers.
+2. Keep `T0-07`, broader conformance fixtures, and `M1-03` as follow-on work rather than current priority drivers.
 
 ## Current checklist (planning/execution)
 
@@ -83,7 +82,7 @@ When `FetchDeckResponse.ok === false`:
 - [x] Freeze deterministic transport error trigger matrix (`T0-03`)
 - [x] Decompose transport internals into clearer module boundaries (`M1-04`)
 - [x] Add CI guardrails for contract drift checks (`M1-06`)
-- [ ] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
+- [x] Split high-churn transport file responsibilities without behavior changes (`M1-08`)
 - [x] Add explicit payload-size guardrails with deterministic oversized rejection (`M1-16`)
 - [x] Add cache/reload request-policy conformance plumbing (`T0-04`)
 - [x] Add deterministic WTP replay-window fixtures (`T0-08`)

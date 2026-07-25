@@ -28,7 +28,7 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 201 selected parent rows across nine mandatory families |
 | Nested clauses | The 201 parents expand into 781 clauses: 738 required, 31 recommended, and 12 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 781 planned clause fixtures have target locations; 0 clauses have direct conformance assessment |
+| Fixtures | All 781 clause fixtures have target locations; 144 clauses now have direct conformance assessment and 637 remain unassessed |
 | Successor delta | All 201 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 78 unique work items with machine-checked rollups |
@@ -43,29 +43,30 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 174 | 2 | 23 | 14 |
+| WML | 39 | 174 | 3 | 24 | 12 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
-| WBXML | 3 | 48 | 0 | 1 | 2 |
+| WBXML | 3 | 48 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 23 | 18 |
 | WMLScript Libraries | 80 | 211 | 0 | 14 | 66 |
 | Caching | 5 | 68 | 0 | 3 | 2 |
-| WDP | 9 | 49 | 0 | 9 | 0 |
-| WCMP | 5 | 28 | 0 | 0 | 5 |
+| WDP | 9 | 49 | 9 | 0 | 0 |
+| WCMP | 5 | 28 | 5 | 0 | 0 |
 | WSP | 8 | 57 | 0 | 8 | 0 |
-| **Total** | **201** | **781** | **7** | **84** | **110** |
+| **Total** | **201** | **781** | **22** | **78** | **101** |
 
-Even the seven parent rows marked implemented still require direct
-source-derived clause evidence. Until the 781 clause fixtures are implemented
-and assessed, the project must remain `pre-conformance`.
+Parent-row status is not a substitute for direct clause evidence. With 144 of
+781 clauses assessed, the project remains `pre-conformance` until every
+selected obligation is implemented or retains an explicit, release-blocking
+gap.
 
 ## Work-program state
 
 The 78 work items currently roll up to:
 
-- 12 done (source/profile/governance planning);
+- 15 done (source/profile/governance planning plus the first direct WDP/WCMP slices);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 11 in progress (existing runtime, WAE, transport, and WSP foundations);
-- 54 todo.
+- 11 in progress (WML evidence plus existing runtime, WAE, transport, and WSP foundations);
+- 51 todo.
 
 New completion claims should follow the machine dependency graph:
 
@@ -106,8 +107,8 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 84 partial and 110 missing parent rows;
-2. implement and assess all 781 direct clause fixtures;
+1. close or correct the 78 partial and 101 missing parent rows;
+2. implement and assess the remaining 637 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

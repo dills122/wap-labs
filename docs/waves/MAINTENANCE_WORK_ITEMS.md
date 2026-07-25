@@ -39,7 +39,8 @@ Completed maintenance tickets are archived in:
 5. `Notes`:
 - Active execution is currently anchored to `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`.
 - `M1-14`, `M1-15`, and the first `M1-16`/browser responsiveness slices landed in `#109` and `#110`.
-- Keep residual `M1-08` cleanup opportunistic while committed compliance tickets execute.
+- The `M1-08` boundary-module split is complete. Record any newly discovered
+  hotspot as an additive ticket instead of reopening the closed item.
 
 ### M1-14 Browser host boundary hardening (CSP + DOM injection sinks)
 

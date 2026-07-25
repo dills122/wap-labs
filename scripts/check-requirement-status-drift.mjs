@@ -127,6 +127,10 @@ const complianceProgramDocument = read(
 const planningBaseline = read(
   'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md'
 );
+const transportTraceability = read(
+  'docs/waves/TRANSPORT_SPEC_TRACEABILITY.md'
+);
+const rootReadme = read('README.md');
 const program = readJson(
   'docs/waves/wap-1.2.1-compliance-program.json'
 );
@@ -154,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 15, blocked: 1, 'in-progress': 9, todo: 53 })
+  JSON.stringify({ done: 15, blocked: 1, 'in-progress': 11, todo: 51 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -371,9 +375,23 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **201** | **781** | **7** | **84** | **110** |',
+      '| **Total** | **201** | **781** | **22** | **78** | **101** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
+    ]
+  ],
+  [
+    'docs/waves/TRANSPORT_SPEC_TRACEABILITY.md',
+    [
+      '14 implemented / 8 partial / 0 missing',
+      '14/22 direct normative tests'
+    ]
+  ],
+  [
+    'README.md',
+    [
+      '22/201 selected parent rows are implemented',
+      '144/781 clauses are directly assessed'
     ]
   ]
 ]);
@@ -388,7 +406,12 @@ const loadedRollups = new Map([
     complianceProgramDocument
   ],
   ['docs/waves/SPEC_COVERAGE_DASHBOARD.md', coverageDashboard],
-  ['docs/waves/WAP_1_2_1_PLANNING_BASELINE.md', planningBaseline]
+  ['docs/waves/WAP_1_2_1_PLANNING_BASELINE.md', planningBaseline],
+  [
+    'docs/waves/TRANSPORT_SPEC_TRACEABILITY.md',
+    transportTraceability
+  ],
+  ['README.md', rootReadme]
 ]);
 for (const [documentPath, fragments] of requiredDocumentFragments) {
   const document = loadedRollups.get(documentPath);

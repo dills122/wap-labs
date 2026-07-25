@@ -31,9 +31,7 @@ After the completed forms/browser responsiveness slice, current aligned engine p
 1. `W0-05` timer/dialog integration baseline.
 2. `D0-01` debug connector contract and architecture baseline.
 3. `W1-06` fatal/non-fatal script taxonomy closure.
-4. `M1-02` parity-critical native/wasm regression suite.
-5. `M1-08` residual high-churn cleanup only if new hotspots emerge.
-6. `M1-03` engine API generator design/bootstrap (non-priority track).
+4. `M1-03` engine API generator design/bootstrap (non-priority track).
 
 Source of truth for these items:
 
