@@ -85,7 +85,7 @@ evidence.
 
 Current priority order is:
 
-1. Continue active `WML-2` parser/deck/validation work: finish the six
+1. Continue active `WML-2` parser/deck/validation work: finish the two
    explicit `WML-203` gaps, preserve the 23/23 mapped `WML-204` clause
    evidence, and adopt direct mappings before new `WML-202`/`WML-205`
    implementation.

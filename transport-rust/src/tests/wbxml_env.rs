@@ -17,7 +17,7 @@ fn transport_decode_wmlc_uses_pinned_native_backend() {
 fn transport_preflight_wbxml_decoder_identity_is_pinned() {
     assert_eq!(
         preflight_wbxml_decoder().ok().as_deref(),
-        Some("lowband-wml13-wbxml/0.1.0")
+        Some("lowband-wml13-wbxml/0.2.0")
     );
 }
 

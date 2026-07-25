@@ -370,9 +370,9 @@ if (
   ledger.summary?.selectedClassCNotApplicableCount !== 12 ||
   ledger.summary?.selectedDirectNormativeTestEvidenceCount !== 3 ||
   ledger.summary?.selectedBoundaryTestEvidenceCount !== 0 ||
-  ledger.summary?.selectedImplementedClauseCount !== 42 ||
-  ledger.summary?.selectedNotAssessedClauseCount !== 6 ||
-  ledger.summary?.fixedOutcomeFixtureCount !== 35
+  ledger.summary?.selectedImplementedClauseCount !== 46 ||
+  ledger.summary?.selectedNotAssessedClauseCount !== 2 ||
+  ledger.summary?.fixedOutcomeFixtureCount !== 36
 ) {
   failures.push('WBXML summary counts drift');
 }
@@ -399,8 +399,8 @@ const implementedClauseIds = new Set(
 );
 
 if (
-  conformanceCorpus.schemaVersion !== 1 ||
-  conformanceCorpus.decoder !== 'lowband-wml13-wbxml/0.1.0' ||
+  conformanceCorpus.schemaVersion !== 2 ||
+  conformanceCorpus.decoder !== 'lowband-wml13-wbxml/0.2.0' ||
   JSON.stringify(conformanceCorpus.sourceDocuments) !==
     JSON.stringify(['WAP-192-WBXML', 'WAP-191_104-WML'])
 ) {
@@ -475,9 +475,9 @@ for (const fixture of corpusFixtures) {
 }
 
 if (
-  corpusFixtures.length !== 35 ||
-  citedClauseIds.size !== 44 ||
-  implementedClauseIds.size !== 42 ||
+  corpusFixtures.length !== 36 ||
+  citedClauseIds.size !== 47 ||
+  implementedClauseIds.size !== 46 ||
   JSON.stringify([...corpusScrIds].sort()) !==
     JSON.stringify([...expectedSelectedIds].sort())
 ) {
@@ -506,11 +506,7 @@ if (
   JSON.stringify([...deferredClauseIds].sort()) !==
   JSON.stringify(
     [
-      'WBXML-CL-BINARY-LITERAL-EQUIVALENCE',
-      'WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE',
       'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
-      'WBXML-CL-EXTERNAL-TOKEN-TYPING',
-      'WBXML-CL-MIME-TOKEN-TYPING',
       'WBXML-CL-TOKEN-CODE-PAGES'
     ].sort()
   )
@@ -529,6 +525,35 @@ if (
   failures.push('WBXML binary/literal equivalence groups drift');
 }
 
+const pageZeroMatrix = conformanceCorpus.pageZeroTokenEquivalence ?? {};
+const pageZeroCategories = [
+  ['tags', 36, ['name']],
+  ['attributeStarts', 85, ['name', 'prefix']],
+  ['attributeValues', 27, ['value']]
+];
+for (const [category, expectedCount, stringFields] of pageZeroCategories) {
+  const entries = pageZeroMatrix[category] ?? [];
+  const tokens = new Set();
+  if (entries.length !== expectedCount) {
+    failures.push(
+      `WBXML page-zero ${category} count=${entries.length}; expected ${expectedCount}`
+    );
+  }
+  for (const entry of entries) {
+    if (
+      !Number.isInteger(entry.token) ||
+      entry.token < 0 ||
+      entry.token > 255 ||
+      tokens.has(entry.token) ||
+      !stringFields.every((field) => typeof entry[field] === 'string')
+    ) {
+      failures.push(`WBXML page-zero ${category} inventory is invalid`);
+      break;
+    }
+    tokens.add(entry.token);
+  }
+}
+
 if (failures.length > 0) {
   console.error('WAP 1.2.1 WBXML conformance-ledger check failed.');
   for (const failure of failures) {
@@ -541,6 +566,7 @@ console.log('==> WAP 1.2.1 WBXML SCR ledger');
 console.log('PASS 15 effective rows (11 mandatory / 4 optional)');
 console.log('PASS WBXML:MCF selects 3 mandatory client rows');
 console.log('PASS selected implementation audit: 0 implemented / 3 partial / 0 missing');
-console.log('PASS 35 fixed-outcome fixtures cite 44 canonical nested clauses');
-console.log('PASS 42 implemented / 6 conservatively unpromoted nested clauses');
+console.log('PASS 36 fixed-outcome fixtures cite 47 canonical nested clauses');
+console.log('PASS 46 implemented / 2 conservatively unpromoted nested clauses');
+console.log('PASS exhaustive WML page-zero inventory: 36 tags / 85 attribute starts / 27 values');
 console.log('PASS source locks, mappings, and direct evidence links');

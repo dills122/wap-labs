@@ -188,11 +188,7 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-INPUT-MAXLENGTH'
 ]);
 const deferredWbxmlClauseIds = new Set([
-  'WBXML-CL-BINARY-LITERAL-EQUIVALENCE',
-  'WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE',
   'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
-  'WBXML-CL-EXTERNAL-TOKEN-TYPING',
-  'WBXML-CL-MIME-TOKEN-TYPING',
   'WBXML-CL-TOKEN-CODE-PAGES'
 ]);
 const hashPattern = /^[a-f0-9]{64}$/;
@@ -538,7 +534,7 @@ for (const family of ledger.families ?? []) {
         JSON.stringify(expectedImplementedIds) ||
       JSON.stringify(corpusImplementedIds) !==
         JSON.stringify(expectedImplementedIds) ||
-      directEvidence?.commands?.length !== 3 ||
+      directEvidence?.commands?.length !== 4 ||
       !directEvidence.commands.every((command) => {
         const test = command.split(' ').at(-1);
         return test && tests.includes(`fn ${test}`);
@@ -561,7 +557,7 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 144
+  assessedClauseCount: 148
 };
 if (
   selectedParentCount !== 201 ||

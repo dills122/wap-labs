@@ -18,8 +18,8 @@
 
 use crate::network::wsp::header_block::{WspHeaderBlock, WspHeaderNameEncoding};
 use crate::network::wsp::header_registry::{
-    decode_pdu_type, encode_header_field_name_on_page, encode_pdu_type, WspAssignedNumberPolicy,
-    DEFAULT_HEADER_CODE_PAGE,
+    decode_pdu_type, decode_well_known_parameter, encode_header_field_name_on_page,
+    encode_pdu_type, WspAssignedNumberPolicy, DEFAULT_HEADER_CODE_PAGE,
 };
 
 /// High bit marking a well-known (binary) WSP field name or short-integer value.
@@ -27,7 +27,9 @@ const WELL_KNOWN_MARKER: u8 = 0x80;
 /// Largest value representable by the five-octet `uintvar` form.
 const MAX_UINTVAR_VALUE: usize = 0x0FFF_FFFF;
 /// Highest first octet still interpreted as a content-type short-length prefix.
-const MAX_SHORT_LENGTH: u8 = 31;
+const MAX_SHORT_LENGTH: u8 = 30;
+/// WSP length-quote introducing a `uintvar` length.
+const LENGTH_QUOTE: u8 = 31;
 /// RFC 2045 quoted-string escape byte used by WSP token-text.
 const TEXT_STRING_QUOTE: u8 = 0x7F;
 /// Assigned-number name of the reply PDU this transport expects back.
@@ -82,6 +84,43 @@ pub(crate) struct WspConnectionlessReply {
     pub(crate) status_code: u16,
     pub(crate) content_type: String,
     pub(crate) body: Vec<u8>,
+}
+
+/// A decoded WSP Content-Type value plus the carrying-protocol charset metadata.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct DecodedWspContentType {
+    media_type: String,
+    charset: Option<String>,
+    consumed_bytes: usize,
+}
+
+impl DecodedWspContentType {
+    fn new(media_type: String, charset: Option<String>, consumed_bytes: usize) -> Self {
+        Self {
+            media_type,
+            charset,
+            consumed_bytes,
+        }
+    }
+
+    pub(crate) fn media_type(&self) -> &str {
+        &self.media_type
+    }
+
+    pub(crate) fn charset(&self) -> Option<&str> {
+        self.charset.as_deref()
+    }
+
+    pub(crate) fn consumed_bytes(&self) -> usize {
+        self.consumed_bytes
+    }
+
+    fn as_mime_value(&self) -> String {
+        match self.charset() {
+            Some(charset) => format!("{}; charset={charset}", self.media_type()),
+            None => self.media_type.clone(),
+        }
+    }
 }
 
 /// A decoded WSP text-string plus the number of raw input bytes it consumed.
@@ -150,6 +189,7 @@ pub(crate) enum WspConnectionlessDecodeError {
     TruncatedContentType,
     ContentTypeOverrunsHeaderSection,
     UnsupportedWellKnownMedia(u8),
+    UnsupportedCharsetMibEnum(u8),
     TruncatedTextString,
     InvalidTextStringUtf8(String),
     UnsupportedStatusCode(u8),
@@ -188,6 +228,9 @@ impl std::fmt::Display for WspConnectionlessDecodeError {
             ),
             Self::UnsupportedWellKnownMedia(code) => {
                 write!(f, "unsupported well-known media type: 0x{code:02X}")
+            }
+            Self::UnsupportedCharsetMibEnum(value) => {
+                write!(f, "unsupported WSP charset MIBenum: {value}")
             }
             Self::TruncatedTextString => write!(f, "truncated native WSP text string"),
             Self::InvalidTextStringUtf8(error) => {
@@ -285,7 +328,7 @@ pub(crate) fn decode_connectionless_reply(
 
     Ok(WspConnectionlessReply {
         status_code: decode_wsp_status_code(status)?,
-        content_type: content_type.text().to_string(),
+        content_type: content_type.as_mime_value(),
         body: data.to_vec(),
     })
 }
@@ -387,7 +430,7 @@ pub(crate) fn decode_uintvar(input: &[u8]) -> Result<(usize, &[u8]), WspConnecti
 
 pub(crate) fn decode_content_type_value(
     input: &[u8],
-) -> Result<DecodedWspText, WspConnectionlessDecodeError> {
+) -> Result<DecodedWspContentType, WspConnectionlessDecodeError> {
     let Some((&first, _)) = input.split_first() else {
         return Err(WspConnectionlessDecodeError::MissingContentType);
     };
@@ -396,17 +439,86 @@ pub(crate) fn decode_content_type_value(
         let media = well_known_media_name(code).ok_or(
             WspConnectionlessDecodeError::UnsupportedWellKnownMedia(code),
         )?;
-        return Ok(DecodedWspText::new(media.to_string(), 1));
+        return Ok(DecodedWspContentType::new(media.to_string(), None, 1));
     }
-    if first <= MAX_SHORT_LENGTH {
-        let length = usize::from(first);
-        if input.len() < 1 + length {
+    if first <= LENGTH_QUOTE {
+        let (length, prefix_length) = if first <= MAX_SHORT_LENGTH {
+            (usize::from(first), 1)
+        } else {
+            let (length, remaining) = decode_uintvar(&input[1..])?;
+            let encoded_length_bytes = input[1..].len() - remaining.len();
+            (length, 1 + encoded_length_bytes)
+        };
+        if input.len() < prefix_length + length {
             return Err(WspConnectionlessDecodeError::TruncatedContentType);
         }
-        let media = decode_text_string(&input[1..1 + length])?;
-        return Ok(DecodedWspText::new(media.text().to_string(), 1 + length));
+        let encoded = &input[prefix_length..prefix_length + length];
+        let (media_type, media_length) = decode_content_type_media(encoded)?;
+        let charset = decode_content_type_charset(&encoded[media_length..])?;
+        return Ok(DecodedWspContentType::new(
+            media_type,
+            charset,
+            prefix_length + length,
+        ));
     }
-    decode_text_string(input)
+    let media = decode_text_string(input)?;
+    Ok(DecodedWspContentType::new(
+        media.text().to_string(),
+        None,
+        media.consumed_bytes(),
+    ))
+}
+
+fn decode_content_type_media(
+    input: &[u8],
+) -> Result<(String, usize), WspConnectionlessDecodeError> {
+    let Some(first) = input.first().copied() else {
+        return Err(WspConnectionlessDecodeError::MissingContentType);
+    };
+    if first & WELL_KNOWN_MARKER != 0 {
+        let code = first & 0x7F;
+        let media = well_known_media_name(code).ok_or(
+            WspConnectionlessDecodeError::UnsupportedWellKnownMedia(code),
+        )?;
+        return Ok((media.to_string(), 1));
+    }
+    let media = decode_text_string(input)?;
+    Ok((media.text().to_string(), media.consumed_bytes()))
+}
+
+fn decode_content_type_charset(
+    parameters: &[u8],
+) -> Result<Option<String>, WspConnectionlessDecodeError> {
+    let Some(first) = parameters.first().copied() else {
+        return Ok(None);
+    };
+    if first & WELL_KNOWN_MARKER == 0 {
+        return Ok(None);
+    }
+    let parameter_code = first & 0x7F;
+    let parameter =
+        decode_well_known_parameter(parameter_code, WspAssignedNumberPolicy::STRICT).ok();
+    if parameter.flatten() != Some("Charset") {
+        return Ok(None);
+    }
+    let Some(value) = parameters.get(1).copied() else {
+        return Err(WspConnectionlessDecodeError::TruncatedContentType);
+    };
+    if value & WELL_KNOWN_MARKER != 0 {
+        let mib_enum = value & 0x7F;
+        let charset = match mib_enum {
+            3 => "us-ascii",
+            4 => "iso-8859-1",
+            106 => "utf-8",
+            _ => {
+                return Err(WspConnectionlessDecodeError::UnsupportedCharsetMibEnum(
+                    mib_enum,
+                ))
+            }
+        };
+        return Ok(Some(charset.to_string()));
+    }
+    decode_text_string(&parameters[1..]).map(|text| Some(text.text().to_string()))
 }
 
 /// Decodes a NUL-terminated WSP text-string.
@@ -616,29 +728,29 @@ mod tests {
     }
 
     #[test]
-    fn decode_content_type_value_general_form_matches_len_plus_one() {
-        // Unquoted general-form text-string: no leading 0x7F is stripped, so the
+    fn decode_content_type_value_extension_media_matches_len_plus_one() {
+        // Unquoted extension-media text-string: no leading 0x7F is stripped, so the
         // consumed byte count legitimately equals `text.len() + 1` (the string
         // bytes plus the terminating NUL).
         let input = b"text/html\x00";
 
         let decoded = decode_content_type_value(input).expect("value should decode");
 
-        assert_eq!(decoded.text(), "text/html");
-        assert_eq!(decoded.consumed_bytes(), decoded.text().len() + 1);
+        assert_eq!(decoded.media_type(), "text/html");
+        assert_eq!(decoded.consumed_bytes(), decoded.media_type().len() + 1);
         assert_eq!(decoded.consumed_bytes(), input.len());
     }
 
     #[test]
-    fn decode_content_type_value_quoted_general_form_counts_quote_byte() {
-        // Quoted general-form text-string (leading 0x7F escape byte, per WSP
+    fn decode_content_type_value_quoted_extension_media_counts_quote_byte() {
+        // Quoted extension-media text-string (leading 0x7F escape byte, per WSP
         // token-text quoting): the quote byte is stripped from the text but must
         // still be counted as consumed, so `text.len() + 1` undercounts by one.
         let input = b"\x7Ftext/html\x00";
 
         let decoded = decode_content_type_value(input).expect("value should decode");
 
-        assert_eq!(decoded.text(), "text/html");
+        assert_eq!(decoded.media_type(), "text/html");
         assert_eq!(
             decoded.consumed_bytes(),
             input.len(),
@@ -646,7 +758,7 @@ mod tests {
         );
         assert_ne!(
             decoded.consumed_bytes(),
-            decoded.text().len() + 1,
+            decoded.media_type().len() + 1,
             "regression guard: consumed length must not be derived from text.len() + 1 \
              when the value was quoted"
         );
@@ -655,7 +767,8 @@ mod tests {
     #[test]
     fn decode_content_type_value_maps_well_known_media_octets() {
         let decoded = decode_content_type_value(&[0x94]).expect("well-known media should decode");
-        assert_eq!(decoded.text(), "application/vnd.wap.wmlc");
+        assert_eq!(decoded.media_type(), "application/vnd.wap.wmlc");
+        assert_eq!(decoded.charset(), None);
         assert_eq!(decoded.consumed_bytes(), 1);
 
         let error = decode_content_type_value(&[0xFF]).expect_err("unknown media should fail");
@@ -663,6 +776,16 @@ mod tests {
             error,
             WspConnectionlessDecodeError::UnsupportedWellKnownMedia(0x7F)
         );
+    }
+
+    #[test]
+    fn decode_content_type_value_preserves_general_form_charset() {
+        let decoded = decode_content_type_value(&[0x03, 0x94, 0x81, 0x84])
+            .expect("well-known WMLC with ISO-8859-1 should decode");
+
+        assert_eq!(decoded.media_type(), "application/vnd.wap.wmlc");
+        assert_eq!(decoded.charset(), Some("iso-8859-1"));
+        assert_eq!(decoded.consumed_bytes(), 4);
     }
 
     #[test]
@@ -708,9 +831,9 @@ mod tests {
     }
 
     #[test]
-    fn reply_decodes_quoted_general_form_content_type() {
+    fn reply_decodes_quoted_extension_media_content_type() {
         // Exercises the `consumed_bytes > header_section.len()` sanity check with
-        // a quoted general-form content type.
+        // a quoted extension-media content type.
         let content_type = b"\x7Ftext/html\x00";
         let headers_len = encode_uintvar(content_type.len()).expect("headers len should encode");
         let mut wire = vec![TRANSACTION_ID, 0x04, 0x20];
@@ -723,6 +846,26 @@ mod tests {
         assert_eq!(reply.content_type, "text/html");
         assert_eq!(reply.status_code, 200);
         assert!(reply.body.is_empty());
+    }
+
+    #[test]
+    fn reply_preserves_general_form_content_type_charset() {
+        let content_type = [0x03, 0x94, 0x81, 0x84];
+        let body = b"\x03\x0a\x6a\x00\x3f";
+        let headers_len = encode_uintvar(content_type.len()).expect("headers len should encode");
+        let mut wire = vec![TRANSACTION_ID, 0x04, 0x20];
+        wire.extend_from_slice(&headers_len);
+        wire.extend_from_slice(&content_type);
+        wire.extend_from_slice(body);
+
+        let reply = decode_connectionless_reply(TRANSACTION_ID, &wire)
+            .expect("general-form content type reply should decode");
+
+        assert_eq!(
+            reply.content_type,
+            "application/vnd.wap.wmlc; charset=iso-8859-1"
+        );
+        assert_eq!(reply.body, body);
     }
 
     #[test]

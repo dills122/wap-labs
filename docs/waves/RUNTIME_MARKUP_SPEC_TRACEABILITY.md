@@ -164,8 +164,10 @@ Legend:
 - Status:
   - `partial`: the pinned built-in decoder and direct source-derived corpus
     establish direct evidence for all three selected rows. The bounded tranche
-    promotes 42/48 nested clauses while external charset/typing, non-page-zero
-    tables, and exhaustive token equivalence remain open.
+    promotes 46/48 nested clauses. Carrying-protocol charset precedence,
+    WMLC MIME typing, and exhaustive WML page-zero token/literal equivalence
+    are direct-evidence-backed; non-page-zero tables and encoder/tokenizer
+    unrepresentable-name behavior remain open.
 - AC:
   - Evidence: [x] `transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json`
     and the three exact `transport_wbxml_c_*` tests provide direct parent-row

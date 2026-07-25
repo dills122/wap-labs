@@ -3,7 +3,7 @@ use std::char::decode_utf16;
 use std::time::Instant;
 
 use crate::request_meta::details_with_request_id;
-use crate::wbxml::decode_wmlc;
+use crate::wbxml::decode_wbxml_for_content_type;
 use crate::{
     EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming,
     FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
@@ -161,12 +161,13 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
         request_url,
         upstream_url,
         final_url,
-        content_type,
+        content_type: raw_content_type,
         body,
         attempt,
         elapsed_ms,
         request_id,
     } = params;
+    let content_type = normalize_content_type(Some(&raw_content_type));
 
     if body.len() > MAX_RESPONSE_BODY_BYTES {
         return payload_too_large_response(PayloadTooLargeParams {
@@ -208,7 +209,7 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
     let raw_b64 = BASE64.encode(body);
     if content_type == "application/vnd.wap.wmlc" {
         let decode_start = Instant::now();
-        return match decode_wmlc(body) {
+        return match decode_wbxml_for_content_type(body, &raw_content_type) {
             Ok(wml) => FetchDeckResponse {
                 ok: true,
                 status,

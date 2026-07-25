@@ -135,11 +135,12 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                 } else {
                     resp.url().to_string()
                 };
-                let content_type = normalize_content_type(
-                    resp.headers()
-                        .get("content-type")
-                        .and_then(|v| v.to_str().ok()),
-                );
+                let raw_content_type = resp
+                    .headers()
+                    .get("content-type")
+                    .and_then(|value| value.to_str().ok())
+                    .map(str::to_owned);
+                let content_type = normalize_content_type(raw_content_type.as_deref());
                 if let Some(content_len) = resp.content_length() {
                     if content_len > MAX_RESPONSE_BODY_BYTES as u64 {
                         let message = format!(
@@ -234,7 +235,7 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                     request_url: &url,
                     upstream_url: &upstream_url,
                     final_url,
-                    content_type,
+                    content_type: raw_content_type.unwrap_or(content_type),
                     body: body.as_slice(),
                     attempt,
                     elapsed_ms,

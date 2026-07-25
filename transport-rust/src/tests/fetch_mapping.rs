@@ -386,6 +386,81 @@ fn transport_map_success_payload_wmlc_decode_success_maps_ok() {
 }
 
 #[test]
+fn transport_map_success_payload_wmlc_uses_mime_typing_and_external_charset() {
+    let body = b"\x03\x0a\x6a\x00\x7f\x67\x60\x03\xe9\x00\x01\x01\x01";
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "Application/Vnd.Wap.Wmlc; charset=iso-8859-1".to_string(),
+        body,
+        attempt: 1,
+        elapsed_ms: 2.0,
+        request_id: None,
+    });
+
+    assert!(response.ok);
+    assert_eq!(response.content_type, "application/vnd.wap.wmlc");
+    assert_eq!(
+        response.wml.as_deref(),
+        Some(
+            "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">é</p></card></wml>"
+        )
+    );
+}
+
+#[test]
+fn transport_map_success_payload_external_charset_conflict_is_deterministic() {
+    let body = b"\x03\x0a\x04\x00\x7f\x67\x60\x03\xe9\x00\x01\x01\x01";
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "application/vnd.wap.wmlc; charset=utf-8".to_string(),
+        body,
+        attempt: 1,
+        elapsed_ms: 2.0,
+        request_id: None,
+    });
+
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.as_ref().map(|error| error.code.as_str()),
+        Some("WBXML_DECODE_FAILED")
+    );
+    assert!(response
+        .error
+        .as_ref()
+        .is_some_and(|error| error.message.contains("invalid UTF-8 string")));
+}
+
+#[test]
+fn transport_map_success_payload_generic_wbxml_does_not_select_wml_tokens() {
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "application/vnd.wap.wbxml".to_string(),
+        body: b"\x03\x0a\x6a\x00\x3f",
+        attempt: 1,
+        elapsed_ms: 2.0,
+        request_id: None,
+    });
+
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.as_ref().map(|error| error.code.as_str()),
+        Some("UNSUPPORTED_CONTENT_TYPE")
+    );
+}
+
+#[test]
 fn transport_map_success_payload_wap_protocol_error_uses_original_url() {
     let response = map_success_payload_response(SuccessPayloadParams {
         status: 500,

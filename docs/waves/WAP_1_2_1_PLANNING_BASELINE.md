@@ -28,7 +28,7 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 201 selected parent rows across nine mandatory families |
 | Nested clauses | The 201 parents expand into 781 clauses: 738 required, 31 recommended, and 12 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 781 clause fixtures have target locations; 144 clauses now have direct conformance assessment and 637 remain unassessed |
+| Fixtures | All 781 clause fixtures have target locations; 148 clauses now have direct conformance assessment and 633 remain unassessed |
 | Successor delta | All 201 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 78 unique work items with machine-checked rollups |
@@ -108,7 +108,7 @@ claim.
 The remaining build work is now measurable:
 
 1. close or correct the 78 partial and 101 missing parent rows;
-2. implement and assess the remaining 637 direct clause fixtures;
+2. implement and assess the remaining 633 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

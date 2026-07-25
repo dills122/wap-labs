@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::fmt::Write as _;
 
-pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.1.0";
+pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.2.0";
 
 const WBXML_VERSION_1_3: u8 = 0x03;
 const WML_1_3_PUBLIC_ID: u32 = 0x0a;
@@ -47,6 +47,15 @@ impl Charset {
         }
     }
 
+    fn from_mime_name(value: &str) -> Result<Self, String> {
+        match value.trim().to_ascii_lowercase().as_str() {
+            "us-ascii" | "ascii" => Ok(Self::Ascii),
+            "iso-8859-1" | "latin1" => Ok(Self::Latin1),
+            "utf-8" | "utf8" => Ok(Self::Utf8),
+            _ => Err(format!("unsupported carrying-protocol charset {value:?}")),
+        }
+    }
+
     fn decode(self, bytes: &[u8]) -> Result<String, String> {
         match self {
             Self::Ascii => {
@@ -77,9 +86,19 @@ struct Decoder<'a> {
     attribute_page: u8,
     output: String,
     max_output_bytes: usize,
+    external_charset: Option<Charset>,
 }
 
+#[cfg(test)]
 pub(crate) fn decode_wml13(payload: &[u8], max_output_bytes: usize) -> Result<String, String> {
+    decode_wml13_with_charset(payload, max_output_bytes, None)
+}
+
+pub(crate) fn decode_wml13_with_charset(
+    payload: &[u8],
+    max_output_bytes: usize,
+    external_charset: Option<&str>,
+) -> Result<String, String> {
     if payload.is_empty() {
         return Err(decode_error("empty payload"));
     }
@@ -96,6 +115,10 @@ pub(crate) fn decode_wml13(payload: &[u8], max_output_bytes: usize) -> Result<St
         attribute_page: 0,
         output: String::new(),
         max_output_bytes,
+        external_charset: external_charset
+            .map(Charset::from_mime_name)
+            .transpose()
+            .map_err(|error| decode_error(&error))?,
     };
     decoder.decode_document().map_err(|error| {
         if error.starts_with("WBXML decode failed:") {
@@ -152,7 +175,10 @@ impl<'a> Decoder<'a> {
             None
         };
         let charset_value = self.read_mb_u_int32("charset")?;
-        let charset = Charset::from_mib_enum(charset_value)?;
+        let charset = match self.external_charset {
+            Some(charset) => charset,
+            None => Charset::from_mib_enum(charset_value)?,
+        };
         let string_table_length = self.read_mb_u_int32("string-table length")? as usize;
         let table_start = self.position;
         let table_end = table_start
