@@ -47,14 +47,14 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
   - WML: 39 selected parents / 174 clauses
   - WAE: 11 selected parents / 39 clauses
-  - WBXML: 3 selected parents / 48 clauses
+  - WBXML: 3 selected parents / 47 clauses
   - caching: 5 selected parents / 68 clauses
   - WCMP: 5 selected parents / 28 clauses
   - WSP: 8 selected parents / 57 clauses
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - 148 fixture-backed clauses assessed; 633 fixture plans remain unassessed
+  - 149 fixture-backed clauses assessed; 631 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
   - all 201 selected rows classified
@@ -189,7 +189,8 @@ Status: Active
 
 0a. Effective WAP-192 WBXML conformance closure (15 actor-specific SCR IDs)
 - Status: in progress (source ledger and selected-client code audit complete;
-  48 nested clauses planned; direct normative fixtures pending)
+  all 47 selected client clauses have direct normative fixtures; broader
+  feature-row limitations remain)
 - Selected-profile scope: 3 required Class C client rows and 12
   server/document/encoder rows outside the client profile
 - Deliverables:

@@ -301,7 +301,7 @@ fn transport_wbxml_section_5_direct_clause_inventory_is_fixed_outcome_backed() {
 
     assert_eq!(
         corpus.implemented_clauses.len(),
-        46,
+        47,
         "the reviewed WML-203 tranche must remain explicit"
     );
     for clause in &corpus.implemented_clauses {
@@ -310,18 +310,15 @@ fn transport_wbxml_section_5_direct_clause_inventory_is_fixed_outcome_backed() {
             "{clause} must remain linked to at least one fixed-outcome fixture"
         );
     }
-    for deferred in [
-        "WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-        "WBXML-CL-TOKEN-CODE-PAGES",
-    ] {
-        assert!(
-            !corpus
-                .implemented_clauses
-                .iter()
-                .any(|clause| clause == deferred),
-            "{deferred} must stay unpromoted until its broader evidence gate is met"
-        );
-    }
+    let encoder_only = "WBXML-CL-CHARSET-UNREPRESENTABLE-NAME";
+    assert!(
+        !corpus
+            .implemented_clauses
+            .iter()
+            .any(|clause| clause == encoder_only)
+            && !fixture_clauses.contains(encoder_only),
+        "{encoder_only} must remain outside the selected client corpus"
+    );
 }
 
 #[test]

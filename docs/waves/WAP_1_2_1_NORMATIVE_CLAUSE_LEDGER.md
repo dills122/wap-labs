@@ -1,6 +1,6 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.9
+Version: v0.10
 Status: `CONF-003` complete; direct evidence is incrementally assessed
 
 ## Purpose
@@ -58,16 +58,16 @@ The current artifact covers all 201 selected Class C parent rows:
 |---|---:|---:|
 | WML | 39 | 174 |
 | WAE | 11 | 39 |
-| WBXML | 3 | 48 |
+| WBXML | 3 | 47 |
 | Caching | 5 | 68 |
 | WCMP | 5 | 28 |
 | WSP | 8 | 57 |
 | WDP | 9 | 49 |
 | WMLScript | 41 | 107 |
 | WMLScript Libraries | 80 | 211 |
-| **Total** | **201** | **781** |
+| **Total** | **201** | **780** |
 
-The 781 clauses are classified as 738 required, 31 recommended, and 12
+The 780 clauses are classified as 737 required, 31 recommended, and 12
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,

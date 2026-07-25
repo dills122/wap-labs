@@ -9,7 +9,7 @@
     "compatibilityFloor": "strict-historical-observable-behavior"
   },
   "generatedFrom": {
-    "recordedOn": "2026-07-24",
+    "recordedOn": "2026-07-25",
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
@@ -25,17 +25,17 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "903e469345d86c37a7b76d7a8f17085be518747d553ef85d54dffb14d91ae32b"
+        "sha256": "f297867c62012a7a93b164c9586fca2a0e614f83186908f3696253176412e40a"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 214,
-    "edgeCount": 540,
+    "nodeCount": 212,
+    "edgeCount": 534,
     "nodesByType": {
-      "clause": 76,
-      "fixture": 76,
+      "clause": 75,
+      "fixture": 75,
       "legacy-ticket": 8,
       "owner-layer": 3,
       "profile": 1,
@@ -54,21 +54,21 @@
       "covers-family": 7,
       "depends-on": 3,
       "effective-document": 12,
-      "maps-to": 137,
+      "maps-to": 135,
       "owned-by": 11,
-      "planned-by": 85,
-      "refines": 86,
+      "planned-by": 84,
+      "refines": 85,
       "relates-to": 9,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 76,
+      "sourced-from": 75,
       "targets-profile": 1,
-      "verified-by": 76
+      "verified-by": 75
     },
     "directClauseCountsByWorkItem": {
       "WML-201": 3,
       "WML-202": 0,
-      "WML-203": 50,
+      "WML-203": 49,
       "WML-204": 23,
       "WML-205": 0
     },
@@ -552,42 +552,6 @@
           "RQ-RMK-010"
         ],
         "implementationStatus": "implemented",
-        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      }
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "key": "WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "type": "clause",
-      "title": "Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.",
-      "properties": {
-        "family": "wbxml",
-        "parentRows": [
-          "WBXML-C-001"
-        ],
-        "sourceAnchor": {
-          "documentId": "WAP-192-WBXML",
-          "section": "5.2",
-          "heading": "5.2. Character Encoding",
-          "normalizedTextSha256": "d9b630bf107ba28639ca21183b5f79cc2820c8d90958024a4372190dfcc9fb2b"
-        },
-        "normativeForce": "error-condition",
-        "obligationLevel": "required",
-        "obligationSynopsis": "Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.",
-        "workItems": [
-          "R0-08",
-          "T0-07",
-          "WML-203"
-        ],
-        "ownerLayers": [
-          "transport-rust"
-        ],
-        "requirementIds": [
-          "RQ-RMK-007",
-          "RQ-RMK-010"
-        ],
-        "implementationStatus": "not-assessed",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1847,7 +1811,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2998,18 +2962,6 @@
       }
     },
     {
-      "id": "fixture:WBXML-FX-CHARSET-UNREPRESENTABLE-NAME",
-      "key": "WBXML-FX-CHARSET-UNREPRESENTABLE-NAME",
-      "type": "fixture",
-      "title": "Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.",
-      "properties": {
-        "kind": "binary-decoder",
-        "status": "planned",
-        "assertion": "Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.",
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      }
-    },
-    {
       "id": "fixture:WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
       "key": "WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
       "type": "fixture",
@@ -3424,7 +3376,7 @@
       "title": "Support 256 code pages per code space and reserve page 255 for implementation-specific use.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Support 256 code pages per code space and reserve page 255 for implementation-specific use.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5537,60 +5489,6 @@
       "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
       "relation": "verified-by",
       "to": "fixture:WBXML-FX-CHARSET-STRING-TERMINATION",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME|maps-to|requirement:RQ-RMK-007",
-      "from": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "relation": "maps-to",
-      "to": "requirement:RQ-RMK-007",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME|maps-to|requirement:RQ-RMK-010",
-      "from": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "relation": "maps-to",
-      "to": "requirement:RQ-RMK-010",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME|planned-by|work-item:WML-203",
-      "from": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "relation": "planned-by",
-      "to": "work-item:WML-203",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME|refines|scr-row:WBXML-C-001",
-      "from": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "relation": "refines",
-      "to": "scr-row:WBXML-C-001",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME|sourced-from|source-document:WAP-192-WBXML",
-      "from": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "relation": "sourced-from",
-      "to": "source-document:WAP-192-WBXML",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME|verified-by|fixture:WBXML-FX-CHARSET-UNREPRESENTABLE-NAME",
-      "from": "clause:WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-      "relation": "verified-by",
-      "to": "fixture:WBXML-FX-CHARSET-UNREPRESENTABLE-NAME",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

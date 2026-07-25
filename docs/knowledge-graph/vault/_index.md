@@ -14,11 +14,11 @@ Target: [[sprints/WML-2|WML-2]]
 
 ## Graph summary
 
-- Nodes: 214
-- Edges: 540
+- Nodes: 212
+- Edges: 534
 
-- `clause`: 76
-- `fixture`: 76
+- `clause`: 75
+- `fixture`: 75
 - `legacy-ticket`: 8
 - `owner-layer`: 3
 - `profile`: 1

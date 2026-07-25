@@ -363,11 +363,11 @@ The installed browser does not require users to install `wbxml2xml`.
 
 ### Current built-in baseline
 
-Lowband pins `lowband-wml13-wbxml/0.2.0` in safe Rust and keeps WBXML parsing
+Lowband pins `lowband-wml13-wbxml/0.3.0` in safe Rust and keeps WBXML parsing
 inside the transport layer. The direct WML-203 corpus establishes header,
-multi-byte integer, string-table, page-zero parser-state, global-token,
+multi-byte integer, string-table, full-range code-page state, global-token,
 literal, default-attribute, and malformed-input behavior without FFI or a
-sidecar.
+sidecar. Only the WML 1.3 page-zero application-token tables are registered.
 
 ### Remaining SDK path
 

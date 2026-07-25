@@ -9,7 +9,7 @@ The WAP 1.2.1 planning baseline now connects:
 
 - authoritative source documents and effective amendment sequences;
 - the selected WAP-215 Class C client profile;
-- 201 selected SCR parent rows and 781 nested normative clauses;
+- 201 selected SCR parent rows and 780 nested normative clauses;
 - dependency-ordered sprints and implementation work items;
 - owner layers, requirements, planned fixtures, and evidence commands.
 

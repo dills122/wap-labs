@@ -3,7 +3,7 @@
   "releaseId": "wap-1.2.1",
   "generatedFrom": {
     "programWorkItem": "CONF-003",
-    "recordedOn": "2026-07-24",
+    "recordedOn": "2026-07-25",
     "generator": "spec-processing/scripts/generate-wap-selected-normative-clauses.mjs",
     "redistributionPolicy": "Only project-authored synopses, public section locators, and cryptographic hashes are committed. Recovered PDFs and full text extractions remain outside Git."
   },
@@ -38,12 +38,12 @@
   },
   "summary": {
     "selectedParentCount": 201,
-    "clauseCount": 781,
-    "requiredClauseCount": 738,
+    "clauseCount": 780,
+    "requiredClauseCount": 737,
     "recommendedClauseCount": 31,
     "permittedClauseCount": 12,
-    "plannedFixtureCount": 781,
-    "assessedClauseCount": 148
+    "plannedFixtureCount": 780,
+    "assessedClauseCount": 149
   },
   "families": [
     {
@@ -10457,7 +10457,7 @@
       "family": "wbxml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
-      "parentLedgerSha256": "32d1e9a3af7fbc6e911e29aa240bd45b99403b9885dd5914ef16421949f42deb",
+      "parentLedgerSha256": "e4da9fe870995895dfd8140947bd8e7cac655ed0990fea328db20bc7031e3f77",
       "effectiveSequence": [
         "WAP-192-WBXML",
         "WAP-192_105-WBXML"
@@ -10480,7 +10480,7 @@
         }
       ],
       "selectedParentCount": 3,
-      "clauseCount": 48,
+      "clauseCount": 47,
       "parents": [
         {
           "id": "WBXML-C-001",
@@ -10509,7 +10509,6 @@
             "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
             "WBXML-CL-CHARSET-MIBENUM",
             "WBXML-CL-CHARSET-STRING-TERMINATION",
-            "WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
             "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
             "WBXML-CL-DOCUMENT-HEADER-ORDER",
             "WBXML-CL-EMPTY-ATTRIBUTE-STRING",
@@ -10880,47 +10879,6 @@
               "WBXML-C-001": "partial"
             },
             "clauseImplementationStatus": "implemented",
-            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
-        },
-        {
-          "id": "WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
-          "family": "wbxml",
-          "parentRows": [
-            "WBXML-C-001"
-          ],
-          "sourceAnchor": {
-            "documentId": "WAP-192-WBXML",
-            "section": "5.2",
-            "heading": "5.2. Character Encoding",
-            "normalizedTextSha256": "d9b630bf107ba28639ca21183b5f79cc2820c8d90958024a4372190dfcc9fb2b"
-          },
-          "normativeForce": "error-condition",
-          "obligationLevel": "required",
-          "obligationSynopsis": "Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.",
-          "fixturePlan": {
-            "id": "WBXML-FX-CHARSET-UNREPRESENTABLE-NAME",
-            "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error."
-          },
-          "mapping": {
-            "ownerLayers": [
-              "transport-rust"
-            ],
-            "workItems": [
-              "R0-08",
-              "T0-07",
-              "WML-203"
-            ],
-            "requirementIds": [
-              "RQ-RMK-007",
-              "RQ-RMK-010"
-            ],
-            "parentImplementationSnapshot": {
-              "WBXML-C-001": "partial"
-            },
-            "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11393,7 +11351,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TOKEN-CODE-PAGES",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Support 256 code pages per code space and reserve page 255 for implementation-specific use."
           },
           "mapping": {
@@ -11412,7 +11370,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12620,6 +12578,7 @@
           "WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT",
           "WBXML-CL-TAG-CONTENT-BIT",
           "WBXML-CL-TAG-IDENTITY-BITS",
+          "WBXML-CL-TOKEN-CODE-PAGES",
           "WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES",
           "WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES",
           "WBXML-CL-VERSION-BYTE"

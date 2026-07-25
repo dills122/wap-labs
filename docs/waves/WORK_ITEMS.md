@@ -80,15 +80,15 @@ Canonical sprint priority rule:
 ## Next In Line (WAP Compliance Rebase - 2026-07-24)
 
 The selected-profile source and planning lanes are complete. The active queue
-must now turn the 201 selected parent rows and 781 planned clauses into direct
+must now turn the 201 selected parent rows and 780 planned clauses into direct
 evidence.
 
 Current priority order is:
 
-1. Continue active `WML-2` parser/deck/validation work: finish the two
-   explicit `WML-203` gaps, preserve the 23/23 mapped `WML-204` clause
-   evidence, and adopt direct mappings before new `WML-202`/`WML-205`
-   implementation.
+1. Continue active `WML-2` parser/deck/validation work: preserve the
+   profile-correct 49/49 mapped `WML-203` evidence, preserve the 23/23 mapped
+   `WML-204` clause evidence, and adopt direct mappings before new
+   `WML-202`/`WML-205` implementation.
 2. Continue `TRN-7` replay/delta evidence in parallel. `TRN-701`,
    `TRN-702`, and `TRN-703` are complete for the selected WDP,
    constrained-payload, and WCMP slices.

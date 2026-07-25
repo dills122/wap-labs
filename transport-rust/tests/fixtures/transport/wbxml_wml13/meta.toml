@@ -4,8 +4,9 @@ mode = "mapped"
 work_items = ["WML-203", "R0-08", "T0-07"]
 spec_items = ["RQ-RMK-007", "RQ-RMK-010", "WBXML-C-001", "WBXML-C-010", "WBXML-C-011"]
 testing_ac = [
-  "The corpus runs against lowband-wml13-wbxml/0.2.0 without a fake or external decoder.",
+  "The corpus runs against lowband-wml13-wbxml/0.3.0 without a fake or external decoder.",
   "Every fixture has exactly one fixed success or failure outcome.",
   "Binary structure, WML 1.3 defaults, MIME typing, and carrying-protocol charset precedence have direct parent-row tests.",
-  "The source-derived page-zero inventory generates equivalent binary and literal pairs for all 36 tags, 85 attribute starts, and 27 attribute values."
+  "The source-derived page-zero inventory generates equivalent binary and literal pairs for all 36 tags, 85 attribute starts, and 27 attribute values.",
+  "Tag and attribute code spaces accept all 256 page indices, preserve global-token meaning, and reject unassigned or unregistered implementation-specific tables deterministically."
 ]

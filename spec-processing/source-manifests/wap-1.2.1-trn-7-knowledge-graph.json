@@ -9,7 +9,7 @@
     "compatibilityFloor": "strict-historical-observable-behavior"
   },
   "generatedFrom": {
-    "recordedOn": "2026-07-24",
+    "recordedOn": "2026-07-25",
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "903e469345d86c37a7b76d7a8f17085be518747d553ef85d54dffb14d91ae32b"
+        "sha256": "f297867c62012a7a93b164c9586fca2a0e614f83186908f3696253176412e40a"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
