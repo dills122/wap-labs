@@ -26,12 +26,19 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 ## Next In Line (Cross-Project Alignment Refresh)
 
-After the completed forms/browser responsiveness slice, current aligned engine priorities are:
+After the merged WML-202 direct slice, current aligned engine priorities are:
 
-1. `D0-01` debug connector contract and architecture baseline.
-2. `W1-06` fatal/non-fatal script taxonomy closure.
-3. Preserve the completed `W0-05` timer/dialog baseline.
-4. `M1-03` engine API generator design/bootstrap (non-priority track).
+1. Close `WML-201`'s declared WML-family mapping gap against the complete
+   76-row SCR matrix.
+2. Add the missing direct WML-family graph mapping for `WML-205`, then close
+   its deterministic WML parse/error taxonomy.
+3. Close the residual `WML-202` deck/head/access/meta gate, followed by the
+   residual `WML-204` field/control validation gate; keep these serial because
+   they overlap parser/runtime tests.
+4. Preserve the completed `WML-202` 9/9, `WML-203` 49/49, and `WML-204` 23/23
+   direct-clause slices while their broader work-item gates remain open.
+5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive until the upstream
+   `WML-2` gate materially changes.
 
 Source of truth for these items:
 

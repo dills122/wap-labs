@@ -35,7 +35,7 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 761 planned clause fixtures, and a
 13-sprint/79-item execution program. The conservative implementation snapshot
 is 22 implemented, 77 partial, and 99 missing parent rows; clause-level
-assessment is 141/761.
+assessment is 140/761.
 
 Use this order for new completion work:
 
@@ -52,7 +52,7 @@ cannot close its sprint or satisfy an upstream obligation early. The blocked
 source item `SRC-006` gates public redistribution only and does not block
 internal implementation or evidence work.
 
-## Current Snapshot (as of 2026-07-24)
+## Current Snapshot (as of 2026-07-25)
 
 This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
@@ -214,20 +214,30 @@ Implementation reference:
 
 ## Parallel Follow-on Sprint Recommendation
 
-Current recommendation after the compliance rebase:
+Current recommendation after all merged implementation workstreams:
 
-1. Continue the active `WML-2` lane: close the two explicit `WML-203` WBXML
-   gaps, retain the fully fixture-backed `WML-204` subset, and adopt direct
-   clause mappings before starting `WML-202` or `WML-205`.
-2. Continue `TRN-7` with `TRN-706` replay-corpus and `TRN-707` delta work.
-   `TRN-701`, `TRN-702`, and `TRN-703` are complete for their selected
-   source-derived slices; do not activate WTP unless connection-oriented WSP
-   is claimed.
-3. Treat completed `W0-05` and active `W1-06` as `WMLS-5` foundations; do
-   not declare that sprint complete before `WML-3` or before the remaining
-   strict Dialogs/error work closes.
-4. Keep `D0-01` and maintenance work non-preemptive while strict P0/P1
-   obligations are open.
+1. **Mapping/evidence lane:** close `WML-201`'s declared WML-family mapping
+   gap and link direct evidence to the already complete 76-row SCR matrix.
+2. **Engine lane, first:** adopt direct WML-family clause mappings for
+   `WML-205`, then implement the deterministic malformed/invalid/unsupported/
+   recoverable error taxonomy. The current zero-clause graph gap is the first
+   subtask, not evidence of zero scope.
+3. **Engine lane, next:** close the residual `WML-202` deck/head/access/meta
+   parser gate while preserving its completed nine-clause template-shadowing
+   slice. Follow with the residual `WML-204` field/control validation gate;
+   these tasks share parser/runtime test files and should land serially.
+4. **Transport lane, parallel with engine:** finish the selected WDP replay
+   boundary for `TRN-706` and keep its WTP family gap explicit. Do not activate
+   WTP or connection-oriented WSP to manufacture completion.
+5. **Cross-layer evidence lane, after the transport fixture shape is stable:**
+   add binary-WBXML-to-engine parity evidence for the broader `WML-203` gate.
+   The current executable story proves text-deck behavior; the binary decoder
+   remains directly tested in transport rather than by that story.
+
+`W1-06`, `D0-01`, frame migration, and general maintenance remain
+non-preemptive until these upstream Class C gates materially change.
+`WSP-801`/`WSP-802` may continue only as isolated downstream foundation work;
+`WSP-8` cannot close before `TRN-7` and `WAE-6`.
 
 Completed this sprint:
 

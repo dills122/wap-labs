@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 25 implemented, 77 partial, and 99
+- the selected implementation audit is 22 implemented, 77 partial, and 99
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
@@ -56,8 +56,8 @@ All nine selected Class C family increments are complete at SCR level:
   server/encoder rows not applicable to the client;
 - all four SCR actors and the `WML-C-32 -> WML-C-54` dependency are preserved;
 - every mandatory row has an implementation work-item lane;
-- the source-wide mandatory code audit finds 5 implemented, 24 partial, and
-  18 missing; the selected 39-row client subset is 5 implemented, 24 partial,
+- the source-wide mandatory code audit finds 6 implemented, 23 partial, and
+  18 missing; the selected 39-row client subset is 6 implemented, 23 partial,
   and 10 missing;
 - 29 rows have direct code symbols and runnable test evidence.
 - 86 effective WAE SCR rows are extracted after applying the WAP-190 SIN

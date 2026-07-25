@@ -204,12 +204,15 @@ Type contract:
 
 ## Next implementation slice
 
-1. Execute the active engine-impacting runtime lane:
-- `D0-01` debug connector contract/architecture definition
-- `W1-06` fatal/non-fatal script taxonomy closure
-2. Preserve the completed `W0-05` timer/dialog baseline while strict
-   Dialogs/WMLS-5 work continues downstream.
-3. Keep `A5-03`, `B5-01`, and `M1-03` queued as follow-on work, not current sprint drivers.
+1. Close the `WML-201` declared-family mapping gap, then map and implement
+   `WML-205`.
+2. Close the residual `WML-202` and `WML-204` gates serially because they
+   overlap parser/runtime test files.
+3. Preserve the completed direct evidence for `WML-202` (9/9 clauses),
+   `WML-203` (49/49 mapped clauses), and `WML-204` (23/23 clauses); broader
+   work-item acceptance remains open.
+4. Keep `D0-01`, `W1-06`, `A5-03`, `B5-01`, and `M1-03` queued as downstream
+   or non-preemptive work rather than current sprint drivers.
 
 ## Current checklist (planning/execution)
 

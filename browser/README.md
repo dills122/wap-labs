@@ -22,6 +22,8 @@ Implemented now:
 - Ordinary-browser Waves story entry backed by the real WaveNav WASM engine and deterministic
   canonical fixture fetching (`pnpm test:story:waves`)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
+- Responsive full-window shell plus gateway-aware startup status that names the probed URL and
+  preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
 - Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
 - Help menu placeholder for updates (`Check for Updates (Coming Soon)`)
@@ -103,11 +105,11 @@ pnpm --dir browser run tauri:icons
 
 ## Next implementation slice
 
-1. Execute the current host-impacting runtime fidelity lane:
-- `D0-01` debug connector contract/architecture baseline
-- `W1-06` fatal/non-fatal script taxonomy closure
-2. Preserve the completed `W0-05` timer/dialog host-capability baseline.
-3. Defer `M1-09` (`F0-F4` frame migration) until the current runtime/debug boundary work is stable enough not to churn the host contract again.
+1. Support cross-layer binary-WBXML-to-engine parity evidence for `WML-203`;
+   no browser-first feature slice should preempt the upstream `WML-2` gate.
+2. Preserve the responsive shell and explicit gateway-probe status behavior.
+3. Defer `D0-01`, `W1-06`, and `M1-09` (`F0-F4` frame migration) until the
+   upstream runtime boundary is stable enough not to churn the host contract.
 4. Keep `M1-03` as non-priority generator follow-up.
 
 ## Planning + Traceability
@@ -134,4 +136,5 @@ pnpm --dir browser run tauri:icons
 - [x] Wire cache/reload and request-policy metadata from runtime to transport flow (`T0-04`)
 - [x] Wire profile-gated UA capability header controls in host flow (`T0-05`)
 - [x] Land browser responsiveness and UI-blocking remediation for startup/navigation/fetch hot paths (`A5-07`, `#109`, `#110`)
+- [x] Make the shell fill the available window and report gateway probe URL/failure details without disabling network mode (`#333`)
 - [x] Land active payload-size guardrails across transport/engine/browser boundaries (`M1-16`)

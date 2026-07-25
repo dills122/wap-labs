@@ -75,8 +75,13 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Support the active cross-lane runtime fidelity work without reopening completed transport lanes.
-2. Keep `T0-07`, broader conformance fixtures, and `M1-03` as follow-on work rather than current priority drivers.
+1. Finish the selected-WDP replay boundary for `TRN-706` while keeping its
+   conditional WTP family gap explicit and inactive.
+2. Support binary-WBXML-to-engine parity evidence for the broader `WML-203`
+   gate after the replay fixture shape is stable.
+3. Keep WTP inactive unless connection-oriented WSP is explicitly claimed;
+   treat `WSP-801`/`WSP-802` as downstream foundation work and `M1-03` as a
+   non-priority follow-up.
 
 ## Current checklist (planning/execution)
 
