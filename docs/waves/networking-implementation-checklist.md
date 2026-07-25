@@ -140,7 +140,7 @@ Execution priority override (`2026-03-08` refresh):
    - canonical record: `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 5. acceptance:
    - implementation gates `T0-08..T0-26` retain explicit owners/artifacts
-   - exact closure gates `TRN-701`, `TRN-703`, and
+   - exact closure gates `TRN-701`, `TRN-702`, `TRN-703`, and
      `WSP-801`/`802`/`804`/`805` pass
    - no behavior drift in transport contracts (`browser/contracts/transport.ts`, `engine-wasm/contracts/wml-engine.ts`).
 

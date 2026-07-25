@@ -9,11 +9,11 @@ Traceability linkage:
   - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
   - `docs/waves/SPEC_TEST_COVERAGE.md`
 
-Immediate cross-project next-in-line maintenance alignment (before Phase B promotion):
+Cross-project maintenance alignment:
 
-- `M1-02` native/wasm parity-critical regression coverage.
-- `M1-07` parser robustness hardening without feature-scope expansion, using an existing XML parser backend with a WaveNav WML semantic mapper layer.
-- `M1-08` boundary-oriented decomposition of high-churn files.
+- `M1-02` native/wasm parity-critical regression coverage is complete.
+- `M1-07` parser robustness hardening is complete.
+- `M1-08` boundary-oriented decomposition of high-churn files is complete.
 - `M1-03` engine API generator design/bootstrap as a non-priority track.
 
 Source board:

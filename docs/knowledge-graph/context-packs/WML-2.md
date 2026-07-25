@@ -24,7 +24,7 @@
 
 ### WML-2: WML parser, deck model, and validation baseline
 
-- Status: `todo`
+- Status: `in-progress`
 - Goal: Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.
 - Depends on: `CONF-1`
 - Direct downstream sprints: `REN-4`, `WML-3`
@@ -80,7 +80,7 @@ Evidence commands:
 
 ### WML-203: WML 1.3 DTD validation policy
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `transport-rust`, `qa`
 - Source families: `wml`, `wbxml`, `associated-assets`
 - Existing tickets: `R0-08`, `T0-07`
@@ -105,7 +105,7 @@ Evidence commands:
 
 ### WML-204: Complete field/control syntax and attribute validation
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-04`, `B5-01`, `C5-05`

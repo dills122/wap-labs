@@ -85,8 +85,13 @@ evidence.
 
 Current priority order is:
 
-1. Start `WML-2` parser/deck/validation fixture work.
-2. Continue `TRN-7` WDP/WCMP evidence in parallel.
+1. Continue active `WML-2` parser/deck/validation work: finish the six
+   explicit `WML-203` gaps, preserve the 23/23 mapped `WML-204` clause
+   evidence, and adopt direct mappings before new `WML-202`/`WML-205`
+   implementation.
+2. Continue `TRN-7` replay/delta evidence in parallel. `TRN-701`,
+   `TRN-702`, and `TRN-703` are complete for the selected WDP,
+   constrained-payload, and WCMP slices.
 3. Complete `WML-3`, then `REN-4` and `WMLS-5`.
 4. Treat existing WAE/WSP work as foundations until their upstream gates
    close.
@@ -108,8 +113,9 @@ Maintenance remains non-preemptive to the strict WAP execution order:
    boundary are stable enough for the frame migration.
 2. Keep `M1-03` as a non-priority generator design/prototype unless manual
    contract synchronization begins blocking compliance work.
-3. Continue `M1-08` only as opportunistic boundary cleanup when active feature
-   work exposes a concrete high-churn file.
+3. Treat the boundary-module split as complete. If active feature work exposes
+   another concrete hotspot, create a new additive maintenance ticket rather
+   than reopening a closed item.
 
 Completed maintenance tickets are tracked on the maintenance board and archive:
 
@@ -137,14 +143,16 @@ Source-ledger reconciliation:
 1. The exact WAP-200/WAP-202/WAP-203 row authority is
    `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
    manifests. The selected connectionless Class C path is 22 rows with an
-   audit of 5 implemented / 17 partial / 0 missing and 5/22 direct normative
-   tests. The five selected WCMP rows are fixture-backed under `TRN-703`;
-   WDP and WSP direct normative evidence remains open.
+   audit of 14 implemented / 8 partial / 0 missing and 14/22 direct normative
+   tests. The nine selected WDP rows are fixture-backed under `TRN-701`, the
+   adopted constrained-payload policy is closed under `TRN-702`, and the five
+   selected WCMP rows are fixture-backed under `TRN-703`; WSP direct
+   normative evidence remains open.
 2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
    reopened. Their existing evidence remains useful but provisional against
    the exact target-era rows.
 3. Exact closure is owned by compliance-program work items `TRN-701`,
-   `TRN-703`, `WSP-801`, `WSP-802`, `WSP-804`, and `WSP-805`.
+   `TRN-702`, `TRN-703`, `WSP-801`, `WSP-802`, `WSP-804`, and `WSP-805`.
 4. `SRC-005` has normalized the selected CDPD bearer citation `TIAEIA-732`
    with an explicit licensed-payload boundary; `CONF-003` has completed all
    201 selected nested-clause plans, while implementation work items own

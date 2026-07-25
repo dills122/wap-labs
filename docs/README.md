@@ -21,7 +21,7 @@
 - `architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`: proposed decision to keep modern TLS, historical WTLS, clear WAP, and any future DTLS route as explicit non-downgrading profiles
 - `architecture/decisions/0003-generate-compliance-knowledge-graph.md`: accepted repository-derived graph, Obsidian projection, and bounded AI context decision
 - `architecture/decisions/0004-build-a-canonical-data-driven-project-atlas.md`: accepted Astro portal and canonical-data projection decision
-- `knowledge-graph/README.md`: WML-2 graph pilot, generated artifact contract, Obsidian entrypoint, and AI retrieval rules
+- `knowledge-graph/README.md`: WML-2/TRN-7 graph slices, generated artifact contract, Obsidian entrypoint, and AI retrieval rules
 - `knowledge-graph/SLICE_ADOPTION.md`: accepted incremental graph-expansion policy and compliance-slice ready/done gates
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + in-process Rust transport)

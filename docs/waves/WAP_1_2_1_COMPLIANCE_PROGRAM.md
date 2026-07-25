@@ -101,9 +101,9 @@ All nine selected Class C family increments are complete at SCR level:
 - the selected connectionless transport path resolves to 22 rows: 9 WDP
   using CDPD-shaped UDP/IPv4, 5 general-WCMP rows, and 8 connectionless WSP
   rows;
-- the selected transport audit is 5 implemented, 17 partial, and 0 missing,
-  with five direct WAP-202 normative tests and no direct WAP-200/WAP-203
-  normative tests;
+- the selected transport audit is 14 implemented, 8 partial, and 0 missing:
+  all nine selected WDP rows and all five selected WCMP rows have direct
+  normative evidence, while the eight connectionless WSP rows remain partial;
 - connection-oriented WSP and WTP remain a separately activated capability;
   the selected CDPD `TIAEIA-732` family citation is authority-locked as a
   licensed-payload, metadata-only informative capability reference.

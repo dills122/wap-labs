@@ -34,8 +34,8 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 201 selected parent rows, 781 planned clause fixtures, and a
 13-sprint/78-item execution program. The conservative implementation snapshot
-is 7 implemented, 84 partial, and 110 missing parent rows; clause-level
-assessment is still 0/781.
+is 22 implemented, 78 partial, and 101 missing parent rows; clause-level
+assessment is 144/781.
 
 Use this order for new completion work:
 
@@ -52,7 +52,7 @@ cannot close its sprint or satisfy an upstream obligation early. The blocked
 source item `SRC-006` gates public redistribution only and does not block
 internal implementation or evidence work.
 
-## Current Snapshot (as of 2026-03-15)
+## Current Snapshot (as of 2026-07-24)
 
 This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
@@ -77,7 +77,7 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 | `T0-24` | transport/docs | `done` | seed corpus is formalized and promotion-gated |
 | `T0-25` | docs/spec-processing | `done` | external vector adoption sweep is closed |
 | `T0-26` | transport/browser/docs | `done` | local Kannel readiness gate is explicit and runnable |
-| `M1-08` | maintenance | `in-progress` | browser/transport cleanup is residual only and should stay non-preemptive |
+| `M1-08` | maintenance | `done` | boundary-module decomposition is complete; new hotspots require additive tickets |
 | `M1-16` | maintenance/security | `done` | payload-size guardrails are closed for the current transport/engine/browser boundary |
 
 ## Sprint 1 Review: Bedrock + Networking Unblockers
@@ -104,7 +104,8 @@ Close committed bedrock compliance work while unblocking networking P0 blockers 
 ### Stretch (only if all P0 are green)
 
 1. `W1-02` bytecode structural verification closure.
-2. `M1-08` residual browser/transport cleanup only if new hot files emerge.
+2. Add a new maintenance ticket only if active work exposes a concrete
+   high-churn hotspot.
 
 ### Exit Gates
 
@@ -188,7 +189,8 @@ Now that the interactive forms lane and browser responsiveness remediation are l
 
 1. `W1-06` fatal/non-fatal script error taxonomy closure.
 2. `M1-09` frame migration kickoff (`F0-*` only).
-3. residual `M1-08` cleanup if a new hotspot emerges during the active lane.
+3. additive hotspot cleanup only when active work identifies a specific
+   boundary problem.
 
 ### Concrete commit-order recommendation
 
@@ -212,9 +214,13 @@ Implementation reference:
 
 Current recommendation after the compliance rebase:
 
-1. Start the `WML-2` parser/deck/validation fixture lane.
-2. Continue `TRN-7` WDP/WCMP source-derived packet and error evidence in
-   parallel.
+1. Continue the active `WML-2` lane: close the six explicit `WML-203` WBXML
+   gaps, retain the fully fixture-backed `WML-204` subset, and adopt direct
+   clause mappings before starting `WML-202` or `WML-205`.
+2. Continue `TRN-7` with `TRN-706` replay-corpus and `TRN-707` delta work.
+   `TRN-701`, `TRN-702`, and `TRN-703` are complete for their selected
+   source-derived slices; do not activate WTP unless connection-oriented WSP
+   is claimed.
 3. Treat `W0-05` and `W1-06` as `WMLS-5` foundations; do not declare that
    sprint complete before `WML-3`.
 4. Keep `D0-01` and maintenance work non-preemptive while strict P0/P1
@@ -226,6 +232,10 @@ Completed this sprint:
 2. native/browser submit hardening for the active form lane
 3. browser responsiveness and UI-blocking remediation
 4. transport/engine payload-size guardrails for active boundaries
+5. story-driven host-sample and Waves-browser acceptance harnesses
+6. WML-204 input/select direct evidence (23/23 mapped clauses)
+7. WML-203 WBXML evidence tranche (44/50 mapped clauses)
+8. TRN-701 WDP, TRN-702 constrained payload, and TRN-703 WCMP direct evidence
 
 ## Capacity and WIP Rules
 
