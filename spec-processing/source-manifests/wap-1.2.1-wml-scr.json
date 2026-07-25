@@ -63,9 +63,9 @@
     },
     "testEvidenceLinkedCount": 27,
     "mandatoryImplementationStatus": {
-      "implemented": 3,
+      "implemented": 4,
       "missing": 20,
-      "partial": 24
+      "partial": 23
     }
   },
   "obligations": [
@@ -884,8 +884,8 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers",
-            "command": "cd engine-wasm/engine && cargo test helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers"
+            "test": "parses_mixed_inline_text_links_break_and_unknown_wrappers",
+            "command": "cd engine-wasm/engine && cargo test parses_mixed_inline_text_links_break_and_unknown_wrappers"
           },
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
@@ -1224,19 +1224,37 @@
           "R0-01",
           "R0-05"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Card-level br emits a break, while inline br currently collapses to a space and therefore does not yet satisfy all hard-line-break behavior.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "Card-level br emits a break (Node::Break), and inline br (nested with text/links/inputs/selects in the same paragraph) now emits a dedicated InlineNode::Break honored by the layout engine as a direct line advance, rather than collapsing to an ordinary whitespace text segment. The prior inline path was a silent no-op, not merely a downgraded break: `wrap_text` returns zero chunks for an all-whitespace segment, so the break neither rendered nor advanced the line.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
             "symbol": "map_card_level_nodes"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "map_inline_nodes_recursive"
+          },
+          {
+            "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+            "symbol": "layout_card"
           }
         ],
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "helper_parse_card_nodes_parses_mixed_content_paths",
-            "command": "cd engine-wasm/engine && cargo test helper_parse_card_nodes_parses_mixed_content_paths"
+            "test": "parses_mixed_card_level_content_paths",
+            "command": "cd engine-wasm/engine && cargo test parses_mixed_card_level_content_paths"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "parses_mixed_inline_text_links_break_and_unknown_wrappers",
+            "command": "cd engine-wasm/engine && cargo test parses_mixed_inline_text_links_break_and_unknown_wrappers"
+          },
+          {
+            "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+            "test": "inline_break_forces_a_hard_line_break_between_segments",
+            "command": "cd engine-wasm/engine && cargo test inline_break_forces_a_hard_line_break_between_segments"
           }
         ],
         "evidenceState": "direct-test-linked"

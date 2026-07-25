@@ -50,7 +50,7 @@
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "d53b0ae6427dbd3478e9ca1135759b29f65805f4091c8c0962e2d168cdfc9dc7",
+      "parentLedgerSha256": "af05a1b83a4e7b55522e82527974effb6d10ae8542790f5da434af2c3e4312ea",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -513,7 +513,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -7785,8 +7785,13 @@
           "fixturePlan": {
             "id": "WML-FX-BR-LINE-BREAK",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "End the current rendered line at br and continue on the following line."
+            "status": "implemented",
+            "assertion": "End the current rendered line at br and continue on the following line.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml inline_break_forces_a_hard_line_break_between_segments"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -7801,9 +7806,9 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-24": "partial"
+              "WML-C-24": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -7841,7 +7846,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-24": "partial"
+              "WML-C-24": "implemented"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

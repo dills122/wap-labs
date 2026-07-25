@@ -26,7 +26,7 @@ const familyDefinitions = [
     expectedRows: 76,
     expectedSelected: 39,
     expectedClauses: 174,
-    expectedStatus: { implemented: 3, partial: 24, missing: 12 },
+    expectedStatus: { implemented: 4, partial: 23, missing: 12 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 201 ||
   aggregateClauses !== 780 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 22, partial: 78, missing: 101 })
+  JSON.stringify({ implemented: 23, partial: 77, missing: 101 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -375,7 +375,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **201** | **780** | **22** | **78** | **101** |',
+      '| **Total** | **201** | **780** | **23** | **77** | **101** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -390,7 +390,7 @@ const requiredDocumentFragments = new Map([
   [
     'README.md',
     [
-      '22/201 selected parent rows are implemented',
+      '23/201 selected parent rows are implemented',
       '149/780 clauses are directly assessed'
     ]
   ]

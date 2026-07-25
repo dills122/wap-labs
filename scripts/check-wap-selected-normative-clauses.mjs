@@ -209,7 +209,8 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-INPUT-EMPTY-COMMIT',
   'WML-CL-INPUT-PASSWORD-DISPLAY',
   'WML-CL-INPUT-FORMAT-LITERALS',
-  'WML-CL-INPUT-MAXLENGTH'
+  'WML-CL-INPUT-MAXLENGTH',
+  'WML-CL-BR-LINE-BREAK'
 ]);
 const deferredWbxmlClauseIds = new Set();
 const hashPattern = /^[a-f0-9]{64}$/;
