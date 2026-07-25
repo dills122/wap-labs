@@ -459,6 +459,17 @@ research produces the following ordered backlog.
 Do not start `WTLS-06` by choosing algorithms first. `WTLS-01` through `WTLS-05` determine the
 actual wire, trust, and interoperability requirements the provider must satisfy.
 
+`WTLS-00` partial status (2026-07-25): the `waps://` native fetch path now emits a
+`transport.fetch.native.security` transport event (`protected: false, reason:
+"wtls-not-implemented", reference: "WTLS-00"`) on every request, and the code path is documented
+inline referencing this decision (`transport-rust/src/native_fetch.rs`,
+`warn_if_unprotected_waps_scheme`). This satisfies the "denote the current state" half of
+`WTLS-00`'s exit condition. It does **not** yet satisfy the rest: there is no unavoidable
+host/user-visible warning surfaced through the typed `FetchDeckResponse` contract, no
+credential/sensitive-submission blocking, and no release-profile fail-closed behavior. Those
+remain open and should be picked up together with `WTLS-08` (`SecurityOutcome` contract) rather
+than bolted onto the transport-event-log mechanism used here.
+
 ## Verification strategy
 
 Historical conformance evidence should include:

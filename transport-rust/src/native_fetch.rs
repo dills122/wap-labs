@@ -155,6 +155,8 @@ pub(crate) fn execute_native_wap_request_with_transport(
         }
     };
 
+    warn_if_unprotected_waps_scheme(&parsed, plan.request_id.as_deref(), &plan.request_url);
+
     let transaction_id = CONNECTIONLESS_INITIAL_TRANSACTION_ID;
     let encoded_request = match encode_native_wap_request(
         transaction_id,
@@ -311,6 +313,41 @@ fn default_service_port(scheme: &str) -> u16 {
     }
 }
 
+/// `waps://` selects the WTLS-secured port (9202) by URL convention, but this crate does not
+/// yet invoke `network::wtls` from any live send path -- `encode_native_wap_request` produces
+/// the identical unprotected connectionless-WSP payload for `wap://` and `waps://` alike. This
+/// is the explicitly decided, temporary state from
+/// `docs/architecture/decisions/0002-separate-modern-security-from-wtls-compatibility.md`
+/// (development/interoperability `waps://` may stay available while WTLS is deferred, but "it
+/// reports no established security, emits an unavoidable warning"), tracked as `WTLS-00` in
+/// `docs/architecture/wtls-modernization-research.md`. Do not remove this warning by treating a
+/// `waps://` request as secure until `WTLS-08` ("Integrate live secure routes") actually routes
+/// it through a conformance-tested WTLS codec and returns a real `SecurityOutcome`.
+fn warn_if_unprotected_waps_scheme(parsed: &Url, request_id: Option<&str>, request_url: &str) {
+    if let Some(payload) = unprotected_waps_warning_payload(parsed.scheme()) {
+        log_transport_event(
+            "transport.fetch.native.security",
+            request_id,
+            request_url,
+            payload,
+        );
+    }
+}
+
+/// Pure decision half of [`warn_if_unprotected_waps_scheme`], split out so the warning payload
+/// is unit-testable without capturing stdout.
+fn unprotected_waps_warning_payload(scheme: &str) -> Option<serde_json::Value> {
+    if scheme != "waps" {
+        return None;
+    }
+    Some(serde_json::json!({
+        "scheme": "waps",
+        "protected": false,
+        "reason": "wtls-not-implemented",
+        "reference": "WTLS-00"
+    }))
+}
+
 fn request_uri(parsed: &Url) -> String {
     let path = if parsed.path().is_empty() {
         "/"
@@ -434,6 +471,20 @@ mod tests {
     use crate::network::wdp::transport_trait::WdpResult;
     use crate::network::wsp::connectionless::{decode_uintvar, encode_uintvar};
     use std::sync::{Mutex, OnceLock};
+
+    #[test]
+    fn unprotected_waps_warning_payload_flags_waps_scheme() {
+        let payload = unprotected_waps_warning_payload("waps").expect("waps must warn");
+        assert_eq!(payload["scheme"], "waps");
+        assert_eq!(payload["protected"], false);
+        assert_eq!(payload["reason"], "wtls-not-implemented");
+        assert_eq!(payload["reference"], "WTLS-00");
+    }
+
+    #[test]
+    fn unprotected_waps_warning_payload_is_silent_for_wap_scheme() {
+        assert_eq!(unprotected_waps_warning_payload("wap"), None);
+    }
 
     struct FakeDatagramTransport {
         sent: Vec<WdpDatagram>,
