@@ -971,6 +971,65 @@ fn timer_non_zero_expires_after_deterministic_advance() {
 }
 
 #[test]
+fn timer_expiry_invokes_script_and_publishes_dialog_in_order() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">Start timer</a>
+          </card>
+          <card id="timed">
+            <timer value="5"/>
+            <onevent type="ontimer">
+              <go href="script:timer-dialog.wmlsc#showExpiryAlert"/>
+            </onevent>
+            <p>Waiting</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+
+    let mut unit = Vec::new();
+    push_string(&mut unit, "Timer expired");
+    unit.push(0x20);
+    unit.push(0x05);
+    unit.push(0x01); // alert(message)
+    unit.push(0x00);
+    engine.register_script_unit("timer-dialog.wmlsc".to_string(), unit);
+    engine.register_script_entry_point(
+        "timer-dialog.wmlsc".to_string(),
+        "showExpiryAlert".to_string(),
+        0,
+    );
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("fragment nav should start timer");
+    engine.clear_trace_entries();
+    engine
+        .advance_time_ms(500)
+        .expect("timer expiry script should succeed");
+
+    assert_eq!(
+        engine.last_script_dialog_requests(),
+        vec![ScriptDialogRequestLiteral::Alert {
+            message: "Timer expired".to_string(),
+        }]
+    );
+    assert_trace_kinds_subsequence(
+        &engine,
+        &[
+            "TIMER_TICK",
+            "TIMER_EXPIRE",
+            "ACTION_ONTIMER",
+            "ACTION_SCRIPT",
+            "DIALOG_ALERT",
+            "SCRIPT_OK",
+        ],
+    );
+}
+
+#[test]
 fn timer_large_single_tick_expires_once_for_host_coarse_clock() {
     let mut engine = WmlEngine::new();
     let xml = r##"

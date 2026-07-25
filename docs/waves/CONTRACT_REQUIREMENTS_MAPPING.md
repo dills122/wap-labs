@@ -89,4 +89,7 @@ Sync rule:
 ## Known gaps to schedule
 
 1. Add explicit contract field for engine/runtime error taxonomy once finalized (planned quality ticket).
-2. Expand script host capability coverage into concrete host wiring during `W0-05` timer/dialog integration work.
+2. Strict Dialogs library/function identifiers and interactive result
+   round-trips remain in `WMLS-504`/`WMLS-505`; the existing
+   `lastScriptDialogRequests()` surface is sufficient for the completed
+   `W0-05` deterministic host-capability baseline.

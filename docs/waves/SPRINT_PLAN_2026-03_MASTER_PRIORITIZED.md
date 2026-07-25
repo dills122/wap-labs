@@ -65,7 +65,7 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 | `A5-07` | browser | `done` | blocking startup/navigation/browser hot-path remediation landed in `#109/#110` |
 | `R0-02` | engine + browser + transport | `done` | closed with deterministic host/runtime request-fidelity coverage |
 | `R0-03` | engine + browser | `done` | closed with history/context fidelity integration evidence |
-| `W0-05` | wavescript/runtime | `in-progress` | finish host capability plumbing and deterministic timer/dialog traces |
+| `W0-05` | wavescript/runtime | `done` | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream |
 | `W0-06` | engine/wavescript | `done` | strict structural closure continues in `W1-02` |
 | `W1-06` | wavescript/runtime | `in-progress` | finalize remaining fatal/non-fatal fixture classes and close checklist split |
 | `D0-01` | engine + browser + docs | `todo` | next planning-ready contract/architecture slice after active runtime correctness work |
@@ -181,9 +181,12 @@ Now that the interactive forms lane and browser responsiveness remediation are l
 
 ### Must Complete (P0/P1)
 
-1. `W0-05` timer/dialog integration baseline.
-2. `D0-01` debug connector contract and architecture baseline.
-3. `W1-06` fatal/non-fatal script error taxonomy closure.
+1. `D0-01` debug connector contract and architecture baseline.
+2. `W1-06` fatal/non-fatal script error taxonomy closure.
+
+Completed foundation:
+
+- `W0-05` timer/dialog integration baseline.
 
 ### Follow-on (only if capacity remains)
 
@@ -194,10 +197,9 @@ Now that the interactive forms lane and browser responsiveness remediation are l
 
 ### Concrete commit-order recommendation
 
-1. `feat(runtime): finish timer/dialog host capability plumbing`
-2. `docs(debug): lock engine debug connector contract and boundary rules`
-3. `fix(runtime): close remaining fatal/non-fatal script taxonomy gaps`
-4. `feat(host): start frame migration only after the above boundaries are stable`
+1. `docs(debug): lock engine debug connector contract and boundary rules`
+2. `fix(runtime): close remaining fatal/non-fatal script taxonomy gaps`
+3. `feat(host): start frame migration only after the above boundaries are stable`
 
 Implementation reference:
 
@@ -221,8 +223,9 @@ Current recommendation after the compliance rebase:
    `TRN-701`, `TRN-702`, and `TRN-703` are complete for their selected
    source-derived slices; do not activate WTP unless connection-oriented WSP
    is claimed.
-3. Treat `W0-05` and `W1-06` as `WMLS-5` foundations; do not declare that
-   sprint complete before `WML-3`.
+3. Treat completed `W0-05` and active `W1-06` as `WMLS-5` foundations; do
+   not declare that sprint complete before `WML-3` or before the remaining
+   strict Dialogs/error work closes.
 4. Keep `D0-01` and maintenance work non-preemptive while strict P0/P1
    obligations are open.
 

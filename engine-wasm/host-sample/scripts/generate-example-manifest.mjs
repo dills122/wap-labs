@@ -18,6 +18,7 @@ const STATE_KEYS = new Set([
   'focusedSelectEditName',
   'focusedSelectEditValue',
   'externalNavigationIntent',
+  'lastScriptDialogRequests',
   'nextCardVar'
 ]);
 const SESSION_KEYS = new Set([
@@ -182,6 +183,24 @@ function parseExpectedState(value, filename, location) {
     if (key === 'activeCardId') {
       if (typeof expected !== 'string' || !expected) {
         throw new Error(`${filename}: ${location}.${key} must be a non-empty string`);
+      }
+      continue;
+    }
+    if (key === 'lastScriptDialogRequests') {
+      if (
+        !Array.isArray(expected) ||
+        expected.some(
+          (request) =>
+            !request ||
+            typeof request !== 'object' ||
+            !['alert', 'confirm', 'prompt'].includes(request.type) ||
+            typeof request.message !== 'string' ||
+            (request.defaultValue !== undefined && typeof request.defaultValue !== 'string')
+        )
+      ) {
+        throw new Error(
+          `${filename}: ${location}.${key} must contain valid dialog request objects`
+        );
       }
       continue;
     }
@@ -484,6 +503,11 @@ export interface StoryStateExpectation {
   focusedSelectEditName?: string | null;
   focusedSelectEditValue?: string | null;
   externalNavigationIntent?: string | null;
+  lastScriptDialogRequests?: Array<
+    | { type: 'alert'; message: string }
+    | { type: 'confirm'; message: string }
+    | { type: 'prompt'; message: string; defaultValue?: string }
+  >;
   nextCardVar?: string | null;
 }
 

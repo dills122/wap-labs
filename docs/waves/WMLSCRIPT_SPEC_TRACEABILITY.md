@@ -362,9 +362,19 @@ Legend:
   - `WAP-194` chapter 12
   - SCRs: `WMLSSL-023 (M)`, `WMLSSL-092..094 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Dialog calls are exposed through host boundary with deterministic return mapping.
+  - Evidence: [ ] Strict closure still requires source-derived identifier,
+    conversion, and interactive-result fixtures for `WMLSSL-023` and
+    `WMLSSL-092..094`.
+  - Baseline evidence: [x] `engine-wasm/engine/src/engine_tests/actions_timers.rs`
+    (`timer_expiry_invokes_script_and_publishes_dialog_in_order`) and
+    `engine-wasm/examples/source/timer-script-dialog.wml` with adjacent
+    `timer-script-dialog.flow.json`; command: `pnpm test:story W0-05`.
+  - [x] Dialog calls are exposed through the host boundary with the current
+    deterministic placeholder return mapping.
   - [ ] UI interaction paths covered by integration tests in host harness.
+  - Note: `W0-05` closes the timer-to-script-to-dialog capability baseline,
+    not strict Dialogs IDs, interactive result round-trips, or full
+    `WMLS-5`.
 
 ## SCR tracking summary for Waves milestones
 

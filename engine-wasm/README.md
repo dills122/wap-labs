@@ -145,7 +145,8 @@ Still out of scope or partial:
 - multi-select behavior
 - advanced input-mask validation semantics
 - images, tables, and broader markup breadth
-- remaining timer/dialog host-integration closure tracked by `W0-05`
+- strict Dialogs identifiers and interactive result round-trips tracked by
+  `WMLS-504`/`WMLS-505`
 
 Partially supported (phase W0 baseline and active follow-ons):
 
@@ -204,10 +205,10 @@ Type contract:
 ## Next implementation slice
 
 1. Execute the active engine-impacting runtime lane:
-- `A5-01` history entry fidelity
-- `W0-05` timer/dialog integration baseline
 - `D0-01` debug connector contract/architecture definition
-2. Keep `W1-06` next after the active runtime lane stabilizes.
+- `W1-06` fatal/non-fatal script taxonomy closure
+2. Preserve the completed `W0-05` timer/dialog baseline while strict
+   Dialogs/WMLS-5 work continues downstream.
 3. Keep `A5-03`, `B5-01`, and `M1-03` queued as follow-on work, not current sprint drivers.
 
 ## Current checklist (planning/execution)

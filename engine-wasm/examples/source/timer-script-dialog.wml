@@ -1,0 +1,24 @@
+<!--
+label: Timer Script Dialog
+description: Demonstrates a runtime-owned WML timer invoking a WaveScript alert host capability at expiry.
+goal: Verify timer expiry dispatches ontimer, invokes the script, and publishes the dialog request in deterministic order.
+work-items: W0-05
+spec-items: RQ-WMLS-022
+testing-ac:
+- Press Enter on "Start timer" to enter the timed card.
+- Advance the deterministic runtime clock by 1000ms.
+- Confirm the trace orders TIMER_EXPIRE, ACTION_ONTIMER, ACTION_SCRIPT, DIALOG_ALERT, and SCRIPT_OK.
+- Confirm the dialog request is published only after the script invocation boundary.
+-->
+<wml>
+  <card id="home">
+    <a href="#timed">Start timer</a>
+  </card>
+  <card id="timed">
+    <timer value="10"/>
+    <onevent type="ontimer">
+      <go href="script:timer-dialog.wmlsc#showExpiryAlert"/>
+    </onevent>
+    <p>Waiting for the runtime timer.</p>
+  </card>
+</wml>

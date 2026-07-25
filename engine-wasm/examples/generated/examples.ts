@@ -10,6 +10,11 @@ export interface StoryStateExpectation {
   focusedSelectEditName?: string | null;
   focusedSelectEditValue?: string | null;
   externalNavigationIntent?: string | null;
+  lastScriptDialogRequests?: Array<
+    | { type: 'alert'; message: string }
+    | { type: 'confirm'; message: string }
+    | { type: 'prompt'; message: string; defaultValue?: string }
+  >;
   nextCardVar?: string | null;
 }
 
@@ -1050,6 +1055,93 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">To timed</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"0\"/>\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "timerScriptDialog",
+    "label": "Timer Script Dialog",
+    "description": "Demonstrates a runtime-owned WML timer invoking a WaveScript alert host capability at expiry.",
+    "goal": "Verify timer expiry dispatches ontimer, invokes the script, and publishes the dialog request in deterministic order.",
+    "workItems": [
+      "W0-05"
+    ],
+    "specItems": [
+      "RQ-WMLS-022"
+    ],
+    "testingAc": [
+      "Press Enter on \"Start timer\" to enter the timed card.",
+      "Advance the deterministic runtime clock by 1000ms.",
+      "Confirm the trace orders TIMER_EXPIRE, ACTION_ONTIMER, ACTION_SCRIPT, DIALOG_ALERT, and SCRIPT_OK.",
+      "Confirm the dialog request is published only after the script invocation boundary."
+    ],
+    "flows": [
+      {
+        "id": "timer-expiry-script-dialog-order",
+        "title": "Timer expiry invokes script and publishes dialog capability in order",
+        "target": "host-sample",
+        "workItems": [
+          "W0-05"
+        ],
+        "specItems": [
+          "RQ-WMLS-022"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null,
+            "lastScriptDialogRequests": []
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null,
+                "lastScriptDialogRequests": []
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 1000
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null,
+                "lastScriptDialogRequests": [
+                  {
+                    "type": "alert",
+                    "message": "Timer expired"
+                  }
+                ]
+              },
+              "traceKinds": [
+                "TIMER_TICK",
+                "TIMER_EXPIRE",
+                "ACTION_ONTIMER",
+                "ACTION_SCRIPT",
+                "DIALOG_ALERT",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timer</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"10\"/>\n    <onevent type=\"ontimer\">\n      <go href=\"script:timer-dialog.wmlsc#showExpiryAlert\"/>\n    </onevent>\n    <p>Waiting for the runtime timer.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wavescriptGoCancel",
