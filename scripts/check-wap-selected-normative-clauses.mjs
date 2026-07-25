@@ -159,9 +159,20 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-SELECT-VARIABLE-INITIALIZATION',
   'WML-CL-SELECT-PRESELECTION',
   'WML-CL-SELECT-USER-UPDATE',
+  'WML-CL-SELECT-NO-IMPLICIT-REFRESH',
   'WML-CL-SELECT-MULTI-SERIALIZATION',
+  'WML-CL-OPTION-VALUE-EVALUATION',
   'WML-CL-OPTION-ONPICK-MULTI',
-  'WML-CL-OPTION-ONPICK-SINGLE'
+  'WML-CL-OPTION-ONPICK-SINGLE',
+  'WML-CL-INPUT-STRUCTURE',
+  'WML-CL-INPUT-MASK-COMMIT',
+  'WML-CL-INPUT-REJECTION-ATOMICITY',
+  'WML-CL-INPUT-INITIALIZATION',
+  'WML-CL-INPUT-INVALID-INITIAL-VALUE',
+  'WML-CL-INPUT-EMPTY-COMMIT',
+  'WML-CL-INPUT-PASSWORD-DISPLAY',
+  'WML-CL-INPUT-FORMAT-LITERALS',
+  'WML-CL-INPUT-MAXLENGTH'
 ]);
 const hashPattern = /^[a-f0-9]{64}$/;
 const releaseById = new Map(release.members.map((member) => [member.documentId, member]));
@@ -482,7 +493,7 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 89
+  assessedClauseCount: 100
 };
 if (
   selectedParentCount !== 201 ||

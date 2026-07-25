@@ -243,7 +243,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Input/form commit flow is deterministic and spec-aligned for baseline text input semantics.
 8. `Notes`:
 - Additive follow-up over Phase C planning scope to close compliance-critical gaps earlier.
-- Basic Latin mask codes, escaped literals, invalid-mask fallback, emptyok precedence, rejection atomicity, and literal name/value initialization are implemented with native/WASM parity. Vdata expansion and language-aware non-Basic-Latin input repertoires remain before this item can close.
+- Basic Latin mask codes, escaped literals, invalid-mask fallback, emptyok precedence, rejection atomicity, maxlength, password display, and name/value initialization are implemented with native/WASM parity and Waves-browser story evidence. Input `value` vdata defaults now evaluate in document order. General vdata validation/conversion beyond input defaults and language-aware non-Basic-Latin input repertoires remain before this item can close; the mandatory Basic Latin floor is directly tested.
 
 ### B5-02 Inline flow layout conformance follow-up
 

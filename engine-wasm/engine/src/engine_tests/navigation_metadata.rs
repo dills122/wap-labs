@@ -314,7 +314,8 @@ fn focused_input_edit_cancel_keeps_original_value() {
 }
 
 #[test]
-fn focused_input_edit_draft_respects_input_maxlength() {
+fn wml_fx_input_maxlength_limits_draft_and_committed_value() {
+    // WML-CL-INPUT-MAXLENGTH / WAP-191_104-WML section 11.6.3.
     let mut engine = WmlEngine::new();
     let xml = r#"
         <wml>
@@ -330,6 +331,10 @@ fn focused_input_edit_draft_respects_input_maxlength() {
         .expect("begin edit should return result");
     assert!(engine.set_focused_input_edit_draft("123456".to_string()));
     assert_eq!(engine.focused_input_edit_value(), Some("1234".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("truncated draft should commit"));
+    assert_eq!(engine.get_var("pin".to_string()), Some("1234".to_string()));
 }
 
 #[test]
@@ -508,6 +513,29 @@ fn wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default() {
 }
 
 #[test]
+fn wml_fx_input_initialization_evaluates_vdata_default_in_document_order() {
+    // WML-CL-INPUT-INITIALIZATION / WAP-191_104-WML section 11.6.3.
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml>
+              <card id="form">
+                <input name="DefaultPin" value="4321" format="4N"/>
+                <input name="Pin" value="$(DefaultPin)" format="4N"/>
+              </card>
+            </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(engine.get_var("Pin".to_string()), Some("4321".to_string()));
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:Pin:text=[Pin: 4321]")));
+}
+
+#[test]
 fn invalid_input_default_leaves_variable_unset_and_control_empty() {
     let mut engine = WmlEngine::new();
     engine
@@ -520,6 +548,40 @@ fn invalid_input_default_leaves_variable_unset_and_control_empty() {
     assert!(render_snapshot_lines(&engine)
         .iter()
         .any(|line| line.contains("href=input:Pin:text=[Pin: ]")));
+}
+
+#[test]
+fn wml_fx_input_password_display_conceals_entry_and_preserves_variable() {
+    // WML-CL-INPUT-PASSWORD-DISPLAY and WML-CL-INPUT-FORMAT-LITERALS,
+    // WAP-191_104-WML section 11.6.3.
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml>
+              <card id="form">
+                <input
+                  name="PhonePin"
+                  type="password"
+                  value="12345-123"
+                  format="NNNNN\-3N"
+                />
+              </card>
+            </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    engine.set_viewport_cols(80);
+    assert_eq!(
+        engine.get_var("PhonePin".to_string()),
+        Some("12345-123".to_string())
+    );
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:PhonePin:text=[PhonePin: *****-***]")));
+    assert!(lines.iter().all(|line| !line.contains("12345-123")));
 }
 
 #[test]

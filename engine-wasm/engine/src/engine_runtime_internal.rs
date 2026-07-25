@@ -298,9 +298,12 @@ impl WmlEngine {
                             Some(existing)
                         } else {
                             vars.remove(name);
-                            default_value.clone().filter(|candidate| {
-                                input_value_is_valid(mask, *empty_ok, candidate)
-                            })
+                            default_value
+                                .as_deref()
+                                .map(|candidate| evaluate_vdata(candidate, vars))
+                                .filter(|candidate| {
+                                    input_value_is_valid(mask, *empty_ok, candidate)
+                                })
                         };
 
                         if let Some(initial_value) = initial_value {

@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "example": "wml204ControlValidation",
+  "flows": [
+    {
+      "id": "waves-input-rejection-retry-and-password-state",
+      "title": "Waves rejects invalid input atomically and preserves committed password state",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["B5-01", "R0-04", "WML-204"],
+      "specItems": ["WML-C-33", "WML-C-41", "WML-C-43"],
+      "initial": {
+        "state": {
+          "activeCardId": "controls",
+          "focusedLinkIndex": 0,
+          "focusedInputEditName": null
+        },
+        "render": {
+          "textIncludes": ["AHMED", "****", "Verify PIN variable", "Jordan"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1,
+              "focusedInputEditName": null
+            }
+          }
+        },
+        {
+          "action": { "type": "type-text", "text": "x" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 1,
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "1234"
+            },
+            "traceKinds": ["INPUT_EDIT_START"]
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Backspace" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "123"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Backspace" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "12"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Backspace" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "1"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Backspace" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": ""
+            }
+          }
+        },
+        {
+          "action": { "type": "type-text", "text": "ab" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "ab"
+            },
+            "render": {
+              "textIncludes": ["**"]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "ab"
+            },
+            "traceKinds": ["INPUT_EDIT_START", "INPUT_EDIT_REJECT"],
+            "statusIncludes": "value does not conform to format mask"
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Backspace" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "a"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Backspace" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": ""
+            }
+          }
+        },
+        {
+          "action": { "type": "type-text", "text": "987" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": "Pin",
+              "focusedInputEditValue": "987"
+            },
+            "render": {
+              "textIncludes": ["***"]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedInputEditName": null,
+              "focusedInputEditValue": null
+            },
+            "traceKinds": ["INPUT_EDIT_START", "INPUT_EDIT_REJECT", "INPUT_EDIT_COMMIT"],
+            "render": {
+              "textIncludes": ["***"]
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "focusedLinkIndex": 2
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "proof",
+              "focusedLinkIndex": 0
+            },
+            "render": {
+              "textIncludes": ["Committed PIN:", "PinProof: 987"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -231,6 +231,59 @@ fn wml_fx_select_variables_are_resynchronized_before_link_task_execution() {
 }
 
 #[test]
+fn wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls() {
+    // WML-CL-SELECT-NO-IMPLICIT-REFRESH / WAP-191_104-WML section 11.6.2.1.
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="controls">
+            <input name="choice" value="seed"/>
+            <select name="choice" iname="choice-index">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    assert_eq!(
+        engine.get_var("choice".to_string()),
+        Some("alpha".to_string())
+    );
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:choice:text=[choice: seed]")));
+
+    engine
+        .handle_key("down".to_string())
+        .expect("focus should move to select");
+    engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    assert!(engine.move_focused_select_edit(1));
+    engine
+        .commit_focused_select_edit()
+        .expect("select commit should succeed");
+
+    assert_eq!(
+        engine.get_var("choice".to_string()),
+        Some("beta".to_string())
+    );
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:choice:text=[choice: seed]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=select:choice:text=[choice: Beta]")));
+    assert!(engine
+        .trace_entries()
+        .iter()
+        .all(|entry| entry.kind != "ACTION_REFRESH"));
+}
+
+#[test]
 fn wml_fx_option_onpick_single_updates_state_before_only_selected_task() {
     // WML-CL-SELECT-USER-UPDATE and WML-CL-OPTION-ONPICK-SINGLE,
     // WAP-191_104-WML sections 11.6.2.1-11.6.2.2.

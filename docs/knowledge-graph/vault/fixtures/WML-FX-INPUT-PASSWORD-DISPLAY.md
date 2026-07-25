@@ -4,7 +4,7 @@ key: "WML-FX-INPUT-PASSWORD-DISPLAY"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "rendering",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Conceal the entered value when input type is password while preserving the actual variable value.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }
