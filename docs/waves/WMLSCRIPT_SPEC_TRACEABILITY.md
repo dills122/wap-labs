@@ -207,13 +207,31 @@ Legend:
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
   - [x] Fatal errors terminate current script invocation safely.
   - [x] Host remains alive and recoverable after script failure.
-  - Note (`2026-03-02`): VM computational `TypeError` and `StackUnderflow` traps are now classified as non-fatal and returned as `invalid`; regression matrix tests now assert both fatal/non-fatal class and category mappings across all current `VmTrap` variants.
+  - Note (`2026-07-25`): corrected a spec-accuracy gap in the `TypeError`/`StackUnderflow`
+    classification. `WAP-193_101` 12.3.1.7 lists Stack Underflow under Bytecode Errors
+    ("[o]nly generated if compiler generates bad code") and marks it Fatal, not Non-fatal;
+    the VM's `TypeError` is the same "compiler generated bad code" condition for a verified
+    unit. Both now classify as `fatal`/`integrity`. This is a behavior change: scripts
+    hitting either trap now abort invocation (`invocation_aborted: true`) instead of
+    yielding `invalid` and continuing. See `engine-wasm/engine/src/engine_script_types.rs`
+    `classify_vm_trap` / `classify_vm_trap_category`.
+  - Gap: no current `VmTrap` variant maps to `non-fatal`. The VM has no opcodes for the
+    chapter 12.4 Non-fatal Computational/Constant-Reference/Conversion errors (divide-by-zero,
+    integer/float overflow/underflow, NaN/infinite float constant, illegal float reference,
+    integer/float conversion range) — those require new opcodes (e.g. integer divide), which
+    is `W1-04`/opcode-expansion scope, not this ticket. The `ScriptExecutionOutcome::non_fatal`
+    contract shape is still pinned directly by
+    `non_fatal_execution_outcome_contract_shape` in
+    `engine-wasm/engine/src/engine_tests/script_runtime.rs` so it stays correct once such an
+    opcode lands.
   - Current implementation-class matrix:
-    - Non-fatal: `TypeError`, `StackUnderflow` -> `invalid`, invocation continues to boundary.
-    - Fatal: decode/integrity/resource/host-binding failures (`UnsupportedOpcode`, `TruncatedImmediate`, `Invalid*Index/Target`, `CallDepthExceeded`, `ExecutionLimitExceeded`, `HostCall*`, etc.) -> invocation abort.
+    - Non-fatal: none currently reachable (see gap above).
+    - Fatal: all current traps (`TypeError`, `StackUnderflow`, decode/integrity/resource/host-binding
+      failures such as `UnsupportedOpcode`, `TruncatedImmediate`, `Invalid*Index/Target`,
+      `CallDepthExceeded`, `ExecutionLimitExceeded`, `HostCall*`, etc.) -> invocation abort.
   - Current implementation-category matrix:
-    - `computational`: `TypeError`, `StackUnderflow`
-    - `integrity`: malformed decode/control-flow/local index/UTF-8/return-frame invariants
+    - `integrity`: `TypeError`, `StackUnderflow`, and malformed decode/control-flow/local
+      index/UTF-8/return-frame invariants
     - `resource`: stack/call-depth/step-limit exhaustion
     - `host-binding`: unavailable/failed host call bindings
 
