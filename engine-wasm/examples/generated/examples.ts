@@ -732,6 +732,100 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      User:\n      <input\n        name=\"UserName\"\n        title=\"User name\"\n        type=\"text\"\n        value=\"AHMED\"\n        size=\"12\"\n        maxlength=\"24\"\n        tabindex=\"1\"\n        accesskey=\"1\"\n      />\n    </p>\n    <p>\n      PIN:\n      <input\n        name=\"Pin\"\n        title=\"Numeric PIN\"\n        type=\"password\"\n        value=\"1234\"\n        format=\"4N\"\n        emptyok=\"false\"\n        size=\"4\"\n        maxlength=\"4\"\n        tabindex=\"2\"\n        accesskey=\"2\"\n      />\n    </p>\n    <p>\n      Country:\n      <select\n        name=\"Country\"\n        title=\"Country\"\n        multiple=\"false\"\n        iname=\"CountryIndex\"\n        ivalue=\"1\"\n        tabindex=\"3\"\n      >\n        <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n        <option value=\"France\" title=\"France\">France</option>\n        <option value=\"Germany\" title=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml204SelectSemantics",
+    "label": "WML 1.3 Select Semantics",
+    "description": "Source-derived single-select initialization and user-commit behavior with name and iname variables.",
+    "goal": "Verify that ivalue preselection initializes both result variables and that a committed user choice updates them deterministically.",
+    "workItems": [
+      "R0-04",
+      "C5-05",
+      "WML-204"
+    ],
+    "specItems": [
+      "WML-C-41",
+      "WML-C-43"
+    ],
+    "testingAc": [
+      "Load the example and confirm France is initially selected from ivalue 2.",
+      "Confirm nextCard is initialized to France and nextCardIndex is initialized to 2.",
+      "Begin select editing, move once to Germany, and confirm the draft does not change the committed variable.",
+      "Commit Germany and confirm nextCard becomes Germany and nextCardIndex becomes 3."
+    ],
+    "flows": [
+      {
+        "id": "initialization-and-user-commit",
+        "title": "Select initialization and committed user state stay deterministic",
+        "workItems": [
+          "R0-04",
+          "C5-05",
+          "WML-204"
+        ],
+        "specItems": [
+          "WML-C-41",
+          "WML-C-43"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "select-semantics",
+            "focusedLinkIndex": 0,
+            "nextCardVar": "France",
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "select-semantics",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "France"
+              },
+              "traceKinds": [
+                "SELECT_EDIT_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "select-semantics",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "France"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "select-semantics",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "Germany",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "SELECT_EDIT_START",
+                "SELECT_EDIT_COMMIT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<wml>\n  <card id=\"select-semantics\" title=\"Select Semantics\">\n    <p>\n      Destination:\n      <select\n        name=\"nextCard\"\n        iname=\"nextCardIndex\"\n        ivalue=\"2\"\n        title=\"Destination\"\n      >\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wmlbrowserContextFidelity",
     "label": "WMLBrowser Context Fidelity",
     "description": "Exercises getCurrentCard and newContext semantics, including context reset side effects and prev suppression.",
