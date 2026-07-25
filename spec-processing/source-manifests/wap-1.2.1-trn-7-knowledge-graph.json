@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "6e24bb05e4b29948237eb3341390ebdac8600dc7f553b070e6ee1e7ac19ce90c"
+        "sha256": "f11d6dae41993f410059ed88af30c274452686b39ec61018d1a4fa0fadc30a1a"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -3948,16 +3948,20 @@
         "explicitUnmappedFamilies": [
           "wtp"
         ],
+        "followUpWorkItems": [
+          "TRN-704",
+          "TRN-705"
+        ],
         "existingTickets": [
           "T0-22",
           "T0-24"
         ],
         "outputs": [
           "WDP/WTP packet and replay golden corpus",
-          "transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json"
+          "schema-v2 exact WDP delivery evidence in transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json"
         ],
         "acceptance": [
-          "The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses.",
+          "The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses; schema-v2 accepted and reassembled delivery events assert exact addresses, ports, and service-data-unit bytes.",
           "WTP duplicate, retransmission, timeout, and abort families remain conditional on a future connection-oriented WSP/WTP claim and do not close TRN-706 in the strict connectionless profile."
         ],
         "evidence": [

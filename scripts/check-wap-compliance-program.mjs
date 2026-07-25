@@ -447,11 +447,17 @@ if (
   replayCorpus?.status !== 'in-progress' ||
   JSON.stringify(replayCorpus?.explicitUnmappedFamilies) !==
     JSON.stringify(['wtp']) ||
+  JSON.stringify(replayCorpus?.followUpWorkItems) !==
+    JSON.stringify(['TRN-704', 'TRN-705']) ||
   !replayCorpus?.outputs?.includes(
-    'transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json'
+    'schema-v2 exact WDP delivery evidence in transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json'
   ) ||
   !replayCorpus?.acceptance?.some(
-    (line) => line.includes('selected WDP-only tranche') && line.includes('576-octet')
+    (line) =>
+      line.includes('selected WDP-only tranche') &&
+      line.includes('576-octet') &&
+      line.includes('schema-v2') &&
+      line.includes('service-data-unit bytes')
   ) ||
   !replayCorpus?.acceptance?.some(
     (line) =>
