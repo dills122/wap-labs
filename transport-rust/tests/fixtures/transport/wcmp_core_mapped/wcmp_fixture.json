@@ -1,0 +1,75 @@
+{
+  "sourceDocumentId": "WAP-202-WCMP",
+  "sourceSections": [
+    "5.1",
+    "5.2",
+    "5.4",
+    "5.5.1",
+    "5.5.2",
+    "5.5.3.1",
+    "5.5.3.3",
+    "5.5.3.5"
+  ],
+  "selectedRows": [
+    "WCMP-C-001",
+    "WCMP-SP-C-002",
+    "WCMP-GEN-C-001",
+    "WCMP-GEN-C-003",
+    "WCMP-GEN-C-006"
+  ],
+  "addressProfile": {
+    "bearer": "AMPS CDPD",
+    "addressType": 13,
+    "address": [192, 0, 2, 7]
+  },
+  "cases": [
+    {
+      "name": "destination-port-unreachable",
+      "encoded": [51, 4, 35, 240, 192, 0, 13, 4, 192, 0, 2, 7]
+    },
+    {
+      "name": "message-too-big-1024",
+      "encoded": [60, 0, 35, 240, 192, 0, 13, 4, 192, 0, 2, 7, 4, 0]
+    },
+    {
+      "name": "echo-request",
+      "encoded": [178, 0, 18, 52, 0, 2, 222, 173, 190, 239]
+    },
+    {
+      "name": "echo-reply",
+      "encoded": [179, 0, 18, 52, 0, 2, 222, 173, 190, 239]
+    }
+  ],
+  "malformed": [
+    {
+      "name": "missing-general-code",
+      "encoded": [51],
+      "error": "truncated WCMP packet: need 2 octets, got 1"
+    },
+    {
+      "name": "truncated-address",
+      "encoded": [51, 4, 35, 240, 192, 0, 13, 4, 192, 0],
+      "error": "truncated WCMP packet: need 12 octets, got 10"
+    },
+    {
+      "name": "destination-unreachable-invalid-code",
+      "encoded": [51, 2, 35, 240, 192, 0, 13, 4, 192, 0, 2, 7],
+      "error": "invalid WCMP code 2 for type 51"
+    },
+    {
+      "name": "message-too-big-trailing-octet",
+      "encoded": [60, 0, 35, 240, 192, 0, 13, 4, 192, 0, 2, 7, 4, 0, 255],
+      "error": "WCMP packet length mismatch: expected 14, got 15"
+    },
+    {
+      "name": "echo-reply-invalid-code",
+      "encoded": [179, 1, 18, 52, 0, 2],
+      "error": "invalid WCMP code 1 for type 179"
+    },
+    {
+      "name": "reserved-type",
+      "encoded": [192, 0],
+      "error": "unsupported WCMP type 192 in Reserved class"
+    }
+  ]
+}

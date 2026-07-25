@@ -1,0 +1,22 @@
+name = "wcmp-core-mapped"
+description = "Source-derived WAP-202 general-WCMP byte vectors, bounded generation, handling, and deterministic error outcomes."
+mode = "mapped"
+work_items = ["TRN-703", "T0-17"]
+spec_items = [
+  "WCMP-C-001",
+  "WCMP-SP-C-002",
+  "WCMP-GEN-C-001",
+  "WCMP-GEN-C-003",
+  "WCMP-GEN-C-006",
+  "RQ-TRX-006",
+  "RQ-TRX-007",
+  "RQ-TRX-008",
+]
+testing_ac = [
+  "Preserves WAP-202 types 51, 60, 178, and 179 plus network-order two-octet fields.",
+  "Round-trips selected Destination Unreachable, Message Too Big, and Echo messages byte-for-byte.",
+  "Maps incoming selected errors to deterministic WDP errors without mutating transaction state.",
+  "Suppresses error-to-error, repeated fragmented-datagram, and congestion responses.",
+  "Rejects oversized messages and truncates only Echo Reply data to the return-path fragment limit.",
+  "Rejects malformed, truncated, invalid-code, and unsupported/reserved messages deterministically.",
+]

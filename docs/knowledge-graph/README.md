@@ -20,9 +20,9 @@ The operational expansion policy is
 [`docs/knowledge-graph/SLICE_ADOPTION.md`](SLICE_ADOPTION.md): extend the graph when a compliance
 implementation slice begins, not through a separate bulk migration.
 
-## WML-2 pilot
+## Supported slices
 
-The pilot selects the `WML-2` compliance sprint and generates:
+The initial pilot selects the `WML-2` compliance sprint and generates:
 
 - `spec-processing/source-manifests/wap-1.2.1-wml-2-knowledge-graph.json`:
   typed, machine-readable nodes and edges;
@@ -41,6 +41,15 @@ The pilot intentionally reports two gap levels:
 
 Broad family ownership and cross-family clauses remain valid planning context, but neither is
 treated as direct clause coverage for a different family.
+
+The `TRN-7` slice adds the minimum projection needed for WCMP implementation work:
+
+- `spec-processing/source-manifests/wap-1.2.1-trn-7-knowledge-graph.json`;
+- `docs/knowledge-graph/vault-TRN-7/`;
+- `docs/knowledge-graph/context-packs/TRN-7.md`.
+
+Its focused `TRN-703` retrieval target includes only the directly mapped WCMP obligations and
+keeps unrelated transport work-item details out of the pack.
 
 ## Commands
 
@@ -68,11 +77,11 @@ For implementation or review of one pilot work item, request a focused pack:
 node scripts/wap-context-pack.mjs WML-203
 ```
 
-The supported retrieval targets are `WML-2` and `WML-201` through `WML-205`. A work-item target
-keeps sprint dependencies and conformance governance in view while limiting work-item details,
-direct obligations, mapping gaps, and source documents to the selected slice. Other targets
-remain rejected until their implementation slice starts, so graph expansion is explicit and
-reviewable.
+The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `TRN-7`, and
+`TRN-703`. A work-item target keeps sprint dependencies and conformance governance in view while
+limiting work-item details, direct obligations, mapping gaps, and source documents to the
+selected slice. Other targets remain rejected until their implementation slice starts, so graph
+expansion is explicit and reviewable.
 
 ## Graph contract
 

@@ -66,9 +66,9 @@ This produces 22 selected-path rows:
 | Family | Selected path | Current audit | Direct normative tests |
 |---|---:|---|---:|
 | WDP | 9 | 0 implemented / 9 partial / 0 missing | 0 |
-| WCMP | 5 | 0 implemented / 0 partial / 5 missing | 0 |
+| WCMP | 5 | 5 implemented / 0 partial / 0 missing | 5 |
 | WSP | 8 | 0 implemented / 8 partial / 0 missing | 0 |
-| **Total** | **22** | **0 implemented / 17 partial / 5 missing** | **0** |
+| **Total** | **22** | **5 implemented / 17 partial / 0 missing** | **5** |
 
 The two optional WDP rows and four optional WCMP/WSP root-dependency rows are
 required by the selected alternatives. Their source `O` status is preserved;
@@ -98,9 +98,12 @@ Clause implementation remains `not-assessed`; parent rows remain partial.
 
 ### WCMP
 
-WCMP is absent from `transport-rust`. There is no codec, message-type model,
-generation/processing policy, or echo/error fixture. All five selected-path
-rows are missing.
+`transport-rust/src/network/wcmp/` now owns the selected general-WCMP codec,
+generation/handling policy, constrained-fragment behavior, and explicit
+WCMP-to-WDP error mapping. The source-derived fixture at
+`transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json`
+preserves WAP-202 types `51`, `60`, `178`, and `179`, selected codes, CDPD
+IPv4 address type `0x0D`, and network-order two-octet fields.
 
 The selected general-WCMP path requires:
 
@@ -110,10 +113,11 @@ The selected general-WCMP path requires:
 - message-too-big structure (`WCMP-GEN-C-003`)
 - echo-reply structure (`WCMP-GEN-C-006`)
 
-`CONF-003` now expands these five rows into 28 source-anchored clauses with
-planned direct fixtures. Clause implementation remains `not-assessed`; all
-five parent rows remain missing until the codec, safety behavior, and message
-fixtures exist.
+All five rows and their 28 source-anchored clauses are linked to direct
+fixture evidence. Tests cover byte-exact round trips, error-to-error and
+congestion suppression, one-fragment bounds, deterministic malformed input,
+Message Too Big mapping, Echo Reply correlation/data identity, MTU
+truncation, and explicit reply rate limiting.
 
 Additional generation, processing, endpoint, and diagnostic rows remain
 optional capabilities until selected.

@@ -286,9 +286,17 @@ for (const config of configs) {
     ).length,
     selectedClassCTransportPathCount: selectedRows.length,
     selectedImplementationStatus: selectedStatus,
-    selectedDirectNormativeTestEvidenceCount: 0,
+    selectedDirectNormativeTestEvidenceCount: selectedRows.filter((row) =>
+      row.mapping.testEvidence.some(
+        (evidence) => evidence.evidenceClass === 'direct-normative'
+      )
+    ).length,
     selectedProvisionalTestEvidenceCount: selectedRows.filter(
-      (row) => row.mapping.testEvidence.length > 0
+      (row) =>
+        row.mapping.testEvidence.length > 0 &&
+        !row.mapping.testEvidence.some(
+          (evidence) => evidence.evidenceClass === 'direct-normative'
+        )
     ).length,
     orderedIdsSha256: sha256(
       obligations.map((row) => row.id).join('\n') + '\n'
@@ -550,7 +558,9 @@ function buildObligation(config, row, ordinal, selected) {
       enhancementMayReplaceStrictBehavior: false
     },
     reviewState: isSelected
-      ? 'source-extracted-class-c-path-applied-mapping-provisional'
+      ? selectedStatus === 'implemented'
+        ? 'source-extracted-class-c-path-implemented-direct-evidence'
+        : 'source-extracted-class-c-path-applied-mapping-provisional'
       : 'source-extracted-not-selected-path',
     mapping: {
       implementationDomain: implementationDomain(config.family, row),
@@ -566,7 +576,11 @@ function buildObligation(config, row, ordinal, selected) {
       evidenceState: isSelected
         ? selectedStatus === 'missing'
           ? 'no-implementation-or-test-evidence'
-          : 'provisional-non-normative-test-linked'
+          : evidence.testEvidence.some(
+                (item) => item.evidenceClass === 'direct-normative'
+              )
+            ? 'direct-normative-test-linked'
+            : 'provisional-non-normative-test-linked'
         : 'not-assessed'
     }
   };
@@ -635,7 +649,7 @@ function workItems(family, id) {
 }
 
 function selectedImplementationStatus(family) {
-  return family === 'wcmp' ? 'missing' : 'partial';
+  return family === 'wcmp' ? 'implemented' : 'partial';
 }
 
 function assessmentNote(family, id) {
@@ -655,7 +669,19 @@ function assessmentNote(family, id) {
     return 'IPv4/IPv6 and source/destination port fields exist, but the mandatory addressing dependency choice and exact WAP-200 port semantics are not yet declared and proven.';
   }
   if (family === 'wcmp') {
-    return 'No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.';
+    if (id === 'WCMP-C-001') {
+      return 'The transport-owned WCMP module provides bounded selected-profile generation, handling, suppression, and explicit WDP error mapping with source-derived executable evidence.';
+    }
+    if (id === 'WCMP-SP-C-002') {
+      return 'The general WCMP Type/Code/data structure is encoded and decoded in network order with deterministic malformed and unsupported-type outcomes.';
+    }
+    if (id === 'WCMP-GEN-C-001') {
+      return 'Destination Unreachable type 51, selected codes, original ports, CDPD/IPv4 address information, generation suppression, and WDP error mapping have byte-exact fixtures.';
+    }
+    if (id === 'WCMP-GEN-C-003') {
+      return 'Message Too Big type 60 code 0, original ports, CDPD/IPv4 address information, buffer limit, and constrained-fragment rejection have byte-exact fixtures.';
+    }
+    return 'Echo Reply type 179 code 0 preserves correlation and data, truncates only data to the return-path fragment limit, and exposes explicit rate limiting.';
   }
   if (id === 'WSP-C-001' || id === 'WSP-CL-C-001') {
     return 'Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.';
@@ -668,7 +694,53 @@ function assessmentNote(family, id) {
 
 function selectedEvidence(family, id) {
   if (family === 'wcmp') {
-    return { implementationEvidence: [], testEvidence: [] };
+    const evidenceById = {
+      'WCMP-C-001': {
+        path: 'transport-rust/src/network/wcmp/handler.rs',
+        symbol: 'pub fn handle_wcmp'
+      },
+      'WCMP-SP-C-002': {
+        path: 'transport-rust/src/network/wcmp/codec.rs',
+        symbol: 'pub fn decode_wcmp'
+      },
+      'WCMP-GEN-C-001': {
+        path: 'transport-rust/src/network/wcmp/handler.rs',
+        symbol: 'WcmpGenerationFailure::PortUnreachable'
+      },
+      'WCMP-GEN-C-003': {
+        path: 'transport-rust/src/network/wcmp/handler.rs',
+        symbol: 'WcmpGenerationFailure::FirstSegmentExceedsReassemblyBuffer'
+      },
+      'WCMP-GEN-C-006': {
+        path: 'transport-rust/src/network/wcmp/handler.rs',
+        symbol: 'WcmpMessage::EchoReply'
+      }
+    };
+    const testById = {
+      'WCMP-C-001': 'source_derived_fixture_covers_selected_class_c_rows',
+      'WCMP-SP-C-002':
+        'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip',
+      'WCMP-GEN-C-001':
+        'generation_maps_port_and_buffer_failures_to_selected_messages',
+      'WCMP-GEN-C-003':
+        'generation_maps_port_and_buffer_failures_to_selected_messages',
+      'WCMP-GEN-C-006':
+        'echo_request_generates_exact_reply_and_preserves_correlation'
+    };
+    return {
+      implementationEvidence: [evidenceById[id]],
+      testEvidence: [
+        {
+          path: 'transport-rust/src/network/wcmp/tests.rs',
+          test: testById[id],
+          fixture:
+            'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+          evidenceClass: 'direct-normative',
+          limitation:
+            'Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed.'
+        }
+      ]
+    };
   }
   if (family === 'wdp') {
     if (id === 'WDP-PF-C-001') {

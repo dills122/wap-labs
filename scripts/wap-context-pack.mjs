@@ -10,20 +10,28 @@ import {
 const target = process.argv[2];
 if (!target) {
   console.error(
-    'Usage: node scripts/wap-context-pack.mjs WML-2|WML-201|WML-202|WML-203|WML-204|WML-205'
+    'Usage: node scripts/wap-context-pack.mjs TRN-7|TRN-703|WML-2|WML-201|WML-202|WML-203|WML-204|WML-205'
   );
   process.exit(1);
 }
 
-const supportedWorkItems = new Set(['WML-201', 'WML-202', 'WML-203', 'WML-204', 'WML-205']);
-if (target !== 'WML-2' && !supportedWorkItems.has(target)) {
+const targetSprints = new Map([
+  ['TRN-7', 'TRN-7'],
+  ['TRN-703', 'TRN-7'],
+  ['WML-2', 'WML-2'],
+  ['WML-201', 'WML-2'],
+  ['WML-202', 'WML-2'],
+  ['WML-203', 'WML-2'],
+  ['WML-204', 'WML-2'],
+  ['WML-205', 'WML-2']
+]);
+const sprint = targetSprints.get(target);
+if (!sprint) {
   console.error(
-    `Unsupported context target: ${target}. Use WML-2 or one of ${[...supportedWorkItems].join(
-      ', '
-    )}.`
+    `Unsupported context target: ${target}. Use one of ${[...targetSprints.keys()].join(', ')}.`
   );
   process.exit(1);
 }
 
-const graph = buildKnowledgeGraph(process.cwd(), 'WML-2');
-process.stdout.write(renderContextPack(graph, target === 'WML-2' ? null : target));
+const graph = buildKnowledgeGraph(process.cwd(), sprint);
+process.stdout.write(renderContextPack(graph, target === sprint ? null : target));

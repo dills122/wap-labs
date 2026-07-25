@@ -271,9 +271,13 @@ for (const family of ledger.families ?? []) {
   const effectiveFamily = effectiveSpec.families.find(
     (candidate) => candidate.family === family.family
   );
+  const expectedFamilyStatus =
+    family.family === 'wcmp'
+      ? 'nested-clauses-fixture-backed'
+      : 'nested-clauses-anchored-fixtures-planned';
 
   if (
-    family.status !== 'nested-clauses-anchored-fixtures-planned' ||
+    family.status !== expectedFamilyStatus ||
     family.parentLedger !== expectedParentLedgerPath ||
     family.parentLedgerSha256 !== sha256(parentLedgerText) ||
     family.selectedDisposition !== definition.selectedDisposition ||
@@ -462,6 +466,13 @@ for (const family of ledger.families ?? []) {
         parent.mapping.implementationStatus
       ])
     );
+    const directFixtureImplemented = candidate.family === 'wcmp';
+    const expectedClauseStatus = directFixtureImplemented
+      ? 'implemented'
+      : 'not-assessed';
+    const expectedFixtureStatus = directFixtureImplemented
+      ? 'implemented'
+      : 'planned';
     if (
       JSON.stringify(candidate.mapping?.ownerLayers) !==
         JSON.stringify(expectedOwners) ||
@@ -471,7 +482,7 @@ for (const family of ledger.families ?? []) {
         JSON.stringify(expectedRequirements) ||
       JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !==
         JSON.stringify(expectedSnapshot) ||
-      candidate.mapping?.clauseImplementationStatus !== 'not-assessed' ||
+      candidate.mapping?.clauseImplementationStatus !== expectedClauseStatus ||
       !candidate.mapping?.evidenceGate?.includes(
         'source-derived direct fixture'
       )
@@ -482,9 +493,17 @@ for (const family of ledger.families ?? []) {
     if (
       !candidate.fixturePlan?.id ||
       globalFixtureIds.has(candidate.fixturePlan.id) ||
-      candidate.fixturePlan.status !== 'planned' ||
+      candidate.fixturePlan.status !== expectedFixtureStatus ||
       !allowedFixtureKinds.has(candidate.fixturePlan.kind) ||
-      candidate.fixturePlan.assertion !== candidate.obligationSynopsis
+      candidate.fixturePlan.assertion !== candidate.obligationSynopsis ||
+      (directFixtureImplemented &&
+        (candidate.fixturePlan.evidence?.path !==
+          'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
+          candidate.fixturePlan.evidence?.testPath !==
+            'transport-rust/src/network/wcmp/tests.rs' ||
+          !candidate.fixturePlan.evidence?.command?.includes(
+            'network::wcmp'
+          )))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }

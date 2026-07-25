@@ -15435,9 +15435,9 @@
     },
     {
       "family": "wcmp",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
-      "parentLedgerSha256": "d2795a8b4ce3b5aa415ea8342c9d15f575b904974bf0b4c4eb4948a740e45ce0",
+      "parentLedgerSha256": "6fd96ae54c3c2f2f9674d7b261c842df7f7806bac895dd98fda01c8175476fc4",
       "effectiveSequence": [
         "WAP-202-WCMP"
       ],
@@ -15462,7 +15462,7 @@
             "documentId": "WAP-202-WCMP",
             "staticConformanceSection": "Appendix A"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -15487,7 +15487,7 @@
             "documentId": "WAP-202-WCMP",
             "staticConformanceSection": "Appendix A"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -15516,7 +15516,7 @@
             "documentId": "WAP-202-WCMP",
             "staticConformanceSection": "Appendix A"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -15543,7 +15543,7 @@
             "documentId": "WAP-202-WCMP",
             "staticConformanceSection": "Appendix A"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -15568,7 +15568,7 @@
             "documentId": "WAP-202-WCMP",
             "staticConformanceSection": "Appendix A"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -15609,8 +15609,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-CLIENT-GENERAL-PROFILE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile."
+            "status": "implemented",
+            "assertion": "Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15624,10 +15629,10 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-C-001": "missing",
-              "WCMP-SP-C-002": "missing"
+              "WCMP-C-001": "implemented",
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15650,8 +15655,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ERROR-AND-DIAGNOSTIC-ROLES",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol."
+            "status": "implemented",
+            "assertion": "Accept WCMP as WDP error reporting and as an informational or diagnostic control-message protocol.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15665,10 +15675,10 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-C-001": "missing",
-              "WCMP-SP-C-002": "missing"
+              "WCMP-C-001": "implemented",
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15691,8 +15701,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-NO-ERROR-TO-ERROR",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Never generate a WCMP error message in response to another WCMP error message."
+            "status": "implemented",
+            "assertion": "Never generate a WCMP error message in response to another WCMP error message.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15706,10 +15721,10 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-C-001": "missing",
-              "WCMP-SP-C-002": "missing"
+              "WCMP-C-001": "implemented",
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15732,8 +15747,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ONE-FRAGMENT-ERROR",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Generate no more than one WCMP error for a fragmented datagram."
+            "status": "implemented",
+            "assertion": "Generate no more than one WCMP error for a fragmented datagram.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15747,10 +15767,10 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-C-001": "missing",
-              "WCMP-SP-C-002": "missing"
+              "WCMP-C-001": "implemented",
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15773,8 +15793,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-SINGLE-BEARER-FRAGMENT",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Encode each WCMP message so it fits in one bearer-level fragment."
+            "status": "implemented",
+            "assertion": "Encode each WCMP message so it fits in one bearer-level fragment.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15788,10 +15813,10 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-C-001": "missing",
-              "WCMP-SP-C-002": "missing"
+              "WCMP-C-001": "implemented",
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15814,8 +15839,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-FORGED-MESSAGE-CAUTION",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message."
+            "status": "implemented",
+            "assertion": "Treat received WCMP messages as potentially forged and avoid immediate broad transaction aborts based only on one error message.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15829,10 +15859,10 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-C-001": "missing",
-              "WCMP-SP-C-002": "missing"
+              "WCMP-C-001": "implemented",
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15854,8 +15884,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-GENERAL-NETWORK-ORDER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first."
+            "status": "implemented",
+            "assertion": "Encode bit fields most-significant-bit first and two-byte fields with the high-order byte first.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15869,9 +15904,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-SP-C-002": "missing"
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15893,8 +15928,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-GENERAL-HEADER-ORDER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets."
+            "status": "implemented",
+            "assertion": "Decode every general WCMP message as one Type octet, one Code octet, followed by zero or more type-specific data octets.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15908,9 +15948,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-SP-C-002": "missing"
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15935,8 +15975,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-GENERAL-TYPE-DISPATCH",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use Type to select the message data format and Code to select the subtype-specific interpretation."
+            "status": "implemented",
+            "assertion": "Use Type to select the message data format and Code to select the subtype-specific interpretation.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15952,12 +15997,12 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-SP-C-002": "missing",
-              "WCMP-GEN-C-001": "missing",
-              "WCMP-GEN-C-003": "missing",
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-SP-C-002": "implemented",
+              "WCMP-GEN-C-001": "implemented",
+              "WCMP-GEN-C-003": "implemented",
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -15979,8 +16024,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-GENERAL-TYPE-CLASSES",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved."
+            "status": "implemented",
+            "assertion": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -15994,9 +16044,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-SP-C-002": "missing"
+              "WCMP-SP-C-002": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16020,8 +16070,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-SELECTED-TYPE-CODE-VALUES",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0."
+            "status": "implemented",
+            "assertion": "Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16037,11 +16092,11 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing",
-              "WCMP-GEN-C-003": "missing",
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-001": "implemented",
+              "WCMP-GEN-C-003": "implemented",
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16063,8 +16118,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-DESTINATION-UNREACHABLE-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information."
+            "status": "implemented",
+            "assertion": "Decode Destination Unreachable as Type, Code, original destination port, original originator port, and destination address information.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16078,9 +16138,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing"
+              "WCMP-GEN-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16102,8 +16162,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-DESTINATION-UNREACHABLE-GENERAL-GENERATION",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion."
+            "status": "implemented",
+            "assertion": "Generate Destination Unreachable when a received WDP datagram cannot be delivered for a reason other than congestion.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16117,9 +16182,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing"
+              "WCMP-GEN-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16141,8 +16206,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-DESTINATION-UNREACHABLE-PORT-REQUIRED",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port."
+            "status": "implemented",
+            "assertion": "Generate Destination Unreachable code 4 when no transport listener exists for the datagram destination port.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16156,9 +16226,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing"
+              "WCMP-GEN-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16180,8 +16250,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-DESTINATION-UNREACHABLE-NO-CONGESTION",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Do not generate a Destination Unreachable message for a packet dropped because of congestion."
+            "status": "implemented",
+            "assertion": "Do not generate a Destination Unreachable message for a packet dropped because of congestion.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16195,9 +16270,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing"
+              "WCMP-GEN-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16219,8 +16294,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-DESTINATION-UNREACHABLE-CODES",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively."
+            "status": "implemented",
+            "assertion": "Interpret codes 0, 1, 3, and 4 as no route, administratively prohibited, address unreachable, and port unreachable respectively.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16234,9 +16314,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing"
+              "WCMP-GEN-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16258,8 +16338,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-DESTINATION-UNREACHABLE-ADDRESS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Interpret the embedded address information as the destination address of the original datagram."
+            "status": "implemented",
+            "assertion": "Interpret the embedded address information as the destination address of the original datagram.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16273,9 +16358,9 @@
               "RQ-TRX-006"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-001": "missing"
+              "WCMP-GEN-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16297,8 +16382,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-MESSAGE-TOO-BIG-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size."
+            "status": "implemented",
+            "assertion": "Decode Message Too Big as Type 60, Code 0, original ports, destination address information, and a two-octet maximum message size.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16312,9 +16402,9 @@
               "RQ-TRX-007"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-003": "missing"
+              "WCMP-GEN-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16336,8 +16426,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-MESSAGE-TOO-BIG-BUFFER-NOTICE",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Use Message Too Big to inform a sender of the receiving node buffer-size limit."
+            "status": "implemented",
+            "assertion": "Use Message Too Big to inform a sender of the receiving node buffer-size limit.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16351,9 +16446,9 @@
               "RQ-TRX-007"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-003": "missing"
+              "WCMP-GEN-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16375,8 +16470,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-MESSAGE-TOO-BIG-FIRST-SEGMENT",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer."
+            "status": "implemented",
+            "assertion": "Generate Message Too Big when the first segment arrives and the complete segmented message cannot fit in the available reassembly buffer.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16390,9 +16490,9 @@
               "RQ-TRX-007"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-003": "missing"
+              "WCMP-GEN-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16414,8 +16514,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-MESSAGE-TOO-BIG-ADDRESS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Interpret Message Too Big address information as the destination address of the original datagram."
+            "status": "implemented",
+            "assertion": "Interpret Message Too Big address information as the destination address of the original datagram.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16429,9 +16534,9 @@
               "RQ-TRX-007"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-003": "missing"
+              "WCMP-GEN-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16453,8 +16558,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-REPLY-FUNCTION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Receive WCMP Echo Requests and send corresponding Echo Replies."
+            "status": "implemented",
+            "assertion": "Receive WCMP Echo Requests and send corresponding Echo Replies.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16468,9 +16578,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16492,8 +16602,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-MESSAGE-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets."
+            "status": "implemented",
+            "assertion": "Decode echo messages as Type, Code 0, two-octet identifier, two-octet sequence number, and zero or more data octets.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16507,9 +16622,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16531,8 +16646,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-REPLY-TYPE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use type 178 for Echo Request and type 179 for Echo Reply."
+            "status": "implemented",
+            "assertion": "Use type 178 for Echo Request and type 179 for Echo Reply.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16546,9 +16666,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16570,8 +16690,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-DATA-IDENTITY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU."
+            "status": "implemented",
+            "assertion": "Return Echo Request data entirely and unmodified in the reply unless the reply would exceed the return-path MTU.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16585,9 +16710,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16609,8 +16734,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-MTU-TRUNCATION",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit."
+            "status": "implemented",
+            "assertion": "When an Echo Reply would exceed the return-path MTU, truncate only the echoed data enough to fit.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16624,9 +16754,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16648,8 +16778,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-CORRELATION-FIELDS",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request."
+            "status": "implemented",
+            "assertion": "Preserve the request identifier and sequence number so an Echo Reply can be correlated with its Echo Request.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16663,9 +16798,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -16687,8 +16822,13 @@
           "fixturePlan": {
             "id": "WCMP-FX-ECHO-REPLY-RATE-LIMIT",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic."
+            "status": "implemented",
+            "assertion": "Permit limits on generated Echo Replies to protect the node and bearer from overload or denial-of-service traffic.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -16702,9 +16842,9 @@
               "RQ-TRX-008"
             ],
             "parentImplementationSnapshot": {
-              "WCMP-GEN-C-006": "missing"
+              "WCMP-GEN-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         }

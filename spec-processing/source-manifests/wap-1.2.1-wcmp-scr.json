@@ -51,9 +51,9 @@
     "mandatoryClientCount": 1,
     "selectedClassCTransportPathCount": 5,
     "selectedImplementationStatus": {
-      "missing": 5
+      "implemented": 5
     },
-    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedDirectNormativeTestEvidenceCount": 5,
     "selectedProvisionalTestEvidenceCount": 0,
     "orderedIdsSha256": "b1a481f22af82ba4bd69c433d692f714ba236a680c4ae318629c0d87ceb0e285"
   },
@@ -76,7 +76,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-client-profile",
         "ownerLayers": [
@@ -89,11 +89,24 @@
           "TRN-703",
           "T0-17"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "no-implementation-or-test-evidence"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The transport-owned WCMP module provides bounded selected-profile generation, handling, suppression, and explicit WDP error mapping with source-derived executable evidence.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/handler.rs",
+            "symbol": "pub fn handle_wcmp"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/tests.rs",
+            "test": "source_derived_fixture_covers_selected_class_c_rows",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+          }
+        ],
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -152,7 +165,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-client-profile",
         "ownerLayers": [
@@ -165,11 +178,24 @@
           "TRN-703",
           "T0-17"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "no-implementation-or-test-evidence"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The general WCMP Type/Code/data structure is encoded and decoded in network order with deterministic malformed and unsupported-type outcomes.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/codec.rs",
+            "symbol": "pub fn decode_wcmp"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/tests.rs",
+            "test": "selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+          }
+        ],
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -266,7 +292,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-message-types",
         "ownerLayers": [
@@ -279,11 +305,24 @@
           "TRN-703",
           "T0-17"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "no-implementation-or-test-evidence"
+        "implementationStatus": "implemented",
+        "assessmentNote": "Destination Unreachable type 51, selected codes, original ports, CDPD/IPv4 address information, generation suppression, and WDP error mapping have byte-exact fixtures.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/handler.rs",
+            "symbol": "WcmpGenerationFailure::PortUnreachable"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/tests.rs",
+            "test": "generation_maps_port_and_buffer_failures_to_selected_messages",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+          }
+        ],
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -342,7 +381,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-message-types",
         "ownerLayers": [
@@ -355,11 +394,24 @@
           "TRN-703",
           "T0-17"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "no-implementation-or-test-evidence"
+        "implementationStatus": "implemented",
+        "assessmentNote": "Message Too Big type 60 code 0, original ports, CDPD/IPv4 address information, buffer limit, and constrained-fragment rejection have byte-exact fixtures.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/handler.rs",
+            "symbol": "WcmpGenerationFailure::FirstSegmentExceedsReassemblyBuffer"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/tests.rs",
+            "test": "generation_maps_port_and_buffer_failures_to_selected_messages",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+          }
+        ],
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -456,7 +508,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wcmp-message-types",
         "ownerLayers": [
@@ -469,11 +521,24 @@
           "TRN-703",
           "T0-17"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No WCMP or ICMP implementation exists in transport-rust; the selected general-WCMP dependency path has no codec, state, or executable fixtures.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "no-implementation-or-test-evidence"
+        "implementationStatus": "implemented",
+        "assessmentNote": "Echo Reply type 179 code 0 preserves correlation and data, truncates only data to the return-path fragment limit, and exposes explicit rate limiting.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/handler.rs",
+            "symbol": "WcmpMessage::EchoReply"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/network/wcmp/tests.rs",
+            "test": "echo_request_generates_exact_reply_and_preserves_correlation",
+            "fixture": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Closes only the five selected general-WCMP client rows; unselected optional/server message breadth remains not assessed."
+          }
+        ],
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {

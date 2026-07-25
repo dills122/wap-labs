@@ -1,0 +1,42 @@
+---
+id: "requirement:RQ-TRX-006"
+key: "RQ-TRX-006"
+type: "requirement"
+generated: true
+slice: "TRN-7"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/requirement"
+---
+
+# RQ-TRX-006
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `maps-to` ← [[clauses/WCMP-CL-CLIENT-GENERAL-PROFILE|WCMP-CL-CLIENT-GENERAL-PROFILE]]
+- `maps-to` ← [[clauses/WCMP-CL-DESTINATION-UNREACHABLE-ADDRESS|WCMP-CL-DESTINATION-UNREACHABLE-ADDRESS]]
+- `maps-to` ← [[clauses/WCMP-CL-DESTINATION-UNREACHABLE-CODES|WCMP-CL-DESTINATION-UNREACHABLE-CODES]]
+- `maps-to` ← [[clauses/WCMP-CL-DESTINATION-UNREACHABLE-GENERAL-GENERATION|WCMP-CL-DESTINATION-UNREACHABLE-GENERAL-GENERATION]]
+- `maps-to` ← [[clauses/WCMP-CL-DESTINATION-UNREACHABLE-LAYOUT|WCMP-CL-DESTINATION-UNREACHABLE-LAYOUT]]
+- `maps-to` ← [[clauses/WCMP-CL-DESTINATION-UNREACHABLE-NO-CONGESTION|WCMP-CL-DESTINATION-UNREACHABLE-NO-CONGESTION]]
+- `maps-to` ← [[clauses/WCMP-CL-DESTINATION-UNREACHABLE-PORT-REQUIRED|WCMP-CL-DESTINATION-UNREACHABLE-PORT-REQUIRED]]
+- `maps-to` ← [[clauses/WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES|WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES]]
+- `maps-to` ← [[clauses/WCMP-CL-FORGED-MESSAGE-CAUTION|WCMP-CL-FORGED-MESSAGE-CAUTION]]
+- `maps-to` ← [[clauses/WCMP-CL-GENERAL-HEADER-ORDER|WCMP-CL-GENERAL-HEADER-ORDER]]
+- `maps-to` ← [[clauses/WCMP-CL-GENERAL-NETWORK-ORDER|WCMP-CL-GENERAL-NETWORK-ORDER]]
+- `maps-to` ← [[clauses/WCMP-CL-GENERAL-TYPE-CLASSES|WCMP-CL-GENERAL-TYPE-CLASSES]]
+- `maps-to` ← [[clauses/WCMP-CL-GENERAL-TYPE-DISPATCH|WCMP-CL-GENERAL-TYPE-DISPATCH]]
+- `maps-to` ← [[clauses/WCMP-CL-NO-ERROR-TO-ERROR|WCMP-CL-NO-ERROR-TO-ERROR]]
+- `maps-to` ← [[clauses/WCMP-CL-ONE-FRAGMENT-ERROR|WCMP-CL-ONE-FRAGMENT-ERROR]]
+- `maps-to` ← [[clauses/WCMP-CL-SELECTED-TYPE-CODE-VALUES|WCMP-CL-SELECTED-TYPE-CODE-VALUES]]
+- `maps-to` ← [[clauses/WCMP-CL-SINGLE-BEARER-FRAGMENT|WCMP-CL-SINGLE-BEARER-FRAGMENT]]
+
+## Data
+
+```json
+{
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

@@ -890,6 +890,7 @@ function clause(
   obligationSynopsis,
   anchorFamily = family
 ) {
+  const directFixtureImplemented = family === 'wcmp';
   clauseRows.push({
     id: `${family.toUpperCase()}-CL-${key.toUpperCase().replaceAll('_', '-')}`,
     family,
@@ -906,8 +907,18 @@ function clause(
     fixturePlan: {
       id: `${family.toUpperCase()}-FX-${key.toUpperCase().replaceAll('_', '-')}`,
       kind: fixtureKind,
-      status: 'planned',
-      assertion: obligationSynopsis
+      status: directFixtureImplemented ? 'implemented' : 'planned',
+      assertion: obligationSynopsis,
+      ...(directFixtureImplemented
+        ? {
+            evidence: {
+              path: 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+              testPath: 'transport-rust/src/network/wcmp/tests.rs',
+              command:
+                'cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp'
+            }
+          }
+        : {})
     }
   });
 }
@@ -2372,7 +2383,8 @@ const families = familyDefinitions.map((definition) => {
           parent.mapping.implementationStatus
         ])
       ),
-      clauseImplementationStatus: 'not-assessed',
+      clauseImplementationStatus:
+        definition.family === 'wcmp' ? 'implemented' : 'not-assessed',
       evidenceGate:
         'A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.'
     };
@@ -2403,7 +2415,10 @@ const families = familyDefinitions.map((definition) => {
   );
   return {
     family: definition.family,
-    status: 'nested-clauses-anchored-fixtures-planned',
+    status:
+      definition.family === 'wcmp'
+        ? 'nested-clauses-fixture-backed'
+        : 'nested-clauses-anchored-fixtures-planned',
     parentLedger: definition.ledgerPath,
     parentLedgerSha256: sha256(
       fs.readFileSync(definition.ledgerPath, 'utf8')
