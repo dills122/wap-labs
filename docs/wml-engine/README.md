@@ -35,6 +35,13 @@ Non-authoritative historical docs are retained only for context:
 9. `source-material-triage.md` (full-corpus triage context)
 10. `implementation-tickets.md` (older backlog draft; superseded by `ticket-plan.md`)
 
+## Reference-Only Material (not implementation-ready)
+
+- `HISTORICAL_QUIRKS.md` / `historical-quirks.json`: source-cited catalogue of documented WAP
+  browser divergences from the WML spec (Openwave/Nokia era). Research reference for a possible
+  future compatibility-profile feature -- does not affect current runtime behavior, and must not be
+  treated as authoritative until explicitly promoted per that doc's own promotion rule.
+
 ## Scope Philosophy
 
 - Start with a strict MVP that renders and navigates cards correctly.
