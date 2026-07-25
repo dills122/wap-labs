@@ -321,20 +321,18 @@ fn transport_fixture_mapped_unsupported_content_type() {
 
 #[test]
 fn transport_map_success_payload_wmlc_decode_failure_maps_error() {
-    let response = with_env_var_locked("WBXML2XML_BIN", "__missing_decoder__", || {
-        map_success_payload_response(
-            200,
-            false,
-            "http://request.example",
-            "http://upstream.example",
-            "http://request.example".to_string(),
-            "application/vnd.wap.wmlc".to_string(),
-            b"\x03\x01\x6a\x00",
-            1,
-            2.0,
-            Some("req-wbxml"),
-        )
-    });
+    let response = map_success_payload_response(
+        200,
+        false,
+        "http://request.example",
+        "http://upstream.example",
+        "http://request.example".to_string(),
+        "application/vnd.wap.wmlc".to_string(),
+        b"\x03\x01\x6a\x00",
+        1,
+        2.0,
+        Some("req-wbxml"),
+    );
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|err| err.code.as_str()),
@@ -347,26 +345,28 @@ fn transport_map_success_payload_wmlc_decode_failure_maps_error() {
 }
 
 #[test]
-#[cfg(unix)]
 fn transport_map_success_payload_wmlc_decode_success_maps_ok() {
-    let script = write_fake_decoder_script("<wml><card id=\"d\"/></wml>");
-    let body = b"\x03\x01\x6a\x00";
-    let response = with_env_var_locked("WBXML2XML_BIN", script.to_string_lossy().as_ref(), || {
-        map_success_payload_response(
-            200,
-            false,
-            "http://request.example",
-            "http://upstream.example",
-            "http://request.example".to_string(),
-            "application/vnd.wap.wmlc".to_string(),
-            body,
-            1,
-            2.0,
-            None,
-        )
-    });
+    let body = b"\x03\x0a\x6a\x00\x7f\x67\x60\x03hello\x00\x01\x01\x01";
+    let response = map_success_payload_response(
+        200,
+        false,
+        "http://request.example",
+        "http://upstream.example",
+        "http://request.example".to_string(),
+        "application/vnd.wap.wmlc".to_string(),
+        body,
+        1,
+        2.0,
+        None,
+    );
     assert!(response.ok);
     assert_eq!(response.status, 200);
+    assert_eq!(
+        response.wml.as_deref(),
+        Some(
+            "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">hello</p></card></wml>"
+        )
+    );
     let deck = response
         .engine_deck_input
         .as_ref()

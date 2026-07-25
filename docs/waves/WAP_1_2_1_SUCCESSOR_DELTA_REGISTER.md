@@ -60,7 +60,9 @@ code/test review establish the strict outcome.
   synthetic cases and require correction against effective WAP-203/SIN
   clauses.
 - WDP and WCMP: WAP-259 remains family delta context. Existing WDP UDP/IP
-  foundations are target-version-neutral; selected WCMP behavior is missing.
+  foundations are target-version-neutral; the selected WAP-202 general-WCMP
+  core is direct-fixture-backed, while unselected optional/server breadth
+  remains capability-gated.
 - WBXML, WMLScript, WMLScript Libraries, and caching: no selected-row
   successor-derived implementation basis is currently identified.
 

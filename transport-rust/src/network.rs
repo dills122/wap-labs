@@ -1,3 +1,4 @@
+pub mod wcmp;
 pub mod wdp;
 pub mod wsp;
 pub mod wtls;

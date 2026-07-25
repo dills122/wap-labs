@@ -10,6 +10,22 @@ export const KNOWLEDGE_GRAPH_OUTPUT =
   'spec-processing/source-manifests/wap-1.2.1-wml-2-knowledge-graph.json';
 export const CONTEXT_PACK_OUTPUT = 'docs/knowledge-graph/context-packs/WML-2.md';
 export const OBSIDIAN_VAULT_OUTPUT = 'docs/knowledge-graph/vault';
+export const TARGET_CONFIGS = {
+  'TRN-7': {
+    graphId: 'wap-1.2.1-trn-7-slice',
+    graphOutput: 'spec-processing/source-manifests/wap-1.2.1-trn-7-knowledge-graph.json',
+    contextPackOutput: 'docs/knowledge-graph/context-packs/TRN-7.md',
+    vaultOutput: 'docs/knowledge-graph/vault-TRN-7',
+    title: 'WAP 1.2.1 TRN-7 Knowledge Graph Slice'
+  },
+  'WML-2': {
+    graphId: 'wap-1.2.1-wml-2-pilot',
+    graphOutput: KNOWLEDGE_GRAPH_OUTPUT,
+    contextPackOutput: CONTEXT_PACK_OUTPUT,
+    vaultOutput: OBSIDIAN_VAULT_OUTPUT,
+    title: 'WAP 1.2.1 WML-2 Knowledge Graph Pilot'
+  }
+};
 
 const INPUT_PATHS = {
   classConformance: 'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
@@ -91,7 +107,7 @@ function codeList(values) {
 function parseArgs(argv) {
   const result = {
     check: false,
-    target: 'WML-2'
+    target: null
   };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
@@ -110,8 +126,13 @@ function parseArgs(argv) {
 }
 
 export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
-  if (targetId !== 'WML-2') {
-    throw new Error(`The pilot currently supports WML-2 only; received ${targetId}`);
+  const targetConfig = TARGET_CONFIGS[targetId];
+  if (!targetConfig) {
+    throw new Error(
+      `Unsupported knowledge-graph target ${targetId}; expected one of ${Object.keys(
+        TARGET_CONFIGS
+      ).join(', ')}`
+    );
   }
 
   const inputs = Object.fromEntries(
@@ -505,7 +526,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
 
   return {
     schemaVersion: 1,
-    graphId: 'wap-1.2.1-wml-2-pilot',
+    graphId: targetConfig.graphId,
     target: {
       release: program.target.release,
       markup: program.target.markup,
@@ -587,12 +608,16 @@ function renderVaultNode(graph, node) {
       return `- \`${edge.relation}\` ← ${vaultLink(source)}`;
     })
   ].sort((left, right) => left.localeCompare(right));
+  const targetMetadata =
+    graph.target.sprint === 'WML-2'
+      ? 'pilot: "WML-2"'
+      : `slice: ${yamlScalar(graph.target.sprint)}`;
   return `---
 id: ${yamlScalar(node.id)}
 key: ${yamlScalar(node.key)}
 type: ${yamlScalar(node.type)}
 generated: true
-pilot: "WML-2"
+${targetMetadata}
 ${status}tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/${node.type}"
@@ -633,14 +658,14 @@ export function renderObsidianVault(graph) {
   files.set(
     '_index.md',
     `---
-id: "wap-1.2.1-wml-2-pilot"
+id: ${yamlScalar(graph.graphId)}
 type: "graph-index"
 generated: true
 tags:
   - "wap-knowledge-graph"
 ---
 
-# WAP 1.2.1 WML-2 Knowledge Graph Pilot
+# ${TARGET_CONFIGS[graph.target.sprint].title}
 
 > Generated from canonical repository manifests. Do not edit generated notes directly.
 
@@ -812,9 +837,10 @@ ${lines.join('\n')}
     ? 'include the target sprint, its direct dependency/downstream neighbors, the focused work item, and only normative clauses explicitly mapped to that work item.'
     : 'include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.';
 
-  return `# ${focusedWorkItem?.key ?? 'WML-2'} AI Context Pack
+  const projectionKind = graph.target.sprint === 'WML-2' ? 'pilot' : 'slice';
+  return `# ${focusedWorkItem?.key ?? graph.target.sprint} AI Context Pack
 
-> Generated from the WAP 1.2.1 knowledge graph pilot. Canonical manifests remain authoritative.
+> Generated from the WAP 1.2.1 knowledge graph ${projectionKind}. Canonical manifests remain authoritative.
 
 ## Retrieval contract
 
@@ -879,11 +905,15 @@ ${sourceLines.join('\n')}
 
 export function buildGeneratedArtifacts(root = process.cwd(), targetId = 'WML-2') {
   const graph = buildKnowledgeGraph(root, targetId);
+  const targetConfig = TARGET_CONFIGS[targetId];
   return {
     graph,
     graphSource: `${JSON.stringify(graph, null, 2)}\n`,
     contextPack: renderContextPack(graph),
-    vaultFiles: renderObsidianVault(graph)
+    vaultFiles: renderObsidianVault(graph),
+    graphOutput: targetConfig.graphOutput,
+    contextPackOutput: targetConfig.contextPackOutput,
+    vaultOutput: targetConfig.vaultOutput
   };
 }
 
@@ -907,9 +937,9 @@ function listMarkdownFiles(root) {
 }
 
 function writeArtifacts(root, artifacts) {
-  const graphPath = path.join(root, KNOWLEDGE_GRAPH_OUTPUT);
-  const contextPath = path.join(root, CONTEXT_PACK_OUTPUT);
-  const vaultRoot = path.join(root, OBSIDIAN_VAULT_OUTPUT);
+  const graphPath = path.join(root, artifacts.graphOutput);
+  const contextPath = path.join(root, artifacts.contextPackOutput);
+  const vaultRoot = path.join(root, artifacts.vaultOutput);
   fs.mkdirSync(path.dirname(graphPath), { recursive: true });
   fs.mkdirSync(path.dirname(contextPath), { recursive: true });
   fs.mkdirSync(vaultRoot, { recursive: true });
@@ -946,19 +976,19 @@ export function checkGeneratedArtifacts(root, artifacts) {
       failures.push(`${relativePath}: generated content is stale`);
     }
   };
-  compareFile(KNOWLEDGE_GRAPH_OUTPUT, artifacts.graphSource);
-  compareFile(CONTEXT_PACK_OUTPUT, artifacts.contextPack);
+  compareFile(artifacts.graphOutput, artifacts.graphSource);
+  compareFile(artifacts.contextPackOutput, artifacts.contextPack);
 
-  const vaultRoot = path.join(root, OBSIDIAN_VAULT_OUTPUT);
+  const vaultRoot = path.join(root, artifacts.vaultOutput);
   const expectedFiles = [...artifacts.vaultFiles.keys()].sort((left, right) =>
     left.localeCompare(right)
   );
   const actualFiles = listMarkdownFiles(vaultRoot);
   if (JSON.stringify(actualFiles) !== JSON.stringify(expectedFiles)) {
-    failures.push(`${OBSIDIAN_VAULT_OUTPUT}: generated note inventory is stale`);
+    failures.push(`${artifacts.vaultOutput}: generated note inventory is stale`);
   }
   for (const [relativePath, source] of artifacts.vaultFiles) {
-    compareFile(path.join(OBSIDIAN_VAULT_OUTPUT, relativePath), source);
+    compareFile(path.join(artifacts.vaultOutput, relativePath), source);
   }
   return failures;
 }
@@ -966,25 +996,28 @@ export function checkGeneratedArtifacts(root, artifacts) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const root = process.cwd();
-  const artifacts = buildGeneratedArtifacts(root, args.target);
-  if (args.check) {
-    const failures = checkGeneratedArtifacts(root, artifacts);
-    if (failures.length) {
-      console.error('WAP knowledge graph generation check failed.');
-      for (const failure of failures) {
-        console.error(`- ${failure}`);
+  const targets = args.target ? [args.target] : Object.keys(TARGET_CONFIGS);
+  for (const target of targets) {
+    const artifacts = buildGeneratedArtifacts(root, target);
+    if (args.check) {
+      const failures = checkGeneratedArtifacts(root, artifacts);
+      if (failures.length) {
+        console.error(`WAP knowledge graph generation check failed for ${target}.`);
+        for (const failure of failures) {
+          console.error(`- ${failure}`);
+        }
+        process.exit(1);
       }
-      process.exit(1);
+      console.log(
+        `WAP knowledge graph generation check OK for ${target} (${artifacts.graph.summary.nodeCount} nodes, ${artifacts.graph.summary.edgeCount} edges)`
+      );
+      continue;
     }
+    writeArtifacts(root, artifacts);
     console.log(
-      `WAP knowledge graph generation check OK (${artifacts.graph.summary.nodeCount} nodes, ${artifacts.graph.summary.edgeCount} edges)`
+      `Generated ${artifacts.graphOutput}, ${artifacts.contextPackOutput}, and ${artifacts.vaultFiles.size} Obsidian notes in ${artifacts.vaultOutput}`
     );
-    return;
   }
-  writeArtifacts(root, artifacts);
-  console.log(
-    `Generated ${KNOWLEDGE_GRAPH_OUTPUT}, ${CONTEXT_PACK_OUTPUT}, and ${artifacts.vaultFiles.size} Obsidian notes`
-  );
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {

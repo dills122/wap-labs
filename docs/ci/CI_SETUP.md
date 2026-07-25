@@ -42,7 +42,7 @@ Jobs:
   - `cargo fmt --check`
   - coverage gate with `cargo llvm-cov`
 - `Rust Transport`
-  - installs the isolated `wbxml2xml` decoder
+  - exercises the pinned built-in WML 1.3 WBXML decoder
   - `cargo fmt --check`
   - `cargo clippy -- -D warnings`
   - coverage gate with `cargo llvm-cov`

@@ -15,6 +15,7 @@ pub mod tcp_profile;
 #[cfg(test)]
 mod test_support;
 mod wbxml;
+mod wbxml_decoder;
 pub mod wsp_capability;
 #[cfg(test)]
 mod wsp_connectionless_primitive_profile;

@@ -52,8 +52,9 @@ useful delta/context evidence. They cannot replace target-era authority.
 
 The `RQ-TRN-*` groups below are implementation-oriented themes. Exact
 conformance is decided by the three machine ledgers: 317 total source rows,
-22 selected rows, a selected audit of 0 implemented / 17 partial / 5 missing,
-and 0/22 direct normative tests.
+22 selected rows, a selected audit of 5 implemented / 17 partial / 0 missing,
+and 5/22 direct normative tests. The direct evidence covers the five selected
+WAP-202 WCMP rows; WAP-200 WDP and WAP-203 WSP remain provisional.
 
 ## Requirements matrix
 

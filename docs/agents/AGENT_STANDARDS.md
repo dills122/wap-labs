@@ -96,6 +96,49 @@ Agents MUST NOT:
 - introduce broad cross-layer refactors without explicit request
 - use branch-name collisions as justification for committing directly on `main`/`gh-pages`
 
+## GitHub Authentication and PR Publishing
+
+Treat these as three independent authentication paths:
+
+1. local Git credentials used by `git fetch` and `git push`
+2. local GitHub CLI credentials used by `gh`
+3. the Codex GitHub connector installation and its repository permissions
+
+A successful push does not prove that the connector can create a pull request, and a connector
+`403 Resource not accessible by integration` does not prove that local `gh` authentication is
+invalid.
+
+For local interactive development on macOS:
+
+- Prefer `gh auth login -h github.com -p https -w` so the OAuth credential is stored in the
+  system keyring.
+- Run `gh auth setup-git` when Git operations should use the same keyring-backed credential.
+- Keep `GH_TOKEN` and `GITHUB_TOKEN` unset unless an explicit headless workflow requires one;
+  either variable overrides stored `gh` credentials.
+- Never place token values in repository files, shell startup files, logs, comments, or agent
+  responses.
+
+Before declaring GitHub authentication invalid:
+
+1. Ensure the command has outbound access to `api.github.com`; request the required sandbox or
+   network permission when necessary.
+2. Run `gh auth status -h github.com`.
+3. Confirm API access with `gh api user --jq .login`.
+4. Check only whether token environment variables are present; never print their values.
+
+Do not treat a sandboxed network failure as token revocation. If the connector cannot create a
+pull request but local `gh` is valid, use `gh` as the fallback.
+
+Before creating a pull request:
+
+1. Resolve the repository, base branch, and current head branch from local Git.
+2. Check for an existing pull request for the head branch with
+   `gh pr list --repo <owner/repo> --head <branch> --state all`.
+3. Create a draft pull request by default unless the user explicitly requests ready-for-review
+   status.
+4. Use a body file with real Markdown newlines for CLI-created pull requests.
+5. Report the resulting pull request URL and whether it is draft or ready for review.
+
 ## Backlog Lifecycle Policy
 
 - Do not change the status of an existing `done` ticket to `todo`/`in-progress` during later audits.

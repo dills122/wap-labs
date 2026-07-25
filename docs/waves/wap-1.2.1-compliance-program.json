@@ -982,7 +982,7 @@
         },
         {
           "id": "TRN-703",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wcmp", "wdp-wcmp-adaptation"],
           "existingTickets": ["T0-17"],
@@ -995,7 +995,9 @@
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml",
-            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+            "node scripts/check-wap-transport-conformance-ledgers.mjs",
+            "node scripts/wap-context-pack.mjs TRN-703",
+            "node scripts/check-wap-knowledge-graph.mjs"
           ]
         },
         {
