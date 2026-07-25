@@ -4,7 +4,7 @@ key: "WBXML-FX-TOKEN-CODE-PAGES"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Support 256 code pages per code space and reserve page 255 for implementation-specific use.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

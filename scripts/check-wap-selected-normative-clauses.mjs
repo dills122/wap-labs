@@ -63,7 +63,7 @@ const familyDefinitions = new Map([
       ledgerFile: 'wap-1.2.1-wbxml-scr.json',
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 3,
-      expectedClauses: 48
+      expectedClauses: 47
     }
   ],
   [
@@ -200,10 +200,7 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-INPUT-FORMAT-LITERALS',
   'WML-CL-INPUT-MAXLENGTH'
 ]);
-const deferredWbxmlClauseIds = new Set([
-  'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
-  'WBXML-CL-TOKEN-CODE-PAGES'
-]);
+const deferredWbxmlClauseIds = new Set();
 const hashPattern = /^[a-f0-9]{64}$/;
 const releaseById = new Map(release.members.map((member) => [member.documentId, member]));
 const ingestionById = new Map(ingestion.members.map((member) => [member.documentId, member]));
@@ -575,11 +572,11 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 148
+  assessedClauseCount: 149
 };
 if (
   selectedParentCount !== 201 ||
-  clauseCount !== 781 ||
+  clauseCount !== 780 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);

@@ -1,6 +1,6 @@
 # WAP 1.2.1 WBXML SCR Ledger
 
-Version: v0.3
+Version: v0.4
 Status: effective SCR extracted; Class C applied; direct decoder evidence
 partially closed
 
@@ -73,11 +73,12 @@ The selected-row audit is:
 - boundary-only tests: 0
 
 These are feature-level evidence counts, not a WBXML compliance percentage.
-The three rows expand into 48 deduplicated clauses covering section 5 and its
-subsections plus sections 6.3 and 6.4. The WML-203 direct-evidence tranche now
-records 36 fixed-outcome fixtures citing 47 clauses and promotes 46 clauses to
-`implemented`. Two remain `not-assessed`; all three parent rows stay
-`partial`.
+The three rows expand into 47 client-applicable deduplicated clauses covering
+section 5 and its subsections plus sections 6.3 and 6.4. The WML-203
+direct-evidence tranche records 42 fixed-outcome fixtures citing all 47
+selected clauses and promotes all 47 to `implemented`. All three feature-level
+parent rows stay `partial` because their broader document-family limitations
+remain.
 
 ## Current implementation evidence
 
@@ -87,15 +88,20 @@ architecture:
 - `map_success_payload_response` recognizes
   `application/vnd.wap.wmlc`;
 - `decode_wmlc` invokes the built-in, pinned
-  `lowband-wml13-wbxml/0.2.0` decoder;
+  `lowband-wml13-wbxml/0.3.0` decoder;
 - WML token-table selection is keyed by the carrying MIME media type, and
   carrying-protocol charset metadata takes precedence over the WBXML header;
 - decoder output and element nesting are bounded;
 - header order, WBXML 1.3 version and WML 1.3 public identifiers, multi-byte
   integers (including legal leading zero-valued groups), supported charset
   termination, string tables, tag/attribute parser states, page-zero WML
-  tokens, global strings/entities/extensions, literal flags, PI and opaque
-  structure, and malformed input have deterministic outcomes;
+  tokens, global strings/entities/extensions across unassigned pages, literal
+  flags, PI and opaque structure, and malformed input have deterministic
+  outcomes;
+- the typed token registry accepts the full one-octet page index independently
+  for tag and attribute spaces, resolves assigned page zero, rejects
+  unassigned pages 1 through 254, and rejects unregistered
+  implementation-specific page 255 deterministically;
 - every default and fixed attribute in the selected WML 1.3 DTD is
   reconstructed before textual handoff;
 - every assigned WML page-zero tag, attribute-start, and attribute-value token
@@ -109,12 +115,13 @@ Direct source-derived evidence is in
 corpus now has fixed failure expectations under the pinned decoder and remains
 robustness-only evidence.
 
-The two unpromoted clauses are:
-
-- `WBXML-CL-CHARSET-UNREPRESENTABLE-NAME`: this is an encoder/tokeniser error
-  condition, not yet direct decoder evidence;
-- `WBXML-CL-TOKEN-CODE-PAGES`: the selected WML table implements page zero,
-  while broader non-page-zero document tables remain open.
+There are no unpromoted selected client clauses. The source sentence tracked as
+`WBXML-CL-CHARSET-UNREPRESENTABLE-NAME` explicitly terminates tokenisation and
+therefore belongs to the unselected server/encoder profile under
+`WBXML-S-001`; it is preserved there as `not-assessed`, not counted as decoder
+evidence. `WBXML-CL-TOKEN-CODE-PAGES` is direct-evidence-backed by the bounded
+registry and fixed outcomes; this does not claim token tables that WML 1.3
+does not assign.
 
 The parent rows also retain broader limitations: externally supplied implied
 attribute values and non-WML document families. Generic
@@ -134,13 +141,13 @@ client claim and have not been implementation-audited in this pass.
 
 ## Remaining WBXML work
 
-1. Add carrying-protocol charset precedence and external/MIME typing cases.
-2. Decide whether non-page-zero document tables enter the selected client
-   profile or remain an explicit unsupported-document outcome.
-3. Exhaustively pair every assigned WML page-zero tag, attribute-start, and
-   attribute-value token with its literal/string equivalent.
-4. Extend engine structural parity beyond the focused canonical deck fixture.
-5. Audit the 12 server/encoder rows only when that module profile is claimed.
+1. Extend engine structural parity beyond the focused canonical deck fixture.
+2. Add generic `application/vnd.wap.wbxml` routing and non-WML token-table
+   registries only if those document-family profiles enter selected scope.
+3. Extend default-attribute reconstruction beyond WML 1.3 only if another
+   version or document-type profile is selected.
+4. Audit the 12 server/encoder rows, including unrepresentable-name
+   tokenisation, only when that independently shippable profile is claimed.
 
 Modern safety, streaming, performance, and diagnostics may improve the
 implementation. They cannot replace these strict decode outcomes or turn an

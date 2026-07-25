@@ -22,7 +22,7 @@ Transport boundary ends at normalized deck payload and optional XML event stream
   path available with an unavoidable no-WTLS warning and false protection
   state; release profiles must fail closed.
 - WBXML decode uses the pinned built-in
-  `lowband-wml13-wbxml/0.2.0` transport decoder.
+  `lowband-wml13-wbxml/0.3.0` transport decoder.
 - Retry/timeout/error mapping and coverage gate are active in Rust CI.
 
 Profile modes in use:

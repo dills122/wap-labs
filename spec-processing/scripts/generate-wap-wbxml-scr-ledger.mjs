@@ -261,7 +261,7 @@ const selectedAudit = new Map([
     {
       status: 'partial',
       note:
-        'The pinned built-in WML 1.3 decoder and 36-fixture source-derived corpus directly implement 41 of 43 mapped section 5 clauses, including carrying-protocol charset precedence across HTTP/MIME and connectionless WSP. Encoder-side unrepresentable-name tokenisation and non-page-zero document tables remain open.',
+        'The pinned built-in WML 1.3 decoder and source-derived corpus directly implement all 42 client-applicable mapped section 5 clauses, including carrying-protocol charset precedence and bounded handling of all 256 tag and attribute code-page indices. The row remains partial because only the WML 1.3 page-zero tables are registered and non-WML document families remain unsupported.',
       workItems: ['WML-203', 'R0-08', 'T0-07'],
       implementationEvidence: [
         {
@@ -282,7 +282,7 @@ const selectedAudit = new Map([
           fixture:
             'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
-            'This tranche leaves encoder-side unrepresentable-name tokenisation and non-page-zero document-table breadth unpromoted.'
+            'The registry covers the full one-octet page-index space with deterministic unassigned and implementation-specific outcomes; only the WML 1.3 page-zero token tables are registered.'
         }
       ],
       evidenceState: 'direct-normative-fixture-linked-partial'
@@ -356,6 +356,32 @@ const selectedAudit = new Map([
     }
   ]
 ]);
+
+const unselectedEncoderClauses = [
+  {
+    id: 'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
+    actor: 'wbxml-server-encoder',
+    parentRows: ['WBXML-S-001'],
+    sourceAnchor: {
+      documentId: 'WAP-192-WBXML',
+      section: '5.2',
+      heading: '5.2. Character Encoding',
+      normalizedTextSha256:
+        'd9b630bf107ba28639ca21183b5f79cc2820c8d90958024a4372190dfcc9fb2b'
+    },
+    normativeForce: 'error-condition',
+    obligationLevel: 'required',
+    obligationSynopsis:
+      'When tokenizing, terminate with an error if a tag or attribute name cannot be represented in the target character set.',
+    disposition: {
+      strict: 'required-for-claimed-actor',
+      classCProfile: 'not-applicable-to-class-c-client'
+    },
+    implementationStatus: 'not-assessed',
+    assessmentNote:
+      'The source explicitly assigns this error to tokenisation. It is retained for a future server/encoder claim and is not a decoder obligation under the selected Class C client profile.'
+  }
+];
 
 const obligations = rows.map(
   (
@@ -538,11 +564,13 @@ const ledger = {
       (obligation) => obligation.mapping.testEvidence.length > 0
     ).length,
     selectedBoundaryTestEvidenceCount: 0,
-    selectedImplementedClauseCount: 46,
-    selectedNotAssessedClauseCount: 2,
-    fixedOutcomeFixtureCount: 36
+    selectedImplementedClauseCount: 47,
+    selectedNotAssessedClauseCount: 0,
+    fixedOutcomeFixtureCount: 42,
+    unselectedEncoderClauseCount: unselectedEncoderClauses.length
   },
-  obligations
+  obligations,
+  unselectedEncoderClauses
 };
 
 fs.mkdirSync(new URL('../source-manifests/', import.meta.url), {
