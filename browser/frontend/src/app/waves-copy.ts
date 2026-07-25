@@ -56,6 +56,7 @@ const locale = {
     fetchFailed: 'Fetch failed:',
     loading: 'Loading ',
     followingExternalIntent: 'Following external intent:',
+    checkingGateway: 'Checking WAP gateway',
     ready: 'Ready',
     fetchedAndLoaded: 'Fetched and loaded'
   },
@@ -70,12 +71,12 @@ const locale = {
   status: {
     starting: `Starting ${WAVES_CONFIG.appTagline}...`,
     ready: 'Ready.',
-    readyNetwork: 'Ready. Network available.',
+    readyNetwork: (url: string) => `Ready. WAP gateway responded at ${url}.`,
     bootShellReady: 'Shell ready.',
     bootEngineReady: 'Engine ready.',
     bootDeckReady: 'Deck ready.',
     localModeEnabled: 'Local mode enabled. Network fetches are disabled.',
-    networkModeEnabled: 'Network mode enabled.',
+    networkModeEnabled: (url: string) => `Checking WAP gateway at ${url}...`,
     loadedLocalDeck: (label: string) => `Loaded local example: ${label}`,
     localExternalIntentCaptured: (url: string) =>
       `Local mode captured external intent: ${url} (not fetched).`,
@@ -112,8 +113,12 @@ const locale = {
     scriptExecutionFailed: (categoryLabel: string, message: string) =>
       `Script error (${categoryLabel}): ${message}`,
     fetchedAndLoadedDeck: (url: string) => `Fetched and loaded deck from ${url}`,
-    networkUnavailableToast: 'No network available currently. WAP server/gateway is unreachable.',
-    networkUnavailable: 'No network available currently. Could not reach WAP server/gateway.',
+    networkUnavailableToast:
+      'Could not reach the WAP server or gateway. Check that Kannel is running and the address is reachable.',
+    networkUnavailable:
+      'Could not reach the WAP server or gateway. Network mode remains available.',
+    gatewayCheckFailed: (url: string, reason: string) =>
+      `Error: WAP gateway not verified at ${url}. ${reason}`,
     error: (message: string) => `Error: ${message}`,
     scriptDialogAlert: (message: string) => `Script alert("${message}") shown.`,
     scriptDialogConfirm: (message: string) =>

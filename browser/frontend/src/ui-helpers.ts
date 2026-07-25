@@ -30,7 +30,8 @@ export const inferStatusTone = (message: string): StatusTone => {
   }
   if (
     message.startsWith(WAVES_COPY.statusPrefix.loading) ||
-    message.startsWith(WAVES_COPY.statusPrefix.followingExternalIntent)
+    message.startsWith(WAVES_COPY.statusPrefix.followingExternalIntent) ||
+    message.startsWith(WAVES_COPY.statusPrefix.checkingGateway)
   ) {
     return 'loading';
   }

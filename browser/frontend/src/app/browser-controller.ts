@@ -447,8 +447,8 @@ export class BrowserController {
       return;
     }
 
-    this.presenter.setStatus(WAVES_COPY.status.networkModeEnabled);
     this.refs.fetchUrlInput.value = this.lastNetworkUrl || defaultStartUrl();
+    this.presenter.setStatus(WAVES_COPY.status.networkModeEnabled(this.refs.fetchUrlInput.value));
     this.startupProbe.start();
     this.updateBackButtonAvailability();
   }

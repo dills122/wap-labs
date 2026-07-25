@@ -25,7 +25,7 @@ describe('app/network', () => {
     expect(
       isProbeReachable({
         ok: false,
-        status: 0,
+        status: 503,
         finalUrl: 'http://local.test/',
         contentType: '',
         error: {
@@ -37,7 +37,23 @@ describe('app/network', () => {
     ).toBe(false);
   });
 
-  it('treats other failures as reachable endpoint path', () => {
+  it('does not mistake a preflight policy rejection for gateway reachability', () => {
+    expect(
+      isProbeReachable({
+        ok: false,
+        status: 400,
+        finalUrl: 'wap://localhost/',
+        contentType: 'text/plain',
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'private destinations are blocked'
+        },
+        timingMs: { encode: 0, udpRtt: 0, decode: 0 }
+      })
+    ).toBe(false);
+  });
+
+  it('treats an upstream error response as evidence that an endpoint answered', () => {
     expect(
       isProbeReachable({
         ok: false,
