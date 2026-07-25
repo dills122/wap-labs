@@ -215,6 +215,14 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-205',
+    new Set([
+      'WML-CL-ERROR-ENFORCEMENT',
+      'WML-CL-ERROR-NO-INTENT-INFERENCE',
+      'WML-CL-TASK-FAILURE-ATOMICITY'
+    ])
+  ],
+  [
     'TRN-702',
     new Set([
       'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',

@@ -219,12 +219,19 @@ Legend:
   - `WAP-191_104` section 12.3
   - SCR: `WML-C-16`
 - AC:
-  - Evidence: [ ] Link source-derived error fixtures and deterministic
-    rollback/outcome tests.
-  - [ ] Each specified error class maps to a stable host-visible outcome.
-  - [ ] Failed operations preserve required card, history, and context state.
-  - [ ] Strict failures remain distinct from optional diagnostics and
-    extension recovery behavior.
+  - Evidence: [x] WML-205 native taxonomy and atomic parse-load tests in
+    `engine-wasm/engine/src/engine_tests/wml_load_errors.rs`, WASM parity checks in
+    `engine-wasm/engine/src/engine_wasm_bindings_tests.rs`, and executable recovery story
+    `engine-wasm/examples/source/wml-205-error-recovery.wml`; run
+    `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205` and
+    `pnpm test:story WML-205`.
+  - [x] Malformed, invalid, unsupported, and recoverable WML load classes map to stable
+    host-visible codes and rejected/ignored outcomes.
+  - [x] Rejected parse and payload-boundary loads preserve the last successfully loaded deck and
+    metadata.
+  - [x] Strict load failures remain distinct from optional diagnostics and extension recovery.
+  - [ ] Fetch/access-control task failures still need host-boundary notification and complete
+    card/context/pending-assignment/event atomicity evidence.
 
 ## Notes
 

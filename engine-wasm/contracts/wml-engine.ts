@@ -11,6 +11,27 @@ export interface WmlDeckInput {
   rawBytesBase64?: string;
 }
 
+export type WmlLoadDiagnosticClass =
+  | 'malformed'
+  | 'invalid'
+  | 'unsupported'
+  | 'recoverable';
+
+export type WmlLoadDiagnosticCode =
+  | 'WML_MALFORMED_XML'
+  | 'WML_INVALID_WML'
+  | 'WML_UNSUPPORTED_OPTIONAL_CONSTRUCT'
+  | 'WML_RECOVERABLE_CONTENT';
+
+export type WmlLoadDiagnosticOutcome = 'rejected' | 'ignored';
+
+export interface WmlLoadDiagnostic {
+  class: WmlLoadDiagnosticClass;
+  code: WmlLoadDiagnosticCode;
+  outcome: WmlLoadDiagnosticOutcome;
+  message: string;
+}
+
 export type ScriptCallSite =
   | 'softkey-do'
   | 'intrinsic-onevent'
@@ -143,6 +164,9 @@ export interface DrawLink {
 // lives in the two target interfaces below.
 export interface WmlEngineCommon {
   loadDeck(xml: string): void;
+  // A rejected load preserves prior runtime state and publishes one diagnostic.
+  // A successful load replaces this list with ordered ignored/recoverable warnings.
+  lastWmlLoadDiagnostics(): WmlLoadDiagnostic[];
   render(): RenderList;
   handleKey(key: EngineKey): void;
   advanceTimeMs(deltaMs: number): void;

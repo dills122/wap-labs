@@ -476,7 +476,7 @@
         },
         {
           "id": "WML-205",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "qa"],
           "sourceFamilies": ["wml"],
           "existingTickets": ["R0-07"],
@@ -487,7 +487,14 @@
             "Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205",
+            "pnpm test:story WML-205",
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "node scripts/check-wap-knowledge-graph.mjs"
+          ],
+          "notes": [
+            "The direct graph slice maps WML-CL-ERROR-ENFORCEMENT, WML-CL-ERROR-NO-INTENT-INFERENCE, and WML-CL-TASK-FAILURE-ATOMICITY.",
+            "The engine-boundary taxonomy and stable recovery story are direct WML-205 evidence; exhaustive per-element error enforcement and host fetch/access-control failure atomicity remain explicit residual gates."
           ]
         }
       ],

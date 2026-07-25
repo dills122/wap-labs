@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "badbdc1e64a60eec5df6fc21813dba8cf7d1f3728ed89c9d51149157ffe5d16c"
+        "sha256": "92dfc2b7a702513f4361d3413886be50c4d648b3da1ef34f4a7eff118d13a0b9"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "429837834a7b7fd5bea164d8b010a4bc205d81e6a1a0d76aea3f3d41fc6d03dc"
+        "sha256": "fb268b42e9eea6a7dd17f56ce6a3b1ae09835f125358c1385c0d9f0a79a49ef3"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
@@ -38,7 +38,7 @@
   },
   "summary": {
     "nodeCount": 588,
-    "edgeCount": 1684,
+    "edgeCount": 1687,
     "nodesByType": {
       "clause": 224,
       "fixture": 224,
@@ -62,7 +62,7 @@
       "effective-document": 12,
       "maps-to": 370,
       "owned-by": 11,
-      "planned-by": 348,
+      "planned-by": 351,
       "refines": 291,
       "relates-to": 10,
       "requires-family": 3,
@@ -76,7 +76,7 @@
       "WML-202": 14,
       "WML-203": 49,
       "WML-204": 23,
-      "WML-205": 0
+      "WML-205": 3
     },
     "directClauseFamiliesByWorkItem": {
       "WML-201": [
@@ -93,7 +93,9 @@
       "WML-204": [
         "wml"
       ],
-      "WML-205": []
+      "WML-205": [
+        "wml"
+      ]
     },
     "directScrRowCountsByWorkItem": {
       "WML-201": 76,
@@ -113,14 +115,8 @@
       "WML-204": {},
       "WML-205": {}
     },
-    "unmappedNormativeFamiliesByWorkItem": {
-      "WML-205": [
-        "wml"
-      ]
-    },
-    "workItemsWithoutDirectClauses": [
-      "WML-205"
-    ]
+    "unmappedNormativeFamiliesByWorkItem": {},
+    "workItemsWithoutDirectClauses": []
   },
   "nodes": [
     {
@@ -3309,7 +3305,8 @@
         "workItems": [
           "R0-01",
           "R0-07",
-          "WML-201"
+          "WML-201",
+          "WML-205"
         ],
         "ownerLayers": [
           "browser",
@@ -3345,7 +3342,8 @@
         "workItems": [
           "R0-01",
           "R0-07",
-          "WML-201"
+          "WML-201",
+          "WML-205"
         ],
         "ownerLayers": [
           "browser",
@@ -7290,7 +7288,8 @@
           "R0-02",
           "R0-06",
           "R0-07",
-          "WML-201"
+          "WML-201",
+          "WML-205"
         ],
         "ownerLayers": [
           "browser",
@@ -16354,13 +16353,17 @@
       "type": "work-item",
       "title": "WML parse/error taxonomy",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "qa"
         ],
         "sourceFamilies": [
           "wml"
+        ],
+        "notes": [
+          "The direct graph slice maps WML-CL-ERROR-ENFORCEMENT, WML-CL-ERROR-NO-INTENT-INFERENCE, and WML-CL-TASK-FAILURE-ATOMICITY.",
+          "The engine-boundary taxonomy and stable recovery story are direct WML-205 evidence; exhaustive per-element error enforcement and host fetch/access-control failure atomicity remain explicit residual gates."
         ],
         "existingTickets": [
           "R0-07"
@@ -16372,7 +16375,10 @@
           "Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205",
+          "pnpm test:story WML-205",
+          "node scripts/check-wap-selected-normative-clauses.mjs",
+          "node scripts/check-wap-knowledge-graph.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -20988,6 +20994,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT|planned-by|work-item:WML-205",
+      "from": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "relation": "planned-by",
+      "to": "work-item:WML-205",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-ERROR-ENFORCEMENT|refines|scr-row:WML-C-16",
       "from": "clause:WML-CL-ERROR-ENFORCEMENT",
       "relation": "refines",
@@ -21028,6 +21043,15 @@
       "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE|planned-by|work-item:WML-205",
+      "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-205",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -26977,6 +27001,15 @@
       "from": "clause:WML-CL-TASK-FAILURE-ATOMICITY",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TASK-FAILURE-ATOMICITY|planned-by|work-item:WML-205",
+      "from": "clause:WML-CL-TASK-FAILURE-ATOMICITY",
+      "relation": "planned-by",
+      "to": "work-item:WML-205",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

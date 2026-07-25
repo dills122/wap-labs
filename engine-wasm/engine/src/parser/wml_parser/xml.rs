@@ -1,17 +1,24 @@
+use quick_xml::errors::{Error as XmlError, IllFormedError};
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::Reader;
 use quick_xml::XmlVersion;
 use std::collections::HashMap;
 
 use super::MAX_PARSE_TREE_DEPTH;
+use crate::WmlLoadDiagnostic;
 
 const WML_1_3_PUBLIC_ID: &str = "-//WAPFORUM//DTD WML 1.3//EN";
 const WML_1_3_SYSTEM_ID: &str = "http://www.wapforum.org/DTD/wml13.dtd";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum WmlDocumentType {
+pub(super) enum WmlDocumentType {
     Wml13,
     Alternate,
+}
+
+pub(super) struct XmlDocument {
+    pub(super) root: XmlElement,
+    pub(super) document_type: Option<WmlDocumentType>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -33,7 +40,14 @@ impl XmlElement {
     }
 }
 
+#[cfg(test)]
 pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
+    parse_xml_document(xml)
+        .map(|document| document.root)
+        .map_err(|diagnostic| diagnostic.message)
+}
+
+pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagnostic> {
     let mut reader = Reader::from_str(xml);
     let mut stack: Vec<XmlElement> = Vec::new();
     let mut root: Option<XmlElement> = None;
@@ -50,9 +64,9 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
                 // compiler-derived recursive `Drop` on `XmlElement`/`XmlNode`
                 // from overflowing the stack when the tree goes out of scope.
                 if stack.len() >= MAX_PARSE_TREE_DEPTH {
-                    return Err(format!(
+                    return Err(WmlLoadDiagnostic::invalid(format!(
                         "Parse limit exceeded: nesting depth in xml tree traversal (max {MAX_PARSE_TREE_DEPTH})"
-                    ));
+                    )));
                 }
                 stack.push(start_to_element(&start)?);
             }
@@ -75,61 +89,85 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
             }
             Ok(Event::DocType(value)) => {
                 if document_type.is_some() {
-                    return Err("Malformed XML: multiple DOCTYPE declarations".to_string());
+                    return Err(WmlLoadDiagnostic::malformed(
+                        "Malformed XML: multiple DOCTYPE declarations",
+                    ));
                 }
                 if root.is_some() || !stack.is_empty() {
-                    return Err(
-                        "Malformed XML: DOCTYPE declaration must precede the root element"
-                            .to_string(),
-                    );
+                    return Err(WmlLoadDiagnostic::malformed(
+                        "Malformed XML: DOCTYPE declaration must precede the root element",
+                    ));
                 }
-                let raw = std::str::from_utf8(value.as_ref())
-                    .map_err(|_| "Malformed XML: DOCTYPE declaration is not UTF-8".to_string())?;
+                let raw = std::str::from_utf8(value.as_ref()).map_err(|_| {
+                    WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE declaration is not UTF-8")
+                })?;
                 document_type = Some(classify_wml_doctype(raw)?);
             }
             Ok(Event::End(_)) => {
                 let Some(element) = stack.pop() else {
-                    return Err("Malformed XML: unexpected closing tag".to_string());
+                    return Err(WmlLoadDiagnostic::malformed(
+                        "Malformed XML: unexpected closing tag",
+                    ));
                 };
                 attach_node(&mut stack, &mut root, XmlNode::Element(element))?;
             }
             Ok(Event::Eof) => break,
             Ok(_) => {}
-            Err(err) => return Err(format!("Malformed XML: {err}")),
+            Err(err) => return Err(map_reader_error(err)),
         }
     }
 
     if !stack.is_empty() {
-        return Err("Malformed XML: unclosed tag".to_string());
+        return Err(WmlLoadDiagnostic::malformed("Malformed XML: unclosed tag"));
     }
 
-    root.ok_or_else(|| "Missing required <wml> root element".to_string())
+    let root =
+        root.ok_or_else(|| WmlLoadDiagnostic::invalid("Missing required <wml> root element"))?;
+    Ok(XmlDocument {
+        root,
+        document_type,
+    })
 }
 
-fn classify_wml_doctype(raw: &str) -> Result<WmlDocumentType, String> {
-    let (root_name, remainder) =
-        take_word(raw).ok_or_else(|| "Malformed XML: DOCTYPE declaration is empty".to_string())?;
+fn map_reader_error(err: XmlError) -> WmlLoadDiagnostic {
+    match err {
+        XmlError::IllFormed(IllFormedError::MismatchedEndTag { expected, .. })
+            if expected == "card" =>
+        {
+            WmlLoadDiagnostic::malformed("Missing closing </card> tag")
+        }
+        other => WmlLoadDiagnostic::malformed(format!("Malformed XML: {other}")),
+    }
+}
+
+fn classify_wml_doctype(raw: &str) -> Result<WmlDocumentType, WmlLoadDiagnostic> {
+    let (root_name, remainder) = take_word(raw).ok_or_else(|| {
+        WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE declaration is empty")
+    })?;
     if !root_name.eq_ignore_ascii_case("wml") {
-        return Err(format!(
+        return Err(WmlLoadDiagnostic::invalid(format!(
             "Malformed XML: DOCTYPE root {root_name:?} does not match <wml>"
-        ));
+        )));
     }
 
-    let (kind, remainder) = take_word(remainder)
-        .ok_or_else(|| "Malformed XML: DOCTYPE external identifier is missing".to_string())?;
+    let (kind, remainder) = take_word(remainder).ok_or_else(|| {
+        WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE external identifier is missing")
+    })?;
     match kind {
         "PUBLIC" => {
-            let (public_id, remainder) = take_quoted(remainder)
-                .ok_or_else(|| "Malformed XML: DOCTYPE public identifier is missing".to_string())?;
-            let (system_id, trailing) = take_quoted(remainder)
-                .ok_or_else(|| "Malformed XML: DOCTYPE system identifier is missing".to_string())?;
+            let (public_id, remainder) = take_quoted(remainder).ok_or_else(|| {
+                WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE public identifier is missing")
+            })?;
+            let (system_id, trailing) = take_quoted(remainder).ok_or_else(|| {
+                WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE system identifier is missing")
+            })?;
             reject_doctype_trailing_data(trailing)?;
 
             if public_id == WML_1_3_PUBLIC_ID {
                 if system_id != WML_1_3_SYSTEM_ID {
-                    return Err(format!(
+                    return Err(WmlLoadDiagnostic::invalid(format!(
                         "Malformed XML: WML 1.3 system identifier must be {WML_1_3_SYSTEM_ID:?}"
-                    ));
+                    )));
                 }
                 Ok(WmlDocumentType::Wml13)
             } else {
@@ -137,14 +175,15 @@ fn classify_wml_doctype(raw: &str) -> Result<WmlDocumentType, String> {
             }
         }
         "SYSTEM" => {
-            let (_, trailing) = take_quoted(remainder)
-                .ok_or_else(|| "Malformed XML: DOCTYPE system identifier is missing".to_string())?;
+            let (_, trailing) = take_quoted(remainder).ok_or_else(|| {
+                WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE system identifier is missing")
+            })?;
             reject_doctype_trailing_data(trailing)?;
             Ok(WmlDocumentType::Alternate)
         }
-        _ => Err(format!(
+        _ => Err(WmlLoadDiagnostic::invalid(format!(
             "Malformed XML: unsupported DOCTYPE external identifier {kind:?}"
-        )),
+        ))),
     }
 }
 
@@ -168,22 +207,28 @@ fn take_quoted(value: &str) -> Option<(&str, &str)> {
     Some((&quoted[..end], &quoted[end + quote.len_utf8()..]))
 }
 
-fn reject_doctype_trailing_data(value: &str) -> Result<(), String> {
+fn reject_doctype_trailing_data(value: &str) -> Result<(), WmlLoadDiagnostic> {
     if value.trim().is_empty() {
         return Ok(());
     }
-    Err("Malformed XML: DOCTYPE internal subsets are outside the supported WML policy".to_string())
+    Err(WmlLoadDiagnostic::invalid(
+        "Malformed XML: DOCTYPE internal subsets are outside the supported WML policy",
+    ))
 }
 
-fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, String> {
+fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, WmlLoadDiagnostic> {
     let name = String::from_utf8_lossy(start.name().as_ref()).to_ascii_lowercase();
     let mut attrs = HashMap::new();
     for attr in start.attributes().with_checks(false) {
-        let attr = attr.map_err(|err| format!("Malformed XML attribute: {err}"))?;
+        let attr = attr.map_err(|err| {
+            WmlLoadDiagnostic::malformed(format!("Malformed XML attribute: {err}"))
+        })?;
         let key = String::from_utf8_lossy(attr.key.as_ref()).to_ascii_lowercase();
         let value = attr
             .normalized_value(XmlVersion::Implicit1_0)
-            .map_err(|err| format!("Malformed XML attribute value: {err}"))?
+            .map_err(|err| {
+                WmlLoadDiagnostic::malformed(format!("Malformed XML attribute value: {err}"))
+            })?
             .into_owned();
         attrs.insert(key, decode_entities(&value));
     }
@@ -198,7 +243,7 @@ fn attach_node(
     stack: &mut [XmlElement],
     root: &mut Option<XmlElement>,
     node: XmlNode,
-) -> Result<(), String> {
+) -> Result<(), WmlLoadDiagnostic> {
     if let Some(parent) = stack.last_mut() {
         parent.children.push(node);
         return Ok(());
@@ -207,7 +252,9 @@ fn attach_node(
     match node {
         XmlNode::Element(element) => {
             if root.is_some() {
-                return Err("Malformed XML: multiple root elements".to_string());
+                return Err(WmlLoadDiagnostic::malformed(
+                    "Malformed XML: multiple root elements",
+                ));
             }
             *root = Some(element);
             Ok(())
@@ -216,7 +263,9 @@ fn attach_node(
             if text.trim().is_empty() {
                 return Ok(());
             }
-            Err("Malformed XML: text outside root element".to_string())
+            Err(WmlLoadDiagnostic::malformed(
+                "Malformed XML: text outside root element",
+            ))
         }
     }
 }

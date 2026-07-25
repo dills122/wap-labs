@@ -21,6 +21,7 @@
 
 4. Contract tests (host <-> wasm)
 - `loadDeckContext` metadata propagation
+- WML load diagnostic class/code/outcome parity and failed-load state preservation
 - render payload shape compatibility
 - raw execution vs invocation boundary behavior (`executeScriptRef*` vs `invokeScriptRef*`)
 

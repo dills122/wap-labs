@@ -86,8 +86,11 @@ Minimum output guarantees:
 
 ## 9. Error Semantics
 
-- Parsing errors must be structured and surfaced to host.
-- Unknown tags in MVP should be ignored or captured as unsupported nodes, not crash runtime.
+- WML loads expose ordered structured diagnostics with stable class, code, outcome, and message
+  fields at both native and WASM boundaries.
+- Malformed XML and invalid WML reject the load without replacing the active deck.
+- Unsupported optional constructs and explicitly recoverable content are ignored with distinct
+  diagnostics; recognized nested content remains available where the recovery policy permits it.
 - Invalid internal target (`#missing`) must emit a runtime error event.
 
 ## 10. Conformance Baseline (for this project)

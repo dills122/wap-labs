@@ -87,8 +87,8 @@ Current priority order is:
 
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and
    174/174 direct WML-clause mapping.
-2. Start `WML-205` with its missing direct WML-family graph mapping, then
-   implement its deterministic parse/error taxonomy.
+2. Preserve `WML-205`'s direct three-clause mapping and engine-boundary load taxonomy, then close
+   the residual exhaustive WML error-enforcement and host fetch/access failure-atomicity gates.
 3. Close the remaining `WML-202` access-policy/card-context gate and then the
    residual `WML-204` field/control validation gate. Preserve their completed
    14/14 and 23/23 direct-clause slices; the remaining work shares engine parser

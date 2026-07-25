@@ -215,6 +215,11 @@ const wml202ClauseIds = new Set([
   'WML-CL-WML-ROOT-DECK-SCOPE',
   'WML-CL-WML-ROOT-STRUCTURE'
 ]);
+const wml205ClauseIds = new Set([
+  'WML-CL-ERROR-ENFORCEMENT',
+  'WML-CL-ERROR-NO-INTENT-INFERENCE',
+  'WML-CL-TASK-FAILURE-ATOMICITY'
+]);
 const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
@@ -497,6 +502,7 @@ for (const family of ledger.families ?? []) {
         ...parents.flatMap((parent) => parent.mapping.workItems),
         ...(candidate.family === 'wml' ? ['WML-201'] : []),
         ...(wml202ClauseIds.has(candidate.id) ? ['WML-202'] : []),
+        ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
         ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -506,6 +512,7 @@ for (const family of ledger.families ?? []) {
     const expectedDirectWorkItems = [
       ...(candidate.family === 'wml' ? ['WML-201'] : []),
       ...(wml202ClauseIds.has(candidate.id) ? ['WML-202'] : []),
+      ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),

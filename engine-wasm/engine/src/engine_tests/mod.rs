@@ -95,3 +95,4 @@ mod panic_containment;
 mod script_runtime;
 mod select_semantics;
 mod traces_public_api;
+mod wml_load_errors;

@@ -27,7 +27,7 @@ pub(super) fn parse_card_bindings(
             _ => {}
         }
     }
-    Ok((bindings, parse_timer_value_ds_xml(&elements)))
+    Ok((bindings, parse_timer_value_ds_xml(&elements, budget)))
 }
 
 pub(super) fn parse_template_bindings(
@@ -229,7 +229,10 @@ fn parse_first_task_action_xml(
     Ok(None)
 }
 
-fn parse_timer_value_ds_xml(elements: &[(usize, &XmlElement)]) -> Option<u32> {
+fn parse_timer_value_ds_xml(
+    elements: &[(usize, &XmlElement)],
+    budget: &mut ParseBudget,
+) -> Option<u32> {
     for (_, element) in elements {
         if element.name != "timer" {
             continue;
@@ -239,6 +242,9 @@ fn parse_timer_value_ds_xml(elements: &[(usize, &XmlElement)]) -> Option<u32> {
                 return Some(value_ds);
             }
         }
+        budget.note_recoverable(
+            "Recoverable <timer>: invalid or missing 'value' attribute was ignored",
+        );
     }
     None
 }

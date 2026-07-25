@@ -10,7 +10,9 @@
 
 1. `parser/`
 - Converts WML XML to AST/runtime nodes.
-- Stores unknown/unsupported nodes for debug only.
+- Classifies malformed and invalid input without guessing author intent.
+- Preserves recognized content inside recoverable alternate-DTD extensions and reports ignored
+  unsupported/recoverable constructs through stable load diagnostics.
 
 2. `runtime/`
 - Holds deck/card graph, active card, history, variable store (later), and task bindings.
@@ -27,6 +29,8 @@
 6. `api (lib.rs core + adapters)`
 - Stable runtime methods in native Rust (`load_deck`, `load_deck_context`, `render`, `handle_key`, `navigate_to_card`, metadata getters).
 - WASM adapter exports JS-compatible names (`loadDeck`, `loadDeckContext`, `render`, `handleKey`, `navigateToCard`, metadata getters).
+- Native `last_wml_load_diagnostics` and WASM `lastWmlLoadDiagnostics` expose the same ordered
+  `malformed | invalid | unsupported | recoverable` taxonomy, codes, outcomes, and messages.
 - Target-specific serialization/binding logic must remain adapter-only.
 
 ## 3. Data Model (Incremental)
@@ -59,6 +63,7 @@ Input boundary:
 Output boundary:
 
 - `render() -> RenderList`
+- `lastWmlLoadDiagnostics() -> WmlLoadDiagnostic[]`
 - future: `drainEvents() -> EngineEvent[]` for nav/error/task events
 
 Compatibility policy:
@@ -80,6 +85,7 @@ Compatibility policy:
 - Cache parsed deck and precomputed interactables per card.
 - Deterministic rendering for snapshot tests.
 - Never panic across wasm boundary; convert to structured error.
+- Reject malformed/invalid loads atomically without replacing the last successfully loaded deck.
 
 ## 7. Future-Proofing Without Overengineering
 
@@ -98,10 +104,16 @@ Do now:
     errors;
   - no DTD is fetched, and transport-decoded WBXML remains normalized textual
     WML before engine ingestion.
+- expose deterministic WML load outcomes:
+  - malformed XML and invalid WML reject the load;
+  - unsupported optional constructs are ignored with an `unsupported` diagnostic;
+  - content errors with an explicit recovery rule are ignored with a `recoverable` diagnostic;
+  - a clean successful load clears diagnostics from the prior attempt.
 
 Defer now:
 
 - mandatory-prologue enforcement and full DTD content-model validation
+- exhaustive per-element error-condition coverage and host fetch/access failure atomicity
 - full WMLScript execution
 - full event/timer matrix
 - pixel-perfect vendor quirks

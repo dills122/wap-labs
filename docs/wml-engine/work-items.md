@@ -26,15 +26,16 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 ## Next In Line (Cross-Project Alignment Refresh)
 
-With the WML-202 deck/head/access/meta parser slice implemented, current aligned engine priorities are:
+With the WML-202 deck/head/access/meta parser and WML-205 engine-boundary taxonomy slices implemented,
+current aligned engine priorities are:
 
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and its
    174/174 direct WML-clause mapping.
-2. Add the missing direct WML-family graph mapping for `WML-205`, then close
-   its deterministic WML parse/error taxonomy.
+2. Preserve the mapped `WML-205` malformed/invalid/unsupported/recoverable load taxonomy, then
+   close its residual exhaustive error-enforcement and host fetch/access failure-atomicity gates.
 3. Close the remaining `WML-202` access-policy/card-context gate, followed by
-   the residual `WML-204` field/control validation gate; keep these serial
-   because they overlap parser/runtime tests.
+   the residual `WML-204` field/control validation gate; keep these serial because
+   they overlap parser/runtime tests.
 4. Preserve the completed `WML-202` 14/14, `WML-203` 49/49, and `WML-204` 23/23
    direct-clause slices while their broader work-item gates remain open.
 5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive until the upstream
