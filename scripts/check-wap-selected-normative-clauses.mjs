@@ -163,6 +163,17 @@ const trn706ClauseIds = new Set([
   'WDP-CL-IPV4-HEADER-CHECKSUM',
   'WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS'
 ]);
+const trn707ClauseIds = new Set([
+  'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+  'WDP-CL-IP-BEARER-REQUIRES-UDP',
+  'WDP-CL-CDPD-UDP-IP-PROFILE',
+  'WDP-CL-UNITDATA-REQUEST-ANYTIME',
+  'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+  'WDP-CL-SELECTED-WSP-PORT',
+  'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
+  'WCMP-CL-CLIENT-GENERAL-PROFILE',
+  'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+]);
 const allowedFixtureKinds = new Set([
   'parser',
   'transport-boundary',
@@ -448,12 +459,14 @@ for (const family of ledger.families ?? []) {
       ...new Set([
         ...parents.flatMap((parent) => parent.mapping.workItems),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
-        ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : [])
+        ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
+        ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : [])
       ])
     ].sort();
     const expectedDirectWorkItems = [
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
-      ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : [])
+      ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
+      ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : [])
     ];
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))

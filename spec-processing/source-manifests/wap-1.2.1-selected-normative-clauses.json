@@ -15794,7 +15794,8 @@
             ],
             "workItems": [
               "T0-17",
-              "TRN-703"
+              "TRN-703",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRX-006"
@@ -15805,7 +15806,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WCMP-CL-ERROR-AND-DIAGNOSTIC-ROLES",
@@ -16255,7 +16259,8 @@
             ],
             "workItems": [
               "T0-17",
-              "TRN-703"
+              "TRN-703",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRX-006",
@@ -16269,7 +16274,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WCMP-CL-DESTINATION-UNREACHABLE-LAYOUT",
@@ -17025,7 +17033,7 @@
       "family": "wsp",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json",
-      "parentLedgerSha256": "2fa1be1c80f4d1b25fcf0da2ceaeebf21428f56305e55ed812f974bf02e56ea8",
+      "parentLedgerSha256": "4789dfc332a7ed7d3e62acbb55c2eab3783211ab13f8e1d60124ca678b9c9ab4",
       "effectiveSequence": [
         "WAP-203-WSP",
         "WAP-203_001-WSP",
@@ -20084,7 +20092,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -20095,7 +20104,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WDP-CL-APPLICATION-PORT-ADDRESSING",
@@ -20324,7 +20336,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -20338,7 +20351,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WDP-CL-CDPD-UDP-IP-PROFILE",
@@ -20374,7 +20390,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-706"
+              "TRN-706",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-002",
@@ -20388,7 +20405,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "TRN-706"
+            "TRN-706",
+            "TRN-707"
           ]
         },
         {
@@ -20423,7 +20441,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -20433,7 +20452,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WDP-CL-UNITDATA-REQUEST-PARAMETERS",
@@ -20755,7 +20777,8 @@
           ],
           "directWorkItems": [
             "TRN-702",
-            "TRN-706"
+            "TRN-706",
+            "TRN-707"
           ],
           "sourceAnchor": {
             "documentId": "WAP-200-WDP",
@@ -20785,7 +20808,8 @@
               "T0-19",
               "TRN-701",
               "TRN-702",
-              "TRN-706"
+              "TRN-706",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -21033,7 +21057,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21045,7 +21070,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WDP-CL-SELECTED-BEARER-ASSIGNMENT",
@@ -21080,7 +21108,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-707"
             ],
             "requirementIds": [
               "RQ-TRN-002",
@@ -21092,7 +21121,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-707"
+          ]
         },
         {
           "id": "WDP-CL-UDP-UNRELIABLE-DATAGRAMS",

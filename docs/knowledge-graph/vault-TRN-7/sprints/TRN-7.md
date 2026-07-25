@@ -23,6 +23,7 @@ tags:
 - `contains` → [[work-items/TRN-705|TRN-705]]
 - `contains` → [[work-items/TRN-706|TRN-706]]
 - `contains` → [[work-items/TRN-707|TRN-707]]
+- `contains` → [[work-items/TRN-708|TRN-708]]
 - `depends-on` ← [[sprints/INT-9|INT-9]]
 - `depends-on` ← [[sprints/WSP-8|WSP-8]]
 - `depends-on` → [[sprints/CONF-1|CONF-1]]

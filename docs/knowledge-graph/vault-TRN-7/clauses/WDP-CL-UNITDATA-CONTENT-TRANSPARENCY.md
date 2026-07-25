@@ -19,6 +19,7 @@ tags:
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
 - `planned-by` → [[work-items/TRN-702|TRN-702]]
 - `planned-by` → [[work-items/TRN-706|TRN-706]]
+- `planned-by` → [[work-items/TRN-707|TRN-707]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-001|WDP-PF-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-002|WDP-PF-C-002]]
@@ -48,7 +49,8 @@ tags:
     "T0-19",
     "TRN-701",
     "TRN-702",
-    "TRN-706"
+    "TRN-706",
+    "TRN-707"
   ],
   "ownerLayers": [
     "transport-rust"

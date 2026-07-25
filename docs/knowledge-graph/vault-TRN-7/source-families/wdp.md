@@ -28,6 +28,7 @@ tags:
 - `covers-family` ← [[work-items/TRN-702|TRN-702]]
 - `covers-family` ← [[work-items/TRN-706|TRN-706]]
 - `covers-family` ← [[work-items/TRN-707|TRN-707]]
+- `covers-family` ← [[work-items/TRN-708|TRN-708]]
 - `effective-document` → [[source-documents/WAP-200_001-WDP|WAP-200_001-WDP]]
 - `effective-document` → [[source-documents/WAP-200_002-WDP|WAP-200_002-WDP]]
 - `effective-document` → [[source-documents/WAP-200_003-WDP|WAP-200_003-WDP]]

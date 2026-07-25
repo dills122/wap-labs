@@ -54,6 +54,7 @@ const policy =
 const authorityDefinitions = [
   {
     documentId: 'WAP-236-WAESpec-20020207-a',
+    title: 'Wireless Application Environment Specification',
     family: 'wae',
     filename: 'WAP-236-WAESpec-20020207-a.pdf',
     expectedSha256:
@@ -61,6 +62,7 @@ const authorityDefinitions = [
   },
   {
     documentId: 'WAP-238-WML-20010911-a',
+    title: 'Wireless Markup Language',
     family: 'wml',
     filename: 'WAP-238-WML-20010911-a.pdf',
     expectedSha256:
@@ -68,6 +70,7 @@ const authorityDefinitions = [
   },
   {
     documentId: 'WAP-259-WDP-20010614-a',
+    title: 'Wireless Datagram Protocol',
     family: 'wdp-wcmp',
     filename: 'WAP-259-WDP-20010614-a.pdf',
     expectedSha256:
@@ -75,6 +78,7 @@ const authorityDefinitions = [
   },
   {
     documentId: 'WAP-230-WSP-20010705-a',
+    title: 'Wireless Session Protocol',
     family: 'wsp',
     filename: 'WAP-230-WSP-20010705-a.pdf',
     expectedSha256:
@@ -93,6 +97,7 @@ const successorAuthorities = authorityDefinitions.map((definition) => {
   }
   return {
     documentId: definition.documentId,
+    title: definition.title,
     family: definition.family,
     filename: definition.filename,
     sha256: actualSha256,
@@ -379,6 +384,147 @@ const successorOnlyCapabilities = [
   }
 ];
 
+const transportSuccessorAudit = {
+  workItemId: 'TRN-707',
+  status:
+    'strict-connectionless-audit-complete-wcmp-correction-open-conditional-wtp-open',
+  scope: {
+    activeProfile: 'wap-net-core / connectionless WSP over WDP',
+    connectionOrientedWspActivated: false,
+    wtpActivated: false,
+    scopeLimitation:
+      'WAP-259 predates the final effective WAP-200_005 overlay. Compatibility is proven only for the nine explicitly mapped WDP/WCMP clauses and direct target-era fixtures; no whole-document equivalence is claimed.'
+  },
+  targetAuthorities: [
+    {
+      family: 'wdp',
+      documentIds: [
+        'WAP-200-WDP',
+        'WAP-200_001-WDP',
+        'WAP-200_002-WDP',
+        'WAP-200_003-WDP',
+        'WAP-200_004-WDP',
+        'WAP-200_005-WDP'
+      ],
+      role: 'strict-target-effective-sequence'
+    },
+    {
+      family: 'wcmp',
+      documentIds: ['WAP-202-WCMP'],
+      role: 'strict-target-approved-baseline'
+    }
+  ],
+  successorContext: {
+    documentId: 'WAP-259-WDP-20010614-a',
+    role: 'delta-evidence-only',
+    comparedSections: [
+      '4.1',
+      '4.2',
+      '4.2.2',
+      '4.3',
+      '4.4.3',
+      '5.3.2',
+      '6.2',
+      'Appendix B',
+      'Appendix C',
+      'Appendix F'
+    ]
+  },
+  classifications: [
+    {
+      id: 'TRN-707-WDP-SERVICE-PRIMITIVE',
+      family: 'wdp',
+      disposition: 'compatible',
+      implementationBasis: 'target-era-or-version-neutral',
+      targetClauseIds: [
+        'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+        'WDP-CL-UNITDATA-REQUEST-ANYTIME',
+        'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY'
+      ],
+      successorSections: ['4.1', '4.2', '5.3.2'],
+      finding:
+        'WAP-259 preserves the consistent bearer-independent service, connectionless T-DUnitdata availability, and unmodified service-data-unit delivery required by effective WAP-200.',
+      implementationEvidence: [
+        'transport-rust/src/network/wdp/primitive.rs::TDUnitdataRequest',
+        'transport-rust/src/network/wdp/primitive.rs::TDUnitdataIndication'
+      ],
+      fixture:
+        'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
+      tests: [
+        'network::wdp::tests::td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics',
+        'network::wdp::tests::simultaneous_connectionless_instances_are_multiplexed_by_port_fields'
+      ]
+    },
+    {
+      id: 'TRN-707-WDP-CDPD-IP-REGISTRIES',
+      family: 'wdp',
+      disposition: 'compatible',
+      implementationBasis: 'target-era-or-version-neutral',
+      targetClauseIds: [
+        'WDP-CL-IP-BEARER-REQUIRES-UDP',
+        'WDP-CL-CDPD-UDP-IP-PROFILE',
+        'WDP-CL-SELECTED-WSP-PORT',
+        'WDP-CL-SELECTED-BEARER-ASSIGNMENT'
+      ],
+      successorSections: ['4.3', '4.4.3', '6.2', 'Appendix B', 'Appendix C'],
+      finding:
+        'WAP-259 preserves UDP for IP bearers, the CDPD UDP/IP profile, connectionless WSP port 9200, and the AMPS/CDPD/IPv4 bearer assignment 0x0D.',
+      implementationEvidence: [
+        'transport-rust/src/network/wdp/profile.rs::CdpdIpv4Profile',
+        'transport-rust/src/network/wdp/datagram.rs::WdpServicePort',
+        'transport-rust/src/network/wdp/ipv4_udp.rs::encode_cdpd_ipv4_udp',
+        'transport-rust/src/network/wdp/ipv4_udp.rs::decode_cdpd_ipv4_udp'
+      ],
+      fixture:
+        'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
+      tests: [
+        'network::wdp::tests::registered_port_and_bearer_profile_are_exact',
+        'network::wdp::tests::selected_cdpd_ipv4_profile_preserves_exact_udp_ipv4_bytes'
+      ]
+    },
+    {
+      id: 'TRN-707-WCMP-TARGET-DELEGATION',
+      family: 'wcmp',
+      disposition: 'strict-correction-required',
+      implementationBasis: 'target-era',
+      targetClauseIds: [
+        'WCMP-CL-CLIENT-GENERAL-PROFILE',
+        'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+      ],
+      targetSections: ['5.3', '5.4', '5.5.1', 'Appendix A'],
+      successorSections: ['4.2.2'],
+      finding:
+        'WAP-259 delegates WDP processing-error behavior to WCMP. WAP-202 section 5.3 assigns CDPD/IP to ICMP, so the current section 5.4/5.5 general-WCMP codec cannot satisfy the selected CDPD/IPv4 strict profile without capability gating and an ICMPv4 correction.',
+      implementationEvidence: [
+        'transport-rust/src/network/wcmp/message.rs::WcmpMessage',
+        'transport-rust/src/network/wcmp/codec.rs::decode_wcmp',
+        'transport-rust/src/network/wcmp/handler.rs::handle_wcmp'
+      ],
+      fixture:
+        'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+      tests: [
+        'network::wcmp::tests::source_derived_fixture_covers_selected_class_c_rows',
+        'network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip'
+      ]
+    }
+  ],
+  strictCorrectionWorkItems: ['TRN-708'],
+  explicitGaps: [
+    {
+      family: 'wtp',
+      status: 'conditional-not-activated-unmapped',
+      activationCondition:
+        'A future explicit connection-oriented WSP claim activates the effective WAP-201/SIN obligation, fixture, and release-evidence closure.',
+      successorContext: [
+        'WAP-224-WTP-20010710-a',
+        'OMA-WAP-224_002-WTP-SIN-20020827-a'
+      ],
+      policy:
+        'Do not classify partial WTP code or successor context as strict evidence, and do not activate WTP or connection-oriented WSP through TRN-707.'
+    }
+  ]
+};
+
 const dispositionCounts = Object.fromEntries(
   [
     'compatible',
@@ -425,7 +571,8 @@ const register = {
   },
   familySummaries,
   entries,
-  successorOnlyCapabilities
+  successorOnlyCapabilities,
+  transportSuccessorAudit
 };
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });

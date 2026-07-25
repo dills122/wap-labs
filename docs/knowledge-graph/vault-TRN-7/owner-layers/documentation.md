@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `owned-by` ← [[work-items/TRN-707|TRN-707]]
+- `owned-by` ← [[work-items/TRN-708|TRN-708]]
 
 ## Data
 

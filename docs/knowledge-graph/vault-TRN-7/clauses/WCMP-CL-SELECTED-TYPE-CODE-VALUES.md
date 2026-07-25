@@ -19,6 +19,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRX-007|RQ-TRX-007]]
 - `maps-to` → [[requirements/RQ-TRX-008|RQ-TRX-008]]
 - `planned-by` → [[work-items/TRN-703|TRN-703]]
+- `planned-by` → [[work-items/TRN-707|TRN-707]]
 - `refines` → [[scr-rows/WCMP-GEN-C-001|WCMP-GEN-C-001]]
 - `refines` → [[scr-rows/WCMP-GEN-C-003|WCMP-GEN-C-003]]
 - `refines` → [[scr-rows/WCMP-GEN-C-006|WCMP-GEN-C-006]]
@@ -46,7 +47,8 @@ tags:
   "obligationSynopsis": "Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.",
   "workItems": [
     "T0-17",
-    "TRN-703"
+    "TRN-703",
+    "TRN-707"
   ],
   "ownerLayers": [
     "transport-rust"

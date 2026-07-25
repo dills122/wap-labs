@@ -412,6 +412,12 @@ const wcmpCore = transportSprint?.workItems.find(
 const replayCorpus = transportSprint?.workItems.find(
   (workItem) => workItem.id === 'TRN-706'
 );
+const successorDeltaAudit = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-707'
+);
+const wcmpIpProfileCorrection = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-708'
+);
 if (
   transportSprint?.status !== 'in-progress' ||
   wdpCore?.status !== 'done' ||
@@ -453,6 +459,26 @@ if (
   ) ||
   !replayCorpus?.evidence?.includes(
     'node scripts/wap-context-pack.mjs TRN-706'
+  ) ||
+  successorDeltaAudit?.status !== 'in-progress' ||
+  JSON.stringify(successorDeltaAudit?.explicitUnmappedFamilies) !==
+    JSON.stringify(['wtp']) ||
+  JSON.stringify(successorDeltaAudit?.followUpWorkItems) !==
+    JSON.stringify(['TRN-708']) ||
+  !successorDeltaAudit?.contextDocuments?.includes(
+    'WAP-259-WDP-20010614-a'
+  ) ||
+  !successorDeltaAudit?.evidence?.includes(
+    'node scripts/wap-context-pack.mjs TRN-707'
+  ) ||
+  wcmpIpProfileCorrection?.status !== 'todo' ||
+  JSON.stringify(wcmpIpProfileCorrection?.dependsOn) !==
+    JSON.stringify(['TRN-703', 'T0-17']) ||
+  !wcmpIpProfileCorrection?.specReferences?.some((line) =>
+    line.includes('WAP-202-WCMP section 5.3')
+  ) ||
+  !wcmpIpProfileCorrection?.acceptance?.some(
+    (line) => line.includes('strict CDPD/IPv4 profile') && line.includes('ICMPv4')
   ) ||
   !transportSprint?.exitGates?.some((line) =>
     line.includes('only when connection-oriented WSP is claimed')
