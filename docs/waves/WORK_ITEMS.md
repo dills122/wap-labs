@@ -98,12 +98,15 @@ Current priority order is:
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
    complete but intentionally remains open while its declared WTP family is
    inactive and unmapped.
-5. Consume the stable WDP delivery fixture in cross-layer
-   binary-WBXML-to-engine parity evidence for the broader `WML-203` gate.
-6. Treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
+5. Treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
    until `TRN-7` and `WAE-6` close. Keep `D0-01`, frame migration, generators,
    and maintenance non-preemptive unless they directly unblock a strict
    obligation.
+
+The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path
+and its paired WASM story now provide the cross-layer `WML-203` evidence.
+`WML-203` remains in progress for mandatory prologue enforcement, full DTD
+content-model validation, and broader document-family evidence.
 
 Planning assessment:
 

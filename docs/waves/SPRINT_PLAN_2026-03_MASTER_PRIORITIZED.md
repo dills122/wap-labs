@@ -230,11 +230,6 @@ Current recommendation after all merged implementation workstreams:
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
    WSP to manufacture completion.
-5. **Cross-layer evidence lane:** consume the stable WDP delivery fixture in
-   binary-WBXML-to-engine parity evidence for the broader `WML-203` gate.
-   The current executable story proves text-deck behavior; the binary decoder
-   remains directly tested in transport rather than by that story.
-
 `W1-06`, `D0-01`, frame migration, and general maintenance remain
 non-preemptive until these upstream Class C gates materially change.
 `WSP-801`/`WSP-802` may continue only as isolated downstream foundation work;
@@ -250,6 +245,8 @@ Completed this sprint:
 6. WML-204 input/select direct evidence (23/23 mapped clauses)
 7. WML-203 WML/WBXML evidence tranche (49/49 mapped clauses)
 8. TRN-701 WDP, TRN-702 constrained payload, and TRN-703 WCMP direct evidence
+9. WML-203 schema-v2 WDP SDU -> fetch/WBXML decode -> native engine parity,
+   paired with executable WASM text-deck rendering evidence
 
 ## Capacity and WIP Rules
 

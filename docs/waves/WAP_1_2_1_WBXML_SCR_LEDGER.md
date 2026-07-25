@@ -115,6 +115,16 @@ Direct source-derived evidence is in
 corpus now has fixed failure expectations under the pinned decoder and remains
 robustness-only evidence.
 
+Cross-layer evidence is in the schema-v2
+`transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json` case
+`selected_cdpd_wbxml_unitdata_round_trip` and
+`wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior`. The test
+reconstructs the opaque WDP delivery payload, assigns the WMLC media type only
+at the fetch boundary, and compares native engine state/rendering with the
+paired canonical text deck. `pnpm test:story WML-203` exercises that paired
+text deck through the WASM engine boundary; it does not move WBXML decoding
+into the simulator.
+
 There are no unpromoted selected client clauses. The source sentence tracked as
 `WBXML-CL-CHARSET-UNREPRESENTABLE-NAME` explicitly terminates tokenisation and
 therefore belongs to the unselected server/encoder profile under

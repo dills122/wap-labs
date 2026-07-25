@@ -114,6 +114,8 @@ Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
 - `cargo test --manifest-path transport-rust/Cargo.toml`
+- `cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior`
+- `pnpm test:story WML-203`
 - `node scripts/check-wap-wbxml-conformance-ledger.mjs`
 
 ### WML-204: Complete field/control syntax and attribute validation

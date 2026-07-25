@@ -2350,7 +2350,7 @@ export const EXAMPLES: HostExample[] = [
     "key": "wml203WbxmlParity",
     "label": "WML 1.3 WBXML Structural Parity",
     "description": "Canonical WML 1.3 text matching the transport decoder's binary-basic-deck output.",
-    "goal": "Verify the text-only engine ingests the canonical deck model and preserves deterministic card navigation.",
+    "goal": "Verify the text-only engine ingests and renders the same canonical deck model as the reconstructed binary WBXML transport path.",
     "workItems": [
       "WML-203"
     ],
@@ -2361,14 +2361,16 @@ export const EXAMPLES: HostExample[] = [
       "WML-C-17"
     ],
     "testingAc": [
-      "Load the example and confirm the main card renders without a parser error.",
-      "Activate Inspect parity and confirm navigation reaches the details card."
+      "Load the example and confirm the main card renders Hello without a parser error."
     ],
     "flows": [
       {
-        "id": "canonical-doctype-deck-navigation",
-        "title": "Canonical WML 1.3 text remains navigable after deck-model ingestion",
-        "target": "host-sample",
+        "id": "canonical-doctype-deck-render",
+        "title": "Canonical WML 1.3 text matches reconstructed WBXML engine rendering",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
         "workItems": [
           "WML-203"
         ],
@@ -2383,30 +2385,39 @@ export const EXAMPLES: HostExample[] = [
             "activeCardId": "main",
             "focusedLinkIndex": 0,
             "externalNavigationIntent": null
+          },
+          "render": {
+            "textIncludes": [
+              "Hello"
+            ]
           }
         },
         "steps": [
           {
             "action": {
               "type": "key",
-              "key": "enter"
+              "key": "down"
             },
             "expect": {
               "state": {
-                "activeCardId": "details",
+                "activeCardId": "main",
                 "focusedLinkIndex": 0,
                 "externalNavigationIntent": null
               },
               "traceKinds": [
-                "KEY",
-                "ACTION_FRAGMENT"
-              ]
+                "KEY"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Hello"
+                ]
+              }
             }
           }
         ]
       }
     ],
-    "wml": "<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p>WML 1.3 text and decoded WBXML share this deck model.</p>\n    <a href=\"#details\">Inspect parity</a>\n  </card>\n  <card id=\"details\">\n    <p>Transport decoded bytes before the engine received textual WML.</p>\n  </card>\n</wml>\n"
+    "wml": "<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\" newcontext=\"false\" ordered=\"true\">\n    <p align=\"left\">Hello</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml204ControlValidation",

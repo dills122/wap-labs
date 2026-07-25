@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "1b9242799d00664a34079c455681ca43fb1422b9a529cad4fdcb78c33c37762a"
+        "sha256": "badbdc1e64a60eec5df6fc21813dba8cf7d1f3728ed89c9d51149157ffe5d16c"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -16287,6 +16287,11 @@
           "wbxml",
           "associated-assets"
         ],
+        "notes": [
+          "The schema-v2 TRN-706 WDP replay fixture now carries a canonical WBXML service data unit whose expected delivery payload is decoded at the fetch boundary and compared with the canonical text deck in the native engine.",
+          "The executable WML-203 story proves the paired normalized text deck through the WASM engine boundary; the simulator does not decode WBXML.",
+          "WML-203 remains in progress because mandatory prologue enforcement, full DTD content-model validation, and broader document-family evidence remain open."
+        ],
         "existingTickets": [
           "R0-08",
           "T0-07"
@@ -16303,6 +16308,8 @@
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
           "cargo test --manifest-path transport-rust/Cargo.toml",
+          "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior",
+          "pnpm test:story WML-203",
           "node scripts/check-wap-wbxml-conformance-ledger.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"

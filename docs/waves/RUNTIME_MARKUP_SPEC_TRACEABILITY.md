@@ -121,9 +121,12 @@ Legend:
   - `WAP-192*` binary tokenized representation + code-page model
   - Waves architecture boundary decisions
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Engine contracts do not require WBXML parser in WASM runtime for MVP.
-  - [ ] Transport/host boundary declares WBXML normalization responsibilities explicitly.
+  - Evidence: [x] `wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior`
+    consumes the schema-v2 WDP delivery payload, supplies
+    `application/vnd.wap.wmlc` at the fetch boundary, and compares native
+    engine state/rendering with the paired text deck.
+  - [x] Engine contracts do not require a WBXML parser in the WASM runtime for MVP.
+  - [x] Transport/host boundary declares WBXML normalization responsibilities explicitly.
 
 ### RQ-RMK-008 `go` encoding and post behavior clarifications
 
@@ -186,6 +189,9 @@ Legend:
     evidence.
   - [x] A canonical text-WML fixture and the exact textual output of the paired
     WBXML fixture reach equal engine `Deck` values.
+  - [x] The exact WBXML service data unit reconstructed from the schema-v2 WDP
+    delivery fixture reaches the native engine through `engineDeckInput` and
+    produces the same state and render list as the paired canonical text deck.
   - [x] Strict decode remains in `transport-rust`; `engine-wasm` receives
     normalized textual WML.
 

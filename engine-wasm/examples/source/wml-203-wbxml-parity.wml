@@ -3,19 +3,14 @@ label: WML 1.3 WBXML Structural Parity
 work-items: WML-203
 spec-items: WBXML-C-001, WBXML-C-010, WBXML-C-011, WML-C-17
 description: Canonical WML 1.3 text matching the transport decoder's binary-basic-deck output.
-goal: Verify the text-only engine ingests the canonical deck model and preserves deterministic card navigation.
+goal: Verify the text-only engine ingests and renders the same canonical deck model as the reconstructed binary WBXML transport path.
 testing-ac:
-- Load the example and confirm the main card renders without a parser error.
-- Activate Inspect parity and confirm navigation reaches the details card.
+- Load the example and confirm the main card renders Hello without a parser error.
 -->
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
   "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
-  <card id="main">
-    <p>WML 1.3 text and decoded WBXML share this deck model.</p>
-    <a href="#details">Inspect parity</a>
-  </card>
-  <card id="details">
-    <p>Transport decoded bytes before the engine received textual WML.</p>
+  <card id="main" newcontext="false" ordered="true">
+    <p align="left">Hello</p>
   </card>
 </wml>
