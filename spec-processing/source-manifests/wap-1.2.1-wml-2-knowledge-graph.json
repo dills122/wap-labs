@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "b3892828ab2d3a2cce5ae92b4a31ffcb90fde705595a80820fb20a91d9e5ba55"
+        "sha256": "c7e24ece1cdce7ad2f2fcce71cfe0b97528d1522f35955f2f56f873eb2b4d1ae"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -1992,7 +1992,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2027,7 +2027,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2062,7 +2062,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2097,7 +2097,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2132,7 +2132,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2167,7 +2167,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2202,7 +2202,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2237,7 +2237,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2272,7 +2272,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2386,7 +2386,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2562,7 +2562,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3402,7 +3402,7 @@
       "title": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3414,7 +3414,7 @@
       "title": "Preserve escaped literal characters that form part of an accepted formatted input value.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Preserve escaped literal characters that form part of an accepted formatted input value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3426,7 +3426,7 @@
       "title": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3438,7 +3438,7 @@
       "title": "Unset an existing name value that violates the mask before attempting the declared default.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Unset an existing name value that violates the mask before attempting the declared default.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3450,7 +3450,7 @@
       "title": "At commit, accept only values conforming to the effective input mask.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "At commit, accept only values conforming to the effective input mask.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3462,7 +3462,7 @@
       "title": "Limit committed text to maxlength when that attribute is present.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Limit committed text to maxlength when that attribute is present.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3474,7 +3474,7 @@
       "title": "Conceal the entered value when input type is password while preserving the actual variable value.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Conceal the entered value when input type is password while preserving the actual variable value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3486,7 +3486,7 @@
       "title": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3498,7 +3498,7 @@
       "title": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3534,7 +3534,7 @@
       "title": "Evaluate option value variable references before assigning the containing select name variable.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Evaluate option value variable references before assigning the containing select name variable.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3594,7 +3594,7 @@
       "title": "Do not create display side effects from select-variable updates without an explicit refresh task.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not create display side effects from select-variable updates without an explicit refresh task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }

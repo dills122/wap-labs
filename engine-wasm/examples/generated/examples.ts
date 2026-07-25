@@ -1112,6 +1112,7 @@ export const EXAMPLES: HostExample[] = [
     "description": "Source-valid WML input, select, and option controls with mandatory attributes exercised by the strict parser.",
     "goal": "Verify the simulator accepts the declared control grammar and renders deterministic text, password, and single-select controls.",
     "workItems": [
+      "B5-01",
       "R0-04",
       "WML-204"
     ],
@@ -1122,12 +1123,251 @@ export const EXAMPLES: HostExample[] = [
     ],
     "testingAc": [
       "Load the example and confirm the User, PIN, and Country controls render without a parser error.",
-      "Focus the User field, edit the value, press Enter, and confirm the committed text is rendered.",
-      "Focus the PIN field, enter alphabetic text, and confirm the mask rejects the commit without replacing the prior value.",
+      "Focus the PIN field, clear it, enter alphabetic text, and confirm the mask rejects the commit while preserving the retry draft.",
       "Correct the PIN to one through four digits, commit it, and confirm its rendered value remains visually masked.",
+      "Follow Verify PIN variable and confirm the committed password value initializes the proof field through vdata without being lost.",
       "Focus Country, move to France, press Enter, and confirm the committed option is rendered."
     ],
-    "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      User:\n      <input\n        name=\"UserName\"\n        title=\"User name\"\n        type=\"text\"\n        value=\"AHMED\"\n        size=\"12\"\n        maxlength=\"24\"\n        tabindex=\"1\"\n        accesskey=\"1\"\n      />\n    </p>\n    <p>\n      PIN:\n      <input\n        name=\"Pin\"\n        title=\"Numeric PIN\"\n        type=\"password\"\n        value=\"1234\"\n        format=\"4N\"\n        emptyok=\"false\"\n        size=\"4\"\n        maxlength=\"4\"\n        tabindex=\"2\"\n        accesskey=\"2\"\n      />\n    </p>\n    <p>\n      Country:\n      <select\n        name=\"Country\"\n        title=\"Country\"\n        multiple=\"false\"\n        iname=\"CountryIndex\"\n        ivalue=\"1\"\n        tabindex=\"3\"\n      >\n        <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n        <option value=\"France\" title=\"France\">France</option>\n        <option value=\"Germany\" title=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "waves-input-rejection-retry-and-password-state",
+        "title": "Waves rejects invalid input atomically and preserves committed password state",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "B5-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "specItems": [
+          "WML-C-33",
+          "WML-C-41",
+          "WML-C-43"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "controls",
+            "focusedLinkIndex": 0,
+            "focusedInputEditName": null
+          },
+          "render": {
+            "textIncludes": [
+              "AHMED",
+              "****",
+              "Verify PIN variable",
+              "Jordan"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": null
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "x"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "1234"
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Backspace"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "123"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Backspace"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "12"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Backspace"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "1"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Backspace"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": ""
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "ab"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "ab"
+              },
+              "render": {
+                "textIncludes": [
+                  "**"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "ab"
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_REJECT"
+              ],
+              "statusIncludes": "value does not conform to format mask"
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Backspace"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "a"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Backspace"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": ""
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "987"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Pin",
+                "focusedInputEditValue": "987"
+              },
+              "render": {
+                "textIncludes": [
+                  "***"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_REJECT",
+                "INPUT_EDIT_COMMIT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "***"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "proof",
+                "focusedLinkIndex": 0
+              },
+              "render": {
+                "textIncludes": [
+                  "Committed PIN:",
+                  "PinProof: 987"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      User:\n      <input\n        name=\"UserName\"\n        title=\"User name\"\n        type=\"text\"\n        value=\"AHMED\"\n        size=\"12\"\n        maxlength=\"24\"\n        tabindex=\"1\"\n        accesskey=\"1\"\n      />\n    </p>\n    <p>\n      PIN:\n      <input\n        name=\"Pin\"\n        title=\"Numeric PIN\"\n        type=\"password\"\n        value=\"1234\"\n        format=\"4N\"\n        emptyok=\"false\"\n        size=\"4\"\n        maxlength=\"4\"\n        tabindex=\"2\"\n        accesskey=\"2\"\n      />\n    </p>\n    <p><a href=\"#proof\">Verify PIN variable</a></p>\n    <p>\n      Country:\n      <select\n        name=\"Country\"\n        title=\"Country\"\n        multiple=\"false\"\n        iname=\"CountryIndex\"\n        ivalue=\"1\"\n        tabindex=\"3\"\n      >\n        <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n        <option value=\"France\" title=\"France\">France</option>\n        <option value=\"Germany\" title=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <do type=\"accept\"><noop/></do>\n  </card>\n  <card id=\"proof\" title=\"PIN Variable Proof\">\n    <p>Committed PIN:</p>\n    <p><input name=\"PinProof\" value=\"$(Pin)\" format=\"4N\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml204SelectSemantics",

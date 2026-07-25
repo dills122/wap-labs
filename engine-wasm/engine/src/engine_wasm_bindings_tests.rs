@@ -22,6 +22,18 @@ fn draw_len(render_value: &JsValue) -> u32 {
     Array::from(&draw).length()
 }
 
+fn draw_text(render_value: &JsValue) -> Vec<String> {
+    let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
+    Array::from(&draw)
+        .iter()
+        .filter_map(|command| {
+            Reflect::get(&command, &JsValue::from_str("text"))
+                .ok()
+                .and_then(|value| value.as_string())
+        })
+        .collect()
+}
+
 #[wasm_bindgen_test]
 fn wasm_m1_02_load_deck_context_boundary_sets_metadata() {
     let mut engine = WmlEngine::wasm_new();
@@ -297,6 +309,58 @@ fn wasm_wml_204_input_initialization_matches_native_state() {
     assert_eq!(
         engine.focused_input_edit_value_wasm(),
         Some("1234".to_string())
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_input_vdata_maxlength_and_password_state_match_native() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r#"
+              <wml>
+                <card id="home">
+                  <input name="DefaultPin" value="12345-123" format="NNNNN\-3N"/>
+                  <input
+                    name="Pin"
+                    value="$(DefaultPin)"
+                    type="password"
+                    format="NNNNN\-3N"
+                    maxlength="9"
+                  />
+                </card>
+              </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(
+        engine.get_var_wasm("Pin".to_string()),
+        Some("12345-123".to_string())
+    );
+    let initial_render = engine.render_wasm().expect("render should succeed");
+    assert!(draw_text(&initial_render)
+        .iter()
+        .any(|text| text.contains("[Pin: *****-***]")));
+
+    assert!(engine
+        .handle_key_wasm("down".to_string())
+        .map(|_| true)
+        .expect("focus should move to password input"));
+    assert!(engine
+        .begin_focused_input_edit_wasm()
+        .expect("edit should begin"));
+    assert!(engine.set_focused_input_edit_draft_wasm("54321-9876".to_string()));
+    assert_eq!(
+        engine.focused_input_edit_value_wasm(),
+        Some("54321-987".to_string())
+    );
+    assert!(engine
+        .commit_focused_input_edit_wasm()
+        .expect("valid truncated value should commit"));
+    assert_eq!(
+        engine.get_var_wasm("Pin".to_string()),
+        Some("54321-987".to_string())
     );
 }
 

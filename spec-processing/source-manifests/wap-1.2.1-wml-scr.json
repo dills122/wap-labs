@@ -1655,7 +1655,7 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, and name/value initialization interleaved with select controls in document order. Invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values. Size/tabindex behavior, general vdata validation/conversion, and language-aware non-Basic-Latin mask repertoires remain incomplete.",
+        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Input value vdata defaults are evaluated at card entry; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values and visible password mask literals stay unobscured while the actual variable remains intact. General vdata validation/conversion beyond input value defaults and language-aware non-Basic-Latin mask repertoires remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -1709,6 +1709,21 @@
             "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
             "test": "wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default",
             "command": "cd engine-wasm/engine && cargo test wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_initialization_evaluates_vdata_default_in_document_order",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_initialization_evaluates_vdata_default_in_document_order"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_maxlength_limits_draft_and_committed_value",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_maxlength_limits_draft_and_committed_value"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_password_display_conceals_entry_and_preserves_variable",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_password_display_conceals_entry_and_preserves_variable"
           },
           {
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
@@ -2235,7 +2250,7 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Select has deterministic DTD-derived syntax validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, evaluated option values, task-time variable synchronization, and onpick dispatch. General vdata/HREF validation and conversion, tabindex behavior, no-implicit-refresh direct evidence, and optional optgroup capability declaration remain incomplete.",
+        "assessmentNote": "Select has deterministic DTD-derived syntax validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, evaluated option values, task-time variable synchronization, onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. General vdata/HREF validation and conversion, tabindex behavior, and optional optgroup capability declaration remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -2284,6 +2299,11 @@
             "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
             "test": "wml_fx_select_variables_are_resynchronized_before_link_task_execution",
             "command": "cd engine-wasm/engine && cargo test wml_fx_select_variables_are_resynchronized_before_link_task_execution"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls"
           }
         ],
         "evidenceState": "direct-test-linked"

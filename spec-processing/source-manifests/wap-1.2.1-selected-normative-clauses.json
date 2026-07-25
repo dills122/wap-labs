@@ -43,14 +43,14 @@
     "recommendedClauseCount": 31,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 781,
-    "assessedClauseCount": 89
+    "assessedClauseCount": 100
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "8564469f6b7f9ec54d72d387c655953f9ebbb029af71e45651fe9b28231d5d0a",
+      "parentLedgerSha256": "ceb5e2549ad494f83f986e044fabe72b4984374f75d6e56eebec21c97a01d722",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -6511,8 +6511,13 @@
           "fixturePlan": {
             "id": "WML-FX-SELECT-NO-IMPLICIT-REFRESH",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Do not create display side effects from select-variable updates without an explicit refresh task."
+            "status": "implemented",
+            "assertion": "Do not create display side effects from select-variable updates without an explicit refresh task.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6529,7 +6534,7 @@
             "parentImplementationSnapshot": {
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6597,8 +6602,13 @@
           "fixturePlan": {
             "id": "WML-FX-OPTION-VALUE-EVALUATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Evaluate option value variable references before assigning the containing select name variable."
+            "status": "implemented",
+            "assertion": "Evaluate option value variable references before assigning the containing select name variable.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6616,7 +6626,7 @@
               "WML-C-41": "partial",
               "WML-C-43": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6738,8 +6748,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-STRUCTURE",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Require an input variable name and constrain input attributes to the declared text-entry grammar."
+            "status": "implemented",
+            "assertion": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_structure"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6756,7 +6771,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6778,8 +6793,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-MASK-COMMIT",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "At commit, accept only values conforming to the effective input mask."
+            "status": "implemented",
+            "assertion": "At commit, accept only values conforming to the effective input mask.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6796,7 +6816,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6818,8 +6838,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-REJECTION-ATOMICITY",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt."
+            "status": "implemented",
+            "assertion": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6836,7 +6861,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6858,8 +6883,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-INITIALIZATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Initialize each input from a valid existing name variable or a valid default value, then preload the control."
+            "status": "implemented",
+            "assertion": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_initialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6876,7 +6906,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6898,8 +6928,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-INVALID-INITIAL-VALUE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Unset an existing name value that violates the mask before attempting the declared default."
+            "status": "implemented",
+            "assertion": "Unset an existing name value that violates the mask before attempting the declared default.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6916,7 +6951,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6938,8 +6973,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-EMPTY-COMMIT",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Accept an empty committed input only when the effective mask and emptyok rules allow it."
+            "status": "implemented",
+            "assertion": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_empty_commit_applies_format_and_emptyok_precedence"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6956,7 +6996,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -6978,8 +7018,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-PASSWORD-DISPLAY",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Conceal the entered value when input type is password while preserving the actual variable value."
+            "status": "implemented",
+            "assertion": "Conceal the entered value when input type is password while preserving the actual variable value.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_password_display_conceals_entry_and_preserves_variable"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6996,7 +7041,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -7018,8 +7063,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-FORMAT-LITERALS",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Preserve escaped literal characters that form part of an accepted formatted input value."
+            "status": "implemented",
+            "assertion": "Preserve escaped literal characters that form part of an accepted formatted input value.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -7036,7 +7086,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -7058,8 +7108,13 @@
           "fixturePlan": {
             "id": "WML-FX-INPUT-MAXLENGTH",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Limit committed text to maxlength when that attribute is present."
+            "status": "implemented",
+            "assertion": "Limit committed text to maxlength when that attribute is present.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_maxlength_limits_draft_and_committed_value"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -7076,7 +7131,7 @@
             "parentImplementationSnapshot": {
               "WML-C-33": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },

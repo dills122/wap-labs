@@ -466,55 +466,55 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-EMPTY-COMMIT` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-EMPTY-COMMIT` (`runtime`, `implemented`)
 - **WML-CL-INPUT-FORMAT-LITERALS** — Preserve escaped literal characters that form part of an accepted formatted input value.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-FORMAT-LITERALS` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-FORMAT-LITERALS` (`runtime`, `implemented`)
 - **WML-CL-INPUT-INITIALIZATION** — Initialize each input from a valid existing name variable or a valid default value, then preload the control.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-INITIALIZATION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-INITIALIZATION` (`runtime`, `implemented`)
 - **WML-CL-INPUT-INVALID-INITIAL-VALUE** — Unset an existing name value that violates the mask before attempting the declared default.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-INVALID-INITIAL-VALUE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-INVALID-INITIAL-VALUE` (`runtime`, `implemented`)
 - **WML-CL-INPUT-MASK-COMMIT** — At commit, accept only values conforming to the effective input mask.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-MASK-COMMIT` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-MASK-COMMIT` (`runtime`, `implemented`)
 - **WML-CL-INPUT-MAXLENGTH** — Limit committed text to maxlength when that attribute is present.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-MAXLENGTH` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-MAXLENGTH` (`runtime`, `implemented`)
 - **WML-CL-INPUT-PASSWORD-DISPLAY** — Conceal the entered value when input type is password while preserving the actual variable value.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-PASSWORD-DISPLAY` (`rendering`, `planned`)
+  - Fixture: `WML-FX-INPUT-PASSWORD-DISPLAY` (`rendering`, `implemented`)
 - **WML-CL-INPUT-REJECTION-ATOMICITY** — On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-REJECTION-ATOMICITY` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INPUT-REJECTION-ATOMICITY` (`runtime`, `implemented`)
 - **WML-CL-INPUT-STRUCTURE** — Require an input variable name and constrain input attributes to the declared text-entry grammar.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-OPTION-ONPICK-MULTI** — For multiple selection, dispatch onpick whenever the option is selected or deselected.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
@@ -532,7 +532,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
   - Parents: `WML-C-41`, `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-OPTION-VALUE-EVALUATION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-OPTION-VALUE-EVALUATION` (`runtime`, `implemented`)
 - **WML-CL-SELECT-DEFAULT-PRECEDENCE** — Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
@@ -562,7 +562,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-NO-IMPLICIT-REFRESH` (`rendering`, `planned`)
+  - Fixture: `WML-FX-SELECT-NO-IMPLICIT-REFRESH` (`rendering`, `implemented`)
 - **WML-CL-SELECT-PRESELECTION** — Deselect all options and then select every positive validated default index.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)

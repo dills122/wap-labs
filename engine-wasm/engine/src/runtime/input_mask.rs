@@ -147,6 +147,31 @@ impl InputMask {
     pub(crate) fn allows_empty(&self) -> bool {
         self.accepts("")
     }
+
+    pub(crate) fn obscure(&self, value: &str) -> String {
+        let mut chars = value.chars();
+        let mut obscured = String::new();
+        for part in &self.parts {
+            match part {
+                MaskPart::Required(_) => {
+                    if chars.next().is_some() {
+                        obscured.push('*');
+                    }
+                }
+                MaskPart::Literal(expected) => match chars.next() {
+                    Some(actual) if actual == *expected => obscured.push(actual),
+                    Some(_) => obscured.push('*'),
+                    None => {}
+                },
+                MaskPart::Repeat { .. } => {
+                    obscured.extend(chars.by_ref().map(|_| '*'));
+                    return obscured;
+                }
+            }
+        }
+        obscured.extend(chars.map(|_| '*'));
+        obscured
+    }
 }
 
 #[cfg(test)]
@@ -214,5 +239,6 @@ mod tests {
         assert!(!mask.accepts("12345123"));
         assert!(!mask.accepts("12345-"));
         assert!(!mask.accepts("12345-1234"));
+        assert_eq!(mask.obscure("12345-123"), "*****-***");
     }
 }

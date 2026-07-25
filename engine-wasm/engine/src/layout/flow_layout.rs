@@ -36,10 +36,11 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             name,
                             value,
                             is_password,
+                            mask,
                             ..
                         } => {
                             let display_value = if *is_password {
-                                "*".repeat(value.chars().count())
+                                mask.obscure(value)
                             } else {
                                 value.clone()
                             };
