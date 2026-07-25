@@ -78,6 +78,17 @@ describe('KeyboardIntentRouter', () => {
     expect(router.isActionInFlight()).toBe(false);
   });
 
+  it('lets the engine commit an active input and resolve accept on Enter', async () => {
+    const deps = createDeps();
+    const router = new KeyboardIntentRouter(deps);
+
+    router.handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await flushAsyncWork();
+
+    expect(deps.applyFocusedControlEditKey).toHaveBeenCalledWith('Enter');
+    expect(deps.applyEngineKey).toHaveBeenCalledWith('enter');
+  });
+
   it('routes Backspace through navigateBackWithFallback and words status by outcome', async () => {
     const deps = createDeps({
       navigateBackWithFallback: vi.fn(async () => 'host' as const)
