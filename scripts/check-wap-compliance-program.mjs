@@ -531,9 +531,29 @@ if (
     'WSP-8 must retain the exact connectionless Class C path and WTP capability gate'
   );
 }
-const wml203 = program.sprints
-  .find((sprint) => sprint.id === 'WML-2')
-  ?.workItems.find((workItem) => workItem.id === 'WML-203');
+const wmlSprint = program.sprints.find((sprint) => sprint.id === 'WML-2');
+const wml201 = wmlSprint?.workItems.find((workItem) => workItem.id === 'WML-201');
+if (
+  wml201?.status !== 'done' ||
+  JSON.stringify(wml201?.scrMatrix) !==
+    JSON.stringify({ family: 'wml', scope: 'all-effective-rows' }) ||
+  !wml201?.acceptance?.some(
+    (line) =>
+      line.includes('29 retain validated code/test links') &&
+      line.includes('18 retain additive gap work items') &&
+      line.includes('29 optional rows')
+  ) ||
+  !wml201?.acceptance?.some(
+    (line) => line.includes('All 174 selected WML clauses')
+  ) ||
+  !wml201?.evidence?.includes('node scripts/wap-context-pack.mjs WML-201') ||
+  !wml201?.evidence?.includes('pnpm wap-graph:check')
+) {
+  failures.push(
+    'WML-201 must retain the completed 76-row evidence matrix and direct WML-family graph closure'
+  );
+}
+const wml203 = wmlSprint?.workItems.find((workItem) => workItem.id === 'WML-203');
 if (
   !wml203?.acceptance?.some((line) =>
     line.includes('WBXML-C-001, WBXML-C-010, and WBXML-C-011')

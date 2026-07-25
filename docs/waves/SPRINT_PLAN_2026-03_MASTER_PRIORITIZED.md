@@ -216,8 +216,8 @@ Implementation reference:
 
 Current recommendation after all merged implementation workstreams:
 
-1. **Mapping/evidence lane:** close `WML-201`'s declared WML-family mapping
-   gap and link direct evidence to the already complete 76-row SCR matrix.
+1. **Mapping/evidence lane:** preserve `WML-201`'s completed 76-row evidence
+   projection and 174/174 direct WML-clause mapping.
 2. **Engine lane, first:** adopt direct WML-family clause mappings for
    `WML-205`, then implement the deterministic malformed/invalid/unsupported/
    recoverable error taxonomy. The current zero-clause graph gap is the first

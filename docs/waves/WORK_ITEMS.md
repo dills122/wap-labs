@@ -85,8 +85,8 @@ evidence.
 
 Current priority order is:
 
-1. Close `WML-201`'s declared WML-family mapping gap and link direct evidence
-   to the already complete 76-row SCR matrix.
+1. Preserve `WML-201`'s completed 76-row SCR evidence projection and
+   174/174 direct WML-clause mapping.
 2. Start `WML-205` with its missing direct WML-family graph mapping, then
    implement its deterministic parse/error taxonomy.
 3. Close the residual `WML-202` deck/head/access/meta gate and then the
@@ -1798,9 +1798,11 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  2 implemented, 23 partial, and 22 missing rows, with direct tests for 25
-  rows. Nested clause, optional capability, and release-gate evidence remain,
-  so this ticket is not done.
+  6 implemented, 23 partial, and 18 missing rows, with validated code/test
+  evidence for 29 rows. `WML-201` directly projects all 76 rows and maps all
+  174 selected WML clauses without treating gaps as implementation. Nested
+  clause, optional capability, and release-gate evidence remain, so this
+  ticket is not done.
 
 ### R0-02 Inter-card navigation process-order conformance
 

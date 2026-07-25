@@ -1,7 +1,7 @@
 # WAP-191 (WML 1.3) Full-Stack Compliance Audit
 
-Version: v0.2
-Date: 2026-07-23
+Version: v0.3
+Date: 2026-07-25
 
 Effective primary source chain:
 
@@ -60,13 +60,15 @@ WAE, WSP, WTP, WDP, or security-domain traceability docs.
 | Image semantics | 11.9, 15.1.6 | parser + renderer + host media | missing/partial | Minimal/none in engine renderer | Implement `img` element semantics and capability-gated hints |
 | UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | partial | Unknown-tag robustness exists | Add access control enforcement path, low-memory policy behavior, deterministic unknown-DTD handling |
 | WML binary representation and token tables | 14.x, 15.2 | transport/encoder tooling | partial | WBXML decode boundary present | Add encoder/validation tooling path and WBXML token/literal conformance fixtures |
-| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | 76-row source ledger; WAP-215 selects 39 required Class C client rows expanded into 174 clauses and assessed as 6 implemented / 23 partial / 10 missing; 29 exact test-linked rows across the full ledger | Execute remaining direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
+| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | WML-201 directly projects all 76 source rows and maps all 174 selected WML clauses; WAP-215 selects 39 required Class C client rows assessed as 6 implemented / 23 partial / 10 missing; 29 exact test-linked rows, 18 mapped mandatory gaps, and 29 optional rows remain explicit | Execute remaining direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
 
 ## Major Gaps Not Fully Tracked Before This Audit
 
 1. The 76-row source ledger and first mandatory implementation audit now
-   exist. Exact direct tests are linked for 25 rows; 22 mandatory rows are
-   explicitly missing. The exact identifiers are `WML-C-01..59`,
+   exist. Exact direct tests are linked for 29 rows; 18 mandatory rows are
+   explicitly missing. WML-201 now exposes every row, its direct spec anchor,
+   evidence state, code/test links or mapped gap, and all 174 selected WML
+   clauses through the generated graph. The exact identifiers are `WML-C-01..59`,
    `WML-S-60..69`, and `WML-C-70..76`; SIN 105 adds optional `WML-C-76` for
    `tabindex`.
 2. Section 12.5 inter-card process ordering (including failure semantics) is only partially ticketed.

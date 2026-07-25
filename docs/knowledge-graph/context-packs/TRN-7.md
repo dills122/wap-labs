@@ -16,6 +16,7 @@
 - Nodes: 176
 - Edges: 548
 - Selected work items: 8
+- Direct SCR rows: 0
 - Direct normative clauses: 91
 - Work items without direct clause mappings: 3
 - Work items with unmapped declared normative families: 3
@@ -44,6 +45,7 @@ Exit gates:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wdp`, `wdp-wcmp-adaptation`
 - Existing tickets: `T0-19`
+- Direct SCR rows: 0
 - Direct normative clauses: 49
 
 Outputs:
@@ -66,6 +68,7 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wdp`
 - Existing tickets: `T0-19`
+- Direct SCR rows: 0
 - Direct normative clauses: 9
 
 Outputs:
@@ -93,6 +96,7 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wcmp`, `wdp-wcmp-adaptation`
 - Existing tickets: `T0-17`
+- Direct SCR rows: 0
 - Direct normative clauses: 0
 
 Outputs:
@@ -117,6 +121,7 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wtp`
 - Existing tickets: `T0-08`, `T0-18`
+- Direct SCR rows: 0
 - Direct normative clauses: 0
 
 Outputs:
@@ -137,6 +142,7 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wtp`
 - Existing tickets: `T0-18`
+- Direct SCR rows: 0
 - Direct normative clauses: 0
 
 Outputs:
@@ -157,6 +163,7 @@ Evidence commands:
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wdp`, `wtp`
 - Existing tickets: `T0-22`, `T0-24`
+- Direct SCR rows: 0
 - Direct normative clauses: 11
 
 Outputs:
@@ -182,6 +189,7 @@ Evidence commands:
 - Owner layers: `documentation`, `transport-rust`, `qa`
 - Source families: `wdp`, `wtp`, `wcmp`
 - Existing tickets: None
+- Direct SCR rows: 0
 - Direct normative clauses: 9
 
 Outputs:
@@ -213,6 +221,7 @@ Evidence commands:
 - Owner layers: `documentation`, `transport-rust`, `qa`
 - Source families: `wdp`, `wcmp`
 - Existing tickets: None
+- Direct SCR rows: 0
 - Direct normative clauses: 13
 
 Outputs:
@@ -236,6 +245,9 @@ Evidence commands:
 - `node scripts/wap-context-pack.mjs TRN-708`
 - `node scripts/check-wap-knowledge-graph.mjs`
 
+## Direct SCR evidence
+
+- No direct SCR matrix rows are mapped for this selection.
 ## Direct normative obligations
 
 ### TRN-701

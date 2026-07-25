@@ -204,13 +204,13 @@ Type contract:
 
 ## Next implementation slice
 
-1. Close the `WML-201` declared-family mapping gap, then map and implement
-   `WML-205`.
+1. Preserve the completed `WML-201` 76-row evidence projection, then map and
+   implement `WML-205`.
 2. Close the residual `WML-202` and `WML-204` gates serially because they
    overlap parser/runtime test files.
-3. Preserve the completed direct evidence for `WML-202` (9/9 clauses),
-   `WML-203` (49/49 mapped clauses), and `WML-204` (23/23 clauses); broader
-   work-item acceptance remains open.
+3. Preserve the completed direct mappings for `WML-201` (174/174 WML
+   clauses), `WML-202` (9/9 clauses), `WML-203` (49/49 mapped clauses), and
+   `WML-204` (23/23 clauses); broader implementation acceptance remains open.
 4. Keep `D0-01`, `W1-06`, `A5-03`, `B5-01`, and `M1-03` queued as downstream
    or non-preemptive work rather than current sprint drivers.
 

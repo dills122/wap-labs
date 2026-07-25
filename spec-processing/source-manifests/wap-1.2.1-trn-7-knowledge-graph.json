@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "e74de9f9e8a30af7e3de4e43ce988e42de719feadf76c9c98590659776135394"
+        "sha256": "f11d6dae41993f410059ed88af30c274452686b39ec61018d1a4fa0fadc30a1a"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "42261c8648a7008acdf67e50f2e374eb4481f127411faf63770c128060294400"
+        "sha256": "8593ebeb09a4d46f196e16e5375c7d839610885cdb63b696b46a0384828223c5"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
@@ -100,6 +100,26 @@
         "wcmp",
         "wdp"
       ]
+    },
+    "directScrRowCountsByWorkItem": {
+      "TRN-701": 0,
+      "TRN-702": 0,
+      "TRN-703": 0,
+      "TRN-704": 0,
+      "TRN-705": 0,
+      "TRN-706": 0,
+      "TRN-707": 0,
+      "TRN-708": 0
+    },
+    "directScrRowEvidenceStatesByWorkItem": {
+      "TRN-701": {},
+      "TRN-702": {},
+      "TRN-703": {},
+      "TRN-704": {},
+      "TRN-705": {},
+      "TRN-706": {},
+      "TRN-707": {},
+      "TRN-708": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
       "TRN-703": [

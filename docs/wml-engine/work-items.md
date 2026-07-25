@@ -28,8 +28,8 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 After the merged WML-202 direct slice, current aligned engine priorities are:
 
-1. Close `WML-201`'s declared WML-family mapping gap against the complete
-   76-row SCR matrix.
+1. Preserve `WML-201`'s completed 76-row SCR evidence projection and its
+   174/174 direct WML-clause mapping.
 2. Add the missing direct WML-family graph mapping for `WML-205`, then close
    its deterministic WML parse/error taxonomy.
 3. Close the residual `WML-202` deck/head/access/meta gate, followed by the

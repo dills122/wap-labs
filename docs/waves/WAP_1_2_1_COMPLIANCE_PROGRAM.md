@@ -60,6 +60,9 @@ All nine selected Class C family increments are complete at SCR level:
   18 missing; the selected 39-row client subset is 6 implemented, 23 partial,
   and 10 missing;
 - 29 rows have direct code symbols and runnable test evidence.
+- `WML-201` directly projects all 76 WML rows and all 174 selected WML
+  clauses; the remaining 18 mandatory gaps and 29 optional unassessed rows
+  stay explicit rather than becoming inferred implementation claims.
 - 86 effective WAE SCR rows are extracted after applying the WAP-190 SIN
   chain, with another 22 removed rows retained as historical change records;
 - `WAESpec:MCF` selects 11 mandatory WAE client rows, while 40 optional client

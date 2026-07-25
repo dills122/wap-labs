@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `maps-to` → [[requirements/RQ-RMK-002|RQ-RMK-002]]
+- `planned-by` → [[work-items/WML-201|WML-201]]
 - `planned-by` → [[work-items/WML-202|WML-202]]
 - `refines` → [[scr-rows/WML-C-08|WML-C-08]]
 - `refines` → [[scr-rows/WML-C-35|WML-C-35]]
@@ -44,6 +45,7 @@ tags:
     "R0-01",
     "R0-02",
     "R0-12",
+    "WML-201",
     "WML-202"
   ],
   "ownerLayers": [
