@@ -4,7 +4,7 @@ key: "WDP-FX-WAP-PORT-REGISTRY"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

@@ -4,7 +4,7 @@ key: "WDP-FX-DESTINATION-ADDRESS-SEMANTICS"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Treat the destination address as the network identity of the receiving device for the submitted user data.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

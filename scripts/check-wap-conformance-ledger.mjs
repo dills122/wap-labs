@@ -622,7 +622,7 @@ if (aggregateRowCount !== 712 || aggregateSelectedCount !== 201) {
 }
 if (
   JSON.stringify(aggregateStatusCounts) !==
-  JSON.stringify({ implemented: 13, partial: 87, missing: 101 })
+  JSON.stringify({ implemented: 22, partial: 78, missing: 101 })
 ) {
   aggregateFailures.push(
     `selected-profile status aggregate drift: ${JSON.stringify(aggregateStatusCounts)}`

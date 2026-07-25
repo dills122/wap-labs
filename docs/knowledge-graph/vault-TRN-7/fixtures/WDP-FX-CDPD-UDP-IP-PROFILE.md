@@ -4,7 +4,7 @@ key: "WDP-FX-CDPD-UDP-IP-PROFILE"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

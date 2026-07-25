@@ -4,7 +4,7 @@ key: "WDP-FX-UDP-DESTINATION-PORT-CONTEXT"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Interpret a UDP destination port within the context of its destination IPv4 address.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

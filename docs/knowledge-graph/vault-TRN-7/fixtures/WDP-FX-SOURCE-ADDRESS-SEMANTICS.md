@@ -4,7 +4,7 @@ key: "WDP-FX-SOURCE-ADDRESS-SEMANTICS"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Treat the source address as the unique network identity of the device issuing the transport request.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

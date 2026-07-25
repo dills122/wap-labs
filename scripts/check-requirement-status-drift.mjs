@@ -87,7 +87,7 @@ const familyDefinitions = [
     expectedRows: 146,
     expectedSelected: 9,
     expectedClauses: 49,
-    expectedStatus: { implemented: 0, partial: 9, missing: 0 },
+    expectedStatus: { implemented: 9, partial: 0, missing: 0 },
     activeDoc: 'docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md'
   },
   {
@@ -154,7 +154,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 13, blocked: 1, 'in-progress': 10, todo: 54 })
+  JSON.stringify({ done: 14, blocked: 1, 'in-progress': 9, todo: 54 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -320,7 +320,7 @@ if (
   aggregateSelected !== 201 ||
   aggregateClauses !== 781 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 13, partial: 87, missing: 101 })
+  JSON.stringify({ implemented: 22, partial: 78, missing: 101 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -343,7 +343,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 201 selected rows now expand into 781',
-      'direct conformance fixture implementation and execution remain'
+      '77 WDP/WCMP clauses are directly fixture-backed'
     ]
   ],
   [
@@ -364,7 +364,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      'all 781 direct fixtures planned'
+      '77 fixture-backed clauses assessed'
     ]
   ],
   [

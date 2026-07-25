@@ -4,7 +4,7 @@ key: "WDP-FX-UDP-CHECKSUM-PADDING"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

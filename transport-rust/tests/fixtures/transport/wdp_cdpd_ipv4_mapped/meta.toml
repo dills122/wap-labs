@@ -1,0 +1,28 @@
+name = "wdp-cdpd-ipv4-mapped"
+description = "Source-derived WAP-200, RFC 768, and RFC 791 evidence for the selected Class C CDPD/IPv4 WDP path."
+mode = "mapped"
+work_items = ["TRN-701", "T0-19"]
+spec_items = [
+  "WDP-C-001",
+  "WDP-CORE-C-001",
+  "WDP-PF-C-001",
+  "WDP-PF-C-002",
+  "WDP-CT-C-002",
+  "WDP-NA-C-000",
+  "WDP-NA-C-003",
+  "WDP-NA-C-006",
+  "WDP-NA-C-007",
+  "RQ-TRN-001",
+  "RQ-TRN-002",
+  "RQ-TRN-003",
+]
+testing_ac = [
+  "Preserves all T-DUnitdata request and indication address, port, and user-data parameters without a connection precondition.",
+  "Declares CDPD/IPv4 bearer value 0x0D, UDP protocol 17, four-octet addresses, and connectionless WSP port 9200.",
+  "Recognizes the complete WAP Appendix B registered port table without activating optional services.",
+  "Encodes and decodes the selected IPv4 and UDP headers, lengths, checksums, and odd-octet checksum padding byte-for-byte.",
+  "Accepts an omitted IPv4 UDP checksum and rejects invalid non-zero checksums deterministically.",
+  "Rejects invalid IPv4 version, IHL, total length, TTL, protocol, checksum, and unreassembled fragments deterministically.",
+  "Keeps IPv4 fragmentation/reassembly below WDP and does not claim WDP segmentation/reassembly closure.",
+  "Enforces the 576-octet IPv4 baseline send assurance and DF/path-MTU discard policies deterministically.",
+]

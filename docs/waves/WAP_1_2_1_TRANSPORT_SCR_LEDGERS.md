@@ -65,10 +65,10 @@ This produces 22 selected-path rows:
 
 | Family | Selected path | Current audit | Direct normative tests |
 |---|---:|---|---:|
-| WDP | 9 | 0 implemented / 9 partial / 0 missing | 0 |
+| WDP | 9 | 9 implemented / 0 partial / 0 missing | 9 |
 | WCMP | 5 | 5 implemented / 0 partial / 0 missing | 5 |
 | WSP | 8 | 0 implemented / 8 partial / 0 missing | 0 |
-| **Total** | **22** | **5 implemented / 17 partial / 0 missing** | **5** |
+| **Total** | **22** | **14 implemented / 8 partial / 0 missing** | **14** |
 
 The two optional WDP rows and four optional WCMP/WSP root-dependency rows are
 required by the selected alternatives. Their source `O` status is preserved;
@@ -78,23 +78,27 @@ the project profile makes them strict for this path.
 
 ### WDP
 
-The Rust transport has a useful WDP-shaped foundation:
+The Rust transport now carries direct evidence for the selected CDPD/IPv4
+WDP path:
 
-- `WdpDatagram` carries source/destination address, ports, and payload;
-- `DatagramTransport` exposes send/receive operations;
-- `UdpDatagramTransport` binds the datagram model to IPv4/IPv6 UDP;
-- known WAP service ports `9200..9203` are represented;
-- payload bounds and a segmentation/reassembly policy surface exist.
+- `TDUnitdataRequest` and `TDUnitdataIndication` preserve the selected source
+  and destination IPv4 addresses, ports, and user data;
+- `CdpdIpv4Profile` declares bearer value `0x0D`, IPv4 addresses, UDP
+  protocol number `17`, and connectionless WSP port `9200`;
+- the complete Appendix B registry is represented for ports `2805`, `2923`,
+  `2948`, `2949`, and `9200..9207`;
+- the bounded IPv4/UDP codec verifies header layout, lengths, IPv4 and UDP
+  checksums, odd-octet checksum padding, TTL, protocol, and address identity;
+- explicit send policy covers the 576-octet IPv4 baseline, larger-destination
+  assurance, DF/path-MTU rejection, and UDP checksum omission.
 
-All nine selected rows remain partial. The code has no machine-declared CDPD
-strict profile, no source-derived `T-DUnitdata` vectors, and no proof that its
-address/port/error semantics cover the effective WAP-200 clauses.
-
-`CONF-003` now expands the nine rows into 49 source-anchored WAP-200,
-RFC 768, and RFC 791 clauses with planned fixtures. The slice covers the
-T-DUnitdata contract, port registries, UDP header/checksum/length rules, IPv4
-addressing and fragmentation boundaries, and the CDPD capability declaration.
-Clause implementation remains `not-assessed`; parent rows remain partial.
+All nine selected rows and their 49 source-anchored WAP-200, RFC 768, and
+RFC 791 clauses link to the direct fixture at
+`transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`.
+IPv4 fragments are rejected with their reassembly key and must be reassembled
+by the destination IP module below WDP. This proves the TRN-701 adaptation
+boundary; it does not implement or close the separately unmapped TRN-702
+segmentation/reassembly policy.
 
 ### WCMP
 
@@ -180,8 +184,10 @@ adapter.
 
 ## Work closure
 
-- `TRN-701` / `T0-19`: close all nine selected WDP rows, the CDPD/IPv4
+- `TRN-701` / `T0-19`: complete for the nine selected WDP rows, CDPD/IPv4
   capability declaration, and source-derived datagram fixtures.
+- `TRN-702`: remains open with no direct clause mapping; constrained-payload
+  and segmentation/reassembly policy must be adopted and evidenced separately.
 - `TRN-703` / `T0-17`: implement and test the five-row WCMP core, then
   capability-gate optional WCMP breadth.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row

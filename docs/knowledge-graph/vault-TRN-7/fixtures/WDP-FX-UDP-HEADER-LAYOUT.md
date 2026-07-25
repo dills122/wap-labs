@@ -4,7 +4,7 @@ key: "WDP-FX-UDP-HEADER-LAYOUT"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

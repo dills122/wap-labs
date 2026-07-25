@@ -4,7 +4,7 @@ key: "WDP-FX-IPV4-HEADER-LAYOUT"
 type: "fixture"
 generated: true
 slice: "TRN-7"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

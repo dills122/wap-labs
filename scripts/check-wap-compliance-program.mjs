@@ -408,7 +408,7 @@ const wcmpCore = transportSprint?.workItems.find(
 );
 if (
   transportSprint?.status !== 'in-progress' ||
-  wdpCore?.status !== 'in-progress' ||
+  wdpCore?.status !== 'done' ||
   wcmpCore?.status !== 'done' ||
   !wdpCore?.outputs?.includes(
     'spec-processing/source-manifests/wap-1.2.1-wdp-scr.json'
