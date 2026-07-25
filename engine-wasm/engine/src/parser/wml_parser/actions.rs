@@ -1,40 +1,77 @@
-use crate::runtime::card::{CardPostField, CardTaskAction};
+use std::collections::HashSet;
 
+use crate::runtime::card::{CardEventBinding, CardEventBindingKind, CardPostField, CardTaskAction};
+
+use super::nodes::validate_nmtoken;
 use super::xml::{XmlElement, XmlNode};
 use super::ParseBudget;
 
-type CardActions = (
-    Option<CardTaskAction>,
-    Option<CardTaskAction>,
-    Option<CardTaskAction>,
-    Option<CardTaskAction>,
-    Option<u32>,
-);
+const CARD_EVENT_TYPES: [&str; 3] = ["onenterforward", "onenterbackward", "ontimer"];
 
-pub(super) fn parse_card_actions(
+pub(super) fn parse_card_bindings(
     card: &XmlElement,
     budget: &mut ParseBudget,
-) -> Result<CardActions, String> {
+) -> Result<(Vec<CardEventBinding>, Option<u32>), String> {
     let mut elements = Vec::new();
-    collect_elements_in_order(&card.children, &mut elements, budget, 0)?;
-
-    let accept_action = parse_do_accept_action_xml(&elements, budget)?;
-    let onenterforward_action = parse_onevent_action_xml(&elements, "onenterforward", budget)?;
-    let onenterbackward_action = parse_onevent_action_xml(&elements, "onenterbackward", budget)?;
-    let ontimer_action = parse_onevent_action_xml(&elements, "ontimer", budget)?;
-    let timer_value_ds = parse_timer_value_ds_xml(&elements);
-    Ok((
-        accept_action,
-        onenterforward_action,
-        onenterbackward_action,
-        ontimer_action,
-        timer_value_ds,
-    ))
+    collect_card_action_elements(&card.children, &mut elements, budget, 0)?;
+    let mut bindings = Vec::new();
+    let mut do_names = HashSet::new();
+    let mut event_types = HashSet::new();
+    parse_intrinsic_attributes(card, "card", &mut bindings, &mut event_types)?;
+    for (depth, element) in &elements {
+        match element.name.as_str() {
+            "do" => push_do_binding(element, "card", &mut bindings, &mut do_names, budget)?,
+            "onevent" if *depth == 0 => {
+                push_onevent_binding(element, "card", &mut bindings, &mut event_types, budget)?
+            }
+            _ => {}
+        }
+    }
+    Ok((bindings, parse_timer_value_ds_xml(&elements)))
 }
 
-fn collect_elements_in_order<'a>(
+pub(super) fn parse_template_bindings(
+    template: &XmlElement,
+    budget: &mut ParseBudget,
+) -> Result<Vec<CardEventBinding>, String> {
+    let mut bindings = Vec::new();
+    let mut do_names = HashSet::new();
+    let mut event_types = HashSet::new();
+    parse_intrinsic_attributes(template, "template", &mut bindings, &mut event_types)?;
+
+    for node in &template.children {
+        match node {
+            XmlNode::Text(text) if text.trim().is_empty() => {}
+            XmlNode::Text(_) => {
+                return Err("Invalid <template>: text content is not allowed".to_string())
+            }
+            XmlNode::Element(element) => {
+                budget.visit_node("template binding traversal")?;
+                match element.name.as_str() {
+                    "do" => {
+                        push_do_binding(element, "template", &mut bindings, &mut do_names, budget)?
+                    }
+                    "onevent" => push_onevent_binding(
+                        element,
+                        "template",
+                        &mut bindings,
+                        &mut event_types,
+                        budget,
+                    )?,
+                    _ => return Err(
+                        "Invalid <template>: only <do> and <onevent> child elements are allowed"
+                            .to_string(),
+                    ),
+                }
+            }
+        }
+    }
+    Ok(bindings)
+}
+
+fn collect_card_action_elements<'a>(
     nodes: &'a [XmlNode],
-    out: &mut Vec<&'a XmlElement>,
+    out: &mut Vec<(usize, &'a XmlElement)>,
     budget: &mut ParseBudget,
     depth: usize,
 ) -> Result<(), String> {
@@ -42,64 +79,119 @@ fn collect_elements_in_order<'a>(
     for node in nodes {
         if let XmlNode::Element(element) = node {
             budget.visit_node("action element traversal")?;
-            out.push(element);
-            collect_elements_in_order(&element.children, out, budget, depth + 1)?;
+            out.push((depth, element));
+            if !matches!(
+                element.name.as_str(),
+                "do" | "onevent" | "card" | "template"
+            ) {
+                collect_card_action_elements(&element.children, out, budget, depth + 1)?;
+            }
         }
     }
     Ok(())
 }
 
-fn parse_do_accept_action_xml(
-    elements: &[&XmlElement],
-    budget: &mut ParseBudget,
-) -> Result<Option<CardTaskAction>, String> {
-    for element in elements {
-        if element.name != "do" {
+fn parse_intrinsic_attributes(
+    container: &XmlElement,
+    scope: &str,
+    bindings: &mut Vec<CardEventBinding>,
+    event_types: &mut HashSet<String>,
+) -> Result<(), String> {
+    for event_type in CARD_EVENT_TYPES {
+        let Some(href) = container.attr(event_type) else {
             continue;
-        }
-
-        let do_type = element
-            .attr("type")
-            .unwrap_or_default()
-            .to_ascii_lowercase();
-        if do_type != "accept" {
-            continue;
-        }
-
-        if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
-            return Ok(Some(CardTaskAction::Go {
+        };
+        push_unique_onevent(
+            scope,
+            event_type.to_string(),
+            CardTaskAction::Go {
                 href: href.to_string(),
-                method: parse_go_method_xml(element),
-                post_fields: parse_post_fields_xml(&element.children),
-            }));
-        }
-
-        if let Some(action) = parse_first_task_action_xml(&element.children, budget, 0)? {
-            return Ok(Some(action));
-        }
+                method: None,
+                post_fields: Vec::new(),
+            },
+            bindings,
+            event_types,
+        )?;
     }
-    Ok(None)
+    Ok(())
 }
 
-fn parse_onevent_action_xml(
-    elements: &[&XmlElement],
-    target_event_type: &str,
+fn push_do_binding(
+    element: &XmlElement,
+    scope: &str,
+    bindings: &mut Vec<CardEventBinding>,
+    do_names: &mut HashSet<String>,
     budget: &mut ParseBudget,
-) -> Result<Option<CardTaskAction>, String> {
-    for element in elements {
-        if element.name != "onevent" {
-            continue;
-        }
-
-        let event_type = element
-            .attr("type")
-            .unwrap_or_default()
-            .to_ascii_lowercase();
-        if event_type == target_event_type {
-            return parse_first_task_action_xml(&element.children, budget, 0);
-        }
+) -> Result<(), String> {
+    let do_type = element
+        .attr("type")
+        .ok_or_else(|| "Invalid <do>: missing required 'type' attribute".to_string())?;
+    let name = element.attr("name").unwrap_or(do_type);
+    validate_nmtoken("do", "name", name)?;
+    if !do_names.insert(name.to_string()) {
+        return Err(format!(
+            "Invalid <{scope}>: duplicate <do> binding name '{name}'"
+        ));
     }
-    Ok(None)
+    let action = if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
+        CardTaskAction::Go {
+            href: href.to_string(),
+            method: parse_go_method_xml(element),
+            post_fields: parse_post_fields_xml(&element.children),
+        }
+    } else {
+        parse_first_task_action_xml(&element.children, budget, 0)?.ok_or_else(|| {
+            "Invalid <do>: expected one <go>, <prev>, <refresh>, or <noop> task".to_string()
+        })?
+    };
+    bindings.push(CardEventBinding {
+        kind: CardEventBindingKind::Do {
+            name: name.to_string(),
+            do_type: do_type.to_string(),
+            label: element.attr("label").map(str::to_string),
+        },
+        action,
+    });
+    Ok(())
+}
+
+fn push_onevent_binding(
+    element: &XmlElement,
+    scope: &str,
+    bindings: &mut Vec<CardEventBinding>,
+    event_types: &mut HashSet<String>,
+    budget: &mut ParseBudget,
+) -> Result<(), String> {
+    let event_type = element
+        .attr("type")
+        .ok_or_else(|| "Invalid <onevent>: missing required 'type' attribute".to_string())?
+        .to_ascii_lowercase();
+    if !CARD_EVENT_TYPES.contains(&event_type.as_str()) {
+        return Ok(());
+    }
+    let action = parse_first_task_action_xml(&element.children, budget, 0)?.ok_or_else(|| {
+        "Invalid <onevent>: expected one <go>, <prev>, <refresh>, or <noop> task".to_string()
+    })?;
+    push_unique_onevent(scope, event_type, action, bindings, event_types)
+}
+
+fn push_unique_onevent(
+    scope: &str,
+    event_type: String,
+    action: CardTaskAction,
+    bindings: &mut Vec<CardEventBinding>,
+    event_types: &mut HashSet<String>,
+) -> Result<(), String> {
+    if !event_types.insert(event_type.clone()) {
+        return Err(format!(
+            "Invalid <{scope}>: conflicting '{event_type}' event bindings"
+        ));
+    }
+    bindings.push(CardEventBinding {
+        kind: CardEventBindingKind::Onevent { event_type },
+        action,
+    });
+    Ok(())
 }
 
 fn parse_first_task_action_xml(
@@ -137,8 +229,8 @@ fn parse_first_task_action_xml(
     Ok(None)
 }
 
-fn parse_timer_value_ds_xml(elements: &[&XmlElement]) -> Option<u32> {
-    for element in elements {
+fn parse_timer_value_ds_xml(elements: &[(usize, &XmlElement)]) -> Option<u32> {
+    for (_, element) in elements {
         if element.name != "timer" {
             continue;
         }

@@ -7,7 +7,7 @@
     "markup": "WML 1.3",
     "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
   },
-  "recordedOn": "2026-07-24",
+  "recordedOn": "2026-07-25",
   "authority": {
     "effectiveSequence": [
       "WAP-191-WML",
@@ -61,10 +61,10 @@
       "wbxml-encoding-and-validation": 4,
       "wml-document-validation": 11
     },
-    "testEvidenceLinkedCount": 27,
+    "testEvidenceLinkedCount": 29,
     "mandatoryImplementationStatus": {
-      "implemented": 4,
-      "missing": 20,
+      "implemented": 6,
+      "missing": 18,
       "partial": 23
     }
   },
@@ -436,13 +436,34 @@
         ],
         "workItems": [
           "R0-01",
-          "R0-02"
+          "R0-02",
+          "R0-12"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "The parser does not retain template-level event bindings or perform card/deck task shadowing.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The shared deck runtime resolves ordered card and template do/onevent bindings by effective identity, applies card precedence, and removes noop bindings without task side effects.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "active_event_bindings"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "active_onevent_action_internal"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "wml_202_template_do_shadowing_and_noop_masking_cover_all_active_set_cases",
+            "command": "cd engine-wasm/engine && cargo test wml_202_template_do_shadowing_and_noop_masking_cover_all_active_set_cases"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "wml_202_card_intrinsic_binding_masks_or_overrides_template_binding",
+            "command": "cd engine-wasm/engine && cargo test wml_202_card_intrinsic_binding_masks_or_overrides_template_binding"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -481,11 +502,11 @@
           "R0-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "onenterforward, onenterbackward, and ontimer execute, but the full intrinsic-event model and binding rules are incomplete.",
+        "assessmentNote": "Card/template onenterforward, onenterbackward, and ontimer bindings execute with cross-syntax precedence, but the broader intrinsic-event model remains incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
-            "symbol": "parse_onevent_action_xml"
+            "symbol": "push_onevent_binding"
           }
         ],
         "testEvidence": [
@@ -1348,11 +1369,11 @@
           "R0-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "accept do tasks execute, but the full do type/name/label/optional/template precedence model is not implemented.",
+        "assessmentNote": "Named do bindings retain type/name/label and execute with template precedence; optional presentation and complete user-interface exposure remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
-            "symbol": "parse_do_accept_action_xml"
+            "symbol": "push_do_binding"
           }
         ],
         "testEvidence": [
@@ -1697,10 +1718,10 @@
             "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
             "symbol": "commit_focused_input_edit_internal"
           },
-      {
-        "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
-        "symbol": "initialize_controls_on_active_card"
-      }
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "initialize_controls_on_active_card"
+          }
         ],
         "testEvidence": [
           {
@@ -1844,7 +1865,7 @@
           "R0-02"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Noop is parsed as a task action and performs no navigation or state mutation beyond deterministic tracing.",
+        "assessmentNote": "Noop is parsed as an inactive task binding and produces no navigation, state mutation, task activation, or task trace.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -1854,8 +1875,8 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "enter_accept_noop_action_keeps_current_card_and_history",
-            "command": "cd engine-wasm/engine && cargo test enter_accept_noop_action_keeps_current_card_and_history"
+            "test": "enter_accept_noop_binding_is_inactive_and_keeps_current_card_and_history",
+            "command": "cd engine-wasm/engine && cargo test enter_accept_noop_binding_is_inactive_and_keeps_current_card_and_history"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2058,11 +2079,11 @@
           "R0-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Three card intrinsic onevent bindings parse and execute; conflict, template, shadowing, and complete event rules are absent.",
+        "assessmentNote": "Card/template intrinsic onevent bindings parse, reject same-scope conflicts, and execute with shadowing; intrinsic events outside the card/deck lifecycle remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
-            "symbol": "parse_onevent_action_xml"
+            "symbol": "push_onevent_binding"
           }
         ],
         "testEvidence": [
@@ -2495,13 +2516,34 @@
         ],
         "workItems": [
           "R0-01",
-          "R0-04"
+          "R0-04",
+          "R0-12"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "Template content, event inheritance, and card-level shadowing are not represented.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The parser retains one deck-level template with ordered do/onevent bindings and card-event attributes; the shared runtime applies those bindings to every card unless shadowed.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_template_bindings"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "active_event_bindings"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "wml_202_rejects_invalid_template_structure_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_template_structure_deterministically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "wml_202_template_bindings_persist_across_navigation_and_back",
+            "command": "cd engine-wasm/engine && cargo test wml_202_template_bindings_persist_across_navigation_and_back"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {

@@ -266,10 +266,7 @@ mod tests {
         Card {
             id: "card".to_string(),
             nodes,
-            accept_action: None,
-            onenterforward_action: None,
-            onenterbackward_action: None,
-            ontimer_action: None,
+            event_bindings: vec![],
             timer_value_ds: None,
         }
     }

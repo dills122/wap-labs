@@ -6,7 +6,7 @@ mod head;
 mod nodes;
 mod xml;
 
-use actions::parse_card_actions;
+use actions::{parse_card_bindings, parse_template_bindings};
 use head::parse_deck_access_control;
 use nodes::parse_card_nodes_xml;
 use xml::{parse_xml_root, XmlNode};
@@ -47,8 +47,11 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     }
 
     let mut cards = Vec::new();
+    let mut template_bindings = Vec::new();
     let mut access_control = None;
     let mut seen_head = false;
+    let mut seen_template = false;
+    let mut seen_card = false;
     let mut budget = ParseBudget::default();
     for node in &root.children {
         let XmlNode::Element(element) = node else {
@@ -65,30 +68,35 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             }
             continue;
         }
+        if element.name == "template" {
+            if seen_template {
+                return Err("Invalid <wml>: only one <template> element is allowed".to_string());
+            }
+            if seen_card {
+                return Err(
+                    "Invalid <wml>: <template> must precede all <card> elements".to_string()
+                );
+            }
+            seen_template = true;
+            template_bindings = parse_template_bindings(element, &mut budget)?;
+            continue;
+        }
         if element.name != "card" {
             continue;
         }
+        seen_card = true;
         let card = element;
 
         let id = card
             .attr("id")
             .map(str::to_string)
             .unwrap_or_else(|| format!("card-{}", cards.len() + 1));
-        let (
-            accept_action,
-            onenterforward_action,
-            onenterbackward_action,
-            ontimer_action,
-            timer_value_ds,
-        ) = parse_card_actions(card, &mut budget)?;
+        let (event_bindings, timer_value_ds) = parse_card_bindings(card, &mut budget)?;
         let nodes = parse_card_nodes_xml(card, &mut budget)?;
         cards.push(Card {
             id,
             nodes,
-            accept_action,
-            onenterforward_action,
-            onenterbackward_action,
-            ontimer_action,
+            event_bindings,
             timer_value_ds,
         });
     }
@@ -97,7 +105,11 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
         return Err("No <card> elements found".to_string());
     }
 
-    Ok(Deck::new(cards, access_control))
+    Ok(Deck::with_template(
+        cards,
+        template_bindings,
+        access_control,
+    ))
 }
 
 fn map_xml_parse_error(err: String) -> String {

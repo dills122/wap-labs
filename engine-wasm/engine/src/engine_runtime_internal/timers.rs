@@ -7,7 +7,10 @@ impl WmlEngine {
     ) -> Result<(), String> {
         let (timer_value_ds, ontimer_action) = {
             let card = self.active_card_internal()?;
-            (card.timer_value_ds, card.ontimer_action.clone())
+            (
+                card.timer_value_ds,
+                self.active_onevent_action_internal("ontimer")?,
+            )
         };
         let Some(value_ds) = timer_value_ds else {
             self.active_timer = None;

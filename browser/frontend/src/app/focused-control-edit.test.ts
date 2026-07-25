@@ -99,7 +99,7 @@ describe('FocusedControlEditController', () => {
     );
   });
 
-  it('supports backspace, escape, and commit while input edit is active', async () => {
+  it('supports backspace and escape while deferring input commit to the engine', async () => {
     const { host } = createHost({
       getSnapshot: vi.fn(() =>
         snapshot({
@@ -118,8 +118,16 @@ describe('FocusedControlEditController', () => {
     expect(await controller.applyKey('Escape')).toBe('handled');
     expect(host.cancelFocusedInputEdit).toHaveBeenCalledTimes(1);
 
-    expect(await controller.applyKey('Enter')).toBe('handled');
-    expect(host.commitFocusedInputEdit).toHaveBeenCalledTimes(1);
+    expect(await controller.applyKey('Enter')).toBe('unhandled');
+    expect(host.commitFocusedInputEdit).not.toHaveBeenCalled();
+    expect(host.recordTimeline).toHaveBeenLastCalledWith(
+      'keyboard-input-edit-state',
+      expect.objectContaining({
+        key: 'Enter',
+        handled: false,
+        phase: 'defer-to-engine'
+      })
+    );
   });
 
   it('engages select edit on enter and handles movement plus exit keys', async () => {

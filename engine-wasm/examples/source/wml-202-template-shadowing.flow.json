@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "example": "wml202TemplateShadowing",
+  "flows": [
+    {
+      "id": "template-inherit-override-and-noop-mask",
+      "title": "Template accept inheritance yields to card override and noop mask",
+      "workItems": ["R0-12", "WML-202"],
+      "specItems": ["WML-C-08", "WML-C-47"],
+      "initial": {
+        "state": {
+          "activeCardId": "inherited",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "override",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "masked",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": [
+              "KEY",
+              "ACTION_ACCEPT",
+              "ACTION_FRAGMENT",
+              "KEY",
+              "ACTION_ACCEPT",
+              "ACTION_FRAGMENT"
+            ]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "masked",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": [
+              "KEY",
+              "ACTION_ACCEPT",
+              "ACTION_FRAGMENT",
+              "KEY",
+              "ACTION_ACCEPT",
+              "ACTION_FRAGMENT",
+              "KEY"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,14 +1,14 @@
 <!--
 label: Accept Noop Ordering
-description: Exercises accept-task ordering with explicit noop behavior alongside go/prev/refresh flows.
-goal: Verify noop is deterministic and does not mutate navigation/history while other accept actions retain expected behavior.
+description: Exercises accept-task ordering with an inactive noop binding alongside go/prev/refresh flows.
+goal: Verify noop remains inactive without mutating navigation/history while other accept actions retain expected behavior.
 work-items: R0-02
 spec-items: WML-18,WML-R-012,WML-R-015,WML-R-017
 testing-ac:
 - Enter "Accept go" then Enter again; activeCardId should become target.
 - Return home, enter "Accept prev" then Enter again; activeCardId should become home.
 - Enter "Accept refresh" then Enter; activeCardId should stay accept-refresh.
-- Enter "Accept noop" then Enter; activeCardId should stay accept-noop and history depth should not change.
+- Enter "Accept noop" then Enter; activeCardId should stay accept-noop, history depth should not change, and no task action should activate.
 -->
 <wml>
   <card id="home">
@@ -35,7 +35,7 @@ testing-ac:
 
   <card id="accept-noop">
     <do type="accept"><noop/></do>
-    <p>Enter should run accept noop without state mutation.</p>
+    <p>Enter should leave the inactive accept noop binding masked.</p>
   </card>
 
   <card id="target">

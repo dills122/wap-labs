@@ -65,11 +65,11 @@
       "not-successor-derived": 181
     },
     "implementationBasisCounts": {
-      "not-implemented": 101,
+      "not-implemented": 99,
       "successor-era-compatibility-behavior": 1,
       "successor-era-or-cross-checked": 8,
       "successor-era-tables-and-synthetic-cases": 8,
-      "target-era-or-version-neutral": 80
+      "target-era-or-version-neutral": 82
     },
     "successorOnlyCapabilityCount": 5
   },
@@ -337,10 +337,10 @@
         "staticConformanceSection": "15.1.2",
         "changeSection": null
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -349,7 +349,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm",
@@ -360,7 +360,8 @@
       ],
       "workItems": [
         "R0-01",
-        "R0-02"
+        "R0-02",
+        "R0-12"
       ],
       "clauseIds": [
         "WML-CL-DO-EFFECTIVE-NAME",
@@ -1608,10 +1609,10 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -1620,7 +1621,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -1630,7 +1631,8 @@
       ],
       "workItems": [
         "R0-01",
-        "R0-04"
+        "R0-04",
+        "R0-12"
       ],
       "clauseIds": [
         "WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",

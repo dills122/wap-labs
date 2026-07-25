@@ -1,5 +1,5 @@
 use super::{parse_wml, parse_xml_root, MAX_PARSE_TREE_DEPTH};
-use crate::runtime::card::{CardPostField, CardTaskAction};
+use crate::runtime::card::{Card, CardEventBindingKind, CardPostField, CardTaskAction};
 use crate::runtime::node::{InlineNode, Node};
 
 fn go_action(href: &str) -> CardTaskAction {
@@ -22,6 +22,32 @@ fn post_go_action(href: &str, fields: &[(&str, &str)]) -> CardTaskAction {
             })
             .collect(),
     }
+}
+
+fn card_do_action(card: &Card, do_type: &str) -> Option<CardTaskAction> {
+    card.event_bindings
+        .iter()
+        .find(|binding| {
+            matches!(
+                &binding.kind,
+                CardEventBindingKind::Do { do_type: candidate, .. }
+                    if candidate.eq_ignore_ascii_case(do_type)
+            )
+        })
+        .map(|binding| binding.action.clone())
+}
+
+fn card_onevent_action(card: &Card, event_type: &str) -> Option<CardTaskAction> {
+    card.event_bindings
+        .iter()
+        .find(|binding| {
+            matches!(
+                &binding.kind,
+                CardEventBindingKind::Onevent { event_type: candidate }
+                    if candidate == event_type
+            )
+        })
+        .map(|binding| binding.action.clone())
 }
 
 #[test]
@@ -591,18 +617,21 @@ fn parses_accept_do_and_card_entry_go_actions() {
 
     let deck = parse_wml(xml).expect("deck should parse");
     assert_eq!(
-        deck.cards[0].accept_action,
+        card_do_action(&deck.cards[0], "accept"),
         Some(go_action("script:calc.wmlsc#main"))
     );
     assert_eq!(
-        deck.cards[0].onenterforward_action,
+        card_onevent_action(&deck.cards[0], "onenterforward"),
         Some(go_action("#next"))
     );
     assert_eq!(
-        deck.cards[0].onenterbackward_action,
+        card_onevent_action(&deck.cards[0], "onenterbackward"),
         Some(go_action("#back"))
     );
-    assert_eq!(deck.cards[0].ontimer_action, Some(go_action("#timer")));
+    assert_eq!(
+        card_onevent_action(&deck.cards[0], "ontimer"),
+        Some(go_action("#timer"))
+    );
     assert_eq!(deck.cards[0].timer_value_ds, Some(0));
 }
 
@@ -640,14 +669,14 @@ fn deck_with_card_body(body: &str) -> String {
 
 fn accept_action_for(control: &str) -> Result<Option<CardTaskAction>, String> {
     let xml = deck_with_card_body(&format!("<do type=\"accept\">{control}</do>"));
-    parse_wml(&xml).map(|deck| deck.cards[0].accept_action.clone())
+    parse_wml(&xml).map(|deck| card_do_action(&deck.cards[0], "accept"))
 }
 
 fn onenterforward_action_for(control: &str) -> Result<Option<CardTaskAction>, String> {
     let xml = deck_with_card_body(&format!(
         "<onevent type=\"onenterforward\">{control}</onevent>"
     ));
-    parse_wml(&xml).map(|deck| deck.cards[0].onenterforward_action.clone())
+    parse_wml(&xml).map(|deck| card_onevent_action(&deck.cards[0], "onenterforward"))
 }
 
 fn card_nodes_for(body: &str) -> Result<Vec<Node>, String> {
@@ -735,14 +764,17 @@ fn parses_do_accept_direct_href_and_nested_task_fallbacks() {
         "<do type=\"accept\" href=\"#direct\"></do>",
     ))
     .expect("direct href should parse");
-    assert_eq!(direct.cards[0].accept_action, Some(go_action("#direct")));
+    assert_eq!(
+        card_do_action(&direct.cards[0], "accept"),
+        Some(go_action("#direct"))
+    );
 
     let fallback = parse_wml(&deck_with_card_body(
         "<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>",
     ))
     .expect("empty href should fall back to the nested task");
     assert_eq!(
-        fallback.cards[0].accept_action,
+        card_do_action(&fallback.cards[0], "accept"),
         Some(go_action("#fallback"))
     );
 
@@ -772,9 +804,9 @@ fn parses_onevent_actions_and_ignores_non_matching_event_types() {
         "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>",
     ))
     .expect("non-matching onevent should parse");
-    assert_eq!(deck.cards[0].onenterforward_action, None);
+    assert_eq!(card_onevent_action(&deck.cards[0], "onenterforward"), None);
     assert_eq!(
-        deck.cards[0].onenterbackward_action,
+        card_onevent_action(&deck.cards[0], "onenterbackward"),
         Some(go_action("#skip"))
     );
 
@@ -823,6 +855,86 @@ fn parses_timer_value_and_ignores_invalid_or_missing_timers() {
         malformed.contains("Malformed XML"),
         "unexpected error: {malformed}"
     );
+}
+
+#[test]
+fn wml_202_parses_template_and_card_bindings_independently() {
+    let xml = r##"
+        <wml>
+          <template>
+            <do type="accept" name="primary" label="Deck"><go href="#deck"/></do>
+            <onevent type="onenterforward"><refresh/></onevent>
+          </template>
+          <card id="home">
+            <do type="accept" name="primary" label="Card"><go href="#card"/></do>
+            <p>Home</p>
+          </card>
+          <card id="deck"><p>Deck</p></card>
+          <card id="card"><p>Card</p></card>
+        </wml>
+        "##;
+
+    let deck = parse_wml(xml).expect("template and card bindings should parse");
+    assert_eq!(deck.template_bindings.len(), 2);
+    assert_eq!(deck.cards[0].event_bindings.len(), 1);
+}
+
+#[test]
+fn wml_202_rejects_invalid_template_structure_deterministically() {
+    let cases = [
+        (
+            r#"<wml><template/><template/><card id="home"/></wml>"#,
+            "Invalid <wml>: only one <template> element is allowed",
+        ),
+        (
+            r#"<wml><card id="home"/><template/></wml>"#,
+            "Invalid <wml>: <template> must precede all <card> elements",
+        ),
+        (
+            r#"<wml><template><p>not permitted</p></template><card id="home"/></wml>"#,
+            "Invalid <template>: only <do> and <onevent> child elements are allowed",
+        ),
+        (
+            r#"<wml><template>text<do type="accept"><noop/></do></template><card id="home"/></wml>"#,
+            "Invalid <template>: text content is not allowed",
+        ),
+    ];
+
+    for (xml, expected) in cases {
+        assert_eq!(
+            parse_wml(xml).expect_err("invalid template must fail"),
+            expected
+        );
+    }
+}
+
+#[test]
+fn wml_202_rejects_duplicate_do_names_and_conflicting_intrinsic_bindings() {
+    let cases = [
+        (
+            r#"<wml><template><do type="accept"><prev/></do><do type="accept" name="accept"><noop/></do></template><card id="home"/></wml>"#,
+            "Invalid <template>: duplicate <do> binding name 'accept'",
+        ),
+        (
+            r#"<wml><card id="home"><do type="options" name="same"><prev/></do><do type="accept" name="same"><noop/></do><p>Home</p></card></wml>"#,
+            "Invalid <card>: duplicate <do> binding name 'same'",
+        ),
+        (
+            r##"<wml><template onenterforward="#one"><onevent type="onenterforward"><go href="#two"/></onevent></template><card id="home"/></wml>"##,
+            "Invalid <template>: conflicting 'onenterforward' event bindings",
+        ),
+        (
+            r##"<wml><card id="home" ontimer="#one"><onevent type="ontimer"><go href="#two"/></onevent></card></wml>"##,
+            "Invalid <card>: conflicting 'ontimer' event bindings",
+        ),
+    ];
+
+    for (xml, expected) in cases {
+        assert_eq!(
+            parse_wml(xml).expect_err("conflicting bindings must fail"),
+            expected
+        );
+    }
 }
 
 #[test]

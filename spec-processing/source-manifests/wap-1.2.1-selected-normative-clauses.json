@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 761,
-    "assessedClauseCount": 131
+    "assessedClauseCount": 140
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "af05a1b83a4e7b55522e82527974effb6d10ae8542790f5da434af2c3e4312ea",
+      "parentLedgerSha256": "42e99a41505304fada032ea07c796d39a65051f625e7688c7043a28fb94d8dcc",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -160,14 +160,15 @@
             "staticConformanceSection": "15.1.2",
             "changeSection": null
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
           ],
           "workItems": [
             "R0-01",
-            "R0-02"
+            "R0-02",
+            "R0-12"
           ],
           "clauseIds": [
             "WML-CL-DO-EFFECTIVE-NAME",
@@ -959,13 +960,14 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "R0-12"
           ],
           "clauseIds": [
             "WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
@@ -1768,8 +1770,13 @@
           "fixturePlan": {
             "id": "WML-FX-SHADOW-MATCHING",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Match card and template onevent bindings by event type and do bindings by effective name for shadowing."
+            "status": "implemented",
+            "assertion": "Match card and template onevent bindings by event type and do bindings by effective name for shadowing.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1779,19 +1786,24 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-RMK-002"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-08": "missing",
-              "WML-C-47": "missing"
+              "WML-C-08": "implemented",
+              "WML-C-47": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-SHADOW-CARD-PRECEDENCE",
@@ -1812,8 +1824,13 @@
           "fixturePlan": {
             "id": "WML-FX-SHADOW-CARD-PRECEDENCE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "A matching card-level event binding overrides its template-level binding."
+            "status": "implemented",
+            "assertion": "A matching card-level event binding overrides its template-level binding.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1823,19 +1840,24 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-RMK-002"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-08": "missing",
-              "WML-C-47": "missing"
+              "WML-C-08": "implemented",
+              "WML-C-47": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-SHADOW-ACTIVE-SET",
@@ -1855,8 +1877,13 @@
           "fixturePlan": {
             "id": "WML-FX-SHADOW-ACTIVE-SET",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings."
+            "status": "implemented",
+            "assertion": "Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1865,17 +1892,22 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-002"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-08": "missing"
+              "WML-C-08": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-SHADOW-NOOP-MASK",
@@ -1896,8 +1928,13 @@
           "fixturePlan": {
             "id": "WML-FX-SHADOW-NOOP-MASK",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "A noop binding masks its event without exposing an activatable action or producing task side effects."
+            "status": "implemented",
+            "assertion": "A noop binding masks its event without exposing an activatable action or producing task side effects.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1906,18 +1943,23 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-002"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-08": "missing",
+              "WML-C-08": "implemented",
               "WML-C-35": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-INTRINSIC-EVENT-TYPES",
@@ -2148,8 +2190,13 @@
           "fixturePlan": {
             "id": "WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax."
+            "status": "implemented",
+            "assertion": "Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2159,7 +2206,9 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -2167,13 +2216,16 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-08": "missing",
+              "WML-C-08": "implemented",
               "WML-C-09": "partial",
-              "WML-C-47": "missing"
+              "WML-C-47": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-ONEVENT-SINGLE-TASK",
@@ -5198,8 +5250,13 @@
           "fixturePlan": {
             "id": "WML-FX-DO-EFFECTIVE-NAME",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Use the declared do name for binding identity and default a missing name to the type value."
+            "status": "implemented",
+            "assertion": "Use the declared do name for binding identity and default a missing name to the type value.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -5208,18 +5265,23 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-002"
             ],
             "parentImplementationSnapshot": {
               "WML-C-26": "partial",
-              "WML-C-08": "missing"
+              "WML-C-08": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-DO-OPTIONAL-PERMISSION",
@@ -5320,8 +5382,13 @@
           "fixturePlan": {
             "id": "WML-FX-DO-INACTIVE-HIDDEN",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Do not expose an inactive do in a form the user can activate."
+            "status": "implemented",
+            "assertion": "Do not expose an inactive do in a form the user can activate.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -5330,18 +5397,23 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-002"
             ],
             "parentImplementationSnapshot": {
               "WML-C-26": "partial",
-              "WML-C-08": "missing"
+              "WML-C-08": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-ANCHOR-STRUCTURE",
@@ -5836,8 +5908,13 @@
           "fixturePlan": {
             "id": "WML-FX-TEMPLATE-STRUCTURE",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Parse template as zero or more do or onevent bindings plus card-event attributes."
+            "status": "implemented",
+            "assertion": "Parse template as zero or more do or onevent bindings plus card-event attributes.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -5845,17 +5922,22 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-47": "missing"
+              "WML-C-47": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
@@ -5875,8 +5957,13 @@
           "fixturePlan": {
             "id": "WML-FX-TEMPLATE-APPLIES-ALL-CARDS",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply each template event binding as though it were declared in every card unless shadowed."
+            "status": "implemented",
+            "assertion": "Apply each template event binding as though it were declared in every card unless shadowed.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -5884,17 +5971,22 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "R0-12",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-47": "missing"
+              "WML-C-47": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-202"
+          ]
         },
         {
           "id": "WML-CL-CARD-COLLECTION",

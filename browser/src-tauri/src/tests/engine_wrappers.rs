@@ -356,7 +356,11 @@ fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
     )
     .expect("accept-noop should keep current card");
     assert_eq!(noop_snapshot.active_card_id.as_deref(), Some("accept-noop"));
-    assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_NOOP"]);
+    assert_trace_kinds_subsequence(&engine, &["KEY"]);
+    assert!(!engine
+        .trace_entries()
+        .iter()
+        .any(|entry| matches!(entry.kind.as_str(), "ACTION_ACCEPT" | "ACTION_NOOP")));
 
     apply_navigate_back(&mut engine);
     apply_handle_key(

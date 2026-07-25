@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-204 23/23 mapped clauses, WML-203 49/49)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 9/9, WML-204 23/23 mapped clauses, WML-203 49/49)
 
 ## Purpose
 
@@ -47,7 +47,7 @@ Legend:
 - Spec:
   - `WAP-191*` DTD lineage (`wml`, `card`, task-bearing content model)
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] Template grammar and ordering: `wml_202_parses_template_and_card_bindings_independently` and `wml_202_rejects_invalid_template_structure_deterministically` in `engine-wasm/engine/src/parser/wml_parser/tests.rs`; `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202`.
   - [ ] Parser accepts valid deck/card structure and rejects invalid root/card omissions.
   - [ ] Runtime activation is deterministic for first-card selection and card ordering.
 
@@ -59,7 +59,7 @@ Legend:
 - Spec:
   - `WAP-191*` task model and `do`/`onevent` DTD usage
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] Template/card binding identity, precedence, noop masking, and navigation persistence: `engine-wasm/engine/src/engine_tests/actions_timers.rs` plus `engine-wasm/examples/source/wml-202-template-shadowing.wml`; `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202` and `pnpm test:story WML-202`.
   - [ ] Each task path has explicit runtime behavior and observable state transitions.
   - [ ] Unsupported task attributes fail deterministically without host/runtime crash.
 

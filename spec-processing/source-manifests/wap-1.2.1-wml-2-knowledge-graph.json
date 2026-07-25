@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "6162a49b3d5b11aa1bb66593108e422aa5561bad71b957dbd683ef0a575c5d98"
+        "sha256": "3388b4689267a643cbc44334328e6f3987f9031c081c0b5ed145629baeeff96a"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,25 +25,25 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "b322a150cef06cf9ca13edaa62e7aac55372dbd5cc5562d50908957f6666cdbd"
+        "sha256": "42261c8648a7008acdf67e50f2e374eb4481f127411faf63770c128060294400"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "cb381a3fefa54a54c0533ffb02442d2ecde1d071e755fcfdd9c7a82d04e3f032"
+        "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 212,
-    "edgeCount": 534,
+    "nodeCount": 236,
+    "edgeCount": 595,
     "nodesByType": {
-      "clause": 75,
-      "fixture": 75,
-      "legacy-ticket": 8,
+      "clause": 84,
+      "fixture": 84,
+      "legacy-ticket": 9,
       "owner-layer": 3,
       "profile": 1,
-      "requirement": 12,
-      "scr-row": 12,
+      "requirement": 13,
+      "scr-row": 16,
       "source-document": 13,
       "source-family": 4,
       "sprint": 4,
@@ -52,25 +52,25 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 12,
+      "belongs-to": 16,
       "contains": 5,
       "covers-family": 7,
       "depends-on": 3,
       "effective-document": 12,
-      "maps-to": 135,
+      "maps-to": 148,
       "owned-by": 11,
-      "planned-by": 84,
-      "refines": 85,
-      "relates-to": 9,
+      "planned-by": 93,
+      "refines": 101,
+      "relates-to": 10,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 75,
+      "sourced-from": 84,
       "targets-profile": 1,
-      "verified-by": 75
+      "verified-by": 84
     },
     "directClauseCountsByWorkItem": {
       "WML-201": 3,
-      "WML-202": 0,
+      "WML-202": 9,
       "WML-203": 49,
       "WML-204": 23,
       "WML-205": 0
@@ -79,7 +79,9 @@
       "WML-201": [
         "wae"
       ],
-      "WML-202": [],
+      "WML-202": [
+        "wml"
+      ],
       "WML-203": [
         "wbxml",
         "wml"
@@ -93,15 +95,11 @@
       "WML-201": [
         "wml"
       ],
-      "WML-202": [
-        "wml"
-      ],
       "WML-205": [
         "wml"
       ]
     },
     "workItemsWithoutDirectClauses": [
-      "WML-202",
       "WML-205"
     ]
   },
@@ -1928,6 +1926,82 @@
       }
     },
     {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "key": "WML-CL-DO-EFFECTIVE-NAME",
+      "type": "clause",
+      "title": "Use the declared do name for binding identity and default a missing name to the type value.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-26",
+          "WML-C-08"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.7",
+          "heading": "9.7 The Do Element",
+          "normalizedTextSha256": "2bc27d930169116f20b3b8e3a2e0f38735321034fd2fe257b78898e70f3f8d19"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Use the declared do name for binding identity and default a missing name to the type value.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "key": "WML-CL-DO-INACTIVE-HIDDEN",
+      "type": "clause",
+      "title": "Do not expose an inactive do in a form the user can activate.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-26",
+          "WML-C-08"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.7",
+          "heading": "9.7 The Do Element",
+          "normalizedTextSha256": "2bc27d930169116f20b3b8e3a2e0f38735321034fd2fe257b78898e70f3f8d19"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Do not expose an inactive do in a form the user can activate.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-INPUT-EMPTY-COMMIT",
       "key": "WML-CL-INPUT-EMPTY-COMMIT",
       "type": "clause",
@@ -2236,6 +2310,48 @@
         ],
         "requirementIds": [
           "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "key": "WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "type": "clause",
+      "title": "Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-08",
+          "WML-C-09",
+          "WML-C-47"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.10.2",
+          "heading": "9.10.2 Card/Deck Intrinsic Events",
+          "normalizedTextSha256": "8487b58f882f6ed366a42d049e0b772db1b300e82d271fa4ff3f0ac69d16e018"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-04",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-002",
+          "RQ-RMK-004"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -2695,6 +2811,233 @@
           "R0-01",
           "R0-04",
           "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-ACTIVE-SET",
+      "key": "WML-CL-SHADOW-ACTIVE-SET",
+      "type": "clause",
+      "title": "Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-08"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.6",
+          "heading": "9.6 Card/Deck Task Shadowing",
+          "normalizedTextSha256": "27f2d6fb18754c82a1deacf349d2c50cf71ca5e70f4e12c73a0775f850e9da4d"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "key": "WML-CL-SHADOW-CARD-PRECEDENCE",
+      "type": "clause",
+      "title": "A matching card-level event binding overrides its template-level binding.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-08",
+          "WML-C-47"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.6",
+          "heading": "9.6 Card/Deck Task Shadowing",
+          "normalizedTextSha256": "27f2d6fb18754c82a1deacf349d2c50cf71ca5e70f4e12c73a0775f850e9da4d"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "A matching card-level event binding overrides its template-level binding.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-04",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING",
+      "key": "WML-CL-SHADOW-MATCHING",
+      "type": "clause",
+      "title": "Match card and template onevent bindings by event type and do bindings by effective name for shadowing.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-08",
+          "WML-C-47"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.6",
+          "heading": "9.6 Card/Deck Task Shadowing",
+          "normalizedTextSha256": "27f2d6fb18754c82a1deacf349d2c50cf71ca5e70f4e12c73a0775f850e9da4d"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Match card and template onevent bindings by event type and do bindings by effective name for shadowing.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-04",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "key": "WML-CL-SHADOW-NOOP-MASK",
+      "type": "clause",
+      "title": "A noop binding masks its event without exposing an activatable action or producing task side effects.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-08",
+          "WML-C-35"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.6",
+          "heading": "9.6 Card/Deck Task Shadowing",
+          "normalizedTextSha256": "27f2d6fb18754c82a1deacf349d2c50cf71ca5e70f4e12c73a0775f850e9da4d"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "A noop binding masks its event without exposing an activatable action or producing task side effects.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "key": "WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "type": "clause",
+      "title": "Apply each template event binding as though it were declared in every card unless shadowed.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-47"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.4",
+          "heading": "11.4 The Template Element",
+          "normalizedTextSha256": "d5511025552598715b52f573fae5bd7e89923f27d0b1f459a0b3b4bf8b57fba7"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Apply each template event binding as though it were declared in every card unless shadowed.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "R0-12",
+          "WML-202"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "key": "WML-CL-TEMPLATE-STRUCTURE",
+      "type": "clause",
+      "title": "Parse template as zero or more do or onevent bindings plus card-event attributes.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-47"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.4",
+          "heading": "11.4 The Template Element",
+          "normalizedTextSha256": "d5511025552598715b52f573fae5bd7e89923f27d0b1f459a0b3b4bf8b57fba7"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Parse template as zero or more do or onevent bindings plus card-event attributes.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "R0-12",
+          "WML-202"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3421,6 +3764,30 @@
       }
     },
     {
+      "id": "fixture:WML-FX-DO-EFFECTIVE-NAME",
+      "key": "WML-FX-DO-EFFECTIVE-NAME",
+      "type": "fixture",
+      "title": "Use the declared do name for binding identity and default a missing name to the type value.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Use the declared do name for binding identity and default a missing name to the type value.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-DO-INACTIVE-HIDDEN",
+      "key": "WML-FX-DO-INACTIVE-HIDDEN",
+      "type": "fixture",
+      "title": "Do not expose an inactive do in a form the user can activate.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Do not expose an inactive do in a form the user can activate.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-INPUT-EMPTY-COMMIT",
       "key": "WML-FX-INPUT-EMPTY-COMMIT",
       "type": "fixture",
@@ -3525,6 +3892,18 @@
         "kind": "parser",
         "status": "implemented",
         "assertion": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "key": "WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "type": "fixture",
+      "title": "Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -3685,6 +4064,78 @@
       }
     },
     {
+      "id": "fixture:WML-FX-SHADOW-ACTIVE-SET",
+      "key": "WML-FX-SHADOW-ACTIVE-SET",
+      "type": "fixture",
+      "title": "Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SHADOW-CARD-PRECEDENCE",
+      "key": "WML-FX-SHADOW-CARD-PRECEDENCE",
+      "type": "fixture",
+      "title": "A matching card-level event binding overrides its template-level binding.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "A matching card-level event binding overrides its template-level binding.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SHADOW-MATCHING",
+      "key": "WML-FX-SHADOW-MATCHING",
+      "type": "fixture",
+      "title": "Match card and template onevent bindings by event type and do bindings by effective name for shadowing.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Match card and template onevent bindings by event type and do bindings by effective name for shadowing.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SHADOW-NOOP-MASK",
+      "key": "WML-FX-SHADOW-NOOP-MASK",
+      "type": "fixture",
+      "title": "A noop binding masks its event without exposing an activatable action or producing task side effects.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "A noop binding masks its event without exposing an activatable action or producing task side effects.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-TEMPLATE-APPLIES-ALL-CARDS",
+      "key": "WML-FX-TEMPLATE-APPLIES-ALL-CARDS",
+      "type": "fixture",
+      "title": "Apply each template event binding as though it were declared in every card unless shadowed.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Apply each template event binding as though it were declared in every card unless shadowed.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-TEMPLATE-STRUCTURE",
+      "key": "WML-FX-TEMPLATE-STRUCTURE",
+      "type": "fixture",
+      "title": "Parse template as zero or more do or onevent bindings plus card-event attributes.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Parse template as zero or more do or onevent bindings plus card-event attributes.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
       "key": "WML-FX-UNKNOWN-CONTENT-PRESERVED",
       "type": "fixture",
@@ -3784,6 +4235,15 @@
       }
     },
     {
+      "id": "legacy-ticket:R0-12",
+      "key": "R0-12",
+      "type": "legacy-ticket",
+      "title": "R0-12",
+      "properties": {
+        "source": "docs/waves/wap-1.2.1-compliance-program.json"
+      }
+    },
+    {
       "id": "legacy-ticket:T0-07",
       "key": "T0-07",
       "type": "legacy-ticket",
@@ -3861,6 +4321,15 @@
       "key": "RQ-RMK-001",
       "type": "requirement",
       "title": "RQ-RMK-001",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-002",
+      "key": "RQ-RMK-002",
+      "type": "requirement",
+      "title": "RQ-RMK-002",
       "properties": {
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4121,6 +4590,32 @@
       }
     },
     {
+      "id": "scr-row:WML-C-08",
+      "key": "WML-C-08",
+      "type": "scr-row",
+      "title": "Card/Deck task shadowing",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "9.6",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.2",
+          "changeSection": null
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-12"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "scr-row:WML-C-09",
       "key": "WML-C-09",
       "type": "scr-row",
@@ -4197,6 +4692,31 @@
       }
     },
     {
+      "id": "scr-row:WML-C-26",
+      "key": "WML-C-26",
+      "type": "scr-row",
+      "title": "do",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "9.7",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "scr-row:WML-C-33",
       "key": "WML-C-33",
       "type": "scr-row",
@@ -4217,6 +4737,31 @@
           "R0-01",
           "R0-04",
           "WML-204"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-35",
+      "key": "WML-C-35",
+      "type": "scr-row",
+      "title": "noop",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "9.5.4",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4267,6 +4812,31 @@
           "R0-01",
           "R0-04",
           "WML-204"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-47",
+      "key": "WML-C-47",
+      "type": "scr-row",
+      "title": "template",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "11.4",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "R0-12"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4650,7 +5220,7 @@
       "type": "work-item",
       "title": "Complete deck/head/template/card/access/meta parser model",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "qa"
@@ -4658,8 +5228,13 @@
         "sourceFamilies": [
           "wml"
         ],
+        "notes": [
+          "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
+          "WML-202 remains in progress because the broader deck/card/meta grammar and metadata-retention acceptance is not complete."
+        ],
         "existingTickets": [
           "R0-04",
+          "R0-12",
           "C5-03"
         ],
         "outputs": [
@@ -4669,7 +5244,10 @@
           "Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+          "pnpm test:story WML-202",
+          "node scripts/check-wap-conformance-ledger.mjs",
+          "node scripts/check-wap-selected-normative-clauses.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -7567,6 +8145,114 @@
       ]
     },
     {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME|refines|scr-row:WML-C-26",
+      "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "relation": "refines",
+      "to": "scr-row:WML-C-26",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-EFFECTIVE-NAME|verified-by|fixture:WML-FX-DO-EFFECTIVE-NAME",
+      "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-DO-EFFECTIVE-NAME",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN|refines|scr-row:WML-C-26",
+      "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "relation": "refines",
+      "to": "scr-row:WML-C-26",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-INACTIVE-HIDDEN|verified-by|fixture:WML-FX-DO-INACTIVE-HIDDEN",
+      "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-DO-INACTIVE-HIDDEN",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-INPUT-EMPTY-COMMIT|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WML-CL-INPUT-EMPTY-COMMIT",
       "relation": "maps-to",
@@ -7967,6 +8653,87 @@
       "from": "clause:WML-CL-INPUT-STRUCTURE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-INPUT-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|maps-to|requirement:RQ-RMK-004",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-004",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|refines|scr-row:WML-C-09",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-09",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|refines|scr-row:WML-C-47",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-47",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE|verified-by|fixture:WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "from": "clause:WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8611,6 +9378,321 @@
       ]
     },
     {
+      "id": "clause:WML-CL-SHADOW-ACTIVE-SET|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SHADOW-ACTIVE-SET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-ACTIVE-SET|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-SHADOW-ACTIVE-SET",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-ACTIVE-SET|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-SHADOW-ACTIVE-SET",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-ACTIVE-SET|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SHADOW-ACTIVE-SET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-ACTIVE-SET|verified-by|fixture:WML-FX-SHADOW-ACTIVE-SET",
+      "from": "clause:WML-CL-SHADOW-ACTIVE-SET",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SHADOW-ACTIVE-SET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|refines|scr-row:WML-C-47",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-47",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-CARD-PRECEDENCE|verified-by|fixture:WML-FX-SHADOW-CARD-PRECEDENCE",
+      "from": "clause:WML-CL-SHADOW-CARD-PRECEDENCE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SHADOW-CARD-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|refines|scr-row:WML-C-47",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "refines",
+      "to": "scr-row:WML-C-47",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-MATCHING|verified-by|fixture:WML-FX-SHADOW-MATCHING",
+      "from": "clause:WML-CL-SHADOW-MATCHING",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SHADOW-MATCHING",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK|refines|scr-row:WML-C-08",
+      "from": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "relation": "refines",
+      "to": "scr-row:WML-C-08",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK|refines|scr-row:WML-C-35",
+      "from": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "relation": "refines",
+      "to": "scr-row:WML-C-35",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SHADOW-NOOP-MASK|verified-by|fixture:WML-FX-SHADOW-NOOP-MASK",
+      "from": "clause:WML-CL-SHADOW-NOOP-MASK",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SHADOW-NOOP-MASK",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS|refines|scr-row:WML-C-47",
+      "from": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-47",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS|verified-by|fixture:WML-FX-TEMPLATE-APPLIES-ALL-CARDS",
+      "from": "clause:WML-CL-TEMPLATE-APPLIES-ALL-CARDS",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-TEMPLATE-APPLIES-ALL-CARDS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE|planned-by|work-item:WML-202",
+      "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE|refines|scr-row:WML-C-47",
+      "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-47",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE|verified-by|fixture:WML-FX-TEMPLATE-STRUCTURE",
+      "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-TEMPLATE-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|maps-to|requirement:RQ-RMK-009",
       "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
       "relation": "maps-to",
@@ -8917,6 +9999,15 @@
       ]
     },
     {
+      "id": "scr-row:WML-C-08|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-08",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WML-C-09|belongs-to|source-family:wml",
       "from": "scr-row:WML-C-09",
       "relation": "belongs-to",
@@ -8953,6 +10044,15 @@
       ]
     },
     {
+      "id": "scr-row:WML-C-26|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-26",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WML-C-33|belongs-to|source-family:wml",
       "from": "scr-row:WML-C-33",
       "relation": "belongs-to",
@@ -8966,6 +10066,15 @@
       "from": "scr-row:WML-C-33",
       "relation": "planned-by",
       "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-35|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-35",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9002,6 +10111,15 @@
       "from": "scr-row:WML-C-43",
       "relation": "planned-by",
       "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-47|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-47",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9417,6 +10535,15 @@
       "from": "work-item:WML-202",
       "relation": "relates-to",
       "to": "legacy-ticket:R0-04",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-202|relates-to|legacy-ticket:R0-12",
+      "from": "work-item:WML-202",
+      "relation": "relates-to",
+      "to": "legacy-ticket:R0-12",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
       ]

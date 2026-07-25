@@ -3,6 +3,32 @@ use crate::*;
 use url::Url;
 
 impl WmlEngine {
+    pub(crate) fn active_do_action_internal(
+        &self,
+        do_type: &str,
+    ) -> Result<Option<CardTaskAction>, String> {
+        let deck = self
+            .deck
+            .as_ref()
+            .ok_or_else(|| "No deck loaded".to_string())?;
+        Ok(deck
+            .active_do_action(self.active_card_idx, do_type)
+            .cloned())
+    }
+
+    pub(crate) fn active_onevent_action_internal(
+        &self,
+        event_type: &str,
+    ) -> Result<Option<CardTaskAction>, String> {
+        let deck = self
+            .deck
+            .as_ref()
+            .ok_or_else(|| "No deck loaded".to_string())?;
+        Ok(deck
+            .active_onevent_action(self.active_card_idx, event_type)
+            .cloned())
+    }
+
     /// Navigate to `id`, guarded against unbounded recursion.
     ///
     /// `onenterforward`/`onenterbackward` actions and `WMLBrowser.go()` from
@@ -100,7 +126,7 @@ impl WmlEngine {
     }
 
     pub(crate) fn run_onenterforward_for_active_card(&mut self) -> Result<(), String> {
-        let action = self.active_card_internal()?.onenterforward_action.clone();
+        let action = self.active_onevent_action_internal("onenterforward")?;
         if let Some(action) = action {
             self.execute_card_task_action(&action)?;
         }
@@ -108,7 +134,7 @@ impl WmlEngine {
     }
 
     pub(crate) fn run_onenterbackward_for_active_card(&mut self) -> Result<(), String> {
-        let action = self.active_card_internal()?.onenterbackward_action.clone();
+        let action = self.active_onevent_action_internal("onenterbackward")?;
         if let Some(action) = action {
             self.execute_card_task_action(&action)?;
         }

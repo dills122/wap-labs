@@ -1,5 +1,11 @@
 use crate::runtime::node::Node;
 
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum CardEventBindingIdentity {
+    Do(String),
+    Onevent(String),
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CardPostField {
     pub name: String,
@@ -19,12 +25,58 @@ pub enum CardTaskAction {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub enum CardEventBindingKind {
+    Do {
+        name: String,
+        do_type: String,
+        label: Option<String>,
+    },
+    Onevent {
+        event_type: String,
+    },
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CardEventBinding {
+    pub kind: CardEventBindingKind,
+    pub action: CardTaskAction,
+}
+
+impl CardEventBinding {
+    pub fn identity(&self) -> CardEventBindingIdentity {
+        match &self.kind {
+            CardEventBindingKind::Do { name, .. } => CardEventBindingIdentity::Do(name.clone()),
+            CardEventBindingKind::Onevent { event_type } => {
+                CardEventBindingIdentity::Onevent(event_type.clone())
+            }
+        }
+    }
+
+    pub fn is_noop(&self) -> bool {
+        self.action == CardTaskAction::Noop
+    }
+
+    pub fn matches_do_type(&self, target_type: &str) -> bool {
+        matches!(
+            &self.kind,
+            CardEventBindingKind::Do { do_type, .. }
+                if do_type.eq_ignore_ascii_case(target_type)
+        )
+    }
+
+    pub fn matches_onevent_type(&self, target_type: &str) -> bool {
+        matches!(
+            &self.kind,
+            CardEventBindingKind::Onevent { event_type }
+                if event_type == target_type
+        )
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Card {
     pub id: String,
     pub nodes: Vec<Node>,
-    pub accept_action: Option<CardTaskAction>,
-    pub onenterforward_action: Option<CardTaskAction>,
-    pub onenterbackward_action: Option<CardTaskAction>,
-    pub ontimer_action: Option<CardTaskAction>,
+    pub event_bindings: Vec<CardEventBinding>,
     pub timer_value_ds: Option<u32>,
 }

@@ -34,6 +34,17 @@ fn draw_text(render_value: &JsValue) -> Vec<String> {
         .collect()
 }
 
+fn trace_kinds(trace_value: &JsValue) -> Vec<String> {
+    Array::from(trace_value)
+        .iter()
+        .filter_map(|entry| {
+            Reflect::get(&entry, &JsValue::from_str("kind"))
+                .ok()
+                .and_then(|value| value.as_string())
+        })
+        .collect()
+}
+
 #[wasm_bindgen_test]
 fn wasm_m1_02_load_deck_context_boundary_sets_metadata() {
     let mut engine = WmlEngine::wasm_new();
@@ -250,6 +261,62 @@ fn wasm_wml_204_control_validation_matches_native_error() {
     assert_eq!(
         err.as_string().expect("parser error should be a string"),
         "Invalid <input>: attribute 'type' must be 'text' or 'password'"
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_202_template_shadowing_matches_native_task_activation() {
+    let mut engine = WmlEngine::wasm_new();
+    let xml = r##"
+        <wml>
+          <template><do type="accept" name="primary"><go href="#deck"/></do></template>
+          <card id="home"><do type="accept" name="primary"><go href="#card"/></do></card>
+          <card id="deck"><p>Deck</p></card>
+          <card id="card"><p>Card</p></card>
+        </wml>
+        "##;
+
+    engine
+        .load_deck_wasm(xml)
+        .expect("deck should load through wasm boundary");
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("card binding should activate");
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be available"),
+        "card"
+    );
+    assert!(
+        draw_text(&engine.render_wasm().expect("render should succeed"))
+            .iter()
+            .any(|text| text.contains("Card"))
+    );
+    assert_eq!(
+        trace_kinds(
+            &engine
+                .trace_entries_wasm()
+                .expect("trace entries should serialize")
+        ),
+        ["LOAD_DECK", "KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]
+    );
+
+    assert!(engine.navigate_back_wasm());
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be available"),
+        "home"
+    );
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("card binding should remain active after back navigation");
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be available"),
+        "card"
     );
 }
 

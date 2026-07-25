@@ -2029,7 +2029,7 @@ Reference:
 
 ### R0-12 Template element and card/deck task shadowing (`WML-C-47`, `WML-C-08`)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `R0-02`, `R0-04`
 3. `Files`:
 - `engine-wasm/engine/src/runtime/card.rs`
@@ -2053,6 +2053,11 @@ Reference:
 8. `Notes`:
 - Split out of `R0-04`'s "parser semantic completeness" scope: `template`/shadowing turned out to need a real named-binding model and merge algorithm, not a small addition alongside `head`/`access`.
 - `WML-C-08` (shadowing) is formally covered by `R0-02`, which is `done` - per `AGENT_STANDARDS.md`'s backlog lifecycle policy, `R0-02`'s status is not reopened for this. This ticket is the scoped corrective follow-up for a gap the newer clause-level ledger (`CONF-003`) found in `R0-02`'s original coverage, not a reversal of `R0-02`'s completion.
+9. `Progress`:
+- Added ordered, independent card/template `do[name]` and `onevent[type]` bindings in the shared Rust deck model, including effective-name matching, cross-syntax intrinsic precedence, and inactive `noop` masking.
+- Added deterministic parser rejection for duplicate templates, misplaced/invalid template content, duplicate effective do names, and conflicting intrinsic bindings.
+- Added native parser/runtime tests, a WASM boundary parity test, and executable `wml-202-template-shadowing.wml` + `.flow.json` evidence (`pnpm test:story WML-202`).
+- Direct evidence closes `WML-C-08` and `WML-C-47`; the broader `WML-202` deck/card/meta completion gate remains open.
 
 ## Phase S (Archived)
 

@@ -196,6 +196,20 @@ const strictWcmpClauseIds = new Set(
 );
 const directWorkItemClauseIds = new Map([
   [
+    'WML-202',
+    new Set([
+      'WML-CL-DO-EFFECTIVE-NAME',
+      'WML-CL-DO-INACTIVE-HIDDEN',
+      'WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE',
+      'WML-CL-SHADOW-ACTIVE-SET',
+      'WML-CL-SHADOW-CARD-PRECEDENCE',
+      'WML-CL-SHADOW-MATCHING',
+      'WML-CL-SHADOW-NOOP-MASK',
+      'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
+      'WML-CL-TEMPLATE-STRUCTURE'
+    ])
+  ],
+  [
     'TRN-702',
     new Set([
       'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -250,8 +264,6 @@ const directWorkItemClauseIds = new Map([
     ])
   ]
 ]);
-const configuredDirectWorkItemIds = new Set(directWorkItemClauseIds.keys());
-
 function directWorkItemsForClause(clauseId) {
   return [...directWorkItemClauseIds]
     .filter(([, clauseIds]) => clauseIds.has(clauseId))
@@ -401,9 +413,22 @@ if (refreshDirectWorkItems) {
   const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
   refreshStrictWcmpFamily(manifest);
   for (const family of manifest.families) {
+    const parentLedger = JSON.parse(fs.readFileSync(family.parentLedger, 'utf8'));
+    const parentById = new Map(
+      parentLedger.obligations.map((parent) => [parent.id, parent])
+    );
     family.parentLedgerSha256 = sha256(
       fs.readFileSync(family.parentLedger, 'utf8')
     );
+    for (const parent of family.parents) {
+      const source = parentById.get(parent.id);
+      if (!source) {
+        throw new Error(`${family.family}/${parent.id}: missing parent ledger row`);
+      }
+      parent.implementationStatus = source.mapping.implementationStatus;
+      parent.ownerLayers = source.mapping.ownerLayers;
+      parent.workItems = source.mapping.workItems;
+    }
     for (const candidate of family.clauses) {
       const directWorkItems = directWorkItemsForClause(candidate.id);
       if (directWorkItems.length) {
@@ -413,12 +438,49 @@ if (refreshDirectWorkItems) {
       }
       candidate.mapping.workItems = [
         ...new Set([
-          ...candidate.mapping.workItems.filter(
-            (workItem) => !configuredDirectWorkItemIds.has(workItem)
+          ...candidate.parentRows.flatMap(
+            (parentId) => parentById.get(parentId).mapping.workItems
           ),
           ...directWorkItems
         ])
       ].sort();
+      candidate.mapping.ownerLayers = [
+        ...new Set(
+          candidate.parentRows.flatMap(
+            (parentId) => parentById.get(parentId).mapping.ownerLayers
+          )
+        )
+      ].sort();
+      candidate.mapping.requirementIds = [
+        ...new Set(
+          candidate.parentRows.flatMap(
+            (parentId) => parentById.get(parentId).mapping.requirementIds
+          )
+        )
+      ].sort();
+      candidate.mapping.parentImplementationSnapshot = Object.fromEntries(
+        candidate.parentRows.map((parentId) => [
+          parentId,
+          parentById.get(parentId).mapping.implementationStatus
+        ])
+      );
+      if (directWorkItems.includes('WML-202')) {
+        const testPath =
+          candidate.fixturePlan.kind === 'parser'
+            ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
+            : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = {
+          path: testPath,
+          testPath,
+          command:
+            'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202'
+        };
+      }
+      candidate.mapping.clauseImplementationStatus =
+        candidate.fixturePlan.status === 'implemented'
+          ? 'implemented'
+          : 'not-assessed';
     }
   }
   refreshManifestTotals(manifest);
@@ -1314,11 +1376,23 @@ function clause(
   const directFixtureImplemented =
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
-    family === 'wbxml';
+    family === 'wbxml' ||
+    directWorkItems.includes('WML-202');
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
+  const wml202TestPath =
+    fixtureKind === 'parser'
+      ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
+      : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
   const evidence =
-    family === 'wbxml'
+    directWorkItems.includes('WML-202')
+      ? {
+          path: wml202TestPath,
+          testPath: wml202TestPath,
+          command:
+            'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202'
+        }
+      : family === 'wbxml'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           testPath: 'transport-rust/src/tests/wbxml_conformance.rs',

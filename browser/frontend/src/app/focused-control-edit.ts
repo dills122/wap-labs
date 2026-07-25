@@ -64,10 +64,20 @@ export class FocusedControlEditController {
       return 'unhandled';
     }
 
-    let frame: EngineFrame;
     if (key === 'Enter') {
-      frame = await this.host.commitFocusedInputEdit();
-    } else if (key === 'Escape') {
+      this.host.recordTimeline('keyboard-input-edit-state', {
+        key,
+        handled: false,
+        focusedInputEditName: snapshot.focusedInputEditName ?? null,
+        focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
+        focusedLinkIndex: snapshot.focusedLinkIndex,
+        phase: 'defer-to-engine'
+      });
+      return 'unhandled';
+    }
+
+    let frame: EngineFrame;
+    if (key === 'Escape') {
       frame = await this.host.cancelFocusedInputEdit();
     } else if (key === 'Backspace') {
       frame = await this.host.setFocusedInputEditDraft(

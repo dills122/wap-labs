@@ -34,14 +34,14 @@
           "action": { "type": "key", "key": "enter" },
           "expect": {
             "state": { "activeCardId": "accept-noop", "focusedLinkIndex": 0 },
-            "traceKinds": ["ACTION_ACCEPT", "ACTION_NOOP"]
+            "traceKinds": ["KEY"]
           }
         },
         {
           "action": { "type": "back" },
           "expect": {
             "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
-            "traceKinds": ["ACTION_NOOP", "ACTION_BACK"]
+            "traceKinds": ["KEY", "ACTION_BACK"]
           }
         }
       ]
