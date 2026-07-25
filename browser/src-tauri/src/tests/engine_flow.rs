@@ -196,11 +196,17 @@ fn snapshot_exposes_script_dialog_and_timer_requests() {
 
 #[test]
 fn snapshot_exposes_script_error_class_and_category() {
+    // WAP-193_101 12.3.1.7 classifies the VM's Stack/type bytecode-integrity
+    // traps as Fatal, not Non-fatal (see `classify_vm_trap` in
+    // engine-wasm/engine/src/engine_script_types.rs), so no VM opcode
+    // currently produces a reachable non-fatal outcome. This exercises the
+    // `ok`/`none` taxonomy the snapshot actually carries for a successful
+    // script, alongside the fatal case below.
     let mut engine = WmlEngine::new();
     let script_deck = r##"
     <wml>
       <card id="home">
-        <a href="script:nonfatal.wmlsc#main">Run non-fatal</a>
+        <a href="script:ok.wmlsc#main">Run ok</a>
         <a href="script:fatal.wmlsc#main">Run fatal</a>
       </card>
     </wml>
@@ -216,10 +222,7 @@ fn snapshot_exposes_script_error_class_and_category() {
     )
     .expect("deck should load");
 
-    engine.register_script_unit(
-        "nonfatal.wmlsc".to_string(),
-        vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
-    );
+    engine.register_script_unit("ok.wmlsc".to_string(), vec![0x01, 4, 0x01, 8, 0x02, 0x00]);
     engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
 
     apply_handle_key(
@@ -228,21 +231,17 @@ fn snapshot_exposes_script_error_class_and_category() {
             key: EngineKey::Enter,
         },
     )
-    .expect("non-fatal script should not abort");
+    .expect("successful script should not abort");
 
-    let nonfatal_snapshot = apply_engine_snapshot(&engine);
-    assert_eq!(nonfatal_snapshot.last_script_execution_ok, Some(true));
+    let ok_snapshot = apply_engine_snapshot(&engine);
+    assert_eq!(ok_snapshot.last_script_execution_ok, Some(true));
     assert_eq!(
-        nonfatal_snapshot
-            .last_script_execution_error_class
-            .as_deref(),
-        Some("non-fatal")
+        ok_snapshot.last_script_execution_error_class.as_deref(),
+        Some("none")
     );
     assert_eq!(
-        nonfatal_snapshot
-            .last_script_execution_error_category
-            .as_deref(),
-        Some("computational")
+        ok_snapshot.last_script_execution_error_category.as_deref(),
+        Some("none")
     );
 
     apply_handle_key(
