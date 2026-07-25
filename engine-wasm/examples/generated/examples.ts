@@ -2778,6 +2778,80 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<wml>\n  <card id=\"select-semantics\" title=\"Select Semantics\">\n    <p>\n      Destination:\n      <select\n        name=\"nextCard\"\n        iname=\"nextCardIndex\"\n        ivalue=\"2\"\n        title=\"Destination\"\n      >\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml205ErrorRecovery",
+    "label": "WML 1.3 Deterministic Error Recovery",
+    "description": "Alternate-DTD extensions recover without hiding recognized content or disrupting supported metadata.",
+    "goal": "Verify recoverable content remains navigable while the engine reports deterministic WML load diagnostics.",
+    "workItems": [
+      "WML-205"
+    ],
+    "specItems": [
+      "WML-C-16",
+      "WML-C-17"
+    ],
+    "testingAc": [
+      "Load the example and confirm recognized content nested in the vendor wrapper remains visible.",
+      "Confirm supported metadata coexists with the recovered vendor extension.",
+      "Activate Recovery proof and confirm deterministic navigation reaches the proof card."
+    ],
+    "flows": [
+      {
+        "id": "alternate-dtd-content-recovery",
+        "title": "Alternate-DTD extension content recovers without losing navigation",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-205"
+        ],
+        "specItems": [
+          "WML-C-16",
+          "WML-C-17"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "render": {
+            "textIncludes": [
+              "Before extension.",
+              "Recovered extension content.",
+              "After extension."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "proof",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Recovered content stayed deterministic and navigable."
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wmlbrowserContextFidelity",
     "label": "WMLBrowser Context Fidelity",
     "description": "Exercises getCurrentCard and newContext semantics, including context reset side effects and prev suppression.",

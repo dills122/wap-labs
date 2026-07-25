@@ -308,6 +308,67 @@ fn wasm_wml_204_control_validation_matches_native_error() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_205_load_diagnostics_match_native_taxonomy() {
+    let mut engine = WmlEngine::wasm_new();
+
+    let malformed = engine
+        .load_deck_wasm("<wml><card id=\"broken\"></wml>")
+        .expect_err("malformed XML must fail at the wasm boundary");
+    assert!(malformed.as_string().is_some());
+    let diagnostics = engine
+        .last_wml_load_diagnostics_wasm()
+        .expect("diagnostics should serialize");
+    let entries = Array::from(&diagnostics);
+    assert_eq!(entries.length(), 1);
+    let entry = entries.get(0);
+    assert_eq!(
+        Reflect::get(&entry, &JsValue::from_str("class"))
+            .expect("class field")
+            .as_string()
+            .as_deref(),
+        Some("malformed")
+    );
+    assert_eq!(
+        Reflect::get(&entry, &JsValue::from_str("code"))
+            .expect("code field")
+            .as_string()
+            .as_deref(),
+        Some("WML_MALFORMED_XML")
+    );
+    assert_eq!(
+        Reflect::get(&entry, &JsValue::from_str("outcome"))
+            .expect("outcome field")
+            .as_string()
+            .as_deref(),
+        Some("rejected")
+    );
+
+    engine
+        .load_deck_wasm(
+            r#"<!DOCTYPE wml SYSTEM "http://example.test/alternate.dtd">
+               <wml><head><meta name="x" content="y"/></head><card id="ok">
+               <future><p>Known</p></future><timer value="bad"/></card></wml>"#,
+        )
+        .expect("recoverable deck should load at wasm boundary");
+    let recovered = Array::from(
+        &engine
+            .last_wml_load_diagnostics_wasm()
+            .expect("diagnostics should serialize"),
+    );
+    assert_eq!(recovered.length(), 2);
+    let classes = recovered
+        .iter()
+        .map(|entry| {
+            Reflect::get(&entry, &JsValue::from_str("class"))
+                .expect("class field")
+                .as_string()
+                .expect("class should be a string")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(classes, ["recoverable", "unsupported"]);
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_202_template_shadowing_matches_native_task_activation() {
     let mut engine = WmlEngine::wasm_new();
     let xml = r##"

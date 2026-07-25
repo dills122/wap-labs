@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-RMK-012|RQ-RMK-012]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
+- `planned-by` → [[work-items/WML-205|WML-205]]
 - `refines` → [[scr-rows/WML-C-16|WML-C-16]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 - `verified-by` → [[fixtures/WML-FX-ERROR-ENFORCEMENT|WML-FX-ERROR-ENFORCEMENT]]
@@ -41,7 +42,8 @@ tags:
   "workItems": [
     "R0-01",
     "R0-07",
-    "WML-201"
+    "WML-201",
+    "WML-205"
   ],
   "ownerLayers": [
     "browser",

@@ -218,10 +218,9 @@ Current recommendation after all merged implementation workstreams:
 
 1. **Mapping/evidence lane:** preserve `WML-201`'s completed 76-row evidence
    projection and 174/174 direct WML-clause mapping.
-2. **Engine lane, first:** adopt direct WML-family clause mappings for
-   `WML-205`, then implement the deterministic malformed/invalid/unsupported/
-   recoverable error taxonomy. The current zero-clause graph gap is the first
-   subtask, not evidence of zero scope.
+2. **Engine lane, first:** preserve `WML-205`'s direct three-clause mapping and deterministic
+   malformed/invalid/unsupported/recoverable engine-boundary taxonomy, then close exhaustive WML
+   error enforcement and host fetch/access failure atomicity as explicit residual gates.
 3. **Engine lane, next:** close the remaining `WML-202` access-policy/card-context
    gate while preserving its completed 14-clause direct slice. Follow with the
    residual `WML-204` field/control validation gate;

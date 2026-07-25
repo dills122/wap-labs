@@ -118,6 +118,7 @@ fn map_card_level_nodes(
                     );
                 }
 
+                budget.note_alternate_dtd_unknown(&element.name);
                 map_card_level_nodes(&element.children, out, budget, depth + 1, select_ordinal)?;
             }
         }
@@ -193,6 +194,7 @@ fn map_inline_nodes_recursive(
                     );
                 }
 
+                budget.note_alternate_dtd_unknown(&element.name);
                 map_inline_nodes_recursive(
                     &element.children,
                     pending_text,

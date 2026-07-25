@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "example": "wml205ErrorRecovery",
+  "flows": [
+    {
+      "id": "alternate-dtd-content-recovery",
+      "title": "Alternate-DTD extension content recovers without losing navigation",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-205"],
+      "specItems": ["WML-C-16", "WML-C-17"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "render": {
+          "textIncludes": [
+            "Before extension.",
+            "Recovered extension content.",
+            "After extension."
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "proof",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "render": {
+              "textIncludes": ["Recovered content stayed deterministic and navigable."]
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

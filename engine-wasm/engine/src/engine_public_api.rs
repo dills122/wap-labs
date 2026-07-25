@@ -27,6 +27,7 @@ impl WmlEngine {
             active_timer: None,
             active_input_edit: None,
             active_select_edit: None,
+            last_wml_load_diagnostics: Vec::new(),
         }
     }
 
@@ -47,9 +48,21 @@ impl WmlEngine {
         content_type: &str,
         raw_bytes_base64: Option<String>,
     ) -> Result<(), String> {
-        catch_engine_panic(|| {
+        let result = match catch_engine_panic(|| {
             self.load_deck_context_bounded(wml_xml, base_url, content_type, raw_bytes_base64)
-        })?
+        }) {
+            Ok(result) => result,
+            Err(message) => Err(WmlLoadDiagnostic::recoverable_rejection(message)),
+        };
+
+        match result {
+            Ok(()) => Ok(()),
+            Err(diagnostic) => {
+                let message = diagnostic.message.clone();
+                self.last_wml_load_diagnostics = vec![diagnostic];
+                Err(message)
+            }
+        }
     }
 
     fn load_deck_context_bounded(
@@ -58,50 +71,49 @@ impl WmlEngine {
         base_url: &str,
         content_type: &str,
         raw_bytes_base64: Option<String>,
-    ) -> Result<(), String> {
+    ) -> Result<(), WmlLoadDiagnostic> {
         if wml_xml.len() > MAX_DECK_WML_XML_BYTES {
-            return Err(format!(
+            return Err(WmlLoadDiagnostic::invalid(format!(
                 "Deck payload exceeds {}-byte limit (got {} bytes)",
                 MAX_DECK_WML_XML_BYTES,
                 wml_xml.len()
-            ));
+            )));
         }
         if raw_bytes_base64
             .as_ref()
             .is_some_and(|payload| payload.len() > MAX_DECK_RAW_BYTES_BASE64_BYTES)
         {
-            return Err(format!(
+            return Err(WmlLoadDiagnostic::invalid(format!(
                 "Raw deck payload exceeds {}-byte limit (got {} bytes)",
                 MAX_DECK_RAW_BYTES_BASE64_BYTES,
                 raw_bytes_base64.as_ref().map_or(0, |payload| payload.len())
-            ));
+            )));
         }
 
-        let deck = parse_wml(wml_xml)?;
-        self.deck = Some(deck);
-        self.active_card_idx = 0;
-        self.nav_stack.clear();
-        self.focused_link_idx = 0;
-        self.external_nav_intent = None;
-        self.external_nav_request_policy = None;
-        self.base_url = base_url.to_string();
-        self.content_type = content_type.to_string();
-        self.raw_bytes_base64 = raw_bytes_base64;
-        self.vars.clear();
-        self.script_units.clear();
-        self.script_entrypoints.clear();
-        self.pending_script_effects = ScriptRuntimeEffects::default();
-        self.last_script_outcome = None;
-        self.last_script_dialog_requests.clear();
-        self.last_script_timer_requests.clear();
-        self.active_input_edit = None;
-        self.active_select_edit = None;
-        self.clear_trace_entries();
-        self.active_timer = None;
-        self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
-        self.initialize_controls_on_active_card()?;
-        self.start_or_resume_timer_for_active_card(false)?;
+        let parsed = parse_wml_report(wml_xml)?;
+        let mut next = WmlEngine::new();
+        next.viewport_cols = self.viewport_cols;
+        next.deck = Some(parsed.deck);
+        next.base_url = base_url.to_string();
+        next.content_type = content_type.to_string();
+        next.raw_bytes_base64 = raw_bytes_base64;
+        next.last_wml_load_diagnostics = parsed.diagnostics;
+        next.push_trace("LOAD_DECK", format!("contentType={content_type}"));
+        next.initialize_controls_on_active_card()
+            .map_err(WmlLoadDiagnostic::invalid)?;
+        next.start_or_resume_timer_for_active_card(false)
+            .map_err(WmlLoadDiagnostic::invalid)?;
+        *self = next;
         Ok(())
+    }
+
+    /// Diagnostics emitted by the most recent WML load attempt.
+    ///
+    /// A rejected load publishes exactly one diagnostic and leaves all other
+    /// engine state unchanged. A successful load replaces this list with its
+    /// ordered ignored/recoverable-content diagnostics.
+    pub fn last_wml_load_diagnostics(&self) -> Vec<WmlLoadDiagnostic> {
+        self.last_wml_load_diagnostics.clone()
     }
 
     /// Read a runtime variable.

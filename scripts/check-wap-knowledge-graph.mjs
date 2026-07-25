@@ -171,11 +171,14 @@ for (const workItem of workItemNodes) {
     failures.push(`${workItem.key}: direct SCR-row evidence-state summary drift`);
   }
 }
-if (!graph.summary.workItemsWithoutDirectClauses.length) {
-  failures.push('pilot must expose work items that lack direct normative-clause mappings');
-}
-if (!Object.keys(graph.summary.unmappedNormativeFamiliesByWorkItem).length) {
-  failures.push('pilot must expose declared normative families without direct clause mappings');
+if (
+  graph.summary.directClauseCountsByWorkItem['WML-205'] !== 3 ||
+  graph.summary.workItemsWithoutDirectClauses.includes('WML-205') ||
+  JSON.stringify(graph.summary.directClauseFamiliesByWorkItem['WML-205']) !==
+    JSON.stringify(['wml']) ||
+  graph.summary.unmappedNormativeFamiliesByWorkItem['WML-205']
+) {
+  failures.push('WML-205 must directly map its three WML error-policy clauses');
 }
 
 for (const clause of graph.nodes.filter((node) => node.type === 'clause')) {

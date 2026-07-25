@@ -149,6 +149,11 @@ impl WmlEngine {
         self.content_type()
     }
 
+    #[wasm_bindgen(js_name = lastWmlLoadDiagnostics)]
+    pub fn last_wml_load_diagnostics_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.last_wml_load_diagnostics())
+    }
+
     #[wasm_bindgen(js_name = externalNavigationIntent)]
     pub fn external_navigation_intent_wasm(&self) -> Option<String> {
         self.external_navigation_intent()

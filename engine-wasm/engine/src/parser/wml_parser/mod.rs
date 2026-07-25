@@ -1,5 +1,6 @@
 use crate::runtime::card::Card;
 use crate::runtime::deck::Deck;
+use crate::WmlLoadDiagnostic;
 
 mod actions;
 mod head;
@@ -9,17 +10,28 @@ mod xml;
 use actions::{parse_card_bindings, parse_template_bindings};
 use head::parse_deck_head;
 use nodes::parse_card_nodes_xml;
-use xml::{parse_xml_root, XmlNode};
+#[cfg(test)]
+use xml::parse_xml_root;
+use xml::{parse_xml_document, WmlDocumentType, XmlNode};
 
 const MAX_PARSE_TREE_DEPTH: usize = 128;
 const MAX_PARSE_VISITED_NODES: usize = 50_000;
 
-#[derive(Default)]
 pub(super) struct ParseBudget {
     visited_nodes: usize,
+    alternate_dtd: bool,
+    diagnostics: Vec<WmlLoadDiagnostic>,
 }
 
 impl ParseBudget {
+    fn new(document_type: Option<WmlDocumentType>) -> Self {
+        Self {
+            visited_nodes: 0,
+            alternate_dtd: document_type == Some(WmlDocumentType::Alternate),
+            diagnostics: Vec::new(),
+        }
+    }
+
     pub(super) fn enter_scope(&self, depth: usize, context: &str) -> Result<(), String> {
         if depth > MAX_PARSE_TREE_DEPTH {
             return Err(format!(
@@ -38,12 +50,82 @@ impl ParseBudget {
         }
         Ok(())
     }
+
+    pub(super) fn note_alternate_dtd_unknown(&mut self, element_name: &str) {
+        if self.alternate_dtd && !is_known_wml_element(element_name) {
+            self.diagnostics.push(WmlLoadDiagnostic::unsupported(format!(
+                "Unsupported alternate-DTD element <{element_name}> was ignored while preserving recognized content"
+            )));
+        }
+    }
+
+    pub(super) fn note_recoverable(&mut self, message: impl Into<String>) {
+        self.diagnostics
+            .push(WmlLoadDiagnostic::recoverable(message));
+    }
 }
 
+fn is_known_wml_element(name: &str) -> bool {
+    matches!(
+        name,
+        "wml"
+            | "head"
+            | "access"
+            | "meta"
+            | "template"
+            | "card"
+            | "do"
+            | "onevent"
+            | "go"
+            | "prev"
+            | "refresh"
+            | "noop"
+            | "timer"
+            | "postfield"
+            | "setvar"
+            | "p"
+            | "br"
+            | "a"
+            | "anchor"
+            | "input"
+            | "select"
+            | "option"
+            | "optgroup"
+            | "fieldset"
+            | "b"
+            | "big"
+            | "em"
+            | "i"
+            | "small"
+            | "strong"
+            | "u"
+            | "img"
+            | "table"
+            | "tr"
+            | "td"
+            | "pre"
+    )
+}
+
+pub(crate) struct ParsedWml {
+    pub(crate) deck: Deck,
+    pub(crate) diagnostics: Vec<WmlLoadDiagnostic>,
+}
+
+#[cfg(test)]
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
-    let root = parse_xml_root(xml).map_err(map_xml_parse_error)?;
+    parse_wml_report(xml)
+        .map(|parsed| parsed.deck)
+        .map_err(|diagnostic| diagnostic.message)
+}
+
+pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic> {
+    let document = parse_xml_document(xml)?;
+    let root = document.root;
     if root.name != "wml" {
-        return Err("Missing required <wml> root element".to_string());
+        return Err(WmlLoadDiagnostic::invalid(
+            "Missing required <wml> root element",
+        ));
     }
 
     let mut cards = Vec::new();
@@ -53,51 +135,60 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     let mut seen_head = false;
     let mut seen_template = false;
     let mut seen_card = false;
-    let mut budget = ParseBudget::default();
+    let mut budget = ParseBudget::new(document.document_type);
     for node in &root.children {
         let element = match node {
             XmlNode::Text(text) if text.trim().is_empty() => continue,
             XmlNode::Text(_) => {
-                return Err("Invalid <wml>: text content is not allowed".to_string())
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid <wml>: text content is not allowed",
+                ))
             }
             XmlNode::Element(element) => element,
         };
         if element.name == "head" {
             if seen_head {
-                return Err("Invalid <wml>: only one <head> element is allowed".to_string());
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid <wml>: only one <head> element is allowed",
+                ));
             }
             if seen_card {
-                return Err(
-                    "Invalid <wml>: <head> must precede <template> and all <card> elements"
-                        .to_string(),
-                );
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid <wml>: <head> must precede <template> and all <card> elements",
+                ));
             }
             if seen_template {
-                return Err("Invalid <wml>: <head> must precede <template>".to_string());
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid <wml>: <head> must precede <template>",
+                ));
             }
             seen_head = true;
-            let parsed_head = parse_deck_head(element)?;
+            let parsed_head = parse_deck_head(element).map_err(WmlLoadDiagnostic::invalid)?;
             access_control = parsed_head.access_control;
             metadata = parsed_head.metadata;
             continue;
         }
         if element.name == "template" {
             if seen_template {
-                return Err("Invalid <wml>: only one <template> element is allowed".to_string());
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid <wml>: only one <template> element is allowed",
+                ));
             }
             if seen_card {
-                return Err(
-                    "Invalid <wml>: <template> must precede all <card> elements".to_string()
-                );
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid <wml>: <template> must precede all <card> elements",
+                ));
             }
             seen_template = true;
-            template_bindings = parse_template_bindings(element, &mut budget)?;
+            template_bindings = parse_template_bindings(element, &mut budget)
+                .map_err(WmlLoadDiagnostic::invalid)?;
             continue;
         }
         if element.name != "card" {
             // WML-C-17 requires forward-compatible handling of unknown markup.
             // Unknown deck-level elements do not participate in the recognized
             // `head?, template?, card+` ordering model.
+            budget.note_alternate_dtd_unknown(&element.name);
             continue;
         }
         seen_card = true;
@@ -107,8 +198,9 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             .attr("id")
             .map(str::to_string)
             .unwrap_or_else(|| format!("card-{}", cards.len() + 1));
-        let (event_bindings, timer_value_ds) = parse_card_bindings(card, &mut budget)?;
-        let nodes = parse_card_nodes_xml(card, &mut budget)?;
+        let (event_bindings, timer_value_ds) =
+            parse_card_bindings(card, &mut budget).map_err(WmlLoadDiagnostic::invalid)?;
+        let nodes = parse_card_nodes_xml(card, &mut budget).map_err(WmlLoadDiagnostic::invalid)?;
         cards.push(Card {
             id,
             nodes,
@@ -118,22 +210,13 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     }
 
     if cards.is_empty() {
-        return Err("No <card> elements found".to_string());
+        return Err(WmlLoadDiagnostic::invalid("No <card> elements found"));
     }
 
-    Ok(Deck::with_template(
-        cards,
-        template_bindings,
-        access_control,
-        metadata,
-    ))
-}
-
-fn map_xml_parse_error(err: String) -> String {
-    if err.contains("expected `</card>`") {
-        return "Missing closing </card> tag".to_string();
-    }
-    err
+    Ok(ParsedWml {
+        deck: Deck::with_template(cards, template_bindings, access_control, metadata),
+        diagnostics: budget.diagnostics,
+    })
 }
 
 #[cfg(test)]

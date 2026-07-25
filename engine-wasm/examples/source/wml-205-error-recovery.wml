@@ -1,0 +1,31 @@
+<!--
+label: WML 1.3 Deterministic Error Recovery
+work-items: WML-205
+spec-items: WML-C-16, WML-C-17
+description: Alternate-DTD extensions recover without hiding recognized content or disrupting supported metadata.
+goal: Verify recoverable content remains navigable while the engine reports deterministic WML load diagnostics.
+testing-ac:
+- Load the example and confirm recognized content nested in the vendor wrapper remains visible.
+- Confirm supported metadata coexists with the recovered vendor extension.
+- Activate Recovery proof and confirm deterministic navigation reaches the proof card.
+-->
+<!DOCTYPE wml PUBLIC "-//VENDOR//DTD WML 1.3 PLUS//EN"
+  "http://vendor.test/wml13-plus.dtd">
+<wml>
+  <head>
+    <meta name="vendor-mode" content="training"/>
+  </head>
+  <card id="home">
+    <p>
+      Before extension.
+      <vendor:panel data-mode="compact">
+        Recovered extension content.
+        <a href="#proof">Recovery proof</a>
+      </vendor:panel>
+      After extension.
+    </p>
+  </card>
+  <card id="proof">
+    <p>Recovered content stayed deterministic and navigable.</p>
+  </card>
+</wml>

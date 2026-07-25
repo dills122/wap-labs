@@ -15,7 +15,7 @@ Target: [[sprints/WML-2|WML-2]]
 ## Graph summary
 
 - Nodes: 588
-- Edges: 1684
+- Edges: 1687
 
 - `clause`: 224
 - `fixture`: 224
@@ -31,8 +31,8 @@ Target: [[sprints/WML-2|WML-2]]
 
 ## Work items without direct normative-clause mappings
 
-- [[work-items/WML-205|WML-205]]
+- None
 
 ## Declared normative families without direct clause mappings
 
-- [[work-items/WML-205|WML-205]]: `wml`
+- None

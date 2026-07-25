@@ -13,6 +13,7 @@ mod engine_public_api;
 mod engine_runtime_internal;
 mod engine_script_types;
 mod engine_wasm_bindings;
+mod engine_wml_types;
 mod layout;
 mod nav;
 mod parser;
@@ -26,7 +27,7 @@ mod engine_tests;
 
 use layout::flow_layout::{layout_card, FocusTarget};
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
-use parser::wml_parser::parse_wml;
+use parser::wml_parser::parse_wml_report;
 use runtime::card::CardTaskAction;
 use runtime::deck::Deck;
 use runtime::events::{
@@ -43,6 +44,10 @@ pub use engine_script_types::{
     ScriptNavigationCacheControlPolicyLiteral, ScriptNavigationIntentLiteral,
     ScriptNavigationPostContextLiteral, ScriptNavigationRequestPolicyLiteral,
     ScriptTimerRequestLiteral, ScriptValueLiteral, SCRIPT_ERROR_CATEGORY_METADATA,
+};
+pub use engine_wml_types::{
+    WmlLoadDiagnostic, WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral,
+    WmlLoadDiagnosticOutcomeLiteral,
 };
 pub use render::render_list::{DrawCmd, RenderList};
 
@@ -159,6 +164,7 @@ pub struct WmlEngine {
     active_timer: Option<CardTimerState>,
     active_input_edit: Option<InputEditState>,
     active_select_edit: Option<SelectEditState>,
+    last_wml_load_diagnostics: Vec<WmlLoadDiagnostic>,
 }
 
 impl Default for WmlEngine {

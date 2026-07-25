@@ -3626,7 +3626,8 @@
             "workItems": [
               "R0-01",
               "R0-07",
-              "WML-201"
+              "WML-201",
+              "WML-205"
             ],
             "requirementIds": [
               "RQ-RMK-012"
@@ -3638,7 +3639,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-205"
           ]
         },
         {
@@ -3670,7 +3672,8 @@
             "workItems": [
               "R0-01",
               "R0-07",
-              "WML-201"
+              "WML-201",
+              "WML-205"
             ],
             "requirementIds": [
               "RQ-RMK-012"
@@ -3682,7 +3685,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-205"
           ]
         },
         {
@@ -4597,7 +4601,8 @@
               "R0-02",
               "R0-06",
               "R0-07",
-              "WML-201"
+              "WML-201",
+              "WML-205"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4614,7 +4619,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-205"
           ]
         },
         {

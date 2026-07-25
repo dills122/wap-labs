@@ -23,6 +23,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `WmlDeckInput.rawBytesBase64` | `RQ-RMK-007`, `RQ-WAE-005` |
 | `loadDeck(xml)` compatibility path | `RQ-RMK-001`, `RQ-RMK-007` |
 | `loadDeckContext(...)` | `RQ-RMK-001`, `RQ-RMK-007`, `RQ-WAE-001` |
+| `WmlLoadDiagnostic` + `lastWmlLoadDiagnostics()` | `RQ-RMK-012`, `WML-205` |
 | `render()` / `RenderList` | `RQ-RMK-001`, `RQ-RMK-009` |
 | `handleKey('up'|'down'|'enter')` | `RQ-RMK-003`, `RQ-WAE-017` |
 | `navigateToCard(id)` | `RQ-RMK-003` |
@@ -88,7 +89,8 @@ Sync rule:
 
 ## Known gaps to schedule
 
-1. Add explicit contract field for engine/runtime error taxonomy once finalized (planned quality ticket).
+1. Extend the WML load taxonomy into navigation, task, resource, and host-policy errors after
+   their source-derived recovery/atomicity rules land.
 2. Strict Dialogs library/function identifiers and interactive result
    round-trips remain in `WMLS-504`/`WMLS-505`; the existing
    `lastScriptDialogRequests()` surface is sufficient for the completed

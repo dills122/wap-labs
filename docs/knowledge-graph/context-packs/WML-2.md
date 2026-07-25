@@ -14,12 +14,12 @@
 ## Graph summary
 
 - Nodes: 588
-- Edges: 1684
+- Edges: 1687
 - Selected work items: 5
 - Direct SCR rows: 76
-- Direct normative clauses: 263
-- Work items without direct clause mappings: 1
-- Work items with unmapped declared normative families: 1
+- Direct normative clauses: 266
+- Work items without direct clause mappings: 0
+- Work items with unmapped declared normative families: 0
 
 ## Execution target
 
@@ -143,12 +143,12 @@ Evidence commands:
 
 ### WML-205: WML parse/error taxonomy
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-07`
 - Direct SCR rows: 0
-- Direct normative clauses: 0
+- Direct normative clauses: 3
 
 Outputs:
 
@@ -160,7 +160,10 @@ Acceptance:
 
 Evidence commands:
 
-- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205`
+- `pnpm test:story WML-205`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/check-wap-knowledge-graph.mjs`
 
 ## Direct SCR evidence
 
@@ -2367,13 +2370,34 @@ Evidence commands:
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-005`
   - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `implemented`)
 
+### WML-205
+
+- **WML-CL-ERROR-ENFORCEMENT** — Enforce every error condition defined by WML.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
+  - Parents: `WML-C-16`
+  - Requirements: `RQ-RMK-012`
+  - Fixture: `WML-FX-ERROR-ENFORCEMENT` (`error-policy`, `planned`)
+- **WML-CL-ERROR-NO-INTENT-INFERENCE** — Do not hide invalid decks by guessing author or origin-server intent.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
+  - Parents: `WML-C-16`
+  - Requirements: `RQ-RMK-012`
+  - Fixture: `WML-FX-ERROR-NO-INTENT-INFERENCE` (`error-policy`, `planned`)
+- **WML-CL-TASK-FAILURE-ATOMICITY** — On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.5 (12.5.5 Task Execution Failure)
+  - Parents: `WML-C-16`, `WML-C-18`, `WML-C-29`, `WML-C-38`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
+  - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `planned`)
+
 ## Explicit mapping gaps
 
-- `WML-205` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
+- None
 
 Declared-family gaps:
 
-- `WML-205` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- None
 
 ## Source documents
 
