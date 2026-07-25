@@ -20,18 +20,26 @@ This document describes all active GitHub Actions automation for this repository
 ### 1) CI (`.github/workflows/ci.yml`)
 
 Purpose:
+
 - Primary merge gate for product code quality and parity checks.
 
 Triggers:
+
 - `pull_request`
 - `push` to `main`
 - `workflow_dispatch`
 
 Core behavior:
+
 - Uses path filtering (`Detect Changed Areas`) to skip unrelated layer jobs on PRs.
+- Derives `full_ci` from the event and pull-request author.
+- Forces the complete validation matrix for Dependabot-authored PRs, pushes to `main`, and manual
+  runs while preserving path filtering for ordinary PRs.
 - Runs repository-wide hygiene checks and layer-specific Rust/Node checks.
+- Reports the stable aggregate check `CI Required Gate`.
 
 Jobs:
+
 - `Repo Hygiene`
   - Node workspace install and lint/type/format checks
   - WaveNav WASM package build
@@ -39,9 +47,11 @@ Jobs:
   - Browser frontend typecheck contract drift guard
   - Transport contract parity script
 - `Rust Engine`
+  - verifies the engine and engine-fuzz lockfiles with `cargo metadata --locked`
   - `cargo fmt --check`
   - coverage gate with `cargo llvm-cov`
 - `Rust Transport`
+  - verifies `transport-rust/Cargo.lock` with `cargo metadata --locked`
   - exercises the pinned built-in WML 1.3 WBXML decoder
   - `cargo fmt --check`
   - `cargo clippy -- -D warnings`
@@ -53,15 +63,27 @@ Jobs:
   - uploads screenshots, traces, and structured evidence when a story fails
   - host-sample typecheck/lint/format checks
 - `Marketing Site Build`
-  - builds marketing site (required/optional per branch-protection policy)
+  - builds the marketing site when selected by path filtering or full CI
+- `Project Atlas Build`
+  - validates the WAP knowledge graph
+  - builds the Project Atlas documentation portal
 - `Browser Shell Skeleton Checks`
   - installs Linux Tauri system packages
+  - verifies `browser/src-tauri/Cargo.lock` with `cargo metadata --locked`
   - Rust fmt and coverage checks for `browser/src-tauri`
   - Rust->TS contract codegen drift check
+- `Browser Frontend Unit Tests`
+  - runs the browser frontend unit suite and coverage gate
 - `WML Server Sanity`
   - installs `wml-server` deps and runs Node syntax check
+- `CI Required Gate`
+  - runs with `always()` after all validation jobs
+  - fails on failed/cancelled prerequisites
+  - permits job-level path-filter skips only for ordinary pull requests
+  - requires every validation job to succeed for Dependabot PRs and other full-CI events
 
 Caching:
+
 - pnpm and npm lockfile caches (via `actions/setup-node`)
 - Rust build artifact cache (`Swatinem/rust-cache`)
 - `wasm-pack` binary cache (`actions/cache`)
@@ -69,15 +91,18 @@ Caching:
 ### 2) Security (`.github/workflows/security.yml`)
 
 Purpose:
+
 - Dependency risk checks and advisory scanning.
 
 Triggers:
+
 - `pull_request`
 - `push` to `main`
 - weekly cron (`27 6 * * 1`)
 - `workflow_dispatch`
 
 Jobs:
+
 - `Dependency Review`
   - PR-only
   - runs `actions/dependency-review-action`
@@ -91,6 +116,7 @@ Jobs:
   - runs `npm audit --audit-level=high` for `wml-server`
 
 Caching:
+
 - Rust build artifact cache for audit crates
 - pnpm cache for workspace audit
 - npm cache for `wml-server` audit
@@ -98,12 +124,15 @@ Caching:
 ### 3) Release Prepare (`.github/workflows/release-prepare.yml`)
 
 Purpose:
+
 - Manually create a frozen `release/vX.Y.Z` branch without publishing a GitHub release.
 
 Triggers:
+
 - `workflow_dispatch`
 
 Behavior:
+
 - checks out a chosen source ref (default `main`)
 - syncs all managed manifest versions from the requested semver
 - verifies version consistency
@@ -113,12 +142,15 @@ Behavior:
 ### 4) Milestone Release (`.github/workflows/milestone-release.yml`)
 
 Purpose:
+
 - Manually publish a milestone-tagged GitHub release from an existing release branch.
 
 Triggers:
+
 - `workflow_dispatch`
 
 Behavior:
+
 - checks out `release/vX.Y.Z` by default
 - verifies managed versions still match `VERSION`
 - builds the static site and simulator bundle
@@ -128,40 +160,45 @@ Behavior:
 ### 5) CodeQL (`.github/workflows/codeql.yml`)
 
 Purpose:
-- GitHub code scanning (SAST) for Rust and JavaScript/TypeScript.
+
+- Repository-controlled advanced CodeQL scanning (SAST) for Rust and JavaScript/TypeScript.
 
 Triggers:
+
 - `pull_request` targeting `main`
 - `push` to `main`
 - weekly cron (`43 5 * * 2`)
 - `workflow_dispatch`
 
 Matrix checks:
+
 - `Analyze (javascript-typescript)`
 - `Analyze (rust)`
 
-Rust-specific setup:
-- installs Tauri Linux system dependencies (GTK/GLib/WebKit)
-- creates `browser/frontend/dist/index.html` placeholder for Tauri compile-time config
-- performs `cargo check` for:
-  - `engine-wasm/engine`
-  - `transport-rust`
-  - `browser/src-tauri`
+Build modes:
+
+- JavaScript/TypeScript uses `none`.
+- Rust uses `none`, the only CodeQL build mode supported for Rust. CodeQL extracts the Rust
+  source directly, so this workflow does not install Tauri system dependencies or run manual
+  Cargo builds. Compilation remains covered by the main CI workflow.
+
+All CodeQL actions are pinned to immutable commit SHAs. The repository must leave CodeQL default
+setup disabled while this advanced workflow manages the same languages.
 
 Config:
+
 - `.github/codeql/codeql-config.yml`
   - includes core source paths: `browser`, `engine-wasm`, `transport-rust`, `wml-server`, `scripts`
   - excludes generated/build paths such as `target`, `dist`, `node_modules`, `engine-wasm/pkg`, and generated browser contracts
 
-Caching:
-- Rust build artifact cache for the Rust matrix leg
-
 ### 6) Deploy Pages (`.github/workflows/pages.yml`)
 
 Purpose:
+
 - Build and publish static artifacts to `gh-pages`.
 
 Triggers:
+
 - `push` to `main` when paths change:
   - `marketing-site/**`
   - `engine-wasm/host-sample/**`
@@ -169,6 +206,7 @@ Triggers:
 - `workflow_dispatch`
 
 Behavior:
+
 - builds marketing site and host-sample
 - assembles combined `_site` artifact
 - deploys to `gh-pages` branch with `peaceiris/actions-gh-pages`
@@ -176,12 +214,15 @@ Behavior:
 ### 7) Transport WAP Smoke (`.github/workflows/transport-wap-smoke.yml`)
 
 Purpose:
+
 - On-demand end-to-end smoke for Kannel + WML stack integration.
 
 Triggers:
+
 - `workflow_dispatch` only
 
 Behavior:
+
 - starts Docker services (`kannel`, `wml-server`)
 - runs `make smoke-transport-wap`
 - executes both:
@@ -193,10 +234,12 @@ Behavior:
 ## Dependency Update Automation
 
 File:
+
 - `.github/dependabot.yml`
 - `.github/workflows/dependabot-auto-merge.yml`
 
 Configured ecosystems:
+
 - `github-actions` (root)
 - npm:
   - root workspace (`/`)
@@ -204,17 +247,54 @@ Configured ecosystems:
   - `/wml-server`
 - cargo:
   - `/engine-wasm/engine`
+  - `/engine-wasm/engine/fuzz`
   - `/transport-rust`
   - `/browser/src-tauri`
 
-Cadence:
-- weekly for all ecosystems
+Grouping and cadence:
+
+- Patch and minor version updates are grouped only within one package ecosystem and one configured
+  directory/lockfile boundary.
+- Major version updates do not match a group and therefore remain individual pull requests for
+  manual review.
+- Security updates do not match the version-update groups and remain individual for focused
+  review.
+- Checks run weekly at deterministic UTC times: GitHub Actions on Monday, Node ecosystems on
+  Tuesday, and Rust ecosystems on Wednesday.
+- Routine releases use a three-day patch, seven-day minor, and fourteen-day major cooldown.
+  Cooldowns do not delay security updates.
+- Open-PR limits are set per ecosystem/directory to prevent an update burst from flooding the
+  review queue.
+- No multi-ecosystem groups are used. The root pnpm workspace is grouped together because its
+  declared workspaces share `pnpm-lock.yaml`; marketing-site, wml-server, and every Cargo lockfile
+  remain independent.
 
 Auto-merge behavior:
-- Dependabot pull requests have GitHub auto-merge enabled via workflow on `pull_request_target`.
-- The workflow uses `gh pr merge --auto --squash`, so GitHub merges only after required branch-protection checks and rules pass.
+
+- The workflow runs on `pull_request`, not `pull_request_target`.
+- `dependabot/fetch-metadata` is pinned to a full commit SHA and verifies that the PR and commits
+  are Dependabot-owned.
+- Only patch and minor updates have auto-merge enabled. The metadata action reports the highest
+  semver change in grouped PRs, so a group cannot hide a major update.
+- Major updates and updates without recognized patch/minor metadata require manual review.
+- Security updates follow the same semver auto-merge rule when the repository setting for
+  Dependabot security updates is enabled; unlike routine version updates, they remain ungrouped
+  and are not delayed by cooldowns.
+- The workflow uses `gh pr merge --auto --squash`, so GitHub queues the merge and waits for every
+  required ruleset check. It does not merge around CI, security, CodeQL, review, or signature
+  requirements.
 - On Dependabot rebases/synchronizations, the workflow re-runs and re-enables auto-merge for the updated head.
-- Repository setting prerequisite: `Allow auto-merge` must be enabled in GitHub repository settings.
+
+Lockfile ownership:
+
+- Dependabot owns manifest and lockfile changes for its configured ecosystem.
+- The former write-back workflow was removed. CI never checks out PR code under
+  `pull_request_target`, broadly refreshes unrelated lockfiles, or commits generated lockfile
+  changes.
+- pnpm frozen installs, `npm ci`, and `cargo metadata --locked` verify that Dependabot supplied a
+  usable lockfile without mutating the PR.
+
+Repository setting prerequisites are documented in `docs/ci/REQUIRED_CHECKS.md`.
 
 ## Branch Protection Guidance
 
@@ -223,11 +303,13 @@ Use `docs/ci/REQUIRED_CHECKS.md` as the source of truth for required checks on `
 For immutable release branches, use `docs/ci/RELEASE_BRANCH_RULESET.md` as the source of truth for GitHub ruleset configuration.
 
 At minimum, require:
-- Main CI check jobs from `ci.yml`
+
+- `CI Required Gate` from `ci.yml`
 - Security jobs from `security.yml`
 - CodeQL matrix checks from `codeql.yml`
 
 Do not require:
+
 - `Transport WAP Smoke` (manual)
 - `Deploy Pages` (deployment workflow)
 
@@ -249,6 +331,7 @@ Do not require:
 ## Maintenance Checklist
 
 When changing CI:
+
 1. Update workflow YAML.
 2. Update `docs/ci/REQUIRED_CHECKS.md` if check names change or required policy changes.
 3. Update `docs/ci/RELEASE_BRANCH_RULESET.md` when release branch governance changes.

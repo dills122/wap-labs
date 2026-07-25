@@ -10,21 +10,22 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: "22"
+  NODE_VERSION: '22'
   RUST_SHARED_KEY: wavenav-rust
   RUST_BROWSER_KEY: wavenav-browser-rust
-  ENGINE_COV_LINES: "90"
-  ENGINE_COV_FUNCS: "85"
-  TRANSPORT_COV_LINES: "85"
-  TRANSPORT_COV_FUNCS: "84"
-  BROWSER_COV_LINES: "80"
-  BROWSER_COV_FUNCS: "65"
+  ENGINE_COV_LINES: '90'
+  ENGINE_COV_FUNCS: '85'
+  TRANSPORT_COV_LINES: '85'
+  TRANSPORT_COV_FUNCS: '84'
+  BROWSER_COV_LINES: '80'
+  BROWSER_COV_FUNCS: '65'
 
 jobs:
   changes:
     name: Detect Changed Areas
     runs-on: ubuntu-latest
     outputs:
+      full_ci: ${{ steps.scope.outputs.full_ci }}
       ci: ${{ steps.filter.outputs.ci }}
       rust_engine: ${{ steps.filter.outputs.rust_engine }}
       rust_transport: ${{ steps.filter.outputs.rust_transport }}
@@ -35,6 +36,12 @@ jobs:
       browser_frontend: ${{ steps.filter.outputs.browser_frontend }}
       wml_server: ${{ steps.filter.outputs.wml_server }}
     steps:
+      - name: Determine CI scope
+        id: scope
+        env:
+          FULL_CI: ${{ github.event_name != 'pull_request' || github.event.pull_request.user.login == 'dependabot[bot]' }}
+        run: echo "full_ci=${FULL_CI}" >> "${GITHUB_OUTPUT}"
+
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -103,7 +110,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install root Node deps
@@ -163,7 +170,7 @@ jobs:
   rust-engine:
     name: Rust Engine
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.rust_engine == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.rust_engine == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -184,6 +191,14 @@ jobs:
           workspaces: |
             engine-wasm/engine -> target
 
+      - name: Verify engine Cargo.lock
+        working-directory: engine-wasm/engine
+        run: cargo metadata --locked --format-version 1 --no-deps >/dev/null
+
+      - name: Verify engine fuzz Cargo.lock
+        working-directory: engine-wasm/engine
+        run: cargo metadata --manifest-path fuzz/Cargo.toml --locked --format-version 1 --no-deps >/dev/null
+
       - name: Rust fmt check
         working-directory: engine-wasm/engine
         run: cargo fmt --check
@@ -201,7 +216,7 @@ jobs:
   rust-transport:
     name: Rust Transport
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.rust_transport == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.rust_transport == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -222,6 +237,10 @@ jobs:
           workspaces: |
             transport-rust -> target
 
+      - name: Verify transport Cargo.lock
+        working-directory: transport-rust
+        run: cargo metadata --locked --format-version 1 --no-deps >/dev/null
+
       - name: Rust fmt check
         working-directory: transport-rust
         run: cargo fmt --check
@@ -237,7 +256,7 @@ jobs:
   host-sample:
     name: WaveNav Host Sample Build
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.host_sample == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.host_sample == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -285,7 +304,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install host-sample deps
@@ -330,7 +349,7 @@ jobs:
   marketing-site:
     name: Marketing Site Build
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.marketing_site == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.marketing_site == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -343,7 +362,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: marketing-site/pnpm-lock.yaml
 
       - name: Install marketing-site deps
@@ -355,7 +374,7 @@ jobs:
   docs-portal:
     name: Project Atlas Build
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.docs_portal == 'true' || needs.changes.outputs.rust_transport == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.docs_portal == 'true' || needs.changes.outputs.rust_transport == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -368,7 +387,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install workspace dependencies
@@ -386,7 +405,7 @@ jobs:
   browser-shell:
     name: Browser Shell Skeleton Checks
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.browser_shell == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.browser_shell == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -410,7 +429,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install root Node deps
@@ -431,6 +450,10 @@ jobs:
           workspaces: |
             browser/src-tauri -> target
 
+      - name: Verify browser Cargo.lock
+        working-directory: browser/src-tauri
+        run: cargo metadata --locked --format-version 1 --no-deps >/dev/null
+
       - name: Ensure Tauri frontendDist exists for compile-time config
         run: |
           mkdir -p browser/frontend/dist
@@ -450,7 +473,7 @@ jobs:
   wml-server:
     name: WML Server Sanity
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.wml_server == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.wml_server == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -460,7 +483,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cache: 'npm'
           cache-dependency-path: wml-server/package-lock.json
 
       - name: Install wml-server deps
@@ -472,7 +495,7 @@ jobs:
   browser-frontend:
     name: Browser Frontend Unit Tests
     needs: [changes]
-    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.browser_frontend == 'true' }}
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.browser_frontend == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -485,7 +508,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
       - name: Install root Node deps
@@ -493,3 +516,66 @@ jobs:
 
       - name: Browser frontend unit tests + coverage gate
         run: pnpm --dir browser/frontend run test:coverage
+
+  ci-gate:
+    name: CI Required Gate
+    if: ${{ always() }}
+    needs:
+      - changes
+      - repo-hygiene
+      - rust-engine
+      - rust-transport
+      - host-sample
+      - marketing-site
+      - docs-portal
+      - browser-shell
+      - wml-server
+      - browser-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify intended CI jobs
+        env:
+          FULL_CI: ${{ needs.changes.outputs.full_ci }}
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          REPO_HYGIENE_RESULT: ${{ needs.repo-hygiene.result }}
+          RUST_ENGINE_RESULT: ${{ needs.rust-engine.result }}
+          RUST_TRANSPORT_RESULT: ${{ needs.rust-transport.result }}
+          HOST_SAMPLE_RESULT: ${{ needs.host-sample.result }}
+          MARKETING_SITE_RESULT: ${{ needs.marketing-site.result }}
+          DOCS_PORTAL_RESULT: ${{ needs.docs-portal.result }}
+          BROWSER_SHELL_RESULT: ${{ needs.browser-shell.result }}
+          WML_SERVER_RESULT: ${{ needs.wml-server.result }}
+          BROWSER_FRONTEND_RESULT: ${{ needs.browser-frontend.result }}
+        run: |
+          always_required=(
+            "${CHANGES_RESULT}"
+            "${REPO_HYGIENE_RESULT}"
+          )
+          conditional=(
+            "${RUST_ENGINE_RESULT}"
+            "${RUST_TRANSPORT_RESULT}"
+            "${HOST_SAMPLE_RESULT}"
+            "${MARKETING_SITE_RESULT}"
+            "${DOCS_PORTAL_RESULT}"
+            "${BROWSER_SHELL_RESULT}"
+            "${WML_SERVER_RESULT}"
+            "${BROWSER_FRONTEND_RESULT}"
+          )
+
+          for result in "${always_required[@]}"; do
+            if [ "${result}" != "success" ]; then
+              echo "Always-required CI prerequisite concluded: ${result}"
+              exit 1
+            fi
+          done
+
+          for result in "${conditional[@]}"; do
+            if [ "${result}" = "failure" ] || [ "${result}" = "cancelled" ]; then
+              echo "Conditional CI prerequisite concluded: ${result}"
+              exit 1
+            fi
+            if [ "${FULL_CI}" = "true" ] && [ "${result}" != "success" ]; then
+              echo "Full CI requires every validation job to succeed; found: ${result}"
+              exit 1
+            fi
+          done

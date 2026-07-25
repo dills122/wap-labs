@@ -1,7 +1,7 @@
 name: Dependabot Auto Merge
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
@@ -11,10 +11,26 @@ permissions:
 jobs:
   enable-automerge:
     name: Enable Auto-merge for Dependabot PRs
-    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.draft == false }}
+    if: >-
+      ${{
+        github.event.pull_request.user.login == 'dependabot[bot]' &&
+        github.event.pull_request.base.ref == github.event.repository.default_branch &&
+        github.event.pull_request.draft == false
+      }}
     runs-on: ubuntu-latest
     steps:
-      - name: Enable GitHub auto-merge (squash)
+      - name: Read Dependabot metadata
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable GitHub auto-merge for patch and minor updates
+        if: >-
+          ${{
+            steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' ||
+            steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor'
+          }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}

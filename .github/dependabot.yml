@@ -1,17 +1,54 @@
 version: 2
+
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 3
+    groups:
+      github-actions-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - security
 
+  # The root pnpm lockfile covers the declared pnpm workspace packages.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+      day: tuesday
+      time: '06:00'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 5
+    exclude-paths:
+      - 'marketing-site/**'
+      - 'wml-server/**'
+    groups:
+      root-pnpm-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - javascript
@@ -20,6 +57,22 @@ updates:
     directory: /marketing-site
     schedule:
       interval: weekly
+      day: tuesday
+      time: '06:30'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 3
+    groups:
+      marketing-site-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - javascript
@@ -28,6 +81,22 @@ updates:
     directory: /wml-server
     schedule:
       interval: weekly
+      day: tuesday
+      time: '07:00'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 3
+    groups:
+      wml-server-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - javascript
@@ -36,6 +105,22 @@ updates:
     directory: /engine-wasm/engine
     schedule:
       interval: weekly
+      day: wednesday
+      time: '06:00'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 5
+    groups:
+      engine-rust-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - rust
@@ -44,6 +129,22 @@ updates:
     directory: /engine-wasm/engine/fuzz
     schedule:
       interval: weekly
+      day: wednesday
+      time: '06:30'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 3
+    groups:
+      engine-fuzz-rust-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - rust
@@ -52,6 +153,22 @@ updates:
     directory: /transport-rust
     schedule:
       interval: weekly
+      day: wednesday
+      time: '07:00'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 4
+    groups:
+      transport-rust-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - rust
@@ -60,6 +177,22 @@ updates:
     directory: /browser/src-tauri
     schedule:
       interval: weekly
+      day: wednesday
+      time: '07:30'
+      timezone: Etc/UTC
+    cooldown:
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 4
+    groups:
+      browser-tauri-rust-non-major:
+        applies-to: version-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - rust
