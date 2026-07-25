@@ -57,7 +57,7 @@ tags:
     "documentId": "WAP-200_005-WDP",
     "staticConformanceSection": "Appendix E"
   },
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "ownerLayers": [
     "transport-rust"
   ],

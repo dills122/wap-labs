@@ -40,7 +40,7 @@ Exit gates:
 
 ### TRN-701: Effective WDP service, addressing, port, and bearer profile
 
-- Status: `in-progress`
+- Status: `done`
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wdp`, `wdp-wcmp-adaptation`
 - Existing tickets: `T0-19`
@@ -193,295 +193,295 @@ Evidence commands:
   - Source: `WAP-200-WDP` §5.2 (5.2 General Description of the WDP Protocol)
   - Parents: `WDP-C-001`, `WDP-CT-C-002`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-002`
-  - Fixture: `WDP-FX-ADAPTATION-LAYER-BOUNDARY` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-ADAPTATION-LAYER-BOUNDARY` (`transport-boundary`, `implemented`)
 - **WDP-CL-APPLICATION-PORT-ADDRESSING** — Provide source and destination port addressing for the higher-layer protocol or application above WDP.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.1 (5.1 Reference Model)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-APPLICATION-PORT-ADDRESSING` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-APPLICATION-PORT-ADDRESSING` (`transport-boundary`, `implemented`)
 - **WDP-CL-BEARER-TRANSPARENCY** — Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.1 (5.1 Reference Model)
   - Parents: `WDP-C-001`, `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-BEARER-TRANSPARENCY` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-BEARER-TRANSPARENCY` (`transport-boundary`, `implemented`)
 - **WDP-CL-CDPD-UDP-IP-PROFILE** — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.4.3 (5.4.3 WDP over CDPD)
   - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-CDPD-UDP-IP-PROFILE` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-CDPD-UDP-IP-PROFILE` (`transport-boundary`, `implemented`)
 - **WDP-CL-CONSISTENT-TRANSPORT-SERVICE** — Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.1 (5.1 Reference Model)
   - Parents: `WDP-C-001`, `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-CONSISTENT-TRANSPORT-SERVICE` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-CONSISTENT-TRANSPORT-SERVICE` (`transport-boundary`, `implemented`)
 - **WDP-CL-DESTINATION-ADDRESS-SEMANTICS** — Treat the destination address as the network identity of the receiving device for the submitted user data.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-PF-C-001`, `WDP-PF-C-002`, `WDP-NA-C-000`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-DESTINATION-ADDRESS-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-DESTINATION-ADDRESS-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WDP-CL-DESTINATION-PORT-SEMANTICS** — Bind the destination port to the destination application or upper-layer protocol for that communication instance.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-PF-C-001`, `WDP-PF-C-002`, `WDP-NA-C-006`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-DESTINATION-PORT-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-DESTINATION-PORT-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WDP-CL-IP-BEARER-REQUIRES-UDP** — Use UDP as the WDP protocol whenever the selected bearer provides IP.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.3 (5.3 WDP Static Conformance Clause)
   - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IP-BEARER-REQUIRES-UDP` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IP-BEARER-REQUIRES-UDP` (`transport-boundary`, `implemented`)
 - **WDP-CL-IP-MAPPING-FRAGMENTATION** — Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §7.2 (7.2 Mapping of WDP for IP)
   - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IP-MAPPING-FRAGMENTATION` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IP-MAPPING-FRAGMENTATION` (`transport-boundary`, `implemented`)
 - **WDP-CL-IP-MAPPING-IS-UDP** — Map WDP directly to UDP for every selected bearer on which IP routing is available.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §7.2 (7.2 Mapping of WDP for IP)
   - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IP-MAPPING-IS-UDP` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IP-MAPPING-IS-UDP` (`transport-boundary`, `implemented`)
 - **WDP-CL-IPV4-BASELINE-RECEIVE-SIZE** — Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-BASELINE-RECEIVE-SIZE` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IPV4-BASELINE-RECEIVE-SIZE` (`transport-boundary`, `implemented`)
 - **WDP-CL-IPV4-DONT-FRAGMENT** — Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `rfc-791` §3.2 (3.2.  Discussion)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-DONT-FRAGMENT` (`error-policy`, `planned`)
+  - Fixture: `WDP-FX-IPV4-DONT-FRAGMENT` (`error-policy`, `implemented`)
 - **WDP-CL-IPV4-FIXED-ADDRESS-SIZE** — Represent each selected IPv4 source or destination address as four octets.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-791` §2.3 (2.3.  Function Description)
   - Parents: `WDP-NA-C-000`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-FIXED-ADDRESS-SIZE` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-FIXED-ADDRESS-SIZE` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY** — Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-791` §3.2 (3.2.  Discussion)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-FRAGMENTATION-LOCATION** — Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-791` §3.2 (3.2.  Discussion)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-FRAGMENTATION-LOCATION` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IPV4-FRAGMENTATION-LOCATION` (`transport-boundary`, `implemented`)
 - **WDP-CL-IPV4-HEADER-CHECKSUM** — Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-HEADER-CHECKSUM` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-HEADER-CHECKSUM` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-HEADER-LAYOUT** — Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.
   - Family: `wdp`; force: `grammar`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-HEADER-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-HEADER-LAYOUT` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-INDEPENDENT-DATAGRAMS** — Treat each IPv4 datagram independently without a transport connection or logical circuit.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-791` §1.4 (1.4.  Operation)
   - Parents: `WDP-C-001`, `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-INDEPENDENT-DATAGRAMS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IPV4-INDEPENDENT-DATAGRAMS` (`transport-boundary`, `implemented`)
 - **WDP-CL-IPV4-LARGE-SEND-GUARD** — Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.
   - Family: `wdp`; force: `explicit-should`; level: `recommended`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-LARGE-SEND-GUARD` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IPV4-LARGE-SEND-GUARD` (`transport-boundary`, `implemented`)
 - **WDP-CL-IPV4-NO-RELIABILITY** — Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-791` §1.4 (1.4.  Operation)
   - Parents: `WDP-C-001`, `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-IPV4-NO-RELIABILITY` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-IPV4-NO-RELIABILITY` (`transport-boundary`, `implemented`)
 - **WDP-CL-IPV4-ROBUST-INTEROPERATION** — Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `rfc-791` §3.2 (3.2.  Discussion)
   - Parents: `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-ROBUST-INTEROPERATION` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-ROBUST-INTEROPERATION` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS** — Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-PF-C-001`, `WDP-PF-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-TOTAL-LENGTH** — Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-TOTAL-LENGTH` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-TOTAL-LENGTH` (`binary-decoder`, `implemented`)
 - **WDP-CL-IPV4-TTL-ZERO** — Destroy an IPv4 datagram when its time-to-live value reaches zero.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-TTL-ZERO` (`error-policy`, `planned`)
+  - Fixture: `WDP-FX-IPV4-TTL-ZERO` (`error-policy`, `implemented`)
 - **WDP-CL-IPV4-VERSION-AND-IHL** — Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
   - Parents: `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-IPV4-VERSION-AND-IHL` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-IPV4-VERSION-AND-IHL` (`binary-decoder`, `implemented`)
 - **WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS** — Carry both destination and source port fields in the selected WDP protocol mapping.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §7.1 (7.1 Introduction)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-PROTOCOL-REQUIRED-PORT-FIELDS` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-PROTOCOL-REQUIRED-PORT-FIELDS` (`binary-decoder`, `implemented`)
 - **WDP-CL-SELECTED-BEARER-ASSIGNMENT** — Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `WAP-200-WDP` §appendix-c (Appendix C: Bearer Type Assignments)
   - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-SELECTED-BEARER-ASSIGNMENT` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-SELECTED-BEARER-ASSIGNMENT` (`transport-boundary`, `implemented`)
 - **WDP-CL-SELECTED-WSP-PORT** — Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `WAP-200-WDP` §appendix-b (Appendix B: Port Number Definitions)
   - Parents: `WDP-C-001`, `WDP-NA-C-006`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-SELECTED-WSP-PORT` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-SELECTED-WSP-PORT` (`transport-boundary`, `implemented`)
 - **WDP-CL-SIMULTANEOUS-INSTANCES** — Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §5.2 (5.2 General Description of the WDP Protocol)
   - Parents: `WDP-C-001`, `WDP-CORE-C-001`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-SIMULTANEOUS-INSTANCES` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-SIMULTANEOUS-INSTANCES` (`transport-boundary`, `implemented`)
 - **WDP-CL-SOURCE-ADDRESS-SEMANTICS** — Treat the source address as the unique network identity of the device issuing the transport request.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-PF-C-001`, `WDP-PF-C-002`, `WDP-NA-C-000`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-SOURCE-ADDRESS-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-SOURCE-ADDRESS-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WDP-CL-SOURCE-PORT-SEMANTICS** — Bind the source port to the requesting application or upper-layer protocol for that communication instance.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-PF-C-001`, `WDP-PF-C-002`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-SOURCE-PORT-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-SOURCE-PORT-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WDP-CL-UDP-CHECKSUM-COVERAGE** — Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-CHECKSUM-COVERAGE` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-CHECKSUM-COVERAGE` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-CHECKSUM-OMISSION** — Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum.
   - Family: `wdp`; force: `explicit-may`; level: `permitted`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UDP-CHECKSUM-OMISSION` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-CHECKSUM-OMISSION` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-CHECKSUM-PADDING** — Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UDP-CHECKSUM-PADDING` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-CHECKSUM-PADDING` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-CHECKSUM-ZERO-ENCODING** — Transmit an arithmetically computed zero UDP checksum as all one bits.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UDP-CHECKSUM-ZERO-ENCODING` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-CHECKSUM-ZERO-ENCODING` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-DESTINATION-PORT-CONTEXT** — Interpret a UDP destination port within the context of its destination IPv4 address.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-NA-C-006`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-DESTINATION-PORT-CONTEXT` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UDP-DESTINATION-PORT-CONTEXT` (`transport-boundary`, `implemented`)
 - **WDP-CL-UDP-HEADER-LAYOUT** — Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.
   - Family: `wdp`; force: `grammar`; level: `required`
   - Source: `rfc-768` §format (Format)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-HEADER-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-HEADER-LAYOUT` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-IP-INTERFACE-METADATA** — Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary.
   - Family: `wdp`; force: `explicit-must`; level: `required`
   - Source: `rfc-768` §ip-interface (IP Interface)
   - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-IP-INTERFACE-METADATA` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UDP-IP-INTERFACE-METADATA` (`transport-boundary`, `implemented`)
 - **WDP-CL-UDP-IP-PROTOCOL-NUMBER** — Identify UDP with IPv4 protocol number 17.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `rfc-768` §protocol-number (Protocol Number)
   - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
   - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-IP-PROTOCOL-NUMBER` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-IP-PROTOCOL-NUMBER` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-LENGTH-BOUNDS** — Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UDP-LENGTH-BOUNDS` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-LENGTH-BOUNDS` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-RECEIVE-INTERFACE** — Provide receive-port creation and return received data with its source IPv4 address and source port.
   - Family: `wdp`; force: `explicit-should`; level: `recommended`
   - Source: `rfc-768` §interface (User Interface)
   - Parents: `WDP-PF-C-002`, `WDP-NA-C-003`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-RECEIVE-INTERFACE` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UDP-RECEIVE-INTERFACE` (`transport-boundary`, `implemented`)
 - **WDP-CL-UDP-SEND-INTERFACE** — Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses.
   - Family: `wdp`; force: `explicit-should`; level: `recommended`
   - Source: `rfc-768` §interface (User Interface)
   - Parents: `WDP-PF-C-001`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-SEND-INTERFACE` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UDP-SEND-INTERFACE` (`transport-boundary`, `implemented`)
 - **WDP-CL-UDP-SOURCE-PORT-ZERO** — Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `rfc-768` §fields (Fields)
   - Parents: `WDP-NA-C-007`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-UDP-SOURCE-PORT-ZERO` (`binary-decoder`, `planned`)
+  - Fixture: `WDP-FX-UDP-SOURCE-PORT-ZERO` (`binary-decoder`, `implemented`)
 - **WDP-CL-UDP-UNRELIABLE-DATAGRAMS** — Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `rfc-768` §introduction (Introduction)
   - Parents: `WDP-C-001`, `WDP-CORE-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UDP-UNRELIABLE-DATAGRAMS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UDP-UNRELIABLE-DATAGRAMS` (`transport-boundary`, `implemented`)
 - **WDP-CL-UNITDATA-CONTENT-TRANSPARENCY** — Transmit and deliver the complete service data unit without manipulating its content.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-CORE-C-001`, `WDP-PF-C-001`, `WDP-PF-C-002`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `implemented`)
 - **WDP-CL-UNITDATA-INDICATION-PARAMETERS** — Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-CORE-C-001`, `WDP-PF-C-002`, `WDP-NA-C-000`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UNITDATA-INDICATION-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UNITDATA-INDICATION-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WDP-CL-UNITDATA-REQUEST-ANYTIME** — Allow T-DUnitdata.request without establishing a prior transport connection.
   - Family: `wdp`; force: `implicit-must`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-PF-C-001`
   - Requirements: `RQ-TRN-001`
-  - Fixture: `WDP-FX-UNITDATA-REQUEST-ANYTIME` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UNITDATA-REQUEST-ANYTIME` (`transport-boundary`, `implemented`)
 - **WDP-CL-UNITDATA-REQUEST-PARAMETERS** — Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
   - Parents: `WDP-CORE-C-001`, `WDP-PF-C-001`, `WDP-NA-C-000`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
-  - Fixture: `WDP-FX-UNITDATA-REQUEST-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-UNITDATA-REQUEST-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WDP-CL-WAP-PORT-REGISTRY** — Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.
   - Family: `wdp`; force: `table`; level: `required`
   - Source: `WAP-200-WDP` §appendix-b (Appendix B: Port Number Definitions)
   - Parents: `WDP-NA-C-006`, `WDP-NA-C-007`
   - Requirements: `RQ-TRN-003`
-  - Fixture: `WDP-FX-WAP-PORT-REGISTRY` (`transport-boundary`, `planned`)
+  - Fixture: `WDP-FX-WAP-PORT-REGISTRY` (`transport-boundary`, `implemented`)
 
 ### TRN-703
 

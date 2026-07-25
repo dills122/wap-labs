@@ -272,7 +272,7 @@ for (const family of ledger.families ?? []) {
     (candidate) => candidate.family === family.family
   );
   const expectedFamilyStatus =
-    family.family === 'wcmp'
+    family.family === 'wcmp' || family.family === 'wdp'
       ? 'nested-clauses-fixture-backed'
       : 'nested-clauses-anchored-fixtures-planned';
 
@@ -466,7 +466,8 @@ for (const family of ledger.families ?? []) {
         parent.mapping.implementationStatus
       ])
     );
-    const directFixtureImplemented = candidate.family === 'wcmp';
+    const directFixtureImplemented =
+      candidate.family === 'wcmp' || candidate.family === 'wdp';
     const expectedClauseStatus = directFixtureImplemented
       ? 'implemented'
       : 'not-assessed';
@@ -498,11 +499,15 @@ for (const family of ledger.families ?? []) {
       candidate.fixturePlan.assertion !== candidate.obligationSynopsis ||
       (directFixtureImplemented &&
         (candidate.fixturePlan.evidence?.path !==
-          'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
+          (candidate.family === 'wdp'
+            ? 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json'
+            : 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json') ||
           candidate.fixturePlan.evidence?.testPath !==
-            'transport-rust/src/network/wcmp/tests.rs' ||
+            (candidate.family === 'wdp'
+              ? 'transport-rust/src/network/wdp/tests.rs'
+              : 'transport-rust/src/network/wcmp/tests.rs') ||
           !candidate.fixturePlan.evidence?.command?.includes(
-            'network::wcmp'
+            candidate.family === 'wdp' ? 'network::wdp' : 'network::wcmp'
           )))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
@@ -529,7 +534,7 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 0
+  assessedClauseCount: 77
 };
 if (
   selectedParentCount !== 201 ||

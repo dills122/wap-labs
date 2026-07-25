@@ -55,7 +55,7 @@ Legend:
 
 | Requirement Group | Status | Current/Planned Test Location |
 |---|---|---|
-| Exact WAP-200 WDP ledger: 146 rows / 9 selected | `0 implemented / 9 partial / 0 missing`; `0/9` direct normative tests | `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`; validate with `node scripts/check-wap-transport-conformance-ledgers.mjs` |
+| Exact WAP-200 WDP ledger: 146 rows / 9 selected | `9 implemented / 0 partial / 0 missing`; `9/9` direct normative tests and 49/49 mapped clauses | `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`; fixture: `transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`; validate with `cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp` and `node scripts/check-wap-transport-conformance-ledgers.mjs` |
 | Exact WAP-202 WCMP ledger: 62 rows / 5 selected | `5 implemented / 0 partial / 0 missing`; `5/5` direct normative tests | `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`; source-derived vectors: `transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json`; validate with `cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp` and `node scripts/check-wap-transport-conformance-ledgers.mjs` |
 | Exact WAP-203 WSP ledger: 109 rows / 8 selected | `0 implemented / 8 partial / 0 missing`; `0/8` direct normative tests | `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`; validate with `node scripts/check-wap-transport-conformance-ledgers.mjs` |
 | `RQ-TRN-001..004` WDP service + UDP + addressing + error policy | `partial` | transport-rust unit tests + fixture harness scenarios under `transport-rust/tests/fixtures/transport/` |

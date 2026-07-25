@@ -1,0 +1,183 @@
+{
+  "sourceDocuments": [
+    {
+      "id": "WAP-200-WDP",
+      "sections": ["5.1", "5.2", "5.3", "5.4.3", "6.3.1.1", "7.1", "7.2", "appendix-b", "appendix-c"]
+    },
+    {
+      "id": "rfc-768",
+      "sections": ["introduction", "format", "fields", "interface", "ip-interface", "protocol-number"]
+    },
+    {
+      "id": "rfc-791",
+      "sections": ["1.4", "2.3", "3.1", "3.2"]
+    }
+  ],
+  "selectedRows": [
+    "WDP-C-001",
+    "WDP-CORE-C-001",
+    "WDP-PF-C-001",
+    "WDP-PF-C-002",
+    "WDP-CT-C-002",
+    "WDP-NA-C-000",
+    "WDP-NA-C-003",
+    "WDP-NA-C-006",
+    "WDP-NA-C-007"
+  ],
+  "clauseIds": [
+    "WDP-CL-CONSISTENT-TRANSPORT-SERVICE",
+    "WDP-CL-APPLICATION-PORT-ADDRESSING",
+    "WDP-CL-BEARER-TRANSPARENCY",
+    "WDP-CL-SIMULTANEOUS-INSTANCES",
+    "WDP-CL-ADAPTATION-LAYER-BOUNDARY",
+    "WDP-CL-IP-BEARER-REQUIRES-UDP",
+    "WDP-CL-CDPD-UDP-IP-PROFILE",
+    "WDP-CL-UNITDATA-REQUEST-ANYTIME",
+    "WDP-CL-UNITDATA-REQUEST-PARAMETERS",
+    "WDP-CL-UNITDATA-INDICATION-PARAMETERS",
+    "WDP-CL-DESTINATION-ADDRESS-SEMANTICS",
+    "WDP-CL-SOURCE-ADDRESS-SEMANTICS",
+    "WDP-CL-DESTINATION-PORT-SEMANTICS",
+    "WDP-CL-SOURCE-PORT-SEMANTICS",
+    "WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+    "WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS",
+    "WDP-CL-IP-MAPPING-IS-UDP",
+    "WDP-CL-IP-MAPPING-FRAGMENTATION",
+    "WDP-CL-WAP-PORT-REGISTRY",
+    "WDP-CL-SELECTED-WSP-PORT",
+    "WDP-CL-SELECTED-BEARER-ASSIGNMENT",
+    "WDP-CL-UDP-UNRELIABLE-DATAGRAMS",
+    "WDP-CL-UDP-HEADER-LAYOUT",
+    "WDP-CL-UDP-SOURCE-PORT-ZERO",
+    "WDP-CL-UDP-DESTINATION-PORT-CONTEXT",
+    "WDP-CL-UDP-LENGTH-BOUNDS",
+    "WDP-CL-UDP-CHECKSUM-COVERAGE",
+    "WDP-CL-UDP-CHECKSUM-PADDING",
+    "WDP-CL-UDP-CHECKSUM-ZERO-ENCODING",
+    "WDP-CL-UDP-CHECKSUM-OMISSION",
+    "WDP-CL-UDP-RECEIVE-INTERFACE",
+    "WDP-CL-UDP-SEND-INTERFACE",
+    "WDP-CL-UDP-IP-INTERFACE-METADATA",
+    "WDP-CL-UDP-IP-PROTOCOL-NUMBER",
+    "WDP-CL-IPV4-INDEPENDENT-DATAGRAMS",
+    "WDP-CL-IPV4-FIXED-ADDRESS-SIZE",
+    "WDP-CL-IPV4-HEADER-LAYOUT",
+    "WDP-CL-IPV4-VERSION-AND-IHL",
+    "WDP-CL-IPV4-TOTAL-LENGTH",
+    "WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+    "WDP-CL-IPV4-LARGE-SEND-GUARD",
+    "WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+    "WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+    "WDP-CL-IPV4-DONT-FRAGMENT",
+    "WDP-CL-IPV4-TTL-ZERO",
+    "WDP-CL-IPV4-HEADER-CHECKSUM",
+    "WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
+    "WDP-CL-IPV4-ROBUST-INTEROPERATION",
+    "WDP-CL-IPV4-NO-RELIABILITY"
+  ],
+  "profile": {
+    "bearer": "AMPS/CDPD/IPv4",
+    "bearerType": 13,
+    "addressOctets": 4,
+    "ipProtocol": 17,
+    "selectedWspPort": 9200,
+    "ipv4BaselineDatagramBytes": 576,
+    "wdpSegmentationHeaderPresent": false
+  },
+  "registeredPorts": [
+    {"port": 2805, "service": "WTA secure connectionless session"},
+    {"port": 2923, "service": "WTA secure session"},
+    {"port": 2948, "service": "Push connectionless session"},
+    {"port": 2949, "service": "Push secure connectionless session"},
+    {"port": 9200, "service": "WAP connectionless session"},
+    {"port": 9201, "service": "WAP session"},
+    {"port": 9202, "service": "WAP secure connectionless session"},
+    {"port": 9203, "service": "WAP secure session"},
+    {"port": 9204, "service": "vCard datagram"},
+    {"port": 9205, "service": "vCalendar datagram"},
+    {"port": 9206, "service": "vCard secure datagram"},
+    {"port": 9207, "service": "vCalendar secure datagram"}
+  ],
+  "datagram": {
+    "sourceAddress": [192, 0, 2, 10],
+    "sourcePort": 49152,
+    "destinationAddress": [192, 0, 2, 7],
+    "destinationPort": 9200,
+    "userData": [222, 173, 190, 239, 1]
+  },
+  "sendPolicy": {
+    "identification": 4660,
+    "timeToLive": 64,
+    "dontFragment": false,
+    "destinationAcceptsLargeDatagrams": false
+  },
+  "cases": [
+    {
+      "name": "udp-checksum-generated",
+      "udpChecksum": "generate",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1]
+    },
+    {
+      "name": "udp-checksum-omitted",
+      "udpChecksum": "omit",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 0, 0, 222, 173, 190, 239, 1]
+    }
+  ],
+  "malformed": [
+    {
+      "name": "truncated-ipv4-header",
+      "encoded": [69, 0, 0, 20],
+      "error": "truncated IPv4 packet: need at least 20 octets, got 4"
+    },
+    {
+      "name": "wrong-ip-version",
+      "encoded": [101, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "unsupported IP version 6; expected IPv4"
+    },
+    {
+      "name": "short-ihl",
+      "encoded": [68, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "invalid IPv4 IHL 4; expected at least 5"
+    },
+    {
+      "name": "total-length-mismatch",
+      "encoded": [69, 0, 0, 32, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "invalid IPv4 total length 32 for header 20 and packet 33"
+    },
+    {
+      "name": "invalid-ipv4-checksum",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 229, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "invalid IPv4 header checksum"
+    },
+    {
+      "name": "ttl-zero",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 0, 17, 36, 135, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "IPv4 time to live is zero"
+    },
+    {
+      "name": "non-udp-protocol",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 6, 228, 145, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "unsupported IPv4 protocol 6; expected UDP 17"
+    },
+    {
+      "name": "fragment-requires-lower-layer-reassembly",
+      "encoded": [69, 0, 0, 33, 18, 52, 32, 1, 64, 17, 196, 133, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "IPv4 fragment requires lower-layer reassembly: id=4660, source=192.0.2.10, destination=192.0.2.7, protocol=17, offset=1, more=true"
+    },
+    {
+      "name": "udp-length-below-header",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 7, 249, 51, 222, 173, 190, 239, 1],
+      "error": "invalid UDP length 7; available UDP octets 13"
+    },
+    {
+      "name": "unregistered-destination-port",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 39, 15, 0, 13, 249, 51, 222, 173, 190, 239, 1],
+      "error": "destination port 9999 is not a supported WAP service"
+    },
+    {
+      "name": "invalid-udp-checksum",
+      "encoded": [69, 0, 0, 33, 18, 52, 0, 0, 64, 17, 228, 134, 192, 0, 2, 10, 192, 0, 2, 7, 192, 0, 35, 240, 0, 13, 249, 51, 222, 173, 190, 239, 0],
+      "error": "invalid UDP checksum"
+    }
+  ]
+}

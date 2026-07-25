@@ -52,14 +52,24 @@ impl WdpAddress {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WdpServicePort {
+    WtaSecureConnectionless = 2805,
+    WtaSecureSession = 2923,
+    PushConnectionless = 2948,
+    PushSecureConnectionless = 2949,
     Connectionless = 9200,
     Session = 9201,
     SecureConnectionless = 9202,
     SecureSession = 9203,
+    VCardDatagram = 9204,
+    VCalendarDatagram = 9205,
+    VCardSecureDatagram = 9206,
+    VCalendarSecureDatagram = 9207,
 }
 
 impl WdpServicePort {
-    pub const ALL: [u16; 4] = [9200, 9201, 9202, 9203];
+    pub const ALL: [u16; 12] = [
+        2805, 2923, 2948, 2949, 9200, 9201, 9202, 9203, 9204, 9205, 9206, 9207,
+    ];
 
     pub fn is_known(port: u16) -> bool {
         Self::from_u16(port).is_some()
@@ -67,10 +77,18 @@ impl WdpServicePort {
 
     pub fn from_u16(port: u16) -> Option<Self> {
         match port {
+            2805 => Some(Self::WtaSecureConnectionless),
+            2923 => Some(Self::WtaSecureSession),
+            2948 => Some(Self::PushConnectionless),
+            2949 => Some(Self::PushSecureConnectionless),
             9200 => Some(Self::Connectionless),
             9201 => Some(Self::Session),
             9202 => Some(Self::SecureConnectionless),
             9203 => Some(Self::SecureSession),
+            9204 => Some(Self::VCardDatagram),
+            9205 => Some(Self::VCalendarDatagram),
+            9206 => Some(Self::VCardSecureDatagram),
+            9207 => Some(Self::VCalendarSecureDatagram),
             _ => None,
         }
     }
@@ -112,6 +130,10 @@ mod tests {
     #[test]
     fn wdp_service_port_from_u16_returns_expected_mapping() {
         assert_eq!(
+            WdpServicePort::from_u16(2948),
+            Some(WdpServicePort::PushConnectionless)
+        );
+        assert_eq!(
             WdpServicePort::from_u16(9200),
             Some(WdpServicePort::Connectionless)
         );
@@ -126,6 +148,10 @@ mod tests {
         assert_eq!(
             WdpServicePort::from_u16(9203),
             Some(WdpServicePort::SecureSession)
+        );
+        assert_eq!(
+            WdpServicePort::from_u16(9207),
+            Some(WdpServicePort::VCalendarSecureDatagram)
         );
         assert_eq!(WdpServicePort::from_u16(1), None);
     }

@@ -58,8 +58,8 @@ const configs = [
       serverCount: 75,
       mandatoryClientCount: 7,
       selectedClassCTransportPathCount: 9,
-      selectedDirectNormativeTestEvidenceCount: 0,
-      selectedProvisionalTestEvidenceCount: 9,
+      selectedDirectNormativeTestEvidenceCount: 9,
+      selectedProvisionalTestEvidenceCount: 0,
       orderedIdsSha256:
         'd090dead796a8ba086e350455ceccb557f34e75ada6d25492c8ee603d3b7b4bc'
     },
@@ -74,7 +74,7 @@ const configs = [
       'WDP-NA-C-006',
       'WDP-NA-C-007'
     ],
-    selectedStatus: { partial: 9 }
+    selectedStatus: { implemented: 9 }
   },
   {
     family: 'wcmp',

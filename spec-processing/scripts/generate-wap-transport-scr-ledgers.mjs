@@ -649,24 +649,24 @@ function workItems(family, id) {
 }
 
 function selectedImplementationStatus(family) {
-  return family === 'wcmp' ? 'implemented' : 'partial';
+  return family === 'wdp' || family === 'wcmp' ? 'implemented' : 'partial';
 }
 
 function assessmentNote(family, id) {
   if (family === 'wdp') {
     if (id === 'WDP-C-001') {
-      return 'A WDP datagram/UDP path exists, but no historical bearer alternative is capability-selected and proven against the WAP-200 dependency closure.';
+      return 'The selected Class C client path declares the CDPD/IPv4 bearer alternative and exposes a connectionless WDP datagram service over bounded UDP/IPv4 codec and primitive boundaries.';
     }
     if (id === 'WDP-CORE-C-001') {
-      return 'The Rust datagram model composes send/receive and address/port fields, but the complete WAP-200 abstract-service contract lacks source-derived fixtures.';
+      return 'The transport-owned WDP profile preserves service data, addresses, and ports while enforcing source-derived UDP/IPv4 header, length, checksum, and deterministic failure rules.';
     }
     if (id.startsWith('WDP-PF-C-')) {
-      return 'Send/receive operations exist behind DatagramTransport, but exact T-DUnitdata primitive semantics and error boundaries are not tested from WAP-200 vectors.';
+      return 'Typed T-DUnitdata request and indication structures preserve the exact selected address, port, and user-data parameters without connection state or content mutation.';
     }
     if (id === 'WDP-CT-C-002') {
-      return 'The UDP/IP adapter matches the WAP-200 CDPD transport shape, but the CDPD capability is not declared and the cited TIA/EIA-732 authority remains an open external-source record.';
+      return 'The selected AMPS/CDPD/IPv4 profile declares bearer value 0x0D and maps WDP directly to UDP protocol 17; the informative TIA/EIA-732 payload remains metadata-only and uncredited.';
     }
-    return 'IPv4/IPv6 and source/destination port fields exist, but the mandatory addressing dependency choice and exact WAP-200 port semantics are not yet declared and proven.';
+    return 'The selected IPv4 dependency uses four-octet source and destination addresses, both 16-bit port fields, and the exact WAP Appendix B registered service-port table with direct fixtures.';
   }
   if (family === 'wcmp') {
     if (id === 'WCMP-C-001') {
@@ -743,68 +743,73 @@ function selectedEvidence(family, id) {
     };
   }
   if (family === 'wdp') {
-    if (id === 'WDP-PF-C-001') {
-      return {
-        implementationEvidence: [
-          {
-            path: 'transport-rust/src/network/wdp/transport_trait.rs',
-            symbol: 'fn send(&mut self'
-          }
-        ],
-        testEvidence: [
-          {
-            path: 'transport-rust/src/network/wdp/udp_adapter.rs',
-            test: 'udp_send_and_receive_roundtrip_with_known_service_ports',
-            limitation:
-              'Synthetic UDP round trip; not a source-derived T-DUnitdata request vector.'
-          }
-        ]
-      };
-    }
-    if (id === 'WDP-PF-C-002') {
-      return {
-        implementationEvidence: [
-          {
-            path: 'transport-rust/src/network/wdp/transport_trait.rs',
-            symbol: 'fn receive(&mut self'
-          }
-        ],
-        testEvidence: [
-          {
-            path: 'transport-rust/src/network/wdp/udp_adapter.rs',
-            test: 'udp_send_and_receive_roundtrip_with_known_service_ports',
-            limitation:
-              'Synthetic UDP round trip; not a source-derived T-DUnitdata indication vector.'
-          }
-        ]
-      };
-    }
-    const symbol =
-      id === 'WDP-NA-C-000'
-        ? 'WdpAddress'
-        : id === 'WDP-CT-C-002'
-          ? 'UdpDatagramTransport'
-        : id === 'WDP-NA-C-006'
-          ? 'pub dst_port'
-          : id === 'WDP-NA-C-007'
-            ? 'pub src_port'
-            : 'WdpDatagram';
+    const evidenceById = {
+      'WDP-C-001': {
+        path: 'transport-rust/src/network/wdp/profile.rs',
+        symbol: 'pub struct CdpdIpv4Profile'
+      },
+      'WDP-CORE-C-001': {
+        path: 'transport-rust/src/network/wdp/ipv4_udp.rs',
+        symbol: 'pub fn decode_cdpd_ipv4_udp'
+      },
+      'WDP-PF-C-001': {
+        path: 'transport-rust/src/network/wdp/primitive.rs',
+        symbol: 'pub struct TDUnitdataRequest'
+      },
+      'WDP-PF-C-002': {
+        path: 'transport-rust/src/network/wdp/primitive.rs',
+        symbol: 'pub struct TDUnitdataIndication'
+      },
+      'WDP-CT-C-002': {
+        path: 'transport-rust/src/network/wdp/profile.rs',
+        symbol: 'WDP_CDPD_IPV4_BEARER_TYPE'
+      },
+      'WDP-NA-C-000': {
+        path: 'transport-rust/src/network/wdp/datagram.rs',
+        symbol: 'pub struct WdpAddress'
+      },
+      'WDP-NA-C-003': {
+        path: 'transport-rust/src/network/wdp/ipv4_udp.rs',
+        symbol: 'WDP_UDP_IPV4_PROTOCOL_NUMBER'
+      },
+      'WDP-NA-C-006': {
+        path: 'transport-rust/src/network/wdp/datagram.rs',
+        symbol: 'pub enum WdpServicePort'
+      },
+      'WDP-NA-C-007': {
+        path: 'transport-rust/src/network/wdp/primitive.rs',
+        symbol: 'pub source_port'
+      }
+    };
+    const testById = {
+      'WDP-C-001':
+        'source_derived_fixture_covers_selected_class_c_rows_and_clauses',
+      'WDP-CORE-C-001':
+        'selected_cdpd_ipv4_profile_preserves_exact_udp_ipv4_bytes',
+      'WDP-PF-C-001':
+        'td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics',
+      'WDP-PF-C-002':
+        'td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics',
+      'WDP-CT-C-002': 'registered_port_and_bearer_profile_are_exact',
+      'WDP-NA-C-000':
+        'td_unitdata_request_and_indication_preserve_address_port_and_payload_semantics',
+      'WDP-NA-C-003':
+        'selected_cdpd_ipv4_profile_preserves_exact_udp_ipv4_bytes',
+      'WDP-NA-C-006': 'registered_port_and_bearer_profile_are_exact',
+      'WDP-NA-C-007':
+        'udp_source_port_zero_and_computed_zero_checksum_follow_rfc_768_encoding'
+    };
     return {
-      implementationEvidence: [
-        {
-          path:
-            id === 'WDP-CT-C-002'
-              ? 'transport-rust/src/network/wdp/udp_adapter.rs'
-              : 'transport-rust/src/network/wdp/datagram.rs',
-          symbol
-        }
-      ],
+      implementationEvidence: [evidenceById[id]],
       testEvidence: [
         {
-          path: 'transport-rust/src/network/wdp/udp_adapter.rs',
-          test: 'udp_send_and_receive_roundtrip_with_known_service_ports',
+          path: 'transport-rust/src/network/wdp/tests.rs',
+          test: testById[id],
+          fixture:
+            'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
+          evidenceClass: 'direct-normative',
           limitation:
-            'Synthetic transport evidence; does not close the WAP-200 bearer/address dependency choice.'
+            'Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed.'
         }
       ]
     };

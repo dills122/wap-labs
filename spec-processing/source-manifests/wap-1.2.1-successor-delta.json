@@ -7457,7 +7457,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7503,7 +7503,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7562,7 +7562,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7606,7 +7606,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7649,7 +7649,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7691,7 +7691,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7731,7 +7731,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7795,7 +7795,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -7841,7 +7841,7 @@
         "documentId": "WAP-200_005-WDP",
         "staticConformanceSection": "Appendix E"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
