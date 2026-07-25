@@ -130,7 +130,6 @@ struct InputEditState {
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct SelectEditState {
     select_name: String,
-    original_index: usize,
     draft_index: usize,
 }
 

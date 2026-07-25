@@ -47,19 +47,28 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             parts.push((rendered, Some(format!("input:{name}"))));
                         }
                         InlineNode::Select {
+                            control_id,
                             name,
+                            iname,
                             title,
                             options,
-                            selected_index,
+                            selected_indices,
+                            multiple,
+                            ..
                         } => {
-                            let selected = options
-                                .get(*selected_index)
-                                .or_else(|| options.first())
+                            let selected = selected_indices
+                                .iter()
+                                .filter_map(|index| options.get(*index))
                                 .map(|option| option.label.clone())
-                                .unwrap_or_default();
-                            let label = title.clone().unwrap_or_else(|| name.clone());
+                                .collect::<Vec<_>>()
+                                .join(if *multiple { "; " } else { "" });
+                            let label = title
+                                .clone()
+                                .or_else(|| name.clone())
+                                .or_else(|| iname.clone())
+                                .unwrap_or_else(|| control_id.clone());
                             let rendered = format!("[{label}: {selected}]");
-                            parts.push((rendered, Some(format!("select:{name}"))));
+                            parts.push((rendered, Some(format!("select:{control_id}"))));
                         }
                     }
                 }
@@ -292,19 +301,26 @@ mod tests {
                     empty_ok: true,
                 },
                 InlineNode::Select {
-                    name: "Country".to_string(),
+                    control_id: "Country".to_string(),
+                    name: Some("Country".to_string()),
+                    iname: None,
                     title: Some("Country".to_string()),
+                    default_value: None,
+                    default_index_value: None,
+                    multiple: false,
                     options: vec![
                         crate::runtime::node::SelectOption {
                             label: "Jordan".to_string(),
                             value: "Jordan".to_string(),
+                            onpick: None,
                         },
                         crate::runtime::node::SelectOption {
                             label: "France".to_string(),
                             value: "France".to_string(),
+                            onpick: None,
                         },
                     ],
-                    selected_index: 1,
+                    selected_indices: vec![1],
                 },
             ])],
             accept_action: None,

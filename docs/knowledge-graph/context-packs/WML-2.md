@@ -114,6 +114,7 @@ Evidence commands:
 Outputs:
 
 - Complete field/control syntax and attribute validation
+- Source-derived select initialization, selection, serialization, and onpick runtime evidence
 
 Acceptance:
 
@@ -122,6 +123,7 @@ Acceptance:
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `pnpm test:story WML-204`
 
 ### WML-205: WML parse/error taxonomy
 
@@ -518,13 +520,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
   - Parents: `WML-C-41`, `WML-C-09`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-OPTION-ONPICK-MULTI` (`runtime`, `planned`)
+  - Fixture: `WML-FX-OPTION-ONPICK-MULTI` (`runtime`, `implemented`)
 - **WML-CL-OPTION-ONPICK-SINGLE** — For single selection, dispatch onpick for the newly selected option but not for implicit deselection.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
   - Parents: `WML-C-41`, `WML-C-09`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-OPTION-ONPICK-SINGLE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-OPTION-ONPICK-SINGLE` (`runtime`, `implemented`)
 - **WML-CL-OPTION-VALUE-EVALUATION** — Evaluate option value variable references before assigning the containing select name variable.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
@@ -536,25 +538,25 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-DEFAULT-PRECEDENCE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-DEFAULT-PRECEDENCE` (`runtime`, `implemented`)
 - **WML-CL-SELECT-INDEX-VALIDATION** — Validate selection indices by removing non-integers, out-of-range entries, and duplicates.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-INDEX-VALIDATION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-INDEX-VALIDATION` (`runtime`, `implemented`)
 - **WML-CL-SELECT-INIT-ORDER** — Initialize input and select controls in document order when entering the card.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`, `WML-C-33`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-INIT-ORDER` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-INIT-ORDER` (`runtime`, `implemented`)
 - **WML-CL-SELECT-MULTI-SERIALIZATION** — Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-MULTI-SERIALIZATION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-MULTI-SERIALIZATION` (`runtime`, `implemented`)
 - **WML-CL-SELECT-NO-IMPLICIT-REFRESH** — Do not create display side effects from select-variable updates without an explicit refresh task.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
@@ -566,37 +568,37 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-PRESELECTION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-PRESELECTION` (`runtime`, `implemented`)
 - **WML-CL-SELECT-SINGLE-MULTI-MODE** — Allow one selected option by default and multiple selections only when multiple is true.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-SINGLE-MULTI-MODE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-SINGLE-MULTI-MODE` (`runtime`, `implemented`)
 - **WML-CL-SELECT-STRUCTURE** — Require one or more option or optgroup children in each select element.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-SELECT-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-SELECT-USER-UPDATE** — Update name and iname after user selection changes and again before every task invocation.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-USER-UPDATE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-USER-UPDATE` (`runtime`, `implemented`)
 - **WML-CL-SELECT-VARIABLE-INITIALIZATION** — Initialize name from selected option values and iname from the validated selected indices.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
   - Parents: `WML-C-43`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-SELECT-VARIABLE-INITIALIZATION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SELECT-VARIABLE-INITIALIZATION` (`runtime`, `implemented`)
 - **WML-CL-VARIABLE-COMMIT-BEFORE-TASK** — Commit input and selection variables before invoking any task.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.4 (10.3.4 Setting Variables)
   - Parents: `WML-C-12`, `WML-C-33`, `WML-C-43`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `implemented`)
 
 ## Explicit mapping gaps
 

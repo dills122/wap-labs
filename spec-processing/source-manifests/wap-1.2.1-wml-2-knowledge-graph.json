@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "e8076afef8391f966d8b1dcad1f1cbd3799efa1cf21034e95663bbc1af746614"
+        "sha256": "e7be2f0ac1198b749da58b2cc864651d8770b675092f36fb1a9d5682158891ef"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "4d05178d0d5b7c1e9c76119aa6d91df6f30e7b93e1e29b0c1b02529cb8d0d28f"
+        "sha256": "7e52675541e14ee97597507e7ecd42590e41bb88e06f40eef1c7e101ae946b89"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -2311,7 +2311,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2350,7 +2350,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2421,7 +2421,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2456,7 +2456,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2492,7 +2492,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2527,7 +2527,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2597,7 +2597,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2632,7 +2632,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2667,7 +2667,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2702,7 +2702,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2737,7 +2737,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2778,7 +2778,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3510,7 +3510,7 @@
       "title": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3522,7 +3522,7 @@
       "title": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3546,7 +3546,7 @@
       "title": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3558,7 +3558,7 @@
       "title": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3570,7 +3570,7 @@
       "title": "Initialize input and select controls in document order when entering the card.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Initialize input and select controls in document order when entering the card.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3582,7 +3582,7 @@
       "title": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3606,7 +3606,7 @@
       "title": "Deselect all options and then select every positive validated default index.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Deselect all options and then select every positive validated default index.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3618,7 +3618,7 @@
       "title": "Allow one selected option by default and multiple selections only when multiple is true.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Allow one selected option by default and multiple selections only when multiple is true.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3630,7 +3630,7 @@
       "title": "Require one or more option or optgroup children in each select element.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require one or more option or optgroup children in each select element.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3642,7 +3642,7 @@
       "title": "Update name and iname after user selection changes and again before every task invocation.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Update name and iname after user selection changes and again before every task invocation.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3654,7 +3654,7 @@
       "title": "Initialize name from selected option values and iname from the validated selected indices.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Initialize name from selected option values and iname from the validated selected indices.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3666,7 +3666,7 @@
       "title": "Commit input and selection variables before invoking any task.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Commit input and selection variables before invoking any task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4648,13 +4648,15 @@
           "C5-05"
         ],
         "outputs": [
-          "Complete field/control syntax and attribute validation"
+          "Complete field/control syntax and attribute validation",
+          "Source-derived select initialization, selection, serialization, and onpick runtime evidence"
         ],
         "acceptance": [
           "Input/select/option/optgroup/fieldset constraints, masks, defaults, and validation failures are deterministic."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+          "pnpm test:story WML-204"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }

@@ -380,7 +380,7 @@ fn wml_fx_select_structure_accepts_declared_control_grammar() {
             if matches!(
                 &items[0],
                 InlineNode::Select { name, options, .. }
-                    if name == "choice"
+                    if name.as_deref() == Some("choice")
                         && options.len() == 1
                         && options[0].label.is_empty()
                         && options[0].value == "alpha"
@@ -428,6 +428,67 @@ fn wml_fx_select_structure_rejects_invalid_syntax_deterministically() {
         (
             r#"<option value="orphan">Orphan</option>"#,
             "Invalid <option>: must be contained by <select> or <optgroup>",
+        ),
+    ];
+
+    for (control, expected) in cases {
+        let xml = format!("<wml><card id=\"home\">{control}</card></wml>");
+        assert_eq!(parse_wml(&xml).expect_err(control), expected);
+    }
+}
+
+#[test]
+fn wml_fx_select_structure_flattens_nested_optgroups_in_document_order() {
+    // WML-CL-SELECT-STRUCTURE and the WML 1.3 DTD declarations for select,
+    // optgroup, option, and fieldset.
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <fieldset title="Grouped choices" xml:lang="en" id="grouped" class="controls">
+              <select name="choice">
+                <optgroup title="Primary">
+                  <option value="alpha">Alpha</option>
+                  <optgroup title="Secondary">
+                    <option value="beta">Beta</option>
+                  </optgroup>
+                </optgroup>
+              </select>
+            </fieldset>
+          </card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("nested declared control grammar should parse");
+    assert!(matches!(
+        &deck.cards[0].nodes[0],
+        Node::Paragraph(items)
+            if matches!(
+                &items[0],
+                InlineNode::Select { options, .. }
+                    if options.iter().map(|option| option.value.as_str()).collect::<Vec<_>>()
+                        == vec!["alpha", "beta"]
+            )
+    ));
+}
+
+#[test]
+fn wml_fx_grouped_control_structure_rejects_invalid_syntax_deterministically() {
+    let cases = [
+        (
+            r#"<select name="choice"><optgroup title="Empty"></optgroup></select>"#,
+            "Invalid <optgroup>: expected one or more <option> or <optgroup> children",
+        ),
+        (
+            r#"<select name="choice"><optgroup><p>wrong</p></optgroup></select>"#,
+            "Invalid <optgroup>: unexpected child <p>",
+        ),
+        (
+            r#"<fieldset title="Group" unexpected="true"><input name="value"/></fieldset>"#,
+            "Invalid <fieldset>: unexpected attribute 'unexpected'",
+        ),
+        (
+            r#"<optgroup><option>Orphan</option></optgroup>"#,
+            "Invalid <optgroup>: must be contained by <select> or <optgroup>",
         ),
     ];
 

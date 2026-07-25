@@ -11,7 +11,8 @@ pub(super) fn parse_card_nodes_xml(
     budget: &mut ParseBudget,
 ) -> Result<Vec<Node>, String> {
     let mut out = Vec::new();
-    map_card_level_nodes(&card.children, &mut out, budget, 0)?;
+    let mut select_ordinal = 0usize;
+    map_card_level_nodes(&card.children, &mut out, budget, 0, &mut select_ordinal)?;
     Ok(out)
 }
 
@@ -20,6 +21,7 @@ fn map_card_level_nodes(
     out: &mut Vec<Node>,
     budget: &mut ParseBudget,
     depth: usize,
+    select_ordinal: &mut usize,
 ) -> Result<(), String> {
     budget.enter_scope(depth, "card-node traversal")?;
     for node in nodes {
@@ -34,7 +36,8 @@ fn map_card_level_nodes(
             XmlNode::Element(element) => match element.name.as_str() {
                 "br" => out.push(Node::Break),
                 "p" => {
-                    let inline = map_inline_nodes(&element.children, budget, depth + 1)?;
+                    let inline =
+                        map_inline_nodes(&element.children, budget, depth + 1, select_ordinal)?;
                     if !inline.is_empty() {
                         out.push(Node::Paragraph(inline));
                     }
@@ -56,17 +59,36 @@ fn map_card_level_nodes(
                     out.push(Node::Paragraph(vec![input_node]));
                 }
                 "select" => {
-                    if let Some(select_node) = parse_select_inline_node(element, budget, depth + 1)?
+                    if let Some(select_node) =
+                        parse_select_inline_node(element, budget, depth + 1, select_ordinal)?
                     {
                         out.push(Node::Paragraph(vec![select_node]));
                     }
+                }
+                "fieldset" => {
+                    validate_fieldset_element(element)?;
+                    map_card_level_nodes(
+                        &element.children,
+                        out,
+                        budget,
+                        depth + 1,
+                        select_ordinal,
+                    )?;
                 }
                 "option" => {
                     return Err(
                         "Invalid <option>: must be contained by <select> or <optgroup>".to_string(),
                     )
                 }
-                _ => map_card_level_nodes(&element.children, out, budget, depth + 1)?,
+                "optgroup" => {
+                    return Err(
+                        "Invalid <optgroup>: must be contained by <select> or <optgroup>"
+                            .to_string(),
+                    )
+                }
+                _ => {
+                    map_card_level_nodes(&element.children, out, budget, depth + 1, select_ordinal)?
+                }
             },
         }
     }
@@ -77,10 +99,18 @@ fn map_inline_nodes(
     nodes: &[XmlNode],
     budget: &mut ParseBudget,
     depth: usize,
+    select_ordinal: &mut usize,
 ) -> Result<Vec<InlineNode>, String> {
     let mut out = Vec::new();
     let mut pending_text = String::new();
-    map_inline_nodes_recursive(nodes, &mut pending_text, &mut out, budget, depth)?;
+    map_inline_nodes_recursive(
+        nodes,
+        &mut pending_text,
+        &mut out,
+        budget,
+        depth,
+        select_ordinal,
+    )?;
     flush_pending_inline_text(&mut pending_text, &mut out);
     Ok(out)
 }
@@ -91,6 +121,7 @@ fn map_inline_nodes_recursive(
     out: &mut Vec<InlineNode>,
     budget: &mut ParseBudget,
     depth: usize,
+    select_ordinal: &mut usize,
 ) -> Result<(), String> {
     budget.enter_scope(depth, "inline-node traversal")?;
     for node in nodes {
@@ -123,14 +154,32 @@ fn map_inline_nodes_recursive(
                 }
                 "select" => {
                     flush_pending_inline_text(pending_text, out);
-                    if let Some(select_node) = parse_select_inline_node(element, budget, depth + 1)?
+                    if let Some(select_node) =
+                        parse_select_inline_node(element, budget, depth + 1, select_ordinal)?
                     {
                         out.push(select_node);
                     }
                 }
+                "fieldset" => {
+                    validate_fieldset_element(element)?;
+                    map_inline_nodes_recursive(
+                        &element.children,
+                        pending_text,
+                        out,
+                        budget,
+                        depth + 1,
+                        select_ordinal,
+                    )?;
+                }
                 "option" => {
                     return Err(
                         "Invalid <option>: must be contained by <select> or <optgroup>".to_string(),
+                    )
+                }
+                "optgroup" => {
+                    return Err(
+                        "Invalid <optgroup>: must be contained by <select> or <optgroup>"
+                            .to_string(),
                     )
                 }
                 _ => map_inline_nodes_recursive(
@@ -139,6 +188,7 @@ fn map_inline_nodes_recursive(
                     out,
                     budget,
                     depth + 1,
+                    select_ordinal,
                 )?,
             },
         }
@@ -232,6 +282,7 @@ fn parse_select_inline_node(
     element: &XmlElement,
     budget: &mut ParseBudget,
     depth: usize,
+    select_ordinal: &mut usize,
 ) -> Result<Option<InlineNode>, String> {
     validate_allowed_attributes(
         element,
@@ -257,65 +308,136 @@ fn parse_select_inline_node(
     };
 
     let mut options = Vec::new();
-    let mut choice_child_count = 0usize;
-
-    budget.enter_scope(depth, "select option traversal")?;
-    for child in &element.children {
-        budget.visit_node("select option traversal")?;
-        let option = match child {
-            XmlNode::Text(text) => {
-                if text.trim().is_empty() {
-                    continue;
-                }
-                return Err("Invalid <select>: text content is not allowed".to_string());
-            }
-            XmlNode::Element(child) if child.name == "optgroup" => {
-                // WML-C-40 is an optional feature. Accept its DTD-permitted
-                // presence without adding optgroup modeling in this mandatory
-                // input/select/option validation slice.
-                choice_child_count = choice_child_count.saturating_add(1);
-                continue;
-            }
-            XmlNode::Element(child) if child.name == "option" => child,
-            XmlNode::Element(child) => {
-                return Err(format!(
-                    "Invalid <select>: unexpected child <{}>",
-                    child.name
-                ))
-            }
-        };
-        choice_child_count = choice_child_count.saturating_add(1);
-        validate_option_element(option)?;
-
-        let label = normalize_text(&inline_text_content(&option.children, budget, depth + 1)?);
-        let value = {
-            let explicit = normalize_text(option.attr("value").unwrap_or_default());
-            if explicit.is_empty() {
-                label.clone()
-            } else {
-                explicit
-            }
-        };
-        options.push(SelectOption { label, value });
-    }
-
+    let choice_child_count =
+        collect_select_options(element, "select", &mut options, budget, depth)?;
     if choice_child_count == 0 {
         return Err(
             "Invalid <select>: expected one or more <option> or <optgroup> children".to_string(),
         );
     }
 
-    let name = normalize_text(element.attr("name").unwrap_or_default());
-    if name.is_empty() || options.is_empty() {
+    if options.is_empty() {
         return Ok(None);
     }
+    *select_ordinal = select_ordinal.saturating_add(1);
+    let name = element.attr("name").map(str::to_string);
+    let iname = element.attr("iname").map(str::to_string);
+    let control_id = name
+        .clone()
+        .or_else(|| iname.clone())
+        .unwrap_or_else(|| format!("select-{}", *select_ordinal));
 
     Ok(Some(InlineNode::Select {
+        control_id,
         name,
+        iname,
         title,
+        default_value: element.attr("value").map(str::to_string),
+        default_index_value: element.attr("ivalue").map(str::to_string),
+        multiple: element.attr("multiple") == Some("true"),
         options,
-        selected_index: 0,
+        selected_indices: Vec::new(),
     }))
+}
+
+fn collect_select_options(
+    element: &XmlElement,
+    container_name: &str,
+    options: &mut Vec<SelectOption>,
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<usize, String> {
+    budget.enter_scope(depth, "select option traversal")?;
+    let mut choice_child_count = 0usize;
+    for child in &element.children {
+        budget.visit_node("select option traversal")?;
+        match child {
+            XmlNode::Text(text) if text.trim().is_empty() => {}
+            XmlNode::Text(_) => {
+                return Err(format!(
+                    "Invalid <{container_name}>: text content is not allowed"
+                ))
+            }
+            XmlNode::Element(child) if child.name == "option" => {
+                choice_child_count = choice_child_count.saturating_add(1);
+                validate_option_element(child)?;
+                let label = normalize_text(
+                    &child
+                        .children
+                        .iter()
+                        .filter_map(|node| match node {
+                            XmlNode::Text(text) => Some(text.as_str()),
+                            XmlNode::Element(_) => None,
+                        })
+                        .collect::<String>(),
+                );
+                let value = child
+                    .attr("value")
+                    .map(normalize_text)
+                    .unwrap_or_else(|| label.clone());
+                options.push(SelectOption {
+                    label,
+                    value,
+                    onpick: child.attr("onpick").map(str::to_string),
+                });
+            }
+            XmlNode::Element(child) if child.name == "optgroup" => {
+                choice_child_count = choice_child_count.saturating_add(1);
+                validate_optgroup_element(child)?;
+                collect_select_options(child, "optgroup", options, budget, depth + 1)?;
+            }
+            XmlNode::Element(child) => {
+                return Err(format!(
+                    "Invalid <{container_name}>: unexpected child <{}>",
+                    child.name
+                ))
+            }
+        }
+    }
+    Ok(choice_child_count)
+}
+
+fn validate_optgroup_element(element: &XmlElement) -> Result<(), String> {
+    validate_allowed_attributes(element, &["class", "id", "title", "xml:lang"])?;
+    validate_optional_xml_name(element, "id")?;
+    validate_optional_nmtoken(element, "xml:lang")?;
+    for child in &element.children {
+        match child {
+            XmlNode::Text(text) if text.trim().is_empty() => {}
+            XmlNode::Text(_) => {
+                return Err("Invalid <optgroup>: text content is not allowed".to_string())
+            }
+            XmlNode::Element(child) if child.name == "option" || child.name == "optgroup" => {}
+            XmlNode::Element(child) => {
+                return Err(format!(
+                    "Invalid <optgroup>: unexpected child <{}>",
+                    child.name
+                ))
+            }
+        }
+    }
+    let choice_count = element
+        .children
+        .iter()
+        .filter(|child| {
+            matches!(
+                child,
+                XmlNode::Element(child) if child.name == "option" || child.name == "optgroup"
+            )
+        })
+        .count();
+    if choice_count == 0 {
+        return Err(
+            "Invalid <optgroup>: expected one or more <option> or <optgroup> children".to_string(),
+        );
+    }
+    Ok(())
+}
+
+fn validate_fieldset_element(element: &XmlElement) -> Result<(), String> {
+    validate_allowed_attributes(element, &["class", "id", "title", "xml:lang"])?;
+    validate_optional_xml_name(element, "id")?;
+    validate_optional_nmtoken(element, "xml:lang")
 }
 
 fn validate_option_element(element: &XmlElement) -> Result<(), String> {

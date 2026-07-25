@@ -6,33 +6,16 @@ import path from 'node:path';
 import process from 'node:process';
 
 const root = process.cwd();
-const manifestDirectory = path.join(
-  root,
-  'spec-processing/source-manifests'
-);
-const ledgerPath = path.join(
-  manifestDirectory,
-  'wap-1.2.1-selected-normative-clauses.json'
-);
+const manifestDirectory = path.join(root, 'spec-processing/source-manifests');
+const ledgerPath = path.join(manifestDirectory, 'wap-1.2.1-selected-normative-clauses.json');
 const ledger = readJson(ledgerPath);
-const release = readJson(
-  path.join(manifestDirectory, 'wap-1.2.1-release.json')
-);
-const ingestion = readJson(
-  path.join(manifestDirectory, 'wap-1.2.1-ingestion-status.json')
-);
+const release = readJson(path.join(manifestDirectory, 'wap-1.2.1-release.json'));
+const ingestion = readJson(path.join(manifestDirectory, 'wap-1.2.1-ingestion-status.json'));
 const externalIngestion = readJson(
-  path.join(
-    manifestDirectory,
-    'wap-1.2.1-external-ingestion-status.json'
-  )
+  path.join(manifestDirectory, 'wap-1.2.1-external-ingestion-status.json')
 );
-const effectiveSpec = readJson(
-  path.join(manifestDirectory, 'wap-1.2.1-effective-spec.json')
-);
-const classConformance = readJson(
-  path.join(manifestDirectory, 'wap-1.2.1-class-conformance.json')
-);
+const effectiveSpec = readJson(path.join(manifestDirectory, 'wap-1.2.1-effective-spec.json'));
+const classConformance = readJson(path.join(manifestDirectory, 'wap-1.2.1-class-conformance.json'));
 
 function readJson(filename) {
   return JSON.parse(fs.readFileSync(filename, 'utf8'));
@@ -166,18 +149,25 @@ const allowedFixtureKinds = new Set([
   'rendering',
   'binary-decoder'
 ]);
+const implementedWmlClauseIds = new Set([
+  'WML-CL-VARIABLE-COMMIT-BEFORE-TASK',
+  'WML-CL-SELECT-STRUCTURE',
+  'WML-CL-SELECT-SINGLE-MULTI-MODE',
+  'WML-CL-SELECT-INIT-ORDER',
+  'WML-CL-SELECT-INDEX-VALIDATION',
+  'WML-CL-SELECT-DEFAULT-PRECEDENCE',
+  'WML-CL-SELECT-VARIABLE-INITIALIZATION',
+  'WML-CL-SELECT-PRESELECTION',
+  'WML-CL-SELECT-USER-UPDATE',
+  'WML-CL-SELECT-MULTI-SERIALIZATION',
+  'WML-CL-OPTION-ONPICK-MULTI',
+  'WML-CL-OPTION-ONPICK-SINGLE'
+]);
 const hashPattern = /^[a-f0-9]{64}$/;
-const releaseById = new Map(
-  release.members.map((member) => [member.documentId, member])
-);
-const ingestionById = new Map(
-  ingestion.members.map((member) => [member.documentId, member])
-);
+const releaseById = new Map(release.members.map((member) => [member.documentId, member]));
+const ingestionById = new Map(ingestion.members.map((member) => [member.documentId, member]));
 const externalIngestionById = new Map(
-  externalIngestion.dependencies.map((dependency) => [
-    dependency.dependencyId,
-    dependency
-  ])
+  externalIngestion.dependencies.map((dependency) => [dependency.dependencyId, dependency])
 );
 
 if (ledger.schemaVersion !== 1) {
@@ -187,8 +177,7 @@ if (ledger.releaseId !== release.release.id) {
   failures.push('selected-clause ledger release lock drift');
 }
 if (
-  ledger.target?.classProfile !==
-    'WAP-215 Class C client (CCR-CLASSC-C-001)' ||
+  ledger.target?.classProfile !== 'WAP-215 Class C client (CCR-CLASSC-C-001)' ||
   classConformance.selectedTarget?.identifier !== 'CCR-CLASSC-C-001'
 ) {
   failures.push('selected-clause ledger must target the WAP-215 Class C client');
@@ -202,19 +191,15 @@ if (
   failures.push('generator provenance or CONF-003 ownership is incomplete');
 }
 if (
-  !ledger.generatedFrom?.redistributionPolicy?.includes(
-    'full text extractions remain outside Git'
-  )
+  !ledger.generatedFrom?.redistributionPolicy?.includes('full text extractions remain outside Git')
 ) {
   failures.push('redistribution boundary is not explicit');
 }
 if (
   ledger.scope?.status !== 'complete' ||
   ledger.scope?.selectedProfileParentCount !== 201 ||
-  JSON.stringify(ledger.scope?.coveredFamilies) !==
-    JSON.stringify(coveredFamilies) ||
-  JSON.stringify(ledger.scope?.remainingFamilies) !==
-    JSON.stringify(remainingFamilies) ||
+  JSON.stringify(ledger.scope?.coveredFamilies) !== JSON.stringify(coveredFamilies) ||
+  JSON.stringify(ledger.scope?.remainingFamilies) !== JSON.stringify(remainingFamilies) ||
   ledger.scope?.coveredSelectedParentCount !== 201 ||
   ledger.scope?.remainingSelectedParentCount !== 0 ||
   !ledger.scope?.completionRule?.includes('CONF-003 is complete')
@@ -224,9 +209,7 @@ if (
 if (
   !ledger.interpretation?.normativeForce?.includes('implicit-MUST') ||
   !ledger.interpretation?.deduplication?.includes('multiple selected SCR') ||
-  !ledger.interpretation?.implementationAssessment?.includes(
-    'not-assessed'
-  )
+  !ledger.interpretation?.implementationAssessment?.includes('not-assessed')
 ) {
   failures.push('clause interpretation and evidence policy drift');
 }
@@ -252,37 +235,30 @@ for (const family of ledger.families ?? []) {
     failures.push(`${family.family}: unexpected covered family`);
     continue;
   }
-  const parentLedgerPath = path.join(
-    manifestDirectory,
-    definition.ledgerFile
-  );
-  const expectedParentLedgerPath =
-    `spec-processing/source-manifests/${definition.ledgerFile}`;
+  const parentLedgerPath = path.join(manifestDirectory, definition.ledgerFile);
+  const expectedParentLedgerPath = `spec-processing/source-manifests/${definition.ledgerFile}`;
   const parentLedgerText = fs.readFileSync(parentLedgerPath, 'utf8');
   const parentLedger = JSON.parse(parentLedgerText);
   const selectedParents = parentLedger.obligations.filter(
-    (obligation) =>
-      obligation.disposition?.classCProfile ===
-      definition.selectedDisposition
+    (obligation) => obligation.disposition?.classCProfile === definition.selectedDisposition
   );
-  const selectedById = new Map(
-    selectedParents.map((parent) => [parent.id, parent])
-  );
+  const selectedById = new Map(selectedParents.map((parent) => [parent.id, parent]));
   const effectiveFamily = effectiveSpec.families.find(
     (candidate) => candidate.family === family.family
   );
   const expectedFamilyStatus =
     family.family === 'wcmp'
       ? 'nested-clauses-fixture-backed'
-      : 'nested-clauses-anchored-fixtures-planned';
+      : family.family === 'wml'
+        ? 'nested-clauses-partially-fixture-backed'
+        : 'nested-clauses-anchored-fixtures-planned';
 
   if (
     family.status !== expectedFamilyStatus ||
     family.parentLedger !== expectedParentLedgerPath ||
     family.parentLedgerSha256 !== sha256(parentLedgerText) ||
     family.selectedDisposition !== definition.selectedDisposition ||
-    JSON.stringify(family.effectiveSequence) !==
-      JSON.stringify(effectiveFamily?.effectiveSequence)
+    JSON.stringify(family.effectiveSequence) !== JSON.stringify(effectiveFamily?.effectiveSequence)
   ) {
     failures.push(`${family.family}: family authority or status drift`);
   }
@@ -316,19 +292,14 @@ for (const family of ledger.families ?? []) {
       externalDependency &&
       externalArtifact &&
       source.authority === externalDependency.authority &&
-      source.authorityRecordUrl ===
-        externalDependency.authorityRecordUrl &&
+      source.authorityRecordUrl === externalDependency.authorityRecordUrl &&
       source.artifactSha256 === externalArtifact.sha256 &&
       source.artifactBytes === externalArtifact.bytes;
     if (!releaseSourceValid && !externalSourceValid) {
-      failures.push(
-        `${family.family}/${source.documentId}: clause source lock drift`
-      );
+      failures.push(`${family.family}/${source.documentId}: clause source lock drift`);
     }
   }
-  const clauseSourceIds = new Set(
-    (family.clauseSources ?? []).map((source) => source.documentId)
-  );
+  const clauseSourceIds = new Set((family.clauseSources ?? []).map((source) => source.documentId));
 
   const actualParentIds = (family.parents ?? []).map((parent) => parent.id);
   const expectedParentIds = selectedParents.map((parent) => parent.id);
@@ -336,9 +307,7 @@ for (const family of ledger.families ?? []) {
     failures.push(`${family.family}: selected parent set/order drift`);
   }
 
-  const clauseById = new Map(
-    (family.clauses ?? []).map((candidate) => [candidate.id, candidate])
-  );
+  const clauseById = new Map((family.clauses ?? []).map((candidate) => [candidate.id, candidate]));
   if (clauseById.size !== family.clauses?.length) {
     failures.push(`${family.family}: duplicate family clause IDs`);
   }
@@ -352,37 +321,25 @@ for (const family of ledger.families ?? []) {
     if (
       parent.feature !== sourceParent.feature ||
       parent.referencedSection !== sourceParent.referencedSection ||
-      JSON.stringify(parent.sourceAnchor) !==
-        JSON.stringify(sourceParent.sourceAnchor) ||
-      parent.implementationStatus !==
-        sourceParent.mapping.implementationStatus ||
-      JSON.stringify(parent.ownerLayers) !==
-        JSON.stringify(sourceParent.mapping.ownerLayers) ||
-      JSON.stringify(parent.workItems) !==
-        JSON.stringify(sourceParent.mapping.workItems) ||
+      JSON.stringify(parent.sourceAnchor) !== JSON.stringify(sourceParent.sourceAnchor) ||
+      parent.implementationStatus !== sourceParent.mapping.implementationStatus ||
+      JSON.stringify(parent.ownerLayers) !== JSON.stringify(sourceParent.mapping.ownerLayers) ||
+      JSON.stringify(parent.workItems) !== JSON.stringify(sourceParent.mapping.workItems) ||
       !Array.isArray(parent.clauseIds) ||
       parent.clauseIds.length === 0
     ) {
-      failures.push(
-        `${family.family}/${parent.id}: parent traceability drift`
-      );
+      failures.push(`${family.family}/${parent.id}: parent traceability drift`);
     }
     const expectedClauseIds = (family.clauses ?? [])
       .filter((candidate) => candidate.parentRows.includes(parent.id))
       .map((candidate) => candidate.id)
       .sort();
-    if (
-      JSON.stringify(parent.clauseIds) !== JSON.stringify(expectedClauseIds)
-    ) {
-      failures.push(
-        `${family.family}/${parent.id}: inverse clause mapping drift`
-      );
+    if (JSON.stringify(parent.clauseIds) !== JSON.stringify(expectedClauseIds)) {
+      failures.push(`${family.family}/${parent.id}: inverse clause mapping drift`);
     }
     for (const clauseId of parent.clauseIds ?? []) {
       if (!clauseById.has(clauseId)) {
-        failures.push(
-          `${family.family}/${parent.id}: unknown clause ${clauseId}`
-        );
+        failures.push(`${family.family}/${parent.id}: unknown clause ${clauseId}`);
       }
     }
   }
@@ -416,17 +373,14 @@ for (const family of ledger.families ?? []) {
     if (
       !candidate.sourceAnchor?.section ||
       !candidate.sourceAnchor?.heading ||
-      !hashPattern.test(
-        candidate.sourceAnchor?.normalizedTextSha256 ?? ''
-      ) ||
+      !hashPattern.test(candidate.sourceAnchor?.normalizedTextSha256 ?? '') ||
       !clauseSourceIds.has(candidate.sourceAnchor?.documentId)
     ) {
       failures.push(`${candidate.id}: incomplete or unlocked source anchor`);
     }
     if (
       !allowedForces.has(candidate.normativeForce) ||
-      candidate.obligationLevel !==
-        expectedLevelByForce[candidate.normativeForce]
+      candidate.obligationLevel !== expectedLevelByForce[candidate.normativeForce]
     ) {
       failures.push(`${candidate.id}: normative force/level drift`);
     }
@@ -437,9 +391,7 @@ for (const family of ledger.families ?? []) {
       candidate.obligationSynopsis.includes('\n') ||
       candidate.obligationSynopsis.trim().split(/\s+/).length > 45
     ) {
-      failures.push(
-        `${candidate.id}: synopsis violates the redistribution-safe shape`
-      );
+      failures.push(`${candidate.id}: synopsis violates the redistribution-safe shape`);
     }
     const clauseKey = [
       candidate.family,
@@ -461,31 +413,20 @@ for (const family of ledger.families ?? []) {
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
     ].sort();
     const expectedSnapshot = Object.fromEntries(
-      parents.map((parent) => [
-        parent.id,
-        parent.mapping.implementationStatus
-      ])
+      parents.map((parent) => [parent.id, parent.mapping.implementationStatus])
     );
-    const directFixtureImplemented = candidate.family === 'wcmp';
-    const expectedClauseStatus = directFixtureImplemented
-      ? 'implemented'
-      : 'not-assessed';
-    const expectedFixtureStatus = directFixtureImplemented
-      ? 'implemented'
-      : 'planned';
+    const directFixtureImplemented =
+      candidate.family === 'wcmp' || implementedWmlClauseIds.has(candidate.id);
+    const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
+    const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
-      JSON.stringify(candidate.mapping?.ownerLayers) !==
-        JSON.stringify(expectedOwners) ||
-      JSON.stringify(candidate.mapping?.workItems) !==
-        JSON.stringify(expectedWorkItems) ||
-      JSON.stringify(candidate.mapping?.requirementIds) !==
-        JSON.stringify(expectedRequirements) ||
+      JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
+      JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
+      JSON.stringify(candidate.mapping?.requirementIds) !== JSON.stringify(expectedRequirements) ||
       JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !==
         JSON.stringify(expectedSnapshot) ||
       candidate.mapping?.clauseImplementationStatus !== expectedClauseStatus ||
-      !candidate.mapping?.evidenceGate?.includes(
-        'source-derived direct fixture'
-      )
+      !candidate.mapping?.evidenceGate?.includes('source-derived direct fixture')
     ) {
       failures.push(`${candidate.id}: owner/work/evidence mapping drift`);
     }
@@ -497,12 +438,16 @@ for (const family of ledger.families ?? []) {
       !allowedFixtureKinds.has(candidate.fixturePlan.kind) ||
       candidate.fixturePlan.assertion !== candidate.obligationSynopsis ||
       (directFixtureImplemented &&
+        candidate.family === 'wcmp' &&
         (candidate.fixturePlan.evidence?.path !==
           'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
-          candidate.fixturePlan.evidence?.testPath !==
-            'transport-rust/src/network/wcmp/tests.rs' ||
+          candidate.fixturePlan.evidence?.testPath !== 'transport-rust/src/network/wcmp/tests.rs' ||
+          !candidate.fixturePlan.evidence?.command?.includes('network::wcmp'))) ||
+      (implementedWmlClauseIds.has(candidate.id) &&
+        (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
+          !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
           !candidate.fixturePlan.evidence?.command?.includes(
-            'network::wcmp'
+            'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
           )))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
@@ -536,22 +481,13 @@ if (
   clauseCount !== 781 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
-  failures.push(
-    `summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`
-  );
+  failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);
 }
 
-const forbiddenKeys = new Set([
-  'sourceText',
-  'sourceExcerpt',
-  'normativeText',
-  'verbatimQuote'
-]);
+const forbiddenKeys = new Set(['sourceText', 'sourceExcerpt', 'normativeText', 'verbatimQuote']);
 function rejectProtectedPayload(value, location = 'ledger') {
   if (Array.isArray(value)) {
-    value.forEach((item, index) =>
-      rejectProtectedPayload(item, `${location}[${index}]`)
-    );
+    value.forEach((item, index) => rejectProtectedPayload(item, `${location}[${index}]`));
     return;
   }
   if (!value || typeof value !== 'object') return;
