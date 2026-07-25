@@ -26,17 +26,15 @@ const createDeps = (
   const showToast = vi.fn();
 
   const base: StartupNetworkProbeDependencies = {
-    fetchDeck: vi.fn(
-      async (): Promise<FetchResponse> => ({
-        ok: true,
-        status: 200,
-        finalUrl: 'wap://localhost/',
-        contentType: 'text/vnd.wap.wml',
-        timingMs: { encode: 0, udpRtt: 1, decode: 0 },
-        engineDeckInput: undefined,
-        wml: '<wml/>'
-      })
-    ),
+    fetchDeck: vi.fn(async (): Promise<FetchResponse> => ({
+      ok: true,
+      status: 200,
+      finalUrl: 'wap://localhost/',
+      contentType: 'text/vnd.wap.wml',
+      timingMs: { encode: 0, udpRtt: 1, decode: 0 },
+      engineDeckInput: undefined,
+      wml: '<wml/>'
+    })),
     getTargetUrl: vi.fn(() => 'wap://localhost/'),
     getRunMode: vi.fn((): RunMode => 'network'),
     setLastNetworkUrl: vi.fn(),
@@ -84,16 +82,14 @@ describe('StartupNetworkProbeController', () => {
 
   it('retries unreachable responses and reports that the gateway was not verified', async () => {
     const deps = createDeps({
-      fetchDeck: vi.fn(
-        async (): Promise<FetchResponse> => ({
-          ok: false,
-          status: 0,
-          finalUrl: 'wap://localhost/',
-          contentType: 'text/plain',
-          timingMs: { encode: 0, udpRtt: 0, decode: 0 },
-          error: { code: 'TRANSPORT_UNAVAILABLE', message: 'offline' }
-        })
-      )
+      fetchDeck: vi.fn(async (): Promise<FetchResponse> => ({
+        ok: false,
+        status: 0,
+        finalUrl: 'wap://localhost/',
+        contentType: 'text/plain',
+        timingMs: { encode: 0, udpRtt: 0, decode: 0 },
+        error: { code: 'TRANSPORT_UNAVAILABLE', message: 'offline' }
+      }))
     });
 
     const controller = new StartupNetworkProbeController(deps);
