@@ -65,6 +65,20 @@ const directWorkItemClauseIds = new Map([
       'WDP-CL-IPV4-HEADER-CHECKSUM',
       'WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS'
     ])
+  ],
+  [
+    'TRN-707',
+    new Set([
+      'WDP-CL-CONSISTENT-TRANSPORT-SERVICE',
+      'WDP-CL-IP-BEARER-REQUIRES-UDP',
+      'WDP-CL-CDPD-UDP-IP-PROFILE',
+      'WDP-CL-UNITDATA-REQUEST-ANYTIME',
+      'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+      'WDP-CL-SELECTED-WSP-PORT',
+      'WDP-CL-SELECTED-BEARER-ASSIGNMENT',
+      'WCMP-CL-CLIENT-GENERAL-PROFILE',
+      'WCMP-CL-SELECTED-TYPE-CODE-VALUES'
+    ])
   ]
 ]);
 const configuredDirectWorkItemIds = new Set(directWorkItemClauseIds.keys());
@@ -77,21 +91,26 @@ function directWorkItemsForClause(clauseId) {
 
 if (refreshDirectWorkItems) {
   const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-  for (const candidate of manifest.families.flatMap((family) => family.clauses)) {
-    const directWorkItems = directWorkItemsForClause(candidate.id);
-    if (directWorkItems.length) {
-      candidate.directWorkItems = directWorkItems;
-    } else {
-      delete candidate.directWorkItems;
+  for (const family of manifest.families) {
+    family.parentLedgerSha256 = sha256(
+      fs.readFileSync(family.parentLedger, 'utf8')
+    );
+    for (const candidate of family.clauses) {
+      const directWorkItems = directWorkItemsForClause(candidate.id);
+      if (directWorkItems.length) {
+        candidate.directWorkItems = directWorkItems;
+      } else {
+        delete candidate.directWorkItems;
+      }
+      candidate.mapping.workItems = [
+        ...new Set([
+          ...candidate.mapping.workItems.filter(
+            (workItem) => !configuredDirectWorkItemIds.has(workItem)
+          ),
+          ...directWorkItems
+        ])
+      ].sort();
     }
-    candidate.mapping.workItems = [
-      ...new Set([
-        ...candidate.mapping.workItems.filter(
-          (workItem) => !configuredDirectWorkItemIds.has(workItem)
-        ),
-        ...directWorkItems
-      ])
-    ].sort();
   }
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(

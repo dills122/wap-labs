@@ -17,6 +17,34 @@ const creqTextPath = option('--creq-text');
 const recordedOn = option('--recorded-on');
 const outputRoot =
   option('--output-root') ?? 'spec-processing/source-manifests';
+const refreshSelectedEvidence = args.includes('--refresh-selected-evidence');
+
+if (refreshSelectedEvidence) {
+  const outputPath = path.join(
+    outputRoot,
+    'wap-1.2.1-wsp-scr.json'
+  );
+  const manifest = readJson(outputPath);
+  let refreshed = 0;
+  for (const obligation of manifest.obligations) {
+    if (
+      obligation.disposition?.classCProfile !==
+      'required-by-selected-class-c-transport-path'
+    ) {
+      continue;
+    }
+    const evidence = selectedEvidence('wsp', obligation.id);
+    obligation.mapping.implementationEvidence =
+      evidence.implementationEvidence;
+    obligation.mapping.testEvidence = evidence.testEvidence;
+    refreshed += 1;
+  }
+  fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  console.log(
+    `Refreshed ${refreshed} selected WSP evidence mappings in ${outputPath}`
+  );
+  process.exit(0);
+}
 
 if (!sourceRoot || !creqTextPath || !recordedOn) {
   console.error(
@@ -862,12 +890,12 @@ function selectedEvidence(family, id) {
   return {
     implementationEvidence: [
       {
-        path: 'transport-rust/src/native_fetch.rs',
+        path: 'transport-rust/src/network/wsp/connectionless.rs',
         symbol: 'encode_connectionless_request'
       },
       {
-        path: 'transport-rust/src/native_fetch.rs',
-        symbol: 'decode_connectionless_wsp_reply'
+        path: 'transport-rust/src/network/wsp/connectionless.rs',
+        symbol: 'decode_connectionless_reply'
       }
     ],
     testEvidence: [

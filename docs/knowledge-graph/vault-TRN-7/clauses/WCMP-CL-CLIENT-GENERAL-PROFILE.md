@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-TRX-006|RQ-TRX-006]]
 - `planned-by` → [[work-items/TRN-703|TRN-703]]
+- `planned-by` → [[work-items/TRN-707|TRN-707]]
 - `refines` → [[scr-rows/WCMP-C-001|WCMP-C-001]]
 - `refines` → [[scr-rows/WCMP-SP-C-002|WCMP-SP-C-002]]
 - `sourced-from` → [[source-documents/WAP-202-WCMP|WAP-202-WCMP]]
@@ -42,7 +43,8 @@ tags:
   "obligationSynopsis": "Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.",
   "workItems": [
     "T0-17",
-    "TRN-703"
+    "TRN-703",
+    "TRN-707"
   ],
   "ownerLayers": [
     "transport-rust"

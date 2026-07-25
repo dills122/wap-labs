@@ -32,7 +32,8 @@ const INPUT_PATHS = {
   clauses: 'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json',
   effectiveSpec: 'spec-processing/source-manifests/wap-1.2.1-effective-spec.json',
   program: 'docs/waves/wap-1.2.1-compliance-program.json',
-  release: 'spec-processing/source-manifests/wap-1.2.1-release.json'
+  release: 'spec-processing/source-manifests/wap-1.2.1-release.json',
+  successorDelta: 'spec-processing/source-manifests/wap-1.2.1-successor-delta.json'
 };
 
 const NODE_FOLDERS = {
@@ -147,6 +148,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   const program = inputs.program.data;
   const effectiveSpec = inputs.effectiveSpec.data;
   const release = inputs.release.data;
+  const successorDelta = inputs.successorDelta.data;
   const classConformance = inputs.classConformance.data;
   const clauseManifest = inputs.clauses.data;
   const targetSprint = program.sprints.find((sprint) => sprint.id === targetId);
@@ -181,6 +183,9 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
     effectiveSpec.families.map((family) => [family.family, family])
   );
   const releaseMembers = new Map(release.members.map((member) => [member.documentId, member]));
+  const successorAuthorities = new Map(
+    successorDelta.successorAuthorities.map((authority) => [authority.documentId, authority])
+  );
   const nodes = new Map();
   const edges = new Map();
 
@@ -386,6 +391,11 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       ownerLayers: workItem.ownerLayers,
       sourceFamilies: workItem.sourceFamilies,
       explicitUnmappedFamilies: workItem.explicitUnmappedFamilies,
+      contextDocuments: workItem.contextDocuments,
+      followUpWorkItems: workItem.followUpWorkItems,
+      dependsOn: workItem.dependsOn,
+      notes: workItem.notes,
+      specReferences: workItem.specReferences,
       existingTickets: workItem.existingTickets,
       outputs: workItem.outputs,
       acceptance: workItem.acceptance,
@@ -395,6 +405,29 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
     addEdge(targetSprintNode, 'contains', workItemNode, [programRef]);
     for (const family of workItem.sourceFamilies) {
       addEdge(workItemNode, 'covers-family', nodeId('source-family', family), [programRef]);
+    }
+    for (const documentId of workItem.contextDocuments ?? []) {
+      const authority = successorAuthorities.get(documentId);
+      if (!authority) {
+        throw new Error(`${workItem.id}: unknown successor context document ${documentId}`);
+      }
+      const documentNode = addNode(
+        'source-document',
+        authority.documentId,
+        authority.title ?? authority.documentId,
+        {
+          family: authority.family,
+          filename: authority.filename,
+          role: authority.role,
+          sha256: authority.sha256,
+          targetNormative: authority.targetNormative,
+          source: INPUT_PATHS.successorDelta
+        }
+      );
+      addEdge(workItemNode, 'uses-context', documentNode, [
+        programRef,
+        INPUT_PATHS.successorDelta
+      ]);
     }
     for (const layer of workItem.ownerLayers) {
       const layerNode = addNode('owner-layer', layer, layer, {
@@ -737,13 +770,21 @@ export function renderContextPack(graph, focusWorkItemId = null) {
       ...directClausesForWorkItem(graph, workItem.key).map((clause) => clause.properties.family)
     ])
   );
+  const contextualSourceDocumentIds = new Set(
+    workItems.flatMap((workItem) =>
+      graph.edges
+        .filter((edge) => edge.from === workItem.id && edge.relation === 'uses-context')
+        .map((edge) => edge.to)
+    )
+  );
   const sourceDocuments = graph.nodes
     .filter((node) => node.type === 'source-document')
     .filter(
       (node) =>
         !focusedWorkItem ||
         selectedFamilies.has(node.properties.family) ||
-        node.properties.family === 'conformance-governance'
+        node.properties.family === 'conformance-governance' ||
+        contextualSourceDocumentIds.has(node.id)
     )
     .sort((left, right) => left.key.localeCompare(right.key));
   const workItemSections = workItems.map((workItem) => {

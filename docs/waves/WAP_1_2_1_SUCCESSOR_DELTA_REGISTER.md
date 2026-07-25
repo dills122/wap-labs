@@ -68,6 +68,39 @@ code/test review establish the strict outcome.
 - WBXML, WMLScript, WMLScript Libraries, and caching: no selected-row
   successor-derived implementation basis is currently identified.
 
+## TRN-707 transport audit
+
+TRN-707 extends the completed `CONF-007` register with transport-specific
+evidence; it does not rewrite the 201-row historical classification. The
+selected WDP and WCMP implementation foundations remain
+`target-era-or-version-neutral`, and WAP-259 remains delta evidence only.
+
+The audit is deliberately narrower than a whole-document equivalence claim.
+WAP-259 predates the final effective WAP-200_005 overlay, so compatibility is
+proven only for nine directly mapped clauses and their existing target-era
+fixtures:
+
+| Classification | Target clauses | WAP-259 comparison | Result |
+|---|---|---|---|
+| WDP service and primitive | `WDP-CL-CONSISTENT-TRANSPORT-SERVICE`, `WDP-CL-UNITDATA-REQUEST-ANYTIME`, `WDP-CL-UNITDATA-CONTENT-TRANSPARENCY` | 4.1, 4.2, 5.3.2 | Compatible: the bearer-independent service, connectionless T-DUnitdata availability, and unchanged SDU delivery are preserved |
+| WDP CDPD/IP and registries | `WDP-CL-IP-BEARER-REQUIRES-UDP`, `WDP-CL-CDPD-UDP-IP-PROFILE`, `WDP-CL-SELECTED-WSP-PORT`, `WDP-CL-SELECTED-BEARER-ASSIGNMENT` | 4.3, 4.4.3, 6.2, Appendices B/C | Compatible: UDP/IP, port 9200, and bearer assignment `0x0D` are unchanged |
+| WCMP target delegation | `WCMP-CL-CLIENT-GENERAL-PROFILE`, `WCMP-CL-SELECTED-TYPE-CODE-VALUES` | 4.2.2 | Strict correction required: WAP-259 delegates to WAP-202, whose 5.3 assigns CDPD/IP to ICMP; the current 5.4/5.5 general-WCMP branch must be capability-gated |
+
+Direct WDP evidence remains the WAP-200/RFC fixture
+`transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json`
+and is compatible. The WAP-202 fixture
+`transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json`
+proves the general-WCMP wire branch but not its use on the selected IP bearer.
+Additive follow-up `TRN-708` must select ICMPv4 for strict CDPD/IPv4 and keep
+the completed TRN-703 general-WCMP implementation behind an explicit non-IP
+capability.
+
+WTP remains conditional and unmapped. TRN-707 does not activate WTP or
+connection-oriented WSP; a future capability claim must first map the
+effective WAP-201/SIN closure and separately audit the pending WAP-224
+successor context. The work item therefore remains `in-progress` even though
+its bounded successor audit is complete.
+
 ## Successor-only boundary
 
 The register separately records five successor-only capability examples. They

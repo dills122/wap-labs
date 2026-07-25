@@ -22,6 +22,7 @@ tags:
 - `belongs-to` ← [[scr-rows/WCMP-SP-C-002|WCMP-SP-C-002]]
 - `covers-family` ← [[work-items/TRN-703|TRN-703]]
 - `covers-family` ← [[work-items/TRN-707|TRN-707]]
+- `covers-family` ← [[work-items/TRN-708|TRN-708]]
 - `effective-document` → [[source-documents/WAP-202-WCMP|WAP-202-WCMP]]
 - `requires-family` ← [[profiles/CCR-CLASSC-C-001|CCR-CLASSC-C-001]]
 

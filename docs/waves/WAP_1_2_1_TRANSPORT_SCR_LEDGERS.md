@@ -144,6 +144,36 @@ truncation, and explicit reply rate limiting.
 Additional generation, processing, endpoint, and diagnostic rows remain
 optional capabilities until selected.
 
+### TRN-707 successor-delta evidence
+
+The transport-specific successor audit preserves `CONF-007` as completed
+history and adds nine direct comparison clauses under `TRN-707`:
+
+- WDP service/primitive invariants compare effective WAP-200 clauses with
+  WAP-259 sections 4.1, 4.2, and 5.3.2;
+- the CDPD UDP/IP profile, connectionless WSP port `9200`, and bearer
+  assignment `0x0D` compare with WAP-259 sections 4.3, 4.4.3, 6.2, and
+  Appendices B/C;
+- the selected general-WCMP profile and type/code table remain governed by
+  WAP-202 because WAP-259 section 4.2.2 delegates WCMP behavior to that
+  specification rather than redefining it.
+
+The WDP comparisons are compatible with the existing target-era fixtures.
+The WCMP comparison exposes a strict-profile mismatch: WAP-202 section 5.3
+assigns CDPD and other IP bearers to ICMP, while the current TRN-703 fixture
+implements the section 5.4/5.5 general-WCMP branch. Additive follow-up
+`TRN-708` must select ICMPv4 for strict CDPD/IPv4 and capability-gate the
+completed general-WCMP work for non-IP use. TRN-703/T0-17 remain canonical
+history and are not reopened.
+
+This is not a whole-document equivalence finding: WAP-259 predates the final
+WAP-200_005 overlay, and only the mapped observable assumptions are
+classified.
+
+WTP remains a direct-family mapping gap and is not activated. A future
+connection-oriented WSP claim must adopt the effective WAP-201/SIN clauses
+and audit WAP-224 separately.
+
 ### WSP
 
 The Rust transport has native connectionless GET/POST/REPLY encoding, WSP
@@ -207,11 +237,17 @@ adapter.
 - `TRN-702`: complete for the adopted nine-clause constrained-payload subset,
   deterministic lower-IPv4 reassembly policy, and direct simulated replay
   evidence; additional bearers remain unclaimed.
-- `TRN-703` / `T0-17`: implement and test the five-row WCMP core, then
-  capability-gate optional WCMP breadth.
+- `TRN-703` / `T0-17`: complete for the five-row WCMP core; optional WCMP
+  breadth remains capability-gated.
 - `TRN-706`: in progress; the eleven-clause selected WDP replay tranche is
   directly evidenced, while the conditional WTP family and full
   timeout/abort corpus remain open.
+- `TRN-707`: in progress; the nine-clause WDP/WCMP successor comparison is
+  complete, with WDP compatible, the WCMP strict-profile correction tracked
+  by additive `TRN-708`, and the conditional WTP mapping still explicit.
+- `TRN-708`: todo; select the WAP-202 section 5.3 ICMPv4 path for strict
+  CDPD/IPv4 and capability-gate the completed general-WCMP branch without
+  activating WTP or connection-oriented WSP.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.

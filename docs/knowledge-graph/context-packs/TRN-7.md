@@ -13,12 +13,12 @@
 
 ## Graph summary
 
-- Nodes: 214
-- Edges: 624
-- Selected work items: 7
-- Direct normative clauses: 97
+- Nodes: 216
+- Edges: 640
+- Selected work items: 8
+- Direct normative clauses: 106
 - Work items without direct clause mappings: 3
-- Work items with unmapped declared normative families: 2
+- Work items with unmapped declared normative families: 3
 
 ## Execution target
 
@@ -178,23 +178,60 @@ Evidence commands:
 
 ### TRN-707: WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `documentation`, `transport-rust`, `qa`
 - Source families: `wdp`, `wtp`, `wcmp`
+- Existing tickets: None
+- Direct normative clauses: 9
+
+Outputs:
+
+- WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register
+- TRN-707 transport-specific audit in spec-processing/source-manifests/wap-1.2.1-successor-delta.json
+
+Acceptance:
+
+- Current successor-spec implementation assumptions are either proven compatible or ticketed as strict-mode corrections.
+- The selected WDP CDPD/UDP/IPv4 service, primitive, port, and bearer assumptions are compared clause-by-clause against effective WAP-200 and WAP-259 without treating the successor as normative.
+- The selected general-WCMP implementation remains governed by WAP-202; WAP-259 delegates WCMP behavior to that specification and does not replace its exact message fixtures.
+- WAP-202 section 5.3 assigns CDPD/IP to ICMP; additive TRN-708 owns the strict-profile correction and capability-gates the completed TRN-703 general-WCMP branch.
+- WTP and connection-oriented WSP remain inactive, and the missing WTP clause mapping remains explicit until a future capability claim activates the effective WAP-201/SIN closure.
+
+Evidence commands:
+
+- `node scripts/check-wap-delta-register.mjs`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/check-wap-transport-conformance-ledgers.mjs`
+- `node scripts/wap-context-pack.mjs TRN-707`
+- `node scripts/check-wap-knowledge-graph.mjs`
+- `cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp`
+- `cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp`
+
+### TRN-708: Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use
+
+- Status: `todo`
+- Owner layers: `documentation`, `transport-rust`, `qa`
+- Source families: `wdp`, `wcmp`
 - Existing tickets: None
 - Direct normative clauses: 0
 
 Outputs:
 
-- WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register
+- Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use
 
 Acceptance:
 
-- Current successor-spec implementation assumptions are either proven compatible or ticketed as strict-mode corrections.
+- The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the section 5.4 general-WCMP wire format.
+- Direct fixtures prove ICMPv4 destination-unreachable code 3 (port unreachable), code 4 (fragmentation needed with DF set), and echo request/reply handling at the WDP error boundary for the selected IPv4 bearer.
+- The existing WAP-202 section 5.4/5.5 general-WCMP codec and TRN-703 fixtures remain available only behind an explicit non-IP bearer capability and do not satisfy the CDPD/IPv4 strict claim.
+- No WTP or connection-oriented WSP capability is activated.
 
 Evidence commands:
 
-- `node scripts/check-wap-delta-register.mjs`
+- `cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile`
+- `node scripts/check-wap-transport-conformance-ledgers.mjs`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/check-requirement-status-drift.mjs`
 
 ## Direct normative obligations
 
@@ -792,16 +829,74 @@ Evidence commands:
   - Requirements: `RQ-TRN-001`
   - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `implemented`)
 
+### TRN-707
+
+- **WCMP-CL-CLIENT-GENERAL-PROFILE** — Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.
+  - Family: `wcmp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-202-WCMP` §5.4 (5.4. WCMP in Non-IP Networks)
+  - Parents: `WCMP-C-001`, `WCMP-SP-C-002`
+  - Requirements: `RQ-TRX-006`
+  - Fixture: `WCMP-FX-CLIENT-GENERAL-PROFILE` (`transport-boundary`, `implemented`)
+- **WCMP-CL-SELECTED-TYPE-CODE-VALUES** — Recognize Destination Unreachable type 51, Message Too Big type 60 code 0, and Echo Reply type 179 code 0.
+  - Family: `wcmp`; force: `table`; level: `required`
+  - Source: `WAP-202-WCMP` §5.5.1 (5.5.1. General Message Structure)
+  - Parents: `WCMP-GEN-C-001`, `WCMP-GEN-C-003`, `WCMP-GEN-C-006`
+  - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+  - Fixture: `WCMP-FX-SELECTED-TYPE-CODE-VALUES` (`binary-decoder`, `implemented`)
+- **WDP-CL-CDPD-UDP-IP-PROFILE** — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.4.3 (5.4.3 WDP over CDPD)
+  - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-CDPD-UDP-IP-PROFILE` (`transport-boundary`, `implemented`)
+- **WDP-CL-CONSISTENT-TRANSPORT-SERVICE** — Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.1 (5.1 Reference Model)
+  - Parents: `WDP-C-001`, `WDP-CORE-C-001`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-CONSISTENT-TRANSPORT-SERVICE` (`transport-boundary`, `implemented`)
+- **WDP-CL-IP-BEARER-REQUIRES-UDP** — Use UDP as the WDP protocol whenever the selected bearer provides IP.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §5.3 (5.3 WDP Static Conformance Clause)
+  - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IP-BEARER-REQUIRES-UDP` (`transport-boundary`, `implemented`)
+- **WDP-CL-SELECTED-BEARER-ASSIGNMENT** — Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.
+  - Family: `wdp`; force: `table`; level: `required`
+  - Source: `WAP-200-WDP` §appendix-c (Appendix C: Bearer Type Assignments)
+  - Parents: `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-SELECTED-BEARER-ASSIGNMENT` (`transport-boundary`, `implemented`)
+- **WDP-CL-SELECTED-WSP-PORT** — Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.
+  - Family: `wdp`; force: `table`; level: `required`
+  - Source: `WAP-200-WDP` §appendix-b (Appendix B: Port Number Definitions)
+  - Parents: `WDP-C-001`, `WDP-NA-C-006`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-SELECTED-WSP-PORT` (`transport-boundary`, `implemented`)
+- **WDP-CL-UNITDATA-CONTENT-TRANSPARENCY** — Transmit and deliver the complete service data unit without manipulating its content.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
+  - Parents: `WDP-CORE-C-001`, `WDP-PF-C-001`, `WDP-PF-C-002`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `implemented`)
+- **WDP-CL-UNITDATA-REQUEST-ANYTIME** — Allow T-DUnitdata.request without establishing a prior transport connection.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
+  - Parents: `WDP-PF-C-001`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-UNITDATA-REQUEST-ANYTIME` (`transport-boundary`, `implemented`)
+
 ## Explicit mapping gaps
 
 - `TRN-704` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-705` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
-- `TRN-707` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
+- `TRN-708` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
 - `TRN-706` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `TRN-707` declares `wcmp`, `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `TRN-707` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `TRN-708` declares `wcmp`, `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents
 
@@ -820,3 +915,4 @@ Declared-family gaps:
 - `WAP-201-WTP`: Wireless Transaction Protocol — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201-WTP-20000219-a.pdf
 - `WAP-202-WCMP`: Wireless Control Message Protocol — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-202-WCMP-20010624-a.pdf
 - `WAP-215-ClassConform-20001213-a`: Class Conformance Requirements — https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf
+- `WAP-259-WDP-20010614-a`: Wireless Datagram Protocol

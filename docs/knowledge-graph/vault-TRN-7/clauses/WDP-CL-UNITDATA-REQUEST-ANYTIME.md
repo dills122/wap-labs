@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-707|TRN-707]]
 - `refines` → [[scr-rows/WDP-PF-C-001|WDP-PF-C-001]]
 - `sourced-from` → [[source-documents/WAP-200-WDP|WAP-200-WDP]]
 - `verified-by` → [[fixtures/WDP-FX-UNITDATA-REQUEST-ANYTIME|WDP-FX-UNITDATA-REQUEST-ANYTIME]]
@@ -40,7 +41,8 @@ tags:
   "obligationSynopsis": "Allow T-DUnitdata.request without establishing a prior transport connection.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-707"
   ],
   "ownerLayers": [
     "transport-rust"

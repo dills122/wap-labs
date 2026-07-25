@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-707|TRN-707]]
 - `refines` → [[scr-rows/WDP-C-001|WDP-C-001]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `sourced-from` → [[source-documents/WAP-200-WDP|WAP-200-WDP]]
@@ -42,7 +43,8 @@ tags:
   "obligationSynopsis": "Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-707"
   ],
   "ownerLayers": [
     "transport-rust"
