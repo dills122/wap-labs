@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "example": "basic",
+  "flows": [
+    {
+      "id": "fragment-and-external-intent",
+      "title": "Fragment navigation and external intent stay separate",
+      "workItems": ["A2-01", "A2-02"],
+      "specItems": ["WML-R-006", "WML-R-007"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": null
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": "http://example.com/other.wml"
+            },
+            "traceKinds": ["ACTION_EXTERNAL"]
+          }
+        }
+      ]
+    }
+  ]
+}

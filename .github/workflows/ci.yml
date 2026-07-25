@@ -64,6 +64,7 @@ jobs:
             host_sample:
               - "engine-wasm/host-sample/**"
               - "engine-wasm/engine/**"
+              - "engine-wasm/examples/**"
               - "engine-wasm/pkg/**"
             marketing_site:
               - "marketing-site/**"
@@ -285,8 +286,29 @@ jobs:
       - name: Install host-sample deps
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Host-sample story schema tests
+        run: pnpm --dir engine-wasm/host-sample run test:story:unit
+
+      - name: Host-sample example manifest drift check
+        run: pnpm --dir engine-wasm/host-sample run examples:check
+
       - name: Build host-sample
         run: pnpm --dir engine-wasm/host-sample run build
+
+      - name: Install Playwright Chromium
+        run: pnpm --dir engine-wasm/host-sample exec playwright install --with-deps chromium
+
+      - name: Host-sample executable stories
+        run: pnpm test:story all
+
+      - name: Upload story failure evidence
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: host-sample-story-evidence
+          path: engine-wasm/host-sample/test-results/story
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Host-sample typecheck
         run: pnpm --dir engine-wasm/host-sample run typecheck

@@ -114,15 +114,24 @@ export class RuntimeInspectorPanel extends LitElement {
     }
   `;
 
-  entries: EngineTraceEntry[] = [];
+  declare entries: EngineTraceEntry[];
 
-  private exportFormat: TraceExportFormat = 'txt';
+  declare private exportFormat: TraceExportFormat;
 
-  private kindFilter = '';
+  declare private kindFilter: string;
 
-  private cardFilter = '';
+  declare private cardFilter: string;
 
-  private trapsOnly = false;
+  declare private trapsOnly: boolean;
+
+  constructor() {
+    super();
+    this.entries = [];
+    this.exportFormat = 'txt';
+    this.kindFilter = '';
+    this.cardFilter = '';
+    this.trapsOnly = false;
+  }
 
   render() {
     const filteredEntries = this.getFilteredEntries();

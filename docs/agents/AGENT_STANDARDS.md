@@ -71,6 +71,12 @@ Target-specific glue is allowed only at serialization/binding boundaries.
 - Add/adjust unit tests in the layer where behavior changed.
 - Add integration/E2E coverage for cross-layer flows (`fetch_deck` -> `loadDeckContext` -> render).
 - Preserve deterministic outputs for fixtures and error paths.
+- For stable host-visible engine/runtime behavior, check the shared
+  `engine-wasm/examples/source` corpus and add or update an adjacent executable `*.flow.json`
+  story when the acceptance path is deterministic.
+- Validate executable stories by work-item/spec ID with
+  `pnpm test:story <work-item-or-spec-id>` (or `all`). Prose `testing-ac` alone remains manual
+  evidence and must not be reported as executable coverage.
 
 ## Security and Robustness Notes
 

@@ -1,6 +1,38 @@
 /* eslint-disable */
 // AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY.
-// Source: engine-wasm/examples/source/*.wml
+// Sources: engine-wasm/examples/source/*.wml and optional *.flow.json companions
+
+export interface StoryStateExpectation {
+  activeCardId?: string;
+  focusedLinkIndex?: number;
+  externalNavigationIntent?: string | null;
+  nextCardVar?: string | null;
+}
+
+export interface StoryExpectation {
+  state: StoryStateExpectation;
+  traceKinds?: string[];
+}
+
+export type StoryAction =
+  | { type: 'key'; key: 'up' | 'down' | 'enter' }
+  | { type: 'back' }
+  | { type: 'tick'; ms: 100 | 1000 }
+  | { type: 'clear-intent' };
+
+export interface StoryStep {
+  action: StoryAction;
+  expect: StoryExpectation;
+}
+
+export interface ExecutableStoryFlow {
+  id: string;
+  title: string;
+  workItems: string[];
+  specItems: string[];
+  initial: StoryExpectation;
+  steps: StoryStep[];
+}
 
 export interface HostExample {
   key: string;
@@ -10,6 +42,7 @@ export interface HostExample {
   workItems: string[];
   specItems: string[];
   testingAc: string[];
+  flows?: ExecutableStoryFlow[];
   wml: string;
 }
 
@@ -151,6 +184,88 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"Return home\"; activeCardId should become home.",
       "Move focus to \"External link\" and press Enter; activeCardId should remain home.",
       "Confirm runtime-state shows externalNavigationIntent as http://example.com/other.wml."
+    ],
+    "flows": [
+      {
+        "id": "fragment-and-external-intent",
+        "title": "Fragment navigation and external intent stay separate",
+        "workItems": [
+          "A2-01",
+          "A2-02"
+        ],
+        "specItems": [
+          "WML-R-006",
+          "WML-R-007"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": null
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": "http://example.com/other.wml"
+              },
+              "traceKinds": [
+                "ACTION_EXTERNAL"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>WaveNav Host Harness</p>\n    <p>Use ArrowUp / ArrowDown / Enter.</p>\n    <a href=\"#next\">Go to next card</a>\n    <br/>\n    <a href=\"http://example.com/other.wml\">External link (emits host intent)</a>\n  </card>\n  <card id=\"next\">\n    <p>Second card loaded.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
   },
@@ -316,6 +431,72 @@ export const EXAMPLES: HostExample[] = [
       "Press Back; activeCardId should return to home.",
       "Press Back again and confirm status reports history empty with activeCardId still home."
     ],
+    "flows": [
+      {
+        "id": "fragment-back-and-empty-history",
+        "title": "Fragment history pops once and then reports empty",
+        "workItems": [
+          "A2-03"
+        ],
+        "specItems": [
+          "WML-R-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_BACK_EMPTY"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>History baseline demo.</p>\n    <a href=\"#next\">Go to next</a>\n  </card>\n  <card id=\"next\">\n    <p>Second card reached by fragment navigation.</p>\n    <a href=\"#home\">Return home via link</a>\n  </card>\n</wml>\n"
   },
   {
@@ -429,6 +610,46 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"To timed\" from home.",
       "Confirm activeCardId becomes next immediately (timed card should not remain active).",
       "Confirm trace includes TIMER_START and ACTION_ONTIMER before the final ACTION_FRAGMENT to next."
+    ],
+    "flows": [
+      {
+        "id": "zero-timer-dispatch",
+        "title": "Zero-value timer dispatches ontimer during card entry",
+        "workItems": [
+          "A5-03"
+        ],
+        "specItems": [
+          "WML-R-014"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_START",
+                "ACTION_ONTIMER",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">To timed</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"0\"/>\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
   },

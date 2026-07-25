@@ -27,7 +27,7 @@ Legend:
 | `RQ-WMLS-004..006` function/local/conversion semantics | `partial` | engine WaveScript VM tests in `engine-wasm/engine/src/wavescript/vm.rs` + `vm_tests.rs` and invocation tests in `engine-wasm/engine/src/engine_tests.rs`; broader spec parity closure tracked in `W1-04` |
 | `RQ-WMLS-008..010` bytecode format/verification/error model | `partial` | decoder/VM tests under `engine-wasm/engine/src/wavescript/` prove only the project-specific nine-opcode safety skeleton; they are provisional evidence and do not decode WAP-193 headers, pools, multi-byte fields, or instruction encoding; direct source-derived `.wmlsc` fixtures remain in `W1-02` |
 | `RQ-WMLS-011` WMLScript content-type routing | `planned` | Target files: `transport-rust/src/responses.rs`, `transport-rust/tests/fixtures/transport/`, `browser/src-tauri/src/lib.rs`; command: `cd transport-rust && cargo test --lib` then `cd browser/src-tauri && cargo test`; tracked in `W1-01` |
-| `RQ-WMLS-017..022` WMLBrowser/dialog/timer/refresh semantics | `partial` | `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs` + `wmlbrowser_tests.rs` and runtime effect tests in `engine-wasm/engine/src/engine_tests.rs`, including `m1_02_script_invocation_public_outcome_regression`, `wmlbrowser_get_current_card_returns_fragment_when_context_exists`, `wmlbrowser_get_current_card_returns_invalid_without_context`, and `wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect`; host/browser local example `examples/wmlbrowser-context-fidelity.wml` exercises `newContext/getCurrentCard`; remaining closure is centered on `refresh` optionality and dialog/timer breadth |
+| `RQ-WMLS-017..022` WMLBrowser/dialog/timer/refresh semantics | `partial` | `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs` + `wmlbrowser_tests.rs` and runtime effect tests in `engine-wasm/engine/src/engine_tests.rs`, including `m1_02_script_invocation_public_outcome_regression`, `wmlbrowser_get_current_card_returns_fragment_when_context_exists`, `wmlbrowser_get_current_card_returns_invalid_without_context`, and `wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect`; host/browser local example `engine-wasm/examples/source/wmlbrowser-context-fidelity.wml` exercises `newContext/getCurrentCard`; remaining closure is centered on `refresh` optionality and dialog/timer breadth |
 | WAP-191 section `11` text/layout semantics (`p`, `br`, `table`, `pre`, `img`) | `planned` | Target files: `engine-wasm/engine/src/render/flow_layout.rs`, `engine-wasm/engine/tests/fixtures/phase-a/`; command: `cd engine-wasm/engine && cargo test`; tickets `B5-02`, `B5-03`, `C5-01`, `C5-02` |
 | WAP-191 section `12.5` inter-card process ordering (`go/prev/refresh/noop`) | `covered` | engine runtime + parser coverage in `engine-wasm/engine/src/engine_tests.rs` (`fixture_accept_*_trace_order_is_deterministic`, `enter_accept_noop_action_keeps_current_card_and_history`, `onenterforward_noop_keeps_deterministic_navigation_state`) and parser action tests in `engine-wasm/engine/src/parser/wml_parser/tests.rs`; browser host-flow assertions in `browser/frontend/src/app/navigation-state.test.ts` (`emits deterministic state-event order for host-history back fallback`, `keeps host history pointer stable when history-back transport load fails`, `replays host back using stored request method and request policy`, header-aware host history replay) plus Tauri host integration path `browser/src-tauri/src/lib.rs` (`tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic`) confirm deterministic forward/back/refresh/noop/error behavior and request-policy handoff evidence |
 | Effective WAP-191 section `15` + SIN 105 conformance ID closure (76 actor-specific IDs) | `partial` | SCR ledger: `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`; clause ledger: `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`; commands: `node scripts/check-wap-conformance-ledger.mjs` and `node scripts/check-wap-selected-normative-clauses.mjs`; all 39 selected rows expand into 174 anchored clauses and planned direct fixtures; clause status remains not assessed; optional capability pass remains in `R0-01` |
@@ -41,14 +41,15 @@ Legend:
 
 | Coverage Focus | Status | Example / Verification |
 |---|---|---|
-| Basic card navigation | `covered` | `examples/basic.wml` |
-| History back-stack baseline | `covered` | `examples/history-back-stack.wml` + Back control in host harness |
-| Missing-fragment error path | `covered` | `examples/missing-fragment.wml` |
-| External navigation intent | `covered` | `examples/external-navigation-intent.wml` |
-| Field/openwave realism baseline | `partial` | `examples/field-openwave-2011-navigation.wml` |
-| Wrap/layout stress | `covered` | `examples/wrap-stress.wml` |
-| Parser robustness | `covered` | `examples/parser-robustness.wml` |
-| WMLBrowser context reset/current-card semantics | `covered` | `examples/wmlbrowser-context-fidelity.wml` (`newContext` + `getCurrentCard`) |
+| Basic card navigation | `covered` | `examples/source/basic.wml` |
+| History back-stack baseline | `covered` | `examples/source/history-back-stack.wml` + Back control in host harness |
+| Missing-fragment error path | `covered` | `examples/source/missing-fragment.wml` |
+| External navigation intent | `covered` | `examples/source/external-navigation-intent.wml` |
+| Field/openwave realism baseline | `partial` | `examples/source/field-openwave-2011-navigation.wml` |
+| Wrap/layout stress | `covered` | `examples/source/wrap-stress.wml` |
+| Parser robustness | `covered` | `examples/source/parser-robustness.wml` |
+| WMLBrowser context reset/current-card semantics | `covered` | `examples/source/wmlbrowser-context-fidelity.wml` (`newContext` + `getCurrentCard`) |
+| Story-driven browser replay | `partial` | `pnpm test:story all` executes typed companion flows for basic fragment/external intent, history back/empty history, and zero-timer dispatch against the production WASM host; transport and native Tauri replay remain open |
 
 ## Transport (`transport-rust`)
 
@@ -107,6 +108,6 @@ Transport error taxonomy progress:
 1. [x] Create a minimal contract parity check between:
    - `transport-rust` request/response model tests
    - `browser/contracts/transport.ts`
-2. [ ] Add a CI check that verifies example metadata (`work-items`, `spec-items`, `testing-ac`) for each host-sample fixture.
+2. [x] Add a CI check that verifies example metadata (`work-items`, `spec-items`, `testing-ac`) and optional executable-flow schema/mappings for each shared host-sample fixture.
 3. [x] Add engine fixture test harness expansion (`A4-02`) and map fixture IDs back to `RQ-RMK-*` groups.
 4. [ ] Extend the 25-row direct evidence set through nested clause, optional-capability, parity, and strict release gates (`R0-01`; source and mandatory first-pass audit complete).
