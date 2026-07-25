@@ -37,6 +37,7 @@ export class StartupNetworkProbeController {
       return;
     }
     this.deps.setLastNetworkUrl(targetUrl);
+    let lastFailure: string = WAVES_COPY.status.networkUnavailable;
 
     for (let attempt = 1; attempt <= WAVES_CONFIG.networkProbeMaxAttempts; attempt += 1) {
       if (!this.isCurrent(probeGeneration)) {
@@ -59,13 +60,15 @@ export class StartupNetworkProbeController {
           return;
         }
         if (isProbeReachable(probe)) {
-          this.deps.setStatus(WAVES_COPY.status.readyNetwork);
+          this.deps.setStatus(WAVES_COPY.status.readyNetwork(targetUrl));
           return;
         }
-      } catch {
+        lastFailure = probe.error?.message || WAVES_COPY.status.networkUnavailable;
+      } catch (error) {
         if (!this.isCurrent(probeGeneration)) {
           return;
         }
+        lastFailure = error instanceof Error ? error.message : WAVES_COPY.status.networkUnavailable;
       }
       if (attempt < WAVES_CONFIG.networkProbeMaxAttempts) {
         await this.deps.wait(WAVES_CONFIG.networkProbeDelayMs);
@@ -75,7 +78,7 @@ export class StartupNetworkProbeController {
     if (!this.isCurrent(probeGeneration)) {
       return;
     }
-    const message = WAVES_COPY.status.networkUnavailable;
+    const message = WAVES_COPY.status.gatewayCheckFailed(targetUrl, lastFailure);
     this.deps.patchSessionState({
       navigationStatus: 'error',
       lastError: message

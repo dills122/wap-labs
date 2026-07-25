@@ -10,6 +10,9 @@ describe('ui-helpers', () => {
     expect(inferStatusTone(`${WAVES_COPY.statusPrefix.followingExternalIntent} http://x`)).toBe(
       'loading'
     );
+    expect(inferStatusTone(WAVES_COPY.status.networkModeEnabled('wap://localhost/'))).toBe(
+      'loading'
+    );
     expect(inferStatusTone(WAVES_COPY.status.ready)).toBe('ok');
     expect(inferStatusTone(WAVES_COPY.status.fetchedAndLoadedDeck('http://x'))).toBe('ok');
     expect(inferStatusTone('Rendered current card.')).toBe('idle');

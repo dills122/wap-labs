@@ -67,7 +67,7 @@ describe('StartupNetworkProbeController', () => {
     expect(deps.fetchDeck).not.toHaveBeenCalled();
   });
 
-  it('marks network ready when a reachable probe succeeds', async () => {
+  it('reports the checked gateway when a reachable probe succeeds', async () => {
     const deps = createDeps();
 
     const controller = new StartupNetworkProbeController(deps);
@@ -76,15 +76,15 @@ describe('StartupNetworkProbeController', () => {
 
     expect(deps.fetchDeck).toHaveBeenCalledTimes(1);
     expect(deps.setLastNetworkUrl).toHaveBeenCalledWith('wap://localhost/');
-    expect(deps.setStatus).toHaveBeenCalledWith(WAVES_COPY.status.readyNetwork);
+    expect(deps.setStatus).toHaveBeenCalledWith(WAVES_COPY.status.readyNetwork('wap://localhost/'));
     expect(deps.patchSessionState).not.toHaveBeenCalled();
   });
 
-  it('retries unreachable responses and reports network unavailable after exhausting attempts', async () => {
+  it('retries unreachable responses and reports that the gateway was not verified', async () => {
     const deps = createDeps({
       fetchDeck: vi.fn(async (): Promise<FetchResponse> => ({
         ok: false,
-        status: 503,
+        status: 0,
         finalUrl: 'wap://localhost/',
         contentType: 'text/plain',
         timingMs: { encode: 0, udpRtt: 0, decode: 0 },
@@ -98,11 +98,13 @@ describe('StartupNetworkProbeController', () => {
 
     expect(deps.fetchDeck).toHaveBeenCalledTimes(3);
     expect(deps.wait).toHaveBeenCalledTimes(2);
+    const expectedMessage = WAVES_COPY.status.gatewayCheckFailed('wap://localhost/', 'offline');
     expect(deps.patchSessionState).toHaveBeenCalledWith({
       navigationStatus: 'error',
-      lastError: WAVES_COPY.status.networkUnavailable
+      lastError: expectedMessage
     });
-    expect(deps.showToast).toHaveBeenCalledWith(WAVES_COPY.status.networkUnavailable, 'error');
+    expect(deps.setStatus).toHaveBeenCalledWith(expectedMessage);
+    expect(deps.showToast).toHaveBeenCalledWith(expectedMessage, 'error');
   });
 
   it('ignores stale failures after cancellation', async () => {

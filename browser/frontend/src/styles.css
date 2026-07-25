@@ -37,6 +37,7 @@
 
 html,
 body {
+  width: 100%;
   min-height: 100%;
 }
 
@@ -48,9 +49,15 @@ body {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
   padding: 18px;
+}
+
+.browser-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 36px);
 }
 
 /* win95.css has a global header hero style; reset for app chrome header */
@@ -138,10 +145,14 @@ button,
   display: grid;
   grid-template-columns: 1.25fr 0.75fr;
   gap: 12px;
+  flex: 1;
   padding: 12px;
 }
 
 .device-frame {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
   border: 2px inset #d5d5d5;
   box-shadow: -1px -1px 0 #828282;
   background: silver;
@@ -223,6 +234,7 @@ textarea.form-95 {
 }
 
 .viewport {
+  flex: 1;
   border: 2px inset #d5d5d5;
   box-shadow: -1px -1px 0 #828282;
   min-height: 520px;
@@ -408,6 +420,10 @@ pre {
 @media (max-width: 900px) {
   #app {
     padding: 10px;
+  }
+
+  .browser-shell {
+    min-height: calc(100vh - 20px);
   }
 
   .browser-main {
