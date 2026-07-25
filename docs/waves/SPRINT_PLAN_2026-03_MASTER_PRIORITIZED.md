@@ -226,11 +226,12 @@ Current recommendation after all merged implementation workstreams:
    parser gate while preserving its completed nine-clause template-shadowing
    slice. Follow with the residual `WML-204` field/control validation gate;
    these tasks share parser/runtime test files and should land serially.
-4. **Transport lane, parallel with engine:** finish the selected WDP replay
-   boundary for `TRN-706` and keep its WTP family gap explicit. Do not activate
-   WTP or connection-oriented WSP to manufacture completion.
-5. **Cross-layer evidence lane, after the transport fixture shape is stable:**
-   add binary-WBXML-to-engine parity evidence for the broader `WML-203` gate.
+4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
+   boundary for `TRN-706` and keep its WTP family gap explicit under additive
+   `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
+   WSP to manufacture completion.
+5. **Cross-layer evidence lane:** consume the stable WDP delivery fixture in
+   binary-WBXML-to-engine parity evidence for the broader `WML-203` gate.
    The current executable story proves text-deck behavior; the binary decoder
    remains directly tested in transport rather than by that story.
 

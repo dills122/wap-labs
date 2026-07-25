@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "corpus": {
     "id": "wdp-cdpd-ipv4-selected-profile-seed",
     "title": "Selected-profile WDP CDPD/UDP/IPv4 replay corpus",
@@ -108,12 +108,17 @@
       "expectedEvents": [
         {
           "kind": "wdpAccepted",
-          "src_addr": [192, 0, 2, 10],
-          "dst_addr": [192, 0, 2, 7],
-          "src_port": 49152,
-          "dst_port": 9200,
           "packet_len": 33,
-          "payload_len": 5
+          "datagram": {
+            "srcAddr": "192.0.2.10",
+            "dstAddr": "192.0.2.7",
+            "srcPort": 49152,
+            "dstPort": 9200,
+            "payload": {
+              "kind": "bytes",
+              "bytes": [222, 173, 190, 239, 1]
+            }
+          }
         }
       ],
       "expectedTransactionOutcomes": [
@@ -165,12 +170,18 @@
       "expectedEvents": [
         {
           "kind": "wdpAccepted",
-          "src_addr": [192, 0, 2, 10],
-          "dst_addr": [192, 0, 2, 7],
-          "src_port": 49152,
-          "dst_port": 9200,
           "packet_len": 576,
-          "payload_len": 548
+          "datagram": {
+            "srcAddr": "192.0.2.10",
+            "dstAddr": "192.0.2.7",
+            "srcPort": 49152,
+            "dstPort": 9200,
+            "payload": {
+              "kind": "repeat",
+              "byte": 165,
+              "length": 548
+            }
+          }
         }
       ],
       "expectedTransactionOutcomes": [
@@ -450,7 +461,16 @@
         {
           "kind": "wdpReassembled",
           "packet_len": 33,
-          "payload_len": 5
+          "datagram": {
+            "srcAddr": "192.0.2.10",
+            "dstAddr": "192.0.2.7",
+            "srcPort": 49152,
+            "dstPort": 9200,
+            "payload": {
+              "kind": "bytes",
+              "bytes": [222, 173, 190, 239, 1]
+            }
+          }
         }
       ],
       "expectedTransactionOutcomes": [

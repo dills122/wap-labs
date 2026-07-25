@@ -113,10 +113,13 @@ TRN-706 now adds a selected-profile WDP-only golden replay tranche at
 `transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json`. Eleven WDP
 clauses directly map byte-exact codec round trip, the 576-octet IPv4 boundary,
 IPv4 checksum and UDP-length rejection, idempotent duplicate fragments, and
-lower-IP reassembly completion. Incomplete assembly expiry uses deterministic
-simulated ticks as a bounded implementation policy; no exact WAP timer value
-is inferred. The declared WTP family remains an explicit conditional mapping
-gap, so this tranche does not activate connection-oriented WSP/WTP or complete
+lower-IP reassembly completion. Schema-v2 accepted and reassembled events now
+assert the complete delivered WDP datagram, including exact opaque SDU bytes,
+rather than only delivery lengths. Incomplete assembly expiry uses
+deterministic simulated ticks as a bounded implementation policy; no exact WAP
+timer value is inferred. The declared WTP family remains an explicit
+conditional mapping gap owned by additive `TRN-704`/`TRN-705` follow-ups, so
+this tranche does not activate connection-oriented WSP/WTP or complete
 TRN-706.
 
 ### WCMP
@@ -232,9 +235,10 @@ adapter.
   evidence; additional bearers remain unclaimed.
 - `TRN-703` / `T0-17`: complete for the capability-gated five-row general-WCMP
   core; it is not selected CDPD/IPv4 evidence.
-- `TRN-706`: in progress; the eleven-clause selected WDP replay tranche is
-  directly evidenced, while the conditional WTP family and full
-  timeout/abort corpus remain open.
+- `TRN-706`: in progress; the eleven-clause selected WDP replay boundary is
+  directly evidenced through exact schema-v2 delivery assertions, while the
+  conditional WTP family and full timeout/abort corpus remain open under
+  additive `TRN-704`/`TRN-705` follow-ups.
 - `TRN-707`: in progress; the nine-clause WDP/WCMP successor comparison is
   complete and compatible after TRN-708, while the conditional WTP mapping
   remains explicit.

@@ -338,12 +338,20 @@ Legend:
 `cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay`.
 The fixture self-checks its eleven direct clause IDs against the selected
 normative-clause manifest and exercises the existing CDPD/UDP/IPv4 codec and
-lower-IP reassembler. It does not claim connection-oriented WSP/WTP.
+lower-IP reassembler. Its schema-v2 delivery events assert the complete WDP
+datagram after codec and reassembly processing: source/destination addresses,
+source/destination ports, and exact opaque service-data-unit bytes. It does
+not claim connection-oriented WSP/WTP.
 
 The simulated incomplete-assembly timeout is deterministic resource-policy
 evidence for the existing reassembler. The source mapping supports lower-IP
 fragment identity and reassembly placement, but no source-defined timer value
 is inferred.
+
+The schema-v2 WDP payload is the stable input contract for later binary
+WBXML-to-engine parity evidence. The consumer must reconstruct the `bytes` or
+`repeat` payload and supply media-type metadata at the WSP/fetch boundary;
+WDP does not classify or decode WBXML.
 
 ## Adjacent transport-context watchlist
 
