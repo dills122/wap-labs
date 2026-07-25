@@ -1,6 +1,38 @@
 use super::*;
 
 #[test]
+fn non_fatal_execution_outcome_contract_shape() {
+    // WMLS-C-111 (non-fatal handling): `classify_vm_trap` maps every current
+    // `VmTrap` variant to Fatal, so no VM opcode can reach this branch of
+    // `classify_vm_trap_outcome` yet (see `execute_script_unit_stack_underflow_is_fatal_bytecode_error`
+    // and `execute_script_unit_type_mismatch_is_fatal_bytecode_error`). This
+    // pins the `ScriptExecutionOutcome::non_fatal` contract shape so it stays
+    // correct for a future computational-error opcode (e.g. integer divide)
+    // without depending on one existing yet.
+    let outcome = crate::ScriptExecutionOutcome::non_fatal(
+        "vm: divide by zero".to_string(),
+        super::ScriptErrorCategoryLiteral::Computational,
+        super::ScriptNavigationIntentLiteral::None,
+        false,
+    );
+
+    assert!(outcome.ok);
+    assert!(!outcome.invocation_aborted);
+    assert_eq!(
+        outcome.error_class,
+        super::ScriptErrorClassLiteral::NonFatal
+    );
+    assert_eq!(
+        outcome.error_category,
+        super::ScriptErrorCategoryLiteral::Computational
+    );
+    assert_eq!(
+        outcome.result,
+        super::ScriptValueLiteral::Invalid { invalid: true }
+    );
+}
+
+#[test]
 fn execute_script_unit_halt_bytecode_returns_ok() {
     let engine = WmlEngine::new();
 
@@ -86,20 +118,21 @@ fn execute_script_unit_truncated_immediate_returns_decode_fatal() {
 }
 
 #[test]
-fn execute_script_unit_type_mismatch_is_non_fatal_invalid() {
+fn execute_script_unit_type_mismatch_is_fatal_bytecode_error() {
+    // WAP-193_101 12.3.1.7: a runtime type mismatch on a verified unit is a
+    // "compiler generated bad code" condition, the same class as Stack
+    // Underflow, and is Fatal per chapter 12.3 rather than a Non-fatal
+    // Computational Error (12.4.1) the VM has no opcodes to produce yet.
     let engine = WmlEngine::new();
     let outcome = engine.execute_script_unit_internal(&[0x03, 1, b'x', 0x01, 1, 0x02, 0x00]);
 
-    assert!(outcome.ok);
-    assert_eq!(
-        outcome.error_class,
-        super::ScriptErrorClassLiteral::NonFatal
-    );
+    assert!(!outcome.ok);
+    assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
     assert_eq!(
         outcome.error_category,
-        super::ScriptErrorCategoryLiteral::Computational
+        super::ScriptErrorCategoryLiteral::Integrity
     );
-    assert!(!outcome.invocation_aborted);
+    assert!(outcome.invocation_aborted);
     assert_eq!(
         outcome.result,
         super::ScriptValueLiteral::Invalid { invalid: true }
@@ -120,20 +153,19 @@ fn execute_script_unit_return_from_root_reports_vm_trap() {
 }
 
 #[test]
-fn execute_script_unit_stack_underflow_is_non_fatal_invalid() {
+fn execute_script_unit_stack_underflow_is_fatal_bytecode_error() {
+    // WAP-193_101 12.3.1.7 classifies Stack Underflow as Fatal ("[o]nly
+    // generated if compiler generates bad code"), not Non-fatal.
     let engine = WmlEngine::new();
     let outcome = engine.execute_script_unit_internal(&[0x02, 0x00]);
 
-    assert!(outcome.ok);
-    assert_eq!(
-        outcome.error_class,
-        super::ScriptErrorClassLiteral::NonFatal
-    );
+    assert!(!outcome.ok);
+    assert_eq!(outcome.error_class, super::ScriptErrorClassLiteral::Fatal);
     assert_eq!(
         outcome.error_category,
-        super::ScriptErrorCategoryLiteral::Computational
+        super::ScriptErrorCategoryLiteral::Integrity
     );
-    assert!(!outcome.invocation_aborted);
+    assert!(outcome.invocation_aborted);
     assert_eq!(
         outcome.result,
         super::ScriptValueLiteral::Invalid { invalid: true }
@@ -145,12 +177,13 @@ fn execute_script_unit_stack_underflow_is_non_fatal_invalid() {
 fn vm_trap_classification_matrix_is_explicit() {
     fn expected_class(trap: &VmTrap) -> ScriptErrorClassLiteral {
         match trap {
-            VmTrap::TypeError(_) | VmTrap::StackUnderflow => ScriptErrorClassLiteral::NonFatal,
             VmTrap::EmptyUnit
             | VmTrap::InvalidEntryPoint { .. }
             | VmTrap::UnsupportedOpcode(_)
             | VmTrap::TruncatedImmediate { .. }
             | VmTrap::StackOverflow { .. }
+            | VmTrap::StackUnderflow
+            | VmTrap::TypeError(_)
             | VmTrap::InvalidLocalIndex { .. }
             | VmTrap::InvalidCallTarget { .. }
             | VmTrap::CallDepthExceeded { .. }
@@ -197,13 +230,12 @@ fn vm_trap_classification_matrix_is_explicit() {
 fn vm_trap_error_category_matrix_is_explicit() {
     fn expected_category(trap: &VmTrap) -> ScriptErrorCategoryLiteral {
         match trap {
-            VmTrap::TypeError(_) | VmTrap::StackUnderflow => {
-                ScriptErrorCategoryLiteral::Computational
-            }
             VmTrap::EmptyUnit
             | VmTrap::InvalidEntryPoint { .. }
             | VmTrap::UnsupportedOpcode(_)
             | VmTrap::TruncatedImmediate { .. }
+            | VmTrap::StackUnderflow
+            | VmTrap::TypeError(_)
             | VmTrap::InvalidLocalIndex { .. }
             | VmTrap::InvalidCallTarget { .. }
             | VmTrap::Utf8ImmediateDecode
@@ -687,7 +719,10 @@ fn invoke_script_ref_trap_does_not_apply_deferred_navigation() {
 }
 
 #[test]
-fn invoke_script_ref_non_fatal_returns_invalid_without_abort() {
+fn invoke_script_ref_fatal_type_error_aborts_invocation() {
+    // WAP-193_101 12.3.1.7 classifies this "compiler generated bad code"
+    // condition as Fatal, not Non-fatal: the type mismatch aborts the
+    // invocation rather than yielding an `invalid` result.
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -696,30 +731,30 @@ fn invoke_script_ref_non_fatal_returns_invalid_without_abort() {
         "##;
     engine.load_deck(xml).expect("deck should load");
     engine.register_script_unit(
-        "nonfatal.wmlsc".to_string(),
+        "type-error.wmlsc".to_string(),
         vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
     );
 
-    let outcome = engine
-        .invoke_script_ref_internal("nonfatal.wmlsc", "main", &[])
-        .expect("non-fatal type error should not abort invocation");
-    assert_eq!(
-        outcome.result,
-        ScriptValueLiteral::Invalid { invalid: true }
-    );
-    assert_eq!(engine.last_script_execution_ok(), Some(true));
+    let err = engine
+        .invoke_script_ref_internal("type-error.wmlsc", "main", &[])
+        .expect_err("fatal type error should abort invocation");
+    assert!(err.contains("type error"));
+    assert_eq!(engine.last_script_execution_ok(), Some(false));
     assert_eq!(
         engine.last_script_execution_error_class().as_deref(),
-        Some("non-fatal")
+        Some("fatal")
     );
     assert_eq!(
         engine.last_script_execution_error_category().as_deref(),
-        Some("computational")
+        Some("integrity")
     );
 }
 
 #[test]
-fn invoke_script_ref_non_fatal_preserves_deferred_navigation_effects() {
+fn invoke_script_ref_fatal_trap_after_go_discards_deferred_navigation_effects() {
+    // A fatal trap after a `go()` call must abort the whole invocation
+    // (WAP-193_101 12.2: "cause the program to abort"), so the navigation
+    // intent deferred before the trap must not take effect.
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -734,31 +769,22 @@ fn invoke_script_ref_non_fatal_preserves_deferred_navigation_effects() {
     unit.push(0x20);
     unit.push(0x03);
     unit.push(0x01); // go("#next")
-    unit.push(0x02); // add => non-fatal (stack underflow / type mismatch)
+    unit.push(0x02); // add => fatal: host call result is not an int32 operand
     unit.push(0x00);
-    engine.register_script_unit("nonfatal-nav.wmlsc".to_string(), unit);
+    engine.register_script_unit("fatal-nav.wmlsc".to_string(), unit);
 
-    let outcome = engine
-        .invoke_script_ref_internal("nonfatal-nav.wmlsc", "main", &[])
-        .expect("non-fatal error should not abort invocation");
-    assert_eq!(
-        outcome.result,
-        ScriptValueLiteral::Invalid { invalid: true }
-    );
-    assert_eq!(
-        outcome.navigation_intent,
-        ScriptNavigationIntentLiteral::Go {
-            href: "#next".to_string()
-        }
-    );
-    assert_eq!(engine.active_card_id().expect("active card"), "next");
+    let err = engine
+        .invoke_script_ref_internal("fatal-nav.wmlsc", "main", &[])
+        .expect_err("fatal trap should abort invocation");
+    assert!(err.contains("type error"));
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
     assert_eq!(
         engine.last_script_execution_error_class().as_deref(),
-        Some("non-fatal")
+        Some("fatal")
     );
     assert_eq!(
         engine.last_script_execution_error_category().as_deref(),
-        Some("computational")
+        Some("integrity")
     );
 }
 

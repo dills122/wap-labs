@@ -97,24 +97,28 @@ fn unknown_key_normalizes_focus_without_triggering_actions() {
 }
 
 #[test]
-fn trace_entries_include_script_error_taxonomy_for_non_fatal() {
+fn trace_entries_include_script_error_taxonomy_for_ok() {
+    // WAP-193_101 12.3.1.7 classifies Stack/type bytecode-integrity traps as
+    // Fatal, not Non-fatal (see `classify_vm_trap`), so no VM opcode
+    // currently produces a reachable non-fatal outcome; this exercises the
+    // `ok`/`none` taxonomy that SCRIPT_OK traces actually carry today. The
+    // `ScriptExecutionOutcome::non_fatal` contract shape is covered directly
+    // by `non_fatal_execution_outcome_contract_shape` pending a
+    // computational-error opcode (e.g. integer divide) landing in the VM.
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
           <card id="home">
-            <a href="script:nonfatal.wmlsc#main">Run</a>
+            <a href="script:ok.wmlsc#main">Run</a>
           </card>
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit(
-        "nonfatal.wmlsc".to_string(),
-        vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
-    );
+    engine.register_script_unit("ok.wmlsc".to_string(), vec![0x01, 4, 0x01, 8, 0x02, 0x00]);
 
     engine
         .handle_key("enter".to_string())
-        .expect("non-fatal script should not abort action handling");
+        .expect("successful script should not abort action handling");
 
     let script_ok = engine
         .trace_entries
@@ -124,11 +128,11 @@ fn trace_entries_include_script_error_taxonomy_for_non_fatal() {
     assert_eq!(script_ok.script_ok, Some(true));
     assert_eq!(
         script_ok.script_error_class,
-        Some(ScriptErrorClassLiteral::NonFatal)
+        Some(ScriptErrorClassLiteral::None)
     );
     assert_eq!(
         script_ok.script_error_category,
-        Some(ScriptErrorCategoryLiteral::Computational)
+        Some(ScriptErrorCategoryLiteral::None)
     );
 }
 

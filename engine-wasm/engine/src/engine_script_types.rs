@@ -298,14 +298,23 @@ pub(crate) fn classify_vm_trap_outcome(
     }
 }
 
+/// WAP-193_101 12.3.1 groups `StackUnderflow` with the other Bytecode Errors
+/// ("[o]nly generated if compiler generates bad code", 12.3.1.7) and calls it
+/// Fatal, not Non-fatal. `TypeError` is this VM's internal analogue: it can
+/// only fire when a verified unit pushes a value of the wrong runtime type
+/// onto the stack, which is the same "compiler generated bad code" condition.
+/// Neither belongs in the chapter 12.4 Non-fatal Computational Errors class
+/// (divide-by-zero, integer/float overflow, conversion range errors), which
+/// this VM does not yet have opcodes to trigger.
 pub(crate) fn classify_vm_trap(trap: &VmTrap) -> ScriptErrorClassLiteral {
     match trap {
-        VmTrap::TypeError(_) | VmTrap::StackUnderflow => ScriptErrorClassLiteral::NonFatal,
         VmTrap::EmptyUnit
         | VmTrap::InvalidEntryPoint { .. }
         | VmTrap::UnsupportedOpcode(_)
         | VmTrap::TruncatedImmediate { .. }
         | VmTrap::StackOverflow { .. }
+        | VmTrap::StackUnderflow
+        | VmTrap::TypeError(_)
         | VmTrap::InvalidLocalIndex { .. }
         | VmTrap::InvalidCallTarget { .. }
         | VmTrap::CallDepthExceeded { .. }
@@ -319,11 +328,12 @@ pub(crate) fn classify_vm_trap(trap: &VmTrap) -> ScriptErrorClassLiteral {
 
 pub(crate) fn classify_vm_trap_category(trap: &VmTrap) -> ScriptErrorCategoryLiteral {
     match trap {
-        VmTrap::TypeError(_) | VmTrap::StackUnderflow => ScriptErrorCategoryLiteral::Computational,
         VmTrap::EmptyUnit
         | VmTrap::InvalidEntryPoint { .. }
         | VmTrap::UnsupportedOpcode(_)
         | VmTrap::TruncatedImmediate { .. }
+        | VmTrap::StackUnderflow
+        | VmTrap::TypeError(_)
         | VmTrap::InvalidLocalIndex { .. }
         | VmTrap::InvalidCallTarget { .. }
         | VmTrap::Utf8ImmediateDecode => ScriptErrorCategoryLiteral::Integrity,
