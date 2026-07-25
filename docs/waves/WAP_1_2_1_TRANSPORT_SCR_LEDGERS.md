@@ -106,8 +106,17 @@ the destination-IP module below WDP, rejects malformed/overlap/oversize input
 without truncating WDP unit data, and expires incomplete assemblies using
 simulated ticks. Direct replay evidence is in
 `transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json`.
-No WDP segmentation header is introduced, and broader TRN-706 corpus status
-remains unchanged.
+No WDP segmentation header is introduced.
+
+TRN-706 now adds a selected-profile WDP-only golden replay tranche at
+`transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json`. Eleven WDP
+clauses directly map byte-exact codec round trip, the 576-octet IPv4 boundary,
+IPv4 checksum and UDP-length rejection, idempotent duplicate fragments, and
+lower-IP reassembly completion. Incomplete assembly expiry uses deterministic
+simulated ticks as a bounded implementation policy; no exact WAP timer value
+is inferred. The declared WTP family remains an explicit conditional mapping
+gap, so this tranche does not activate connection-oriented WSP/WTP or complete
+TRN-706.
 
 ### WCMP
 
@@ -200,6 +209,9 @@ adapter.
   evidence; additional bearers remain unclaimed.
 - `TRN-703` / `T0-17`: implement and test the five-row WCMP core, then
   capability-gate optional WCMP breadth.
+- `TRN-706`: in progress; the eleven-clause selected WDP replay tranche is
+  directly evidenced, while the conditional WTP family and full
+  timeout/abort corpus remain open.
 - `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row
   connectionless WSP path, exact WAP-203 registries, and browser GET/POST
   ingress.

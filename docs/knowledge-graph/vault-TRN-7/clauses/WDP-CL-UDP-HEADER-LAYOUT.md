@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `maps-to` → [[requirements/RQ-TRN-003|RQ-TRN-003]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-706|TRN-706]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `refines` → [[scr-rows/WDP-NA-C-006|WDP-NA-C-006]]
 - `refines` → [[scr-rows/WDP-NA-C-007|WDP-NA-C-007]]
@@ -45,7 +46,8 @@ tags:
   "obligationSynopsis": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-706"
   ],
   "ownerLayers": [
     "transport-rust"

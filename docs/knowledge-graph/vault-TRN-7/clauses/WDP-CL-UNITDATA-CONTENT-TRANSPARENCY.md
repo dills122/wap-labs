@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRN-001|RQ-TRN-001]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
 - `planned-by` → [[work-items/TRN-702|TRN-702]]
+- `planned-by` → [[work-items/TRN-706|TRN-706]]
 - `refines` → [[scr-rows/WDP-CORE-C-001|WDP-CORE-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-001|WDP-PF-C-001]]
 - `refines` → [[scr-rows/WDP-PF-C-002|WDP-PF-C-002]]
@@ -46,7 +47,8 @@ tags:
   "workItems": [
     "T0-19",
     "TRN-701",
-    "TRN-702"
+    "TRN-702",
+    "TRN-706"
   ],
   "ownerLayers": [
     "transport-rust"

@@ -1046,15 +1046,21 @@
           "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wdp", "wtp"],
+          "explicitUnmappedFamilies": ["wtp"],
           "existingTickets": ["T0-22", "T0-24"],
           "outputs": [
-            "WDP/WTP packet and replay golden corpus"
+            "WDP/WTP packet and replay golden corpus",
+            "transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json"
           ],
           "acceptance": [
-            "Positive, boundary, malformed, duplicate, timeout, and abort traces replay identically and cite exact effective source features."
+            "The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses.",
+            "WTP duplicate, retransmission, timeout, and abort families remain conditional on a future connection-oriented WSP/WTP claim and do not close TRN-706 in the strict connectionless profile."
           ],
           "evidence": [
-            "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay"
+            "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay",
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "node scripts/wap-context-pack.mjs TRN-706",
+            "node scripts/check-wap-knowledge-graph.mjs"
           ]
         },
         {

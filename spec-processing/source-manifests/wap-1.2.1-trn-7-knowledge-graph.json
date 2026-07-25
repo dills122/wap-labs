@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "6497a1802b8ea8661aff21b847cd754564b305d5245e41c653b7cb9df6cd9865"
+        "sha256": "92b8d3321d22f08832d37c7c43af7771c1f7ff9941b47800b8e9de3d15bc0f6d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,14 +25,14 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "3e51cf531c278871d4fd0948017950c3a3992f152960a8e0f43e39dadf8d8740"
+        "sha256": "903e469345d86c37a7b76d7a8f17085be518747d553ef85d54dffb14d91ae32b"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
     "nodeCount": 214,
-    "edgeCount": 613,
+    "edgeCount": 624,
     "nodesByType": {
       "clause": 77,
       "fixture": 77,
@@ -56,7 +56,7 @@
       "effective-document": 12,
       "maps-to": 114,
       "owned-by": 15,
-      "planned-by": 100,
+      "planned-by": 111,
       "refines": 154,
       "relates-to": 8,
       "requires-family": 2,
@@ -71,7 +71,7 @@
       "TRN-703": 28,
       "TRN-704": 0,
       "TRN-705": 0,
-      "TRN-706": 0,
+      "TRN-706": 11,
       "TRN-707": 0
     },
     "directClauseFamiliesByWorkItem": {
@@ -86,12 +86,14 @@
       ],
       "TRN-704": [],
       "TRN-705": [],
-      "TRN-706": [],
+      "TRN-706": [
+        "wdp"
+      ],
       "TRN-707": []
     },
     "unmappedNormativeFamiliesByWorkItem": {
       "TRN-706": [
-        "wdp"
+        "wtp"
       ],
       "TRN-707": [
         "wcmp",
@@ -101,7 +103,6 @@
     "workItemsWithoutDirectClauses": [
       "TRN-704",
       "TRN-705",
-      "TRN-706",
       "TRN-707"
     ]
   },
@@ -1203,7 +1204,8 @@
         "obligationSynopsis": "Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1389,7 +1391,8 @@
         "workItems": [
           "T0-19",
           "TRN-701",
-          "TRN-702"
+          "TRN-702",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1465,7 +1468,8 @@
         "workItems": [
           "T0-19",
           "TRN-701",
-          "TRN-702"
+          "TRN-702",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1574,7 +1578,8 @@
         "workItems": [
           "T0-19",
           "TRN-701",
-          "TRN-702"
+          "TRN-702",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1611,7 +1616,8 @@
         "workItems": [
           "T0-19",
           "TRN-701",
-          "TRN-702"
+          "TRN-702",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1646,7 +1652,8 @@
         "obligationSynopsis": "Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1680,7 +1687,8 @@
         "obligationSynopsis": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1859,7 +1867,8 @@
         "obligationSynopsis": "Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -2396,7 +2405,8 @@
         "obligationSynopsis": "Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.",
         "workItems": [
           "T0-19",
-          "TRN-701"
+          "TRN-701",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -2504,7 +2514,8 @@
         "workItems": [
           "T0-19",
           "TRN-701",
-          "TRN-702"
+          "TRN-702",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -2685,7 +2696,8 @@
         "workItems": [
           "T0-19",
           "TRN-701",
-          "TRN-702"
+          "TRN-702",
+          "TRN-706"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -4813,18 +4825,26 @@
           "wdp",
           "wtp"
         ],
+        "explicitUnmappedFamilies": [
+          "wtp"
+        ],
         "existingTickets": [
           "T0-22",
           "T0-24"
         ],
         "outputs": [
-          "WDP/WTP packet and replay golden corpus"
+          "WDP/WTP packet and replay golden corpus",
+          "transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json"
         ],
         "acceptance": [
-          "Positive, boundary, malformed, duplicate, timeout, and abort traces replay identically and cite exact effective source features."
+          "The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses.",
+          "WTP duplicate, retransmission, timeout, and abort families remain conditional on a future connection-oriented WSP/WTP claim and do not close TRN-706 in the strict connectionless profile."
         ],
         "evidence": [
-          "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay"
+          "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay",
+          "node scripts/check-wap-selected-normative-clauses.mjs",
+          "node scripts/wap-context-pack.mjs TRN-706",
+          "node scripts/check-wap-knowledge-graph.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -6473,6 +6493,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-CDPD-UDP-IP-PROFILE|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-CDPD-UDP-IP-PROFILE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-CDPD-UDP-IP-PROFILE|refines|scr-row:WDP-CT-C-002",
       "from": "clause:WDP-CL-CDPD-UDP-IP-PROFILE",
       "relation": "refines",
@@ -6842,6 +6871,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION|refines|scr-row:WDP-C-001",
       "from": "clause:WDP-CL-IP-MAPPING-FRAGMENTATION",
       "relation": "refines",
@@ -6999,6 +7037,15 @@
       "from": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
       "relation": "planned-by",
       "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IPV4-BASELINE-RECEIVE-SIZE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7202,6 +7249,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY|refines|scr-row:WDP-CORE-C-001",
       "from": "clause:WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY",
       "relation": "refines",
@@ -7274,6 +7330,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION|refines|scr-row:WDP-CORE-C-001",
       "from": "clause:WDP-CL-IPV4-FRAGMENTATION-LOCATION",
       "relation": "refines",
@@ -7328,6 +7393,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-IPV4-HEADER-CHECKSUM|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IPV4-HEADER-CHECKSUM",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-IPV4-HEADER-CHECKSUM|refines|scr-row:WDP-NA-C-003",
       "from": "clause:WDP-CL-IPV4-HEADER-CHECKSUM",
       "relation": "refines",
@@ -7368,6 +7442,15 @@
       "from": "clause:WDP-CL-IPV4-HEADER-LAYOUT",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-HEADER-LAYOUT|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IPV4-HEADER-LAYOUT",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7665,6 +7748,15 @@
       "from": "clause:WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
       "relation": "planned-by",
       "to": "work-item:TRN-701",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8588,6 +8680,15 @@
       ]
     },
     {
+      "id": "clause:WDP-CL-UDP-HEADER-LAYOUT|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-UDP-HEADER-LAYOUT",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WDP-CL-UDP-HEADER-LAYOUT|refines|scr-row:WDP-CORE-C-001",
       "from": "clause:WDP-CL-UDP-HEADER-LAYOUT",
       "relation": "refines",
@@ -8781,6 +8882,15 @@
       "from": "clause:WDP-CL-UDP-LENGTH-BOUNDS",
       "relation": "planned-by",
       "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-UDP-LENGTH-BOUNDS|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-UDP-LENGTH-BOUNDS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9087,6 +9197,15 @@
       "from": "clause:WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
       "relation": "planned-by",
       "to": "work-item:TRN-702",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WDP-CL-UNITDATA-CONTENT-TRANSPARENCY|planned-by|work-item:TRN-706",
+      "from": "clause:WDP-CL-UNITDATA-CONTENT-TRANSPARENCY",
+      "relation": "planned-by",
+      "to": "work-item:TRN-706",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

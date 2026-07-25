@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-TRN-003|RQ-TRN-003]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-706|TRN-706]]
 - `refines` → [[scr-rows/WDP-NA-C-003|WDP-NA-C-003]]
 - `sourced-from` → [[source-documents/rfc-791|rfc-791]]
 - `verified-by` → [[fixtures/WDP-FX-IPV4-HEADER-LAYOUT|WDP-FX-IPV4-HEADER-LAYOUT]]
@@ -40,7 +41,8 @@ tags:
   "obligationSynopsis": "Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-706"
   ],
   "ownerLayers": [
     "transport-rust"

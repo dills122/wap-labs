@@ -323,6 +323,20 @@ Legend:
 - Migration dependency lock: `T0-08`..`T0-14` must be closed before production profile move in `TECHNICAL_ARCHITECTURE.md`.
 - Profile-gate evidence reference (`T0-14`): `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` + `node scripts/check-networking-profile-gates.mjs`.
 
+## Selected-profile replay evidence
+
+`TRN-706` has a bounded WDP-only replay lane at
+`transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json`, executed by
+`cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay`.
+The fixture self-checks its eleven direct clause IDs against the selected
+normative-clause manifest and exercises the existing CDPD/UDP/IPv4 codec and
+lower-IP reassembler. It does not claim connection-oriented WSP/WTP.
+
+The simulated incomplete-assembly timeout is deterministic resource-policy
+evidence for the existing reassembler. The source mapping supports lower-IP
+fragment identity and reassembly placement, but no source-defined timer value
+is inferred.
+
 ## Adjacent transport-context watchlist
 
 The transport stack will remain stable while adjacent networking specs are explicitly deferred:

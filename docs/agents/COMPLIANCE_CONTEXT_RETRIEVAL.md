@@ -28,8 +28,9 @@ Use `WML-2` only for sprint-wide planning or review:
 node scripts/wap-context-pack.mjs WML-2
 ```
 
-For the selected WCMP transport core, use `TRN-703` for implementation and
-review, or `TRN-7` only for sprint-wide transport planning:
+For a selected transport implementation slice, use the supported focused work
+item target (`TRN-702`, `TRN-703`, or `TRN-706`), or `TRN-7` only for
+sprint-wide transport planning:
 
 ```sh
 node scripts/wap-context-pack.mjs TRN-703

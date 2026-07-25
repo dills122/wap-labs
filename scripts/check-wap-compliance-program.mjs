@@ -409,6 +409,9 @@ const wdpConstrained = transportSprint?.workItems.find(
 const wcmpCore = transportSprint?.workItems.find(
   (workItem) => workItem.id === 'TRN-703'
 );
+const replayCorpus = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-706'
+);
 if (
   transportSprint?.status !== 'in-progress' ||
   wdpCore?.status !== 'done' ||
@@ -433,6 +436,24 @@ if (
     'node scripts/wap-context-pack.mjs TRN-702'
   ) ||
   !wcmpCore?.acceptance?.some((line) => line.includes('five selected')) ||
+  replayCorpus?.status !== 'in-progress' ||
+  JSON.stringify(replayCorpus?.explicitUnmappedFamilies) !==
+    JSON.stringify(['wtp']) ||
+  !replayCorpus?.outputs?.includes(
+    'transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json'
+  ) ||
+  !replayCorpus?.acceptance?.some(
+    (line) => line.includes('selected WDP-only tranche') && line.includes('576-octet')
+  ) ||
+  !replayCorpus?.acceptance?.some(
+    (line) =>
+      line.includes('WTP') &&
+      line.includes('conditional') &&
+      line.includes('do not close TRN-706')
+  ) ||
+  !replayCorpus?.evidence?.includes(
+    'node scripts/wap-context-pack.mjs TRN-706'
+  ) ||
   !transportSprint?.exitGates?.some((line) =>
     line.includes('only when connection-oriented WSP is claimed')
   )

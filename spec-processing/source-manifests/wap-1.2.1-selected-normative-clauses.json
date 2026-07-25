@@ -20414,7 +20414,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-002",
@@ -20426,7 +20427,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-706"
+          ]
         },
         {
           "id": "WDP-CL-UNITDATA-REQUEST-ANYTIME",
@@ -20791,7 +20795,8 @@
             "WDP-PF-C-002"
           ],
           "directWorkItems": [
-            "TRN-702"
+            "TRN-702",
+            "TRN-706"
           ],
           "sourceAnchor": {
             "documentId": "WAP-200-WDP",
@@ -20820,7 +20825,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-702"
+              "TRN-702",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -20942,7 +20948,8 @@
             "WDP-NA-C-003"
           ],
           "directWorkItems": [
-            "TRN-702"
+            "TRN-702",
+            "TRN-706"
           ],
           "sourceAnchor": {
             "documentId": "WAP-200-WDP",
@@ -20971,7 +20978,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-702"
+              "TRN-702",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21207,7 +21215,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21220,7 +21229,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-706"
+          ]
         },
         {
           "id": "WDP-CL-UDP-SOURCE-PORT-ZERO",
@@ -21319,7 +21331,8 @@
             "WDP-CORE-C-001"
           ],
           "directWorkItems": [
-            "TRN-702"
+            "TRN-702",
+            "TRN-706"
           ],
           "sourceAnchor": {
             "documentId": "rfc-768",
@@ -21348,7 +21361,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-702"
+              "TRN-702",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -21860,7 +21874,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-003"
@@ -21870,7 +21885,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-706"
+          ]
         },
         {
           "id": "WDP-CL-IPV4-VERSION-AND-IHL",
@@ -21975,7 +21993,8 @@
             "WDP-NA-C-003"
           ],
           "directWorkItems": [
-            "TRN-702"
+            "TRN-702",
+            "TRN-706"
           ],
           "sourceAnchor": {
             "documentId": "rfc-791",
@@ -22004,7 +22023,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-702"
+              "TRN-702",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -22077,7 +22097,8 @@
             "WDP-NA-C-003"
           ],
           "directWorkItems": [
-            "TRN-702"
+            "TRN-702",
+            "TRN-706"
           ],
           "sourceAnchor": {
             "documentId": "rfc-791",
@@ -22106,7 +22127,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-702"
+              "TRN-702",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -22128,7 +22150,8 @@
             "WDP-NA-C-003"
           ],
           "directWorkItems": [
-            "TRN-702"
+            "TRN-702",
+            "TRN-706"
           ],
           "sourceAnchor": {
             "documentId": "rfc-791",
@@ -22157,7 +22180,8 @@
             "workItems": [
               "T0-19",
               "TRN-701",
-              "TRN-702"
+              "TRN-702",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -22298,7 +22322,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-003"
@@ -22308,7 +22333,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-706"
+          ]
         },
         {
           "id": "WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS",
@@ -22344,7 +22372,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-706"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -22357,7 +22386,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "TRN-706"
+          ]
         },
         {
           "id": "WDP-CL-IPV4-ROBUST-INTEROPERATION",

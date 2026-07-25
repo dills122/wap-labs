@@ -385,6 +385,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       status: workItem.status,
       ownerLayers: workItem.ownerLayers,
       sourceFamilies: workItem.sourceFamilies,
+      explicitUnmappedFamilies: workItem.explicitUnmappedFamilies,
       existingTickets: workItem.existingTickets,
       outputs: workItem.outputs,
       acceptance: workItem.acceptance,
@@ -515,7 +516,9 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
         workItem.id,
         workItem.sourceFamilies
           .filter((family) => normativeFamilyIds.has(family))
+          .concat(workItem.explicitUnmappedFamilies ?? [])
           .filter((family) => !directClauseFamiliesByWorkItem[workItem.id].includes(family))
+          .filter((family, index, families) => families.indexOf(family) === index)
           .sort((left, right) => left.localeCompare(right))
       ])
       .filter(([, families]) => families.length > 0)
