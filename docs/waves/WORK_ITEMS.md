@@ -1095,11 +1095,11 @@ Completed `B0` through `B3` tickets are archived in:
 - `RQ-TRN-001..015`, `RQ-TRX-010`
 10. `Notes`:
 - Keep scope constrained to WML form submission first; do not widen into full connection-oriented WSP session work unless required to land baseline login/register flows.
-- Research note: [NATIVE_WSP_POST_RESEARCH_NOTES.md](/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
+- Research note: [NATIVE_WSP_POST_RESEARCH_NOTES.md](../../docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
 - Landed evidence:
-  - transport native `POST` login/register smoke in [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs)
-  - Tauri host native `POST` smoke in [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs)
-  - browser-engine native `POST` smoke in [browser/src-tauri/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/tests/kannel_smoke.rs)
+  - transport native `POST` login/register smoke in [transport-rust/tests/kannel_smoke.rs](../../transport-rust/tests/kannel_smoke.rs)
+  - Tauri host native `POST` smoke in [browser/src-tauri/src/tests/fetch_commands.rs](../../browser/src-tauri/src/tests/fetch_commands.rs)
+  - browser-engine native `POST` smoke in [browser/src-tauri/tests/kannel_smoke.rs](../../browser/src-tauri/tests/kannel_smoke.rs)
 
 ### A5-04 Minimal WML text-input interaction baseline
 

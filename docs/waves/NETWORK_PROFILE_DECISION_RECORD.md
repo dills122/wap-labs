@@ -91,7 +91,7 @@ Rollback action:
 
 ## Operational tracking
 
-Use [docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md](/Users/dsteele/repos/wap-labs/docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md) to track how close Waves is to:
+Use [docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md](../../docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md) to track how close Waves is to:
 
 1. `transport-rust` -> local Kannel -> local WML server E2E smoke
 2. browser/host -> transport -> local Kannel -> local WML server E2E smoke

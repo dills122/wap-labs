@@ -82,6 +82,11 @@ Regenerate host contract types from Rust:
 pnpm --dir browser run contracts:codegen
 ```
 
+The command is self-sufficient on a clean checkout: it creates the minimal
+`frontend/dist/index.html` required by Tauri's compile-time configuration when
+no real frontend build exists. Use `pnpm --dir browser run contracts:check` to
+regenerate the contracts and fail on committed drift.
+
 Regenerate Tauri app icons from canonical SVG source:
 
 ```bash

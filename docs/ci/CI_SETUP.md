@@ -66,6 +66,7 @@ Jobs:
   - builds the marketing site when selected by path filtering or full CI
 - `Project Atlas Build`
   - validates the WAP knowledge graph
+  - validates transport conformance evidence references against current source and tests
   - builds the Project Atlas documentation portal
 - `Browser Shell Skeleton Checks`
   - installs Linux Tauri system packages
@@ -201,14 +202,19 @@ Triggers:
 
 - `push` to `main` when paths change:
   - `marketing-site/**`
+  - `docs-portal/**`
+  - `docs/**`
+  - `spec-processing/source-manifests/**`
   - `engine-wasm/host-sample/**`
+  - `pnpm-lock.yaml`
+  - `pnpm-workspace.yaml`
   - `.github/workflows/pages.yml`
 - `workflow_dispatch`
 
 Behavior:
 
-- builds marketing site and host-sample
-- assembles combined `_site` artifact
+- builds the marketing site, WaveNav simulator, and Project Atlas
+- assembles the three applications under `/`, `/simulator/`, and `/atlas/`
 - deploys to `gh-pages` branch with `peaceiris/actions-gh-pages`
 
 ### 7) Transport WAP Smoke (`.github/workflows/transport-wap-smoke.yml`)
@@ -318,7 +324,9 @@ Do not require:
 - Tauri/GTK pkg-config errors (`gio-2.0`, `glib-2.0`, `gobject-2.0`)
   - Ensure Linux dependencies are installed in the workflow before Rust build/check steps.
 - Tauri frontend dist missing during Rust compile
-  - Ensure `browser/frontend/dist/index.html` placeholder exists for CI/build-time config.
+  - `pnpm --dir browser run contracts:codegen` and `contracts:check` create the minimal
+    `browser/frontend/dist/index.html` automatically. Direct Tauri compile/coverage commands still
+    need a real frontend build or an explicit placeholder for the compile-time config.
 - Lockfile/cache mismatches
   - Confirm the correct lockfile path is used for `actions/setup-node` cache keys.
 - Branch protection check name mismatch

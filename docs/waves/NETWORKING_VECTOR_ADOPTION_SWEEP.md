@@ -10,7 +10,7 @@ Rank publicly available WAP interoperability and conformance-vector candidates t
 
 Machine-readable register:
 
-- [docs/waves/networking-vector-adoption.json](/Users/dsteele/repos/wap-labs/docs/waves/networking-vector-adoption.json)
+- [docs/waves/networking-vector-adoption.json](../../docs/waves/networking-vector-adoption.json)
 
 Validation command:
 
