@@ -84,6 +84,68 @@ Target-specific glue is allowed only at serialization/binding boundaries.
 - Transport errors must remain structured and deterministic.
 - Runtime/script failures must trap without crashing host process.
 
+## Duplication Policy
+
+This is the canonical duplication policy, referenced by `docs/agents/RUST_ENGINE_STEERING.md` and
+`docs/agents/RUST_TRANSPORT_STEERING.md`. It exists because "keep changes localized, avoid broad
+refactors" (see Scope Control in `AGENTS.md`) was being read as license to copy-paste instead of
+share, across every layer of this repo. Sharing code is not a broad refactor when it stays inside
+the boundary you're already working in; it only becomes one when it would require touching files
+you would not otherwise touch for the task at hand. Three tiers, narrowest to widest:
+
+1. **Same file or module.** Before adding a new function, loop, or encode/decode block, grep the
+   file (and sibling files in the same directory) for a near-identical existing implementation. If
+   one exists, extract a shared helper and have both call sites use it — this is always in scope,
+   regardless of how small the requested change is.
+2. **Same language, different crate in this workspace** (e.g. `transport-rust` and
+   `engine-wasm/engine`, both Rust). If the same logic is genuinely needed in both, do not copy it
+   across the crate boundary; pull it into a small shared internal crate instead. This tier has not
+   come up yet in practice — the two crates currently have no overlapping logic — but the rule
+   exists so the first occurrence doesn't get copy-pasted by default.
+3. **Cross-language** (Rust and TypeScript). Single source of truth lives in Rust; the TypeScript
+   artifact is generated, never hand-maintained. This is already the house style for wire types
+   (`ts-rs`-derived contract types, drift-checked via `pnpm --dir browser run contracts:check`) and
+   for runtime behavior (`engine-wasm/engine` compiles once to both native and WASM targets rather
+   than reimplementing logic in TypeScript). It is not yet the house style for label/taxonomy
+   tables — see `docs/waves/MAINTENANCE_WORK_ITEMS.md` `M1-23` for the tracked gap. Any new
+   cross-language constant/label/taxonomy mapping should extend the existing codegen pipeline
+   rather than add another hand-copied table.
+
+When duplication is found but fixing it falls outside the current task's touched files (tier 2 or
+3, or a tier-1 case in a file you have no other reason to open), record it as a scoped
+`docs/waves/MAINTENANCE_WORK_ITEMS.md` entry instead of leaving it undocumented.
+
+## Codegen & Supported-Tooling Policy
+
+This exists because of `M1-18`: `transport-rust/src/native_fetch.rs` hand-rolled its own WSP wire
+codec instead of calling into the already-existing, spec-conformant `network::wsp` module —
+built one day apart by the same author, never wired together, and the drift sat unnoticed for
+months. Two related but distinct failure modes to guard against:
+
+1. **Hand-rolling a format/protocol implementation that already has a supported one.** Before
+   writing a new parser, encoder, decoder, or serializer for any wire format, file format, or data
+   shape, check whether this repo already has a module/crate for it, or whether the ecosystem has
+   a standard crate for it (e.g. `ts-rs` for Rust-to-TypeScript type generation, `wasm_bindgen` for
+   the WASM boundary, `network::wsp`'s codec for WSP framing). Use the existing one. If it's
+   missing a capability you need, extend it — don't build a second implementation "for now"; "for
+   now" is how `M1-18` happened, and it took an explicit owner override to unwind.
+2. **Data/logic that must stay in sync across languages or across multiple hand-authored call
+   sites should be generated from one source of truth, not hand-copied.** Ask three questions
+   before deciding: (a) does this need to exist in more than one place or language, (b) is there
+   already a canonical source of truth it could derive from (a Rust struct/enum, a spec, a
+   schema), (c) would hand-sync realistically drift given how infrequently this file gets touched
+   and by how many different contributors/agents. If yes to those, generate it — through the
+   repo's existing generator/derive infrastructure (`ts-rs`, `wasm_bindgen`,
+   `browser/scripts/generate-contract-wrappers.mjs`, drift-checked via
+   `pnpm --dir browser run contracts:check`) rather than inventing a parallel one-off script. If no
+   existing pipeline fits, design the new one deliberately and document it as a contract-first
+   surface per `AGENTS.md`, rather than bolting on an ad hoc generator nobody else knows exists.
+
+Shipping a hand-rolled reimplementation of something the repo already has a supported
+implementation for is not an acceptable "small, localized change" shortcut, even under Scope
+Control — flag the conflict and get an explicit decision (as happened with `M1-18`) rather than
+quietly duplicating.
+
 ## Agent Behavioral Rules
 
 Agents MUST:
@@ -94,6 +156,7 @@ Agents MUST:
 - keep completed backlog artifacts immutable; add linked follow-up tickets instead of rewriting `done` tickets when new compliance gaps are found
 - commit only from a feature branch; never commit on `main` or `gh-pages`
 - create a new branch name when the preferred feature-branch name already exists but is stale, unrelated, or otherwise unsuitable
+- dedupe near-identical logic within files/modules already being touched rather than deferring it — see `docs/agents/RUST_ENGINE_STEERING.md` / `docs/agents/RUST_TRANSPORT_STEERING.md` §0 for where in-scope dedup ends and an out-of-scope broad refactor begins
 
 Agents MUST NOT:
 

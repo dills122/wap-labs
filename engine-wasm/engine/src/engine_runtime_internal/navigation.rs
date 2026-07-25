@@ -33,42 +33,24 @@ impl WmlEngine {
             .card_index(id)
             .ok_or_else(|| "Card id not found".to_string())?;
 
-        let previous_idx = self.active_card_idx;
-        let previous_focus = self.focused_link_idx;
-        let previous_stack_len = self.nav_stack.len();
-        let previous_timer = self.active_timer.clone();
-        self.stop_active_timer_for_exit();
-        self.active_input_edit = None;
-        self.active_select_edit = None;
-        self.nav_stack.push(self.active_card_idx);
-        self.active_card_idx = next_idx;
-        self.focused_link_idx = 0;
-        if let Err(err) = self.initialize_controls_on_active_card() {
-            self.active_card_idx = previous_idx;
-            self.focused_link_idx = previous_focus;
-            self.nav_stack.truncate(previous_stack_len);
-            self.active_timer = previous_timer;
-            return Err(err);
-        }
-        if let Err(err) = self.run_onenterforward_for_active_card() {
-            // Roll back all state for deterministic failure behavior on entry-task failures.
-            // This also unwinds cleanly when a deeper recursive navigation trips the
-            // dispatch-depth guard above: each frame rolls back to its own prior state,
-            // so the engine ends up back on the last card that was fully, successfully
-            // entered before the cycle was detected.
-            self.active_card_idx = previous_idx;
-            self.focused_link_idx = previous_focus;
-            self.nav_stack.truncate(previous_stack_len);
-            self.active_timer = previous_timer;
-            return Err(err);
-        }
-        if let Err(err) = self.start_or_resume_timer_for_active_card(false) {
-            self.active_card_idx = previous_idx;
-            self.focused_link_idx = previous_focus;
-            self.nav_stack.truncate(previous_stack_len);
-            self.active_timer = previous_timer;
-            return Err(err);
-        }
+        // Every fallible entry step below rolls back all navigation state for
+        // deterministic failure behavior on entry-task failures. This also
+        // unwinds cleanly when a deeper recursive navigation trips the
+        // dispatch-depth guard above: each frame rolls back to its own prior
+        // state, so the engine ends up back on the last card that was fully,
+        // successfully entered before the cycle was detected.
+        let nav = NavRollbackGuard::forward(self);
+        nav.engine.stop_active_timer_for_exit();
+        nav.engine.active_input_edit = None;
+        nav.engine.active_select_edit = None;
+        let previous_idx = nav.engine.active_card_idx;
+        nav.engine.nav_stack.push(previous_idx);
+        nav.engine.active_card_idx = next_idx;
+        nav.engine.focused_link_idx = 0;
+        nav.engine.initialize_controls_on_active_card()?;
+        nav.engine.run_onenterforward_for_active_card()?;
+        nav.engine.start_or_resume_timer_for_active_card(false)?;
+        nav.commit();
         Ok(())
     }
 
@@ -86,44 +68,34 @@ impl WmlEngine {
     }
 
     fn navigate_back_internal_bounded(&mut self) -> bool {
-        let rollback_active_idx = self.active_card_idx;
-        let rollback_focus = self.focused_link_idx;
-        let rollback_stack = self.nav_stack.clone();
-        let rollback_timer = self.active_timer.clone();
-        let Some(back_target_idx) = self.nav_stack.pop() else {
-            self.push_trace("ACTION_BACK_EMPTY", String::new());
+        let nav = NavRollbackGuard::back(self);
+        let Some(back_target_idx) = nav.engine.nav_stack.pop() else {
+            nav.engine.push_trace("ACTION_BACK_EMPTY", String::new());
+            nav.commit();
             return false;
         };
 
-        self.stop_active_timer_for_exit();
-        self.active_input_edit = None;
-        self.active_select_edit = None;
-        self.active_card_idx = back_target_idx;
-        self.focused_link_idx = 0;
-        self.push_trace("ACTION_BACK", String::new());
-        if let Err(err) = self.initialize_controls_on_active_card() {
-            self.push_trace("INPUT_INIT_ERROR", err);
-            self.active_card_idx = rollback_active_idx;
-            self.focused_link_idx = rollback_focus;
-            self.nav_stack = rollback_stack;
-            self.active_timer = rollback_timer;
+        nav.engine.stop_active_timer_for_exit();
+        nav.engine.active_input_edit = None;
+        nav.engine.active_select_edit = None;
+        nav.engine.active_card_idx = back_target_idx;
+        nav.engine.focused_link_idx = 0;
+        nav.engine.push_trace("ACTION_BACK", String::new());
+        // Each fallible entry step traces first, then leaves the guard armed so
+        // the drop restores the pre-navigation state before returning.
+        if let Err(err) = nav.engine.initialize_controls_on_active_card() {
+            nav.engine.push_trace("INPUT_INIT_ERROR", err);
             return true;
         }
-        if let Err(err) = self.run_onenterbackward_for_active_card() {
-            self.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
-            self.active_card_idx = rollback_active_idx;
-            self.focused_link_idx = rollback_focus;
-            self.nav_stack = rollback_stack;
-            self.active_timer = rollback_timer;
+        if let Err(err) = nav.engine.run_onenterbackward_for_active_card() {
+            nav.engine.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
             return true;
         }
-        if let Err(err) = self.start_or_resume_timer_for_active_card(false) {
-            self.push_trace("ACTION_ONTIMER_ERROR", err);
-            self.active_card_idx = rollback_active_idx;
-            self.focused_link_idx = rollback_focus;
-            self.nav_stack = rollback_stack;
-            self.active_timer = rollback_timer;
+        if let Err(err) = nav.engine.start_or_resume_timer_for_active_card(false) {
+            nav.engine.push_trace("ACTION_ONTIMER_ERROR", err);
+            return true;
         }
+        nav.commit();
         true
     }
 
@@ -331,6 +303,86 @@ impl WmlEngine {
     }
 }
 
+/// Snapshot-and-restore guard for the state one navigation attempt may mutate.
+///
+/// Card entry has three fallible steps (input initialization, the `onenter*`
+/// task action, and timer start/resume). Rollback is all-or-nothing across
+/// them: a failure in any step must leave the engine exactly where it was
+/// before the attempt. The guard captures the affected fields up front and
+/// restores them on drop — including on `?` and early `return` paths — unless
+/// [`NavRollbackGuard::commit`] disarms it once the whole attempt succeeded.
+///
+/// While the guard is alive the engine is reached through its `engine` field,
+/// because the guard holds the `&mut WmlEngine` it must be able to restore.
+struct NavRollbackGuard<'a> {
+    engine: &'a mut WmlEngine,
+    rollback: Option<NavStateRollback>,
+}
+
+struct NavStateRollback {
+    active_card_idx: usize,
+    focused_link_idx: usize,
+    nav_stack: NavStackRollback,
+    active_timer: Option<CardTimerState>,
+}
+
+/// How to undo a navigation attempt's change to the history stack.
+enum NavStackRollback {
+    /// Forward navigation only pushes, so dropping entries added since the
+    /// snapshot restores the prior history.
+    TruncateTo(usize),
+    /// Back navigation pops, so the exact prior contents are restored.
+    Restore(Vec<usize>),
+}
+
+impl<'a> NavRollbackGuard<'a> {
+    fn forward(engine: &'a mut WmlEngine) -> Self {
+        let rollback = NavStateRollback {
+            active_card_idx: engine.active_card_idx,
+            focused_link_idx: engine.focused_link_idx,
+            nav_stack: NavStackRollback::TruncateTo(engine.nav_stack.len()),
+            active_timer: engine.active_timer.clone(),
+        };
+        Self {
+            engine,
+            rollback: Some(rollback),
+        }
+    }
+
+    fn back(engine: &'a mut WmlEngine) -> Self {
+        let rollback = NavStateRollback {
+            active_card_idx: engine.active_card_idx,
+            focused_link_idx: engine.focused_link_idx,
+            nav_stack: NavStackRollback::Restore(engine.nav_stack.clone()),
+            active_timer: engine.active_timer.clone(),
+        };
+        Self {
+            engine,
+            rollback: Some(rollback),
+        }
+    }
+
+    /// Disarm the guard: the navigation attempt is keeping its new state.
+    fn commit(mut self) {
+        self.rollback = None;
+    }
+}
+
+impl Drop for NavRollbackGuard<'_> {
+    fn drop(&mut self) {
+        let Some(rollback) = self.rollback.take() else {
+            return;
+        };
+        self.engine.active_card_idx = rollback.active_card_idx;
+        self.engine.focused_link_idx = rollback.focused_link_idx;
+        match rollback.nav_stack {
+            NavStackRollback::TruncateTo(len) => self.engine.nav_stack.truncate(len),
+            NavStackRollback::Restore(stack) => self.engine.nav_stack = stack,
+        }
+        self.engine.active_timer = rollback.active_timer;
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct ParsedScriptRef<'a> {
     pub(crate) src: &'a str,
@@ -354,4 +406,59 @@ pub(crate) fn parse_script_href(href: &str) -> Option<ParsedScriptRef<'_>> {
         return None;
     }
     Some(ParsedScriptRef { src, function_name })
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::WmlEngine;
+
+    /// Covers the third fallible step of back navigation (timer start/resume),
+    /// which the deck-level tests only exercise for forward navigation.
+    #[test]
+    fn ontimer_failure_on_back_entry_rolls_back_navigation_state() {
+        let mut engine = WmlEngine::new();
+        let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#timed">To timed</a>
+          </card>
+          <card id="timed">
+            <timer value="0"/>
+            <onevent type="ontimer"><go href="script:timer.wmlsc#main"/></onevent>
+            <a href="#next">To next</a>
+          </card>
+          <card id="next"><p>Next</p></card>
+        </wml>
+        "##;
+        engine.load_deck(xml).expect("deck should load");
+        // HALT-only unit: the ontimer task succeeds while the unit is registered.
+        engine.register_script_unit("timer.wmlsc".to_string(), vec![0x00]);
+
+        engine
+            .handle_key("enter".to_string())
+            .expect("home enter should navigate to timed card");
+        assert_eq!(engine.active_card_id().expect("active card"), "timed");
+        engine
+            .handle_key("enter".to_string())
+            .expect("timed enter should navigate to next card");
+        assert_eq!(engine.active_card_id().expect("active card"), "next");
+        assert_eq!(engine.nav_stack.len(), 2);
+
+        // Re-entering the timed card now fails inside the timer step.
+        engine.clear_script_units();
+        let handled = engine.navigate_back();
+
+        assert!(handled, "back should report handled when history exists");
+        assert_eq!(
+            engine.active_card_id().expect("active card"),
+            "next",
+            "failed entry timer task should roll back back-navigation state"
+        );
+        assert_eq!(engine.nav_stack.len(), 2);
+        assert_eq!(engine.focused_link_index(), 0);
+        assert!(engine
+            .trace_entries()
+            .iter()
+            .any(|entry| entry.kind == "ACTION_ONTIMER_ERROR"));
+    }
 }

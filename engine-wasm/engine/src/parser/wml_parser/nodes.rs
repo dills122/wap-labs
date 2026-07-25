@@ -1,8 +1,6 @@
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
 
-#[cfg(test)]
-use super::xml::{extract_attr, starts_with_tag_at};
 use super::xml::{normalize_text, XmlElement, XmlNode};
 use super::ParseBudget;
 
@@ -14,6 +12,53 @@ pub(super) fn parse_card_nodes_xml(
     let mut select_ordinal = 0usize;
     map_card_level_nodes(&card.children, &mut out, budget, 0, &mut select_ordinal)?;
     Ok(out)
+}
+
+/// What a tag from the shared inline tag set contributed to its walker.
+///
+/// The two walkers place the same inline content in different output models
+/// (`Node` for card level, `InlineNode` for paragraph level), so the shared
+/// dispatch reports *what* was produced and each walker decides *where* it
+/// goes.
+enum InlineTagOutcome {
+    /// A line break, rendered differently by each walker.
+    Break,
+    /// A concrete inline node to emit.
+    Node(InlineNode),
+    /// A recognized tag that intentionally contributes nothing (for example an
+    /// `<a>` without an `href`, or a `<select>` without a usable name).
+    Skip,
+}
+
+/// Handles the tags that both walkers treat identically (`a`, `br`, `input`,
+/// `select`, `option`).
+///
+/// Returns `Ok(None)` when `element` is not part of the shared set, leaving the
+/// caller to apply its own walker-specific handling (`<p>` at card level, or
+/// recursion into an unknown wrapper). Keeping this in one place means a new
+/// inline tag only has to be added here rather than in both walkers.
+///
+/// `child_depth` is the traversal depth used for `element`'s children, so the
+/// parse budget keeps counting nesting exactly as the callers do.
+fn map_shared_inline_tag(
+    element: &XmlElement,
+    budget: &mut ParseBudget,
+    child_depth: usize,
+    select_ordinal: &mut usize,
+) -> Result<Option<InlineTagOutcome>, String> {
+    let outcome = match element.name.as_str() {
+        "a" => parse_link_inline_node(element, budget, child_depth)?
+            .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
+        "br" => InlineTagOutcome::Break,
+        "input" => InlineTagOutcome::Node(parse_input_inline_node(element)?),
+        "select" => parse_select_inline_node(element, budget, child_depth, select_ordinal)?
+            .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
+        "option" => {
+            return Err("Invalid <option>: must be contained by <select> or <optgroup>".to_string())
+        }
+        _ => return Ok(None),
+    };
+    Ok(Some(outcome))
 }
 
 fn map_card_level_nodes(
@@ -33,39 +78,28 @@ fn map_card_level_nodes(
                     out.push(Node::Paragraph(vec![InlineNode::Text(text)]));
                 }
             }
-            XmlNode::Element(element) => match element.name.as_str() {
-                "br" => out.push(Node::Break),
-                "p" => {
+            XmlNode::Element(element) => {
+                if let Some(outcome) =
+                    map_shared_inline_tag(element, budget, depth + 1, select_ordinal)?
+                {
+                    match outcome {
+                        InlineTagOutcome::Break => out.push(Node::Break),
+                        InlineTagOutcome::Node(inline) => out.push(Node::Paragraph(vec![inline])),
+                        InlineTagOutcome::Skip => {}
+                    }
+                    continue;
+                }
+
+                if element.name == "p" {
                     let inline =
                         map_inline_nodes(&element.children, budget, depth + 1, select_ordinal)?;
                     if !inline.is_empty() {
                         out.push(Node::Paragraph(inline));
                     }
+                    continue;
                 }
-                "a" => {
-                    let href = element.attr("href").unwrap_or_default().to_string();
-                    if !href.is_empty() {
-                        let text = normalize_text(&inline_text_content(
-                            &element.children,
-                            budget,
-                            depth + 1,
-                        )?);
-                        let text = if text.is_empty() { href.clone() } else { text };
-                        out.push(Node::Paragraph(vec![InlineNode::Link { text, href }]));
-                    }
-                }
-                "input" => {
-                    let input_node = parse_input_inline_node(element)?;
-                    out.push(Node::Paragraph(vec![input_node]));
-                }
-                "select" => {
-                    if let Some(select_node) =
-                        parse_select_inline_node(element, budget, depth + 1, select_ordinal)?
-                    {
-                        out.push(Node::Paragraph(vec![select_node]));
-                    }
-                }
-                "fieldset" => {
+
+                if element.name == "fieldset" {
                     validate_fieldset_element(element)?;
                     map_card_level_nodes(
                         &element.children,
@@ -74,22 +108,18 @@ fn map_card_level_nodes(
                         depth + 1,
                         select_ordinal,
                     )?;
+                    continue;
                 }
-                "option" => {
-                    return Err(
-                        "Invalid <option>: must be contained by <select> or <optgroup>".to_string(),
-                    )
-                }
-                "optgroup" => {
+
+                if element.name == "optgroup" {
                     return Err(
                         "Invalid <optgroup>: must be contained by <select> or <optgroup>"
                             .to_string(),
-                    )
+                    );
                 }
-                _ => {
-                    map_card_level_nodes(&element.children, out, budget, depth + 1, select_ordinal)?
-                }
-            },
+
+                map_card_level_nodes(&element.children, out, budget, depth + 1, select_ordinal)?;
+            }
         }
     }
     Ok(())
@@ -128,39 +158,22 @@ fn map_inline_nodes_recursive(
         budget.visit_node("inline-node traversal")?;
         match node {
             XmlNode::Text(text) => pending_text.push_str(text),
-            XmlNode::Element(element) => match element.name.as_str() {
-                "a" => {
+            XmlNode::Element(element) => {
+                if let Some(outcome) =
+                    map_shared_inline_tag(element, budget, depth + 1, select_ordinal)?
+                {
+                    // Text accumulated before this tag has to be emitted first
+                    // so inline ordering is preserved.
                     flush_pending_inline_text(pending_text, out);
-                    let href = element.attr("href").unwrap_or_default().to_string();
-                    if !href.is_empty() {
-                        let text = normalize_text(&inline_text_content(
-                            &element.children,
-                            budget,
-                            depth + 1,
-                        )?);
-                        out.push(InlineNode::Link {
-                            text: if text.is_empty() { href.clone() } else { text },
-                            href,
-                        });
+                    match outcome {
+                        InlineTagOutcome::Break => out.push(InlineNode::Text(" ".to_string())),
+                        InlineTagOutcome::Node(inline) => out.push(inline),
+                        InlineTagOutcome::Skip => {}
                     }
+                    continue;
                 }
-                "br" => {
-                    flush_pending_inline_text(pending_text, out);
-                    out.push(InlineNode::Text(" ".to_string()));
-                }
-                "input" => {
-                    flush_pending_inline_text(pending_text, out);
-                    out.push(parse_input_inline_node(element)?);
-                }
-                "select" => {
-                    flush_pending_inline_text(pending_text, out);
-                    if let Some(select_node) =
-                        parse_select_inline_node(element, budget, depth + 1, select_ordinal)?
-                    {
-                        out.push(select_node);
-                    }
-                }
-                "fieldset" => {
+
+                if element.name == "fieldset" {
                     validate_fieldset_element(element)?;
                     map_inline_nodes_recursive(
                         &element.children,
@@ -170,30 +183,46 @@ fn map_inline_nodes_recursive(
                         depth + 1,
                         select_ordinal,
                     )?;
+                    continue;
                 }
-                "option" => {
-                    return Err(
-                        "Invalid <option>: must be contained by <select> or <optgroup>".to_string(),
-                    )
-                }
-                "optgroup" => {
+
+                if element.name == "optgroup" {
                     return Err(
                         "Invalid <optgroup>: must be contained by <select> or <optgroup>"
                             .to_string(),
-                    )
+                    );
                 }
-                _ => map_inline_nodes_recursive(
+
+                map_inline_nodes_recursive(
                     &element.children,
                     pending_text,
                     out,
                     budget,
                     depth + 1,
                     select_ordinal,
-                )?,
-            },
+                )?;
+            }
         }
     }
     Ok(())
+}
+
+fn parse_link_inline_node(
+    element: &XmlElement,
+    budget: &mut ParseBudget,
+    child_depth: usize,
+) -> Result<Option<InlineNode>, String> {
+    let href = element.attr("href").unwrap_or_default().to_string();
+    if href.is_empty() {
+        return Ok(None);
+    }
+    let text = normalize_text(&inline_text_content(
+        &element.children,
+        budget,
+        child_depth,
+    )?);
+    let text = if text.is_empty() { href.clone() } else { text };
+    Ok(Some(InlineNode::Link { text, href }))
 }
 
 fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode>) {
@@ -593,157 +622,4 @@ fn inline_text_content(
         }
     }
     Ok(out)
-}
-
-#[cfg(test)]
-pub(super) fn parse_card_nodes(body: &str) -> Result<Vec<Node>, String> {
-    let mut nodes = Vec::new();
-    let mut cursor = 0usize;
-
-    while cursor < body.len() {
-        if let Some(start) = body[cursor..].find('<') {
-            let tag_start = cursor + start;
-
-            if tag_start > cursor {
-                let text = normalize_text(&body[cursor..tag_start]);
-                if !text.is_empty() {
-                    nodes.push(Node::Paragraph(vec![InlineNode::Text(text)]));
-                }
-            }
-
-            if starts_with_tag_at(body, tag_start, "br") {
-                let end = body[tag_start..]
-                    .find('>')
-                    .map(|idx| tag_start + idx)
-                    .ok_or_else(|| "Malformed <br> tag".to_string())?;
-                nodes.push(Node::Break);
-                cursor = end + 1;
-                continue;
-            }
-
-            if starts_with_tag_at(body, tag_start, "p") {
-                let open_end = body[tag_start..]
-                    .find('>')
-                    .map(|idx| tag_start + idx)
-                    .ok_or_else(|| "Malformed <p> opening tag".to_string())?;
-                let close_start = body[open_end + 1..]
-                    .find("</p>")
-                    .map(|idx| open_end + 1 + idx)
-                    .ok_or_else(|| "Missing closing </p> tag".to_string())?;
-
-                let content = &body[open_end + 1..close_start];
-                let inline = parse_inline_nodes(content)?;
-                if !inline.is_empty() {
-                    nodes.push(Node::Paragraph(inline));
-                }
-                cursor = close_start + "</p>".len();
-                continue;
-            }
-
-            if starts_with_tag_at(body, tag_start, "a") {
-                let open_end = body[tag_start..]
-                    .find('>')
-                    .map(|idx| tag_start + idx)
-                    .ok_or_else(|| "Malformed <a> opening tag".to_string())?;
-                let open_tag = &body[tag_start..=open_end];
-                let href = extract_attr(open_tag, "href").unwrap_or_default();
-                let close_start = body[open_end + 1..]
-                    .find("</a>")
-                    .map(|idx| open_end + 1 + idx)
-                    .ok_or_else(|| "Missing closing </a> tag".to_string())?;
-
-                let link_text_raw = &body[open_end + 1..close_start];
-                let link_text = normalize_text(link_text_raw);
-                if !href.is_empty() {
-                    let text = if link_text.is_empty() {
-                        href.clone()
-                    } else {
-                        link_text
-                    };
-                    nodes.push(Node::Paragraph(vec![InlineNode::Link { text, href }]));
-                }
-                cursor = close_start + "</a>".len();
-                continue;
-            }
-
-            let end = body[tag_start..]
-                .find('>')
-                .map(|idx| tag_start + idx)
-                .ok_or_else(|| "Malformed tag".to_string())?;
-            cursor = end + 1;
-        } else {
-            let text = normalize_text(&body[cursor..]);
-            if !text.is_empty() {
-                nodes.push(Node::Paragraph(vec![InlineNode::Text(text)]));
-            }
-            break;
-        }
-    }
-
-    Ok(nodes)
-}
-
-#[cfg(test)]
-pub(super) fn parse_inline_nodes(content: &str) -> Result<Vec<InlineNode>, String> {
-    let mut nodes = Vec::new();
-    let mut cursor = 0usize;
-
-    while cursor < content.len() {
-        if let Some(start) = content[cursor..].find('<') {
-            let tag_start = cursor + start;
-            if tag_start > cursor {
-                let text = normalize_text(&content[cursor..tag_start]);
-                if !text.is_empty() {
-                    nodes.push(InlineNode::Text(text));
-                }
-            }
-
-            if starts_with_tag_at(content, tag_start, "a") {
-                let open_end = content[tag_start..]
-                    .find('>')
-                    .map(|idx| tag_start + idx)
-                    .ok_or_else(|| "Malformed inline <a> opening tag".to_string())?;
-                let open_tag = &content[tag_start..=open_end];
-                let href = extract_attr(open_tag, "href").unwrap_or_default();
-                let close_start = content[open_end + 1..]
-                    .find("</a>")
-                    .map(|idx| open_end + 1 + idx)
-                    .ok_or_else(|| "Missing closing inline </a> tag".to_string())?;
-                let raw_text = &content[open_end + 1..close_start];
-                let text = normalize_text(raw_text);
-                if !href.is_empty() {
-                    nodes.push(InlineNode::Link {
-                        text: if text.is_empty() { href.clone() } else { text },
-                        href,
-                    });
-                }
-                cursor = close_start + "</a>".len();
-                continue;
-            }
-
-            if starts_with_tag_at(content, tag_start, "br") {
-                let end = content[tag_start..]
-                    .find('>')
-                    .map(|idx| tag_start + idx)
-                    .ok_or_else(|| "Malformed inline <br> tag".to_string())?;
-                nodes.push(InlineNode::Text(" ".to_string()));
-                cursor = end + 1;
-                continue;
-            }
-
-            let end = content[tag_start..]
-                .find('>')
-                .map(|idx| tag_start + idx)
-                .ok_or_else(|| "Malformed inline tag".to_string())?;
-            cursor = end + 1;
-        } else {
-            let text = normalize_text(&content[cursor..]);
-            if !text.is_empty() {
-                nodes.push(InlineNode::Text(text));
-            }
-            break;
-        }
-    }
-
-    Ok(nodes)
 }

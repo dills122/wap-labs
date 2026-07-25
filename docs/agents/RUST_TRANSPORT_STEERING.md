@@ -7,6 +7,19 @@ This file is intentionally prescriptive. Transport code processes untrusted netw
 input, so protocol fidelity, bounded resource use, deterministic behavior, and explicit failures
 take priority over convenience.
 
+## 0. Duplication Discipline (read first)
+
+Follow the canonical duplication policy in `docs/agents/AGENT_STANDARDS.md` ("Duplication
+Policy"). Tier 1 (same file/module) applies to nearly everything in this crate and is always in
+scope, no matter how small the requested change is. Tier 2 (shared internal crate) is the relevant
+one if `transport-rust` and `engine-wasm/engine` ever need the same logic — do not copy it across
+that boundary.
+
+In this crate, watch especially for: wire-format encode/decode helpers reimplemented per call
+site, retry/attempt-loop scaffolding duplicated across transports, string-prefix-matched error
+classification instead of a typed error, and positional tuples/argument lists growing past 3-4
+members instead of a named struct.
+
 ## 1. Scope
 
 Applies to:
@@ -59,6 +72,11 @@ Transport must not:
 - bypass the contract generation and drift-check workflow
 
 ## 4. Contract source of truth
+
+Follow `docs/agents/AGENT_STANDARDS.md` ("Codegen & Supported-Tooling Policy") before hand-writing
+any parser/encoder/decoder in this crate. `M1-18` is the cautionary tale: `native_fetch.rs`
+hand-rolled a WSP codec instead of calling into the already-existing `network::wsp` module. Check
+for an existing module or standard crate first; extend it rather than building a parallel one.
 
 The exported Rust request/response types in `transport-rust/src/lib.rs` are the source of truth for
 the host transport contract.

@@ -15,6 +15,23 @@ pub enum FocusTarget {
     Select(String),
 }
 
+impl FocusTarget {
+    /// Encode this target as the `href` string carried by [`DrawCmd::Link`].
+    ///
+    /// This is the only place the `input:`/`select:` prefix encoding is
+    /// produced. The prefixes are part of the host-visible render-list shape
+    /// (see the `browser/src-tauri` render assertions), so the string form is
+    /// built once here at the output boundary rather than being round-tripped
+    /// back into a `FocusTarget` internally.
+    pub fn to_render_href(&self) -> String {
+        match self {
+            FocusTarget::Link(href) => href.clone(),
+            FocusTarget::Input(name) => format!("input:{name}"),
+            FocusTarget::Select(name) => format!("select:{name}"),
+        }
+    }
+}
+
 pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -> LayoutResult {
     let mut result = LayoutResult::default();
     let mut line = 0u32;
@@ -25,12 +42,12 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                 line += 1;
             }
             Node::Paragraph(inline) => {
-                let mut parts = Vec::new();
+                let mut parts: Vec<(String, Option<FocusTarget>)> = Vec::new();
                 for entry in inline {
                     match entry {
                         InlineNode::Text(text) => parts.push((text.clone(), None)),
                         InlineNode::Link { text, href } => {
-                            parts.push((text.clone(), Some(href.clone())));
+                            parts.push((text.clone(), Some(FocusTarget::Link(href.clone()))));
                         }
                         InlineNode::Input {
                             name,
@@ -45,7 +62,7 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                                 value.clone()
                             };
                             let rendered = format!("[{name}: {display_value}]");
-                            parts.push((rendered, Some(format!("input:{name}"))));
+                            parts.push((rendered, Some(FocusTarget::Input(name.clone()))));
                         }
                         InlineNode::Select {
                             control_id,
@@ -69,28 +86,23 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                                 .or_else(|| iname.clone())
                                 .unwrap_or_else(|| control_id.clone());
                             let rendered = format!("[{label}: {selected}]");
-                            parts.push((rendered, Some(format!("select:{control_id}"))));
+                            // Selects are looked up by `control_id` everywhere downstream
+                            // (WML-204 select semantics allow duplicate/absent `name`), so
+                            // the focus target must carry `control_id`, not `name`.
+                            parts.push((rendered, Some(FocusTarget::Select(control_id.clone()))));
                         }
                     }
                 }
 
-                for (segment, href) in parts {
+                for (segment, target) in parts {
                     let chunks = wrap_text(&segment, viewport_cols);
-                    let focus_index = href.as_ref().map(|target| {
+                    let focus_index = target.as_ref().map(|target| {
                         let idx = result.focus_targets.len();
-                        if let Some(input_name) = target.strip_prefix("input:") {
-                            result
-                                .focus_targets
-                                .push(FocusTarget::Input(input_name.to_string()));
-                        } else if let Some(select_name) = target.strip_prefix("select:") {
-                            result
-                                .focus_targets
-                                .push(FocusTarget::Select(select_name.to_string()));
-                        } else {
-                            result.focus_targets.push(FocusTarget::Link(target.clone()));
-                        }
+                        result.focus_targets.push(target.clone());
                         idx
                     });
+                    // Stringify once per segment, at the render-list boundary.
+                    let href = target.as_ref().map(FocusTarget::to_render_href);
 
                     for chunk in chunks {
                         match &href {

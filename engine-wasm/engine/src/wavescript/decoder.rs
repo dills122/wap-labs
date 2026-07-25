@@ -1,16 +1,11 @@
 use std::collections::HashSet;
 
-pub const MAX_COMPILATION_UNIT_BYTES: usize = 64 * 1024;
+use super::opcodes::{
+    ADD_I32_OPCODE, CALL_HOST_OPCODE, CALL_OPCODE, HALT_OPCODE, LOAD_LOCAL_OPCODE,
+    PUSH_INT8_OPCODE, PUSH_STRING8_OPCODE, RET_OPCODE, STORE_LOCAL_OPCODE,
+};
 
-const HALT_OPCODE: u8 = 0x00;
-const PUSH_INT8_OPCODE: u8 = 0x01;
-const ADD_I32_OPCODE: u8 = 0x02;
-const PUSH_STRING8_OPCODE: u8 = 0x03;
-const STORE_LOCAL_OPCODE: u8 = 0x10;
-const LOAD_LOCAL_OPCODE: u8 = 0x11;
-const CALL_OPCODE: u8 = 0x12;
-const RET_OPCODE: u8 = 0x13;
-const CALL_HOST_OPCODE: u8 = 0x20;
+pub const MAX_COMPILATION_UNIT_BYTES: usize = 64 * 1024;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DecodeLimits {

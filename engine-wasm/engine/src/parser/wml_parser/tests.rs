@@ -1,8 +1,4 @@
-use super::{
-    extract_wml_body, parse_card_nodes, parse_do_accept_action, parse_first_task_action,
-    parse_inline_nodes, parse_onevent_action, parse_timer_value_ds, parse_wml, parse_xml_root,
-    MAX_PARSE_TREE_DEPTH,
-};
+use super::{parse_wml, parse_xml_root, MAX_PARSE_TREE_DEPTH};
 use crate::runtime::card::{CardPostField, CardTaskAction};
 use crate::runtime::node::{InlineNode, Node};
 
@@ -633,52 +629,96 @@ fn does_not_treat_prev_tag_as_paragraph_opening_tag() {
     );
 }
 
-#[test]
-fn helper_extract_wml_body_reports_root_errors() {
-    let malformed = extract_wml_body("<wml ").expect_err("malformed wml open tag must fail");
-    assert!(malformed.contains("Malformed <wml> opening tag"));
+// The tests below previously drove a second, string-scanning WML parser that
+// existed only under `#[cfg(test)]` and duplicated the production XML-tree
+// parser. That legacy scanner has been deleted; each test now asserts the same
+// observable behavior through the real `parse_wml` path.
 
-    let missing_close =
-        extract_wml_body("<wml><card id=\"x\"></card>").expect_err("missing wml close must fail");
-    assert!(missing_close.contains("Missing closing </wml> root element"));
+fn deck_with_card_body(body: &str) -> String {
+    format!("<wml><card id=\"home\">{body}</card></wml>")
+}
+
+fn accept_action_for(control: &str) -> Result<Option<CardTaskAction>, String> {
+    let xml = deck_with_card_body(&format!("<do type=\"accept\">{control}</do>"));
+    parse_wml(&xml).map(|deck| deck.cards[0].accept_action.clone())
+}
+
+fn onenterforward_action_for(control: &str) -> Result<Option<CardTaskAction>, String> {
+    let xml = deck_with_card_body(&format!(
+        "<onevent type=\"onenterforward\">{control}</onevent>"
+    ));
+    parse_wml(&xml).map(|deck| deck.cards[0].onenterforward_action.clone())
+}
+
+fn card_nodes_for(body: &str) -> Result<Vec<Node>, String> {
+    parse_wml(&deck_with_card_body(body)).map(|deck| deck.cards[0].nodes.clone())
+}
+
+fn paragraph_items_for(body: &str) -> Vec<InlineNode> {
+    let nodes = card_nodes_for(&format!("<p>{body}</p>")).expect("paragraph should parse");
+    match nodes.into_iter().next() {
+        Some(Node::Paragraph(items)) => items,
+        other => panic!("expected a leading paragraph, got: {other:?}"),
+    }
 }
 
 #[test]
-fn helper_parse_first_task_action_handles_go_prev_and_malformed() {
+fn parse_wml_rejects_malformed_and_unclosed_root_markup() {
+    let malformed = parse_wml("<wml ").expect_err("malformed <wml> opening tag must fail");
+    assert!(
+        malformed.contains("Malformed XML"),
+        "unexpected error: {malformed}"
+    );
+
+    let missing_close =
+        parse_wml("<wml><card id=\"x\"></card>").expect_err("missing </wml> must fail");
+    assert!(
+        missing_close.contains("unclosed tag"),
+        "unexpected error: {missing_close}"
+    );
+}
+
+#[test]
+fn parses_go_prev_refresh_and_noop_accept_tasks() {
     assert_eq!(
-        parse_first_task_action("<go href=\"#ok\"/>").expect("go should parse"),
+        accept_action_for("<go href=\"#ok\"/>").expect("go should parse"),
         Some(go_action("#ok"))
     );
     assert_eq!(
-        parse_first_task_action("<prev/>").expect("prev should parse"),
+        accept_action_for("<prev/>").expect("prev should parse"),
         Some(CardTaskAction::Prev)
     );
     assert_eq!(
-        parse_first_task_action("<refresh/>").expect("refresh should parse"),
+        accept_action_for("<refresh/>").expect("refresh should parse"),
         Some(CardTaskAction::Refresh)
     );
     assert_eq!(
-        parse_first_task_action("<go/><prev/>").expect("empty go should fall through"),
-        Some(CardTaskAction::Prev)
-    );
-    assert_eq!(
-        parse_first_task_action("<go/><refresh/>")
-            .expect("empty go should fall through to refresh"),
-        Some(CardTaskAction::Refresh)
-    );
-    assert_eq!(
-        parse_first_task_action("<noop/>").expect("noop should parse"),
+        accept_action_for("<noop/>").expect("noop should parse"),
         Some(CardTaskAction::Noop)
     );
+
+    // A <go> without an href does not claim the task; the next task wins.
+    assert_eq!(
+        accept_action_for("<go/><prev/>").expect("empty go should fall through"),
+        Some(CardTaskAction::Prev)
+    );
+    assert_eq!(
+        accept_action_for("<go/><refresh/>").expect("empty go should fall through to refresh"),
+        Some(CardTaskAction::Refresh)
+    );
+
     let malformed_go =
-        parse_first_task_action("<go href=\"#broken\"").expect_err("malformed go must fail");
-    assert!(malformed_go.contains("Malformed <go> tag"));
+        accept_action_for("<go href=\"#broken\"").expect_err("malformed go must fail");
+    assert!(
+        malformed_go.contains("Malformed XML"),
+        "unexpected error: {malformed_go}"
+    );
 }
 
 #[test]
-fn helper_parse_first_task_action_preserves_post_method_and_postfields() {
+fn preserves_go_post_method_and_postfields() {
     assert_eq!(
-        parse_first_task_action(
+        accept_action_for(
             "<go method=\"post\" href=\"/login\"><postfield name=\"username\" value=\"$(alias)\"/><postfield name=\"pin\" value=\"0000\"/></go>"
         )
         .expect("post go should parse"),
@@ -690,169 +730,135 @@ fn helper_parse_first_task_action_preserves_post_method_and_postfields() {
 }
 
 #[test]
-fn helper_parse_do_accept_action_exercises_direct_and_error_paths() {
-    assert_eq!(
-        parse_do_accept_action("<do type=\"accept\" href=\"#direct\"></do>")
-            .expect("direct href should parse"),
-        Some(go_action("#direct"))
-    );
+fn parses_do_accept_direct_href_and_nested_task_fallbacks() {
+    let direct = parse_wml(&deck_with_card_body(
+        "<do type=\"accept\" href=\"#direct\"></do>",
+    ))
+    .expect("direct href should parse");
+    assert_eq!(direct.cards[0].accept_action, Some(go_action("#direct")));
 
+    let fallback = parse_wml(&deck_with_card_body(
+        "<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>",
+    ))
+    .expect("empty href should fall back to the nested task");
     assert_eq!(
-        parse_do_accept_action("<do type=\"accept\" href=\"\"><go href=\"#fallback\"/></do>")
-            .expect("fallback go href should parse"),
+        fallback.cards[0].accept_action,
         Some(go_action("#fallback"))
     );
 
-    assert_eq!(
-        parse_do_accept_action("<do type=\"accept\"><prev/></do>")
-            .expect("fallback prev should parse"),
-        Some(CardTaskAction::Prev)
-    );
-    assert_eq!(
-        parse_do_accept_action("<do type=\"accept\"><refresh/></do>")
-            .expect("fallback refresh should parse"),
-        Some(CardTaskAction::Refresh)
-    );
-    assert_eq!(
-        parse_do_accept_action("<do type=\"accept\"><noop/></do>")
-            .expect("fallback noop should parse"),
-        Some(CardTaskAction::Noop)
-    );
+    for (control, expected) in [
+        ("<prev/>", CardTaskAction::Prev),
+        ("<refresh/>", CardTaskAction::Refresh),
+        ("<noop/>", CardTaskAction::Noop),
+    ] {
+        assert_eq!(
+            accept_action_for(control).expect("nested task fallback should parse"),
+            Some(expected),
+            "unexpected accept action for {control}"
+        );
+    }
 
-    let malformed =
-        parse_do_accept_action("<do type=\"accept\"").expect_err("malformed do open tag must fail");
-    assert!(malformed.contains("Malformed <do> opening tag"));
-
-    let missing_close =
-        parse_do_accept_action("<do type=\"accept\">").expect_err("missing do close tag must fail");
-    assert!(missing_close.contains("Missing closing </do> tag"));
+    let missing_close = parse_wml(&deck_with_card_body("<do type=\"accept\">"))
+        .expect_err("unclosed <do> must fail");
+    assert!(
+        missing_close.contains("Malformed XML"),
+        "unexpected error: {missing_close}"
+    );
 }
 
 #[test]
-fn helper_parse_onevent_action_exercises_non_matching_and_error_paths() {
+fn parses_onevent_actions_and_ignores_non_matching_event_types() {
+    let deck = parse_wml(&deck_with_card_body(
+        "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>",
+    ))
+    .expect("non-matching onevent should parse");
+    assert_eq!(deck.cards[0].onenterforward_action, None);
     assert_eq!(
-        parse_onevent_action(
-            "<onevent type=\"onenterbackward\"><go href=\"#skip\"/></onevent>",
-            "onenterforward"
-        )
-        .expect("non-matching onevent should parse"),
-        None
+        deck.cards[0].onenterbackward_action,
+        Some(go_action("#skip"))
     );
 
     assert_eq!(
-        parse_onevent_action(
-            "<onevent type=\"onenterforward\"><go href=\"#next\"/></onevent>",
-            "onenterforward"
-        )
-        .expect("matching onevent should parse"),
+        onenterforward_action_for("<go href=\"#next\"/>").expect("matching onevent should parse"),
         Some(go_action("#next"))
     );
 
-    assert_eq!(
-        parse_onevent_action(
-            "<onevent type=\"onenterbackward\"><go href=\"#prev\"/></onevent>",
-            "onenterbackward"
-        )
-        .expect("matching backward onevent should parse"),
-        Some(go_action("#prev"))
-    );
+    for (control, expected) in [
+        ("<prev/>", CardTaskAction::Prev),
+        ("<refresh/>", CardTaskAction::Refresh),
+        ("<noop/>", CardTaskAction::Noop),
+    ] {
+        assert_eq!(
+            onenterforward_action_for(control).expect("onevent task should parse"),
+            Some(expected),
+            "unexpected onenterforward action for {control}"
+        );
+    }
 
-    assert_eq!(
-        parse_onevent_action(
-            "<onevent type=\"onenterforward\"><prev/></onevent>",
-            "onenterforward"
-        )
-        .expect("prev task onevent should parse"),
-        Some(CardTaskAction::Prev)
+    let missing_close = parse_wml(&deck_with_card_body("<onevent type=\"onenterforward\">"))
+        .expect_err("unclosed <onevent> must fail");
+    assert!(
+        missing_close.contains("Malformed XML"),
+        "unexpected error: {missing_close}"
     );
-    assert_eq!(
-        parse_onevent_action(
-            "<onevent type=\"onenterforward\"><refresh/></onevent>",
-            "onenterforward"
-        )
-        .expect("refresh task onevent should parse"),
-        Some(CardTaskAction::Refresh)
-    );
-    assert_eq!(
-        parse_onevent_action(
-            "<onevent type=\"onenterforward\"><noop/></onevent>",
-            "onenterforward"
-        )
-        .expect("noop task onevent should parse"),
-        Some(CardTaskAction::Noop)
-    );
-
-    let malformed = parse_onevent_action("<onevent type=\"onenterforward\"", "onenterforward")
-        .expect_err("malformed onevent open tag must fail");
-    assert!(malformed.contains("Malformed <onevent> opening tag"));
-
-    let missing_close = parse_onevent_action("<onevent type=\"onenterforward\">", "onenterforward")
-        .expect_err("missing onevent close tag must fail");
-    assert!(missing_close.contains("Missing closing </onevent> tag"));
 }
 
 #[test]
-fn helper_parse_timer_value_ds_handles_valid_invalid_and_malformed() {
-    assert_eq!(
-        parse_timer_value_ds("<timer value=\"10\"/>").expect("timer should parse"),
-        Some(10)
+fn parses_timer_value_and_ignores_invalid_or_missing_timers() {
+    let deck =
+        parse_wml(&deck_with_card_body("<timer value=\"10\"/>")).expect("timer should parse");
+    assert_eq!(deck.cards[0].timer_value_ds, Some(10));
+
+    let deck = parse_wml(&deck_with_card_body("<timer value=\"x\"/>"))
+        .expect("invalid timer value should be ignored");
+    assert_eq!(deck.cards[0].timer_value_ds, None);
+
+    let deck = parse_wml(&deck_with_card_body("<p>No timer</p>"))
+        .expect("deck without a timer should parse");
+    assert_eq!(deck.cards[0].timer_value_ds, None);
+
+    let malformed = parse_wml(&deck_with_card_body("<timer value=\"3\""))
+        .expect_err("malformed <timer> must fail");
+    assert!(
+        malformed.contains("Malformed XML"),
+        "unexpected error: {malformed}"
     );
-    assert_eq!(
-        parse_timer_value_ds("<timer value=\"x\"/>").expect("invalid timer should be ignored"),
-        None
-    );
-    assert_eq!(
-        parse_timer_value_ds("<p>No timer</p>").expect("missing timer should parse"),
-        None
-    );
-    let malformed =
-        parse_timer_value_ds("<timer value=\"3\"").expect_err("malformed timer tag should fail");
-    assert!(malformed.contains("Malformed <timer> tag"));
 }
 
 #[test]
-fn helper_parse_card_nodes_reports_malformed_tags() {
-    let malformed_br = parse_card_nodes("<br").expect_err("malformed br should fail");
-    assert!(malformed_br.contains("Malformed <br> tag"));
-
-    let malformed_p = parse_card_nodes("<p").expect_err("malformed p open tag should fail");
-    assert!(malformed_p.contains("Malformed <p> opening tag"));
-
-    let missing_p_close = parse_card_nodes("<p>text").expect_err("unclosed p should fail");
-    assert!(missing_p_close.contains("Missing closing </p> tag"));
-
-    let malformed_a =
-        parse_card_nodes("<a href=\"#x\"").expect_err("malformed a open tag should fail");
-    assert!(malformed_a.contains("Malformed <a> opening tag"));
-
-    let missing_a_close = parse_card_nodes("<a href=\"#x\">X").expect_err("unclosed a should fail");
-    assert!(missing_a_close.contains("Missing closing </a> tag"));
-
-    let malformed_tag = parse_card_nodes("<foo").expect_err("malformed generic tag should fail");
-    assert!(malformed_tag.contains("Malformed tag"));
+fn parse_wml_rejects_malformed_card_level_markup() {
+    for control in [
+        "<br",
+        "<p",
+        "<p>text",
+        "<a href=\"#x\"",
+        "<a href=\"#x\">X",
+        "<foo",
+    ] {
+        let err = parse_wml(&deck_with_card_body(control))
+            .expect_err("malformed card-level markup must fail");
+        assert!(
+            err.contains("Malformed XML"),
+            "unexpected error for {control}: {err}"
+        );
+    }
 }
 
 #[test]
-fn helper_parse_inline_nodes_reports_malformed_tags() {
-    let malformed_a =
-        parse_inline_nodes("<a href=\"#x\"").expect_err("malformed inline a should fail");
-    assert!(malformed_a.contains("Malformed inline <a> opening tag"));
-
-    let missing_a_close =
-        parse_inline_nodes("<a href=\"#x\">X").expect_err("unclosed inline a should fail");
-    assert!(missing_a_close.contains("Missing closing inline </a> tag"));
-
-    let malformed_br = parse_inline_nodes("<br").expect_err("malformed inline br should fail");
-    assert!(malformed_br.contains("Malformed inline <br> tag"));
-
-    let malformed_tag =
-        parse_inline_nodes("<unknown").expect_err("malformed inline tag should fail");
-    assert!(malformed_tag.contains("Malformed inline tag"));
+fn parse_wml_rejects_malformed_inline_markup() {
+    for control in ["<a href=\"#x\"", "<a href=\"#x\">X", "<br", "<unknown"] {
+        let err = parse_wml(&deck_with_card_body(&format!("<p>{control}</p>")))
+            .expect_err("malformed inline markup must fail");
+        assert!(
+            err.contains("Malformed XML"),
+            "unexpected error for {control}: {err}"
+        );
+    }
 }
 
 #[test]
-fn helper_parse_card_nodes_parses_mixed_content_paths() {
-    let nodes = parse_card_nodes(
+fn parses_mixed_card_level_content_paths() {
+    let nodes = card_nodes_for(
         r##"lead<br/><p>one <a href="#a">A</a><br/>two <span>three</span></p><a href="#next"></a><a>NoHref</a><unknown attr="x">drop</unknown>tail"##,
     )
     .expect("mixed card nodes should parse");
@@ -881,11 +887,10 @@ fn helper_parse_card_nodes_parses_mixed_content_paths() {
 }
 
 #[test]
-fn helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers() {
-    let items = parse_inline_nodes(
+fn parses_mixed_inline_text_links_break_and_unknown_wrappers() {
+    let items = paragraph_items_for(
         r##"pre <a href="#a">A</a> mid <br/> <span>wrapped</span> <a href="">skip</a> post"##,
-    )
-    .expect("mixed inline nodes should parse");
+    );
 
     assert!(matches!(&items[0], InlineNode::Text(t) if t == "pre"));
     assert!(matches!(

@@ -74,10 +74,15 @@ impl WmlEngine {
             return Ok(());
         }
         let (before, after) = {
+            // The guard above already proved `active_timer` is `Some`, but this
+            // path is reachable from untrusted script/host-driven time advance,
+            // so per the panic-vs-`Result` guidance in
+            // `docs/agents/RUST_ENGINE_STEERING.md` a broken invariant degrades
+            // to a structured error instead of panicking.
             let timer = self
                 .active_timer
                 .as_mut()
-                .expect("timer must exist after guard");
+                .ok_or_else(|| "timer: active timer missing after presence check".to_string())?;
             let before = timer.remaining_ms;
             timer.remaining_ms = timer.remaining_ms.saturating_sub(delta_ms);
             (before, timer.remaining_ms)

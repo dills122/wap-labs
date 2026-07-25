@@ -141,7 +141,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-18 `network::wsp` codec is dead code relative to the live native fetch path (2026-07-23)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P2`
 3. `Files`:
 - `transport-rust/src/network/wsp/pdu.rs`
@@ -178,6 +178,13 @@ Completed maintenance tickets are archived in:
 - `native_fetch.rs`'s WSP wire encode/decode calls into `network::wsp` instead of duplicating parsing logic.
 - `cargo test` stays green for `transport-rust`; native fetch behavior is unchanged for existing passing fixtures/smokes.
 - `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` / `TRANSPORT_RUST_PHASE_PLAN.md` updated to reflect that `wap-net-core` is genuinely live end-to-end, not just profile-gated.
+9. `Resolution` (2026-07-24): **Implemented in this pass, overriding the 2026-07-23 `Decision` to defer, per explicit repo-owner instruction.** The `Decision` and `Why the split exists` sections above are preserved as the historical record of why the split existed and why deferral was originally chosen; they are no longer the active call.
+- Added `transport-rust/src/network/wsp/connectionless.rs`, which owns the connectionless (session-less, WDP/UDP) WSP framing: `encode_connectionless_request`, `decode_connectionless_reply`, `encode_uintvar`/`decode_uintvar`, `decode_content_type_value`, `decode_text_string`, `decode_wsp_status_code`, plus typed `WspConnectionlessEncodeError`/`WspConnectionlessDecodeError` enums. It reuses `network::wsp::header_registry` assigned numbers (`encode_pdu_type`/`decode_pdu_type` for the `Get`/`Post`/`Reply` octets, `encode_header_field_name_on_page` for well-known header names) and the `network::wsp::header_block` types (`WspHeaderBlock`/`WspHeaderField`/`WspHeaderNameEncoding`) as its header representation. `network::wsp` is therefore on the live fetch path, no longer test-only.
+- Deleted the hand-rolled codec from `native_fetch.rs` (`encode_connectionless_request`, `encode_connectionless_request_headers`, `encode_connectionless_content_type`, `decode_connectionless_wsp_reply`, `encode_uintvar`, `decode_uintvar`, `decode_content_type_value`, `decode_text_string`, `decode_wsp_status_code`, `decode_well_known_media`, and the local `NativeReply` struct) along with the `NOTE(wsp-codec-duplication)` comment block that pointed at this entry. `native_fetch.rs` now owns no wire-format code: it keeps only fetch-level mapping (`encode_native_wap_request`, `negotiated_accept_media`, `connectionless_request_headers`, `build_kannel_request_uri`).
+- Scope note: `network::wsp::pdu`/`session` could **not** be called directly without changing bytes on the wire. Their fixture-defined framing is the connection-oriented form (no transaction id, single-octet block lengths, `u16` reply status, text-string header values), while the gateway path speaks the connectionless form (transaction id prefix, `uintvar` block lengths, single-octet assigned-number reply status, short-integer well-known values). Sharing happens at the assigned-number/header-model layer instead; `pdu.rs`/`session.rs` remain the connection-oriented reference implementation.
+- Fixed a latent encoder bug carried over from the deleted code: `encode_uintvar` set the continuation bit on the final octet for values >= 128, so any request URI or POST header section of 128+ bytes emitted a length field a conformant peer would mis-parse. The shared implementation sets the continuation bit only on non-final octets; covered by `uintvar_roundtrips_multi_octet_values_with_canonical_continuation_bits`.
+- Tests: codec-level cases moved into `connectionless.rs` (`get_request_uses_transaction_id_pdu_type_and_uintvar_uri_length`, `post_request_encodes_content_type_header_block_and_body`, `post_content_type_rejects_nul_bytes`, `decode_content_type_value_*`, `reply_*`, `status_code_mapping_covers_each_assigned_class`); `native_fetch.rs` keeps the fetch-level wire assertions and gains `encode_native_wap_request_rejects_unsupported_methods` and `connectionless_request_headers_negotiate_a_single_accept_media_type`. `make lint-rust-transport` and `make test-rust-transport` pass.
+- Not done here: `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` and `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md` were left unchanged; the `wap-net-core` profile documentation refresh remains open.
 
 ### M1-19 `fetch_policy.rs` pre-flight destination check is shallow relative to the enforced check (2026-07-24)
 
@@ -227,6 +234,49 @@ Completed maintenance tickets are archived in:
 - A test demonstrates the gateway-fallback path cannot be redirected to an arbitrary non-configured host.
 7. `Resolution`: **Invariant confirmed to hold — no gap found.**
 - `WAVES_FETCH_TRANSPORT_FALLBACK` is a strict two-value enum switch (`disabled` | `gateway-bridged`) parsed in `default_fetch_transport_fallback()`; it carries no host/URL value itself and cannot smuggle one. When it selects the fallback, `fetch_deck_with_transport_executor` always retries with the hardcoded `FetchTransportProfile::GatewayBridged`, which routes through the same `build_gateway_request`/`GATEWAY_HTTP_BASE` machinery pinned by the M1-20 test — never a value derived from the fallback env var, request headers, or the original `wap://` URL's own host/port. Added `fetch_deck_command_gateway_fallback_cannot_be_redirected_by_fallback_env_value` in `browser/src-tauri/src/tests/fetch_commands.rs`, an end-to-end test using the real (unmocked) transport: a native attempt to an unreachable loopback port triggers the fallback, and the fallback is proven to land only on a local TCP listener bound to the test's `GATEWAY_HTTP_BASE`, receiving the original wap path unchanged. No enforcement logic changed.
+
+### M1-22 Residual ad hoc `Result<_, String>` on live transport paths (2026-07-24)
+
+1. `Status`: `todo`
+2. `Priority`: `P3`
+3. `Files`:
+- `transport-rust/src/gateway.rs` (`build_gateway_request`)
+- `transport-rust/src/fetch_body.rs` (`ReadBodyError::ReadFailed(String)`)
+- `transport-rust/src/wbxml_decoder.rs` (decoder returns `Result<String, String>` throughout)
+- `transport-rust/src/wbxml.rs` (`decode_wmlc`)
+- `transport-rust/src/native_fetch.rs` (`build_kannel_request_uri`)
+- `transport-rust/src/responses.rs` (`decode_textual_wml_payload`, `decode_utf16_payload`)
+4. `Finding`:
+- The live fetch modules historically used ad hoc `Result<_, String>` while the `network::` subsystem used per-module typed error enums. The M1-18/M1-19 pass (2026-07-24) converted the highest-value call sites it already touched: destination validation/resolution now returns `fetch_policy::FetchDestinationError` (classification is by variant, not by message prefix), and connectionless WSP encode/decode now returns `WspConnectionlessEncodeError`/`WspConnectionlessDecodeError`.
+- The remaining `Result<_, String>` surfaces above were deliberately left alone to keep that pass scoped. None of them currently drive a classification decision by string matching, so this is readability/robustness debt rather than a live defect — but each is one refactor away from becoming another string-matched boundary.
+5. `Recommendation`:
+- Convert the listed functions to typed errors module by module, smallest blast radius first (`gateway.rs`, then `fetch_body.rs`, then `native_fetch::build_kannel_request_uri`, then the WBXML decoder chain, which is the largest and should be its own change).
+- Preserve the exact rendered message text at every public boundary; the transport error codes and messages in `FetchDeckResponse` must not change.
+- Do not convert error strings that are already asserted verbatim by fixtures without updating the fixture in the same change.
+6. `Accept`:
+- No live transport module returns a bare `Result<_, String>` for a multi-variant failure.
+- Error classification anywhere in `transport-rust` is by type/variant, never by message content.
+- `make lint-rust-transport` and `make test-rust-transport` stay green; public error codes and messages are unchanged.
+
+### M1-23 Script error taxonomy label table is hand-mirrored in TypeScript instead of generated (2026-07-24)
+
+1. `Status`: `todo`
+2. `Priority`: `P3`
+3. `Files`:
+- `browser/frontend/src/app/browser-presenter.ts` (`SCRIPT_ERROR_CATEGORY_LABELS`)
+- `engine-wasm/engine/src/engine_script_types.rs` (`ScriptErrorCategoryLiteral` / the category enum it mirrors)
+- `browser/scripts/generate-contract-wrappers.mjs`
+- `engine-wasm/contracts/wml-engine.ts`
+4. `Finding`:
+- `browser-presenter.ts` defines `SCRIPT_ERROR_CATEGORY_LABELS` as a hand-written `Record<string, string>` mapping each script-error category to a human-facing label, with a comment above it admitting it "mirrors the engine's `ScriptErrorCategoryLiteral` taxonomy." Nothing generates this table and nothing drift-checks it against the Rust enum it mirrors — it is exactly the cross-language duplication pattern `M1-11`/`M1-12` closed for wire *types*, but that codegen pipeline was never extended to cover human-facing label/taxonomy *tables*. A new script-error category added to the engine falls back to a generic label in the host UI until someone remembers to hand-edit this unrelated file.
+5. `Recommendation`:
+- Extend `browser/scripts/generate-contract-wrappers.mjs` (or a small sibling generator) to emit the label table from the Rust source of truth — either from doc comments/attributes on the enum variants, or from a small `#[derive]`-driven constant table exported alongside the existing `ts-rs` contract types — and have `browser-presenter.ts` import the generated table instead of hand-authoring it.
+- Cover this under `pnpm --dir browser run contracts:check` so a missing/stale label fails CI the same way a stale wire type does today.
+- This is a small, scoped codegen extension, not a new pipeline; do not build a second, parallel generator.
+6. `Accept`:
+- `SCRIPT_ERROR_CATEGORY_LABELS` (or its replacement) is generated, not hand-authored.
+- Adding a new script-error category on the Rust side and forgetting the TypeScript label fails `contracts:check` instead of silently falling back to a generic label.
+- No behavior change to today's rendered labels.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 

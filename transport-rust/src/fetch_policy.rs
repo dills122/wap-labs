@@ -13,12 +13,64 @@ pub(crate) fn resolve_fetch_destination_policy(
         .unwrap_or(FetchDestinationPolicy::PublicOnly)
 }
 
+/// Typed failure reason for destination validation and resolution.
+///
+/// Classification must never be re-derived by string-matching the rendered
+/// message: `PolicyBlocked` is the only variant that maps to `INVALID_REQUEST`,
+/// every other variant is a transport-level failure. The message text is kept
+/// stable for logs and response payloads.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum FetchDestinationError {
+    UnsupportedScheme(String),
+    PolicyBlocked(String),
+    Unresolvable(String),
+}
+
+impl FetchDestinationError {
+    pub(crate) fn blocked_host(class: DestinationHostClass) -> Self {
+        Self::PolicyBlocked(format!(
+            "Destination blocked by fetch policy (public-only): {} host",
+            class.label()
+        ))
+    }
+
+    pub(crate) fn blocked_resolved_address(class: DestinationHostClass) -> Self {
+        Self::PolicyBlocked(format!(
+            "Destination blocked by fetch policy (public-only): resolved to {} address",
+            class.label()
+        ))
+    }
+
+    /// True when the failure is a policy decision (maps to `INVALID_REQUEST`)
+    /// rather than a transport/resolution failure.
+    pub(crate) fn is_policy_blocked(&self) -> bool {
+        matches!(self, Self::PolicyBlocked(_))
+    }
+}
+
+impl std::fmt::Display for FetchDestinationError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::UnsupportedScheme(scheme) => {
+                write!(formatter, "Unsupported URL scheme: {scheme}")
+            }
+            Self::PolicyBlocked(message) | Self::Unresolvable(message) => {
+                formatter.write_str(message)
+            }
+        }
+    }
+}
+
+impl std::error::Error for FetchDestinationError {}
+
 pub(crate) fn validate_fetch_destination(
     parsed_url: &Url,
     destination_policy: &FetchDestinationPolicy,
-) -> Result<(), String> {
+) -> Result<(), FetchDestinationError> {
     if !matches!(parsed_url.scheme(), "http" | "https" | "wap" | "waps") {
-        return Err(format!("Unsupported URL scheme: {}", parsed_url.scheme()));
+        return Err(FetchDestinationError::UnsupportedScheme(
+            parsed_url.scheme().to_string(),
+        ));
     }
     if matches!(destination_policy, FetchDestinationPolicy::AllowPrivate) {
         return Ok(());
@@ -26,10 +78,7 @@ pub(crate) fn validate_fetch_destination(
 
     match classify_destination_host(parsed_url) {
         None | Some(DestinationHostClass::Public) => Ok(()),
-        Some(class) => Err(format!(
-            "Destination blocked by fetch policy (public-only): {} host",
-            class.label()
-        )),
+        Some(class) => Err(FetchDestinationError::blocked_host(class)),
     }
 }
 
@@ -113,13 +162,19 @@ pub(crate) fn resolve_fetch_destination_addresses(
     host: &str,
     port: u16,
     destination_policy: &FetchDestinationPolicy,
-) -> Result<Vec<SocketAddr>, String> {
+) -> Result<Vec<SocketAddr>, FetchDestinationError> {
     let addresses = (host, port)
         .to_socket_addrs()
-        .map_err(|error| format!("failed to resolve destination {host}:{port}: {error}"))?
+        .map_err(|error| {
+            FetchDestinationError::Unresolvable(format!(
+                "failed to resolve destination {host}:{port}: {error}"
+            ))
+        })?
         .collect::<Vec<_>>();
     if addresses.is_empty() {
-        return Err(format!("failed to resolve destination {host}:{port}"));
+        return Err(FetchDestinationError::Unresolvable(format!(
+            "failed to resolve destination {host}:{port}"
+        )));
     }
     validate_resolved_destination_addresses(&addresses, destination_policy)?;
     Ok(addresses)
@@ -128,7 +183,7 @@ pub(crate) fn resolve_fetch_destination_addresses(
 pub(crate) fn validate_resolved_destination_addresses(
     addresses: &[SocketAddr],
     destination_policy: &FetchDestinationPolicy,
-) -> Result<(), String> {
+) -> Result<(), FetchDestinationError> {
     if matches!(destination_policy, FetchDestinationPolicy::AllowPrivate) {
         return Ok(());
     }
@@ -136,25 +191,26 @@ pub(crate) fn validate_resolved_destination_addresses(
     for address in addresses {
         let class = classify_ip(address.ip());
         if class != DestinationHostClass::Public {
-            return Err(format!(
-                "Destination blocked by fetch policy (public-only): resolved to {} address",
-                class.label()
-            ));
+            return Err(FetchDestinationError::blocked_resolved_address(class));
         }
     }
     Ok(())
+}
+
+/// Outcome of applying request policy to an outbound request.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct AppliedRequestPolicy {
+    pub(crate) method: String,
+    pub(crate) outbound_headers: HashMap<String, String>,
+    pub(crate) suppressed_same_deck_post_context: bool,
+    pub(crate) applied_ua_capability_profile: FetchUaCapabilityProfile,
 }
 
 pub(crate) fn apply_request_policy(
     method: String,
     mut outbound_headers: HashMap<String, String>,
     request_policy: Option<&FetchRequestPolicy>,
-) -> (
-    String,
-    HashMap<String, String>,
-    bool,
-    FetchUaCapabilityProfile,
-) {
+) -> AppliedRequestPolicy {
     let mut normalized_method = method;
     let mut suppressed_same_deck_post_context = false;
     let mut applied_ua_capability_profile = FetchUaCapabilityProfile::Disabled;
@@ -202,12 +258,12 @@ pub(crate) fn apply_request_policy(
         }
     }
 
-    (
-        normalized_method,
+    AppliedRequestPolicy {
+        method: normalized_method,
         outbound_headers,
         suppressed_same_deck_post_context,
         applied_ua_capability_profile,
-    )
+    }
 }
 
 fn apply_ua_capability_headers(

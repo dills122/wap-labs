@@ -12,7 +12,11 @@ export default defineConfig({
       exclude: [
         'src/**/*.test.ts',
         'src/main.ts'
-      ]
+      ],
+      thresholds: {
+        lines: 80,
+        functions: 78
+      }
     }
   }
 });

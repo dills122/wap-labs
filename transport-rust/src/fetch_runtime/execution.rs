@@ -1,9 +1,12 @@
 use crate::fetch_body::{read_response_body_limited, ReadBodyError};
-use crate::fetch_policy::{resolve_fetch_destination_addresses, validate_fetch_destination};
-use crate::request_meta::log_transport_event;
+use crate::fetch_policy::{
+    resolve_fetch_destination_addresses, validate_fetch_destination, FetchDestinationError,
+};
+use crate::request_meta::{log_fetch_attempt_failure, log_transport_event};
 use crate::responses::{
-    invalid_request_response, map_success_payload_response, map_terminal_send_error,
-    normalize_content_type, payload_too_large_response, transport_unavailable_response,
+    invalid_request_response, map_success_payload_response, normalize_content_type,
+    payload_too_large_response, transport_unavailable_response, FetchAttemptFailure,
+    PayloadTooLargeParams, SuccessPayloadParams,
 };
 use crate::{FetchDeckResponse, FetchDestinationPolicy, MAX_RESPONSE_BODY_BYTES};
 use reqwest::blocking::{Client, ClientBuilder};
@@ -28,12 +31,14 @@ pub(super) struct FetchExecutionPlan {
     pub(super) destination_policy: FetchDestinationPolicy,
 }
 
+/// Carries a typed [`FetchDestinationError`] through `reqwest`'s boxed error
+/// wrapping so the classification survives to `destination_policy_error`.
 #[derive(Debug)]
-struct DestinationPolicyError(String);
+struct DestinationPolicyError(FetchDestinationError);
 
 impl fmt::Display for DestinationPolicyError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str(&self.0)
+        write!(formatter, "{}", self.0)
     }
 }
 
@@ -51,14 +56,12 @@ impl Resolve for PolicyDnsResolver {
         Box::pin(async move {
             match resolve_fetch_destination_addresses(&host, 0, &destination_policy) {
                 Ok(addresses) => Ok(Box::new(addresses.into_iter()) as Addrs),
-                Err(message) if message.starts_with("Destination blocked by fetch policy") => {
-                    Err(Box::new(DestinationPolicyError(message))
+                Err(error) if error.is_policy_blocked() => {
+                    Err(Box::new(DestinationPolicyError(error))
                         as Box<dyn std::error::Error + Send + Sync>)
                 }
-                Err(message) => {
-                    Err(Box::new(io::Error::other(message))
-                        as Box<dyn std::error::Error + Send + Sync>)
-                }
+                Err(error) => Err(Box::new(io::Error::other(error.to_string()))
+                    as Box<dyn std::error::Error + Send + Sync>),
             }
         })
     }
@@ -78,7 +81,7 @@ fn http_client_builder(
             }
             match validate_fetch_destination(attempt.url(), &redirect_destination_policy) {
                 Ok(()) => attempt.follow(),
-                Err(message) => attempt.error(DestinationPolicyError(message)),
+                Err(error) => attempt.error(DestinationPolicyError(error)),
             }
         }))
 }
@@ -114,9 +117,7 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
             );
         }
     };
-    let mut last_error = "Retries exhausted".to_string();
-    let mut last_elapsed_ms = 0.0_f64;
-    let mut last_is_timeout = false;
+    let mut failure = FetchAttemptFailure::default();
 
     for attempt in 1..=attempts {
         let start = Instant::now();
@@ -156,16 +157,16 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                                 "error": message
                             }),
                         );
-                        return payload_too_large_response(
+                        return payload_too_large_response(PayloadTooLargeParams {
                             status,
                             final_url,
                             content_type,
-                            MAX_RESPONSE_BODY_BYTES,
-                            Some(content_len),
+                            limit_bytes: MAX_RESPONSE_BODY_BYTES,
+                            actual_bytes: Some(content_len),
                             attempt,
                             elapsed_ms,
-                            request_id.as_deref(),
-                        );
+                            request_id: request_id.as_deref(),
+                        });
                     }
                 }
 
@@ -202,16 +203,16 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                                 "error": message
                             }),
                         );
-                        return payload_too_large_response(
+                        return payload_too_large_response(PayloadTooLargeParams {
                             status,
                             final_url,
                             content_type,
                             limit_bytes,
-                            None,
+                            actual_bytes: None,
                             attempt,
                             elapsed_ms,
-                            request_id.as_deref(),
-                        );
+                            request_id: request_id.as_deref(),
+                        });
                     }
                 };
                 log_transport_event(
@@ -227,74 +228,49 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                         "elapsedMs": elapsed_ms
                     }),
                 );
-                return map_success_payload_response(
+                return map_success_payload_response(SuccessPayloadParams {
                     status,
                     is_wap_scheme,
-                    &url,
-                    &upstream_url,
+                    request_url: &url,
+                    upstream_url: &upstream_url,
                     final_url,
                     content_type,
-                    body.as_slice(),
+                    body: body.as_slice(),
                     attempt,
                     elapsed_ms,
-                    request_id.as_deref(),
-                );
+                    request_id: request_id.as_deref(),
+                });
             }
             Err(err) => {
-                if let Some(message) = destination_policy_error(&err) {
+                if let Some(policy_error) = destination_policy_error(&err) {
                     return invalid_request_response(
                         request_url.clone(),
-                        message,
+                        policy_error.to_string(),
                         request_id.as_deref(),
                     );
                 }
-                last_error = err.to_string();
-                last_is_timeout = err.is_timeout();
-                last_elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
-                if attempt < attempts {
-                    log_transport_event(
-                        "transport.fetch.retry",
-                        request_id.as_deref(),
-                        &url,
-                        serde_json::json!({
-                            "attempt": attempt,
-                            "nextAttempt": attempt + 1,
-                            "attempts": attempts,
-                            "isTimeout": last_is_timeout,
-                            "error": last_error,
-                            "elapsedMs": last_elapsed_ms
-                        }),
-                    );
-                } else {
-                    log_transport_event(
-                        "transport.fetch.failure",
-                        request_id.as_deref(),
-                        &url,
-                        serde_json::json!({
-                            "attempt": attempt,
-                            "attempts": attempts,
-                            "isTimeout": last_is_timeout,
-                            "error": last_error,
-                            "elapsedMs": last_elapsed_ms
-                        }),
-                    );
-                }
+                failure.record(
+                    err.to_string(),
+                    err.is_timeout(),
+                    start.elapsed().as_secs_f64() * 1000.0,
+                );
+                log_fetch_attempt_failure(
+                    request_id.as_deref(),
+                    &url,
+                    attempt,
+                    attempts,
+                    failure.is_timeout(),
+                    failure.message(),
+                    failure.elapsed_ms(),
+                );
             }
         }
     }
 
-    map_terminal_send_error(
-        url,
-        last_error,
-        attempts,
-        attempts,
-        last_is_timeout,
-        last_elapsed_ms,
-        request_id.as_deref(),
-    )
+    failure.into_terminal_response(url, attempts, attempts, request_id.as_deref())
 }
 
-fn destination_policy_error(error: &reqwest::Error) -> Option<String> {
+fn destination_policy_error(error: &reqwest::Error) -> Option<FetchDestinationError> {
     let mut current: Option<&(dyn std::error::Error + 'static)> = Some(error);
     while let Some(cause) = current {
         if let Some(policy_error) = cause.downcast_ref::<DestinationPolicyError>() {
@@ -323,8 +299,13 @@ mod tests {
             .send()
             .expect_err("private DNS answer must be rejected");
 
-        let message =
+        let policy_error =
             destination_policy_error(&error).expect("policy error should survive reqwest wrapping");
+        assert!(
+            policy_error.is_policy_blocked(),
+            "classification must come from the error type, not its message text"
+        );
+        let message = policy_error.to_string();
         assert!(message.contains("public-only"));
         assert!(message.contains("loopback"));
     }
@@ -353,8 +334,13 @@ mod tests {
             .expect_err("private redirect must be rejected");
         server.join().expect("redirect test server should exit");
 
-        let message =
+        let policy_error =
             destination_policy_error(&error).expect("policy error should survive reqwest wrapping");
+        assert!(
+            policy_error.is_policy_blocked(),
+            "classification must come from the error type, not its message text"
+        );
+        let message = policy_error.to_string();
         assert!(message.contains("public-only"));
         assert!(message.contains("loopback"));
     }
