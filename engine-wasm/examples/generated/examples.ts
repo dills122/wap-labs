@@ -104,8 +104,8 @@ export const EXAMPLES: HostExample[] = [
   {
     "key": "acceptNoopOrdering",
     "label": "Accept Noop Ordering",
-    "description": "Exercises accept-task ordering with explicit noop behavior alongside go/prev/refresh flows.",
-    "goal": "Verify noop is deterministic and does not mutate navigation/history while other accept actions retain expected behavior.",
+    "description": "Exercises accept-task ordering with an inactive noop binding alongside go/prev/refresh flows.",
+    "goal": "Verify noop remains inactive without mutating navigation/history while other accept actions retain expected behavior.",
     "workItems": [
       "R0-02"
     ],
@@ -119,7 +119,7 @@ export const EXAMPLES: HostExample[] = [
       "Enter \"Accept go\" then Enter again; activeCardId should become target.",
       "Return home, enter \"Accept prev\" then Enter again; activeCardId should become home.",
       "Enter \"Accept refresh\" then Enter; activeCardId should stay accept-refresh.",
-      "Enter \"Accept noop\" then Enter; activeCardId should stay accept-noop and history depth should not change."
+      "Enter \"Accept noop\" then Enter; activeCardId should stay accept-noop, history depth should not change, and no task action should activate."
     ],
     "flows": [
       {
@@ -205,8 +205,7 @@ export const EXAMPLES: HostExample[] = [
                 "focusedLinkIndex": 0
               },
               "traceKinds": [
-                "ACTION_ACCEPT",
-                "ACTION_NOOP"
+                "KEY"
               ]
             }
           },
@@ -220,7 +219,7 @@ export const EXAMPLES: HostExample[] = [
                 "focusedLinkIndex": 0
               },
               "traceKinds": [
-                "ACTION_NOOP",
+                "KEY",
                 "ACTION_BACK"
               ]
             }
@@ -228,7 +227,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-noop\">Accept noop</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-noop\">\n    <do type=\"accept\"><noop/></do>\n    <p>Enter should run accept noop without state mutation.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-noop\">Accept noop</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-noop\">\n    <do type=\"accept\"><noop/></do>\n    <p>Enter should leave the inactive accept noop binding masked.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsDoOnevent",
