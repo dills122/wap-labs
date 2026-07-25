@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 9/9, WML-204 23/23 mapped clauses, WML-203 49/49)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 14/14, WML-204 23/23 mapped clauses, WML-203 49/49)
 
 ## Purpose
 
@@ -48,7 +48,8 @@ Legend:
   - `WAP-191*` DTD lineage (`wml`, `card`, task-bearing content model)
 - AC:
   - Evidence: [x] Template grammar and ordering: `wml_202_parses_template_and_card_bindings_independently` and `wml_202_rejects_invalid_template_structure_deterministically` in `engine-wasm/engine/src/parser/wml_parser/tests.rs`; `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202`.
-  - [ ] Parser accepts valid deck/card structure and rejects invalid root/card omissions.
+  - Evidence: [x] Root/head ordering, access uniqueness/retention, and ordered meta validation/retention: `wml_202_retains_access_and_ordered_meta_for_the_whole_deck`, `wml_202_rejects_invalid_wml_root_structure_deterministically`, and `wml_202_rejects_invalid_head_access_and_meta_structure_deterministically`; WASM boundary parity: `wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior`.
+  - [x] Parser accepts valid deck structure and rejects invalid root/card omissions.
   - [ ] Runtime activation is deterministic for first-card selection and card ordering.
 
 ### RQ-RMK-002 Task model support and execution

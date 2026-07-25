@@ -70,6 +70,49 @@ fn wasm_m1_02_load_deck_context_boundary_sets_metadata() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior() {
+    let valid = r#"
+        <wml>
+          <head>
+            <meta name="scenario" content="wml-202"/>
+            <access domain="example.test" path="/apps"/>
+            <meta http-equiv="Cache-Control" content="max-age=60" forua="true"/>
+          </head>
+          <card id="home"><p>Metadata deck</p></card>
+        </wml>
+    "#;
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(valid)
+        .expect("valid WML-202 head metadata should load through wasm");
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("activeCardId should be available"),
+        "home"
+    );
+    assert_eq!(
+        draw_text(&engine.render_wasm().expect("render should succeed")),
+        vec!["Metadata deck"]
+    );
+
+    let duplicate_head = r#"
+        <wml>
+          <head><meta name="first" content="one"/></head>
+          <head><meta name="second" content="two"/></head>
+          <card id="home"><p>Invalid</p></card>
+        </wml>
+    "#;
+    let err = engine
+        .load_deck_wasm(duplicate_head)
+        .expect_err("native and wasm paths must both reject duplicate head elements");
+    assert!(err
+        .as_string()
+        .expect("parser error should be a string")
+        .contains("only one <head>"));
+}
+
+#[wasm_bindgen_test]
 fn wasm_m1_02_handle_key_render_and_navigate_back_boundary_flow() {
     let mut engine = WmlEngine::wasm_new();
     engine

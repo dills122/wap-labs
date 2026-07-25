@@ -35,7 +35,7 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 761 planned clause fixtures, and a
 13-sprint/79-item execution program. The conservative implementation snapshot
 is 22 implemented, 77 partial, and 99 missing parent rows; clause-level
-assessment is 140/761.
+assessment is 145/761.
 
 Use this order for new completion work:
 
@@ -222,9 +222,9 @@ Current recommendation after all merged implementation workstreams:
    `WML-205`, then implement the deterministic malformed/invalid/unsupported/
    recoverable error taxonomy. The current zero-clause graph gap is the first
    subtask, not evidence of zero scope.
-3. **Engine lane, next:** close the residual `WML-202` deck/head/access/meta
-   parser gate while preserving its completed nine-clause template-shadowing
-   slice. Follow with the residual `WML-204` field/control validation gate;
+3. **Engine lane, next:** close the remaining `WML-202` access-policy/card-context
+   gate while preserving its completed 14-clause direct slice. Follow with the
+   residual `WML-204` field/control validation gate;
    these tasks share parser/runtime test files and should land serially.
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive

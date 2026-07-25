@@ -7,7 +7,7 @@ mod nodes;
 mod xml;
 
 use actions::{parse_card_bindings, parse_template_bindings};
-use head::parse_deck_access_control;
+use head::parse_deck_head;
 use nodes::parse_card_nodes_xml;
 use xml::{parse_xml_root, XmlNode};
 
@@ -49,23 +49,36 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
     let mut cards = Vec::new();
     let mut template_bindings = Vec::new();
     let mut access_control = None;
+    let mut metadata = Vec::new();
     let mut seen_head = false;
     let mut seen_template = false;
     let mut seen_card = false;
     let mut budget = ParseBudget::default();
     for node in &root.children {
-        let XmlNode::Element(element) = node else {
-            continue;
+        let element = match node {
+            XmlNode::Text(text) if text.trim().is_empty() => continue,
+            XmlNode::Text(_) => {
+                return Err("Invalid <wml>: text content is not allowed".to_string())
+            }
+            XmlNode::Element(element) => element,
         };
         if element.name == "head" {
-            // The `wml` content model (`head?, template?, card+`) allows at most
-            // one `<head>`; a malformed deck with more than one is tolerated and
-            // only the first is honored, consistent with this parser's existing
-            // first-wins handling of other duplicate/invalid structures.
-            if !seen_head {
-                seen_head = true;
-                access_control = parse_deck_access_control(element)?;
+            if seen_head {
+                return Err("Invalid <wml>: only one <head> element is allowed".to_string());
             }
+            if seen_card {
+                return Err(
+                    "Invalid <wml>: <head> must precede <template> and all <card> elements"
+                        .to_string(),
+                );
+            }
+            if seen_template {
+                return Err("Invalid <wml>: <head> must precede <template>".to_string());
+            }
+            seen_head = true;
+            let parsed_head = parse_deck_head(element)?;
+            access_control = parsed_head.access_control;
+            metadata = parsed_head.metadata;
             continue;
         }
         if element.name == "template" {
@@ -82,6 +95,9 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
             continue;
         }
         if element.name != "card" {
+            // WML-C-17 requires forward-compatible handling of unknown markup.
+            // Unknown deck-level elements do not participate in the recognized
+            // `head?, template?, card+` ordering model.
             continue;
         }
         seen_card = true;
@@ -109,6 +125,7 @@ pub fn parse_wml(xml: &str) -> Result<Deck, String> {
         cards,
         template_bindings,
         access_control,
+        metadata,
     ))
 }
 

@@ -5,8 +5,8 @@
     {
       "id": "template-inherit-override-and-noop-mask",
       "title": "Template accept inheritance yields to card override and noop mask",
-      "workItems": ["R0-12", "WML-202"],
-      "specItems": ["WML-C-08", "WML-C-47"],
+      "workItems": ["R0-04", "R0-12", "C5-03", "WML-202"],
+      "specItems": ["WML-C-08", "WML-C-21", "WML-C-30", "WML-C-34", "WML-C-47", "WML-C-53"],
       "initial": {
         "state": {
           "activeCardId": "inherited",

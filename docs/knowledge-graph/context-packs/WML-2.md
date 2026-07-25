@@ -14,10 +14,10 @@
 ## Graph summary
 
 - Nodes: 588
-- Edges: 1679
+- Edges: 1684
 - Selected work items: 5
 - Direct SCR rows: 76
-- Direct normative clauses: 258
+- Direct normative clauses: 263
 - Work items without direct clause mappings: 1
 - Work items with unmapped declared normative families: 1
 
@@ -73,7 +73,7 @@ Evidence commands:
 - Source families: `wml`
 - Existing tickets: `R0-04`, `R0-12`, `C5-03`
 - Direct SCR rows: 0
-- Direct normative clauses: 9
+- Direct normative clauses: 14
 
 Outputs:
 
@@ -328,10 +328,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3.1 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_deck_access_control`, `engine-wasm/engine/src/runtime/deck.rs#DeckAccessControl`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::parse_wml_populates_deck_access_control_from_head` (`cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head`), `engine-wasm/engine/src/parser/wml_parser/head.rs::more_than_one_access_element_is_a_parse_error` (`cd engine-wasm/engine && cargo test more_than_one_access_element_is_a_parse_error`)
+  - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_access`, `engine-wasm/engine/src/runtime/deck.rs#DeckAccessControl`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_rejects_invalid_head_access_and_meta_structure_deterministically` (`cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically`)
   - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: The access element's domain/path attributes are now parsed and retained on the deck model (engine-wasm). Enforcement of the access-control policy (suffix/prefix matching against a referring URI) is a host-boundary concern and remains R0-07's scope; this obligation is partial until that lands.
+  - Assessment note: The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.
 - **WML-C-22** — b
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -400,10 +400,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3 (SCR §15.1.5)
   - Assessment: `implemented`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::parse_wml_populates_deck_access_control_from_head` (`cd engine-wasm/engine && cargo test parse_wml_populates_deck_access_control_from_head`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::parse_wml_honors_only_first_head_when_deck_has_more_than_one` (`cd engine-wasm/engine && cargo test parse_wml_honors_only_first_head_when_deck_has_more_than_one`)
+  - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_deck_head`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_rejects_invalid_head_access_and_meta_structure_deterministically` (`cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically`)
   - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: The head element is recognized at the deck level (not mistaken for a card) and its access child is extracted onto the deck model. The meta child (WML-C-34, optional) is not yet represented and is tolerated as an unimplemented-optional element, consistent with this parser's existing handling of other unsupported optional constructs.
+  - Assessment note: The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.
 - **WML-C-31** — i
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -585,9 +585,9 @@ Evidence commands:
   - Spec: `WAP-191_104-WML` §11.2 (SCR §15.1.5)
   - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::rejects_document_without_wml_root` (`cd engine-wasm/engine && cargo test rejects_document_without_wml_root`)
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_rejects_invalid_wml_root_structure_deterministically` (`cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically`)
   - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: The parser requires a wml root and constructs the ordered deck from its card children.
+  - Assessment note: The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.
 - **WML-C-54** — Display of alt attribute of <img>
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.9 (SCR §15.1.6)
@@ -848,7 +848,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-SINGLE-ELEMENT` (`parser`, `planned`)
+  - Fixture: `WML-FX-ACCESS-SINGLE-ELEMENT` (`parser`, `implemented`)
 - **WML-CL-ACCESS-URL-CASE-RULES** — Apply URL component capitalization rules when evaluating domain and path restrictions.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
@@ -1166,13 +1166,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.3 (11.3 The Head Element)
   - Parents: `WML-C-30`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-HEAD-DECK-SCOPE` (`parser`, `planned`)
+  - Fixture: `WML-FX-HEAD-DECK-SCOPE` (`parser`, `implemented`)
 - **WML-CL-HEAD-STRUCTURE** — When head is present, require one or more access or meta children.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.3 (11.3 The Head Element)
   - Parents: `WML-C-30`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-HEAD-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-HEAD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-HISTORY-DUPLICATE-PUSH** — Push an entry for each explicit card access even when it duplicates the newest history entry.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
@@ -1826,7 +1826,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
   - Parents: `WML-C-53`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-WML-ROOT-DECK-SCOPE` (`parser`, `planned`)
+  - Fixture: `WML-FX-WML-ROOT-DECK-SCOPE` (`parser`, `implemented`)
 - **WML-CL-WML-ROOT-LANGUAGE** — Apply optional root language metadata as the deck language input to inherited language resolution.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
@@ -1838,10 +1838,16 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
   - Parents: `WML-C-53`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-WML-ROOT-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-WML-ROOT-STRUCTURE` (`parser`, `implemented`)
 
 ### WML-202
 
+- **WML-CL-ACCESS-SINGLE-ELEMENT** — Reject a deck containing more than one access element.
+  - Family: `wml`; force: `error-condition`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-SINGLE-ELEMENT` (`parser`, `implemented`)
 - **WML-CL-DO-EFFECTIVE-NAME** — Use the declared do name for binding identity and default a missing name to the type value.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1854,6 +1860,18 @@ Evidence commands:
   - Parents: `WML-C-26`, `WML-C-08`
   - Requirements: `RQ-RMK-002`
   - Fixture: `WML-FX-DO-INACTIVE-HIDDEN` (`rendering`, `implemented`)
+- **WML-CL-HEAD-DECK-SCOPE** — Treat head children as metadata and access-control information for the whole deck.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3 (11.3 The Head Element)
+  - Parents: `WML-C-30`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-HEAD-DECK-SCOPE` (`parser`, `implemented`)
+- **WML-CL-HEAD-STRUCTURE** — When head is present, require one or more access or meta children.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3 (11.3 The Head Element)
+  - Parents: `WML-C-30`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-HEAD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE** — Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.10.2 (9.10.2 Card/Deck Intrinsic Events)
@@ -1896,6 +1914,18 @@ Evidence commands:
   - Parents: `WML-C-47`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-TEMPLATE-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-WML-ROOT-DECK-SCOPE** — Treat the wml element as the enclosing scope for every card and all deck-level information.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
+  - Parents: `WML-C-53`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-WML-ROOT-DECK-SCOPE` (`parser`, `implemented`)
+- **WML-CL-WML-ROOT-STRUCTURE** — Require a wml root containing optional head, optional template, and one or more cards in that order.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
+  - Parents: `WML-C-53`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-WML-ROOT-STRUCTURE` (`parser`, `implemented`)
 
 ### WML-203
 

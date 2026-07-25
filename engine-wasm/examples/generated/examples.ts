@@ -2230,18 +2230,25 @@ export const EXAMPLES: HostExample[] = [
   },
   {
     "key": "wml202TemplateShadowing",
-    "label": "WML Template Task Shadowing",
-    "description": "A deck-level accept binding is inherited, overridden, and then masked by card-level bindings with the same effective name.",
-    "goal": "Verify deterministic template inheritance, card precedence, and inactive noop masking across card navigation.",
+    "label": "WML Deck Head Metadata and Template Task Shadowing",
+    "description": "Ordered deck access/meta data coexists with a deck-level accept binding that is inherited, overridden, and then masked by card-level bindings with the same effective name.",
+    "goal": "Verify a stable deck/head/access/meta parse path plus deterministic template inheritance, card precedence, and inactive noop masking across card navigation.",
     "workItems": [
+      "R0-04",
       "R0-12",
+      "C5-03",
       "WML-202"
     ],
     "specItems": [
       "WML-C-08",
-      "WML-C-47"
+      "WML-C-21",
+      "WML-C-30",
+      "WML-C-34",
+      "WML-C-47",
+      "WML-C-53"
     ],
     "testingAc": [
+      "Load the example; its ordered head access/meta model is accepted without changing the first-card render.",
       "Load the example and activate Enter on inherited; the unshadowed template binding navigates to override.",
       "Activate Enter on override; the same-named card binding replaces the template task and navigates to masked.",
       "Activate Enter on masked; the card-level noop masks both bindings and produces no task action."
@@ -2252,12 +2259,18 @@ export const EXAMPLES: HostExample[] = [
         "title": "Template accept inheritance yields to card override and noop mask",
         "target": "host-sample",
         "workItems": [
+          "R0-04",
           "R0-12",
+          "C5-03",
           "WML-202"
         ],
         "specItems": [
           "WML-C-08",
-          "WML-C-47"
+          "WML-C-21",
+          "WML-C-30",
+          "WML-C-34",
+          "WML-C-47",
+          "WML-C-53"
         ],
         "initial": {
           "state": {
@@ -2331,7 +2344,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <head>\n    <meta name=\"scenario\" content=\"wml-202\" scheme=\"work-item\"/>\n    <access domain=\"example.test\" path=\"/examples\"/>\n    <meta http-equiv=\"Cache-Control\" content=\"max-age=60\" forua=\"true\"/>\n  </head>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml203WbxmlParity",

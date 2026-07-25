@@ -368,7 +368,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '140 fixture-backed clauses assessed'
+      '145 fixture-backed clauses assessed'
     ]
   ],
   [
@@ -391,7 +391,7 @@ const requiredDocumentFragments = new Map([
     'README.md',
     [
       '22/198 selected parent rows are implemented',
-      '140/761 clauses are directly assessed'
+      '145/761 clauses are directly assessed'
     ]
   ]
 ]);

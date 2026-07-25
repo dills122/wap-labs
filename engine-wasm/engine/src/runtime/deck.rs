@@ -2,13 +2,33 @@ use crate::runtime::card::{Card, CardEventBinding, CardEventBindingIdentity, Car
 use std::collections::{HashMap, HashSet};
 
 /// Deck-level access control from a WML `<head><access domain=".." path=".."/></head>`
-/// element (WML-C-21, section 11.3.1). Values are stored exactly as authored; resolving
-/// the domain/path defaults against the deck's own URL and enforcing the suffix/prefix
-/// match against a referring URI is a host-boundary concern, not a parser concern.
+/// element (WML-C-21, section 11.3.1). Values are stored exactly as authored, including
+/// the distinction between an omitted attribute and an explicitly empty CDATA value.
+/// Resolving defaults and enforcing the referring-URI policy remain the separate R0-07
+/// host-boundary slice.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DeckAccessControl {
     pub domain: Option<String>,
     pub path: Option<String>,
+}
+
+/// The mutually exclusive property-name forms accepted by WML `<meta>`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DeckMetaProperty {
+    Name(String),
+    HttpEquiv(String),
+}
+
+/// Ordered deck metadata retained from `<head><meta .../></head>`.
+///
+/// WML 1.3 does not define property interpretation. The engine therefore preserves the
+/// authored semantic fields without applying header or application-specific side effects.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DeckMeta {
+    pub property: DeckMetaProperty,
+    pub content: String,
+    pub for_user_agent: bool,
+    pub scheme: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -16,6 +36,7 @@ pub struct Deck {
     pub cards: Vec<Card>,
     pub template_bindings: Vec<CardEventBinding>,
     pub access_control: Option<DeckAccessControl>,
+    pub metadata: Vec<DeckMeta>,
     id_index: HashMap<String, usize>,
 }
 
@@ -24,6 +45,7 @@ impl Deck {
         cards: Vec<Card>,
         template_bindings: Vec<CardEventBinding>,
         access_control: Option<DeckAccessControl>,
+        metadata: Vec<DeckMeta>,
     ) -> Deck {
         let mut id_index = HashMap::new();
         for (idx, card) in cards.iter().enumerate() {
@@ -34,6 +56,7 @@ impl Deck {
             cards,
             template_bindings,
             access_control,
+            metadata,
             id_index,
         }
     }
@@ -110,6 +133,7 @@ mod tests {
             ],
             vec![],
             None,
+            vec![],
         );
 
         assert_eq!(deck.card_index("dup"), Some(0));
@@ -126,6 +150,7 @@ mod tests {
             }],
             vec![],
             None,
+            vec![],
         );
 
         assert_eq!(deck.card_index("missing"), None);
