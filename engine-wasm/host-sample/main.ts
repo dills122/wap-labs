@@ -9,6 +9,23 @@ import { renderExampleMetadata } from './ui/example-metadata';
 import { downloadFile } from './services/download';
 import './ui/runtime-inspector-panel';
 import type { RuntimeInspectorPanel } from './ui/runtime-inspector-panel';
+import type { EngineTraceEntry } from '../contracts/wml-engine';
+
+interface StoryEvidence {
+  activeExampleKey: string;
+  snapshot: EngineSnapshot;
+  traceEntries: EngineTraceEntry[];
+  status: string;
+  eventLog: string;
+}
+
+declare global {
+  interface Window {
+    __WAVENAV_STORY_EVIDENCE__?: {
+      collect(): StoryEvidence;
+    };
+  }
+}
 
 const LIVE_RELOAD_DEBOUNCE_MS = 250;
 const AUTO_TICK_DEFAULT_MS = 100;
@@ -179,6 +196,16 @@ async function main() {
 
   const appendEvent = (action: string, snapshot?: EngineSnapshot) =>
     eventLogService.append(action, snapshot);
+
+  window.__WAVENAV_STORY_EVIDENCE__ = {
+    collect: () => ({
+      activeExampleKey,
+      snapshot: host.snapshot(),
+      traceEntries: host.traceEntries(),
+      status: status.textContent ?? '',
+      eventLog: eventLog.textContent ?? ''
+    })
+  };
 
   const reloadFromEditor = (prefix: string, reason: string) => {
     try {

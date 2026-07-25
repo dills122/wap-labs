@@ -30,6 +30,7 @@
     "version:check": "node scripts/check-release-version.mjs",
     "version:set": "node scripts/set-release-version.mjs",
     "test:node": "pnpm -r --if-present run test",
+    "test:story": "pnpm --dir engine-wasm/host-sample run test:story",
     "build:node": "pnpm -r --if-present run build",
     "typecheck:node": "pnpm -r --if-present run typecheck"
   },

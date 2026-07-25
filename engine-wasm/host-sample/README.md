@@ -43,6 +43,64 @@ testing-ac:
 <wml>...</wml>
 ```
 
+Executable story flows are optional companion files next to the canonical deck:
+
+```text
+engine-wasm/examples/source/basic.wml
+engine-wasm/examples/source/basic.flow.json
+```
+
+The WML remains the only deck corpus. The existing manifest generator validates and merges the
+companion into `examples.ts`. A version 1 companion contains:
+
+- `example`: the generated example key (`basic`, `historyBackStack`, and so on)
+- one or more lower-kebab-case `flows`
+- exact `workItems` and `specItems` mappings; the union across flows must match the WML metadata
+- an `initial` expectation and one or more action/expectation steps
+- actions: `key` (`up`, `down`, `enter`), `back`, `tick` (`100` or `1000` ms), and
+  `clear-intent`
+- state assertions: `activeCardId`, `focusedLinkIndex`, `externalNavigationIntent`, and
+  `nextCardVar`
+- optional `traceKinds`, matched as an ordered subsequence of engine trace entries
+
+Unknown example references/actions, malformed values, missing mappings, extra mappings, and stale
+generated output fail deterministically:
+
+```bash
+pnpm --dir engine-wasm/host-sample run examples:check
+pnpm --dir engine-wasm/host-sample run test:story:unit
+```
+
+## Executable stories
+
+Build the WASM package once, install Playwright Chromium once, then run stories from the repository
+root:
+
+```bash
+cd engine-wasm/engine
+wasm-pack build --target web --out-dir ../pkg
+cd ../..
+pnpm --dir engine-wasm/host-sample exec playwright install chromium
+
+pnpm test:story list
+pnpm test:story WML-R-007
+pnpm test:story A2-03
+pnpm test:story all
+```
+
+The command generates/validates the shared manifest, builds the production host sample, reserves an
+ephemeral localhost port, manages the Vite preview lifecycle, and drives the real WASM host through
+Playwright. No manual server setup is required.
+
+Every run writes a stable summary under
+`engine-wasm/host-sample/test-results/story/<selector>/summary.json`. Failed flows also receive
+`failure.png`, `trace.zip`, and structured `evidence.json` containing runtime snapshots, engine
+trace entries, host events, and browser diagnostics. Override the root with
+`WAVES_STORY_OUTPUT_DIR`.
+
+Exit codes are `0` for pass/list, `1` for assertion failures, `2` for usage or environment errors,
+and `3` when the requested ID has no executable coverage.
+
 Main files:
 
 - `host-sample/index.html`

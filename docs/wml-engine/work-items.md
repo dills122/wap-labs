@@ -58,8 +58,8 @@ Execution plan reference:
 
 For any newly implemented, demoable feature:
 
-- add a new `engine-wasm/host-sample/examples/*.wml` fixture, or
-- update an existing host-sample example that directly exercises the new behavior.
+- add a new `engine-wasm/examples/source/*.wml` fixture, or
+- update an existing shared example that directly exercises the new behavior.
 
 Every completed ticket with host-visible behavior should note which example covers it.
 Each example metadata block must include:
@@ -67,6 +67,9 @@ Each example metadata block must include:
 - work item and/or spec IDs (`work-items`, `spec-items`)
 - brief `description` and `goal`
 - `testing-ac` checklist steps for deterministic manual verification
+
+When behavior is stable enough for automated browser replay, add an optional adjacent
+`*.flow.json` companion and validate it with `pnpm test:story <work-item-or-spec-id>`.
 
 ## Ticket Template
 

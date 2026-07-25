@@ -45,11 +45,20 @@ Each fixture stores expected:
 
 ## 3. End-to-End Harness Validation
 
-Use `engine-wasm/host-sample` for manual/automated smoke:
+Use `engine-wasm/host-sample` for manual or story-driven automated smoke:
 
 1. Load fixture text.
 2. Execute key sequence.
 3. Verify screen output and status.
+
+Executable acceptance flows are optional `engine-wasm/examples/source/*.flow.json` companions to
+the canonical WML examples. Run `pnpm test:story <work-item-or-spec-id>` from the repository root,
+or use `list`/`all`. The runner owns its production Vite server lifecycle, uses an ephemeral port,
+asserts structured runtime state and ordered trace evidence, and writes failure artifacts under
+`engine-wasm/host-sample/test-results/story/`.
+
+This lane currently covers representative fragment/external-intent, history-back, and immediate
+timer flows. It does not yet replay transport or native Tauri behavior.
 
 ## 4. Definition of Done for Each Ticket
 

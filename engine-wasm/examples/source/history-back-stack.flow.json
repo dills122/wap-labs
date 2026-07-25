@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "example": "historyBackStack",
+  "flows": [
+    {
+      "id": "fragment-back-and-empty-history",
+      "title": "Fragment history pops once and then reports empty",
+      "workItems": ["A2-03"],
+      "specItems": ["WML-R-008"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["ACTION_BACK", "ACTION_BACK_EMPTY"]
+          }
+        }
+      ]
+    }
+  ]
+}

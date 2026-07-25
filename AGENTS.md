@@ -108,6 +108,13 @@ Prefer work that improves:
 - Follow `.editorconfig` for whitespace and indentation.
 - Update docs when interfaces, setup steps, or commands change.
 - Add tests for parser/runtime behavior changes when toolchain is available.
+- For stable host-visible engine/runtime behavior, add or update the canonical
+  `engine-wasm/examples/source/*.wml` example and its optional adjacent `*.flow.json`
+  executable story when the acceptance path is deterministic. Run
+  `pnpm test:story <work-item-or-spec-id>` (or `all`) before handoff.
+- Do not treat exploratory/manual-only examples as executable coverage. If a stable example
+  intentionally has no story flow, leave that gap explicit rather than inferring coverage from
+  prose `testing-ac`.
 - Avoid committing generated artifacts unless explicitly requested.
 
 ## Useful commands

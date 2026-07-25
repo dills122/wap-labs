@@ -48,6 +48,9 @@ Jobs:
   - coverage gate with `cargo llvm-cov`
 - `WaveNav Host Sample Build`
   - builds WASM package and host-sample app
+  - validates executable-flow schema and exact ticket/spec mappings
+  - installs Playwright Chromium and runs all story-driven WASM host flows
+  - uploads screenshots, traces, and structured evidence when a story fails
   - host-sample typecheck/lint/format checks
 - `Marketing Site Build`
   - builds marketing site (required/optional per branch-protection policy)

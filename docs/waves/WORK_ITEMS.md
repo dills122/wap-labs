@@ -230,6 +230,8 @@ When a PR changes spec interpretation, requirement mapping, or contract behavior
 - For any host-visible engine/runtime behavior change, add or update at least one example under `engine-wasm/examples/source/*.wml` in the same PR.
 - Regenerate `engine-wasm/examples/generated/examples.ts` via `pnpm --dir engine-wasm/host-sample run examples:generate` in the same PR.
 - New/updated examples must include metadata (`work-items` or `spec-items`, `goal`, and `testing-ac`) to keep host-sample and Waves tester verification aligned.
+- Stable acceptance paths should add an optional adjacent `*.flow.json` companion and verify it
+  with `pnpm test:story <work-item-or-spec-id>`.
 
 ## Initial Backlog (Prepared)
 
@@ -1949,7 +1951,7 @@ Reference:
 
 ### R0-10 Cross-layer acceptance fixture ledger
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `R0-02`, `R0-03`, `R0-06`, `W1-06`
 3. `Files`:
 - `docs/waves/SPEC_TEST_COVERAGE.md`
@@ -1967,10 +1969,16 @@ Reference:
 - Ticket closure decisions can be made from one cross-layer fixture map without ad hoc test discovery.
 7. `Spec`:
 - Aggregated IDs from `WML-191`, `RQ-WAE-*`, `RQ-TRN-*`, and `RQ-WMLS-*` lanes linked by mapped tickets.
+8. `Progress`:
+- The shared WML example corpus now accepts validated executable-flow companions whose work-item
+  and spec-item mappings must exactly match example metadata. `pnpm test:story list` exposes this
+  first machine-readable host-sample ledger slice.
+- Full `R0`/`T0`/`W1` cross-layer asset enumeration and implemented/partial/missing acceptance
+  lanes remain open; this slice does not close the ticket.
 
 ### R0-11 Deterministic cross-layer replay runner
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `R0-10`, `T0-04`, `R0-03`
 3. `Files`:
 - `transport-rust/tests/fixtures/transport/*`
@@ -1988,6 +1996,13 @@ Reference:
 - Cross-layer behavioral regressions are detectable in one reproducible replay lane with stable fixture outputs.
 7. `Spec`:
 - `WML-07`, `WML-18`, `RQ-WAE-008`, `RQ-WAE-016`, `RQ-TRN-004`
+8. `Progress`:
+- `pnpm test:story <id|all>` now provides deterministic Playwright replay against the production
+  WASM host sample with automatic Vite lifecycle, semantic state/trace assertions, and structured
+  failure artifacts.
+- Representative fragment/external-intent, history-back, and timer flows are executable. The
+  required transport-to-engine-to-native-browser replay and request-policy lane remain open; this
+  slice does not close the ticket.
 
 ### R0-12 Template element and card/deck task shadowing (`WML-C-47`, `WML-C-08`)
 

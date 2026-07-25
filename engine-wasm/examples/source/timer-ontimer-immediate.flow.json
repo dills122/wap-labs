@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "example": "timerOntimerImmediate",
+  "flows": [
+    {
+      "id": "zero-timer-dispatch",
+      "title": "Zero-value timer dispatches ontimer during card entry",
+      "workItems": ["A5-03"],
+      "specItems": ["WML-R-014"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["ACTION_FRAGMENT", "TIMER_START", "ACTION_ONTIMER", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
