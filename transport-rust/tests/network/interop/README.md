@@ -8,7 +8,9 @@ Current seed corpus:
   CDPD/UDP/IPv4 round trip, the 576-octet boundary, malformed IPv4/UDP
   rejection, duplicate fragment idempotence, and simulated incomplete
   reassembly expiry. Accepted and reassembled events assert the complete WDP
-  datagram, including addresses, ports, and exact service-data-unit bytes.
+  datagram, including addresses, ports, and exact service-data-unit bytes. A
+  downstream WML-203 case carries canonical WBXML bytes as an opaque service
+  data unit for cross-layer parity evidence; the fixture assigns no media type.
 - `connect_session_seed.json`: deterministic WSP session-setup replay for minimal `Connect` / `ConnectReply` over connection-oriented service ports.
 - `get_reply_seed.json`: deterministic WDP + WSP replay corpus for minimal `GET` / `REPLY` paths over known service ports.
 - `retransmission_seed.json`: deterministic WTP retransmission replay path for timer-expiry and ACK completion sequencing.

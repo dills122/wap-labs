@@ -1,3 +1,4 @@
+use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
 use lowband_transport_rust::network::wdp::{
     decode_cdpd_ipv4_udp, encode_cdpd_ipv4_udp, CdpdIpv4SendPolicy, Ipv4Reassembler,
     Ipv4ReassemblyOutcome, Ipv4ReassemblyPolicy, UdpChecksumPolicy, WdpAddress, WdpDatagram,
@@ -14,14 +15,23 @@ use lowband_transport_rust::network::wtp::retransmission::{
     decide_retransmission, WtpBackoffKind, WtpRetransmissionDecision, WtpRetransmissionEvent,
     WtpRetransmissionPolicy, WtpRetransmissionState,
 };
+use lowband_transport_rust::{
+    fetch_deck_in_process, FetchDeckRequest, FetchDestinationPolicy, FetchRequestPolicy,
+};
 use serde::Deserialize;
 use std::fs;
+use std::io::{BufRead, BufReader, Write};
 use std::net::IpAddr;
 use std::path::{Path, PathBuf};
+use std::thread::JoinHandle;
+use wavenav_engine::WmlEngine;
 
 const CLAUSE_LEDGER_SOURCE: &str = include_str!(
     "../../spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 );
+const WML_203_CANONICAL_TEXT_DECK: &str =
+    include_str!("../../engine-wasm/examples/source/wml-203-wbxml-parity.wml");
+const WML_203_WDP_CASE: &str = "selected_cdpd_wbxml_unitdata_round_trip";
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -1371,4 +1381,124 @@ fn interop_replay_fixture_paths_are_deterministic() {
             );
         }
     }
+}
+
+fn serve_one_wmlc_response(body: Vec<u8>) -> (String, JoinHandle<()>) {
+    let listener =
+        std::net::TcpListener::bind("127.0.0.1:0").expect("bind local WMLC fixture server");
+    let address = listener.local_addr().expect("read fixture server address");
+    let server = std::thread::spawn(move || {
+        let (mut stream, _) = listener.accept().expect("accept WMLC fixture request");
+        let mut reader = BufReader::new(stream.try_clone().expect("clone WMLC request stream"));
+        loop {
+            let mut line = String::new();
+            reader.read_line(&mut line).expect("read WMLC request");
+            if line == "\r\n" || line.is_empty() {
+                break;
+            }
+        }
+        let headers = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: application/vnd.wap.wmlc\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+            body.len()
+        );
+        stream
+            .write_all(headers.as_bytes())
+            .expect("write WMLC response headers");
+        stream.write_all(&body).expect("write WMLC response body");
+    });
+    (format!("http://{address}/wml-203.wmlc"), server)
+}
+
+#[test]
+fn wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior() {
+    let fixture = load_fixture(&interop_fixture_root().join("wdp_cdpd_ipv4_seed.json"));
+    let case = fixture
+        .cases
+        .iter()
+        .find(|case| case.name == WML_203_WDP_CASE)
+        .expect("WML-203 WDP replay case should exist");
+    let expected_datagram = case
+        .expected_events
+        .iter()
+        .find_map(|event| match event {
+            ExpectedReplayEvent::WdpAccepted { datagram, .. }
+            | ExpectedReplayEvent::WdpReassembled { datagram, .. } => Some(datagram),
+            _ => None,
+        })
+        .expect("WML-203 replay case should expose an exact WDP delivery event");
+    let wbxml_sdu = replay_payload(&expected_datagram.payload);
+    let expected_raw_bytes_base64 = BASE64.encode(&wbxml_sdu);
+
+    let (url, server) = serve_one_wmlc_response(wbxml_sdu);
+    let response = fetch_deck_in_process(FetchDeckRequest {
+        url,
+        method: Some("GET".to_string()),
+        headers: None,
+        timeout_ms: Some(1_000),
+        retries: Some(0),
+        request_id: Some("wml-203-reconstructed-sdu".to_string()),
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            ua_capability_profile: None,
+        }),
+    });
+    server.join().expect("WMLC fixture server should exit");
+    assert!(
+        response.ok,
+        "reconstructed WDP SDU should decode at the fetch boundary: {:?}",
+        response.error
+    );
+    assert_eq!(response.content_type, "application/vnd.wap.wmlc");
+
+    let deck_input = response
+        .engine_deck_input
+        .expect("successful WMLC response should provide engineDeckInput");
+    assert_eq!(
+        deck_input.raw_bytes_base64.as_deref(),
+        Some(expected_raw_bytes_base64.as_str()),
+        "binary handoff should preserve the exact reconstructed WBXML payload"
+    );
+    let mut binary_engine = WmlEngine::new();
+    binary_engine
+        .load_deck_context(
+            &deck_input.wml_xml,
+            &deck_input.base_url,
+            &deck_input.content_type,
+            deck_input.raw_bytes_base64,
+        )
+        .expect("transport-decoded WBXML should load into the native engine");
+
+    let mut text_engine = WmlEngine::new();
+    text_engine
+        .load_deck_context(
+            WML_203_CANONICAL_TEXT_DECK,
+            &deck_input.base_url,
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("canonical text WML should load into the native engine");
+
+    assert_eq!(binary_engine.active_card_id(), text_engine.active_card_id());
+    assert_eq!(
+        binary_engine.focused_link_index(),
+        text_engine.focused_link_index()
+    );
+    assert_eq!(
+        binary_engine.external_navigation_intent(),
+        text_engine.external_navigation_intent()
+    );
+    assert_eq!(
+        serde_json::to_value(
+            binary_engine
+                .render()
+                .expect("binary render should succeed")
+        )
+        .expect("serialize binary render"),
+        serde_json::to_value(text_engine.render().expect("text render should succeed"))
+            .expect("serialize text render"),
+        "reconstructed WBXML and canonical text should produce identical render lists"
+    );
 }

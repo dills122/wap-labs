@@ -75,8 +75,9 @@ When `FetchDeckResponse.ok === false`:
 
 ## Next implementation slice
 
-1. Consume the stable schema-v2 WDP delivery fixture in binary-WBXML-to-engine
-   parity evidence for the broader `WML-203` gate.
+1. Preserve the schema-v2 WDP delivery -> fetch/WBXML decode -> native engine
+   parity evidence and its paired `WML-203` WASM story while broader DTD and
+   document-family gates remain open.
 2. Keep the completed selected-WDP replay boundary for `TRN-706` distinct from
    the work item's conditional WTP family gap.
 3. Keep WTP inactive unless connection-oriented WSP is explicitly claimed;

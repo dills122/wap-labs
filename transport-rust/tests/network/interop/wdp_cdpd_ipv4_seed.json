@@ -196,6 +196,67 @@
       ]
     },
     {
+      "name": "selected_cdpd_wbxml_unitdata_round_trip",
+      "capture": {
+        "captureId": "wdp-selected-wml203-wbxml-001",
+        "sourceFamily": "wap-1.2.1-selected-wdp",
+        "captureKind": "seed-trace",
+        "provenanceNote": "Opaque WDP SDU carrying the WML-203 canonical binary-basic-deck WBXML bytes; media type is assigned only by the downstream fetch boundary.",
+        "legalReuse": "synthetic-derivative"
+      },
+      "wdpSteps": [
+        {
+          "kind": "roundTrip",
+          "datagram": {
+            "srcAddr": "192.0.2.10",
+            "dstAddr": "192.0.2.7",
+            "srcPort": 49152,
+            "dstPort": 9200,
+            "payload": {
+              "kind": "bytes",
+              "bytes": [3, 10, 106, 0, 127, 231, 85, 3, 109, 97, 105, 110, 0, 1, 96, 3, 72, 101, 108, 108, 111, 0, 1, 1, 1]
+            }
+          },
+          "send_policy": {
+            "identification": 515,
+            "timeToLive": 64,
+            "dontFragment": false,
+            "pathMtu": null,
+            "destinationAcceptsLargeDatagrams": false,
+            "udpChecksum": "generate"
+          },
+          "expected_packet": null,
+          "expected_packet_len": 53
+        }
+      ],
+      "expectedEvents": [
+        {
+          "kind": "wdpAccepted",
+          "packet_len": 53,
+          "datagram": {
+            "srcAddr": "192.0.2.10",
+            "dstAddr": "192.0.2.7",
+            "srcPort": 49152,
+            "dstPort": 9200,
+            "payload": {
+              "kind": "bytes",
+              "bytes": [3, 10, 106, 0, 127, 231, 85, 3, 109, 97, 105, 110, 0, 1, 96, 3, 72, 101, 108, 108, 111, 0, 1, 1, 1]
+            }
+          }
+        }
+      ],
+      "expectedTransactionOutcomes": [
+        {
+          "kind": "wdpReplaySummary",
+          "accepted_datagrams": 1,
+          "rejected_packets": 0,
+          "duplicate_fragments": 0,
+          "completed_reassemblies": 0,
+          "expired_assemblies": 0
+        }
+      ]
+    },
+    {
       "name": "malformed_ipv4_header_checksum_is_rejected",
       "capture": {
         "captureId": "wdp-selected-malformed-ipv4-001",
