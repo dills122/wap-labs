@@ -504,7 +504,8 @@ export const EXAMPLES: HostExample[] = [
     "testingAc": [
       "Load the example and confirm the User, PIN, and Country controls render without a parser error.",
       "Focus the User field, edit the value, press Enter, and confirm the committed text is rendered.",
-      "Focus the PIN field and confirm its value remains visually masked.",
+      "Focus the PIN field, enter alphabetic text, and confirm the mask rejects the commit without replacing the prior value.",
+      "Correct the PIN to one through four digits, commit it, and confirm its rendered value remains visually masked.",
       "Focus Country, move to France, press Enter, and confirm the committed option is rendered."
     ],
     "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      User:\n      <input\n        name=\"UserName\"\n        title=\"User name\"\n        type=\"text\"\n        value=\"AHMED\"\n        size=\"12\"\n        maxlength=\"24\"\n        tabindex=\"1\"\n        accesskey=\"1\"\n      />\n    </p>\n    <p>\n      PIN:\n      <input\n        name=\"Pin\"\n        title=\"Numeric PIN\"\n        type=\"password\"\n        value=\"1234\"\n        format=\"4N\"\n        emptyok=\"false\"\n        size=\"4\"\n        maxlength=\"4\"\n        tabindex=\"2\"\n        accesskey=\"2\"\n      />\n    </p>\n    <p>\n      Country:\n      <select\n        name=\"Country\"\n        title=\"Country\"\n        multiple=\"false\"\n        iname=\"CountryIndex\"\n        ivalue=\"1\"\n        tabindex=\"3\"\n      >\n        <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n        <option value=\"France\" title=\"France\">France</option>\n        <option value=\"Germany\" title=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"

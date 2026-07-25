@@ -50,7 +50,7 @@
       "family": "wml",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "2682a302b03fcdad0a283b4227b0d447dfbc0ce10584ca90df075e47047a20d3",
+      "parentLedgerSha256": "173ca35025962f3a18737a02c3b66e4d25ce6faae1d727048b2c98f89d5546ec",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",

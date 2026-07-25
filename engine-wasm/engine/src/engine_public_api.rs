@@ -99,6 +99,7 @@ impl WmlEngine {
         self.clear_trace_entries();
         self.active_timer = None;
         self.push_trace("LOAD_DECK", format!("contentType={content_type}"));
+        self.initialize_inputs_on_active_card()?;
         self.start_or_resume_timer_for_active_card(false)?;
         Ok(())
     }

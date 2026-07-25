@@ -291,7 +291,7 @@ fn submit_uses_card_input_values_when_postfield_vars_are_unset() {
 }
 
 #[test]
-fn submit_preserves_active_input_draft_when_accept_executes() {
+fn wml_fx_variable_commit_before_task_commits_active_input_before_accept() {
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -343,6 +343,105 @@ fn submit_preserves_active_input_draft_when_accept_executes() {
     assert_eq!(
         post_context.payload.as_deref(),
         Some("username=usern1220&pin=1220")
+    );
+    assert_eq!(engine.get_var("pin".to_string()), Some("1220".to_string()));
+    assert_eq!(engine.focused_input_edit_name(), None);
+}
+
+#[test]
+fn invalid_masked_input_blocks_task_without_navigation_side_effects() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="login">
+            <input name="pin" value="1234" format="4N"/>
+            <do type="accept">
+              <go method="post" href="/login">
+                <postfield name="pin" value="$(pin)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/login", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+    engine
+        .begin_focused_input_edit()
+        .expect("begin input edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("12ab".to_string()));
+
+    let accept_action = engine
+        .active_card_internal()
+        .expect("active card")
+        .accept_action
+        .clone()
+        .expect("accept action should exist");
+    let err = engine
+        .execute_card_task_action(&accept_action)
+        .expect_err("invalid draft must block the task");
+
+    assert_eq!(
+        err,
+        "Input 'pin' rejected: value does not conform to format mask"
+    );
+    assert_eq!(engine.get_var("pin".to_string()), Some("1234".to_string()));
+    assert_eq!(engine.focused_input_edit_value(), Some("12ab".to_string()));
+    assert_eq!(engine.external_navigation_intent(), None);
+    assert_eq!(engine.external_navigation_request_policy(), None);
+}
+
+#[test]
+fn wml_fx_variable_commit_before_task_commits_active_select_before_accept() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="profile">
+            <select name="Country">
+              <option value="Jordan">Jordan</option>
+              <option value="France">France</option>
+            </select>
+            <do type="accept">
+              <go method="post" href="/profile">
+                <postfield name="Country" value="$(Country)"/>
+              </go>
+            </do>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(xml, "wap://localhost/profile", "text/vnd.wap.wml", None)
+        .expect("deck should load");
+    engine
+        .begin_focused_select_edit()
+        .expect("begin select edit should succeed");
+    assert!(engine.move_focused_select_edit(1));
+
+    let accept_action = engine
+        .active_card_internal()
+        .expect("active card")
+        .accept_action
+        .clone()
+        .expect("accept action should exist");
+    engine
+        .execute_card_task_action(&accept_action)
+        .expect("valid selection should commit before the task");
+
+    assert_eq!(
+        engine.get_var("Country".to_string()),
+        Some("France".to_string())
+    );
+    assert_eq!(engine.focused_select_edit_name(), None);
+    let policy = engine
+        .external_navigation_request_policy()
+        .expect("post action should emit request policy");
+    assert_eq!(
+        policy
+            .post_context
+            .expect("post action should populate post context")
+            .payload
+            .as_deref(),
+        Some("Country=France")
     );
 }
 

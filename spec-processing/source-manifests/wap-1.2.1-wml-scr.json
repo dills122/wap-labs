@@ -630,11 +630,15 @@
           "R0-03"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Runtime variables and input/select commits exist, but general PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution are incomplete.",
+        "assessmentNote": "Runtime variables exist, and active input/select edits commit before card task execution. General PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_public_api.rs",
             "symbol": "set_var"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
           }
         ],
         "testEvidence": [
@@ -642,6 +646,11 @@
             "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
             "test": "focused_input_edit_commit_updates_render_and_runtime_var",
             "command": "cd engine-wasm/engine && cargo test focused_input_edit_commit_updates_render_and_runtime_var"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "wml_fx_variable_commit_before_task_commits_active_input_before_accept",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_variable_commit_before_task_commits_active_input_before_accept"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -1646,11 +1655,23 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Input now has deterministic DTD-derived required-name, empty-content, allowed-attribute, NMTOKEN, enum, boolean, and numeric syntax validation; text/password input, value commit, and maxlength exist. Format-mask, emptyok, size, tabindex, and full initialization/runtime validation semantics remain incomplete.",
+        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, and literal name/value initialization in document order. Invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values. Size/tabindex behavior, vdata expansion, language-aware non-Basic-Latin mask repertoires, and interleaved select initialization remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
             "symbol": "parse_input_inline_node"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/input_mask.rs",
+            "symbol": "InputMask"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "commit_focused_input_edit_internal"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "initialize_inputs_on_active_card"
           }
         ],
         "testEvidence": [
@@ -1663,6 +1684,36 @@
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_fx_input_structure_rejects_invalid_syntax_deterministically",
             "command": "cd engine-wasm/engine && cargo test wml_fx_input_structure_rejects_invalid_syntax_deterministically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_empty_commit_applies_format_and_emptyok_precedence",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_empty_commit_applies_format_and_emptyok_precedence"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "invalid_input_format_is_ignored_in_favor_of_default_mask",
+            "command": "cd engine-wasm/engine && cargo test invalid_input_format_is_ignored_in_favor_of_default_mask"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_initialization_prefers_existing_valid_name_value",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_initialization_prefers_existing_valid_name_value"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "invalid_masked_input_blocks_task_without_navigation_side_effects",
+            "command": "cd engine-wasm/engine && cargo test invalid_masked_input_blocks_task_without_navigation_side_effects"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2164,11 +2215,15 @@
           "WML-204"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Select now has deterministic DTD-derived child-content, allowed-attribute, NMTOKEN, boolean, and numeric syntax validation; single-choice selection and variable commit exist. Optional optgroup modeling and multiple, iname/ivalue, tabindex, and complete initialization/runtime semantics remain absent.",
+        "assessmentNote": "Select now has deterministic DTD-derived child-content, allowed-attribute, NMTOKEN, boolean, and numeric syntax validation; single-choice selection commits to its name variable before card task execution. Optional optgroup modeling and multiple, iname/ivalue, tabindex, and complete initialization/runtime semantics remain absent.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
             "symbol": "parse_select_inline_node"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
           }
         ],
         "testEvidence": [
@@ -2181,6 +2236,11 @@
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_fx_select_structure_accepts_declared_control_grammar",
             "command": "cd engine-wasm/engine && cargo test wml_fx_select_structure_accepts_declared_control_grammar"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "wml_fx_variable_commit_before_task_commits_active_select_before_accept",
+            "command": "cd engine-wasm/engine && cargo test wml_fx_variable_commit_before_task_commits_active_select_before_accept"
           }
         ],
         "evidenceState": "direct-test-linked"

@@ -7,7 +7,8 @@ goal: Verify the simulator accepts the declared control grammar and renders dete
 testing-ac:
 - Load the example and confirm the User, PIN, and Country controls render without a parser error.
 - Focus the User field, edit the value, press Enter, and confirm the committed text is rendered.
-- Focus the PIN field and confirm its value remains visually masked.
+- Focus the PIN field, enter alphabetic text, and confirm the mask rejects the commit without replacing the prior value.
+- Correct the PIN to one through four digits, commit it, and confirm its rendered value remains visually masked.
 - Focus Country, move to France, press Enter, and confirm the committed option is rendered.
 -->
 <wml>

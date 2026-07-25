@@ -1,3 +1,4 @@
+use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
 
 #[cfg(test)]
@@ -191,7 +192,8 @@ fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
     }
 
     let name = name.to_string();
-    let value = normalize_text(element.attr("value").unwrap_or_default());
+    let default_value = element.attr("value").map(normalize_text);
+    let value = default_value.clone().unwrap_or_default();
     let is_password = element
         .attr("type")
         .map(|value| value == "password")
@@ -207,11 +209,22 @@ fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
                 })
         })
         .transpose()?;
+    let mask = element
+        .attr("format")
+        .and_then(InputMask::parse)
+        .unwrap_or_default();
+    let empty_ok = element
+        .attr("emptyok")
+        .map(|value| value == "true")
+        .unwrap_or_else(|| mask.allows_empty());
     Ok(InlineNode::Input {
         name,
         value,
+        default_value,
         is_password,
         max_length,
+        mask,
+        empty_ok,
     })
 }
 

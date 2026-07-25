@@ -136,7 +136,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-03 WML timer lifecycle runtime follow-up
 
 1. `Requirement IDs`: `WML-R-014`
-2. `Status`: `todo`
+2. `Status`: `in-progress`
 3. `Depends On`: `A5-02`
 4. `Files`:
 - `engine-wasm/engine/src/runtime/events.rs`
@@ -240,6 +240,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Input/form commit flow is deterministic and spec-aligned for baseline text input semantics.
 8. `Notes`:
 - Additive follow-up over Phase C planning scope to close compliance-critical gaps earlier.
+- Basic Latin mask codes, escaped literals, invalid-mask fallback, emptyok precedence, rejection atomicity, and literal name/value initialization are implemented with native/WASM parity. Vdata expansion and language-aware non-Basic-Latin input repertoires remain before this item can close.
 
 ### B5-02 Inline flow layout conformance follow-up
 

@@ -240,3 +240,62 @@ fn wasm_wml_204_control_validation_matches_native_error() {
         "Invalid <input>: attribute 'type' must be 'text' or 'password'"
     );
 }
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_input_mask_rejection_matches_native_state() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r#"<wml><card id="home"><input name="Pin" value="1234" format="4N"/></card></wml>"#,
+        )
+        .expect("deck should load");
+    assert!(engine.set_var_wasm("Pin".to_string(), "1234".to_string()));
+    assert!(engine
+        .begin_focused_input_edit_wasm()
+        .expect("edit should start"));
+    assert!(engine.set_focused_input_edit_draft_wasm("12ab".to_string()));
+
+    let err = engine
+        .commit_focused_input_edit_wasm()
+        .expect_err("invalid masked value should be rejected")
+        .as_string()
+        .expect("error should be a string");
+    assert_eq!(
+        err,
+        "Input 'Pin' rejected: value does not conform to format mask"
+    );
+    assert_eq!(
+        engine.focused_input_edit_name_wasm(),
+        Some("Pin".to_string())
+    );
+    assert_eq!(
+        engine.focused_input_edit_value_wasm(),
+        Some("12ab".to_string())
+    );
+    assert_eq!(
+        engine.get_var_wasm("Pin".to_string()),
+        Some("1234".to_string())
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_input_initialization_matches_native_state() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r#"<wml><card id="home"><input name="Pin" value="1234" format="4N"/></card></wml>"#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(
+        engine.get_var_wasm("Pin".to_string()),
+        Some("1234".to_string())
+    );
+    assert!(engine
+        .begin_focused_input_edit_wasm()
+        .expect("initialized input should be editable"));
+    assert_eq!(
+        engine.focused_input_edit_value_wasm(),
+        Some("1234".to_string())
+    );
+}

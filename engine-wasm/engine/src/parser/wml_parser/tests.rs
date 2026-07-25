@@ -202,7 +202,8 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
                     name,
                     value,
                     is_password,
-                    max_length
+                    max_length,
+                    ..
                 } if name == "UserName" && value == "AHMED" && !is_password
                     && max_length.is_none()
             ));
@@ -218,7 +219,8 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
                     name,
                     value,
                     is_password,
-                    max_length
+                    max_length,
+                    ..
                 } if name == "Password" && value == "secret" && *is_password
                     && max_length.is_none()
             ));
