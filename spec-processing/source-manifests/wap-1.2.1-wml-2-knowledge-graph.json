@@ -25,22 +25,22 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "9d95cfdfe37c5f89656e5f1fadff88ea8172662dd1b010f8c3e78d3d9ef7dc0f"
+        "sha256": "a9625f0576bc59b2acd6ca30bb8f52b52920204a419708de6f40d3b93e892e73"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 154,
-    "edgeCount": 395,
+    "nodeCount": 208,
+    "edgeCount": 528,
     "nodesByType": {
-      "clause": 51,
-      "fixture": 51,
+      "clause": 74,
+      "fixture": 74,
       "legacy-ticket": 8,
       "owner-layer": 3,
       "profile": 1,
-      "requirement": 8,
-      "scr-row": 6,
+      "requirement": 11,
+      "scr-row": 11,
       "source-document": 13,
       "source-family": 4,
       "sprint": 4,
@@ -49,27 +49,27 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 6,
+      "belongs-to": 11,
       "contains": 5,
       "covers-family": 7,
       "depends-on": 3,
       "effective-document": 12,
-      "maps-to": 108,
+      "maps-to": 135,
       "owned-by": 11,
-      "planned-by": 56,
-      "refines": 55,
+      "planned-by": 82,
+      "refines": 84,
       "relates-to": 9,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 51,
+      "sourced-from": 74,
       "targets-profile": 1,
-      "verified-by": 51
+      "verified-by": 74
     },
     "directClauseCountsByWorkItem": {
       "WML-201": 3,
       "WML-202": 0,
       "WML-203": 48,
-      "WML-204": 0,
+      "WML-204": 23,
       "WML-205": 0
     },
     "directClauseFamiliesByWorkItem": {
@@ -80,7 +80,9 @@
       "WML-203": [
         "wbxml"
       ],
-      "WML-204": [],
+      "WML-204": [
+        "wml"
+      ],
       "WML-205": []
     },
     "unmappedNormativeFamiliesByWorkItem": {
@@ -93,16 +95,12 @@
       "WML-203": [
         "wml"
       ],
-      "WML-204": [
-        "wml"
-      ],
       "WML-205": [
         "wml"
       ]
     },
     "workItemsWithoutDirectClauses": [
       "WML-202",
-      "WML-204",
       "WML-205"
     ]
   },
@@ -1965,6 +1963,827 @@
       }
     },
     {
+      "id": "clause:WML-CL-INPUT-EMPTY-COMMIT",
+      "key": "WML-CL-INPUT-EMPTY-COMMIT",
+      "type": "clause",
+      "title": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-FORMAT-LITERALS",
+      "key": "WML-CL-INPUT-FORMAT-LITERALS",
+      "type": "clause",
+      "title": "Preserve escaped literal characters that form part of an accepted formatted input value.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Preserve escaped literal characters that form part of an accepted formatted input value.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INITIALIZATION",
+      "key": "WML-CL-INPUT-INITIALIZATION",
+      "type": "clause",
+      "title": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "key": "WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "type": "clause",
+      "title": "Unset an existing name value that violates the mask before attempting the declared default.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Unset an existing name value that violates the mask before attempting the declared default.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MASK-COMMIT",
+      "key": "WML-CL-INPUT-MASK-COMMIT",
+      "type": "clause",
+      "title": "At commit, accept only values conforming to the effective input mask.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "At commit, accept only values conforming to the effective input mask.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MAXLENGTH",
+      "key": "WML-CL-INPUT-MAXLENGTH",
+      "type": "clause",
+      "title": "Limit committed text to maxlength when that attribute is present.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Limit committed text to maxlength when that attribute is present.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-PASSWORD-DISPLAY",
+      "key": "WML-CL-INPUT-PASSWORD-DISPLAY",
+      "type": "clause",
+      "title": "Conceal the entered value when input type is password while preserving the actual variable value.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Conceal the entered value when input type is password while preserving the actual variable value.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-REJECTION-ATOMICITY",
+      "key": "WML-CL-INPUT-REJECTION-ATOMICITY",
+      "type": "clause",
+      "title": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE",
+      "key": "WML-CL-INPUT-STRUCTURE",
+      "type": "clause",
+      "title": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "key": "WML-CL-OPTION-ONPICK-MULTI",
+      "type": "clause",
+      "title": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-41",
+          "WML-C-09"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.2",
+          "heading": "11.6.2.2 The Option Element",
+          "normalizedTextSha256": "3653abfdab40f1491bcb57969e2e9496ebb4fd47e7d6c70479ae9aab91f30318"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-004"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "key": "WML-CL-OPTION-ONPICK-SINGLE",
+      "type": "clause",
+      "title": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-41",
+          "WML-C-09"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.2",
+          "heading": "11.6.2.2 The Option Element",
+          "normalizedTextSha256": "3653abfdab40f1491bcb57969e2e9496ebb4fd47e7d6c70479ae9aab91f30318"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-004"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "key": "WML-CL-OPTION-VALUE-EVALUATION",
+      "type": "clause",
+      "title": "Evaluate option value variable references before assigning the containing select name variable.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-41",
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.2",
+          "heading": "11.6.2.2 The Option Element",
+          "normalizedTextSha256": "3653abfdab40f1491bcb57969e2e9496ebb4fd47e7d6c70479ae9aab91f30318"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Evaluate option value variable references before assigning the containing select name variable.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "key": "WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "type": "clause",
+      "title": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INDEX-VALIDATION",
+      "key": "WML-CL-SELECT-INDEX-VALIDATION",
+      "type": "clause",
+      "title": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER",
+      "key": "WML-CL-SELECT-INIT-ORDER",
+      "type": "clause",
+      "title": "Initialize input and select controls in document order when entering the card.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43",
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Initialize input and select controls in document order when entering the card.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-MULTI-SERIALIZATION",
+      "key": "WML-CL-SELECT-MULTI-SERIALIZATION",
+      "type": "clause",
+      "title": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "key": "WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "type": "clause",
+      "title": "Do not create display side effects from select-variable updates without an explicit refresh task.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Do not create display side effects from select-variable updates without an explicit refresh task.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-PRESELECTION",
+      "key": "WML-CL-SELECT-PRESELECTION",
+      "type": "clause",
+      "title": "Deselect all options and then select every positive validated default index.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Deselect all options and then select every positive validated default index.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "key": "WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "type": "clause",
+      "title": "Allow one selected option by default and multiple selections only when multiple is true.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Allow one selected option by default and multiple selections only when multiple is true.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-STRUCTURE",
+      "key": "WML-CL-SELECT-STRUCTURE",
+      "type": "clause",
+      "title": "Require one or more option or optgroup children in each select element.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Require one or more option or optgroup children in each select element.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-USER-UPDATE",
+      "key": "WML-CL-SELECT-USER-UPDATE",
+      "type": "clause",
+      "title": "Update name and iname after user selection changes and again before every task invocation.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Update name and iname after user selection changes and again before every task invocation.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "key": "WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "type": "clause",
+      "title": "Initialize name from selected option values and iname from the validated selected indices.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.2.1",
+          "heading": "11.6.2.1 The Select Element",
+          "normalizedTextSha256": "61089e6a105a3e740d7b1a3c25f204d8724e8f634c5bdae9d6ef056b87c97040"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Initialize name from selected option values and iname from the validated selected indices.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "key": "WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "type": "clause",
+      "title": "Commit input and selection variables before invoking any task.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12",
+          "WML-C-33",
+          "WML-C-43"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.4",
+          "heading": "10.3.4 Setting Variables",
+          "normalizedTextSha256": "06c5e4be7633a32ca7e1c524c832663d5940f60f82bc3e371926ec76f535350d"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Commit input and selection variables before invoking any task.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "R0-04",
+          "WML-204"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WAE-FX-WML-LANGUAGE-DELEGATE",
       "key": "WAE-FX-WML-LANGUAGE-DELEGATE",
       "type": "fixture",
@@ -2577,6 +3396,282 @@
       }
     },
     {
+      "id": "fixture:WML-FX-INPUT-EMPTY-COMMIT",
+      "key": "WML-FX-INPUT-EMPTY-COMMIT",
+      "type": "fixture",
+      "title": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Accept an empty committed input only when the effective mask and emptyok rules allow it.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-FORMAT-LITERALS",
+      "key": "WML-FX-INPUT-FORMAT-LITERALS",
+      "type": "fixture",
+      "title": "Preserve escaped literal characters that form part of an accepted formatted input value.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Preserve escaped literal characters that form part of an accepted formatted input value.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-INITIALIZATION",
+      "key": "WML-FX-INPUT-INITIALIZATION",
+      "type": "fixture",
+      "title": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Initialize each input from a valid existing name variable or a valid default value, then preload the control.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-INVALID-INITIAL-VALUE",
+      "key": "WML-FX-INPUT-INVALID-INITIAL-VALUE",
+      "type": "fixture",
+      "title": "Unset an existing name value that violates the mask before attempting the declared default.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Unset an existing name value that violates the mask before attempting the declared default.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-MASK-COMMIT",
+      "key": "WML-FX-INPUT-MASK-COMMIT",
+      "type": "fixture",
+      "title": "At commit, accept only values conforming to the effective input mask.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "At commit, accept only values conforming to the effective input mask.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-MAXLENGTH",
+      "key": "WML-FX-INPUT-MAXLENGTH",
+      "type": "fixture",
+      "title": "Limit committed text to maxlength when that attribute is present.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Limit committed text to maxlength when that attribute is present.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-PASSWORD-DISPLAY",
+      "key": "WML-FX-INPUT-PASSWORD-DISPLAY",
+      "type": "fixture",
+      "title": "Conceal the entered value when input type is password while preserving the actual variable value.",
+      "properties": {
+        "kind": "rendering",
+        "status": "planned",
+        "assertion": "Conceal the entered value when input type is password while preserving the actual variable value.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-REJECTION-ATOMICITY",
+      "key": "WML-FX-INPUT-REJECTION-ATOMICITY",
+      "type": "fixture",
+      "title": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-INPUT-STRUCTURE",
+      "key": "WML-FX-INPUT-STRUCTURE",
+      "type": "fixture",
+      "title": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
+      "properties": {
+        "kind": "parser",
+        "status": "planned",
+        "assertion": "Require an input variable name and constrain input attributes to the declared text-entry grammar.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-OPTION-ONPICK-MULTI",
+      "key": "WML-FX-OPTION-ONPICK-MULTI",
+      "type": "fixture",
+      "title": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-OPTION-ONPICK-SINGLE",
+      "key": "WML-FX-OPTION-ONPICK-SINGLE",
+      "type": "fixture",
+      "title": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "For single selection, dispatch onpick for the newly selected option but not for implicit deselection.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-OPTION-VALUE-EVALUATION",
+      "key": "WML-FX-OPTION-VALUE-EVALUATION",
+      "type": "fixture",
+      "title": "Evaluate option value variable references before assigning the containing select name variable.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Evaluate option value variable references before assigning the containing select name variable.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-DEFAULT-PRECEDENCE",
+      "key": "WML-FX-SELECT-DEFAULT-PRECEDENCE",
+      "type": "fixture",
+      "title": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-INDEX-VALIDATION",
+      "key": "WML-FX-SELECT-INDEX-VALIDATION",
+      "type": "fixture",
+      "title": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Validate selection indices by removing non-integers, out-of-range entries, and duplicates.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-INIT-ORDER",
+      "key": "WML-FX-SELECT-INIT-ORDER",
+      "type": "fixture",
+      "title": "Initialize input and select controls in document order when entering the card.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Initialize input and select controls in document order when entering the card.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-MULTI-SERIALIZATION",
+      "key": "WML-FX-SELECT-MULTI-SERIALIZATION",
+      "type": "fixture",
+      "title": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-NO-IMPLICIT-REFRESH",
+      "key": "WML-FX-SELECT-NO-IMPLICIT-REFRESH",
+      "type": "fixture",
+      "title": "Do not create display side effects from select-variable updates without an explicit refresh task.",
+      "properties": {
+        "kind": "rendering",
+        "status": "planned",
+        "assertion": "Do not create display side effects from select-variable updates without an explicit refresh task.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-PRESELECTION",
+      "key": "WML-FX-SELECT-PRESELECTION",
+      "type": "fixture",
+      "title": "Deselect all options and then select every positive validated default index.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Deselect all options and then select every positive validated default index.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-SINGLE-MULTI-MODE",
+      "key": "WML-FX-SELECT-SINGLE-MULTI-MODE",
+      "type": "fixture",
+      "title": "Allow one selected option by default and multiple selections only when multiple is true.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Allow one selected option by default and multiple selections only when multiple is true.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-STRUCTURE",
+      "key": "WML-FX-SELECT-STRUCTURE",
+      "type": "fixture",
+      "title": "Require one or more option or optgroup children in each select element.",
+      "properties": {
+        "kind": "parser",
+        "status": "planned",
+        "assertion": "Require one or more option or optgroup children in each select element.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-USER-UPDATE",
+      "key": "WML-FX-SELECT-USER-UPDATE",
+      "type": "fixture",
+      "title": "Update name and iname after user selection changes and again before every task invocation.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Update name and iname after user selection changes and again before every task invocation.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SELECT-VARIABLE-INITIALIZATION",
+      "key": "WML-FX-SELECT-VARIABLE-INITIALIZATION",
+      "type": "fixture",
+      "title": "Initialize name from selected option values and iname from the validated selected indices.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Initialize name from selected option values and iname from the validated selected indices.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
+      "key": "WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
+      "type": "fixture",
+      "title": "Commit input and selection variables before invoking any task.",
+      "properties": {
+        "kind": "runtime",
+        "status": "planned",
+        "assertion": "Commit input and selection variables before invoking any task.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "legacy-ticket:B5-01",
       "key": "B5-01",
       "type": "legacy-ticket",
@@ -2717,6 +3812,33 @@
       "key": "RQ-RMK-001",
       "type": "requirement",
       "title": "RQ-RMK-001",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-003",
+      "key": "RQ-RMK-003",
+      "type": "requirement",
+      "title": "RQ-RMK-003",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-004",
+      "key": "RQ-RMK-004",
+      "type": "requirement",
+      "title": "RQ-RMK-004",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-005",
+      "key": "RQ-RMK-005",
+      "type": "requirement",
+      "title": "RQ-RMK-005",
       "properties": {
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2936,6 +4058,131 @@
           "WML-203",
           "R0-08",
           "T0-07"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-09",
+      "key": "WML-C-09",
+      "type": "scr-row",
+      "title": "Intrinsic Events",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "9.10",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.2",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-12",
+      "key": "WML-C-12",
+      "type": "scr-row",
+      "title": "Variables",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "10.3",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.3",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-03"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-33",
+      "key": "WML-C-33",
+      "type": "scr-row",
+      "title": "input",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "11.6.3",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-41",
+      "key": "WML-C-41",
+      "type": "scr-row",
+      "title": "option",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "11.6.2.2",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-43",
+      "key": "WML-C-43",
+      "type": "scr-row",
+      "title": "select",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "11.6.2.1",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-204"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6288,6 +7535,1131 @@
       ]
     },
     {
+      "id": "clause:WML-CL-INPUT-EMPTY-COMMIT|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-EMPTY-COMMIT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-EMPTY-COMMIT|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-EMPTY-COMMIT",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-EMPTY-COMMIT|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-EMPTY-COMMIT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-EMPTY-COMMIT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-EMPTY-COMMIT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-EMPTY-COMMIT|verified-by|fixture:WML-FX-INPUT-EMPTY-COMMIT",
+      "from": "clause:WML-CL-INPUT-EMPTY-COMMIT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-EMPTY-COMMIT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-FORMAT-LITERALS|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-FORMAT-LITERALS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-FORMAT-LITERALS|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-FORMAT-LITERALS",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-FORMAT-LITERALS|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-FORMAT-LITERALS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-FORMAT-LITERALS|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-FORMAT-LITERALS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-FORMAT-LITERALS|verified-by|fixture:WML-FX-INPUT-FORMAT-LITERALS",
+      "from": "clause:WML-CL-INPUT-FORMAT-LITERALS",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-FORMAT-LITERALS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INITIALIZATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-INITIALIZATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INITIALIZATION|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-INITIALIZATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INITIALIZATION|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-INITIALIZATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INITIALIZATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-INITIALIZATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INITIALIZATION|verified-by|fixture:WML-FX-INPUT-INITIALIZATION",
+      "from": "clause:WML-CL-INPUT-INITIALIZATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-INITIALIZATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE|verified-by|fixture:WML-FX-INPUT-INVALID-INITIAL-VALUE",
+      "from": "clause:WML-CL-INPUT-INVALID-INITIAL-VALUE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-INVALID-INITIAL-VALUE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MASK-COMMIT|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-MASK-COMMIT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MASK-COMMIT|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-MASK-COMMIT",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MASK-COMMIT|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-MASK-COMMIT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MASK-COMMIT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-MASK-COMMIT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MASK-COMMIT|verified-by|fixture:WML-FX-INPUT-MASK-COMMIT",
+      "from": "clause:WML-CL-INPUT-MASK-COMMIT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-MASK-COMMIT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MAXLENGTH|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-MAXLENGTH",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MAXLENGTH|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-MAXLENGTH",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MAXLENGTH|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-MAXLENGTH",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MAXLENGTH|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-MAXLENGTH",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-MAXLENGTH|verified-by|fixture:WML-FX-INPUT-MAXLENGTH",
+      "from": "clause:WML-CL-INPUT-MAXLENGTH",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-MAXLENGTH",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-PASSWORD-DISPLAY|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-PASSWORD-DISPLAY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-PASSWORD-DISPLAY|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-PASSWORD-DISPLAY",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-PASSWORD-DISPLAY|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-PASSWORD-DISPLAY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-PASSWORD-DISPLAY|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-PASSWORD-DISPLAY",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-PASSWORD-DISPLAY|verified-by|fixture:WML-FX-INPUT-PASSWORD-DISPLAY",
+      "from": "clause:WML-CL-INPUT-PASSWORD-DISPLAY",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-PASSWORD-DISPLAY",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-REJECTION-ATOMICITY|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-REJECTION-ATOMICITY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-REJECTION-ATOMICITY|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-REJECTION-ATOMICITY",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-REJECTION-ATOMICITY|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-REJECTION-ATOMICITY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-REJECTION-ATOMICITY|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-REJECTION-ATOMICITY",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-REJECTION-ATOMICITY|verified-by|fixture:WML-FX-INPUT-REJECTION-ATOMICITY",
+      "from": "clause:WML-CL-INPUT-REJECTION-ATOMICITY",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-REJECTION-ATOMICITY",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-INPUT-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE|verified-by|fixture:WML-FX-INPUT-STRUCTURE",
+      "from": "clause:WML-CL-INPUT-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|maps-to|requirement:RQ-RMK-004",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-004",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|refines|scr-row:WML-C-09",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "refines",
+      "to": "scr-row:WML-C-09",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|refines|scr-row:WML-C-41",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "refines",
+      "to": "scr-row:WML-C-41",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-MULTI|verified-by|fixture:WML-FX-OPTION-ONPICK-MULTI",
+      "from": "clause:WML-CL-OPTION-ONPICK-MULTI",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-OPTION-ONPICK-MULTI",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|maps-to|requirement:RQ-RMK-004",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-004",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|refines|scr-row:WML-C-09",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-09",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|refines|scr-row:WML-C-41",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-41",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-ONPICK-SINGLE|verified-by|fixture:WML-FX-OPTION-ONPICK-SINGLE",
+      "from": "clause:WML-CL-OPTION-ONPICK-SINGLE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-OPTION-ONPICK-SINGLE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION|refines|scr-row:WML-C-41",
+      "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-41",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-OPTION-VALUE-EVALUATION|verified-by|fixture:WML-FX-OPTION-VALUE-EVALUATION",
+      "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-OPTION-VALUE-EVALUATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE|verified-by|fixture:WML-FX-SELECT-DEFAULT-PRECEDENCE",
+      "from": "clause:WML-CL-SELECT-DEFAULT-PRECEDENCE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-DEFAULT-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INDEX-VALIDATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-INDEX-VALIDATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INDEX-VALIDATION|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-INDEX-VALIDATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INDEX-VALIDATION|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-INDEX-VALIDATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INDEX-VALIDATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-INDEX-VALIDATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INDEX-VALIDATION|verified-by|fixture:WML-FX-SELECT-INDEX-VALIDATION",
+      "from": "clause:WML-CL-SELECT-INDEX-VALIDATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-INDEX-VALIDATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-INIT-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-INIT-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-SELECT-INIT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-INIT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-INIT-ORDER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-INIT-ORDER|verified-by|fixture:WML-FX-SELECT-INIT-ORDER",
+      "from": "clause:WML-CL-SELECT-INIT-ORDER",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-INIT-ORDER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-MULTI-SERIALIZATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-MULTI-SERIALIZATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-MULTI-SERIALIZATION|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-MULTI-SERIALIZATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-MULTI-SERIALIZATION|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-MULTI-SERIALIZATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-MULTI-SERIALIZATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-MULTI-SERIALIZATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-MULTI-SERIALIZATION|verified-by|fixture:WML-FX-SELECT-MULTI-SERIALIZATION",
+      "from": "clause:WML-CL-SELECT-MULTI-SERIALIZATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-MULTI-SERIALIZATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH|verified-by|fixture:WML-FX-SELECT-NO-IMPLICIT-REFRESH",
+      "from": "clause:WML-CL-SELECT-NO-IMPLICIT-REFRESH",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-NO-IMPLICIT-REFRESH",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-PRESELECTION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-PRESELECTION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-PRESELECTION|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-PRESELECTION",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-PRESELECTION|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-PRESELECTION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-PRESELECTION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-PRESELECTION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-PRESELECTION|verified-by|fixture:WML-FX-SELECT-PRESELECTION",
+      "from": "clause:WML-CL-SELECT-PRESELECTION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-PRESELECTION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE|verified-by|fixture:WML-FX-SELECT-SINGLE-MULTI-MODE",
+      "from": "clause:WML-CL-SELECT-SINGLE-MULTI-MODE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-SINGLE-MULTI-MODE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-STRUCTURE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-STRUCTURE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-STRUCTURE|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-STRUCTURE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-STRUCTURE|verified-by|fixture:WML-FX-SELECT-STRUCTURE",
+      "from": "clause:WML-CL-SELECT-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-USER-UPDATE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-USER-UPDATE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-USER-UPDATE|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-USER-UPDATE",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-USER-UPDATE|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-USER-UPDATE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-USER-UPDATE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-USER-UPDATE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-USER-UPDATE|verified-by|fixture:WML-FX-SELECT-USER-UPDATE",
+      "from": "clause:WML-CL-SELECT-USER-UPDATE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-USER-UPDATE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION|verified-by|fixture:WML-FX-SELECT-VARIABLE-INITIALIZATION",
+      "from": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SELECT-VARIABLE-INITIALIZATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|planned-by|work-item:WML-204",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|refines|scr-row:WML-C-43",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "refines",
+      "to": "scr-row:WML-C-43",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|verified-by|fixture:WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "profile:CCR-CLASSC-C-001|requires-family|source-family:wae",
       "from": "profile:CCR-CLASSC-C-001",
       "relation": "requires-family",
@@ -6418,6 +8790,78 @@
       "from": "scr-row:WBXML-C-011",
       "relation": "planned-by",
       "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-09|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-09",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-12|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-12",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-33|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-33",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-33|planned-by|work-item:WML-204",
+      "from": "scr-row:WML-C-33",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-41|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-41",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-41|planned-by|work-item:WML-204",
+      "from": "scr-row:WML-C-41",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-43|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-43",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-43|planned-by|work-item:WML-204",
+      "from": "scr-row:WML-C-43",
+      "relation": "planned-by",
+      "to": "work-item:WML-204",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

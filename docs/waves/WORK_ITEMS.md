@@ -1840,7 +1840,8 @@ Reference:
 8. `Notes`:
 - `head` (`WML-C-30`) and `access` (`WML-C-21`) landed: the parser now recognizes deck-level `<head>` (not mistaken for a card) and extracts `<access domain= path=>` onto the deck model, rejecting a deck with more than one `<access>` element per section `11.3.1`. `access` is `partial`, not `implemented`, in the compliance ledger - parsing/storage is done, but enforcing the access-control policy against a referring URI is a host-boundary concern (`R0-07`). `meta` (`WML-C-34`, optional) is not yet represented.
 - `template` (`WML-C-47`) split out to `R0-12`: it is spec-inseparable from card/deck task shadowing (`WML-C-08`, section `9.6`) and requires a real named `do`/`onevent` binding model this codebase doesn't have yet, not a small addition alongside `head`/`access`.
-- Remaining scope: `do`/`onevent`/`select`/`option`/`optgroup`/`input`/`fieldset`/`timer` validity constraints beyond what's already parsed.
+- Mandatory `input`/`select`/`option` syntax validation for `WML-C-33`, `WML-C-41`, and `WML-C-43` now rejects invalid DTD content, undeclared attributes, and invalid NMTOKEN/enum/boolean/number values deterministically. Optional `optgroup` remains accepted but unmodeled; mask/default/selection behavior remains runtime follow-up scope.
+- Remaining scope: `do`/`onevent`, optional `optgroup`, `fieldset`, `timer`, and control runtime constraints beyond the parser validation now landed.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 

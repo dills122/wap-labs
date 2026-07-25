@@ -226,3 +226,17 @@ fn wasm_load_deck_context_rejects_oversized_raw_payload() {
     let err_msg = err.as_string().expect("error should be a string message");
     assert!(err_msg.contains("Raw deck payload exceeds"));
 }
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_control_validation_matches_native_error() {
+    let mut engine = WmlEngine::wasm_new();
+    let invalid = r#"<wml><card id="home"><input name="pin" type="number"/></card></wml>"#;
+
+    let err = engine
+        .load_deck_wasm(invalid)
+        .expect_err("invalid WML control syntax must fail at the wasm boundary");
+    assert_eq!(
+        err.as_string().expect("parser error should be a string"),
+        "Invalid <input>: attribute 'type' must be 'text' or 'password'"
+    );
+}

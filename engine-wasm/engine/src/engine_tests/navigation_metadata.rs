@@ -330,14 +330,14 @@ fn focused_input_edit_draft_respects_input_maxlength() {
 }
 
 #[test]
-fn select_control_renders_default_selected_option() {
+fn select_control_renders_first_option_by_default() {
     let mut engine = WmlEngine::new();
     let xml = r#"
         <wml>
           <card id="home">
             <select name="Country" title="Country">
               <option value="Jordan">Jordan</option>
-              <option value="France" selected="true">France</option>
+              <option value="France">France</option>
               <option value="Germany">Germany</option>
             </select>
           </card>
@@ -348,7 +348,27 @@ fn select_control_renders_default_selected_option() {
     let lines = render_snapshot_lines(&engine);
     assert!(lines
         .iter()
-        .any(|line| line.contains("href=select:Country:text=[Country: France]")));
+        .any(|line| line.contains("href=select:Country:text=[Country: Jordan]")));
+}
+
+#[test]
+fn wml_204_control_validation_simulator_example_loads_and_renders() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(WML_204_CONTROL_VALIDATION_EXAMPLE)
+        .expect("WML-204 simulator example should load");
+
+    assert_eq!(engine.active_card_id().expect("active card"), "controls");
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:UserName:text=[UserName: AHMED]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:Pin:text=[Pin: ****]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=select:Country:text=[Country: Jordan]")));
 }
 
 #[test]

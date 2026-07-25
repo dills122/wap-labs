@@ -488,6 +488,28 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh policy demo (no navigation).</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml204ControlValidation",
+    "label": "WML 1.3 Control Validation",
+    "description": "Source-valid WML input, select, and option controls with mandatory attributes exercised by the strict parser.",
+    "goal": "Verify the simulator accepts the declared control grammar and renders deterministic text, password, and single-select controls.",
+    "workItems": [
+      "R0-04",
+      "WML-204"
+    ],
+    "specItems": [
+      "WML-C-33",
+      "WML-C-41",
+      "WML-C-43"
+    ],
+    "testingAc": [
+      "Load the example and confirm the User, PIN, and Country controls render without a parser error.",
+      "Focus the User field, edit the value, press Enter, and confirm the committed text is rendered.",
+      "Focus the PIN field and confirm its value remains visually masked.",
+      "Focus Country, move to France, press Enter, and confirm the committed option is rendered."
+    ],
+    "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      User:\n      <input\n        name=\"UserName\"\n        title=\"User name\"\n        type=\"text\"\n        value=\"AHMED\"\n        size=\"12\"\n        maxlength=\"24\"\n        tabindex=\"1\"\n        accesskey=\"1\"\n      />\n    </p>\n    <p>\n      PIN:\n      <input\n        name=\"Pin\"\n        title=\"Numeric PIN\"\n        type=\"password\"\n        value=\"1234\"\n        format=\"4N\"\n        emptyok=\"false\"\n        size=\"4\"\n        maxlength=\"4\"\n        tabindex=\"2\"\n        accesskey=\"2\"\n      />\n    </p>\n    <p>\n      Country:\n      <select\n        name=\"Country\"\n        title=\"Country\"\n        multiple=\"false\"\n        iname=\"CountryIndex\"\n        ivalue=\"1\"\n        tabindex=\"3\"\n      >\n        <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n        <option value=\"France\" title=\"France\">France</option>\n        <option value=\"Germany\" title=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wmlbrowserContextFidelity",
     "label": "WMLBrowser Context Fidelity",
     "description": "Exercises getCurrentCard and newContext semantics, including context reset side effects and prev suppression.",
