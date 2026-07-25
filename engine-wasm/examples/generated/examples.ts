@@ -2422,20 +2422,21 @@ export const EXAMPLES: HostExample[] = [
   {
     "key": "wml204ControlValidation",
     "label": "WML 1.3 Control Validation",
-    "description": "Source-valid WML input, select, and option controls with mandatory attributes exercised by the strict parser.",
-    "goal": "Verify the simulator accepts the declared control grammar and renders deterministic text, password, and single-select controls.",
+    "description": "Source-valid WML fieldset, input, select, and option controls with declared attributes exercised by the strict parser.",
+    "goal": "Verify the simulator accepts the declared grouped-control grammar, processes fieldset children, and renders deterministic text, password, and single-select controls.",
     "workItems": [
       "B5-01",
       "R0-04",
       "WML-204"
     ],
     "specItems": [
+      "WML-C-28",
       "WML-C-33",
       "WML-C-41",
       "WML-C-43"
     ],
     "testingAc": [
-      "Load the example and confirm the User, PIN, and Country controls render without a parser error.",
+      "Load the example and confirm the fieldset's User, PIN, and Country controls render without a parser error.",
       "Focus the PIN field, clear it, enter alphabetic text, and confirm the mask rejects the commit while preserving the retry draft.",
       "Correct the PIN to one through four digits, commit it, and confirm its rendered value remains visually masked.",
       "Follow Verify PIN variable and confirm the committed password value initializes the proof field through vdata without being lost.",
@@ -2455,6 +2456,7 @@ export const EXAMPLES: HostExample[] = [
           "WML-204"
         ],
         "specItems": [
+          "WML-C-28",
           "WML-C-33",
           "WML-C-41",
           "WML-C-43"
@@ -2680,24 +2682,25 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      User:\n      <input\n        name=\"UserName\"\n        title=\"User name\"\n        type=\"text\"\n        value=\"AHMED\"\n        size=\"12\"\n        maxlength=\"24\"\n        tabindex=\"1\"\n        accesskey=\"1\"\n      />\n    </p>\n    <p>\n      PIN:\n      <input\n        name=\"Pin\"\n        title=\"Numeric PIN\"\n        type=\"password\"\n        value=\"1234\"\n        format=\"4N\"\n        emptyok=\"false\"\n        size=\"4\"\n        maxlength=\"4\"\n        tabindex=\"2\"\n        accesskey=\"2\"\n      />\n    </p>\n    <p><a href=\"#proof\">Verify PIN variable</a></p>\n    <p>\n      Country:\n      <select\n        name=\"Country\"\n        title=\"Country\"\n        multiple=\"false\"\n        iname=\"CountryIndex\"\n        ivalue=\"1\"\n        tabindex=\"3\"\n      >\n        <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n        <option value=\"France\" title=\"France\">France</option>\n        <option value=\"Germany\" title=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <do type=\"accept\"><noop/></do>\n  </card>\n  <card id=\"proof\" title=\"PIN Variable Proof\">\n    <p>Committed PIN:</p>\n    <p><input name=\"PinProof\" value=\"$(Pin)\" format=\"4N\"/></p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      <fieldset title=\"Account controls\">\n        User:\n        <input\n          name=\"UserName\"\n          title=\"User name\"\n          type=\"text\"\n          value=\"AHMED\"\n          size=\"12\"\n          maxlength=\"24\"\n          tabindex=\"1\"\n          accesskey=\"1\"\n        />\n        <br/>\n        PIN:\n        <input\n          name=\"Pin\"\n          title=\"Numeric PIN\"\n          type=\"password\"\n          value=\"1234\"\n          format=\"4N\"\n          emptyok=\"false\"\n          size=\"4\"\n          maxlength=\"4\"\n          tabindex=\"2\"\n          accesskey=\"2\"\n        />\n        <br/>\n        <a href=\"#proof\">Verify PIN variable</a>\n        <br/>\n        Country:\n        <select\n          name=\"Country\"\n          title=\"Country\"\n          multiple=\"false\"\n          iname=\"CountryIndex\"\n          ivalue=\"1\"\n          tabindex=\"3\"\n        >\n          <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n          <option value=\"France\" title=\"France\">France</option>\n          <option value=\"Germany\" title=\"Germany\">Germany</option>\n        </select>\n      </fieldset>\n    </p>\n    <do type=\"accept\"><noop/></do>\n  </card>\n  <card id=\"proof\" title=\"PIN Variable Proof\">\n    <p>Committed PIN:</p>\n    <p><input name=\"PinProof\" value=\"$(Pin)\" format=\"4N\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml204SelectSemantics",
     "label": "WML 1.3 Select Semantics",
-    "description": "Source-derived single-select initialization and user-commit behavior with name and iname variables.",
-    "goal": "Verify that ivalue preselection initializes both result variables and that a committed user choice updates them deterministically.",
+    "description": "Source-derived nested optgroup traversal, single-select initialization, and user-commit behavior with name and iname variables.",
+    "goal": "Verify that ignored optgroup hierarchy still processes options in document order, ivalue preselection initializes both result variables, and a committed user choice updates them deterministically.",
     "workItems": [
       "R0-04",
       "C5-05",
       "WML-204"
     ],
     "specItems": [
+      "WML-C-40",
       "WML-C-41",
       "WML-C-43"
     ],
     "testingAc": [
-      "Load the example and confirm France is initially selected from ivalue 2.",
+      "Load the example and confirm nested optgroup children are processed and France is initially selected from ivalue 2.",
       "Confirm nextCard is initialized to France and nextCardIndex is initialized to 2.",
       "Begin select editing, move once to Germany, and confirm the draft does not change the committed variable.",
       "Commit Germany and confirm nextCard becomes Germany and nextCardIndex becomes 3."
@@ -2713,6 +2716,7 @@ export const EXAMPLES: HostExample[] = [
           "WML-204"
         ],
         "specItems": [
+          "WML-C-40",
           "WML-C-41",
           "WML-C-43"
         ],
@@ -2775,7 +2779,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"select-semantics\" title=\"Select Semantics\">\n    <p>\n      Destination:\n      <select\n        name=\"nextCard\"\n        iname=\"nextCardIndex\"\n        ivalue=\"2\"\n        title=\"Destination\"\n      >\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <card id=\"select-semantics\" title=\"Select Semantics\">\n    <p>\n      Destination:\n      <select\n        name=\"nextCard\"\n        iname=\"nextCardIndex\"\n        ivalue=\"2\"\n        title=\"Destination\"\n      >\n        <optgroup title=\"Destinations\">\n          <option value=\"Jordan\">Jordan</option>\n          <optgroup title=\"Europe\">\n            <option value=\"France\">France</option>\n            <option value=\"Germany\">Germany</option>\n          </optgroup>\n        </optgroup>\n      </select>\n    </p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml205ErrorRecovery",

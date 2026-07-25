@@ -1,11 +1,11 @@
 <!--
 label: WML 1.3 Select Semantics
 work-items: R0-04, C5-05, WML-204
-spec-items: WML-C-41, WML-C-43
-description: Source-derived single-select initialization and user-commit behavior with name and iname variables.
-goal: Verify that ivalue preselection initializes both result variables and that a committed user choice updates them deterministically.
+spec-items: WML-C-40, WML-C-41, WML-C-43
+description: Source-derived nested optgroup traversal, single-select initialization, and user-commit behavior with name and iname variables.
+goal: Verify that ignored optgroup hierarchy still processes options in document order, ivalue preselection initializes both result variables, and a committed user choice updates them deterministically.
 testing-ac:
-- Load the example and confirm France is initially selected from ivalue 2.
+- Load the example and confirm nested optgroup children are processed and France is initially selected from ivalue 2.
 - Confirm nextCard is initialized to France and nextCardIndex is initialized to 2.
 - Begin select editing, move once to Germany, and confirm the draft does not change the committed variable.
 - Commit Germany and confirm nextCard becomes Germany and nextCardIndex becomes 3.
@@ -20,9 +20,13 @@ testing-ac:
         ivalue="2"
         title="Destination"
       >
-        <option value="Jordan">Jordan</option>
-        <option value="France">France</option>
-        <option value="Germany">Germany</option>
+        <optgroup title="Destinations">
+          <option value="Jordan">Jordan</option>
+          <optgroup title="Europe">
+            <option value="France">France</option>
+            <option value="Germany">Germany</option>
+          </optgroup>
+        </optgroup>
       </select>
     </p>
   </card>

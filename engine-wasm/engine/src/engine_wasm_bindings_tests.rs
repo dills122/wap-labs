@@ -369,6 +369,20 @@ fn wasm_wml_205_load_diagnostics_match_native_taxonomy() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_204_grouped_control_validation_matches_native_error() {
+    let mut engine = WmlEngine::wasm_new();
+    let invalid = r#"<wml><card id="home"><fieldset/></card></wml>"#;
+
+    let err = engine
+        .load_deck_wasm(invalid)
+        .expect_err("empty WML fieldset must fail at the wasm boundary");
+    assert_eq!(
+        err.as_string().expect("parser error should be a string"),
+        "Invalid <fieldset>: element must not be empty"
+    );
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_202_template_shadowing_matches_native_task_activation() {
     let mut engine = WmlEngine::wasm_new();
     let xml = r##"

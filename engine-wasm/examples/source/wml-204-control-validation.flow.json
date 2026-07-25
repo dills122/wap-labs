@@ -8,7 +8,7 @@
       "target": "waves-browser",
       "setup": { "runMode": "local" },
       "workItems": ["B5-01", "R0-04", "WML-204"],
-      "specItems": ["WML-C-33", "WML-C-41", "WML-C-43"],
+      "specItems": ["WML-C-28", "WML-C-33", "WML-C-41", "WML-C-43"],
       "initial": {
         "state": {
           "activeCardId": "controls",
