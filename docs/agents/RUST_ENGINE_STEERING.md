@@ -4,6 +4,16 @@ Purpose: project-specific Rust rules for contributors and coding agents working 
 
 This file is intentionally prescriptive. When there is a conflict between "clever" and "predictable", choose predictable.
 
+## 0. Duplication Discipline (read first)
+
+Follow the canonical duplication policy in `docs/agents/AGENT_STANDARDS.md` ("Duplication
+Policy"). Tier 1 (same file/module) applies to nearly everything in this crate and is always in
+scope, no matter how small the requested change is.
+
+In this crate, watch especially for: tree/node lookups repeated across near-identical accessor
+functions, snapshot/rollback or other paired setup-teardown logic, wire-format encode/decode
+helpers, and thin wrapper functions that differ only in what they delegate to.
+
 ## 1. Scope
 
 Applies to:
@@ -76,6 +86,9 @@ Project rule: if an internal convention conflicts with these references, prefer 
 - Any boundary behavior change must update:
 - `engine-wasm/contracts/wml-engine.ts`
 - related docs under `docs/wml-engine/`
+- Before hand-writing a parser/encoder/decoder for a format this crate (or the Rust ecosystem)
+  already has a supported implementation for, use that instead of a parallel one — see
+  `docs/agents/AGENT_STANDARDS.md` ("Codegen & Supported-Tooling Policy") and `M1-18` for why.
 
 ## 5. API Design Rules
 

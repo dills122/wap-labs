@@ -258,6 +258,26 @@ Completed maintenance tickets are archived in:
 - Error classification anywhere in `transport-rust` is by type/variant, never by message content.
 - `make lint-rust-transport` and `make test-rust-transport` stay green; public error codes and messages are unchanged.
 
+### M1-23 Script error taxonomy label table is hand-mirrored in TypeScript instead of generated (2026-07-24)
+
+1. `Status`: `todo`
+2. `Priority`: `P3`
+3. `Files`:
+- `browser/frontend/src/app/browser-presenter.ts` (`SCRIPT_ERROR_CATEGORY_LABELS`)
+- `engine-wasm/engine/src/engine_script_types.rs` (`ScriptErrorCategoryLiteral` / the category enum it mirrors)
+- `browser/scripts/generate-contract-wrappers.mjs`
+- `engine-wasm/contracts/wml-engine.ts`
+4. `Finding`:
+- `browser-presenter.ts` defines `SCRIPT_ERROR_CATEGORY_LABELS` as a hand-written `Record<string, string>` mapping each script-error category to a human-facing label, with a comment above it admitting it "mirrors the engine's `ScriptErrorCategoryLiteral` taxonomy." Nothing generates this table and nothing drift-checks it against the Rust enum it mirrors — it is exactly the cross-language duplication pattern `M1-11`/`M1-12` closed for wire *types*, but that codegen pipeline was never extended to cover human-facing label/taxonomy *tables*. A new script-error category added to the engine falls back to a generic label in the host UI until someone remembers to hand-edit this unrelated file.
+5. `Recommendation`:
+- Extend `browser/scripts/generate-contract-wrappers.mjs` (or a small sibling generator) to emit the label table from the Rust source of truth — either from doc comments/attributes on the enum variants, or from a small `#[derive]`-driven constant table exported alongside the existing `ts-rs` contract types — and have `browser-presenter.ts` import the generated table instead of hand-authoring it.
+- Cover this under `pnpm --dir browser run contracts:check` so a missing/stale label fails CI the same way a stale wire type does today.
+- This is a small, scoped codegen extension, not a new pipeline; do not build a second, parallel generator.
+6. `Accept`:
+- `SCRIPT_ERROR_CATEGORY_LABELS` (or its replacement) is generated, not hand-authored.
+- Adding a new script-error category on the Rust side and forgetting the TypeScript label fails `contracts:check` instead of silently falling back to a generic label.
+- No behavior change to today's rendered labels.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`
