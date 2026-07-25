@@ -31,6 +31,7 @@
     "version:set": "node scripts/set-release-version.mjs",
     "test:node": "pnpm -r --if-present run test",
     "test:story": "pnpm --dir engine-wasm/host-sample run test:story",
+    "test:story:waves": "pnpm test:story waves",
     "build:node": "pnpm -r --if-present run build",
     "typecheck:node": "pnpm -r --if-present run typecheck"
   },

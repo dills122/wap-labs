@@ -95,8 +95,20 @@ describe('KeyboardIntentRouter', () => {
     expect(deps.setStatus).toHaveBeenCalledTimes(1);
   });
 
-  it('routes a plain Backspace through the focused-control-edit check first', async () => {
+  it('falls through to back navigation when the control-edit check does not handle Backspace', async () => {
     const deps = createDeps();
+    const router = new KeyboardIntentRouter(deps);
+
+    router.handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Backspace' }));
+    await flushAsyncWork();
+
+    expect(deps.applyFocusedControlEditKey).toHaveBeenCalledWith('Backspace');
+    expect(deps.navigateBackWithFallback).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not navigate back when focused input editing handles Backspace', async () => {
+    const deps = createDeps();
+    deps.applyFocusedControlEditKey.mockResolvedValue('handled');
     const router = new KeyboardIntentRouter(deps);
 
     router.handleWindowKeydown(new KeyboardEvent('keydown', { key: 'Backspace' }));

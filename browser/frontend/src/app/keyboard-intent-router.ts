@@ -57,7 +57,7 @@ export class KeyboardIntentRouter {
         this.enqueueAction(async () => {
           await this.deps.runAction('keyboard-control-edit', async () => {
             const handled = await this.deps.applyFocusedControlEditKey(event.key);
-            if (handled) {
+            if (handled !== 'unhandled') {
               this.deps.setStatus(WAVES_COPY.status.keyboard(event.key));
             }
           })();
@@ -101,7 +101,7 @@ export class KeyboardIntentRouter {
         await this.deps.runAction('keyboard-backspace', async () => {
           if (this.shouldRouteKeyToControlEdit(event)) {
             const handled = await this.deps.applyFocusedControlEditKey(event.key);
-            if (handled) {
+            if (handled !== 'unhandled') {
               this.deps.setStatus(WAVES_COPY.status.keyboard(event.key));
               return;
             }
