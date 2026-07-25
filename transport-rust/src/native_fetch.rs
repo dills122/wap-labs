@@ -1,12 +1,18 @@
-use crate::fetch_policy::resolve_fetch_destination_addresses;
+use crate::fetch_policy::{resolve_fetch_destination_addresses, FetchDestinationError};
 use crate::network::wdp::transport_trait::{DatagramTransport, WdpError};
 use crate::network::wdp::{
     UdpDatagramTransport, UdpDatagramTransportConfig, WdpAddress, WdpDatagram,
 };
+use crate::network::wsp::connectionless::{
+    decode_connectionless_reply, encode_connectionless_request, WspConnectionlessEncodeError,
+    WspConnectionlessMethod, WspConnectionlessRequest,
+};
+use crate::network::wsp::header_block::{WspHeaderBlock, WspHeaderField, WspHeaderNameEncoding};
+use crate::network::wsp::header_registry::DEFAULT_HEADER_CODE_PAGE;
 use crate::request_meta::log_transport_event;
 use crate::responses::{
     invalid_request_response, map_success_payload_response, map_terminal_send_error,
-    normalize_content_type,
+    normalize_content_type, FetchAttemptFailure, SuccessPayloadParams,
 };
 use crate::{FetchDeckResponse, FetchDestinationPolicy};
 use std::collections::HashMap;
@@ -38,11 +44,27 @@ pub(crate) struct NativeFetchPlan {
     pub(crate) destination_policy: FetchDestinationPolicy,
 }
 
+/// Media type this transport negotiates when the caller sends no `Accept`.
+const DEFAULT_ACCEPT_MEDIA: &str = "application/vnd.wap.wmlc";
+
+/// Failure while building the connectionless request for a native fetch plan.
 #[derive(Debug)]
-struct NativeReply {
-    status_code: u16,
-    content_type: String,
-    body: Vec<u8>,
+enum NativeRequestEncodeError {
+    UnsupportedMethod(String),
+    InvalidRequestUri(String),
+    Wsp(WspConnectionlessEncodeError),
+}
+
+impl std::fmt::Display for NativeRequestEncodeError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::UnsupportedMethod(method) => {
+                write!(formatter, "unsupported native WSP method: {method}")
+            }
+            Self::InvalidRequestUri(message) => formatter.write_str(message),
+            Self::Wsp(error) => write!(formatter, "{error}"),
+        }
+    }
 }
 
 pub(crate) fn active_transport_profile() -> TransportProfile {
@@ -134,7 +156,7 @@ pub(crate) fn execute_native_wap_request_with_transport(
     };
 
     let transaction_id = CONNECTIONLESS_INITIAL_TRANSACTION_ID;
-    let encoded_request = match encode_connectionless_request(
+    let encoded_request = match encode_native_wap_request(
         transaction_id,
         &plan.method,
         &parsed,
@@ -156,9 +178,7 @@ pub(crate) fn execute_native_wap_request_with_transport(
         }
     };
 
-    let mut last_error = "Retries exhausted".to_string();
-    let mut last_is_timeout = false;
-    let mut last_elapsed_ms = 0.0_f64;
+    let mut failure = FetchAttemptFailure::default();
 
     for attempt in 1..=plan.attempts {
         let send_start = Instant::now();
@@ -183,64 +203,63 @@ pub(crate) fn execute_native_wap_request_with_transport(
         );
 
         if let Err(error) = transport.send(&outbound) {
-            last_error = error.to_string();
-            last_is_timeout = matches!(error, WdpError::Timeout);
-            last_elapsed_ms = send_start.elapsed().as_secs_f64() * 1000.0;
+            failure.record(
+                error.to_string(),
+                matches!(error, WdpError::Timeout),
+                send_start.elapsed().as_secs_f64() * 1000.0,
+            );
             continue;
         }
 
         match transport.receive() {
             Ok(reply_datagram) => {
                 let elapsed_ms = send_start.elapsed().as_secs_f64() * 1000.0;
-                let reply = match decode_connectionless_wsp_reply(
-                    transaction_id,
-                    &reply_datagram.payload,
-                ) {
-                    Ok(reply) => reply,
-                    Err(error) => {
-                        return map_terminal_send_error(
-                            plan.request_url,
-                            format!(
-                                "failed to decode native WSP reply: {error} (payload={})",
-                                hex_bytes(&reply_datagram.payload)
-                            ),
-                            plan.attempts,
-                            attempt,
-                            false,
-                            elapsed_ms,
-                            plan.request_id.as_deref(),
-                        );
-                    }
-                };
+                let reply =
+                    match decode_connectionless_reply(transaction_id, &reply_datagram.payload) {
+                        Ok(reply) => reply,
+                        Err(error) => {
+                            return map_terminal_send_error(
+                                plan.request_url,
+                                format!(
+                                    "failed to decode native WSP reply: {error} (payload={})",
+                                    hex_bytes(&reply_datagram.payload)
+                                ),
+                                plan.attempts,
+                                attempt,
+                                false,
+                                elapsed_ms,
+                                plan.request_id.as_deref(),
+                            );
+                        }
+                    };
 
-                return map_success_payload_response(
-                    reply.status_code,
-                    true,
-                    &plan.request_url,
-                    &plan.request_url,
-                    plan.request_url.clone(),
-                    normalize_content_type(Some(reply.content_type.as_str())),
-                    &reply.body,
+                return map_success_payload_response(SuccessPayloadParams {
+                    status: reply.status_code,
+                    is_wap_scheme: true,
+                    request_url: &plan.request_url,
+                    upstream_url: &plan.request_url,
+                    final_url: plan.request_url.clone(),
+                    content_type: normalize_content_type(Some(reply.content_type.as_str())),
+                    body: &reply.body,
                     attempt,
                     elapsed_ms,
-                    plan.request_id.as_deref(),
-                );
+                    request_id: plan.request_id.as_deref(),
+                });
             }
             Err(error) => {
-                last_error = error.to_string();
-                last_is_timeout = matches!(error, WdpError::Timeout);
-                last_elapsed_ms = send_start.elapsed().as_secs_f64() * 1000.0;
+                failure.record(
+                    error.to_string(),
+                    matches!(error, WdpError::Timeout),
+                    send_start.elapsed().as_secs_f64() * 1000.0,
+                );
             }
         }
     }
 
-    map_terminal_send_error(
+    failure.into_terminal_response(
         plan.request_url,
-        last_error,
         plan.attempts,
         plan.attempts,
-        last_is_timeout,
-        last_elapsed_ms,
         plan.request_id.as_deref(),
     )
 }
@@ -256,29 +275,32 @@ fn default_bind_address(peer: &SocketAddr) -> String {
 fn resolve_destination_socket_addr(
     parsed: &Url,
     destination_policy: &FetchDestinationPolicy,
-) -> Result<SocketAddr, String> {
-    let host = parsed
-        .host_str()
-        .ok_or_else(|| "wap url must include a host".to_string())?;
+) -> Result<SocketAddr, FetchDestinationError> {
+    let host = parsed.host_str().ok_or_else(|| {
+        FetchDestinationError::Unresolvable("wap url must include a host".to_string())
+    })?;
     let port = parsed
         .port()
         .unwrap_or_else(|| default_service_port(parsed.scheme()));
     resolve_fetch_destination_addresses(host, port, destination_policy)?
         .into_iter()
         .next()
-        .ok_or_else(|| format!("failed to resolve wap host {host}:{port}"))
+        .ok_or_else(|| {
+            FetchDestinationError::Unresolvable(format!("failed to resolve wap host {host}:{port}"))
+        })
 }
 
 fn map_destination_resolution_error(
     request_url: String,
-    error: String,
+    error: FetchDestinationError,
     attempts: u8,
     request_id: Option<&str>,
 ) -> FetchDeckResponse {
-    if error.starts_with("Destination blocked by fetch policy") {
-        invalid_request_response(request_url, error, request_id)
+    let message = error.to_string();
+    if error.is_policy_blocked() {
+        invalid_request_response(request_url, message, request_id)
     } else {
-        map_terminal_send_error(request_url, error, attempts, 1, false, 0.0, request_id)
+        map_terminal_send_error(request_url, message, attempts, 1, false, 0.0, request_id)
     }
 }
 
@@ -332,239 +354,66 @@ fn default_http_port_for_host(host: &str) -> u16 {
     }
 }
 
-// NOTE(wsp-codec-duplication): The functions from here through
-// `decode_well_known_media` below are a hand-rolled, minimal WSP
-// uintvar/content-type/header/PDU codec used only by this native
-// connectionless fetch path. A separate, spec-conformant, fixture-tested
-// WSP codec already exists at `crate::network::wsp` (`pdu.rs`,
-// `header_block.rs`, `header_registry.rs`, `encoding_version.rs`,
-// `session.rs`, `decoder.rs`, `encoder.rs`) but is not called from here —
-// it is currently exercised only by its own `#[cfg(test)]` modules. This is
-// tracked drift, not an intentional permanent split: see
-// `docs/waves/MAINTENANCE_WORK_ITEMS.md` (entry dated 2026-07-23,
-// "network::wsp codec is dead code relative to the live native fetch
-// path") for the history and the recommendation to wire `network::wsp`
-// into this module in a future, dedicated change.
-fn encode_connectionless_request(
+/// Builds the connectionless WSP request wire bytes for a native fetch plan.
+///
+/// All wire-format concerns live in `crate::network::wsp::connectionless`; this
+/// function only maps fetch-level inputs (HTTP-style method, parsed URL, the
+/// outbound header map) onto that codec's inputs.
+fn encode_native_wap_request(
     transaction_id: u8,
     method: &str,
     parsed: &Url,
     headers: &HashMap<String, String>,
     post_content_type: Option<&str>,
     post_body: Option<&[u8]>,
-) -> Result<Vec<u8>, String> {
-    let uri = build_kannel_request_uri(parsed)?;
-    let uri_bytes = uri.as_bytes();
-    let encoded_headers = encode_connectionless_request_headers(headers);
-    let encoded_content_type = encode_connectionless_content_type(post_content_type)?;
-    let post_body = post_body.unwrap_or(&[]);
-    let mut wire = Vec::with_capacity(
-        uri_bytes.len() + encoded_content_type.len() + encoded_headers.len() + post_body.len() + 12,
-    );
-    wire.push(transaction_id);
-    wire.push(match method {
-        "GET" => 0x40,
-        "POST" => 0x60,
-        other => return Err(format!("unsupported native WSP method: {other}")),
-    });
-    if method == "GET" {
-        wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
-        wire.extend_from_slice(uri_bytes);
-        wire.extend_from_slice(&encoded_headers);
-    } else {
-        let headers_len = encoded_content_type.len() + encoded_headers.len();
-        wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
-        wire.extend_from_slice(&encode_uintvar(headers_len)?);
-        wire.extend_from_slice(uri_bytes);
-        wire.extend_from_slice(&encoded_content_type);
-        wire.extend_from_slice(&encoded_headers);
-        wire.extend_from_slice(post_body);
-    }
-    Ok(wire)
+) -> Result<Vec<u8>, NativeRequestEncodeError> {
+    let method = WspConnectionlessMethod::from_http_method(method)
+        .ok_or_else(|| NativeRequestEncodeError::UnsupportedMethod(method.to_string()))?;
+    let uri =
+        build_kannel_request_uri(parsed).map_err(NativeRequestEncodeError::InvalidRequestUri)?;
+    let header_block = connectionless_request_headers(headers);
+
+    encode_connectionless_request(&WspConnectionlessRequest {
+        transaction_id,
+        method,
+        uri: &uri,
+        headers: &header_block,
+        content_type: post_content_type,
+        body: post_body.unwrap_or(&[]),
+    })
+    .map_err(NativeRequestEncodeError::Wsp)
 }
 
-fn encode_connectionless_request_headers(headers: &HashMap<String, String>) -> Vec<u8> {
-    let mut out = Vec::new();
+/// Negotiates the single `Accept` media type this transport advertises.
+///
+/// Only the two WML media types are negotiable; anything else advertises
+/// nothing rather than forwarding an unrepresentable `Accept` value.
+fn negotiated_accept_media(headers: &HashMap<String, String>) -> Option<&'static str> {
     let accept_value = headers
         .get("Accept")
         .map(String::as_str)
-        .unwrap_or("application/vnd.wap.wmlc");
+        .unwrap_or(DEFAULT_ACCEPT_MEDIA);
     if accept_value.contains("application/vnd.wap.wmlc") {
-        out.extend_from_slice(&[0x80, 0x94]);
+        Some("application/vnd.wap.wmlc")
     } else if accept_value.contains("text/vnd.wap.wml") {
-        out.extend_from_slice(&[0x80, 0x88]);
-    }
-    out
-}
-
-fn encode_connectionless_content_type(content_type: Option<&str>) -> Result<Vec<u8>, String> {
-    let Some(content_type) = content_type
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-    else {
-        return Ok(Vec::new());
-    };
-
-    if content_type.as_bytes().contains(&0x00) {
-        return Err("native WSP POST content type must not contain NUL bytes".to_string());
-    }
-    let mut out = Vec::with_capacity(content_type.len() + 1);
-    out.extend_from_slice(content_type.as_bytes());
-    out.push(0x00);
-    Ok(out)
-}
-
-fn decode_connectionless_wsp_reply(
-    expected_transaction_id: u8,
-    payload: &[u8],
-) -> Result<NativeReply, String> {
-    let Some((&transaction_id, body)) = payload.split_first() else {
-        return Err("truncated native WSP reply: missing transaction id".to_string());
-    };
-    if transaction_id != expected_transaction_id {
-        return Err(format!(
-            "unexpected native WSP reply transaction id: expected {expected_transaction_id}, got {transaction_id}"
-        ));
-    }
-
-    let Some((&pdu_type, body)) = body.split_first() else {
-        return Err("truncated native WSP reply: missing pdu type".to_string());
-    };
-    if pdu_type != 0x04 {
-        return Err(format!(
-            "unexpected native WSP reply pdu type: expected 0x04, got 0x{pdu_type:02X}"
-        ));
-    }
-
-    let Some((&status, body)) = body.split_first() else {
-        return Err("truncated native WSP reply: missing status".to_string());
-    };
-    let (headers_len, body) = decode_uintvar(body)?;
-    if body.len() < headers_len {
-        return Err("truncated native WSP reply: headers section incomplete".to_string());
-    }
-    let (header_section, data) = body.split_at(headers_len);
-    let (content_type, content_type_len) = decode_content_type_value(header_section)?;
-    if content_type_len > header_section.len() {
-        return Err("truncated native WSP reply: content type overruns header section".to_string());
-    }
-
-    Ok(NativeReply {
-        status_code: decode_wsp_status_code(status)?,
-        content_type,
-        body: data.to_vec(),
-    })
-}
-
-fn encode_uintvar(value: usize) -> Result<Vec<u8>, String> {
-    if value > 0x0FFF_FFFF {
-        return Err(format!("value too large for uintvar encoding: {value}"));
-    }
-    let mut chunks = [0u8; 5];
-    let mut cursor = chunks.len();
-    let mut remaining = value;
-    loop {
-        cursor -= 1;
-        chunks[cursor] = (remaining & 0x7F) as u8;
-        remaining >>= 7;
-        if remaining == 0 {
-            break;
-        }
-        chunks[cursor] |= 0x80;
-    }
-    let mut out = chunks[cursor..].to_vec();
-    for index in 0..out.len().saturating_sub(1) {
-        out[index] |= 0x80;
-    }
-    Ok(out)
-}
-
-fn decode_uintvar(input: &[u8]) -> Result<(usize, &[u8]), String> {
-    let mut value = 0usize;
-    for (index, byte) in input.iter().copied().enumerate().take(5) {
-        value = (value << 7) | usize::from(byte & 0x7F);
-        if byte & 0x80 == 0 {
-            return Ok((value, &input[index + 1..]));
-        }
-    }
-    Err("truncated uintvar".to_string())
-}
-
-fn decode_content_type_value(input: &[u8]) -> Result<(String, usize), String> {
-    let Some((&first, _)) = input.split_first() else {
-        return Err("truncated native WSP reply: missing content type".to_string());
-    };
-    if first & 0x80 != 0 {
-        let media = decode_well_known_media(first & 0x7F)
-            .ok_or_else(|| format!("unsupported well-known media type: 0x{:02X}", first & 0x7F))?;
-        return Ok((media.to_string(), 1));
-    }
-    if first <= 31 {
-        let length = usize::from(first);
-        if input.len() < 1 + length {
-            return Err(
-                "truncated native WSP reply: content type general form incomplete".to_string(),
-            );
-        }
-        let (media, _consumed) = decode_text_string(&input[1..1 + length])?;
-        return Ok((media, 1 + length));
-    }
-    // General form: `decode_text_string` reports exactly how many bytes of
-    // `input` it consumed (terminating NUL included), which is the only
-    // correct source for the returned length here. Do not reconstruct it
-    // from `media.len() + 1` — when the string is quoted with a leading
-    // 0x7F byte (RFC 2045 quoted-string escape used by WSP token-text),
-    // `decode_text_string` strips that leading byte from `media`, so
-    // `media.len()` undercounts the raw bytes consumed by exactly one.
-    let (media, consumed) = decode_text_string(input)?;
-    Ok((media, consumed))
-}
-
-/// Decodes a NUL-terminated WSP text-string, returning the decoded text and
-/// the number of bytes consumed from `input` (including the leading 0x7F
-/// quote byte, if present, and the terminating NUL). The returned length is
-/// intentionally not derivable from `text.len() + 1` alone: a leading 0x7F
-/// is stripped from the returned text but still counts toward consumed
-/// bytes, so quoted and unquoted strings of the same visible length consume
-/// different amounts of input.
-fn decode_text_string(input: &[u8]) -> Result<(String, usize), String> {
-    let terminator = input
-        .iter()
-        .position(|byte| *byte == 0x00)
-        .ok_or_else(|| "truncated native WSP text string".to_string())?;
-    let content = if input.first().copied() == Some(0x7F) {
-        &input[1..terminator]
+        Some("text/vnd.wap.wml")
     } else {
-        &input[..terminator]
-    };
-    let text = String::from_utf8(content.to_vec())
-        .map_err(|error| format!("invalid utf-8 in native WSP text string: {error}"))?;
-    Ok((text, terminator + 1))
-}
-
-fn decode_wsp_status_code(status: u8) -> Result<u16, String> {
-    match status {
-        0x10 => Ok(100),
-        0x11 => Ok(101),
-        0x20..=0x26 => Ok(200 + u16::from(status - 0x20)),
-        0x30..=0x37 => Ok(300 + u16::from(status - 0x30)),
-        0x40..=0x51 => Ok(400 + u16::from(status - 0x40)),
-        0x60..=0x65 => Ok(500 + u16::from(status - 0x60)),
-        _ => Err(format!(
-            "unsupported native WSP status code: 0x{status:02X}"
-        )),
+        None
     }
 }
 
-fn decode_well_known_media(code: u8) -> Option<&'static str> {
-    match code {
-        0x03 => Some("text/plain"),
-        0x08 => Some("text/vnd.wap.wml"),
-        0x14 => Some("application/vnd.wap.wmlc"),
-        0x28 => Some("text/xml"),
-        0x29 => Some("application/xml"),
-        _ => None,
+fn connectionless_request_headers(headers: &HashMap<String, String>) -> WspHeaderBlock {
+    let mut block = WspHeaderBlock::default();
+    if let Some(media) = negotiated_accept_media(headers) {
+        block.headers.push(WspHeaderField {
+            name: "Accept".to_string(),
+            value: media.to_string(),
+            name_encoding: WspHeaderNameEncoding::Binary {
+                page: DEFAULT_HEADER_CODE_PAGE,
+            },
+        });
     }
+    block
 }
 
 fn hex_bytes(bytes: &[u8]) -> String {
@@ -581,7 +430,9 @@ fn hex_bytes(bytes: &[u8]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::fetch_policy::DestinationHostClass;
     use crate::network::wdp::transport_trait::WdpResult;
+    use crate::network::wsp::connectionless::{decode_uintvar, encode_uintvar};
     use std::sync::{Mutex, OnceLock};
 
     struct FakeDatagramTransport {
@@ -787,7 +638,7 @@ mod tests {
     #[test]
     fn native_connectionless_wire_format_prefixes_transaction_id() {
         let parsed = Url::parse("wap://localhost/").expect("url should parse");
-        let encoded = encode_connectionless_request(
+        let encoded = encode_native_wap_request(
             CONNECTIONLESS_INITIAL_TRANSACTION_ID,
             "GET",
             &parsed,
@@ -836,11 +687,67 @@ mod tests {
     }
 
     #[test]
-    fn encode_connectionless_content_type_rejects_nul_bytes() {
-        let error = encode_connectionless_content_type(Some("text/plain\0oops"))
-            .expect_err("content type with NUL should fail");
+    fn encode_native_wap_request_rejects_content_type_with_nul_bytes() {
+        let parsed = Url::parse("wap://localhost/login").expect("url should parse");
 
-        assert!(error.contains("must not contain NUL bytes"));
+        let error = encode_native_wap_request(
+            CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            "POST",
+            &parsed,
+            &HashMap::new(),
+            Some("text/plain\0oops"),
+            Some(b"a=1"),
+        )
+        .expect_err("content type with NUL should fail");
+
+        assert!(error.to_string().contains("must not contain NUL bytes"));
+    }
+
+    #[test]
+    fn encode_native_wap_request_rejects_unsupported_methods() {
+        let parsed = Url::parse("wap://localhost/").expect("url should parse");
+
+        let error = encode_native_wap_request(
+            CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            "HEAD",
+            &parsed,
+            &HashMap::new(),
+            None,
+            None,
+        )
+        .expect_err("HEAD is not a connectionless method this transport encodes");
+
+        assert_eq!(error.to_string(), "unsupported native WSP method: HEAD");
+    }
+
+    #[test]
+    fn connectionless_request_headers_negotiate_a_single_accept_media_type() {
+        assert_eq!(
+            negotiated_accept_media(&HashMap::new()),
+            Some("application/vnd.wap.wmlc"),
+            "missing Accept must fall back to the compiled WML media type"
+        );
+        assert_eq!(
+            negotiated_accept_media(&HashMap::from([(
+                "Accept".to_string(),
+                "text/vnd.wap.wml".to_string()
+            )])),
+            Some("text/vnd.wap.wml")
+        );
+        assert_eq!(
+            negotiated_accept_media(&HashMap::from([(
+                "Accept".to_string(),
+                "application/json".to_string()
+            )])),
+            None,
+            "unrepresentable Accept values advertise nothing"
+        );
+        assert!(connectionless_request_headers(&HashMap::from([(
+            "Accept".to_string(),
+            "application/json".to_string()
+        )]))
+        .headers
+        .is_empty());
     }
 
     #[test]
@@ -867,16 +774,16 @@ mod tests {
         let error = resolve_destination_socket_addr(&wap, &FetchDestinationPolicy::PublicOnly)
             .expect_err("public-only must reject a resolved loopback peer");
 
-        assert!(error.contains("public-only"));
-        assert!(error.contains("loopback"));
+        assert!(error.is_policy_blocked());
+        assert!(error.to_string().contains("public-only"));
+        assert!(error.to_string().contains("loopback"));
     }
 
     #[test]
     fn native_destination_policy_failure_maps_invalid_request() {
         let response = map_destination_resolution_error(
             "wap://private.test/".to_string(),
-            "Destination blocked by fetch policy (public-only): resolved to private address"
-                .to_string(),
+            FetchDestinationError::blocked_resolved_address(DestinationHostClass::Private),
             1,
             Some("req-native-policy"),
         );
@@ -892,9 +799,25 @@ mod tests {
     }
 
     #[test]
+    fn native_destination_resolution_failure_maps_transport_error() {
+        let response = map_destination_resolution_error(
+            "wap://unknown.invalid/".to_string(),
+            FetchDestinationError::Unresolvable("failed to resolve wap host x:9200".to_string()),
+            2,
+            Some("req-native-dns"),
+        );
+
+        assert_eq!(
+            response.error.as_ref().map(|error| error.code.as_str()),
+            Some("TRANSPORT_UNAVAILABLE"),
+            "non-policy resolution failures must not be classified as INVALID_REQUEST"
+        );
+    }
+
+    #[test]
     fn native_connectionless_post_wire_format_encodes_header_block_and_body() {
         let parsed = Url::parse("wap://localhost/login").expect("url should parse");
-        let encoded = encode_connectionless_request(
+        let encoded = encode_native_wap_request(
             CONNECTIONLESS_INITIAL_TRANSACTION_ID,
             "POST",
             &parsed,
@@ -937,7 +860,7 @@ mod tests {
         ];
 
         for payload in payloads {
-            let encoded = encode_connectionless_request(
+            let encoded = encode_native_wap_request(
                 CONNECTIONLESS_INITIAL_TRANSACTION_ID,
                 "POST",
                 &parsed,
@@ -969,74 +892,49 @@ mod tests {
     }
 
     #[test]
-    fn native_connectionless_reply_rejects_transaction_id_mismatch() {
-        let encoded = build_connectionless_reply_wire(9, 0x20, 0x08, &[]);
+    fn native_connectionless_reply_mismatch_maps_terminal_transport_error() {
+        // Codec-level reply decoding is covered in
+        // `crate::network::wsp::connectionless`; this pins how a decode failure
+        // surfaces through the fetch path.
+        let reply_datagram = WdpDatagram {
+            src_addr: WdpAddress::ipv4([127, 0, 0, 1]),
+            dst_addr: WdpAddress::ipv4([127, 0, 0, 1]),
+            src_port: 9200,
+            dst_port: 49152,
+            payload: build_connectionless_reply_wire(9, 0x20, 0x08, &[]),
+        };
+        let mut transport = FakeDatagramTransport {
+            sent: Vec::new(),
+            next_receive: Ok(reply_datagram),
+        };
 
-        let error =
-            decode_connectionless_wsp_reply(CONNECTIONLESS_INITIAL_TRANSACTION_ID, &encoded)
-                .expect_err("transaction-id mismatch should fail");
+        let response = execute_native_wap_request_with_transport(
+            &mut transport,
+            "127.0.0.1:9200".parse().expect("literal should parse"),
+            NativeFetchPlan {
+                request_url: "wap://127.0.0.1/".to_string(),
+                method: "GET".to_string(),
+                outbound_headers: HashMap::new(),
+                post_body: None,
+                post_content_type: None,
+                timeout_ms: 200,
+                attempts: 1,
+                request_id: Some("req-native-mismatch".to_string()),
+                destination_policy: FetchDestinationPolicy::AllowPrivate,
+            },
+        );
 
-        assert!(error.contains("unexpected native WSP reply transaction id"));
-    }
-
-    #[test]
-    fn decode_content_type_value_general_form_matches_len_plus_one() {
-        // Unquoted general-form text-string: no leading 0x7F is stripped,
-        // so the consumed byte count legitimately equals `media.len() + 1`
-        // (the string bytes plus the terminating NUL). This is the
-        // non-quoted case the fix must leave unchanged.
-        let input = b"text/html\x00";
-
-        let (media, consumed) = decode_content_type_value(input).expect("value should decode");
-
-        assert_eq!(media, "text/html");
-        assert_eq!(consumed, media.len() + 1);
-        assert_eq!(consumed, input.len());
-    }
-
-    #[test]
-    fn decode_content_type_value_quoted_general_form_counts_quote_byte() {
-        // Quoted general-form text-string (leading 0x7F escape byte, per
-        // WSP token-text quoting): `decode_text_string` strips the leading
-        // 0x7F from the returned media string, so `media.len() + 1` alone
-        // undercounts the consumed bytes by exactly one. Regression test
-        // for that off-by-one.
-        let input = b"\x7Ftext/html\x00";
-
-        let (media, consumed) = decode_content_type_value(input).expect("value should decode");
-
-        assert_eq!(media, "text/html");
+        assert!(!response.ok);
         assert_eq!(
-            consumed,
-            input.len(),
-            "quoted content type must count the leading 0x7F byte as consumed"
+            response.error.as_ref().map(|error| error.code.as_str()),
+            Some("TRANSPORT_UNAVAILABLE")
         );
-        assert_ne!(
-            consumed,
-            media.len() + 1,
-            "regression guard: consumed length must not be derived from media.len() + 1 \
-             when the value was quoted"
-        );
-    }
-
-    #[test]
-    fn native_connectionless_reply_decodes_quoted_general_form_content_type() {
-        // Exercises the real downstream caller of `decode_content_type_value`
-        // (`decode_connectionless_wsp_reply`'s `content_type_len >
-        // header_section.len()` sanity check) with a quoted general-form
-        // content type, proving the corrected byte count still passes that
-        // check and yields the right decoded reply.
-        let content_type = b"\x7Ftext/html\x00";
-        let headers_len = encode_uintvar(content_type.len()).expect("headers len should encode");
-        let mut wire = vec![CONNECTIONLESS_INITIAL_TRANSACTION_ID, 0x04, 0x20];
-        wire.extend_from_slice(&headers_len);
-        wire.extend_from_slice(content_type);
-
-        let reply = decode_connectionless_wsp_reply(CONNECTIONLESS_INITIAL_TRANSACTION_ID, &wire)
-            .expect("quoted content type reply should decode");
-
-        assert_eq!(reply.content_type, "text/html");
-        assert_eq!(reply.status_code, 200);
-        assert!(reply.body.is_empty());
+        assert!(response
+            .error
+            .as_ref()
+            .map(|error| error
+                .message
+                .contains("unexpected native WSP reply transaction id"))
+            .unwrap_or(false));
     }
 }

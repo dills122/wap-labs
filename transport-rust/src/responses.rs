@@ -9,66 +9,17 @@ use crate::{
     FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
 };
 
-pub(crate) fn transport_unavailable_response(
-    url: String,
-    message: String,
-    request_id: Option<&str>,
-) -> FetchDeckResponse {
-    FetchDeckResponse {
-        ok: false,
-        status: 0,
-        final_url: url,
-        content_type: "text/plain".to_string(),
-        wml: None,
-        error: Some(FetchErrorInfo {
-            code: "TRANSPORT_UNAVAILABLE".to_string(),
-            message,
-            details: details_with_request_id(request_id, None),
-        }),
-        timing_ms: FetchTiming {
-            encode: 0.0,
-            udp_rtt: 0.0,
-            decode: 0.0,
-        },
-        engine_deck_input: None,
-    }
-}
-
-pub(crate) fn invalid_request_response(
-    url: String,
-    message: String,
-    request_id: Option<&str>,
-) -> FetchDeckResponse {
-    FetchDeckResponse {
-        ok: false,
-        status: 0,
-        final_url: url,
-        content_type: "text/plain".to_string(),
-        wml: None,
-        error: Some(FetchErrorInfo {
-            code: "INVALID_REQUEST".to_string(),
-            message,
-            details: details_with_request_id(request_id, None),
-        }),
-        timing_ms: FetchTiming {
-            encode: 0.0,
-            udp_rtt: 0.0,
-            decode: 0.0,
-        },
-        engine_deck_input: None,
-    }
-}
-
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn payload_too_large_response(
+/// Builds the shared shape of every failed `FetchDeckResponse`.
+///
+/// Every error path differs only in status, final URL, content type, error info
+/// and round-trip timing; `ok`, `wml`, `engine_deck_input` and the encode/decode
+/// timings are invariant across all of them.
+fn error_response(
     status: u16,
     final_url: String,
     content_type: String,
-    limit_bytes: usize,
-    actual_bytes: Option<u64>,
-    attempt: u8,
+    error: FetchErrorInfo,
     elapsed_ms: f64,
-    request_id: Option<&str>,
 ) -> FetchDeckResponse {
     FetchDeckResponse {
         ok: false,
@@ -76,7 +27,80 @@ pub(crate) fn payload_too_large_response(
         final_url,
         content_type,
         wml: None,
-        error: Some(FetchErrorInfo {
+        error: Some(error),
+        timing_ms: FetchTiming {
+            encode: 0.0,
+            udp_rtt: elapsed_ms,
+            decode: 0.0,
+        },
+        engine_deck_input: None,
+    }
+}
+
+pub(crate) fn transport_unavailable_response(
+    url: String,
+    message: String,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
+    error_response(
+        0,
+        url,
+        "text/plain".to_string(),
+        FetchErrorInfo {
+            code: "TRANSPORT_UNAVAILABLE".to_string(),
+            message,
+            details: details_with_request_id(request_id, None),
+        },
+        0.0,
+    )
+}
+
+pub(crate) fn invalid_request_response(
+    url: String,
+    message: String,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
+    error_response(
+        0,
+        url,
+        "text/plain".to_string(),
+        FetchErrorInfo {
+            code: "INVALID_REQUEST".to_string(),
+            message,
+            details: details_with_request_id(request_id, None),
+        },
+        0.0,
+    )
+}
+
+/// Inputs for [`payload_too_large_response`].
+pub(crate) struct PayloadTooLargeParams<'a> {
+    pub(crate) status: u16,
+    pub(crate) final_url: String,
+    pub(crate) content_type: String,
+    pub(crate) limit_bytes: usize,
+    pub(crate) actual_bytes: Option<u64>,
+    pub(crate) attempt: u8,
+    pub(crate) elapsed_ms: f64,
+    pub(crate) request_id: Option<&'a str>,
+}
+
+pub(crate) fn payload_too_large_response(params: PayloadTooLargeParams<'_>) -> FetchDeckResponse {
+    let PayloadTooLargeParams {
+        status,
+        final_url,
+        content_type,
+        limit_bytes,
+        actual_bytes,
+        attempt,
+        elapsed_ms,
+        request_id,
+    } = params;
+    error_response(
+        status,
+        final_url,
+        content_type,
+        FetchErrorInfo {
             code: FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE.to_string(),
             message: match actual_bytes {
                 Some(actual) => {
@@ -92,14 +116,9 @@ pub(crate) fn payload_too_large_response(
                     "actualBytes": actual_bytes
                 })),
             ),
-        }),
-        timing_ms: FetchTiming {
-            encode: 0.0,
-            udp_rtt: elapsed_ms,
-            decode: 0.0,
         },
-        engine_deck_input: None,
-    }
+        elapsed_ms,
+    )
 }
 
 pub(crate) fn normalize_content_type(content_type: Option<&str>) -> String {
@@ -121,44 +140,57 @@ pub(crate) fn is_supported_wml_content_type(content_type: &str) -> bool {
     )
 }
 
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn map_success_payload_response(
-    status: u16,
-    is_wap_scheme: bool,
-    request_url: &str,
-    upstream_url: &str,
-    final_url: String,
-    content_type: String,
-    body: &[u8],
-    attempt: u8,
-    elapsed_ms: f64,
-    request_id: Option<&str>,
-) -> FetchDeckResponse {
+/// Inputs for [`map_success_payload_response`].
+pub(crate) struct SuccessPayloadParams<'a> {
+    pub(crate) status: u16,
+    pub(crate) is_wap_scheme: bool,
+    pub(crate) request_url: &'a str,
+    pub(crate) upstream_url: &'a str,
+    pub(crate) final_url: String,
+    pub(crate) content_type: String,
+    pub(crate) body: &'a [u8],
+    pub(crate) attempt: u8,
+    pub(crate) elapsed_ms: f64,
+    pub(crate) request_id: Option<&'a str>,
+}
+
+pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> FetchDeckResponse {
+    let SuccessPayloadParams {
+        status,
+        is_wap_scheme,
+        request_url,
+        upstream_url,
+        final_url,
+        content_type,
+        body,
+        attempt,
+        elapsed_ms,
+        request_id,
+    } = params;
+
     if body.len() > MAX_RESPONSE_BODY_BYTES {
-        return payload_too_large_response(
+        return payload_too_large_response(PayloadTooLargeParams {
             status,
             final_url,
             content_type,
-            MAX_RESPONSE_BODY_BYTES,
-            Some(body.len() as u64),
+            limit_bytes: MAX_RESPONSE_BODY_BYTES,
+            actual_bytes: Some(body.len() as u64),
             attempt,
             elapsed_ms,
             request_id,
-        );
+        });
     }
 
     if status >= 400 {
-        return FetchDeckResponse {
-            ok: false,
+        return error_response(
             status,
-            final_url: if is_wap_scheme {
+            if is_wap_scheme {
                 request_url.to_string()
             } else {
                 upstream_url.to_string()
             },
-            content_type: "text/plain".to_string(),
-            wml: None,
-            error: Some(FetchErrorInfo {
+            "text/plain".to_string(),
+            FetchErrorInfo {
                 code: "PROTOCOL_ERROR".to_string(),
                 message: format!("Upstream HTTP error: {status}"),
                 details: details_with_request_id(
@@ -168,14 +200,9 @@ pub(crate) fn map_success_payload_response(
                         "attempt": attempt
                     })),
                 ),
-            }),
-            timing_ms: FetchTiming {
-                encode: 0.0,
-                udp_rtt: elapsed_ms,
-                decode: 0.0,
             },
-            engine_deck_input: None,
-        };
+            elapsed_ms,
+        );
     }
 
     let raw_b64 = BASE64.encode(body);
@@ -201,78 +228,57 @@ pub(crate) fn map_success_payload_response(
                     raw_bytes_base64: Some(raw_b64),
                 }),
             },
-            Err(err) => FetchDeckResponse {
-                ok: false,
+            Err(err) => error_response(
                 status,
                 final_url,
                 content_type,
-                wml: None,
-                error: Some(FetchErrorInfo {
+                FetchErrorInfo {
                     code: "WBXML_DECODE_FAILED".to_string(),
                     message: err,
                     details: details_with_request_id(
                         request_id,
                         Some(serde_json::json!({ "attempt": attempt })),
                     ),
-                }),
-                timing_ms: FetchTiming {
-                    encode: 0.0,
-                    udp_rtt: elapsed_ms,
-                    decode: 0.0,
                 },
-                engine_deck_input: None,
-            },
+                elapsed_ms,
+            ),
         };
     }
 
     if !is_supported_wml_content_type(&content_type) {
-        return FetchDeckResponse {
-            ok: false,
+        return error_response(
             status,
             final_url,
-            content_type: content_type.clone(),
-            wml: None,
-            error: Some(FetchErrorInfo {
+            content_type.clone(),
+            FetchErrorInfo {
                 code: "UNSUPPORTED_CONTENT_TYPE".to_string(),
                 message: format!("Unsupported content type: {content_type}"),
                 details: details_with_request_id(
                     request_id,
                     Some(serde_json::json!({ "attempt": attempt })),
                 ),
-            }),
-            timing_ms: FetchTiming {
-                encode: 0.0,
-                udp_rtt: elapsed_ms,
-                decode: 0.0,
             },
-            engine_deck_input: None,
-        };
+            elapsed_ms,
+        );
     }
 
     let wml = match decode_textual_wml_payload(body) {
         Ok(wml) => wml,
         Err(message) => {
-            return FetchDeckResponse {
-                ok: false,
+            return error_response(
                 status,
                 final_url,
                 content_type,
-                wml: None,
-                error: Some(FetchErrorInfo {
+                FetchErrorInfo {
                     code: "PROTOCOL_ERROR".to_string(),
                     message,
                     details: details_with_request_id(
                         request_id,
                         Some(serde_json::json!({ "attempt": attempt })),
                     ),
-                }),
-                timing_ms: FetchTiming {
-                    encode: 0.0,
-                    udp_rtt: elapsed_ms,
-                    decode: 0.0,
                 },
-                engine_deck_input: None,
-            };
+                elapsed_ms,
+            );
         }
     };
     FetchDeckResponse {
@@ -336,13 +342,11 @@ pub(crate) fn map_terminal_send_error(
     elapsed_ms: f64,
     request_id: Option<&str>,
 ) -> FetchDeckResponse {
-    FetchDeckResponse {
-        ok: false,
-        status: 0,
-        final_url: request_url,
-        content_type: "text/plain".to_string(),
-        wml: None,
-        error: Some(FetchErrorInfo {
+    error_response(
+        0,
+        request_url,
+        "text/plain".to_string(),
+        FetchErrorInfo {
             code: if is_timeout {
                 "GATEWAY_TIMEOUT".to_string()
             } else {
@@ -356,12 +360,68 @@ pub(crate) fn map_terminal_send_error(
                     "lastAttempt": attempt
                 })),
             ),
-        }),
-        timing_ms: FetchTiming {
-            encode: 0.0,
-            udp_rtt: elapsed_ms,
-            decode: 0.0,
         },
-        engine_deck_input: None,
+        elapsed_ms,
+    )
+}
+
+/// Last-failure accumulator shared by the HTTP and native transport retry loops.
+///
+/// Both loops previously carried three parallel `last_*` locals and re-derived
+/// the same terminal-response mapping. The actual send/receive mechanics stay
+/// with each transport; only this bookkeeping is shared.
+pub(crate) struct FetchAttemptFailure {
+    message: String,
+    is_timeout: bool,
+    elapsed_ms: f64,
+}
+
+impl Default for FetchAttemptFailure {
+    fn default() -> Self {
+        Self {
+            message: "Retries exhausted".to_string(),
+            is_timeout: false,
+            elapsed_ms: 0.0,
+        }
+    }
+}
+
+impl FetchAttemptFailure {
+    pub(crate) fn record(&mut self, message: String, is_timeout: bool, elapsed_ms: f64) {
+        self.message = message;
+        self.is_timeout = is_timeout;
+        self.elapsed_ms = elapsed_ms;
+    }
+
+    pub(crate) fn message(&self) -> &str {
+        &self.message
+    }
+
+    pub(crate) fn is_timeout(&self) -> bool {
+        self.is_timeout
+    }
+
+    pub(crate) fn elapsed_ms(&self) -> f64 {
+        self.elapsed_ms
+    }
+
+    /// Maps the recorded failure to the terminal `FetchDeckResponse` returned
+    /// once every attempt has been consumed.
+    pub(crate) fn into_terminal_response(
+        self,
+        request_url: String,
+        attempts: u8,
+        last_attempt: u8,
+        request_id: Option<&str>,
+    ) -> FetchDeckResponse {
+        map_terminal_send_error(
+            request_url,
+            self.message,
+            attempts,
+            last_attempt,
+            self.is_timeout,
+            self.elapsed_ms,
+            request_id,
+        )
     }
 }

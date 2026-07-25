@@ -47,3 +47,46 @@ pub(crate) fn log_transport_event(
     entry.insert("payload".to_string(), payload);
     println!("{}", Value::Object(entry));
 }
+
+/// Emits the retry-or-failure event for a consumed fetch attempt.
+///
+/// Attempts before the last one are logged as retries (carrying the next
+/// attempt number); the final attempt is logged as a failure.
+pub(crate) fn log_fetch_attempt_failure(
+    request_id: Option<&str>,
+    request_url: &str,
+    attempt: u8,
+    attempts: u8,
+    is_timeout: bool,
+    error: &str,
+    elapsed_ms: f64,
+) {
+    if attempt < attempts {
+        log_transport_event(
+            "transport.fetch.retry",
+            request_id,
+            request_url,
+            serde_json::json!({
+                "attempt": attempt,
+                "nextAttempt": attempt + 1,
+                "attempts": attempts,
+                "isTimeout": is_timeout,
+                "error": error,
+                "elapsedMs": elapsed_ms
+            }),
+        );
+    } else {
+        log_transport_event(
+            "transport.fetch.failure",
+            request_id,
+            request_url,
+            serde_json::json!({
+                "attempt": attempt,
+                "attempts": attempts,
+                "isTimeout": is_timeout,
+                "error": error,
+                "elapsedMs": elapsed_ms
+            }),
+        );
+    }
+}

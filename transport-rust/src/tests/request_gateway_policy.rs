@@ -204,8 +204,13 @@ fn apply_request_policy_adds_no_cache_headers_and_referer() {
         ua_capability_profile: None,
     };
 
-    let (method, mapped_headers, suppressed, ua_profile) =
-        apply_request_policy("GET".to_string(), headers, Some(&policy));
+    let AppliedRequestPolicy {
+        method,
+        outbound_headers: mapped_headers,
+        suppressed_same_deck_post_context: suppressed,
+        applied_ua_capability_profile: ua_profile,
+        ..
+    } = apply_request_policy("GET".to_string(), headers, Some(&policy));
     assert_eq!(method, "GET");
     assert!(!suppressed);
     assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
@@ -240,8 +245,12 @@ fn apply_request_policy_keeps_same_deck_post_when_payload_present() {
         }),
         ua_capability_profile: None,
     };
-    let (method, _mapped_headers, suppressed, ua_profile) =
-        apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
+    let AppliedRequestPolicy {
+        method,
+        suppressed_same_deck_post_context: suppressed,
+        applied_ua_capability_profile: ua_profile,
+        ..
+    } = apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
     assert_eq!(method, "POST");
     assert!(!suppressed);
     assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
@@ -260,8 +269,12 @@ fn apply_request_policy_suppresses_same_deck_post_when_payload_missing() {
         }),
         ua_capability_profile: None,
     };
-    let (method, _mapped_headers, suppressed, ua_profile) =
-        apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
+    let AppliedRequestPolicy {
+        method,
+        suppressed_same_deck_post_context: suppressed,
+        applied_ua_capability_profile: ua_profile,
+        ..
+    } = apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
     assert_eq!(method, "GET");
     assert!(suppressed);
     assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
@@ -280,8 +293,13 @@ fn apply_request_policy_keeps_post_when_no_cache_is_set() {
         }),
         ua_capability_profile: None,
     };
-    let (method, mapped_headers, suppressed, ua_profile) =
-        apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
+    let AppliedRequestPolicy {
+        method,
+        outbound_headers: mapped_headers,
+        suppressed_same_deck_post_context: suppressed,
+        applied_ua_capability_profile: ua_profile,
+        ..
+    } = apply_request_policy("POST".to_string(), HashMap::new(), Some(&policy));
     assert_eq!(method, "POST");
     assert!(!suppressed);
     assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
@@ -300,8 +318,13 @@ fn apply_request_policy_wap_baseline_profile_adds_capability_headers() {
         post_context: None,
         ua_capability_profile: Some(FetchUaCapabilityProfile::WapBaseline),
     };
-    let (method, mapped_headers, suppressed, ua_profile) =
-        apply_request_policy("GET".to_string(), HashMap::new(), Some(&policy));
+    let AppliedRequestPolicy {
+        method,
+        outbound_headers: mapped_headers,
+        suppressed_same_deck_post_context: suppressed,
+        applied_ua_capability_profile: ua_profile,
+        ..
+    } = apply_request_policy("GET".to_string(), HashMap::new(), Some(&policy));
     assert_eq!(method, "GET");
     assert!(!suppressed);
     assert_eq!(ua_profile, FetchUaCapabilityProfile::WapBaseline);
@@ -334,8 +357,10 @@ fn apply_request_policy_wap_baseline_profile_keeps_existing_capability_headers()
         post_context: None,
         ua_capability_profile: Some(FetchUaCapabilityProfile::WapBaseline),
     };
-    let (_method, mapped_headers, _suppressed, _ua_profile) =
-        apply_request_policy("GET".to_string(), headers, Some(&policy));
+    let AppliedRequestPolicy {
+        outbound_headers: mapped_headers,
+        ..
+    } = apply_request_policy("GET".to_string(), headers, Some(&policy));
     assert_eq!(
         mapped_headers.get("Accept-Language").map(String::as_str),
         Some("fr-ca")
@@ -351,8 +376,11 @@ fn apply_request_policy_disabled_profile_does_not_add_capability_headers() {
         post_context: None,
         ua_capability_profile: Some(FetchUaCapabilityProfile::Disabled),
     };
-    let (_method, mapped_headers, _suppressed, ua_profile) =
-        apply_request_policy("GET".to_string(), HashMap::new(), Some(&policy));
+    let AppliedRequestPolicy {
+        outbound_headers: mapped_headers,
+        applied_ua_capability_profile: ua_profile,
+        ..
+    } = apply_request_policy("GET".to_string(), HashMap::new(), Some(&policy));
     assert_eq!(ua_profile, FetchUaCapabilityProfile::Disabled);
     assert!(!mapped_headers.contains_key("Accept"));
     assert!(!mapped_headers.contains_key("Accept-Charset"));

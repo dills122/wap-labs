@@ -46,12 +46,12 @@ pub(crate) fn fetch_deck_in_process_impl(
     let method = method
         .unwrap_or_else(|| "GET".to_string())
         .to_ascii_uppercase();
-    let (
-        method,
-        mut outbound_headers,
-        suppressed_same_deck_post_context,
-        applied_ua_capability_profile,
-    ) = apply_request_policy(method, headers.unwrap_or_default(), request_policy.as_ref());
+    let applied_policy =
+        apply_request_policy(method, headers.unwrap_or_default(), request_policy.as_ref());
+    let method = applied_policy.method;
+    let mut outbound_headers = applied_policy.outbound_headers;
+    let suppressed_same_deck_post_context = applied_policy.suppressed_same_deck_post_context;
+    let applied_ua_capability_profile = applied_policy.applied_ua_capability_profile;
     let native_method_supported = matches!(method.as_str(), "GET" | "POST")
         && matches!(parsed_scheme(&url), Some("wap" | "waps"));
     if method != "GET" && !native_method_supported {
@@ -73,8 +73,8 @@ pub(crate) fn fetch_deck_in_process_impl(
         }
     };
     let destination_policy = resolve_fetch_destination_policy(request_policy.as_ref());
-    if let Err(message) = validate_fetch_destination(&parsed, &destination_policy) {
-        return invalid_request_response(url, message, request_id.as_deref());
+    if let Err(error) = validate_fetch_destination(&parsed, &destination_policy) {
+        return invalid_request_response(url, error.to_string(), request_id.as_deref());
     }
 
     let attempts = retries.unwrap_or(1).clamp(0, 2) + 1;

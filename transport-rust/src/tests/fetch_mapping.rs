@@ -90,18 +90,18 @@ fn transport_fetch_accepts_url_at_1024_octet_boundary() {
 fn transport_map_success_payload_http_success_builds_engine_deck_input() {
     let base = "http://example.test/index.wml".to_string();
     let body = b"<wml><card id=\"home\"><p>ok</p></card></wml>";
-    let response = map_success_payload_response(
-        200,
-        false,
-        &base,
-        &base,
-        base.clone(),
-        "text/vnd.wap.wml".to_string(),
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
         body,
-        1,
-        3.5,
-        None,
-    );
+        attempt: 1,
+        elapsed_ms: 3.5,
+        request_id: None,
+    });
     assert!(response.ok);
     assert_eq!(response.status, 200);
     assert_eq!(response.content_type, "text/vnd.wap.wml");
@@ -128,18 +128,18 @@ fn transport_map_success_payload_http_success_builds_engine_deck_input() {
 fn transport_map_success_payload_rejects_oversized_body() {
     let base = "http://example.test/index.wml".to_string();
     let body = vec![b'a'; MAX_RESPONSE_BODY_BYTES + 1];
-    let response = map_success_payload_response(
-        200,
-        false,
-        &base,
-        &base,
-        base.clone(),
-        "text/vnd.wap.wml".to_string(),
-        body.as_slice(),
-        1,
-        3.5,
-        Some("req-oversized-body"),
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        body: body.as_slice(),
+        attempt: 1,
+        elapsed_ms: 3.5,
+        request_id: Some("req-oversized-body"),
+    });
 
     assert!(!response.ok);
     assert_eq!(response.status, 200);
@@ -159,18 +159,18 @@ fn transport_map_success_payload_rejects_oversized_body() {
 fn transport_map_success_payload_accepts_body_at_limit() {
     let base = "http://example.test/index.wml".to_string();
     let body = vec![b'a'; MAX_RESPONSE_BODY_BYTES];
-    let response = map_success_payload_response(
-        200,
-        false,
-        &base,
-        &base,
-        base.clone(),
-        "text/vnd.wap.wml".to_string(),
-        body.as_slice(),
-        1,
-        3.5,
-        Some("req-body-at-limit"),
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        body: body.as_slice(),
+        attempt: 1,
+        elapsed_ms: 3.5,
+        request_id: Some("req-body-at-limit"),
+    });
 
     assert!(response.ok, "body at hard limit should map successfully");
     assert_eq!(response.status, 200);
@@ -193,18 +193,18 @@ fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
         0xFF, 0xFE, b'<', 0x00, b'w', 0x00, b'm', 0x00, b'l', 0x00, b'>', 0x00, b'<', 0x00, b'/',
         0x00, b'w', 0x00, b'm', 0x00, b'l', 0x00, b'>', 0x00,
     ];
-    let response = map_success_payload_response(
-        200,
-        false,
-        &base,
-        &base,
-        base.clone(),
-        "text/vnd.wap.wml".to_string(),
-        &utf16le_body,
-        1,
-        3.5,
-        None,
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        body: &utf16le_body,
+        attempt: 1,
+        elapsed_ms: 3.5,
+        request_id: None,
+    });
     assert!(response.ok);
     assert_eq!(response.wml.as_deref(), Some("<wml></wml>"));
 }
@@ -213,18 +213,18 @@ fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
 fn transport_map_success_payload_utf16_odd_length_maps_protocol_error() {
     let base = "http://example.test/index.wml".to_string();
     let invalid_utf16_body: Vec<u8> = vec![0xFF, 0xFE, b'<', 0x00, b'w'];
-    let response = map_success_payload_response(
-        200,
-        false,
-        &base,
-        &base,
-        base.clone(),
-        "text/vnd.wap.wml".to_string(),
-        &invalid_utf16_body,
-        1,
-        3.5,
-        Some("req-utf16-invalid"),
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        body: &invalid_utf16_body,
+        attempt: 1,
+        elapsed_ms: 3.5,
+        request_id: Some("req-utf16-invalid"),
+    });
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|err| err.code.as_str()),
@@ -238,18 +238,18 @@ fn transport_map_success_payload_utf16_odd_length_maps_protocol_error() {
 
 #[test]
 fn transport_map_success_payload_http_error_maps_protocol_error() {
-    let response = map_success_payload_response(
-        502,
-        false,
-        "http://request.example",
-        "http://upstream.example",
-        "http://request.example".to_string(),
-        "text/plain".to_string(),
-        b"upstream fail",
-        2,
-        9.1,
-        Some("req-protocol"),
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 502,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "text/plain".to_string(),
+        body: b"upstream fail",
+        attempt: 2,
+        elapsed_ms: 9.1,
+        request_id: Some("req-protocol"),
+    });
     assert!(!response.ok);
     assert_eq!(response.status, 502);
     assert_eq!(
@@ -264,18 +264,18 @@ fn transport_map_success_payload_http_error_maps_protocol_error() {
 
 #[test]
 fn transport_map_success_payload_unsupported_content_type_maps_error() {
-    let response = map_success_payload_response(
-        200,
-        false,
-        "http://request.example",
-        "http://upstream.example",
-        "http://request.example".to_string(),
-        "application/json".to_string(),
-        br#"{"ok":true}"#,
-        1,
-        2.0,
-        Some("req-content"),
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "application/json".to_string(),
+        body: br#"{"ok":true}"#,
+        attempt: 1,
+        elapsed_ms: 2.0,
+        request_id: Some("req-content"),
+    });
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|err| err.code.as_str()),
@@ -294,18 +294,18 @@ fn transport_fixture_mapped_unsupported_content_type() {
     let expected: FixtureExpected =
         read_json_fixture("unsupported_content_type_mapped", "expected.json");
     let body = input.body_bytes();
-    let response = map_success_payload_response(
-        input.status,
-        input.is_wap_scheme,
-        &input.request_url,
-        &input.upstream_url,
-        input.final_url,
-        input.content_type,
-        &body,
-        input.attempt,
-        input.elapsed_ms,
-        None,
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: input.status,
+        is_wap_scheme: input.is_wap_scheme,
+        request_url: &input.request_url,
+        upstream_url: &input.upstream_url,
+        final_url: input.final_url,
+        content_type: input.content_type,
+        body: &body,
+        attempt: input.attempt,
+        elapsed_ms: input.elapsed_ms,
+        request_id: None,
+    });
     assert_eq!(response.ok, expected.ok);
     assert_eq!(response.status, expected.status);
     assert_eq!(response.final_url, expected.final_url);
@@ -321,18 +321,18 @@ fn transport_fixture_mapped_unsupported_content_type() {
 
 #[test]
 fn transport_map_success_payload_wmlc_decode_failure_maps_error() {
-    let response = map_success_payload_response(
-        200,
-        false,
-        "http://request.example",
-        "http://upstream.example",
-        "http://request.example".to_string(),
-        "application/vnd.wap.wmlc".to_string(),
-        b"\x03\x01\x6a\x00",
-        1,
-        2.0,
-        Some("req-wbxml"),
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "application/vnd.wap.wmlc".to_string(),
+        body: b"\x03\x01\x6a\x00",
+        attempt: 1,
+        elapsed_ms: 2.0,
+        request_id: Some("req-wbxml"),
+    });
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|err| err.code.as_str()),
@@ -347,18 +347,18 @@ fn transport_map_success_payload_wmlc_decode_failure_maps_error() {
 #[test]
 fn transport_map_success_payload_wmlc_decode_success_maps_ok() {
     let body = b"\x03\x0a\x6a\x00\x7f\x67\x60\x03hello\x00\x01\x01\x01";
-    let response = map_success_payload_response(
-        200,
-        false,
-        "http://request.example",
-        "http://upstream.example",
-        "http://request.example".to_string(),
-        "application/vnd.wap.wmlc".to_string(),
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: "http://request.example",
+        upstream_url: "http://upstream.example",
+        final_url: "http://request.example".to_string(),
+        content_type: "application/vnd.wap.wmlc".to_string(),
         body,
-        1,
-        2.0,
-        None,
-    );
+        attempt: 1,
+        elapsed_ms: 2.0,
+        request_id: None,
+    });
     assert!(response.ok);
     assert_eq!(response.status, 200);
     assert_eq!(
@@ -387,18 +387,18 @@ fn transport_map_success_payload_wmlc_decode_success_maps_ok() {
 
 #[test]
 fn transport_map_success_payload_wap_protocol_error_uses_original_url() {
-    let response = map_success_payload_response(
-        500,
-        true,
-        "wap://example.test/start.wml",
-        "http://gateway.local/start.wml",
-        "wap://example.test/start.wml".to_string(),
-        "text/plain".to_string(),
-        b"bad gateway",
-        1,
-        4.0,
-        None,
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 500,
+        is_wap_scheme: true,
+        request_url: "wap://example.test/start.wml",
+        upstream_url: "http://gateway.local/start.wml",
+        final_url: "wap://example.test/start.wml".to_string(),
+        content_type: "text/plain".to_string(),
+        body: b"bad gateway",
+        attempt: 1,
+        elapsed_ms: 4.0,
+        request_id: None,
+    });
     assert!(!response.ok);
     assert_eq!(response.final_url, "wap://example.test/start.wml");
 }
@@ -408,18 +408,18 @@ fn transport_fixture_mapped_protocol_error_5xx() {
     let input: FixtureMapInput = read_json_fixture("protocol_error_5xx_mapped", "map_input.json");
     let expected: FixtureExpected = read_json_fixture("protocol_error_5xx_mapped", "expected.json");
     let body = input.body_bytes();
-    let response = map_success_payload_response(
-        input.status,
-        input.is_wap_scheme,
-        &input.request_url,
-        &input.upstream_url,
-        input.final_url,
-        input.content_type,
-        &body,
-        input.attempt,
-        input.elapsed_ms,
-        None,
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: input.status,
+        is_wap_scheme: input.is_wap_scheme,
+        request_url: &input.request_url,
+        upstream_url: &input.upstream_url,
+        final_url: input.final_url,
+        content_type: input.content_type,
+        body: &body,
+        attempt: input.attempt,
+        elapsed_ms: input.elapsed_ms,
+        request_id: None,
+    });
     assert_eq!(response.ok, expected.ok);
     assert_eq!(response.status, expected.status);
     assert_eq!(response.final_url, expected.final_url);
@@ -439,18 +439,18 @@ fn transport_fixture_mapped_utf16le_textual_wml_ok() {
     let expected: FixtureExpected =
         read_json_fixture("utf16le_textual_wml_mapped", "expected.json");
     let body = input.body_bytes();
-    let response = map_success_payload_response(
-        input.status,
-        input.is_wap_scheme,
-        &input.request_url,
-        &input.upstream_url,
-        input.final_url,
-        input.content_type,
-        &body,
-        input.attempt,
-        input.elapsed_ms,
-        None,
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: input.status,
+        is_wap_scheme: input.is_wap_scheme,
+        request_url: &input.request_url,
+        upstream_url: &input.upstream_url,
+        final_url: input.final_url,
+        content_type: input.content_type,
+        body: &body,
+        attempt: input.attempt,
+        elapsed_ms: input.elapsed_ms,
+        request_id: None,
+    });
     assert_eq!(response.ok, expected.ok);
     assert_eq!(response.status, expected.status);
     assert_eq!(response.final_url, expected.final_url);
@@ -471,18 +471,18 @@ fn transport_fixture_mapped_utf16_odd_length_protocol_error() {
     let expected: FixtureExpected =
         read_json_fixture("utf16_odd_length_protocol_error_mapped", "expected.json");
     let body = input.body_bytes();
-    let response = map_success_payload_response(
-        input.status,
-        input.is_wap_scheme,
-        &input.request_url,
-        &input.upstream_url,
-        input.final_url,
-        input.content_type,
-        &body,
-        input.attempt,
-        input.elapsed_ms,
-        None,
-    );
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: input.status,
+        is_wap_scheme: input.is_wap_scheme,
+        request_url: &input.request_url,
+        upstream_url: &input.upstream_url,
+        final_url: input.final_url,
+        content_type: input.content_type,
+        body: &body,
+        attempt: input.attempt,
+        elapsed_ms: input.elapsed_ms,
+        request_id: None,
+    });
     assert_eq!(response.ok, expected.ok);
     assert_eq!(response.status, expected.status);
     assert_eq!(response.final_url, expected.final_url);
@@ -618,8 +618,9 @@ fn transport_destination_policy_rejects_loopback_without_override() {
     let parsed = Url::parse("http://127.0.0.1:8080/deck.wml").expect("url should parse");
     let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
         .expect_err("loopback destination should be blocked");
-    assert!(err.contains("public-only"));
-    assert!(err.contains("loopback"));
+    assert!(err.is_policy_blocked());
+    assert!(err.to_string().contains("public-only"));
+    assert!(err.to_string().contains("loopback"));
 }
 
 #[test]
@@ -627,7 +628,8 @@ fn transport_destination_policy_rejects_private_without_override() {
     let parsed = Url::parse("http://10.0.0.8/deck.wml").expect("url should parse");
     let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
         .expect_err("private destination should be blocked");
-    assert!(err.contains("private"));
+    assert!(err.is_policy_blocked());
+    assert!(err.to_string().contains("private"));
 }
 
 #[test]
@@ -642,7 +644,11 @@ fn transport_destination_policy_rejects_unsupported_scheme() {
     let parsed = Url::parse("ftp://example.test/deck.wml").expect("url should parse");
     let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
         .expect_err("unsupported scheme should be rejected");
-    assert!(err.contains("Unsupported URL scheme"));
+    assert!(
+        !err.is_policy_blocked(),
+        "an unsupported scheme is a request-shape failure, not a policy block"
+    );
+    assert!(err.to_string().contains("Unsupported URL scheme"));
 }
 
 #[test]
@@ -650,7 +656,8 @@ fn transport_destination_policy_rejects_localhost_domains_without_override() {
     let parsed = Url::parse("http://api.localhost/deck.wml").expect("url should parse");
     let err = validate_fetch_destination(&parsed, &FetchDestinationPolicy::PublicOnly)
         .expect_err("localhost domain should be blocked");
-    assert!(err.contains("loopback"));
+    assert!(err.is_policy_blocked());
+    assert!(err.to_string().contains("loopback"));
 }
 
 #[test]
@@ -729,8 +736,9 @@ fn transport_destination_policy_rejects_private_resolved_addresses() {
         validate_resolved_destination_addresses(&addresses, &FetchDestinationPolicy::PublicOnly)
             .expect_err("mixed public and loopback answers must be rejected");
 
-    assert!(error.contains("public-only"));
-    assert!(error.contains("loopback"));
+    assert!(error.is_policy_blocked());
+    assert!(error.to_string().contains("public-only"));
+    assert!(error.to_string().contains("loopback"));
 }
 
 #[test]
@@ -791,8 +799,12 @@ fn transport_resolution_time_check_blocks_private_answer_that_shallow_preflight_
         &FetchDestinationPolicy::PublicOnly,
     )
     .expect_err("resolution-time layer must block the private resolved address");
-    assert!(error.contains("public-only"));
-    assert!(error.contains("private"));
+    assert!(
+        error.is_policy_blocked(),
+        "classification must be carried by the error type, not matched from its message"
+    );
+    assert!(error.to_string().contains("public-only"));
+    assert!(error.to_string().contains("private"));
 }
 
 #[test]
@@ -838,16 +850,16 @@ fn transport_invalid_request_response_helper() {
 
 #[test]
 fn transport_payload_too_large_response_with_known_actual_bytes() {
-    let response = payload_too_large_response(
-        200,
-        "http://example.test/deck.wml".to_string(),
-        "text/vnd.wap.wml".to_string(),
-        512 * 1024,
-        Some(700_000),
-        1,
-        5.0,
-        Some("req-too-large"),
-    );
+    let response = payload_too_large_response(PayloadTooLargeParams {
+        status: 200,
+        final_url: "http://example.test/deck.wml".to_string(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        limit_bytes: 512 * 1024,
+        actual_bytes: Some(700_000),
+        attempt: 1,
+        elapsed_ms: 5.0,
+        request_id: Some("req-too-large"),
+    });
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|error| error.code.as_str()),
@@ -867,16 +879,16 @@ fn transport_payload_too_large_response_with_known_actual_bytes() {
 
 #[test]
 fn transport_payload_too_large_response_without_actual_bytes() {
-    let response = payload_too_large_response(
-        200,
-        "http://example.test/deck.wml".to_string(),
-        "text/vnd.wap.wml".to_string(),
-        512 * 1024,
-        None,
-        2,
-        9.0,
-        None,
-    );
+    let response = payload_too_large_response(PayloadTooLargeParams {
+        status: 200,
+        final_url: "http://example.test/deck.wml".to_string(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        limit_bytes: 512 * 1024,
+        actual_bytes: None,
+        attempt: 2,
+        elapsed_ms: 9.0,
+        request_id: None,
+    });
     assert!(!response.ok);
     let message = response
         .error
@@ -906,48 +918,48 @@ fn transport_error_code_trigger_matrix_is_deterministic() {
         },
         Case {
             name: "payload-too-large",
-            response: payload_too_large_response(
-                200,
-                "http://example.test/deck.wml".to_string(),
-                "text/vnd.wap.wml".to_string(),
-                512 * 1024,
-                Some(700_000),
-                1,
-                1.0,
-                None,
-            ),
+            response: payload_too_large_response(PayloadTooLargeParams {
+                status: 200,
+                final_url: "http://example.test/deck.wml".to_string(),
+                content_type: "text/vnd.wap.wml".to_string(),
+                limit_bytes: 512 * 1024,
+                actual_bytes: Some(700_000),
+                attempt: 1,
+                elapsed_ms: 1.0,
+                request_id: None,
+            }),
             expected_code: "PAYLOAD_TOO_LARGE",
         },
         Case {
             name: "protocol-error-5xx",
-            response: map_success_payload_response(
-                502,
-                false,
-                "http://request.example",
-                "http://upstream.example",
-                "http://request.example".to_string(),
-                "text/plain".to_string(),
-                b"upstream fail",
-                1,
-                1.0,
-                None,
-            ),
+            response: map_success_payload_response(SuccessPayloadParams {
+                status: 502,
+                is_wap_scheme: false,
+                request_url: "http://request.example",
+                upstream_url: "http://upstream.example",
+                final_url: "http://request.example".to_string(),
+                content_type: "text/plain".to_string(),
+                body: b"upstream fail",
+                attempt: 1,
+                elapsed_ms: 1.0,
+                request_id: None,
+            }),
             expected_code: "PROTOCOL_ERROR",
         },
         Case {
             name: "unsupported-content-type",
-            response: map_success_payload_response(
-                200,
-                false,
-                "http://request.example",
-                "http://upstream.example",
-                "http://request.example".to_string(),
-                "application/json".to_string(),
-                br#"{"ok":true}"#,
-                1,
-                1.0,
-                None,
-            ),
+            response: map_success_payload_response(SuccessPayloadParams {
+                status: 200,
+                is_wap_scheme: false,
+                request_url: "http://request.example",
+                upstream_url: "http://upstream.example",
+                final_url: "http://request.example".to_string(),
+                content_type: "application/json".to_string(),
+                body: br#"{"ok":true}"#,
+                attempt: 1,
+                elapsed_ms: 1.0,
+                request_id: None,
+            }),
             expected_code: "UNSUPPORTED_CONTENT_TYPE",
         },
         Case {

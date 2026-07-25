@@ -23,7 +23,8 @@ pub(super) use super::{
 };
 pub(super) use crate::fetch_policy::{
     apply_request_policy, classify_destination_host, classify_ip, resolve_fetch_destination_policy,
-    validate_fetch_destination, validate_resolved_destination_addresses, DestinationHostClass,
+    validate_fetch_destination, validate_resolved_destination_addresses, AppliedRequestPolicy,
+    DestinationHostClass,
 };
 pub(super) use crate::gateway::build_gateway_request;
 pub(super) use crate::request_meta::{
@@ -32,6 +33,7 @@ pub(super) use crate::request_meta::{
 pub(super) use crate::responses::{
     invalid_request_response, is_supported_wml_content_type, map_success_payload_response,
     map_terminal_send_error, normalize_content_type, payload_too_large_response,
+    PayloadTooLargeParams, SuccessPayloadParams,
 };
 pub(super) use crate::wbxml::decode_wmlc;
 pub(super) use base64::engine::general_purpose::STANDARD as BASE64;
