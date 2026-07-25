@@ -19,4 +19,37 @@ describe('mountBrowserShell', () => {
     expect(softkeyRow?.getAttribute('role')).toBe('group');
     expect(softkeyRow?.getAttribute('aria-label')).toBeTruthy();
   });
+
+  it('decomposes the shell into landmark-labelled sections', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    const nav = document.querySelector('nav.nav-toolbar');
+    const handsetStage = document.querySelector('section.handset-stage');
+    const utilityRail = document.querySelector('aside.utility-rail');
+    const devDrawerSection = document.querySelector('section.developer-drawer-section');
+
+    expect(nav?.getAttribute('aria-label')).toBeTruthy();
+    expect(handsetStage?.getAttribute('aria-label')).toBeTruthy();
+    expect(utilityRail?.getAttribute('aria-label')).toBeTruthy();
+    expect(devDrawerSection?.getAttribute('aria-label')).toBeTruthy();
+
+    // Handset stage still owns the engine viewport adapter directly.
+    expect(handsetStage?.querySelector('#viewport')).not.toBeNull();
+    // Developer drawer moved out from under the utility rail to its own
+    // top-level sibling section, per the desktop product IA.
+    expect(utilityRail?.querySelector('#dev-drawer')).toBeNull();
+    expect(devDrawerSection?.querySelector('#dev-drawer')).not.toBeNull();
+
+    const phaseBarSlot = document.querySelector('.phase-bar-slot');
+    expect(phaseBarSlot?.hasAttribute('hidden')).toBe(true);
+  });
+
+  it('opens the utility rail by default at normal window widths', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    const railPanel = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
+    expect(railPanel?.open).toBe(true);
+  });
 });

@@ -16,6 +16,7 @@ const locale = {
     select: 'Select',
     down: 'Down',
     viewportCols: 'Viewport Cols',
+    utilityRail: 'Utility Rail',
     status: 'Status',
     developerTools: 'Developer Tools',
     health: 'Health',
