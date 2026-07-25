@@ -16,24 +16,38 @@ compatibility profiles"), but building it on guesses would undermine the same ev
 the WML compliance program already enforces.
 
 `historical-quirks.json` is a structured, source-cited catalogue of documented divergences, gathered
-during focused external research (`docs/waves/RESEARCH_WTLS_WTP_HISTORICAL_QUIRKS_2026-07-25.md`,
-Part 3). It exists so a future compatibility-profile feature has real evidence to build against
-instead of starting from memory or plausible-sounding assumption.
+across two research passes -- see the file's own `researchPasses` field for exact scope/dates of
+each. It exists so a future compatibility-profile feature has real evidence to build against
+instead of starting from memory or plausible-sounding assumption. `COMPATIBILITY_PROFILE_DESIGN_
+NOTES.md` captures the proposed architecture (profile struct shape, build order, test corpus) that
+pass 2's research sketched out -- also reference-only, not implemented, subject to the same
+promotion rule as this file.
 
 ## What's actually in the data
 
-33 entries as of 2026-07-25. The bulk (24 entries) come from the WAP Forum's own official "Generic
-Content Authoring Guide for WML 1.1" (WAP-218-GCAG, 8-Feb-2001) -- a genuinely strong, citable,
-primary-tier source, but one that deliberately anonymizes every divergence as "some browsers..." for
-consortium-neutrality reasons rather than naming a vendor. The remaining entries carry actual vendor
-attribution (Openwave/Phone.com, Nokia, WinWAP) but come from tutorial sites, a single W3C workshop
-paper, and similar secondary sources -- real testimony, but not independently reproduced or verified
-against a primary vendor document. Every entry's `sourceType`, `confidence`, and
-`attributionConfidence` fields say explicitly which kind of evidence it is; read those before citing
-or acting on any single entry. See the research memo for the full honest assessment of source
-scarcity (Wayback Machine access was unavailable during that research pass, which is likely the
-single biggest reason vendor-specific attribution is thin -- see that memo's Open Questions for
-concrete next research steps, including a deep vendor-specific pass someone may run separately).
+84 entries as of 2026-07-25 (33 from pass 1, 51 added in pass 2).
+
+Pass 1's bulk (24 entries) came from the WAP Forum's own official "Generic Content Authoring Guide
+for WML 1.1" (WAP-218-GCAG, 8-Feb-2001) -- a genuinely strong, citable, primary-tier source, but one
+that deliberately anonymizes every divergence as "some browsers..." for consortium-neutrality
+reasons rather than naming a vendor. Its remaining entries carried vendor attribution (Openwave/
+Phone.com, Nokia, WinWAP) but came from tutorial sites and similar secondary sources -- real
+testimony, not independently reproduced against a primary vendor document. That pass explicitly
+flagged Wayback Machine access as unavailable, which it identified as the main reason
+vendor-specific attribution was thin.
+
+Pass 2 (an external deep-research task, results supplied by the user) closed a meaningful part of
+that gap: it recovered **primary vendor developer documentation** for four distinct devices --
+Nokia's own 7110 service developer guide, Motorola's A008 WAP developer style guide, Ericsson's R320
+manuals, plus several **normative OMA specs** fetched directly (WML 1.1, WBXML, WMLScript, WMLScript
+libraries, WAP caching, WAEMT, UAProf) rather than relying on secondary summaries of them. Those
+entries carry `sourceType: "primary-vendor-doc"` or `"normative-spec"` and mostly `confidence:
+"high"`. Not every pass-2 URL was independently re-fetched during this integration pass -- see each
+entry's own citation and the file's `researchPasses` note for exactly what was and wasn't
+re-verified before being added.
+
+Every entry's `sourceType`, `confidence`, and `attributionConfidence` fields say explicitly which
+kind of evidence it is; read those before citing or acting on any single entry.
 
 ## Schema
 
@@ -46,16 +60,19 @@ Each entry in `historical-quirks.json`'s `entries` array has:
 | `product` | Specific browser/product/version, or `null` if not that specific |
 | `wmlConstruct` | The WML tag, attribute, or event the divergence concerns |
 | `claimedBehavior` | The divergence itself, in the source's own terms where possible |
-| `sourceType` | One of `sourceTypeTaxonomy`: `official-informative-document`, `primary-vendor-doc`, `contemporary-trade-press`, `tutorial-site`, `modern-retrospective`, `unverified-search-synthesis` |
+| `sourceType` | One of `sourceTypeTaxonomy`: `normative-spec`, `official-informative-document`, `primary-vendor-doc`, `contemporary-trade-press`, `tutorial-site`, `modern-retrospective`, `unverified-search-synthesis` |
 | `sourceUrl` | Where the claim comes from |
 | `confidence` | One of `confidenceTaxonomy` (`high`/`medium`/`low`): how trustworthy the claim itself is |
 | `attributionConfidence` | One of `attributionConfidenceTaxonomy` (`none`/`low`/`medium`/`high`): how confident the *vendor attribution specifically* is, independent of whether the underlying divergence is real |
 | `implementationReady` | Always `false` today -- see Promotion rule below |
 | `notes` | Optional caveats, chronology mismatches, or corroboration gaps worth knowing before citing the entry elsewhere |
 
-`primary-vendor-doc` currently has zero entries -- no primary Openwave or Nokia developer
-documentation was recoverable in the research pass that produced this file (Wayback Machine access
-was blocked). Filling that gap is the highest-value next step for anyone continuing this research.
+`normative-spec` is distinct from `official-informative-document`: the latter is reserved for the
+WAP Forum's GCAG specifically (explicitly informative, not normative, and deliberately
+vendor-anonymized); the former is for actual normative OMA specs (WML, WBXML, WMLScript, UAProf,
+caching, WAEMT) fetched directly. Primary Openwave developer documentation (developer.openwave.com)
+is still not recovered as of pass 2 -- Wayback Machine access remains the likely path to closing that
+specific gap, per pass 1's Open Questions.
 
 ## Promotion rule (read before writing a `CompatibilityProfile`)
 
