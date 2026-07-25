@@ -143,6 +143,14 @@ Legend:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Class behavior fixtures validate expected ACK/result/termination rules.
   - [ ] Unsupported class behavior is deterministic and standards-aligned.
+- Implementation note (2026-07-25, not a formal evidence entry -- boxes above intentionally left
+  unchecked pending real SCR-ledger mapping): `transport-rust/src/network/wtp/{types,initiator,
+  responder}.rs` implement Initiator and Responder transaction state machines covering all three
+  classes, including the §7.9 TID-verification handshake gating delivery and the §8.3.4 abort
+  type/reason pairing, with unit tests for both. Standalone -- not wired into `network::wsp` or a
+  live socket. See `docs/waves/RESEARCH_WTLS_WTP_HISTORICAL_QUIRKS_2026-07-25.md` Part 2 for the
+  research this is built from, including one disclosed simplification (Responder Class-2
+  result-retry state count not independently re-verified against the raw §9.6 table text).
 
 ### RQ-TRN-007 WTP reliability and control functions
 
