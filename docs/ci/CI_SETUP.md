@@ -261,7 +261,9 @@ Grouping and cadence:
   review.
 - Checks run weekly at deterministic UTC times: GitHub Actions on Monday, Node ecosystems on
   Tuesday, and Rust ecosystems on Wednesday.
-- Routine releases use a three-day patch, seven-day minor, and fourteen-day major cooldown.
+- Node and Cargo releases use a three-day patch, seven-day minor, and fourteen-day major
+  cooldown. GitHub Actions uses a seven-day default cooldown because that ecosystem does not
+  support SemVer-specific cooldown keys.
   Cooldowns do not delay security updates.
 - Open-PR limits are set per ecosystem/directory to prevent an update burst from flooding the
   review queue.
