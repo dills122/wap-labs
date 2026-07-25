@@ -38,9 +38,12 @@ Non-authoritative historical docs are retained only for context:
 ## Reference-Only Material (not implementation-ready)
 
 - `HISTORICAL_QUIRKS.md` / `historical-quirks.json`: source-cited catalogue of documented WAP
-  browser divergences from the WML spec (Openwave/Nokia era). Research reference for a possible
-  future compatibility-profile feature -- does not affect current runtime behavior, and must not be
-  treated as authoritative until explicitly promoted per that doc's own promotion rule.
+  browser divergences from the WML spec (Openwave/Nokia/Ericsson/Motorola era). Research reference
+  for a possible future compatibility-profile feature -- does not affect current runtime behavior,
+  and must not be treated as authoritative until explicitly promoted per that doc's own promotion
+  rule.
+- `COMPATIBILITY_PROFILE_DESIGN_NOTES.md`: proposed architecture (profile struct shape, build
+  order, test corpus) for the same possible future feature. Design reference only, not implemented.
 
 ## Scope Philosophy
 
