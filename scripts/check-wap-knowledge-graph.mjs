@@ -196,9 +196,12 @@ const selectedWcmpRows = [
 if (
   trnGraph.target.sprint !== 'TRN-7' ||
   trnGraph.target.profile !== 'CCR-CLASSC-C-001' ||
+  !trnNodeIds.has('work-item:TRN-702') ||
   !trnNodeIds.has('work-item:TRN-703')
 ) {
-  failures.push('TRN-7 target must retain the selected Class C profile and TRN-703 work item');
+  failures.push(
+    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703 work items'
+  );
 }
 for (const row of selectedWcmpRows) {
   if (!trnNodeIds.has(`scr-row:${row}`)) {
@@ -213,6 +216,19 @@ if (
   !trn703Pack.includes('- Direct normative clauses: 28')
 ) {
   failures.push('TRN-703 context rendering must remain bounded to its 28 direct WCMP clauses');
+}
+const trn702Pack = renderContextPack(trnGraph, 'TRN-702');
+if (
+  !trn702Pack.startsWith('# TRN-702 AI Context Pack') ||
+  !trn702Pack.includes('### TRN-702:') ||
+  trn702Pack.includes('### TRN-701:') ||
+  !trn702Pack.includes('- Direct normative clauses: 9') ||
+  trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-702') ||
+  trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-702']
+) {
+  failures.push(
+    'TRN-702 context rendering must remain bounded to its nine adopted WDP clauses without a declared-family gap'
+  );
 }
 
 if (failures.length) {

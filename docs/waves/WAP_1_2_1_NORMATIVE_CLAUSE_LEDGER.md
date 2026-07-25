@@ -1,6 +1,6 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
-Version: v0.8
+Version: v0.9
 Status: `CONF-003` complete; all 201 selected Class C parents planned
 
 ## Purpose
@@ -82,13 +82,17 @@ Each clause records:
 - explicit force classification, including WML implicit-MUST rules;
 - a short project-authored obligation synopsis;
 - every selected SCR parent;
-- inherited owner layers, work items, requirements, and parent implementation
-  status;
-- one planned source-derived direct fixture.
+- inherited owner layers, requirements, parent implementation status, and
+  baseline work items;
+- any explicit slice-scoped `directWorkItems` additions adopted from the same
+  authoritative clause without widening its SCR parents;
+- one planned or implemented source-derived direct fixture.
 
-The fixture plan is not test evidence. Clause implementation status remains
-`not-assessed` until the planned fixture and direct code/test evidence are
-reviewed.
+A planned fixture is not test evidence. An implemented fixture must name its
+fixture path, test path, and command, and clause implementation status changes
+only after that direct evidence is reviewed. The validator currently
+allowlists the nine-clause `TRN-702` overlay so a broad parent-row mapping
+cannot silently substitute for slice adoption.
 
 ## Redistribution boundary
 
@@ -102,6 +106,7 @@ verbatim source text.
 ## `CONF-003` closure
 
 No selected family or parent row remains unexpanded. `CONF-003` is complete at
-the planning level; every clause still remains `not-assessed` until its
-source-derived fixture and direct code/test evidence are reviewed. WTP is
-added only if connection-oriented WSP becomes a claimed profile.
+the planning level. Most clauses remain `not-assessed` until source-derived
+fixture and direct code/test evidence are reviewed; implemented WDP, WCMP, and
+incremental WML clauses retain their explicit fixture evidence. WTP is added
+only if connection-oriented WSP becomes a claimed profile.

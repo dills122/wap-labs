@@ -19,6 +19,7 @@ tags:
 - `maps-to` → [[requirements/RQ-TRN-002|RQ-TRN-002]]
 - `maps-to` → [[requirements/RQ-TRN-003|RQ-TRN-003]]
 - `planned-by` → [[work-items/TRN-701|TRN-701]]
+- `planned-by` → [[work-items/TRN-702|TRN-702]]
 - `refines` → [[scr-rows/WDP-C-001|WDP-C-001]]
 - `refines` → [[scr-rows/WDP-CT-C-002|WDP-CT-C-002]]
 - `refines` → [[scr-rows/WDP-NA-C-003|WDP-NA-C-003]]
@@ -46,7 +47,8 @@ tags:
   "obligationSynopsis": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.",
   "workItems": [
     "T0-19",
-    "TRN-701"
+    "TRN-701",
+    "TRN-702"
   ],
   "ownerLayers": [
     "transport-rust"

@@ -139,6 +139,17 @@ const expectedLevelByForce = {
   table: 'required',
   'error-condition': 'required'
 };
+const trn702ClauseIds = new Set([
+  'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
+  'WDP-CL-IP-MAPPING-FRAGMENTATION',
+  'WDP-CL-UDP-LENGTH-BOUNDS',
+  'WDP-CL-IPV4-TOTAL-LENGTH',
+  'WDP-CL-IPV4-BASELINE-RECEIVE-SIZE',
+  'WDP-CL-IPV4-LARGE-SEND-GUARD',
+  'WDP-CL-IPV4-FRAGMENTATION-LOCATION',
+  'WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY',
+  'WDP-CL-IPV4-DONT-FRAGMENT'
+]);
 const allowedFixtureKinds = new Set([
   'parser',
   'transport-boundary',
@@ -418,7 +429,10 @@ for (const family of ledger.families ?? []) {
       ...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))
     ].sort();
     const expectedWorkItems = [
-      ...new Set(parents.flatMap((parent) => parent.mapping.workItems))
+      ...new Set([
+        ...parents.flatMap((parent) => parent.mapping.workItems),
+        ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : [])
+      ])
     ].sort();
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
@@ -434,6 +448,8 @@ for (const family of ledger.families ?? []) {
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
       JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
+      JSON.stringify(candidate.directWorkItems ?? []) !==
+        JSON.stringify(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []) ||
       JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
       JSON.stringify(candidate.mapping?.requirementIds) !== JSON.stringify(expectedRequirements) ||
       JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !==
@@ -452,15 +468,23 @@ for (const family of ledger.families ?? []) {
       candidate.fixturePlan.assertion !== candidate.obligationSynopsis ||
       ((candidate.family === 'wcmp' || candidate.family === 'wdp') &&
         (candidate.fixturePlan.evidence?.path !==
-          (candidate.family === 'wdp'
-            ? 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json'
+          (trn702ClauseIds.has(candidate.id)
+            ? 'transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json'
+            : candidate.family === 'wdp'
+              ? 'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json'
             : 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json') ||
           candidate.fixturePlan.evidence?.testPath !==
-            (candidate.family === 'wdp'
-              ? 'transport-rust/src/network/wdp/tests.rs'
+            (trn702ClauseIds.has(candidate.id)
+              ? 'transport-rust/tests/wdp_constrained_replay.rs'
+              : candidate.family === 'wdp'
+                ? 'transport-rust/src/network/wdp/tests.rs'
               : 'transport-rust/src/network/wcmp/tests.rs') ||
           !candidate.fixturePlan.evidence?.command?.includes(
-            candidate.family === 'wdp' ? 'network::wdp' : 'network::wcmp'
+            trn702ClauseIds.has(candidate.id)
+              ? 'wdp_constrained_replay'
+              : candidate.family === 'wdp'
+                ? 'network::wdp'
+                : 'network::wcmp'
           ))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
         (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||

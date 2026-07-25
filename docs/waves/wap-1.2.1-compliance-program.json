@@ -968,18 +968,25 @@
         },
         {
           "id": "TRN-702",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wdp"],
           "existingTickets": ["T0-19"],
           "outputs": [
-            "WDP constrained-payload and segmentation/reassembly policy"
+            "WDP constrained-payload and segmentation/reassembly policy",
+            "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json"
           ],
           "acceptance": [
-            "Payload limits, truncation/rejection, segmentation applicability, and reassembly failure are deterministic for the selected bearer."
+            "The nine adopted WAP-200 and RFC 791/768 obligations directly evidence deterministic payload limits, rejection without WDP unit-data truncation, no WDP segmentation header on CDPD/IPv4, and destination-IP reassembly below WDP.",
+            "Whole, fragmented, out-of-order, duplicate, malformed, overlapping, oversize, and incomplete-expiry inputs produce bounded deterministic outcomes for the selected 576-octet baseline profile."
           ],
           "evidence": [
-            "cargo test --manifest-path transport-rust/Cargo.toml"
+            "cargo test --manifest-path transport-rust/Cargo.toml",
+            "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay",
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs",
+            "node scripts/wap-context-pack.mjs TRN-702",
+            "node scripts/check-wap-knowledge-graph.mjs"
           ]
         },
         {

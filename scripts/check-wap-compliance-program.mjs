@@ -403,12 +403,16 @@ const transportSprint = program.sprints.find(
 const wdpCore = transportSprint?.workItems.find(
   (workItem) => workItem.id === 'TRN-701'
 );
+const wdpConstrained = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-702'
+);
 const wcmpCore = transportSprint?.workItems.find(
   (workItem) => workItem.id === 'TRN-703'
 );
 if (
   transportSprint?.status !== 'in-progress' ||
   wdpCore?.status !== 'done' ||
+  wdpConstrained?.status !== 'done' ||
   wcmpCore?.status !== 'done' ||
   !wdpCore?.outputs?.includes(
     'spec-processing/source-manifests/wap-1.2.1-wdp-scr.json'
@@ -417,6 +421,17 @@ if (
     'spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json'
   ) ||
   !wdpCore?.acceptance?.some((line) => line.includes('nine selected')) ||
+  !wdpConstrained?.acceptance?.some(
+    (line) =>
+      line.includes('nine adopted') &&
+      line.includes('destination-IP reassembly below WDP')
+  ) ||
+  !wdpConstrained?.evidence?.includes(
+    'cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay'
+  ) ||
+  !wdpConstrained?.evidence?.includes(
+    'node scripts/wap-context-pack.mjs TRN-702'
+  ) ||
   !wcmpCore?.acceptance?.some((line) => line.includes('five selected')) ||
   !transportSprint?.exitGates?.some((line) =>
     line.includes('only when connection-oriented WSP is claimed')

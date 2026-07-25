@@ -809,7 +809,7 @@ function selectedEvidence(family, id) {
             'transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json',
           evidenceClass: 'direct-normative',
           limitation:
-            'Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses; TRN-702 reassembly policy, alternate bearers, server rows, and optional services remain unclaimed.'
+            'Closes only the nine selected CDPD/IPv4 WDP client rows and their mapped TRN-701 clauses at SCR-row level; TRN-702 separately closes its adopted constrained-payload clause subset without widening row selection. Alternate bearers, server rows, and optional services remain unclaimed.'
         }
       ]
     };

@@ -6,11 +6,11 @@ use crate::network::wdp::profile::{
 };
 use crate::network::wdp::transport_trait::{WdpError, WdpResult};
 
-const IPV4_MIN_HEADER_BYTES: usize = 20;
+pub(super) const IPV4_MIN_HEADER_BYTES: usize = 20;
 const UDP_HEADER_BYTES: usize = 8;
-const IPV4_FLAG_DONT_FRAGMENT: u16 = 0x4000;
-const IPV4_FLAG_MORE_FRAGMENTS: u16 = 0x2000;
-const IPV4_FRAGMENT_OFFSET_MASK: u16 = 0x1FFF;
+pub(super) const IPV4_FLAG_DONT_FRAGMENT: u16 = 0x4000;
+pub(super) const IPV4_FLAG_MORE_FRAGMENTS: u16 = 0x2000;
+pub(super) const IPV4_FRAGMENT_OFFSET_MASK: u16 = 0x1FFF;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UdpChecksumPolicy {
@@ -66,7 +66,7 @@ fn ones_complement_sum(bytes: &[u8]) -> u32 {
     sum
 }
 
-fn checksum(bytes: &[u8]) -> u16 {
+pub(super) fn checksum(bytes: &[u8]) -> u16 {
     !(ones_complement_sum(bytes) as u16)
 }
 

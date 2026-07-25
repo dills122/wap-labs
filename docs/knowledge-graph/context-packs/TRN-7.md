@@ -14,11 +14,11 @@
 ## Graph summary
 
 - Nodes: 214
-- Edges: 604
+- Edges: 613
 - Selected work items: 7
-- Direct normative clauses: 77
-- Work items without direct clause mappings: 5
-- Work items with unmapped declared normative families: 3
+- Direct normative clauses: 86
+- Work items without direct clause mappings: 4
+- Work items with unmapped declared normative families: 2
 
 ## Execution target
 
@@ -62,23 +62,30 @@ Evidence commands:
 
 ### TRN-702: WDP constrained-payload and segmentation/reassembly policy
 
-- Status: `todo`
+- Status: `done`
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wdp`
 - Existing tickets: `T0-19`
-- Direct normative clauses: 0
+- Direct normative clauses: 9
 
 Outputs:
 
 - WDP constrained-payload and segmentation/reassembly policy
+- transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json
 
 Acceptance:
 
-- Payload limits, truncation/rejection, segmentation applicability, and reassembly failure are deterministic for the selected bearer.
+- The nine adopted WAP-200 and RFC 791/768 obligations directly evidence deterministic payload limits, rejection without WDP unit-data truncation, no WDP segmentation header on CDPD/IPv4, and destination-IP reassembly below WDP.
+- Whole, fragmented, out-of-order, duplicate, malformed, overlapping, oversize, and incomplete-expiry inputs produce bounded deterministic outcomes for the selected 576-octet baseline profile.
 
 Evidence commands:
 
 - `cargo test --manifest-path transport-rust/Cargo.toml`
+- `cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/check-wap-transport-conformance-ledgers.mjs`
+- `node scripts/wap-context-pack.mjs TRN-702`
+- `node scripts/check-wap-knowledge-graph.mjs`
 
 ### TRN-703: WCMP generation/handling and error mapping
 
@@ -483,6 +490,63 @@ Evidence commands:
   - Requirements: `RQ-TRN-003`
   - Fixture: `WDP-FX-WAP-PORT-REGISTRY` (`transport-boundary`, `implemented`)
 
+### TRN-702
+
+- **WDP-CL-IP-MAPPING-FRAGMENTATION** — Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §7.2 (7.2 Mapping of WDP for IP)
+  - Parents: `WDP-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IP-MAPPING-FRAGMENTATION` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-BASELINE-RECEIVE-SIZE** — Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-BASELINE-RECEIVE-SIZE` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-DONT-FRAGMENT** — Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.
+  - Family: `wdp`; force: `explicit-must`; level: `required`
+  - Source: `rfc-791` §3.2 (3.2.  Discussion)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-DONT-FRAGMENT` (`error-policy`, `implemented`)
+- **WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY** — Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-791` §3.2 (3.2.  Discussion)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY` (`binary-decoder`, `implemented`)
+- **WDP-CL-IPV4-FRAGMENTATION-LOCATION** — Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-791` §3.2 (3.2.  Discussion)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-FRAGMENTATION-LOCATION` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-LARGE-SEND-GUARD** — Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.
+  - Family: `wdp`; force: `explicit-should`; level: `recommended`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-LARGE-SEND-GUARD` (`transport-boundary`, `implemented`)
+- **WDP-CL-IPV4-TOTAL-LENGTH** — Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-791` §3.1 (3.1.  Internet Header Format)
+  - Parents: `WDP-CORE-C-001`, `WDP-NA-C-003`
+  - Requirements: `RQ-TRN-001`, `RQ-TRN-003`
+  - Fixture: `WDP-FX-IPV4-TOTAL-LENGTH` (`binary-decoder`, `implemented`)
+- **WDP-CL-UDP-LENGTH-BOUNDS** — Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `rfc-768` §fields (Fields)
+  - Parents: `WDP-CORE-C-001`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-UDP-LENGTH-BOUNDS` (`binary-decoder`, `implemented`)
+- **WDP-CL-UNITDATA-CONTENT-TRANSPARENCY** — Transmit and deliver the complete service data unit without manipulating its content.
+  - Family: `wdp`; force: `implicit-must`; level: `required`
+  - Source: `WAP-200-WDP` §6.3.1.1 (6.3.1.1 T-DUnitdata)
+  - Parents: `WDP-CORE-C-001`, `WDP-PF-C-001`, `WDP-PF-C-002`
+  - Requirements: `RQ-TRN-001`
+  - Fixture: `WDP-FX-UNITDATA-CONTENT-TRANSPARENCY` (`transport-boundary`, `implemented`)
+
 ### TRN-703
 
 - **WCMP-CL-CLIENT-GENERAL-PROFILE** — Implement the general WCMP message branch used to report WDP processing errors on the selected non-ICMP profile.
@@ -656,7 +720,6 @@ Evidence commands:
 
 ## Explicit mapping gaps
 
-- `TRN-702` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-704` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-705` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-706` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
@@ -664,7 +727,6 @@ Evidence commands:
 
 Declared-family gaps:
 
-- `TRN-702` declares `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-706` declares `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-707` declares `wcmp`, `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 

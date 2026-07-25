@@ -19693,7 +19693,7 @@
       "family": "wdp",
       "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wdp-scr.json",
-      "parentLedgerSha256": "900f30373d63b8ba7764ded3211fe8074010f191a7f8119031f6be677be03253",
+      "parentLedgerSha256": "8cdd4055da1b4eb69770c74696aa6e1d9e71d8314bd4213f939d6378db7d3bfd",
       "effectiveSequence": [
         "WAP-200-WDP",
         "WAP-200_001-WDP",
@@ -20719,6 +20719,9 @@
             "WDP-PF-C-001",
             "WDP-PF-C-002"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "WAP-200-WDP",
             "section": "6.3.1.1",
@@ -20734,9 +20737,9 @@
             "status": "implemented",
             "assertion": "Transmit and deliver the complete service data unit without manipulating its content.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -20745,7 +20748,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -20866,6 +20870,9 @@
             "WDP-CT-C-002",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "WAP-200-WDP",
             "section": "7.2",
@@ -20881,9 +20888,9 @@
             "status": "implemented",
             "assertion": "Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -20892,7 +20899,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21239,6 +21247,9 @@
           "parentRows": [
             "WDP-CORE-C-001"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-768",
             "section": "fields",
@@ -21254,9 +21265,9 @@
             "status": "implemented",
             "assertion": "Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -21265,7 +21276,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001"
@@ -21840,6 +21852,9 @@
             "WDP-CORE-C-001",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-791",
             "section": "3.1",
@@ -21855,9 +21870,9 @@
             "status": "implemented",
             "assertion": "Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -21866,7 +21881,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21887,6 +21903,9 @@
             "WDP-CORE-C-001",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-791",
             "section": "3.1",
@@ -21902,9 +21921,9 @@
             "status": "implemented",
             "assertion": "Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -21913,7 +21932,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21934,6 +21954,9 @@
             "WDP-CORE-C-001",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-791",
             "section": "3.1",
@@ -21949,9 +21972,9 @@
             "status": "implemented",
             "assertion": "Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -21960,7 +21983,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -21981,6 +22005,9 @@
             "WDP-CORE-C-001",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-791",
             "section": "3.2",
@@ -21996,9 +22023,9 @@
             "status": "implemented",
             "assertion": "Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -22007,7 +22034,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -22028,6 +22056,9 @@
             "WDP-CORE-C-001",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-791",
             "section": "3.2",
@@ -22043,9 +22074,9 @@
             "status": "implemented",
             "assertion": "Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -22054,7 +22085,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
@@ -22075,6 +22107,9 @@
             "WDP-CORE-C-001",
             "WDP-NA-C-003"
           ],
+          "directWorkItems": [
+            "TRN-702"
+          ],
           "sourceAnchor": {
             "documentId": "rfc-791",
             "section": "3.2",
@@ -22090,9 +22125,9 @@
             "status": "implemented",
             "assertion": "Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.",
             "evidence": {
-              "path": "transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json",
-              "testPath": "transport-rust/src/network/wdp/tests.rs",
-              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp"
+              "path": "transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json",
+              "testPath": "transport-rust/tests/wdp_constrained_replay.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay"
             }
           },
           "mapping": {
@@ -22101,7 +22136,8 @@
             ],
             "workItems": [
               "T0-19",
-              "TRN-701"
+              "TRN-701",
+              "TRN-702"
             ],
             "requirementIds": [
               "RQ-TRN-001",
