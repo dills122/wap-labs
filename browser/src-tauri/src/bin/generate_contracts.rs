@@ -7,6 +7,7 @@ use lowband_transport_rust::{
     FetchUaCapabilityProfile,
 };
 use ts_rs::{Config, TS};
+use wavenav_engine::SCRIPT_ERROR_CATEGORY_METADATA;
 use wavenav_host_lib::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineFrame, EngineKey, EngineRuntimeSnapshot,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationPostContextSnapshot,
@@ -25,6 +26,29 @@ fn push_decl<T: TS>(out: &mut String) {
 
 fn contracts_out_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../contracts/generated")
+}
+
+fn render_script_error_category_labels(
+    categories: &[(&str, Option<&str>)],
+) -> Result<String, String> {
+    let mut output = String::from(
+        "export const SCRIPT_ERROR_CATEGORY_LABELS: Readonly<Record<string, string>> = {\n",
+    );
+    for (literal, label) in categories {
+        let Some(label) = label else {
+            if *literal == "none" {
+                continue;
+            }
+            return Err(format!(
+                "script error category `{literal}` is missing a label"
+            ));
+        };
+        let literal = serde_json::to_string(literal).map_err(|err| err.to_string())?;
+        let label = serde_json::to_string(label).map_err(|err| err.to_string())?;
+        output.push_str(&format!("  {literal}: {label},\n"));
+    }
+    output.push_str("};\n\n");
+    Ok(output)
 }
 
 fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
@@ -55,6 +79,10 @@ fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
     push_decl::<EngineFrame>(&mut output);
     push_decl::<DrawCmd>(&mut output);
     push_decl::<RenderList>(&mut output);
+    output.push_str(
+        &render_script_error_category_labels(SCRIPT_ERROR_CATEGORY_METADATA)
+            .map_err(std::io::Error::other)?,
+    );
 
     fs::write(&out_path, output)?;
     println!("generated {}", out_path.display());
@@ -87,4 +115,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     write_engine_contracts()?;
     write_transport_contracts()?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn renders_rust_owned_script_error_category_labels() {
+        let output = render_script_error_category_labels(SCRIPT_ERROR_CATEGORY_METADATA)
+            .expect("the engine category metadata must generate");
+
+        assert_eq!(
+            output,
+            concat!(
+                "export const SCRIPT_ERROR_CATEGORY_LABELS: ",
+                "Readonly<Record<string, string>> = {\n",
+                "  \"computational\": \"computation error\",\n",
+                "  \"integrity\": \"data integrity error\",\n",
+                "  \"resource\": \"resource limit error\",\n",
+                "  \"host-binding\": \"host binding error\",\n",
+                "};\n\n"
+            )
+        );
+    }
+
+    #[test]
+    fn rejects_non_fallback_script_error_category_without_label() {
+        let error =
+            render_script_error_category_labels(&[("none", None), ("future-category", None)])
+                .expect_err("an unlabeled non-fallback category must fail contract generation");
+
+        assert_eq!(
+            error.to_string(),
+            "script error category `future-category` is missing a label"
+        );
+    }
 }

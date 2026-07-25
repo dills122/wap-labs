@@ -261,7 +261,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-23 Script error taxonomy label table is hand-mirrored in TypeScript instead of generated (2026-07-24)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P3`
 3. `Files`:
 - `browser/frontend/src/app/browser-presenter.ts` (`SCRIPT_ERROR_CATEGORY_LABELS`)
@@ -278,6 +278,12 @@ Completed maintenance tickets are archived in:
 - `SCRIPT_ERROR_CATEGORY_LABELS` (or its replacement) is generated, not hand-authored.
 - Adding a new script-error category on the Rust side and forgetting the TypeScript label fails `contracts:check` instead of silently falling back to a generic label.
 - No behavior change to today's rendered labels.
+7. `Resolution`:
+- `ScriptErrorCategoryLiteral`, its serialized literals, and its UI labels now come from one macro-backed Rust definition in `engine_script_types.rs`; the `none` fallback remains intentionally unlabeled.
+- The existing Rust contract generator emits `SCRIPT_ERROR_CATEGORY_LABELS` into `browser/contracts/generated/engine-host.ts`, and the existing AST wrapper generator discovers and re-exports that value from `browser/contracts/engine.ts`.
+- Contract generation rejects any non-fallback category whose Rust metadata has no label. A focused generator regression covers that rejection, and an end-to-end temporary-category check confirmed `pnpm --dir browser run contracts:check` exits nonzero with the missing category named in the error.
+- `browser-presenter.ts` imports the generated table. Presenter tests pin all four existing labels and preserve the generic `script error` fallback for `none`, unknown, and absent categories.
+- `engine-wasm/contracts/wml-engine.ts` is unchanged because the runtime wire shape and semantics did not change; the generated table is host presentation metadata, not a new engine method or payload field.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
