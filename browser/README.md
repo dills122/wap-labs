@@ -49,7 +49,7 @@ Implemented now:
   - `wap://`/`waps://` gateway bridge mapping
   - per-request correlation ID plumbing and structured request lifecycle logs
   - retry/timeout and error taxonomy mapping
-  - WBXML decode using `wbxml2xml` utility
+  - WBXML decode through Lowband's pinned built-in WML 1.3 decoder
   - startup preflight for decoder availability
 
 Not implemented yet:
@@ -90,19 +90,9 @@ pnpm --dir browser run tauri:icons
 
 - `GATEWAY_HTTP_BASE` (default `http://localhost:13002`)
 - `VITE_WAVES_DEFAULT_URL` (frontend startup URL, default `http://127.0.0.1:3000/`)
-- Decoder backend: isolated `wbxml2xml` subprocess with bounded runtime and decoded output.
-- `WBXML2XML_BIN` (optional explicit absolute path to a trusted `wbxml2xml` binary)
-
-## Bundled WBXML decoder
-
-You can bundle `wbxml2xml` as a Tauri resource:
-
-- `src-tauri/resources/wbxml/macos/wbxml2xml`
-- `src-tauri/resources/wbxml/linux/wbxml2xml`
-- `src-tauri/resources/wbxml/windows/wbxml2xml.exe`
-
-When present, startup sets `WBXML2XML_BIN` to the bundled binary automatically.
-Otherwise the host resolves `wbxml2xml` from absolute entries on `PATH`.
+- Decoder backend: Lowband's built-in
+  `lowband-wml13-wbxml/0.1.0` implementation with bounded output and parser
+  depth. No external `wbxml2xml` installation or bundled sidecar is required.
 
 ## Next implementation slice
 

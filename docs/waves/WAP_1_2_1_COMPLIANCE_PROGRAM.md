@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 201 selected strict
   rows;
-- the selected implementation audit is 13 implemented, 85 partial, and 103
+- the selected implementation audit is 13 implemented, 87 partial, and 101
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 201 selected parent rows
@@ -72,9 +72,10 @@ All nine selected Class C family increments are complete at SCR level:
   `WAP-192_105`, with 11 mandatory and 4 optional rows;
 - `WBXML:MCF` selects exactly three mandatory client rows and leaves 12
   server/document/encoder rows outside the selected client profile;
-- the selected WBXML audit is 0 implemented, 1 partial, and 2 missing; the
-  single linked test proves the subprocess boundary rather than normative
-  decode semantics, so direct normative evidence remains 0/3.
+- the selected WBXML audit is 0 implemented, 3 partial, and 0 missing; a
+  pinned built-in decoder and source-derived corpus now link direct normative
+  baseline tests to all 3 rows, while exhaustive 48-clause closure remains
+  open.
 - 112 effective WMLScript rows are extracted from the consolidated
   WAP-193_101 table; `WMLScript:MCF` selects 41 mandatory interpreter rows;
 - the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,

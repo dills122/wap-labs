@@ -31,7 +31,7 @@ tags:
     "staticConformanceSection": "9.2",
     "changeSection": "3.3"
   },
-  "implementationStatus": "missing",
+  "implementationStatus": "partial",
   "ownerLayers": [
     "transport-rust"
   ],

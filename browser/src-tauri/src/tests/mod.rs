@@ -204,7 +204,6 @@ fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
     );
 }
 
-mod bootstrap;
 mod engine_flow;
 mod engine_wrappers;
 mod fetch_commands;

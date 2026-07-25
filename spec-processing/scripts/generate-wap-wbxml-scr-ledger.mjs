@@ -261,12 +261,12 @@ const selectedAudit = new Map([
     {
       status: 'partial',
       note:
-        'WMLC payloads reach a bounded external decoder subprocess, but the repository neither pins a conforming decoder nor tests the WBXML 1.3 binary structure and token grammar directly.',
+        'The pinned built-in WML 1.3 decoder and source-derived corpus directly cover header order, multi-byte integers, string tables, parser pages, core global tokens, binary tokens, literals, and deterministic malformed input. Broader charset termination, external charset precedence, processing-instruction, opaque/application-extension, and full token-table fixture breadth remain open.',
       workItems: ['WML-203', 'R0-08', 'T0-07'],
       implementationEvidence: [
         {
-          path: 'transport-rust/src/wbxml.rs',
-          symbol: 'decode_wmlc_with_tool_limits'
+          path: 'transport-rust/src/wbxml_decoder.rs',
+          symbol: 'decode_wml13'
         },
         {
           path: 'transport-rust/src/responses.rs',
@@ -275,39 +275,73 @@ const selectedAudit = new Map([
       ],
       testEvidence: [
         {
-          path: 'transport-rust/src/tests/wbxml_env.rs',
-          test: 'transport_decode_wmlc_uses_subprocess_backend',
+          path: 'transport-rust/src/tests/wbxml_conformance.rs',
+          test: 'transport_wbxml_c_001_binary_structure_fixtures',
           command:
-            'cd transport-rust && cargo test --lib transport_decode_wmlc_uses_subprocess_backend',
+            'cd transport-rust && cargo test --lib transport_wbxml_c_001_binary_structure_fixtures',
+          fixture:
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
-            'The fake decoder emits fixed XML and does not validate the input token stream.'
+            'This bounded baseline does not yet execute every one of the 43 nested WBXML-C-001 clauses.'
         }
       ],
-      evidenceState: 'boundary-test-linked'
+      evidenceState: 'direct-normative-fixture-linked-partial'
     }
   ],
   [
     'WBXML-C-010',
     {
-      status: 'missing',
+      status: 'partial',
       note:
-        'No source-pinned decoder behavior or fixture proves the effective section 6.3 default-attribute-value requirement.',
+        'The pinned decoder reconstructs the WML 1.3 DTD default and fixed attributes exercised by a source-derived omitted-attribute fixture. Additional version-dependent and externally supplied implied-value cases remain open.',
       workItems: ['WML-203', 'R0-08'],
-      implementationEvidence: [],
-      testEvidence: [],
-      evidenceState: 'gap-work-item-mapped'
+      implementationEvidence: [
+        {
+          path: 'transport-rust/src/wbxml_decoder.rs',
+          symbol: 'default_attributes'
+        }
+      ],
+      testEvidence: [
+        {
+          path: 'transport-rust/src/tests/wbxml_conformance.rs',
+          test: 'transport_wbxml_c_010_default_attribute_fixtures',
+          command:
+            'cd transport-rust && cargo test --lib transport_wbxml_c_010_default_attribute_fixtures',
+          fixture:
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
+          limitation:
+            'The baseline is pinned to WML 1.3 and does not yet model an external implied-value source.'
+        }
+      ],
+      evidenceState: 'direct-normative-fixture-linked-partial'
     }
   ],
   [
     'WBXML-C-011',
     {
-      status: 'missing',
+      status: 'partial',
       note:
-        'No direct fixture proves equivalent decoding of binary and literal tokens for tags, attribute names, and attribute values; the permissive corpus and fake subprocess tests are insufficient.',
+        'The pinned decoder implements the WML 1.3 page-zero tag, attribute-start, and attribute-value tables and a direct fixture proves equivalent textual output for representative binary and literal tag, attribute-name, and string-value encodings. Exhaustive per-token equivalence cases and MIME typing integration remain open.',
       workItems: ['WML-203', 'R0-08', 'T0-07'],
-      implementationEvidence: [],
-      testEvidence: [],
-      evidenceState: 'gap-work-item-mapped'
+      implementationEvidence: [
+        {
+          path: 'transport-rust/src/wbxml_decoder.rs',
+          symbol: 'attribute_value'
+        }
+      ],
+      testEvidence: [
+        {
+          path: 'transport-rust/src/tests/wbxml_conformance.rs',
+          test: 'transport_wbxml_c_011_binary_literal_equivalence_fixtures',
+          command:
+            'cd transport-rust && cargo test --lib transport_wbxml_c_011_binary_literal_equivalence_fixtures',
+          fixture:
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
+          limitation:
+            'Representative equivalence is direct, but every assigned token has not yet received a paired fixture.'
+        }
+      ],
+      evidenceState: 'direct-normative-fixture-linked-partial'
     }
   ]
 ]);
@@ -489,10 +523,10 @@ const ledger = {
       })),
       'status'
     ),
-    selectedDirectNormativeTestEvidenceCount: 0,
-    selectedBoundaryTestEvidenceCount: selectedRequired.filter(
+    selectedDirectNormativeTestEvidenceCount: selectedRequired.filter(
       (obligation) => obligation.mapping.testEvidence.length > 0
-    ).length
+    ).length,
+    selectedBoundaryTestEvidenceCount: 0
   },
   obligations
 };
