@@ -1841,7 +1841,10 @@ Reference:
 8. `Notes`:
 - `head` (`WML-C-30`) and `access` (`WML-C-21`) landed: the parser now recognizes deck-level `<head>` (not mistaken for a card) and extracts `<access domain= path=>` onto the deck model, rejecting a deck with more than one `<access>` element per section `11.3.1`. `access` is `partial`, not `implemented`, in the compliance ledger - parsing/storage is done, but enforcing the access-control policy against a referring URI is a host-boundary concern (`R0-07`). `meta` (`WML-C-34`, optional) is not yet represented.
 - `template` (`WML-C-47`) split out to `R0-12`: it is spec-inseparable from card/deck task shadowing (`WML-C-08`, section `9.6`) and requires a real named `do`/`onevent` binding model this codebase doesn't have yet, not a small addition alongside `head`/`access`.
-- Remaining scope: `do`/`onevent`/`select`/`option`/`optgroup`/`input`/`fieldset`/`timer` validity constraints beyond what's already parsed.
+- Mandatory `input`/`select`/`option` syntax validation for `WML-C-33`, `WML-C-41`, and `WML-C-43` now rejects invalid DTD content, undeclared attributes, and invalid NMTOKEN/enum/boolean/number values deterministically. Optional `optgroup` remains accepted but unmodeled; mask/default/selection behavior remains runtime follow-up scope.
+- Input commit now enforces valid Basic Latin format codes, escaped literals, invalid-mask fallback, and `emptyok` precedence. Rejection returns a deterministic host-visible error while preserving the prior variable and active draft for retry; native and WASM boundary tests cover the same state.
+- Literal input name/value initialization now runs in document order on load, navigation, back, and refresh; invalid existing values are unset before valid-default fallback. Active input/select edits commit before card task execution, and invalid masked input blocks task side effects.
+- Remaining scope: `do`/`onevent`, optional `optgroup`, `fieldset`, `timer`, vdata expansion and language-aware non-Basic-Latin mask repertoires, plus select initialization/multiple/iname/ivalue/onpick behavior.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 

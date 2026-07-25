@@ -1,3 +1,4 @@
+use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
 
 #[cfg(test)]
@@ -51,15 +52,19 @@ fn map_card_level_nodes(
                     }
                 }
                 "input" => {
-                    if let Some(input_node) = parse_input_inline_node(element) {
-                        out.push(Node::Paragraph(vec![input_node]));
-                    }
+                    let input_node = parse_input_inline_node(element)?;
+                    out.push(Node::Paragraph(vec![input_node]));
                 }
                 "select" => {
                     if let Some(select_node) = parse_select_inline_node(element, budget, depth + 1)?
                     {
                         out.push(Node::Paragraph(vec![select_node]));
                     }
+                }
+                "option" => {
+                    return Err(
+                        "Invalid <option>: must be contained by <select> or <optgroup>".to_string(),
+                    )
                 }
                 _ => map_card_level_nodes(&element.children, out, budget, depth + 1)?,
             },
@@ -114,9 +119,7 @@ fn map_inline_nodes_recursive(
                 }
                 "input" => {
                     flush_pending_inline_text(pending_text, out);
-                    if let Some(input_node) = parse_input_inline_node(element) {
-                        out.push(input_node);
-                    }
+                    out.push(parse_input_inline_node(element)?);
                 }
                 "select" => {
                     flush_pending_inline_text(pending_text, out);
@@ -124,6 +127,11 @@ fn map_inline_nodes_recursive(
                     {
                         out.push(select_node);
                     }
+                }
+                "option" => {
+                    return Err(
+                        "Invalid <option>: must be contained by <select> or <optgroup>".to_string(),
+                    )
                 }
                 _ => map_inline_nodes_recursive(
                     &element.children,
@@ -149,25 +157,74 @@ fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode
     }
 }
 
-fn parse_input_inline_node(element: &XmlElement) -> Option<InlineNode> {
-    let name = normalize_text(element.attr("name").unwrap_or_default());
-    if name.is_empty() {
-        return None;
+fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
+    validate_allowed_attributes(
+        element,
+        &[
+            "accesskey",
+            "class",
+            "emptyok",
+            "format",
+            "id",
+            "maxlength",
+            "name",
+            "size",
+            "tabindex",
+            "title",
+            "type",
+            "value",
+            "xml:lang",
+        ],
+    )?;
+    if !element.children.is_empty() {
+        return Err("Invalid <input>: element must be empty".to_string());
     }
-    let value = normalize_text(element.attr("value").unwrap_or_default());
+    let name = element
+        .attr("name")
+        .ok_or_else(|| "Invalid <input>: missing required 'name' attribute".to_string())?;
+    validate_nmtoken("input", "name", name)?;
+    validate_optional_xml_name(element, "id")?;
+    validate_optional_nmtoken(element, "xml:lang")?;
+    validate_optional_enum(element, "type", &["text", "password"])?;
+    validate_optional_enum(element, "emptyok", &["true", "false"])?;
+    for attr in ["size", "maxlength", "tabindex"] {
+        validate_optional_number(element, attr)?;
+    }
+
+    let name = name.to_string();
+    let default_value = element.attr("value").map(normalize_text);
+    let value = default_value.clone().unwrap_or_default();
     let is_password = element
         .attr("type")
-        .map(|value| value.eq_ignore_ascii_case("password"))
+        .map(|value| value == "password")
         .unwrap_or(false);
     let max_length = element
         .attr("maxlength")
-        .and_then(|value| value.parse::<usize>().ok())
-        .filter(|value| *value > 0);
-    Some(InlineNode::Input {
+        .map(|value| {
+            value
+                .parse::<u32>()
+                .map(|value| value as usize)
+                .map_err(|_| {
+                    "Invalid <input>: attribute 'maxlength' exceeds supported range".to_string()
+                })
+        })
+        .transpose()?;
+    let mask = element
+        .attr("format")
+        .and_then(InputMask::parse)
+        .unwrap_or_default();
+    let empty_ok = element
+        .attr("emptyok")
+        .map(|value| value == "true")
+        .unwrap_or_else(|| mask.allows_empty());
+    Ok(InlineNode::Input {
         name,
         value,
+        default_value,
         is_password,
         max_length,
+        mask,
+        empty_ok,
     })
 }
 
@@ -176,10 +233,19 @@ fn parse_select_inline_node(
     budget: &mut ParseBudget,
     depth: usize,
 ) -> Result<Option<InlineNode>, String> {
-    let name = normalize_text(element.attr("name").unwrap_or_default());
-    if name.is_empty() {
-        return Ok(None);
+    validate_allowed_attributes(
+        element,
+        &[
+            "class", "id", "iname", "ivalue", "multiple", "name", "tabindex", "title", "value",
+            "xml:lang",
+        ],
+    )?;
+    validate_optional_xml_name(element, "id")?;
+    for attr in ["name", "iname", "xml:lang"] {
+        validate_optional_nmtoken(element, attr)?;
     }
+    validate_optional_enum(element, "multiple", &["true", "false"])?;
+    validate_optional_number(element, "tabindex")?;
 
     let title = {
         let value = normalize_text(element.attr("title").unwrap_or_default());
@@ -191,22 +257,37 @@ fn parse_select_inline_node(
     };
 
     let mut options = Vec::new();
-    let mut selected_index = None;
+    let mut choice_child_count = 0usize;
 
     budget.enter_scope(depth, "select option traversal")?;
     for child in &element.children {
         budget.visit_node("select option traversal")?;
-        let XmlNode::Element(option) = child else {
-            continue;
+        let option = match child {
+            XmlNode::Text(text) => {
+                if text.trim().is_empty() {
+                    continue;
+                }
+                return Err("Invalid <select>: text content is not allowed".to_string());
+            }
+            XmlNode::Element(child) if child.name == "optgroup" => {
+                // WML-C-40 is an optional feature. Accept its DTD-permitted
+                // presence without adding optgroup modeling in this mandatory
+                // input/select/option validation slice.
+                choice_child_count = choice_child_count.saturating_add(1);
+                continue;
+            }
+            XmlNode::Element(child) if child.name == "option" => child,
+            XmlNode::Element(child) => {
+                return Err(format!(
+                    "Invalid <select>: unexpected child <{}>",
+                    child.name
+                ))
+            }
         };
-        if option.name != "option" {
-            continue;
-        }
+        choice_child_count = choice_child_count.saturating_add(1);
+        validate_option_element(option)?;
 
         let label = normalize_text(&inline_text_content(&option.children, budget, depth + 1)?);
-        if label.is_empty() {
-            continue;
-        }
         let value = {
             let explicit = normalize_text(option.attr("value").unwrap_or_default());
             if explicit.is_empty() {
@@ -215,23 +296,17 @@ fn parse_select_inline_node(
                 explicit
             }
         };
-        let is_selected = option
-            .attr("selected")
-            .map(|value| {
-                let value = value.trim();
-                value.is_empty()
-                    || value.eq_ignore_ascii_case("true")
-                    || value.eq_ignore_ascii_case("selected")
-            })
-            .unwrap_or(false);
-        let idx = options.len();
         options.push(SelectOption { label, value });
-        if is_selected && selected_index.is_none() {
-            selected_index = Some(idx);
-        }
     }
 
-    if options.is_empty() {
+    if choice_child_count == 0 {
+        return Err(
+            "Invalid <select>: expected one or more <option> or <optgroup> children".to_string(),
+        );
+    }
+
+    let name = normalize_text(element.attr("name").unwrap_or_default());
+    if name.is_empty() || options.is_empty() {
         return Ok(None);
     }
 
@@ -239,8 +314,144 @@ fn parse_select_inline_node(
         name,
         title,
         options,
-        selected_index: selected_index.unwrap_or(0),
+        selected_index: 0,
     }))
+}
+
+fn validate_option_element(element: &XmlElement) -> Result<(), String> {
+    validate_allowed_attributes(
+        element,
+        &["class", "id", "onpick", "title", "value", "xml:lang"],
+    )?;
+    validate_optional_xml_name(element, "id")?;
+    validate_optional_nmtoken(element, "xml:lang")?;
+
+    for child in &element.children {
+        if let XmlNode::Element(child) = child {
+            if child.name != "onevent" {
+                return Err(format!(
+                    "Invalid <option>: unexpected child <{}>",
+                    child.name
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn validate_allowed_attributes(element: &XmlElement, allowed: &[&str]) -> Result<(), String> {
+    let mut unexpected = element
+        .attrs
+        .keys()
+        .filter(|attr| !allowed.contains(&attr.as_str()))
+        .collect::<Vec<_>>();
+    unexpected.sort();
+    if let Some(attr) = unexpected.first() {
+        return Err(format!(
+            "Invalid <{}>: unexpected attribute '{}'",
+            element.name, attr
+        ));
+    }
+    Ok(())
+}
+
+fn validate_optional_enum(
+    element: &XmlElement,
+    attr: &str,
+    allowed: &[&str],
+) -> Result<(), String> {
+    let Some(value) = element.attr(attr) else {
+        return Ok(());
+    };
+    if allowed.contains(&value) {
+        return Ok(());
+    }
+    let expectation = allowed
+        .iter()
+        .map(|value| format!("'{value}'"))
+        .collect::<Vec<_>>()
+        .join(" or ");
+    Err(format!(
+        "Invalid <{}>: attribute '{attr}' must be {expectation}",
+        element.name
+    ))
+}
+
+fn validate_optional_number(element: &XmlElement, attr: &str) -> Result<(), String> {
+    let Some(value) = element.attr(attr) else {
+        return Ok(());
+    };
+    if !value.is_empty() && value.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Ok(());
+    }
+    Err(format!(
+        "Invalid <{}>: attribute '{attr}' must contain decimal digits",
+        element.name
+    ))
+}
+
+fn validate_optional_nmtoken(element: &XmlElement, attr: &str) -> Result<(), String> {
+    let Some(value) = element.attr(attr) else {
+        return Ok(());
+    };
+    validate_nmtoken(&element.name, attr, value)
+}
+
+fn validate_nmtoken(element_name: &str, attr: &str, value: &str) -> Result<(), String> {
+    if !value.is_empty() && value.chars().all(is_xml_name_char) {
+        return Ok(());
+    }
+    Err(format!(
+        "Invalid <{element_name}>: attribute '{attr}' must be an XML NMTOKEN"
+    ))
+}
+
+fn validate_optional_xml_name(element: &XmlElement, attr: &str) -> Result<(), String> {
+    let Some(value) = element.attr(attr) else {
+        return Ok(());
+    };
+    let mut chars = value.chars();
+    if chars.next().is_some_and(is_xml_name_start_char) && chars.all(is_xml_name_char) {
+        return Ok(());
+    }
+    Err(format!(
+        "Invalid <{}>: attribute '{attr}' must be an XML Name",
+        element.name
+    ))
+}
+
+fn is_xml_name_start_char(ch: char) -> bool {
+    matches!(
+        ch,
+        ':'
+            | 'A'..='Z'
+            | '_'
+            | 'a'..='z'
+            | '\u{C0}'..='\u{D6}'
+            | '\u{D8}'..='\u{F6}'
+            | '\u{F8}'..='\u{2FF}'
+            | '\u{370}'..='\u{37D}'
+            | '\u{37F}'..='\u{1FFF}'
+            | '\u{200C}'..='\u{200D}'
+            | '\u{2070}'..='\u{218F}'
+            | '\u{2C00}'..='\u{2FEF}'
+            | '\u{3001}'..='\u{D7FF}'
+            | '\u{F900}'..='\u{FDCF}'
+            | '\u{FDF0}'..='\u{FFFD}'
+            | '\u{10000}'..='\u{EFFFF}'
+    )
+}
+
+fn is_xml_name_char(ch: char) -> bool {
+    is_xml_name_start_char(ch)
+        || matches!(
+            ch,
+            '-' | '.'
+                | '0'..='9'
+                | '\u{B7}'
+                | '\u{300}'..='\u{36F}'
+                | '\u{203F}'..='\u{2040}'
+        )
 }
 
 fn inline_text_content(

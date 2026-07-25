@@ -276,14 +276,20 @@ mod tests {
                 InlineNode::Input {
                     name: "UserName".to_string(),
                     value: "AHMED".to_string(),
+                    default_value: Some("AHMED".to_string()),
                     is_password: false,
                     max_length: None,
+                    mask: Default::default(),
+                    empty_ok: true,
                 },
                 InlineNode::Input {
                     name: "Password".to_string(),
                     value: "secret".to_string(),
+                    default_value: Some("secret".to_string()),
                     is_password: true,
                     max_length: None,
+                    mask: Default::default(),
+                    empty_ok: true,
                 },
                 InlineNode::Select {
                     name: "Country".to_string(),

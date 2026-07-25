@@ -303,7 +303,10 @@ fn focused_input_edit_cancel_keeps_original_value() {
     assert!(engine.set_focused_input_edit_draft("BOB".to_string()));
     assert!(engine.cancel_focused_input_edit());
     assert_eq!(engine.focused_input_edit_name(), None);
-    assert_eq!(engine.get_var("UserName".to_string()), None);
+    assert_eq!(
+        engine.get_var("UserName".to_string()),
+        Some("AHMED".to_string())
+    );
     let lines = render_snapshot_lines(&engine);
     assert!(lines
         .iter()
@@ -330,14 +333,234 @@ fn focused_input_edit_draft_respects_input_maxlength() {
 }
 
 #[test]
-fn select_control_renders_default_selected_option() {
+fn wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input name="Phone" value="12345-123" format="NNNNN\-3N"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    assert!(engine.set_var("Phone".to_string(), "12345-123".to_string()));
+    engine
+        .begin_focused_input_edit()
+        .expect("begin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("54321987".to_string()));
+    let err = engine
+        .commit_focused_input_edit()
+        .expect_err("value without the mask literal must be rejected");
+    assert_eq!(
+        err,
+        "Input 'Phone' rejected: value does not conform to format mask"
+    );
+    assert_eq!(
+        engine.get_var("Phone".to_string()),
+        Some("12345-123".to_string())
+    );
+    assert_eq!(
+        engine.focused_input_edit_value(),
+        Some("54321987".to_string())
+    );
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:Phone:text=[Phone: 54321987]")));
+
+    assert!(engine.set_focused_input_edit_draft("54321-987".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("corrected value should commit"));
+    assert_eq!(
+        engine.get_var("Phone".to_string()),
+        Some("54321-987".to_string())
+    );
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:Phone:text=[Phone: 54321-987]")));
+}
+
+#[test]
+fn wml_fx_input_empty_commit_applies_format_and_emptyok_precedence() {
+    let cases = [
+        ("format-required", r#"format="N""#, false),
+        ("format-allows-empty", r#"format="*N""#, true),
+        (
+            "explicitly-allows-empty",
+            r#"format="N" emptyok="true""#,
+            true,
+        ),
+        (
+            "explicitly-requires-input",
+            r#"format="*N" emptyok="false""#,
+            false,
+        ),
+        ("implied-default-mask", "", true),
+    ];
+
+    for (name, attrs, accepts_empty) in cases {
+        let mut engine = WmlEngine::new();
+        let xml =
+            format!(r#"<wml><card id="home"><input name="Value" value="7" {attrs}/></card></wml>"#);
+        engine.load_deck(&xml).expect("deck should load");
+        engine
+            .begin_focused_input_edit()
+            .expect("begin edit should succeed");
+        assert!(engine.set_focused_input_edit_draft(String::new()));
+        let result = engine.commit_focused_input_edit();
+
+        if accepts_empty {
+            assert_eq!(result, Ok(true), "case {name}");
+            assert_eq!(
+                engine.get_var("Value".to_string()),
+                Some(String::new()),
+                "case {name}"
+            );
+            assert_eq!(engine.focused_input_edit_name(), None, "case {name}");
+        } else {
+            assert_eq!(
+                result,
+                Err("Input 'Value' rejected: empty value is not allowed".to_string()),
+                "case {name}"
+            );
+            assert_eq!(
+                engine.get_var("Value".to_string()),
+                Some("7".to_string()),
+                "case {name}"
+            );
+            assert_eq!(
+                engine.focused_input_edit_value(),
+                Some(String::new()),
+                "case {name}"
+            );
+        }
+    }
+}
+
+#[test]
+fn invalid_input_format_is_ignored_in_favor_of_default_mask() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(r#"<wml><card id="home"><input name="Value" value="" format="*"/></card></wml>"#)
+        .expect("invalid format is ignored rather than rejecting the deck");
+    engine
+        .begin_focused_input_edit()
+        .expect("begin edit should succeed");
+    assert!(engine.set_focused_input_edit_draft("Any value 42!".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("default mask should accept general text"));
+    assert_eq!(
+        engine.get_var("Value".to_string()),
+        Some("Any value 42!".to_string())
+    );
+}
+
+#[test]
+fn wml_fx_input_initialization_prefers_existing_valid_name_value() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r##"
+            <wml>
+              <card id="home"><a href="#form">Form</a></card>
+              <card id="form"><input name="Pin" value="1234" format="4N"/></card>
+            </wml>
+            "##,
+        )
+        .expect("deck should load");
+    assert!(engine.set_var("Pin".to_string(), "4321".to_string()));
+
+    engine
+        .navigate_to_card("form".to_string())
+        .expect("form card should initialize");
+
+    assert_eq!(engine.get_var("Pin".to_string()), Some("4321".to_string()));
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:Pin:text=[Pin: 4321]")));
+}
+
+#[test]
+fn wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r##"
+            <wml>
+              <card id="home"><a href="#form">Form</a></card>
+              <card id="form"><input name="Pin" value="1234" format="4N"/></card>
+            </wml>
+            "##,
+        )
+        .expect("deck should load");
+    assert!(engine.set_var("Pin".to_string(), "abcd".to_string()));
+
+    engine
+        .navigate_to_card("form".to_string())
+        .expect("form card should initialize");
+
+    assert_eq!(engine.get_var("Pin".to_string()), Some("1234".to_string()));
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:Pin:text=[Pin: 1234]")));
+}
+
+#[test]
+fn invalid_input_default_leaves_variable_unset_and_control_empty() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"<wml><card id="form"><input name="Pin" value="abcd" format="4N"/></card></wml>"#,
+        )
+        .expect("deck should load with invalid default ignored");
+
+    assert_eq!(engine.get_var("Pin".to_string()), None);
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=input:Pin:text=[Pin: ]")));
+}
+
+#[test]
+fn input_initialization_runs_in_document_order() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml>
+              <card id="form">
+                <input name="Shared" value="12" format="2N"/>
+                <input name="Shared" value="AB" format="2A"/>
+                <input name="Shared" value="34" format="2N"/>
+              </card>
+            </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(engine.get_var("Shared".to_string()), Some("34".to_string()));
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:Shared:text=[Shared: 12]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:Shared:text=[Shared: AB]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:Shared:text=[Shared: 34]")));
+}
+
+#[test]
+fn select_control_renders_first_option_by_default() {
     let mut engine = WmlEngine::new();
     let xml = r#"
         <wml>
           <card id="home">
             <select name="Country" title="Country">
               <option value="Jordan">Jordan</option>
-              <option value="France" selected="true">France</option>
+              <option value="France">France</option>
               <option value="Germany">Germany</option>
             </select>
           </card>
@@ -348,7 +571,27 @@ fn select_control_renders_default_selected_option() {
     let lines = render_snapshot_lines(&engine);
     assert!(lines
         .iter()
-        .any(|line| line.contains("href=select:Country:text=[Country: France]")));
+        .any(|line| line.contains("href=select:Country:text=[Country: Jordan]")));
+}
+
+#[test]
+fn wml_204_control_validation_simulator_example_loads_and_renders() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(WML_204_CONTROL_VALIDATION_EXAMPLE)
+        .expect("WML-204 simulator example should load");
+
+    assert_eq!(engine.active_card_id().expect("active card"), "controls");
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:UserName:text=[UserName: AHMED]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=input:Pin:text=[Pin: ****]")));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("href=select:Country:text=[Country: Jordan]")));
 }
 
 #[test]

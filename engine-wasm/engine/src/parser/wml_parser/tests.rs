@@ -202,7 +202,8 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
                     name,
                     value,
                     is_password,
-                    max_length
+                    max_length,
+                    ..
                 } if name == "UserName" && value == "AHMED" && !is_password
                     && max_length.is_none()
             ));
@@ -218,7 +219,8 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
                     name,
                     value,
                     is_password,
-                    max_length
+                    max_length,
+                    ..
                 } if name == "Password" && value == "secret" && *is_password
                     && max_length.is_none()
             ));
@@ -251,6 +253,187 @@ fn parses_input_maxlength_when_present() {
             ));
         }
         _ => panic!("expected input paragraph"),
+    }
+}
+
+#[test]
+fn wml_fx_input_structure_accepts_declared_attributes_and_zero_maxlength() {
+    // WML-CL-INPUT-STRUCTURE / WAP-191_104-WML section 11.6.3.
+    let xml = r#"
+        <wml>
+          <card id="home">
+            <input
+              name="pin"
+              type="password"
+              value=""
+              format="NNNN"
+              emptyok="false"
+              size="4"
+              maxlength="0"
+              tabindex="1"
+              title="PIN"
+              accesskey="1"
+              xml:lang="en-US"
+              id="pin-field"
+              class="credential"
+            />
+          </card>
+        </wml>
+        "#;
+
+    let deck = parse_wml(xml).expect("source-declared input attributes should parse");
+    assert!(matches!(
+        &deck.cards[0].nodes[0],
+        Node::Paragraph(items)
+            if matches!(
+                &items[0],
+                InlineNode::Input {
+                    name,
+                    is_password: true,
+                    max_length: Some(0),
+                    ..
+                } if name == "pin"
+            )
+    ));
+}
+
+#[test]
+fn wml_fx_input_structure_rejects_invalid_syntax_deterministically() {
+    // WML-CL-INPUT-STRUCTURE / WAP-191_104-WML section 11.6.3 and DTD.
+    let cases = [
+        (
+            r#"<input type="text"/>"#,
+            "Invalid <input>: missing required 'name' attribute",
+        ),
+        (
+            r#"<input name="has space"/>"#,
+            "Invalid <input>: attribute 'name' must be an XML NMTOKEN",
+        ),
+        (
+            r#"<input name="pin" type="number"/>"#,
+            "Invalid <input>: attribute 'type' must be 'text' or 'password'",
+        ),
+        (
+            r#"<input name="pin" emptyok="yes"/>"#,
+            "Invalid <input>: attribute 'emptyok' must be 'true' or 'false'",
+        ),
+        (
+            r#"<input name="pin" maxlength="-1"/>"#,
+            "Invalid <input>: attribute 'maxlength' must contain decimal digits",
+        ),
+        (
+            r#"<input name="pin" maxlength="4294967296"/>"#,
+            "Invalid <input>: attribute 'maxlength' exceeds supported range",
+        ),
+        (
+            r#"<input name="pin" zeta="1" alpha="2"/>"#,
+            "Invalid <input>: unexpected attribute 'alpha'",
+        ),
+        (
+            r#"<input name="pin">content</input>"#,
+            "Invalid <input>: element must be empty",
+        ),
+    ];
+
+    for (control, expected) in cases {
+        let xml = format!("<wml><card id=\"home\">{control}</card></wml>");
+        assert_eq!(parse_wml(&xml).expect_err(control), expected);
+    }
+}
+
+#[test]
+fn wml_fx_select_structure_accepts_declared_control_grammar() {
+    // WML-CL-SELECT-STRUCTURE and WML-C-41 option grammar,
+    // WAP-191_104-WML sections 11.6.2.1-11.6.2.2.
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <select
+              name="choice"
+              iname="choice-index"
+              value="alpha"
+              ivalue="1"
+              multiple="false"
+              tabindex="0"
+              title="Choice"
+              xml:lang="en-US"
+              id="choice-field"
+              class="menu"
+            >
+              <option
+                value="alpha"
+                title="Alpha"
+                onpick="#picked"
+                xml:lang="en"
+                id="alpha-option"
+                class="first"
+              ></option>
+            </select>
+          </card>
+        </wml>
+        "##;
+
+    let deck = parse_wml(xml).expect("source-declared select and option syntax should parse");
+    assert!(matches!(
+        &deck.cards[0].nodes[0],
+        Node::Paragraph(items)
+            if matches!(
+                &items[0],
+                InlineNode::Select { name, options, .. }
+                    if name == "choice"
+                        && options.len() == 1
+                        && options[0].label.is_empty()
+                        && options[0].value == "alpha"
+            )
+    ));
+}
+
+#[test]
+fn wml_fx_select_structure_rejects_invalid_syntax_deterministically() {
+    // WML-CL-SELECT-STRUCTURE and WML-C-41 option grammar,
+    // WAP-191_104-WML sections 11.6.2.1-11.6.2.2 and DTD.
+    let cases = [
+        (
+            r#"<select name="choice"></select>"#,
+            "Invalid <select>: expected one or more <option> or <optgroup> children",
+        ),
+        (
+            r#"<select name="choice"><p>wrong</p></select>"#,
+            "Invalid <select>: unexpected child <p>",
+        ),
+        (
+            r#"<select name="choice" multiple="yes"><option>A</option></select>"#,
+            "Invalid <select>: attribute 'multiple' must be 'true' or 'false'",
+        ),
+        (
+            r#"<select name="choice" tabindex="1.5"><option>A</option></select>"#,
+            "Invalid <select>: attribute 'tabindex' must contain decimal digits",
+        ),
+        (
+            r#"<select name="choice" selected="true"><option>A</option></select>"#,
+            "Invalid <select>: unexpected attribute 'selected'",
+        ),
+        (
+            r#"<select name="choice"><option selected="true">A</option></select>"#,
+            "Invalid <option>: unexpected attribute 'selected'",
+        ),
+        (
+            r#"<select name="choice"><option><b>A</b></option></select>"#,
+            "Invalid <option>: unexpected child <b>",
+        ),
+        (
+            r#"<select name="choice">text<option>A</option></select>"#,
+            "Invalid <select>: text content is not allowed",
+        ),
+        (
+            r#"<option value="orphan">Orphan</option>"#,
+            "Invalid <option>: must be contained by <select> or <optgroup>",
+        ),
+    ];
+
+    for (control, expected) in cases {
+        let xml = format!("<wml><card id=\"home\">{control}</card></wml>");
+        assert_eq!(parse_wml(&xml).expect_err(control), expected);
     }
 }
 

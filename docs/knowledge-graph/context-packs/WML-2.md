@@ -13,12 +13,12 @@
 
 ## Graph summary
 
-- Nodes: 154
-- Edges: 395
+- Nodes: 208
+- Edges: 528
 - Selected work items: 5
-- Direct normative clauses: 51
-- Work items without direct clause mappings: 3
-- Work items with unmapped declared normative families: 5
+- Direct normative clauses: 74
+- Work items without direct clause mappings: 2
+- Work items with unmapped declared normative families: 4
 
 ## Execution target
 
@@ -109,7 +109,7 @@ Evidence commands:
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-04`, `B5-01`, `C5-05`
-- Direct normative clauses: 0
+- Direct normative clauses: 23
 
 Outputs:
 
@@ -457,10 +457,150 @@ Evidence commands:
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
   - Fixture: `WBXML-FX-VERSION-BYTE` (`binary-decoder`, `planned`)
 
+### WML-204
+
+- **WML-CL-INPUT-EMPTY-COMMIT** — Accept an empty committed input only when the effective mask and emptyok rules allow it.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-EMPTY-COMMIT` (`runtime`, `planned`)
+- **WML-CL-INPUT-FORMAT-LITERALS** — Preserve escaped literal characters that form part of an accepted formatted input value.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-FORMAT-LITERALS` (`runtime`, `planned`)
+- **WML-CL-INPUT-INITIALIZATION** — Initialize each input from a valid existing name variable or a valid default value, then preload the control.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-INITIALIZATION` (`runtime`, `planned`)
+- **WML-CL-INPUT-INVALID-INITIAL-VALUE** — Unset an existing name value that violates the mask before attempting the declared default.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-INVALID-INITIAL-VALUE` (`runtime`, `planned`)
+- **WML-CL-INPUT-MASK-COMMIT** — At commit, accept only values conforming to the effective input mask.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-MASK-COMMIT` (`runtime`, `planned`)
+- **WML-CL-INPUT-MAXLENGTH** — Limit committed text to maxlength when that attribute is present.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-MAXLENGTH` (`runtime`, `planned`)
+- **WML-CL-INPUT-PASSWORD-DISPLAY** — Conceal the entered value when input type is password while preserving the actual variable value.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-PASSWORD-DISPLAY` (`rendering`, `planned`)
+- **WML-CL-INPUT-REJECTION-ATOMICITY** — On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-REJECTION-ATOMICITY` (`runtime`, `planned`)
+- **WML-CL-INPUT-STRUCTURE** — Require an input variable name and constrain input attributes to the declared text-entry grammar.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `planned`)
+- **WML-CL-OPTION-ONPICK-MULTI** — For multiple selection, dispatch onpick whenever the option is selected or deselected.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
+  - Parents: `WML-C-41`, `WML-C-09`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
+  - Fixture: `WML-FX-OPTION-ONPICK-MULTI` (`runtime`, `planned`)
+- **WML-CL-OPTION-ONPICK-SINGLE** — For single selection, dispatch onpick for the newly selected option but not for implicit deselection.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
+  - Parents: `WML-C-41`, `WML-C-09`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
+  - Fixture: `WML-FX-OPTION-ONPICK-SINGLE` (`runtime`, `planned`)
+- **WML-CL-OPTION-VALUE-EVALUATION** — Evaluate option value variable references before assigning the containing select name variable.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
+  - Parents: `WML-C-41`, `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-OPTION-VALUE-EVALUATION` (`runtime`, `planned`)
+- **WML-CL-SELECT-DEFAULT-PRECEDENCE** — Choose initial selections in iname, ivalue, name, value, then single/multiple fallback order.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-DEFAULT-PRECEDENCE` (`runtime`, `planned`)
+- **WML-CL-SELECT-INDEX-VALIDATION** — Validate selection indices by removing non-integers, out-of-range entries, and duplicates.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-INDEX-VALIDATION` (`runtime`, `planned`)
+- **WML-CL-SELECT-INIT-ORDER** — Initialize input and select controls in document order when entering the card.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`, `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-INIT-ORDER` (`runtime`, `planned`)
+- **WML-CL-SELECT-MULTI-SERIALIZATION** — Serialize multiple results as semicolon-delimited lists with unique indices, duplicate non-empty values preserved, and no empty value entries.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-MULTI-SERIALIZATION` (`runtime`, `planned`)
+- **WML-CL-SELECT-NO-IMPLICIT-REFRESH** — Do not create display side effects from select-variable updates without an explicit refresh task.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-NO-IMPLICIT-REFRESH` (`rendering`, `planned`)
+- **WML-CL-SELECT-PRESELECTION** — Deselect all options and then select every positive validated default index.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-PRESELECTION` (`runtime`, `planned`)
+- **WML-CL-SELECT-SINGLE-MULTI-MODE** — Allow one selected option by default and multiple selections only when multiple is true.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-SINGLE-MULTI-MODE` (`runtime`, `planned`)
+- **WML-CL-SELECT-STRUCTURE** — Require one or more option or optgroup children in each select element.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-STRUCTURE` (`parser`, `planned`)
+- **WML-CL-SELECT-USER-UPDATE** — Update name and iname after user selection changes and again before every task invocation.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-USER-UPDATE` (`runtime`, `planned`)
+- **WML-CL-SELECT-VARIABLE-INITIALIZATION** — Initialize name from selected option values and iname from the validated selected indices.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-VARIABLE-INITIALIZATION` (`runtime`, `planned`)
+- **WML-CL-VARIABLE-COMMIT-BEFORE-TASK** — Commit input and selection variables before invoking any task.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.4 (10.3.4 Setting Variables)
+  - Parents: `WML-C-12`, `WML-C-33`, `WML-C-43`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `planned`)
+
 ## Explicit mapping gaps
 
 - `WML-202` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
-- `WML-204` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `WML-205` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
@@ -468,7 +608,6 @@ Declared-family gaps:
 - `WML-201` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-202` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-203` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `WML-204` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-205` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents

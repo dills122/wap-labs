@@ -14,16 +14,16 @@ Target: [[sprints/WML-2|WML-2]]
 
 ## Graph summary
 
-- Nodes: 154
-- Edges: 395
+- Nodes: 208
+- Edges: 528
 
-- `clause`: 51
-- `fixture`: 51
+- `clause`: 74
+- `fixture`: 74
 - `legacy-ticket`: 8
 - `owner-layer`: 3
 - `profile`: 1
-- `requirement`: 8
-- `scr-row`: 6
+- `requirement`: 11
+- `scr-row`: 11
 - `source-document`: 13
 - `source-family`: 4
 - `sprint`: 4
@@ -32,7 +32,6 @@ Target: [[sprints/WML-2|WML-2]]
 ## Work items without direct normative-clause mappings
 
 - [[work-items/WML-202|WML-202]]
-- [[work-items/WML-204|WML-204]]
 - [[work-items/WML-205|WML-205]]
 
 ## Declared normative families without direct clause mappings
@@ -40,5 +39,4 @@ Target: [[sprints/WML-2|WML-2]]
 - [[work-items/WML-201|WML-201]]: `wml`
 - [[work-items/WML-202|WML-202]]: `wml`
 - [[work-items/WML-203|WML-203]]: `wml`
-- [[work-items/WML-204|WML-204]]: `wml`
 - [[work-items/WML-205|WML-205]]: `wml`

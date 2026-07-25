@@ -43,6 +43,13 @@ impl WmlEngine {
         self.nav_stack.push(self.active_card_idx);
         self.active_card_idx = next_idx;
         self.focused_link_idx = 0;
+        if let Err(err) = self.initialize_inputs_on_active_card() {
+            self.active_card_idx = previous_idx;
+            self.focused_link_idx = previous_focus;
+            self.nav_stack.truncate(previous_stack_len);
+            self.active_timer = previous_timer;
+            return Err(err);
+        }
         if let Err(err) = self.run_onenterforward_for_active_card() {
             // Roll back all state for deterministic failure behavior on entry-task failures.
             // This also unwinds cleanly when a deeper recursive navigation trips the
@@ -94,6 +101,14 @@ impl WmlEngine {
         self.active_card_idx = back_target_idx;
         self.focused_link_idx = 0;
         self.push_trace("ACTION_BACK", String::new());
+        if let Err(err) = self.initialize_inputs_on_active_card() {
+            self.push_trace("INPUT_INIT_ERROR", err);
+            self.active_card_idx = rollback_active_idx;
+            self.focused_link_idx = rollback_focus;
+            self.nav_stack = rollback_stack;
+            self.active_timer = rollback_timer;
+            return true;
+        }
         if let Err(err) = self.run_onenterbackward_for_active_card() {
             self.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
             self.active_card_idx = rollback_active_idx;
@@ -132,6 +147,13 @@ impl WmlEngine {
         &mut self,
         action: &CardTaskAction,
     ) -> Result<(), String> {
+        if self.active_input_edit.is_some() {
+            self.commit_focused_input_edit_internal()?;
+        }
+        if self.active_select_edit.is_some() {
+            self.commit_focused_select_edit_internal()?;
+        }
+
         match action {
             CardTaskAction::Go {
                 href,
@@ -145,6 +167,7 @@ impl WmlEngine {
             }
             CardTaskAction::Refresh => {
                 self.push_trace("ACTION_REFRESH", String::new());
+                self.initialize_inputs_on_active_card()?;
                 self.start_or_resume_timer_for_active_card(true)?;
                 Ok(())
             }
@@ -274,13 +297,13 @@ impl WmlEngine {
     }
 
     fn resolve_post_field_name_fallback(&self, name: &str) -> String {
-        if let Some(value) = self.vars.get(name).cloned() {
-            return value;
-        }
         if let Some(edit) = &self.active_input_edit {
             if edit.input_name == name {
                 return edit.draft_value.clone();
             }
+        }
+        if let Some(value) = self.vars.get(name).cloned() {
+            return value;
         }
         if let Some(value) = self.input_value_on_active_card(name) {
             return value;

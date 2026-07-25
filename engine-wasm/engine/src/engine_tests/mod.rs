@@ -31,6 +31,8 @@ const FIXTURE_MISSING_FRAGMENT: &str =
     include_str!("../../tests/fixtures/phase-a/missing-fragment.wml");
 const FIXTURE_TASK_ACTION_ORDER: &str =
     include_str!("../../tests/fixtures/phase-a/task-action-order.wml");
+const WML_204_CONTROL_VALIDATION_EXAMPLE: &str =
+    include_str!("../../../examples/source/wml-204-control-validation.wml");
 
 fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
     engine

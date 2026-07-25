@@ -239,6 +239,26 @@ impl WmlEngine {
         let Some(edit) = self.active_input_edit.clone() else {
             return Ok(false);
         };
+        let Some((mask, empty_ok)) = self.input_constraints_on_active_card(&edit.input_name) else {
+            return Ok(false);
+        };
+        let rejection = if edit.draft_value.is_empty() && !empty_ok {
+            Some(format!(
+                "Input '{}' rejected: empty value is not allowed",
+                edit.input_name
+            ))
+        } else if !edit.draft_value.is_empty() && !mask.accepts(&edit.draft_value) {
+            Some(format!(
+                "Input '{}' rejected: value does not conform to format mask",
+                edit.input_name
+            ))
+        } else {
+            None
+        };
+        if let Some(error) = rejection {
+            self.push_trace("INPUT_EDIT_REJECT", edit.input_name);
+            return Err(error);
+        }
         let committed = self.set_input_value_on_active_card(&edit.input_name, &edit.draft_value)?;
         if !committed {
             return Ok(false);
@@ -247,6 +267,56 @@ impl WmlEngine {
         self.active_input_edit = None;
         self.push_trace("INPUT_EDIT_COMMIT", edit.input_name);
         Ok(true)
+    }
+
+    pub(crate) fn initialize_inputs_on_active_card(&mut self) -> Result<(), String> {
+        let card = self
+            .deck
+            .as_mut()
+            .and_then(|deck| deck.cards.get_mut(self.active_card_idx))
+            .ok_or_else(|| "Active card not found".to_string())?;
+
+        for node in &mut card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                let runtime::node::InlineNode::Input {
+                    name,
+                    value,
+                    default_value,
+                    mask,
+                    empty_ok,
+                    ..
+                } = item
+                else {
+                    continue;
+                };
+
+                let valid_existing = self
+                    .vars
+                    .get(name)
+                    .cloned()
+                    .filter(|candidate| input_value_is_valid(mask, *empty_ok, candidate));
+                let initial_value = if let Some(existing) = valid_existing {
+                    Some(existing)
+                } else {
+                    self.vars.remove(name);
+                    default_value
+                        .clone()
+                        .filter(|candidate| input_value_is_valid(mask, *empty_ok, candidate))
+                };
+
+                if let Some(initial_value) = initial_value {
+                    self.vars.insert(name.clone(), initial_value.clone());
+                    *value = initial_value;
+                } else {
+                    self.vars.remove(name);
+                    value.clear();
+                }
+            }
+        }
+        Ok(())
     }
 
     pub(crate) fn begin_focused_select_edit_internal(&mut self) -> Result<bool, String> {
@@ -525,5 +595,43 @@ impl WmlEngine {
             }
         }
         None
+    }
+
+    fn input_constraints_on_active_card(
+        &self,
+        input_name: &str,
+    ) -> Option<(runtime::input_mask::InputMask, bool)> {
+        let card = self.active_card_internal().ok()?;
+        for node in &card.nodes {
+            let runtime::node::Node::Paragraph(items) = node else {
+                continue;
+            };
+            for item in items {
+                if let runtime::node::InlineNode::Input {
+                    name,
+                    mask,
+                    empty_ok,
+                    ..
+                } = item
+                {
+                    if name == input_name {
+                        return Some((mask.clone(), *empty_ok));
+                    }
+                }
+            }
+        }
+        None
+    }
+}
+
+fn input_value_is_valid(
+    mask: &runtime::input_mask::InputMask,
+    empty_ok: bool,
+    value: &str,
+) -> bool {
+    if value.is_empty() {
+        empty_ok
+    } else {
+        mask.accepts(value)
     }
 }

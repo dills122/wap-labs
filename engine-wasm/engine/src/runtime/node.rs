@@ -1,3 +1,5 @@
+use super::input_mask::InputMask;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Node {
     Paragraph(Vec<InlineNode>),
@@ -20,8 +22,11 @@ pub enum InlineNode {
     Input {
         name: String,
         value: String,
+        default_value: Option<String>,
         is_password: bool,
         max_length: Option<usize>,
+        mask: InputMask,
+        empty_ok: bool,
     },
     Select {
         name: String,

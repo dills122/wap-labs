@@ -50,7 +50,7 @@
       "family": "wml",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "c175886342f055e2732e6e5d0c4ca20732505952bc509181b93366388f36f09e",
+      "parentLedgerSha256": "173ca35025962f3a18737a02c3b66e4d25ce6faae1d727048b2c98f89d5546ec",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -691,7 +691,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "WML-204"
           ],
           "clauseIds": [
             "WML-CL-INPUT-EMPTY-COMMIT",
@@ -852,7 +853,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "WML-204"
           ],
           "clauseIds": [
             "WML-CL-OPTION-ONPICK-MULTI",
@@ -901,7 +903,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "WML-204"
           ],
           "clauseIds": [
             "WML-CL-OPTION-VALUE-EVALUATION",
@@ -2872,7 +2875,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -6149,7 +6153,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6188,7 +6193,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6228,7 +6234,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6268,7 +6275,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6307,7 +6315,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6346,7 +6355,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6385,7 +6395,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6424,7 +6435,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6463,7 +6475,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6502,7 +6515,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6542,7 +6556,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6585,7 +6600,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -6629,7 +6645,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -6670,7 +6687,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6709,7 +6727,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6748,7 +6767,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6787,7 +6807,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6826,7 +6847,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6865,7 +6887,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6904,7 +6927,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6943,7 +6967,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6982,7 +7007,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-204"
             ],
             "requirementIds": [
               "RQ-RMK-001"

@@ -61,11 +61,11 @@
       "not-successor-derived": 184
     },
     "implementationBasisCounts": {
-      "not-implemented": 110,
+      "not-implemented": 101,
       "successor-era-compatibility-behavior": 1,
       "successor-era-or-cross-checked": 8,
       "successor-era-tables-and-synthetic-cases": 8,
-      "target-era-or-version-neutral": 74
+      "target-era-or-version-neutral": 83
     },
     "successorOnlyCapabilityCount": 5
   },
@@ -853,10 +853,10 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -865,7 +865,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -1086,10 +1086,10 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -1098,7 +1098,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -1190,7 +1190,8 @@
       ],
       "workItems": [
         "R0-01",
-        "R0-04"
+        "R0-04",
+        "WML-204"
       ],
       "clauseIds": [
         "WML-CL-INPUT-EMPTY-COMMIT",
@@ -1448,7 +1449,8 @@
       ],
       "workItems": [
         "R0-01",
-        "R0-04"
+        "R0-04",
+        "WML-204"
       ],
       "clauseIds": [
         "WML-CL-OPTION-ONPICK-MULTI",
@@ -1529,7 +1531,8 @@
       ],
       "workItems": [
         "R0-01",
-        "R0-04"
+        "R0-04",
+        "WML-204"
       ],
       "clauseIds": [
         "WML-CL-OPTION-VALUE-EVALUATION",
@@ -2509,14 +2512,14 @@
         "staticConformanceSection": "9.2",
         "changeSection": "3.3"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
@@ -2543,14 +2546,14 @@
         "staticConformanceSection": "9.3",
         "changeSection": "3.3"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
@@ -7884,10 +7887,10 @@
         "documentId": "WAP-202-WCMP",
         "staticConformanceSection": "Appendix A"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -7896,7 +7899,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
@@ -7925,10 +7928,10 @@
         "documentId": "WAP-202-WCMP",
         "staticConformanceSection": "Appendix A"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -7937,7 +7940,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
@@ -7970,10 +7973,10 @@
         "documentId": "WAP-202-WCMP",
         "staticConformanceSection": "Appendix A"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -7982,7 +7985,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
@@ -8013,10 +8016,10 @@
         "documentId": "WAP-202-WCMP",
         "staticConformanceSection": "Appendix A"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -8025,7 +8028,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
@@ -8054,10 +8057,10 @@
         "documentId": "WAP-202-WCMP",
         "staticConformanceSection": "Appendix A"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [
         {
@@ -8066,7 +8069,7 @@
         }
       ],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "transport-rust"
