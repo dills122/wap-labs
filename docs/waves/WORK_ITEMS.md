@@ -137,8 +137,9 @@ Source-ledger reconciliation:
 1. The exact WAP-200/WAP-202/WAP-203 row authority is
    `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
    manifests. The selected connectionless Class C path is 22 rows with an
-   audit of 0 implemented / 17 partial / 5 missing and 0/22 direct normative
-   tests.
+   audit of 5 implemented / 17 partial / 0 missing and 5/22 direct normative
+   tests. The five selected WCMP rows are fixture-backed under `TRN-703`;
+   WDP and WSP direct normative evidence remains open.
 2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
    reopened. Their existing evidence remains useful but provisional against
    the exact target-era rows.

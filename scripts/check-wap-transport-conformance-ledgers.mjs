@@ -88,7 +88,7 @@ const configs = [
       serverCount: 31,
       mandatoryClientCount: 1,
       selectedClassCTransportPathCount: 5,
-      selectedDirectNormativeTestEvidenceCount: 0,
+      selectedDirectNormativeTestEvidenceCount: 5,
       selectedProvisionalTestEvidenceCount: 0,
       orderedIdsSha256:
         'b1a481f22af82ba4bd69c433d692f714ba236a680c4ae318629c0d87ceb0e285'
@@ -100,7 +100,7 @@ const configs = [
       'WCMP-GEN-C-003',
       'WCMP-GEN-C-006'
     ],
-    selectedStatus: { missing: 5 }
+    selectedStatus: { implemented: 5 }
   },
   {
     family: 'wsp',
@@ -256,7 +256,9 @@ for (const config of configs) {
     const isSelected = config.selectedIds.includes(row.id);
     if (
       isSelected &&
-      !['partial', 'missing'].includes(row.mapping?.implementationStatus)
+      !['implemented', 'partial', 'missing'].includes(
+        row.mapping?.implementationStatus
+      )
     ) {
       failures.push(`${config.family}: ${row.id} optimistic selected status`);
     }

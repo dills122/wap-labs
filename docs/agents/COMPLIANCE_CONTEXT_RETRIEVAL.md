@@ -16,7 +16,7 @@ Retrieve a pack before acting when a task:
 - evaluates whether implementation or tests satisfy a mapped normative obligation; or
 - updates the selected clauses, compliance program, source manifests, or graph projections.
 
-Choose the narrowest supported target:
+Choose the narrowest supported target. For a WML work item:
 
 ```sh
 node scripts/wap-context-pack.mjs WML-203
@@ -26,6 +26,13 @@ Use `WML-2` only for sprint-wide planning or review:
 
 ```sh
 node scripts/wap-context-pack.mjs WML-2
+```
+
+For the selected WCMP transport core, use `TRN-703` for implementation and
+review, or `TRN-7` only for sprint-wide transport planning:
+
+```sh
+node scripts/wap-context-pack.mjs TRN-703
 ```
 
 ## Retrieval workflow

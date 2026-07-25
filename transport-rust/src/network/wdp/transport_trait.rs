@@ -9,8 +9,12 @@ pub enum WdpError {
     TransportUnavailable(String),
     AddressTypeUnsupported,
     AddressUnresolvable(String),
+    NoRouteToDestination,
+    CommunicationAdministrativelyProhibited,
+    AddressUnreachable,
     DestinationPortUnsupported(u16),
     PayloadOversize { actual: usize, max: usize },
+    PeerMessageTooBig { max: usize },
     Timeout,
     CorruptOrMalformed,
     Internal(String),
@@ -24,11 +28,19 @@ impl std::fmt::Display for WdpError {
             }
             Self::AddressTypeUnsupported => write!(f, "address type unsupported by WDP transport"),
             Self::AddressUnresolvable(reason) => write!(f, "address unresolvable: {reason}"),
+            Self::NoRouteToDestination => write!(f, "no route to destination"),
+            Self::CommunicationAdministrativelyProhibited => {
+                write!(f, "communication administratively prohibited")
+            }
+            Self::AddressUnreachable => write!(f, "destination address unreachable"),
             Self::DestinationPortUnsupported(port) => {
                 write!(f, "destination port {port} is not a supported WAP service")
             }
             Self::PayloadOversize { actual, max } => {
                 write!(f, "payload size {actual} exceeds {max}")
+            }
+            Self::PeerMessageTooBig { max } => {
+                write!(f, "peer maximum message size is {max}")
             }
             Self::Timeout => write!(f, "transport timeout"),
             Self::CorruptOrMalformed => write!(f, "corrupt or malformed datagram"),

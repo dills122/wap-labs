@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 201 selected strict
   rows;
-- the selected implementation audit is 8 implemented, 85 partial, and 108
+- the selected implementation audit is 13 implemented, 85 partial, and 103
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 201 selected parent rows
@@ -100,8 +100,9 @@ All nine selected Class C family increments are complete at SCR level:
 - the selected connectionless transport path resolves to 22 rows: 9 WDP
   using CDPD-shaped UDP/IPv4, 5 general-WCMP rows, and 8 connectionless WSP
   rows;
-- the selected transport audit is 0 implemented, 17 partial, and 5 missing,
-  with zero direct WAP-200/WAP-202/WAP-203 normative tests;
+- the selected transport audit is 5 implemented, 17 partial, and 0 missing,
+  with five direct WAP-202 normative tests and no direct WAP-200/WAP-203
+  normative tests;
 - connection-oriented WSP and WTP remain a separately activated capability;
   the selected CDPD `TIAEIA-732` family citation is authority-locked as a
   licensed-payload, metadata-only informative capability reference.

@@ -43,6 +43,7 @@ const allowedRelations = new Set([
 
 const root = process.cwd();
 const artifacts = buildGeneratedArtifacts(root, 'WML-2');
+const trnArtifacts = buildGeneratedArtifacts(root, 'TRN-7');
 const { graph } = artifacts;
 const failures = [];
 const nodeIds = new Set(graph.nodes.map((node) => node.id));
@@ -181,6 +182,38 @@ try {
 }
 
 failures.push(...checkGeneratedArtifacts(root, artifacts));
+failures.push(...checkGeneratedArtifacts(root, trnArtifacts));
+
+const trnGraph = trnArtifacts.graph;
+const trnNodeIds = new Set(trnGraph.nodes.map((node) => node.id));
+const selectedWcmpRows = [
+  'WCMP-C-001',
+  'WCMP-SP-C-002',
+  'WCMP-GEN-C-001',
+  'WCMP-GEN-C-003',
+  'WCMP-GEN-C-006'
+];
+if (
+  trnGraph.target.sprint !== 'TRN-7' ||
+  trnGraph.target.profile !== 'CCR-CLASSC-C-001' ||
+  !trnNodeIds.has('work-item:TRN-703')
+) {
+  failures.push('TRN-7 target must retain the selected Class C profile and TRN-703 work item');
+}
+for (const row of selectedWcmpRows) {
+  if (!trnNodeIds.has(`scr-row:${row}`)) {
+    failures.push(`TRN-7 graph is missing selected WCMP row ${row}`);
+  }
+}
+const trn703Pack = renderContextPack(trnGraph, 'TRN-703');
+if (
+  !trn703Pack.startsWith('# TRN-703 AI Context Pack') ||
+  !trn703Pack.includes('### TRN-703:') ||
+  trn703Pack.includes('### TRN-701:') ||
+  !trn703Pack.includes('- Direct normative clauses: 28')
+) {
+  failures.push('TRN-703 context rendering must remain bounded to its 28 direct WCMP clauses');
+}
 
 if (failures.length) {
   console.error('WAP knowledge graph check failed.');

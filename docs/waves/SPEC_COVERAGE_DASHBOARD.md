@@ -107,7 +107,8 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
   - 317 source rows and 22 selected connectionless Class C rows
-  - selected audit: 0 implemented, 17 partial, 5 missing
+  - selected audit: 5 implemented, 17 partial, 0 missing
+  - direct normative evidence: 5/22, all on the selected WAP-202 WCMP path
   - direct normative test evidence: 0/22
 - Conditional target source:
   - `WAP-201-WTP` plus approved SINs, only when connection-oriented WSP is
