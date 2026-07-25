@@ -25,6 +25,17 @@ node scripts/check-wap-conformance-ledger.mjs
 node scripts/check-wap-selected-normative-clauses.mjs
 ```
 
+Known evidence-reference gap (2026-07-25): the generated WML SCR still cites
+the retired parser test names
+`helper_parse_inline_nodes_parses_text_links_break_and_unknown_wrappers` for
+`WML-C-17` and `helper_parse_card_nodes_parses_mixed_content_paths` for
+`WML-C-24`. Their replacement production-parser tests are
+`parses_mixed_inline_text_links_break_and_unknown_wrappers` and
+`parses_mixed_card_level_content_paths`. Regenerate the hash-locked WML SCR
+from its private extraction inputs after correcting the existing generator;
+do not hand-edit the generated ledger or infer a row-status change from the
+rename.
+
 ## Effective source chain
 
 The ledger applies the locked WML family precedence:

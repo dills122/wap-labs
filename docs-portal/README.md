@@ -16,7 +16,8 @@ pnpm dev
 ## Validate
 
 ```sh
-pnpm build
+pnpm --dir docs-portal run check
+pnpm --dir docs-portal run build
 ```
 
 The static production build is emitted under `dist/` with the configured `/wap-labs/atlas` base.

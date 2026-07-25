@@ -37,13 +37,13 @@ Secondary docs:
 Status source: `docs/waves/wap-1.2.1-compliance-program.json`,
 `docs/waves/WORK_ITEMS.md`, `docs/waves/MAINTENANCE_WORK_ITEMS.md`,
 `docs/wml-engine/work-items.md`, and `.github/workflows/engine-fuzz.yml`
-(updated 2026-07-24).
+(updated 2026-07-25).
 
 | Track | Implemented | Roadmap / In Progress |
 |---|---|---|
-| Waves desktop app (`browser/`) | Desktop shell is usable end-to-end: network/local mode, runtime deck navigation, focused text/select editing, browser back/reload flow, debug/timeline surfaces, and an ordinary-browser story adapter backed by the real WASM engine | Broaden spec-driven Waves stories as stable runtime behavior lands; keep timer/dialog and debug-connector work dependency-gated |
+| Waves desktop app (`browser/`) | Desktop shell is usable end-to-end: network/local mode, runtime deck navigation, focused text/select editing, browser back/reload flow, debug/timeline surfaces, and an ordinary-browser story adapter backed by the real WASM engine | Preserve the completed W0-05 timer/dialog baseline while broadening spec-driven stories; keep downstream Dialogs/WMLS-5 and debug-connector work dependency-gated |
 | WaveNav runtime (`engine-wasm/`) | Runtime covers deck/card parsing, navigation, focus, input/select semantics, deterministic render output, native/WASM parity checks, and 23/23 mapped WML-204 clause fixtures | Finish the remaining WML-2 parser/DTD/error gaps before advancing WML-3 runtime breadth |
-| Lowband transport (`transport-rust/`) | The selected WDP path is 9/9 rows implemented, WCMP is 5/5, TRN-702 constrained-payload/reassembly behavior is direct-fixture-backed, and the pinned WBXML decoder has all 47 selected client clauses implemented | Close broader WBXML feature-row limitations and selected connectionless WSP evidence; activate WTP only with connection-oriented WSP |
+| Lowband transport (`transport-rust/`) | The selected WDP path is 9/9 rows implemented, WCMP is 5/5, TRN-702 constraints and the TRN-706 WDP replay tranche are direct-fixture-backed, TRN-707 records the successor delta, and the pinned WBXML decoder has all 47 selected client clauses implemented | Close the TRN-708 strict CDPD/IP correction, broader WBXML feature-row limitations, and selected connectionless WSP evidence; activate WTP only with connection-oriented WSP |
 | WAP evidence program | 22/201 selected parent rows are implemented and 149/780 clauses are directly assessed; Atlas renders the canonical program and active documents | 78 partial and 101 missing parents remain, so the project stays explicitly pre-conformance |
 | Frame-based render/input migration | Additive frame-oriented host commands are already in place for the hot browser paths | Finish the deliberate `M1-09` migration only after the current runtime/debug boundary work settles |
 | Fuzz hardening (`engine-wasm/engine/fuzz`) | Cargo-fuzz scaffold with `engine_wml_fuzzer`, starter corpus seeds, and scheduled weekly CI run | Add target coverage for transport/protocol surfaces, grow dictionaries/corpus, and tune campaign budgets |
@@ -101,6 +101,7 @@ make lint-rust-transport
 make test-rust-transport
 pnpm test:story all
 pnpm wap-graph:check
+pnpm --dir docs-portal run check
 pnpm --dir docs-portal run build
 cd engine-wasm/engine && cargo +nightly fuzz run engine_wml_fuzzer -- -runs=200
 ```

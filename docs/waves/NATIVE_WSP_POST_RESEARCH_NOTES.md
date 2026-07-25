@@ -18,7 +18,7 @@ The native desktop `GET` lane is already working against Kannel. The next featur
 
 Canonical source:
 
-- [OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md](/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md)
+- [OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md](../../spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md)
 
 The key connectionless `Post` layout is:
 
@@ -41,7 +41,7 @@ Why this matters:
 
 Canonical source:
 
-- [OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md](/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md)
+- [OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md](../../spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md)
 
 The `Get` layout is:
 
@@ -53,8 +53,8 @@ This is already proven live in the native desktop path and should remain the com
 
 Canonical sources:
 
-- [WAP-191_105-WML-20020212-a.cleaned.md](/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191_105-WML-20020212-a.cleaned.md)
-- [WAP-238-WML-20010911-a.cleaned.md](/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-238-WML-20010911-a.cleaned.md)
+- [WAP-191_105-WML-20020212-a.cleaned.md](../../spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191_105-WML-20020212-a.cleaned.md)
+- [WAP-238-WML-20010911-a.cleaned.md](../../spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-238-WML-20010911-a.cleaned.md)
 
 Relevant rules:
 
@@ -77,8 +77,8 @@ For this MVP slice, the most important rules are:
 
 Relevant source set:
 
-- [WAP-193-WMLScript-20001025-a.cleaned.md](/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193-WMLScript-20001025-a.cleaned.md)
-- [WAP-193_101-WMLScript-20010928-a.cleaned.md](/Users/dsteele/repos/wap-labs/spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193_101-WMLScript-20010928-a.cleaned.md)
+- [WAP-193-WMLScript-20001025-a.cleaned.md](../../spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193-WMLScript-20001025-a.cleaned.md)
+- [WAP-193_101-WMLScript-20010928-a.cleaned.md](../../spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193_101-WMLScript-20010928-a.cleaned.md)
 
 Conclusion:
 
@@ -92,7 +92,7 @@ Conclusion:
 
 Relevant path:
 
-- [navigation.rs](/Users/dsteele/repos/wap-labs/engine-wasm/engine/src/engine_runtime_internal/navigation.rs)
+- [navigation.rs](../../engine-wasm/engine/src/engine_runtime_internal/navigation.rs)
 
 Current state:
 
@@ -108,8 +108,8 @@ Gap still to keep in mind:
 
 Relevant paths:
 
-- [fetch_runtime.rs](/Users/dsteele/repos/wap-labs/transport-rust/src/fetch_runtime.rs)
-- [native_fetch.rs](/Users/dsteele/repos/wap-labs/transport-rust/src/native_fetch.rs)
+- [fetch_runtime.rs](../../transport-rust/src/fetch_runtime.rs)
+- [native_fetch.rs](../../transport-rust/src/native_fetch.rs)
 
 Current state:
 
@@ -121,7 +121,7 @@ Current state:
 
 Relevant path:
 
-- [kannel.conf](/Users/dsteele/repos/wap-labs/docker/kannel/kannel.conf)
+- [kannel.conf](../../docker/kannel/kannel.conf)
 
 Current lab mapping:
 

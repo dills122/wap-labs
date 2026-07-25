@@ -216,7 +216,7 @@ export function isActiveDoc(id: string): boolean {
   return (
     !id.split('/').includes('archive') &&
     !/[-_]archive(?:\.md)?$/i.test(basename) &&
-    !/\b20\d{2}[-_]\d{2}[-_]\d{2}\b/.test(id)
+    !/(?:^|[^0-9])20\d{2}[-_]\d{2}[-_]\d{2}(?:[^0-9]|$)/.test(id)
   );
 }
 

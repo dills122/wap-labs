@@ -48,14 +48,14 @@ Score: `8.0 / 8.0` (`100%`)
 
 | Gate | Description | Transport-to-Kannel | Browser-to-Kannel | Evidence |
 | --- | --- | --- | --- | --- |
-| `G1` | Local Kannel + WML stack boots reliably with one command | `1.0` | `1.0` | `make up`, `make status`, [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md) |
-| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs), `make smoke-transport-wap`; native-mode smoke now forces `wap-net-core` rather than relying on ambient bridge defaults |
+| `G1` | Local Kannel + WML stack boots reliably with one command | `1.0` | `1.0` | `make up`, `make status`, [docs/wap-test-environment/README.md](../../docs/wap-test-environment/README.md) |
+| `G2` | Real transport request can fetch through local Kannel | `1.0` | `1.0` | [transport-rust/tests/kannel_smoke.rs](../../transport-rust/tests/kannel_smoke.rs), [browser/src-tauri/src/tests/fetch_commands.rs](../../browser/src-tauri/src/tests/fetch_commands.rs), `make smoke-transport-wap`; native-mode smoke now forces `wap-net-core` rather than relying on ambient bridge defaults |
 | `G3` | Assertions validate deck identity and normalized engine input, not just HTTP success | `1.0` | `1.0` | transport smoke asserts deck/card markers for root + login decks; browser host smokes assert engine load, card identity, render markers, and navigation outcome |
 | `G4` | At least one multi-step real gateway scenario exists (redirect/login/session/navigation) | `1.0` | `1.0` | native Kannel smoke now covers register -> login success flow at transport, host, and browser-engine levels |
 | `G5` | One-command runnable smoke exists for local and CI-like use | `1.0` | `1.0` | `make smoke-transport-wap` now runs native-only transport, host, and browser-render smoke checks |
-| `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](/Users/dsteele/repos/wap-labs/scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
-| `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
-| `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in [browser/src-tauri/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/browser/src-tauri/tests/kannel_smoke.rs) |
+| `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](../../scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
+| `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](../../browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
+| `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in [browser/src-tauri/tests/kannel_smoke.rs](../../browser/src-tauri/tests/kannel_smoke.rs) |
 
 ## Interpretation
 
@@ -76,13 +76,13 @@ Score: `8.0 / 8.0` (`100%`)
 
 ### Existing strengths
 
-1. active profile is explicitly `wap-net-core`, with `gateway-bridged` retained as rollback posture, in [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
-2. local Kannel + WML stack is documented and runnable in [docs/wap-test-environment/README.md](/Users/dsteele/repos/wap-labs/docs/wap-test-environment/README.md)
+1. active profile is explicitly `wap-net-core`, with `gateway-bridged` retained as rollback posture, in [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](../../docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
+2. local Kannel + WML stack is documented and runnable in [docs/wap-test-environment/README.md](../../docs/wap-test-environment/README.md)
 3. transport-specific native smoke path exists:
-   - [transport-rust/tests/kannel_smoke.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/kannel_smoke.rs)
+   - [transport-rust/tests/kannel_smoke.rs](../../transport-rust/tests/kannel_smoke.rs)
    - `make smoke-transport-wap`
-4. on-demand CI smoke workflow exists in [docs/ci/CI_SETUP.md](/Users/dsteele/repos/wap-labs/docs/ci/CI_SETUP.md)
-5. protocol-native replay harness exists in [transport-rust/tests/interop_replay.rs](/Users/dsteele/repos/wap-labs/transport-rust/tests/interop_replay.rs)
+4. on-demand CI smoke workflow exists in [docs/ci/CI_SETUP.md](../../docs/ci/CI_SETUP.md)
+5. protocol-native replay harness exists in [transport-rust/tests/interop_replay.rs](../../transport-rust/tests/interop_replay.rs)
 
 ### Main gaps
 
@@ -124,5 +124,5 @@ Suggested scope:
 When transport/gateway/browser integration changes materially, update:
 
 1. this scorecard
-2. [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](/Users/dsteele/repos/wap-labs/docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
-3. [docs/waves/networking-implementation-checklist.md](/Users/dsteele/repos/wap-labs/docs/waves/networking-implementation-checklist.md) if promotion gates or execution posture change
+2. [docs/waves/NETWORK_PROFILE_DECISION_RECORD.md](../../docs/waves/NETWORK_PROFILE_DECISION_RECORD.md)
+3. [docs/waves/networking-implementation-checklist.md](../../docs/waves/networking-implementation-checklist.md) if promotion gates or execution posture change

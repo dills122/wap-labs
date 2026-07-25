@@ -203,7 +203,7 @@ Completed foundation:
 
 Implementation reference:
 
-- [NATIVE_WSP_POST_RESEARCH_NOTES.md](/Users/dsteele/repos/wap-labs/docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
+- [NATIVE_WSP_POST_RESEARCH_NOTES.md](../../docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
 
 ### Exit Gates
 
@@ -237,7 +237,7 @@ Completed this sprint:
 4. transport/engine payload-size guardrails for active boundaries
 5. story-driven host-sample and Waves-browser acceptance harnesses
 6. WML-204 input/select direct evidence (23/23 mapped clauses)
-7. WML-203 WBXML evidence tranche (44/50 mapped clauses)
+7. WML-203 WML/WBXML evidence tranche (49/49 mapped clauses)
 8. TRN-701 WDP, TRN-702 constrained payload, and TRN-703 WCMP direct evidence
 
 ## Capacity and WIP Rules
