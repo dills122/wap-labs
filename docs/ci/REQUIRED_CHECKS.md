@@ -1,41 +1,104 @@
 # CI Required Checks Policy
 
-This document defines the intended required GitHub branch-protection checks for `main`.
+This document defines the intended GitHub ruleset checks for `main`.
 
-For a full workflow reference (triggers, jobs, caches, deployment, and troubleshooting), see `docs/ci/CI_SETUP.md`.
-For immutable release-branch governance, see `docs/ci/RELEASE_BRANCH_RULESET.md`.
+For workflow details, see `docs/ci/CI_SETUP.md`. For immutable release-branch governance, see
+`docs/ci/RELEASE_BRANCH_RULESET.md`.
 
-## Required workflow checks
+## Required check contexts
 
-Configure branch protection to require these job names from `.github/workflows/ci.yml`:
+Configure the active `main` ruleset to require these exact GitHub Actions check names:
 
+- `CI Required Gate`
+- `Dependency Review`
+- `Rust Advisory Audit`
+- `Node Dependency Audit`
+- `Analyze (javascript-typescript)`
+- `Analyze (rust)`
+
+`CI Required Gate` is the stable aggregate from `.github/workflows/ci.yml`. It evaluates:
+
+- `Detect Changed Areas`
 - `Repo Hygiene`
 - `Rust Engine`
 - `Rust Transport`
 - `WaveNav Host Sample Build`
+- `Marketing Site Build`
+- `Project Atlas Build`
 - `Browser Shell Skeleton Checks`
 - `WML Server Sanity`
+- `Browser Frontend Unit Tests`
 
-`Marketing Site Build` may be required or optional depending on whether site changes should block product-layer merges.
+For ordinary pull requests, path-filtered jobs may conclude `skipped`; the gate accepts those skips
+while failing if an intended job fails or is cancelled. For Dependabot-authored pull requests,
+pushes to `main`, and manual CI runs, `full_ci` is true and the gate requires every validation job
+to conclude `success`.
 
-For `.github/workflows/security.yml`, require at least:
+The security checks come from `.github/workflows/security.yml`. The CodeQL checks come from the
+repository-controlled advanced setup in `.github/workflows/codeql.yml`.
 
-- `Dependency Review`
-- `Rust Advisory Audit`
-- `Node Dependency Audit`
+## Ruleset configuration
 
-For `.github/workflows/codeql.yml`, require:
+In **Settings > Rules > Rulesets > main**:
 
-- `Analyze (javascript-typescript)`
-- `Analyze (rust)`
+1. Keep the ruleset active and targeted at the default branch.
+2. Keep pull requests required and squash as the allowed merge method.
+3. Keep bypass actors empty.
+4. Under required status checks, require the six exact contexts above and select the GitHub
+   Actions app as the expected source.
+5. Enable the strict/up-to-date option if every pull request must be tested against the latest
+   `main` before merge.
 
-## Manual / optional workflows
+The existing required contexts (`Repo Hygiene`, `Rust Engine`, `Rust Transport`, and
+`WaveNav Host Sample Build`) are not renamed by this change. Migrate without a deadlock:
 
-- `.github/workflows/transport-wap-smoke.yml` is manual (`workflow_dispatch`) and should not be configured as a required PR status check.
-- `.github/workflows/pages.yml` is deployment-focused and should not be required for code PR mergeability.
+1. Let this workflow run once on a pull request so `CI Required Gate` and both `Analyze (...)`
+   contexts exist.
+2. Add the six new required contexts.
+3. Confirm the aggregate and security/CodeQL checks pass on that pull request.
+4. Remove the four legacy individual CI contexts from the ruleset. They are redundant once
+   `CI Required Gate` is required and would make future path-filter changes harder to manage.
+
+Do not require `Detect Changed Areas` or the individual conditional CI jobs in addition to the
+aggregate gate.
+
+## Repository settings required by Dependabot automation
+
+In **Settings > General > Pull Requests**:
+
+- Enable **Allow auto-merge**.
+- Keep **Allow squash merging** enabled.
+
+In **Settings > Actions > General > Workflow permissions**:
+
+- Keep the default `GITHUB_TOKEN` permission read-only. The auto-merge workflow requests only
+  `contents: write` and `pull-requests: write` for its gated Dependabot job.
+- The setting that lets Actions create and approve pull requests is not required; this workflow
+  neither creates nor approves pull requests.
+
+In **Settings > Advanced Security**:
+
+- Enable the dependency graph and Dependabot alerts.
+- Enable **Dependabot security updates** if security-fix pull requests are desired. Security
+  updates are currently repository-setting controlled; `.github/dependabot.yml` controls version
+  updates.
+- Use the checked-in `.github/workflows/codeql.yml` advanced setup. Do not enable CodeQL default
+  setup for the same languages at the same time.
+
+Auto-merge only queues an eligible pull request. It does not override the ruleset: GitHub merges
+only after every required status check and any other ruleset requirement succeeds.
+
+## Manual and deployment workflows
+
+- `Transport WAP Smoke (Kannel)` is manual and must not be required for pull requests.
+- `Build and Deploy to gh-pages` is deployment-focused and must not be required for code merges.
+- Scheduled/manual fuzzing and release workflows must not be required pull-request checks.
 
 ## Maintenance notes
 
-- If job names are changed in workflow YAML, update branch-protection required check names immediately.
-- Re-check required checks after CI refactors to avoid stale required statuses blocking merges.
-- `Browser Shell Skeleton Checks` includes Rust->TS contract codegen drift validation for `browser/contracts/generated/engine-host.ts` and `browser/contracts/generated/transport-host.ts`.
+- Treat the check names above as contract surfaces. Update this document and the ruleset whenever
+  a required job name changes.
+- Validate changes in a live pull request before removing an old required context.
+- Do not configure a required workflow that can be skipped at the trigger level by branch or path
+  filters; GitHub leaves such checks pending. This repository uses job-level conditions plus the
+  always-running aggregate gate instead.
