@@ -14,16 +14,16 @@ Target: [[sprints/WML-2|WML-2]]
 
 ## Graph summary
 
-- Nodes: 208
-- Edges: 528
+- Nodes: 214
+- Edges: 540
 
-- `clause`: 74
-- `fixture`: 74
+- `clause`: 76
+- `fixture`: 76
 - `legacy-ticket`: 8
 - `owner-layer`: 3
 - `profile`: 1
-- `requirement`: 11
-- `scr-row`: 11
+- `requirement`: 12
+- `scr-row`: 12
 - `source-document`: 13
 - `source-family`: 4
 - `sprint`: 4
@@ -38,5 +38,4 @@ Target: [[sprints/WML-2|WML-2]]
 
 - [[work-items/WML-201|WML-201]]: `wml`
 - [[work-items/WML-202|WML-202]]: `wml`
-- [[work-items/WML-203|WML-203]]: `wml`
 - [[work-items/WML-205|WML-205]]: `wml`

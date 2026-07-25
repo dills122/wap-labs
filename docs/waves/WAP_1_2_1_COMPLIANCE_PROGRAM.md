@@ -73,9 +73,9 @@ All nine selected Class C family increments are complete at SCR level:
 - `WBXML:MCF` selects exactly three mandatory client rows and leaves 12
   server/document/encoder rows outside the selected client profile;
 - the selected WBXML audit is 0 implemented, 3 partial, and 0 missing; a
-  pinned built-in decoder and source-derived corpus now link direct normative
-  baseline tests to all 3 rows, while exhaustive 48-clause closure remains
-  open.
+  pinned built-in decoder and 35-case source-derived corpus link direct
+  normative tests to all 3 rows, with 42/48 nested clauses implemented and six
+  explicit gaps retained.
 - 112 effective WMLScript rows are extracted from the consolidated
   WAP-193_101 table; `WMLScript:MCF` selects 41 mandatory interpreter rows;
 - the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,

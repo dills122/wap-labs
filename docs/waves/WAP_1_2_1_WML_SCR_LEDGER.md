@@ -123,9 +123,11 @@ still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 174
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a planned direct fixture. Clause implementation status
-remains `not-assessed`, so these records improve planning completeness without
-raising the implementation audit.
+owner/work mapping and a direct fixture plan. Twenty-five clauses now have
+reviewed direct evidence, including the two `WML-C-17` unknown-DTD clauses
+mapped to `WML-203` and the 11-clause WML-204 input tranche; the remaining
+clauses stay `not-assessed`. The parent-row implementation audit remains
+conservative.
 
 The 12 missing required Class C client rows are:
 

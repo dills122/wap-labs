@@ -1,11 +1,13 @@
 use super::*;
 use crate::wbxml_decoder::{decode_wml13, WML13_DECODER_ID};
+use std::collections::HashSet;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct ConformanceCorpus {
     decoder: String,
     source_documents: Vec<String>,
+    implemented_clauses: Vec<String>,
     fixtures: Vec<ConformanceFixture>,
 }
 
@@ -131,6 +133,44 @@ fn transport_wbxml_c_011_binary_literal_equivalence_fixtures() {
         groups.contains_key("attribute-fragments"),
         "binary/literal attribute-fragment equivalence group must execute"
     );
+}
+
+#[test]
+fn transport_wbxml_section_5_direct_clause_inventory_is_fixed_outcome_backed() {
+    let corpus = load_conformance_corpus();
+    let fixture_clauses: HashSet<_> = corpus
+        .fixtures
+        .iter()
+        .flat_map(|fixture| fixture.clauses.iter().map(String::as_str))
+        .collect();
+
+    assert_eq!(
+        corpus.implemented_clauses.len(),
+        42,
+        "the reviewed WML-203 tranche must remain explicit"
+    );
+    for clause in &corpus.implemented_clauses {
+        assert!(
+            fixture_clauses.contains(clause.as_str()),
+            "{clause} must remain linked to at least one fixed-outcome fixture"
+        );
+    }
+    for deferred in [
+        "WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+        "WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+        "WBXML-CL-CHARSET-UNREPRESENTABLE-NAME",
+        "WBXML-CL-EXTERNAL-TOKEN-TYPING",
+        "WBXML-CL-MIME-TOKEN-TYPING",
+        "WBXML-CL-TOKEN-CODE-PAGES",
+    ] {
+        assert!(
+            !corpus
+                .implemented_clauses
+                .iter()
+                .any(|clause| clause == deferred),
+            "{deferred} must stay unpromoted until its broader evidence gate is met"
+        );
+    }
 }
 
 #[test]

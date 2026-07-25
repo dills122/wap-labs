@@ -43,14 +43,14 @@
     "recommendedClauseCount": 31,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 781,
-    "assessedClauseCount": 100
+    "assessedClauseCount": 144
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "ceb5e2549ad494f83f986e044fabe72b4984374f75d6e56eebec21c97a01d722",
+      "parentLedgerSha256": "d53b0ae6427dbd3478e9ca1135759b29f65805f4091c8c0962e2d168cdfc9dc7",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -379,7 +379,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-07"
+            "R0-07",
+            "WML-203"
           ],
           "clauseIds": [
             "WML-CL-UNKNOWN-CONTENT-PRESERVED",
@@ -3433,8 +3434,13 @@
           "fixturePlan": {
             "id": "WML-FX-UNKNOWN-MARKUP-IGNORED",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation."
+            "status": "implemented",
+            "assertion": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3443,7 +3449,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-07"
+              "R0-07",
+              "WML-203"
             ],
             "requirementIds": [
               "RQ-RMK-009"
@@ -3451,7 +3458,7 @@
             "parentImplementationSnapshot": {
               "WML-C-17": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -3473,8 +3480,13 @@
           "fixturePlan": {
             "id": "WML-FX-UNKNOWN-CONTENT-PRESERVED",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Continue rendering recognized content nested inside an unrecognized element."
+            "status": "implemented",
+            "assertion": "Continue rendering recognized content nested inside an unrecognized element.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3483,7 +3495,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-07"
+              "R0-07",
+              "WML-203"
             ],
             "requirementIds": [
               "RQ-RMK-009"
@@ -3491,7 +3504,7 @@
             "parentImplementationSnapshot": {
               "WML-C-17": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10442,9 +10455,9 @@
     },
     {
       "family": "wbxml",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
-      "parentLedgerSha256": "77c6a4077a40867e6854499642799a432a01afc311dd66f6ee81b9a454909639",
+      "parentLedgerSha256": "3b1aac8b9a4d76ae3a1dc419e2e31a87a47265ff48318484dd295d9f2988ffb7",
       "effectiveSequence": [
         "WAP-192-WBXML",
         "WAP-192_105-WBXML"
@@ -10601,7 +10614,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-NETWORK-BYTE-ORDER",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode multi-byte fields and bit fields using the specified most-significant-first network ordering."
           },
           "mapping": {
@@ -10620,7 +10633,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10642,7 +10655,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-MULTIBYTE-CONTINUATION",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet."
           },
           "mapping": {
@@ -10661,7 +10674,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10683,7 +10696,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-MULTIBYTE-GROUP-ORDER",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Combine multi-byte integer groups in most-significant-group-first order."
           },
           "mapping": {
@@ -10702,7 +10715,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10724,7 +10737,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-MULTIBYTE-UNUSED-ZERO",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Require unused value bits in the initial multi-byte integer octet to be zero."
           },
           "mapping": {
@@ -10743,7 +10756,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10765,7 +10778,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-CHARSET-INTERNAL-DEFAULT",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Without external charset metadata, present strings using the encoding named by the WBXML charset field."
           },
           "mapping": {
@@ -10784,7 +10797,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10847,7 +10860,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-CHARSET-STRING-TERMINATION",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator."
           },
           "mapping": {
@@ -10866,7 +10879,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10929,7 +10942,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-DOCUMENT-HEADER-ORDER",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode each document in version, public identifier, charset, string-table, then body order."
           },
           "mapping": {
@@ -10948,7 +10961,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -10970,7 +10983,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-DOCUMENT-BODY-GRAMMAR",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar."
           },
           "mapping": {
@@ -10989,7 +11002,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11011,7 +11024,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-VERSION-BYTE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble."
           },
           "mapping": {
@@ -11030,7 +11043,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11052,7 +11065,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-PUBLIC-ID-NUMERIC",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Accept a positive multi-byte numeric public identifier for a known document type."
           },
           "mapping": {
@@ -11071,7 +11084,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11093,7 +11106,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-PUBLIC-ID-STRING-TABLE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "When public identifier is zero, resolve its following index through the string table."
           },
           "mapping": {
@@ -11112,7 +11125,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11134,7 +11147,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-CHARSET-MIBENUM",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown."
           },
           "mapping": {
@@ -11153,7 +11166,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11175,7 +11188,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-STRING-TABLE-REQUIRED",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Read a string-table length immediately after charset even when the table is empty."
           },
           "mapping": {
@@ -11194,7 +11207,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11216,7 +11229,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-STRING-TABLE-LENGTH",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Treat string-table length as its byte count excluding the encoded length field."
           },
           "mapping": {
@@ -11235,7 +11248,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11257,7 +11270,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-STRING-TABLE-OFFSETS",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Resolve string-table references as byte offsets from the first table byte."
           },
           "mapping": {
@@ -11276,7 +11289,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11298,7 +11311,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TOKEN-GLOBAL-APPLICATION-SPACES",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Distinguish fixed global tokens from context-dependent application tokens."
           },
           "mapping": {
@@ -11317,7 +11330,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11339,7 +11352,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TOKEN-TAG-ATTRIBUTE-SPACES",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Interpret application token values in separate tag and attribute code spaces."
           },
           "mapping": {
@@ -11358,7 +11371,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11421,7 +11434,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-PARSER-STATE-PAGES",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Maintain separate current code pages for tag and attribute parser states, each initialized to page zero."
           },
           "mapping": {
@@ -11440,7 +11453,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11462,7 +11475,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-PARSER-SWITCH-PERSISTENCE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Keep a selected code page active for its parser state until another switch in that state or document end."
           },
           "mapping": {
@@ -11481,7 +11494,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11503,7 +11516,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TAG-ATTRIBUTE-BIT",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Use tag bit seven to determine whether an END-terminated attribute list follows."
           },
           "mapping": {
@@ -11522,7 +11535,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11544,7 +11557,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TAG-CONTENT-BIT",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Use tag bit six to determine whether content and its terminating END follow."
           },
           "mapping": {
@@ -11563,7 +11576,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11585,7 +11598,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TAG-IDENTITY-BITS",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Use tag bits zero through five as the application tag identity."
           },
           "mapping": {
@@ -11604,7 +11617,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11626,7 +11639,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TAG-ATTRIBUTES-BEFORE-CONTENT",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "When a tag has attributes and content, decode the complete attribute list before content."
           },
           "mapping": {
@@ -11645,7 +11658,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11667,7 +11680,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-ATTRIBUTE-START-RANGE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix."
           },
           "mapping": {
@@ -11686,7 +11699,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11708,7 +11721,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-ATTRIBUTE-VALUE-RANGE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments."
           },
           "mapping": {
@@ -11727,7 +11740,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11749,7 +11762,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-ATTRIBUTE-SEQUENCE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token."
           },
           "mapping": {
@@ -11768,7 +11781,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11790,7 +11803,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Do not interpret LITERAL as encoding any portion of an attribute value."
           },
           "mapping": {
@@ -11809,7 +11822,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11831,7 +11844,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-GLOBAL-TOKEN-INVARIANCE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Give each global token the same structure and meaning in every code space and page."
           },
           "mapping": {
@@ -11850,7 +11863,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11872,7 +11885,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-INLINE-STRING",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode STR_I as encoding-dependent terminated inline character data."
           },
           "mapping": {
@@ -11891,7 +11904,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11913,7 +11926,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-TABLE-STRING",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode STR_T as a multi-byte byte offset into the string table."
           },
           "mapping": {
@@ -11932,7 +11945,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11954,7 +11967,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-EMPTY-ATTRIBUTE-STRING",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding."
           },
           "mapping": {
@@ -11973,7 +11986,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -11995,7 +12008,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-EXTENSION-TOKEN-FORMS",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode single-byte, inline-string, and inline-integer extension token forms."
           },
           "mapping": {
@@ -12014,7 +12027,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12036,7 +12049,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-EXTENSION-SWITCH-CONTEXT",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list."
           },
           "mapping": {
@@ -12055,7 +12068,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12077,7 +12090,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-ENTITY-UCS4",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics."
           },
           "mapping": {
@@ -12096,7 +12109,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12118,7 +12131,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-PROCESSING-INSTRUCTION",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode PI target and optional value using attribute-start/value syntax terminated by END."
           },
           "mapping": {
@@ -12137,7 +12150,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12160,7 +12173,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-LITERAL-NAME-STATE",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table."
           },
           "mapping": {
@@ -12180,7 +12193,7 @@
               "WBXML-C-001": "partial",
               "WBXML-C-011": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12203,7 +12216,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-LITERAL-TAG-FLAGS",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC."
           },
           "mapping": {
@@ -12223,7 +12236,7 @@
               "WBXML-C-001": "partial",
               "WBXML-C-011": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12245,7 +12258,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-OPAQUE-LENGTH",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes."
           },
           "mapping": {
@@ -12264,7 +12277,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12286,7 +12299,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-END-TOKEN",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Use END to terminate the current attribute list or element as determined by parser state."
           },
           "mapping": {
@@ -12305,7 +12318,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12327,7 +12340,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-SWITCH-PAGE-TOKEN",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Decode SWITCH_PAGE and its following page byte for the current parser state."
           },
           "mapping": {
@@ -12346,7 +12359,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-001": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12368,7 +12381,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values."
           },
           "mapping": {
@@ -12386,7 +12399,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-010": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12408,7 +12421,7 @@
           "fixturePlan": {
             "id": "WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
             "kind": "binary-decoder",
-            "status": "planned",
+            "status": "implemented",
             "assertion": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model."
           },
           "mapping": {
@@ -12426,7 +12439,7 @@
             "parentImplementationSnapshot": {
               "WBXML-C-010": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12553,7 +12566,60 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         }
-      ]
+      ],
+      "directEvidence": {
+        "corpusPath": "transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json",
+        "testPath": "transport-rust/src/tests/wbxml_conformance.rs",
+        "commands": [
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_001_binary_structure_fixtures",
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_c_010_default_attribute_fixtures",
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_section_5_direct_clause_inventory_is_fixed_outcome_backed"
+        ],
+        "implementedClauseIds": [
+          "WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
+          "WBXML-CL-ATTRIBUTE-SEQUENCE",
+          "WBXML-CL-ATTRIBUTE-START-RANGE",
+          "WBXML-CL-ATTRIBUTE-VALUE-RANGE",
+          "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+          "WBXML-CL-CHARSET-MIBENUM",
+          "WBXML-CL-CHARSET-STRING-TERMINATION",
+          "WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+          "WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+          "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
+          "WBXML-CL-DOCUMENT-HEADER-ORDER",
+          "WBXML-CL-EMPTY-ATTRIBUTE-STRING",
+          "WBXML-CL-END-TOKEN",
+          "WBXML-CL-ENTITY-UCS4",
+          "WBXML-CL-EXTENSION-SWITCH-CONTEXT",
+          "WBXML-CL-EXTENSION-TOKEN-FORMS",
+          "WBXML-CL-GLOBAL-TOKEN-INVARIANCE",
+          "WBXML-CL-INLINE-STRING",
+          "WBXML-CL-LITERAL-NAME-STATE",
+          "WBXML-CL-LITERAL-TAG-FLAGS",
+          "WBXML-CL-MULTIBYTE-CONTINUATION",
+          "WBXML-CL-MULTIBYTE-GROUP-ORDER",
+          "WBXML-CL-MULTIBYTE-UNUSED-ZERO",
+          "WBXML-CL-NETWORK-BYTE-ORDER",
+          "WBXML-CL-OPAQUE-LENGTH",
+          "WBXML-CL-PARSER-STATE-PAGES",
+          "WBXML-CL-PARSER-SWITCH-PERSISTENCE",
+          "WBXML-CL-PROCESSING-INSTRUCTION",
+          "WBXML-CL-PUBLIC-ID-NUMERIC",
+          "WBXML-CL-PUBLIC-ID-STRING-TABLE",
+          "WBXML-CL-STRING-TABLE-LENGTH",
+          "WBXML-CL-STRING-TABLE-OFFSETS",
+          "WBXML-CL-STRING-TABLE-REQUIRED",
+          "WBXML-CL-SWITCH-PAGE-TOKEN",
+          "WBXML-CL-TABLE-STRING",
+          "WBXML-CL-TAG-ATTRIBUTE-BIT",
+          "WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT",
+          "WBXML-CL-TAG-CONTENT-BIT",
+          "WBXML-CL-TAG-IDENTITY-BITS",
+          "WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES",
+          "WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES",
+          "WBXML-CL-VERSION-BYTE"
+        ]
+      }
     },
     {
       "family": "caching",

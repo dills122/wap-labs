@@ -563,11 +563,6 @@ impl<'a> Decoder<'a> {
             if octets > 5 {
                 return Err(format!("{label} at byte {start} exceeds five octets"));
             }
-            if octets == 1 && octet == 0x80 {
-                return Err(format!(
-                    "{label} at byte {start} has a non-canonical leading zero group"
-                ));
-            }
             if octets == 1 {
                 first_group = octet & 0x7f;
             }

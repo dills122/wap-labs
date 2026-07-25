@@ -686,10 +686,11 @@
         }
       ],
       "relationshipClassification": "successor-compatibility-fallback",
-      "rationale": "Unknown-DTD fallback is informed by WML2 compatibility behavior and needs target-era WML 1.3 fixtures before it can satisfy the selected row.",
+      "rationale": "Target-era WML 1.3 fixtures now directly cover canonical and alternate external DTD handling, including unknown-wrapper preservation. Strict prologue-presence enforcement, internal subsets, and full DTD validation remain open, so successor compatibility stays contextual rather than conformance evidence.",
       "strictCorrectionWorkItems": [
         "R0-01",
-        "R0-07"
+        "R0-07",
+        "WML-203"
       ],
       "ownerLayers": [
         "engine-wasm",
@@ -700,7 +701,8 @@
       ],
       "workItems": [
         "R0-01",
-        "R0-07"
+        "R0-07",
+        "WML-203"
       ],
       "clauseIds": [
         "WML-CL-UNKNOWN-CONTENT-PRESERVED",

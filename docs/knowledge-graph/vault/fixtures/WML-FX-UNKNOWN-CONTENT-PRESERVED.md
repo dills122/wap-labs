@@ -1,6 +1,6 @@
 ---
-id: "fixture:WBXML-FX-INLINE-STRING"
-key: "WBXML-FX-INLINE-STRING"
+id: "fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED"
+key: "WML-FX-UNKNOWN-CONTENT-PRESERVED"
 type: "fixture"
 generated: true
 pilot: "WML-2"
@@ -10,21 +10,21 @@ tags:
   - "wap-knowledge-graph/fixture"
 ---
 
-# Decode STR_I as encoding-dependent terminated inline character data.
+# Continue rendering recognized content nested inside an unrecognized element.
 
 > Generated from canonical repository manifests. Do not edit this note directly.
 
 ## Relationships
 
-- `verified-by` ← [[clauses/WBXML-CL-INLINE-STRING|WBXML-CL-INLINE-STRING]]
+- `verified-by` ← [[clauses/WML-CL-UNKNOWN-CONTENT-PRESERVED|WML-CL-UNKNOWN-CONTENT-PRESERVED]]
 
 ## Data
 
 ```json
 {
-  "kind": "binary-decoder",
+  "kind": "rendering",
   "status": "implemented",
-  "assertion": "Decode STR_I as encoding-dependent terminated inline character data.",
+  "assertion": "Continue rendering recognized content nested inside an unrecognized element.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }
 ```

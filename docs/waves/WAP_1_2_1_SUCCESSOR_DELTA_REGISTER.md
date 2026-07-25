@@ -53,9 +53,11 @@ code/test review establish the strict outcome.
 - WAE: 8 implemented/partial foundations are cross-checked against the
   existing WAP-236 delta. Two preserved/subsumed mappings are compatible; six
   expanded, split, relaxed, or decomposed mappings require strict correction.
-- WML: `WML-C-17` uses WML2 compatibility behavior and requires WML 1.3
-  correction/proof. The other selected rows have no identified
-  successor-derived implementation basis.
+- WML: `WML-C-17` now has direct WML 1.3 proof for canonical and alternate
+  external DTD handling, while strict prologue-presence, internal-subset, and
+  full-validation gaps keep its WML2 compatibility behavior contextual. The
+  other selected rows have no identified successor-derived implementation
+  basis.
 - WSP: all eight selected partial rows use successor-oriented tables or
   synthetic cases and require correction against effective WAP-203/SIN
   clauses.

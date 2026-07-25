@@ -4,7 +4,7 @@ key: "WBXML-FX-DOCUMENT-BODY-GRAMMAR"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

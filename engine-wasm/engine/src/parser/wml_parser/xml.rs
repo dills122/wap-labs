@@ -5,6 +5,15 @@ use std::collections::HashMap;
 
 use super::MAX_PARSE_TREE_DEPTH;
 
+const WML_1_3_PUBLIC_ID: &str = "-//WAPFORUM//DTD WML 1.3//EN";
+const WML_1_3_SYSTEM_ID: &str = "http://www.wapforum.org/DTD/wml13.dtd";
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum WmlDocumentType {
+    Wml13,
+    Alternate,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) enum XmlNode {
     Element(XmlElement),
@@ -28,6 +37,7 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
     let mut reader = Reader::from_str(xml);
     let mut stack: Vec<XmlElement> = Vec::new();
     let mut root: Option<XmlElement> = None;
+    let mut document_type = None;
 
     loop {
         match reader.read_event() {
@@ -63,6 +73,20 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
                 let raw = String::from_utf8_lossy(text.as_ref()).to_string();
                 attach_node(&mut stack, &mut root, XmlNode::Text(raw))?;
             }
+            Ok(Event::DocType(value)) => {
+                if document_type.is_some() {
+                    return Err("Malformed XML: multiple DOCTYPE declarations".to_string());
+                }
+                if root.is_some() || !stack.is_empty() {
+                    return Err(
+                        "Malformed XML: DOCTYPE declaration must precede the root element"
+                            .to_string(),
+                    );
+                }
+                let raw = std::str::from_utf8(value.as_ref())
+                    .map_err(|_| "Malformed XML: DOCTYPE declaration is not UTF-8".to_string())?;
+                document_type = Some(classify_wml_doctype(raw)?);
+            }
             Ok(Event::End(_)) => {
                 let Some(element) = stack.pop() else {
                     return Err("Malformed XML: unexpected closing tag".to_string());
@@ -80,6 +104,75 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
     }
 
     root.ok_or_else(|| "Missing required <wml> root element".to_string())
+}
+
+fn classify_wml_doctype(raw: &str) -> Result<WmlDocumentType, String> {
+    let (root_name, remainder) =
+        take_word(raw).ok_or_else(|| "Malformed XML: DOCTYPE declaration is empty".to_string())?;
+    if !root_name.eq_ignore_ascii_case("wml") {
+        return Err(format!(
+            "Malformed XML: DOCTYPE root {root_name:?} does not match <wml>"
+        ));
+    }
+
+    let (kind, remainder) = take_word(remainder)
+        .ok_or_else(|| "Malformed XML: DOCTYPE external identifier is missing".to_string())?;
+    match kind {
+        "PUBLIC" => {
+            let (public_id, remainder) = take_quoted(remainder)
+                .ok_or_else(|| "Malformed XML: DOCTYPE public identifier is missing".to_string())?;
+            let (system_id, trailing) = take_quoted(remainder)
+                .ok_or_else(|| "Malformed XML: DOCTYPE system identifier is missing".to_string())?;
+            reject_doctype_trailing_data(trailing)?;
+
+            if public_id == WML_1_3_PUBLIC_ID {
+                if system_id != WML_1_3_SYSTEM_ID {
+                    return Err(format!(
+                        "Malformed XML: WML 1.3 system identifier must be {WML_1_3_SYSTEM_ID:?}"
+                    ));
+                }
+                Ok(WmlDocumentType::Wml13)
+            } else {
+                Ok(WmlDocumentType::Alternate)
+            }
+        }
+        "SYSTEM" => {
+            let (_, trailing) = take_quoted(remainder)
+                .ok_or_else(|| "Malformed XML: DOCTYPE system identifier is missing".to_string())?;
+            reject_doctype_trailing_data(trailing)?;
+            Ok(WmlDocumentType::Alternate)
+        }
+        _ => Err(format!(
+            "Malformed XML: unsupported DOCTYPE external identifier {kind:?}"
+        )),
+    }
+}
+
+fn take_word(value: &str) -> Option<(&str, &str)> {
+    let value = value.trim_start();
+    if value.is_empty() {
+        return None;
+    }
+    let end = value.find(char::is_whitespace).unwrap_or(value.len());
+    Some((&value[..end], &value[end..]))
+}
+
+fn take_quoted(value: &str) -> Option<(&str, &str)> {
+    let value = value.trim_start();
+    let quote = value.chars().next()?;
+    if !matches!(quote, '\'' | '"') {
+        return None;
+    }
+    let quoted = &value[quote.len_utf8()..];
+    let end = quoted.find(quote)?;
+    Some((&quoted[..end], &quoted[end + quote.len_utf8()..]))
+}
+
+fn reject_doctype_trailing_data(value: &str) -> Result<(), String> {
+    if value.trim().is_empty() {
+        return Ok(());
+    }
+    Err("Malformed XML: DOCTYPE internal subsets are outside the supported WML policy".to_string())
 }
 
 fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, String> {

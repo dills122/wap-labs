@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "example": "wml203WbxmlParity",
+  "flows": [
+    {
+      "id": "canonical-doctype-deck-navigation",
+      "title": "Canonical WML 1.3 text remains navigable after deck-model ingestion",
+      "workItems": ["WML-203"],
+      "specItems": ["WBXML-C-001", "WBXML-C-010", "WBXML-C-011", "WML-C-17"],
+      "initial": {
+        "state": {
+          "activeCardId": "main",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "details",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
