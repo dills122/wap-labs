@@ -285,9 +285,31 @@ fn destination_policy_error(error: &reqwest::Error) -> Option<FetchDestinationEr
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Write;
+    use crate::fetch_policy::DestinationHostClass;
+    use std::io::{Read, Write};
     use std::net::TcpListener;
     use std::thread;
+
+    fn read_http_request_headers(stream: &mut impl Read) {
+        const MAX_TEST_REQUEST_HEADER_BYTES: usize = 8 * 1024;
+
+        let mut request = [0_u8; MAX_TEST_REQUEST_HEADER_BYTES];
+        let mut request_len = 0;
+        while !request[..request_len]
+            .windows(4)
+            .any(|window| window == b"\r\n\r\n")
+        {
+            assert!(
+                request_len < request.len(),
+                "redirect test request headers must stay bounded"
+            );
+            let read = stream
+                .read(&mut request[request_len..])
+                .expect("read redirect request");
+            assert!(read > 0, "redirect request must contain complete headers");
+            request_len += read;
+        }
+    }
 
     #[test]
     fn http_client_rejects_private_dns_answer() {
@@ -317,6 +339,10 @@ mod tests {
         let listener_address = listener.local_addr().expect("read redirect server address");
         let server = thread::spawn(move || {
             let (mut stream, _) = listener.accept().expect("accept redirect request");
+            // Linux may reset a TCP connection closed with unread request bytes, racing the
+            // response and masking the intended reqwest redirect-policy error with an I/O error.
+            // Consume the complete GET request before writing and closing the fixture response.
+            read_http_request_headers(&mut stream);
             stream
                 .write_all(
                     b"HTTP/1.1 302 Found\r\nLocation: http://127.0.0.1:9/private\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
@@ -340,6 +366,11 @@ mod tests {
         assert!(
             policy_error.is_policy_blocked(),
             "classification must come from the error type, not its message text"
+        );
+        assert_eq!(
+            policy_error,
+            FetchDestinationError::blocked_host(DestinationHostClass::Loopback),
+            "the redirect target must retain its typed loopback policy classification"
         );
         let message = policy_error.to_string();
         assert!(message.contains("public-only"));
