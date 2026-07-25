@@ -56,10 +56,14 @@ export function traceContainsSubsequence(actualKinds, expectedKinds) {
   return expectedKinds.length === 0;
 }
 
+export function isExpectedHostFailureStatus(status, expectation) {
+  return Boolean(expectation.statusIncludes && status?.includes(expectation.statusIncludes));
+}
+
 export function assertStoryExpectation(evidence, expectation, label) {
   assert.ok(evidence.snapshot, `${label}: runtime snapshot is unavailable`);
   for (const [key, expected] of Object.entries(expectation.state)) {
-    const actual = evidence.snapshot[key] ?? null;
+    const actual = stripUndefinedFields(evidence.snapshot[key] ?? null);
     assert.deepEqual(actual, expected, `${label}: snapshot.${key}`);
   }
   if (expectation.traceKinds) {
@@ -109,3 +113,17 @@ export function storyListLines(records) {
 
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const normalizeRenderText = (parts) => parts.join(' ').replace(/\s+/g, ' ').trim();
+
+const stripUndefinedFields = (value) => {
+  if (Array.isArray(value)) {
+    return value.map(stripUndefinedFields);
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, fieldValue]) => fieldValue !== undefined)
+        .map(([field, fieldValue]) => [field, stripUndefinedFields(fieldValue)])
+    );
+  }
+  return value;
+};

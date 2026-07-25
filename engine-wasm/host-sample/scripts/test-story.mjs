@@ -9,6 +9,7 @@ import { generateExamples } from './generate-example-manifest.mjs';
 import {
   NoExecutableCoverageError,
   assertStoryExpectation,
+  isExpectedHostFailureStatus,
   selectExecutableStories,
   storyListLines
 } from './story-runner-lib.mjs';
@@ -253,7 +254,11 @@ async function runStory(browser, baseUrl, story, artifactRoot) {
         step.expect,
         `${storyName} step ${index + 1}`
       );
-      if (target === 'host-sample' && FAILURE_STATUS_PATTERN.test(evidence.status)) {
+      if (
+        target === 'host-sample' &&
+        FAILURE_STATUS_PATTERN.test(evidence.status) &&
+        !isExpectedHostFailureStatus(evidence.status, step.expect)
+      ) {
         throw new Error(`${storyName} step ${index + 1}: host reported "${evidence.status}"`);
       }
       result.steps.push({

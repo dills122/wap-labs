@@ -10,11 +10,19 @@ export interface StoryStateExpectation {
   focusedSelectEditName?: string | null;
   focusedSelectEditValue?: string | null;
   externalNavigationIntent?: string | null;
+  externalNavigationRequestPolicy?: {
+    cacheControl?: 'default' | 'no-cache';
+    refererUrl?: string;
+    postContext?: { sameDeck?: boolean; contentType?: string; payload?: string };
+  } | null;
   lastScriptDialogRequests?: Array<
     | { type: 'alert'; message: string }
     | { type: 'confirm'; message: string }
     | { type: 'prompt'; message: string; defaultValue?: string }
   >;
+  lastScriptExecutionOk?: boolean | null;
+  lastScriptExecutionTrap?: string | null;
+  lastScriptRequiresRefresh?: boolean | null;
   nextCardVar?: string | null;
 }
 
@@ -113,6 +121,113 @@ export const EXAMPLES: HostExample[] = [
       "Enter \"Accept refresh\" then Enter; activeCardId should stay accept-refresh.",
       "Enter \"Accept noop\" then Enter; activeCardId should stay accept-noop and history depth should not change."
     ],
+    "flows": [
+      {
+        "id": "accept-noop-preserves-navigation-state",
+        "title": "Accept noop leaves the active card and history deterministic",
+        "target": "host-sample",
+        "workItems": [
+          "R0-02"
+        ],
+        "specItems": [
+          "WML-18",
+          "WML-R-012",
+          "WML-R-015",
+          "WML-R-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 3
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-noop",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-noop",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_NOOP"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_NOOP",
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-noop\">Accept noop</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-noop\">\n    <do type=\"accept\"><noop/></do>\n    <p>Enter should run accept noop without state mutation.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
   },
   {
@@ -190,6 +305,263 @@ export const EXAMPLES: HostExample[] = [
       "Back to home, enter \"Accept prev\" then Enter again; activeCardId should become home.",
       "Enter \"Accept refresh\" then Enter; activeCardId should stay accept-refresh.",
       "Enter \"Accept broken\" then Enter; action should error and activeCardId should remain accept-broken."
+    ],
+    "flows": [
+      {
+        "id": "accept-go-prev-refresh-and-rollback",
+        "title": "Accept tasks preserve go, prev, refresh, and rollback ordering",
+        "target": "host-sample",
+        "workItems": [
+          "A5-02"
+        ],
+        "specItems": [
+          "WML-R-012",
+          "WML-R-015",
+          "WML-R-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-go",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "target",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-go",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-prev",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-refresh",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-refresh",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_REFRESH"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 3
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-broken",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-broken",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ],
+              "statusIncludes": "Key error (enter):"
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-broken\">Accept broken</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Enter should fail and keep this card active.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
   },
@@ -410,6 +782,58 @@ export const EXAMPLES: HostExample[] = [
       "Press Back once; activeCardId should become rewind because transit runs onenterbackward on re-entry.",
       "Confirm runtime trace shows ACTION_BACK and subsequent ACTION_FRAGMENT for rewind."
     ],
+    "flows": [
+      {
+        "id": "forward-entry-and-backward-reentry",
+        "title": "Forward entry and backward re-entry dispatch at card boundaries",
+        "target": "host-sample",
+        "workItems": [
+          "A2-03"
+        ],
+        "specItems": [
+          "WML-R-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "rewind",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Start card.</p>\n    <a href=\"#transit\">Enter transit</a>\n  </card>\n  <card id=\"transit\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#next\"/>\n    </onevent>\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Transit card should not remain active after either entry event.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached from onenterforward.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached from onenterbackward.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
   },
   {
@@ -624,8 +1048,28 @@ export const EXAMPLES: HostExample[] = [
             "expect": {
               "state": {
                 "focusedInputEditName": null,
-                "focusedInputEditValue": null
+                "focusedInputEditValue": null,
+                "externalNavigationIntent": "http://local.test/profile",
+                "externalNavigationRequestPolicy": {
+                  "refererUrl": "http://local.test/examples/formsSelectNavigationLocal.wml",
+                  "postContext": {
+                    "sameDeck": false,
+                    "contentType": "application/x-www-form-urlencoded",
+                    "payload": "Country=France&pin=12"
+                  }
+                }
               },
+              "traceKinds": [
+                "INPUT_EDIT_COMMIT",
+                "ACTION_ACCEPT",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "runMode": "local",
+                "navigationStatus": "loaded",
+                "externalNavigationIntent": "http://local.test/profile"
+              },
+              "statusIncludes": "Local mode captured external intent",
               "render": {
                 "textIncludes": [
                   "**"
@@ -657,6 +1101,136 @@ export const EXAMPLES: HostExample[] = [
       "Move to the PIN field, type digits, and confirm the viewport masks the committed value.",
       "Submit the card and confirm Waves reports a captured external intent instead of performing a fetch."
     ],
+    "flows": [
+      {
+        "id": "waves-text-edit-and-local-submit-intent",
+        "title": "Waves commits text and password edits into a captured local POST intent",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "A5-04",
+          "A5-06"
+        ],
+        "specItems": [
+          "WML-R-019",
+          "RQ-RMK-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "login",
+            "focusedLinkIndex": 0,
+            "focusedInputEditName": null,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "local",
+            "navigationStatus": "loaded"
+          },
+          "render": {
+            "textIncludes": [
+              "AHMED",
+              "PIN:"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "type-text",
+              "text": "BOB"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 0,
+                "focusedInputEditName": "username",
+                "focusedInputEditValue": "AHMEDBOB"
+              },
+              "render": {
+                "textIncludes": [
+                  "AHMEDBOB"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_COMMIT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "42"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": "pin",
+                "focusedInputEditValue": "42"
+              },
+              "render": {
+                "textIncludes": [
+                  "**"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "login",
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null,
+                "externalNavigationIntent": "http://local.test/login",
+                "externalNavigationRequestPolicy": {
+                  "refererUrl": "http://local.test/examples/formsTextSubmitLocal.wml",
+                  "postContext": {
+                    "sameDeck": false,
+                    "contentType": "application/x-www-form-urlencoded",
+                    "payload": "username=AHMEDBOB&pin=42"
+                  }
+                }
+              },
+              "traceKinds": [
+                "INPUT_EDIT_COMMIT",
+                "ACTION_ACCEPT",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "runMode": "local",
+                "navigationStatus": "loaded",
+                "externalNavigationIntent": "http://local.test/login"
+              },
+              "statusIncludes": "Local mode captured external intent",
+              "render": {
+                "textIncludes": [
+                  "AHMEDBOB",
+                  "**"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"login\" title=\"Local Login\">\n    <p>User: <input name=\"username\" value=\"AHMED\" type=\"text\"/></p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/login\">\n        <postfield name=\"username\" value=\"$(username)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n  </card>\n</wml>\n"
   },
   {
@@ -678,6 +1252,98 @@ export const EXAMPLES: HostExample[] = [
       "Press Back once and confirm activeCardId is level-1.",
       "Press Back again and confirm activeCardId is home.",
       "Press Back on home and confirm no-op behavior with activeCardId still home."
+    ],
+    "flows": [
+      {
+        "id": "multi-card-back-process-order",
+        "title": "Multi-card history unwinds in order and stops when empty",
+        "target": "host-sample",
+        "workItems": [
+          "R0-02",
+          "R0-03"
+        ],
+        "specItems": [
+          "WML-18",
+          "WML-07",
+          "WML-R-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "level-1",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "level-2",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "level-1",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_BACK_EMPTY"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>History process-order demo.</p>\n    <a href=\"#level-1\">To level 1</a>\n  </card>\n\n  <card id=\"level-1\">\n    <p>Level 1 card.</p>\n    <a href=\"#level-2\">To level 2</a>\n  </card>\n\n  <card id=\"level-2\">\n    <p>Level 2 card.</p>\n    <a href=\"#home\">Return home via link</a>\n  </card>\n</wml>\n"
   },
@@ -977,6 +1643,77 @@ export const EXAMPLES: HostExample[] = [
       "Confirm runtime-state lastScriptExecutionOk becomes true.",
       "Confirm runtime-state lastScriptExecutionTrap remains (none)."
     ],
+    "flows": [
+      {
+        "id": "script-link-success-and-navigation-continuity",
+        "title": "A script link succeeds without disrupting subsequent navigation",
+        "target": "host-sample",
+        "workItems": [
+          "W0-01",
+          "W0-03"
+        ],
+        "specItems": [
+          "RQ-WMLS-001",
+          "RQ-WMLS-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "lastScriptExecutionOk": null,
+            "lastScriptExecutionTrap": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "lastScriptExecutionOk": true,
+                "lastScriptExecutionTrap": null
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "done",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "SCRIPT_OK",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Script action execution demo.</p>\n    <a href=\"script:calc.wmlsc#main\">Run calc script</a>\n    <br/>\n    <a href=\"#done\">Continue</a>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
   },
   {
@@ -994,6 +1731,125 @@ export const EXAMPLES: HostExample[] = [
       "Select this example and press Enter on \"Start timed card\".",
       "Enable Auto Tick with 100ms step and wait until the card transitions.",
       "Confirm activeCardId transitions from timed to done and trace contains TIMER_TICK, TIMER_EXPIRE, and ACTION_ONTIMER."
+    ],
+    "flows": [
+      {
+        "id": "nonzero-timer-host-clock-expiry",
+        "title": "A nonzero timer advances through host ticks and expires once",
+        "target": "host-sample",
+        "workItems": [
+          "A5-03"
+        ],
+        "specItems": [
+          "WML-R-014"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 1000
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "TIMER_START",
+                "TIMER_TICK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "done",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "TIMER_TICK",
+                "TIMER_EXPIRE",
+                "ACTION_ONTIMER",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timed card</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"15\"/>\n    <onevent type=\"ontimer\"><go href=\"#done\"/></onevent>\n    <p>Auto tick should move this card after 1.5 seconds.</p>\n  </card>\n  <card id=\"done\">\n    <p>Timer completed through host clock lifecycle.</p>\n  </card>\n</wml>\n"
   },
@@ -1159,6 +2015,48 @@ export const EXAMPLES: HostExample[] = [
       "Confirm activeCardId remains home after invocation.",
       "Confirm runtime-state externalNavigationIntent remains (none)."
     ],
+    "flows": [
+      {
+        "id": "script-go-cancel-clears-pending-navigation",
+        "title": "Script go followed by cancel leaves navigation unchanged",
+        "target": "host-sample",
+        "workItems": [
+          "W0-04"
+        ],
+        "specItems": [
+          "RQ-WMLS-018"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null,
+            "lastScriptExecutionOk": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null,
+                "lastScriptExecutionOk": true,
+                "lastScriptExecutionTrap": null
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>go(\"#next\") then go(\"\") in one script invocation.</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#goCancel\">Script go then cancel</a>\n  </card>\n  <card id=\"next\">\n    <p>If you can read this from the script link, cancellation regressed.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
   },
   {
@@ -1176,6 +2074,94 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"go then prev\" and confirm activeCardId stays home.",
       "Press Down then Enter on \"prev then go\" and confirm activeCardId becomes next.",
       "On next card, press Enter on \"Script external go\" and confirm externalNavigationIntent is populated."
+    ],
+    "flows": [
+      {
+        "id": "script-navigation-order-and-external-outcome",
+        "title": "Script navigation is last-call-wins for cancel, fragment, and external outcomes",
+        "target": "host-sample",
+        "workItems": [
+          "W0-04"
+        ],
+        "specItems": [
+          "RQ-WMLS-018"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null,
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null,
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": "http://local.test/next.wml?from=script",
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Navigation ordering matrix.</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#goThenPrev\">go then prev</a>\n    <br/>\n    <a href=\"script:wavescript-fixtures.wmlsc#prevThenGo\">prev then go</a>\n  </card>\n  <card id=\"next\">\n    <p>Reached via prev-then-go ordering.</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#externalGo\">Script external go</a>\n    <br/>\n    <a href=\"#home\">Back home</a>\n  </card>\n</wml>\n"
   },
@@ -1195,6 +2181,51 @@ export const EXAMPLES: HostExample[] = [
       "On home card, press Enter on \"Script setVar only\".",
       "Confirm activeCardId remains home and focusedLinkIndex remains stable.",
       "Confirm runtime-state nextCardVar becomes updated and lastScriptRequiresRefresh becomes true."
+    ],
+    "flows": [
+      {
+        "id": "script-refresh-without-navigation",
+        "title": "Script variable mutation requests refresh without navigation",
+        "target": "host-sample",
+        "workItems": [
+          "W0-04"
+        ],
+        "specItems": [
+          "RQ-WMLS-017",
+          "RQ-WMLS-021"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "nextCardVar": null,
+            "externalNavigationIntent": null,
+            "lastScriptRequiresRefresh": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "updated",
+                "externalNavigationIntent": null,
+                "lastScriptExecutionOk": true,
+                "lastScriptRequiresRefresh": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh policy demo (no navigation).</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n  </card>\n</wml>\n"
   },
@@ -1636,6 +2667,135 @@ export const EXAMPLES: HostExample[] = [
       "Follow \"Go to next card\" then activate \"Run newContext + prev\"; activeCardId should remain next and nextCardVar should clear.",
       "Press browser Back after newContext and verify history is cleared for prior card context (no return to home via engine history)."
     ],
+    "flows": [
+      {
+        "id": "current-card-and-context-reset",
+        "title": "Current-card lookup and newContext clear variables and history",
+        "target": "host-sample",
+        "workItems": [
+          "R0-03",
+          "W0-07"
+        ],
+        "specItems": [
+          "RQ-WMLS-019",
+          "RQ-WMLS-020"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "nextCardVar": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "#home",
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "nextCardVar": null,
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "nextCardVar": null
+              },
+              "traceKinds": [
+                "ACTION_BACK_EMPTY"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 1,
+                "nextCardVar": "#next",
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>WMLBrowser context semantics demo.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n    <a href=\"#next\">Go to next card</a>\n  </card>\n  <card id=\"next\">\n    <p>newContext should clear vars/history and ignore prev in same script.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#newContextPrev\">Run newContext + prev</a>\n    <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n  </card>\n</wml>\n"
   },
   {
@@ -1654,6 +2814,66 @@ export const EXAMPLES: HostExample[] = [
       "On home card, press Enter on \"Script setVar + go\"; activeCardId should become next.",
       "Confirm runtime-state nextCardVar becomes #next after the script runs.",
       "On next card, press Enter on \"Script prev\"; activeCardId should return to home."
+    ],
+    "flows": [
+      {
+        "id": "variable-fragment-and-prev-effects",
+        "title": "WMLBrowser variable, go, and prev effects apply after script invocation",
+        "target": "host-sample",
+        "workItems": [
+          "W0-04"
+        ],
+        "specItems": [
+          "RQ-WMLS-017",
+          "RQ-WMLS-018"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "nextCardVar": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "#next",
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "nextCardVar": "#next",
+                "lastScriptExecutionOk": true
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "ACTION_BACK",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>WMLBrowser var/nav subset demo.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#main\">Script setVar + go</a>\n  </card>\n  <card id=\"next\">\n    <p>Navigation came from script go().</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#back\">Script prev</a>\n  </card>\n</wml>\n"
   },

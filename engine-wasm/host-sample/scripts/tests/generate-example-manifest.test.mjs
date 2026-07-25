@@ -94,6 +94,68 @@ test('parses waves-browser target setup, keyboard actions, and semantic expectat
   assert.deepEqual(parsed.flows[0].initial.render, { textIncludes: ['Home'] });
 });
 
+test('parses script outcomes and structured external request policy expectations', () => {
+  const document = validFlow({
+    initial: {
+      state: {
+        activeCardId: 'home',
+        lastScriptExecutionOk: null,
+        lastScriptExecutionTrap: null,
+        lastScriptRequiresRefresh: false,
+        externalNavigationRequestPolicy: null
+      }
+    },
+    steps: [
+      {
+        action: { type: 'key', key: 'enter' },
+        expect: {
+          state: {
+            activeCardId: 'home',
+            lastScriptExecutionOk: true,
+            externalNavigationRequestPolicy: {
+              refererUrl: 'http://local.test/form.wml',
+              postContext: {
+                sameDeck: false,
+                contentType: 'application/x-www-form-urlencoded',
+                payload: 'username=BOB'
+              }
+            }
+          }
+        }
+      }
+    ]
+  });
+
+  const parsed = parseExecutableFlow(
+    JSON.stringify(document),
+    'test-example.flow.json',
+    'testExample'
+  );
+  assert.equal(parsed.flows[0].steps[0].expect.state.lastScriptExecutionOk, true);
+  assert.equal(
+    parsed.flows[0].steps[0].expect.state.externalNavigationRequestPolicy.postContext.payload,
+    'username=BOB'
+  );
+});
+
+test('rejects malformed structured external request policy expectations', () => {
+  const document = validFlow({
+    initial: {
+      state: {
+        activeCardId: 'home',
+        externalNavigationRequestPolicy: {
+          postContext: { sameDeck: 'no' }
+        }
+      }
+    }
+  });
+
+  assert.throws(
+    () => parseExecutableFlow(JSON.stringify(document), 'test-example.flow.json', 'testExample'),
+    /postContext\.sameDeck must be boolean/
+  );
+});
+
 test('rejects flow companions for examples that do not exist', async () => {
   const examplesDir = await mkdtemp(path.join(os.tmpdir(), 'wavenav-examples-'));
   await writeFile(path.join(examplesDir, 'unknown.flow.json'), JSON.stringify(validFlow()), 'utf8');

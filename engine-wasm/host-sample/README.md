@@ -61,9 +61,10 @@ companion into `examples.ts`. A version 1 companion contains:
 - an `initial` expectation and one or more action/expectation steps
 - actions: `key` (`up`, `down`, `enter`), `back`, `tick` (`100` or `1000` ms), and
   `clear-intent`; Waves flows can also use real `keyboard` presses and `type-text`
-- runtime state assertions including card/focus, focused input/select edit state, external intent,
-  and `nextCardVar`
-- Waves-only semantic `session`, `statusIncludes`, and rendered `textIncludes` assertions
+- runtime state assertions including card/focus, focused input/select edit state, external intent
+  and structured request policy, script outcome/refresh state, and `nextCardVar`
+- semantic `statusIncludes` assertions (including expected host error paths), plus Waves-only
+  `session` and rendered `textIncludes` assertions
 - optional `traceKinds`, matched as an ordered subsequence of engine trace entries
 
 Unknown example references/actions, malformed values, missing mappings, extra mappings, and stale

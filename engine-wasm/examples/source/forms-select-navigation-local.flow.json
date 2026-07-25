@@ -89,8 +89,24 @@
           "expect": {
             "state": {
               "focusedInputEditName": null,
-              "focusedInputEditValue": null
+              "focusedInputEditValue": null,
+              "externalNavigationIntent": "http://local.test/profile",
+              "externalNavigationRequestPolicy": {
+                "refererUrl": "http://local.test/examples/formsSelectNavigationLocal.wml",
+                "postContext": {
+                  "sameDeck": false,
+                  "contentType": "application/x-www-form-urlencoded",
+                  "payload": "Country=France&pin=12"
+                }
+              }
             },
+            "session": {
+              "runMode": "local",
+              "navigationStatus": "loaded",
+              "externalNavigationIntent": "http://local.test/profile"
+            },
+            "statusIncludes": "Local mode captured external intent",
+            "traceKinds": ["INPUT_EDIT_COMMIT", "ACTION_ACCEPT", "ACTION_EXTERNAL"],
             "render": {
               "textIncludes": ["**"]
             }

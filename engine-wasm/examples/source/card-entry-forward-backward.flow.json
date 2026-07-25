@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "example": "cardEntryForwardBackward",
+  "flows": [
+    {
+      "id": "forward-entry-and-backward-reentry",
+      "title": "Forward entry and backward re-entry dispatch at card boundaries",
+      "workItems": ["A2-03"],
+      "specItems": ["WML-R-008"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_FRAGMENT", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "rewind", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

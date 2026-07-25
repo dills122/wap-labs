@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "example": "acceptNoopOrdering",
+  "flows": [
+    {
+      "id": "accept-noop-preserves-navigation-state",
+      "title": "Accept noop leaves the active card and history deterministic",
+      "workItems": ["R0-02"],
+      "specItems": ["WML-18", "WML-R-012", "WML-R-015", "WML-R-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 2 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 3 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "accept-noop", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "accept-noop", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_NOOP"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_NOOP", "ACTION_BACK"]
+          }
+        }
+      ]
+    }
+  ]
+}

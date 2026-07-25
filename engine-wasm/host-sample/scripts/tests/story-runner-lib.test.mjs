@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   NoExecutableCoverageError,
   assertStoryExpectation,
+  isExpectedHostFailureStatus,
   selectExecutableStories,
   traceContainsSubsequence
 } from '../story-runner-lib.mjs';
@@ -63,6 +64,22 @@ test('checks ordered trace subsequences without requiring adjacent entries', () 
   );
 });
 
+test('accepts host failure status only when the flow expects its text', () => {
+  assert.equal(
+    isExpectedHostFailureStatus('Key error (enter): Card id not found', {
+      statusIncludes: 'Key error (enter):'
+    }),
+    true
+  );
+  assert.equal(
+    isExpectedHostFailureStatus('Key error (enter): Card id not found', {
+      statusIncludes: 'Loaded'
+    }),
+    false
+  );
+  assert.equal(isExpectedHostFailureStatus('Key error', {}), false);
+});
+
 test('asserts structured runtime state and trace evidence', () => {
   const evidence = {
     snapshot: {
@@ -118,6 +135,43 @@ test('asserts Waves host session, status, and semantic render evidence', () => {
         render: { textIncludes: ['Broken target'] }
       },
       'waves'
+    )
+  );
+});
+
+test('normalizes undefined optional fields in structured snapshot expectations', () => {
+  const evidence = {
+    snapshot: {
+      activeCardId: 'home',
+      externalNavigationRequestPolicy: {
+        cacheControl: undefined,
+        refererUrl: 'http://local.test/form.wml',
+        postContext: {
+          sameDeck: false,
+          contentType: 'application/x-www-form-urlencoded',
+          payload: 'username=BOB'
+        }
+      }
+    },
+    traceEntries: []
+  };
+
+  assert.doesNotThrow(() =>
+    assertStoryExpectation(
+      evidence,
+      {
+        state: {
+          externalNavigationRequestPolicy: {
+            refererUrl: 'http://local.test/form.wml',
+            postContext: {
+              sameDeck: false,
+              contentType: 'application/x-www-form-urlencoded',
+              payload: 'username=BOB'
+            }
+          }
+        }
+      },
+      'request-policy'
     )
   );
 });

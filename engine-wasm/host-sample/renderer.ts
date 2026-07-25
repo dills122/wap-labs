@@ -488,6 +488,6 @@ function registerBuiltInScriptUnits(engine: WmlEngine): void {
   engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'refreshOnly', 0);
   engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'goCancel', 23);
   engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'externalGo', 39);
-  engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'goThenPrev', 63);
-  engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'prevThenGo', 77);
+  engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'goThenPrev', 65);
+  engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'prevThenGo', 79);
 }
