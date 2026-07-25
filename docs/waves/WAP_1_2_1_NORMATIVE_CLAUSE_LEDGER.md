@@ -1,7 +1,7 @@
 # WAP 1.2.1 Selected Normative-Clause Ledger
 
 Version: v0.9
-Status: `CONF-003` complete; all 201 selected Class C parents planned
+Status: `CONF-003` complete; direct evidence is incrementally assessed
 
 ## Purpose
 
@@ -90,9 +90,13 @@ Each clause records:
 
 A planned fixture is not test evidence. An implemented fixture must name its
 fixture path, test path, and command, and clause implementation status changes
-only after that direct evidence is reviewed. The validator currently
-allowlists the nine-clause `TRN-702` overlay so a broad parent-row mapping
-cannot silently substitute for slice adoption.
+only after that direct evidence is reviewed. The current ledger records 144
+implemented clauses with reviewed direct evidence and keeps 637 clauses
+`not-assessed`. The WML-203 slice contributes 42 implemented WBXML clauses and
+two implemented WML unknown-DTD clauses; the newer WML-204 input tranche adds
+11 implemented WML clauses. The validator allowlists the nine-clause
+`TRN-702` direct-work-item overlay so a broad parent-row mapping cannot
+silently substitute for slice adoption.
 
 ## Redistribution boundary
 
@@ -106,7 +110,7 @@ verbatim source text.
 ## `CONF-003` closure
 
 No selected family or parent row remains unexpanded. `CONF-003` is complete at
-the planning level. Most clauses remain `not-assessed` until source-derived
-fixture and direct code/test evidence are reviewed; implemented WDP, WCMP, and
-incremental WML clauses retain their explicit fixture evidence. WTP is added
+the planning level; clause statuses advance independently when source-derived
+fixture and direct code/test evidence are reviewed. Implemented WDP, WCMP,
+WML, and WBXML clauses retain their explicit fixture evidence. WTP is added
 only if connection-oriented WSP becomes a claimed profile.

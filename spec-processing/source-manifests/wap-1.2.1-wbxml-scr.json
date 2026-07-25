@@ -68,7 +68,10 @@
       "partial": 3
     },
     "selectedDirectNormativeTestEvidenceCount": 3,
-    "selectedBoundaryTestEvidenceCount": 0
+    "selectedBoundaryTestEvidenceCount": 0,
+    "selectedImplementedClauseCount": 42,
+    "selectedNotAssessedClauseCount": 6,
+    "fixedOutcomeFixtureCount": 35
   },
   "obligations": [
     {
@@ -150,7 +153,7 @@
           "T0-07"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The pinned built-in WML 1.3 decoder and source-derived corpus directly cover header order, multi-byte integers, string tables, parser pages, core global tokens, binary tokens, literals, and deterministic malformed input. Broader charset termination, external charset precedence, processing-instruction, opaque/application-extension, and full token-table fixture breadth remain open.",
+        "assessmentNote": "The pinned built-in WML 1.3 decoder and 35-fixture source-derived corpus directly implement 40 of 43 mapped section 5 clauses, including header order, multi-byte integers, supported charset termination, string tables, parser pages, global/application tokens, processing instructions, opaque/extension structure, literals, and deterministic malformed input. External charset precedence, unrepresentable-name tokenisation, and non-page-zero token-table support remain open.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wbxml_decoder.rs",
@@ -167,7 +170,7 @@
             "test": "transport_wbxml_c_001_binary_structure_fixtures",
             "command": "cd transport-rust && cargo test --lib transport_wbxml_c_001_binary_structure_fixtures",
             "fixture": "transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json",
-            "limitation": "This bounded baseline does not yet execute every one of the 43 nested WBXML-C-001 clauses."
+            "limitation": "This tranche leaves external charset precedence, encoder-side unrepresentable-name tokenisation, and non-page-zero token-table breadth unpromoted."
           }
         ],
         "evidenceState": "direct-normative-fixture-linked-partial"
@@ -579,7 +582,7 @@
           "R0-08"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The pinned decoder reconstructs the WML 1.3 DTD default and fixed attributes exercised by a source-derived omitted-attribute fixture. Additional version-dependent and externally supplied implied-value cases remain open.",
+        "assessmentNote": "The pinned decoder reconstructs every default and fixed attribute declared by the selected WML 1.3 DTD, with source-derived fixtures covering omitted attributes and the complete reconstructed set. The row remains partial because externally supplied implied values and other document families are not modeled.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wbxml_decoder.rs",
@@ -592,7 +595,7 @@
             "test": "transport_wbxml_c_010_default_attribute_fixtures",
             "command": "cd transport-rust && cargo test --lib transport_wbxml_c_010_default_attribute_fixtures",
             "fixture": "transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json",
-            "limitation": "The baseline is pinned to WML 1.3 and does not yet model an external implied-value source."
+            "limitation": "The selected WML 1.3 DTD is complete; an external implied-value source remains outside this tranche."
           }
         ],
         "evidenceState": "direct-normative-fixture-linked-partial"
@@ -718,7 +721,7 @@
           "T0-07"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The pinned decoder implements the WML 1.3 page-zero tag, attribute-start, and attribute-value tables and a direct fixture proves equivalent textual output for representative binary and literal tag, attribute-name, and string-value encodings. Exhaustive per-token equivalence cases and MIME typing integration remain open.",
+        "assessmentNote": "The pinned decoder implements WML 1.3 page-zero tag, attribute-start, and attribute-value tables; direct fixtures cover every literal tag flag and representative binary/literal tag, attribute-name, and string-value equivalence. The literal parser-state clauses are implemented, while exhaustive per-token equivalence and external/MIME typing remain open.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wbxml_decoder.rs",

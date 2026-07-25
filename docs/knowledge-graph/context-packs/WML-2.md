@@ -13,12 +13,12 @@
 
 ## Graph summary
 
-- Nodes: 208
-- Edges: 528
+- Nodes: 214
+- Edges: 540
 - Selected work items: 5
-- Direct normative clauses: 74
+- Direct normative clauses: 76
 - Work items without direct clause mappings: 2
-- Work items with unmapped declared normative families: 4
+- Work items with unmapped declared normative families: 3
 
 ## Execution target
 
@@ -84,7 +84,7 @@ Evidence commands:
 - Owner layers: `engine-wasm`, `transport-rust`, `qa`
 - Source families: `wml`, `wbxml`, `associated-assets`
 - Existing tickets: `R0-08`, `T0-07`
-- Direct normative clauses: 48
+- Direct normative clauses: 50
 
 Outputs:
 
@@ -175,25 +175,25 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-ATTRIBUTE-LITERAL-VALUE-PROHIBITION` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-ATTRIBUTE-LITERAL-VALUE-PROHIBITION` (`binary-decoder`, `implemented`)
 - **WBXML-CL-ATTRIBUTE-SEQUENCE** — Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-ATTRIBUTE-SEQUENCE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-ATTRIBUTE-SEQUENCE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-ATTRIBUTE-START-RANGE** — Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-ATTRIBUTE-START-RANGE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-ATTRIBUTE-START-RANGE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-ATTRIBUTE-VALUE-RANGE** — Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.3 (5.8.3. Attribute Code Space (ATTRSTART and ATTRVALUE))
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-ATTRIBUTE-VALUE-RANGE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-ATTRIBUTE-VALUE-RANGE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-BINARY-LITERAL-EQUIVALENCE** — Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
@@ -211,19 +211,19 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-CHARSET-INTERNAL-DEFAULT` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-CHARSET-INTERNAL-DEFAULT` (`binary-decoder`, `implemented`)
 - **WBXML-CL-CHARSET-MIBENUM** — Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.6 (5.6. Charset)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-CHARSET-MIBENUM` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-CHARSET-MIBENUM` (`binary-decoder`, `implemented`)
 - **WBXML-CL-CHARSET-STRING-TERMINATION** — Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-CHARSET-STRING-TERMINATION` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-CHARSET-STRING-TERMINATION` (`binary-decoder`, `implemented`)
 - **WBXML-CL-CHARSET-UNREPRESENTABLE-NAME** — Treat a tag or attribute name that cannot be represented in the target character set as a tokenization error.
   - Family: `wbxml`; force: `error-condition`; level: `required`
   - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
@@ -235,55 +235,55 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §6.3 (6.3. Encoding Default Attribute Values)
   - Parents: `WBXML-C-010`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED` (`binary-decoder`, `implemented`)
 - **WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED** — Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §6.3 (6.3. Encoding Default Attribute Values)
   - Parents: `WBXML-C-010`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED` (`binary-decoder`, `implemented`)
 - **WBXML-CL-DOCUMENT-BODY-GRAMMAR** — Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.
   - Family: `wbxml`; force: `grammar`; level: `required`
   - Source: `WAP-192-WBXML` §5.3 (5.3. BNF for Document Structure)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-DOCUMENT-BODY-GRAMMAR` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-DOCUMENT-BODY-GRAMMAR` (`binary-decoder`, `implemented`)
 - **WBXML-CL-DOCUMENT-HEADER-ORDER** — Decode each document in version, public identifier, charset, string-table, then body order.
   - Family: `wbxml`; force: `grammar`; level: `required`
   - Source: `WAP-192-WBXML` §5.3 (5.3. BNF for Document Structure)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-DOCUMENT-HEADER-ORDER` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-DOCUMENT-HEADER-ORDER` (`binary-decoder`, `implemented`)
 - **WBXML-CL-EMPTY-ATTRIBUTE-STRING** — Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.1 (5.8.4.1. Strings)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-EMPTY-ATTRIBUTE-STRING` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-EMPTY-ATTRIBUTE-STRING` (`binary-decoder`, `implemented`)
 - **WBXML-CL-END-TOKEN** — Use END to terminate the current attribute list or element as determined by parser state.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.7.1 (5.8.4.7.1. END Token)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-END-TOKEN` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-END-TOKEN` (`binary-decoder`, `implemented`)
 - **WBXML-CL-ENTITY-UCS4** — Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.3 (5.8.4.3. Character Entity)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-ENTITY-UCS4` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-ENTITY-UCS4` (`binary-decoder`, `implemented`)
 - **WBXML-CL-EXTENSION-SWITCH-CONTEXT** — Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.2 (5.8.4.2. Global Extension Tokens)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-EXTENSION-SWITCH-CONTEXT` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-EXTENSION-SWITCH-CONTEXT` (`binary-decoder`, `implemented`)
 - **WBXML-CL-EXTENSION-TOKEN-FORMS** — Decode single-byte, inline-string, and inline-integer extension token forms.
   - Family: `wbxml`; force: `grammar`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.2 (5.8.4.2. Global Extension Tokens)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-EXTENSION-TOKEN-FORMS` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-EXTENSION-TOKEN-FORMS` (`binary-decoder`, `implemented`)
 - **WBXML-CL-EXTERNAL-TOKEN-TYPING** — Use an external typing system to associate an XML document family with its WBXML token values.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
@@ -295,25 +295,25 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §5.8.4 (5.8.4. Global Tokens)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-GLOBAL-TOKEN-INVARIANCE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-GLOBAL-TOKEN-INVARIANCE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-INLINE-STRING** — Decode STR_I as encoding-dependent terminated inline character data.
   - Family: `wbxml`; force: `grammar`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.1 (5.8.4.1. Strings)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-INLINE-STRING` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-INLINE-STRING` (`binary-decoder`, `implemented`)
 - **WBXML-CL-LITERAL-NAME-STATE** — Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.5 (5.8.4.5. Literal Tag or Attribute Name)
   - Parents: `WBXML-C-001`, `WBXML-C-011`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-LITERAL-NAME-STATE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-LITERAL-NAME-STATE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-LITERAL-TAG-FLAGS** — Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.5 (5.8.4.5. Literal Tag or Attribute Name)
   - Parents: `WBXML-C-001`, `WBXML-C-011`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-LITERAL-TAG-FLAGS` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-LITERAL-TAG-FLAGS` (`binary-decoder`, `implemented`)
 - **WBXML-CL-MIME-TOKEN-TYPING** — For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
@@ -325,115 +325,115 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §5.1 (5.1. Multi-byte Integers)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-MULTIBYTE-CONTINUATION` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-MULTIBYTE-CONTINUATION` (`binary-decoder`, `implemented`)
 - **WBXML-CL-MULTIBYTE-GROUP-ORDER** — Combine multi-byte integer groups in most-significant-group-first order.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.1 (5.1. Multi-byte Integers)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-MULTIBYTE-GROUP-ORDER` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-MULTIBYTE-GROUP-ORDER` (`binary-decoder`, `implemented`)
 - **WBXML-CL-MULTIBYTE-UNUSED-ZERO** — Require unused value bits in the initial multi-byte integer octet to be zero.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.1 (5.1. Multi-byte Integers)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-MULTIBYTE-UNUSED-ZERO` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-MULTIBYTE-UNUSED-ZERO` (`binary-decoder`, `implemented`)
 - **WBXML-CL-NETWORK-BYTE-ORDER** — Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5 (5. Binary XML Content Structure)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-NETWORK-BYTE-ORDER` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-NETWORK-BYTE-ORDER` (`binary-decoder`, `implemented`)
 - **WBXML-CL-OPAQUE-LENGTH** — Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.6 (5.8.4.6. Opaque Data)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-OPAQUE-LENGTH` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-OPAQUE-LENGTH` (`binary-decoder`, `implemented`)
 - **WBXML-CL-PARSER-STATE-PAGES** — Maintain separate current code pages for tag and attribute parser states, each initialized to page zero.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.1 (5.8.1. Parser State Machine)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-PARSER-STATE-PAGES` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-PARSER-STATE-PAGES` (`binary-decoder`, `implemented`)
 - **WBXML-CL-PARSER-SWITCH-PERSISTENCE** — Keep a selected code page active for its parser state until another switch in that state or document end.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.1 (5.8.1. Parser State Machine)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-PARSER-SWITCH-PERSISTENCE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-PARSER-SWITCH-PERSISTENCE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-PROCESSING-INSTRUCTION** — Decode PI target and optional value using attribute-start/value syntax terminated by END.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.4 (5.8.4.4. Processing Instruction)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-PROCESSING-INSTRUCTION` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-PROCESSING-INSTRUCTION` (`binary-decoder`, `implemented`)
 - **WBXML-CL-PUBLIC-ID-NUMERIC** — Accept a positive multi-byte numeric public identifier for a known document type.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.5 (5.5. Document Public Identifier)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-PUBLIC-ID-NUMERIC` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-PUBLIC-ID-NUMERIC` (`binary-decoder`, `implemented`)
 - **WBXML-CL-PUBLIC-ID-STRING-TABLE** — When public identifier is zero, resolve its following index through the string table.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.5 (5.5. Document Public Identifier)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-PUBLIC-ID-STRING-TABLE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-PUBLIC-ID-STRING-TABLE` (`binary-decoder`, `implemented`)
 - **WBXML-CL-STRING-TABLE-LENGTH** — Treat string-table length as its byte count excluding the encoded length field.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.7 (5.7. String Table)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-STRING-TABLE-LENGTH` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-STRING-TABLE-LENGTH` (`binary-decoder`, `implemented`)
 - **WBXML-CL-STRING-TABLE-OFFSETS** — Resolve string-table references as byte offsets from the first table byte.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.7 (5.7. String Table)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-STRING-TABLE-OFFSETS` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-STRING-TABLE-OFFSETS` (`binary-decoder`, `implemented`)
 - **WBXML-CL-STRING-TABLE-REQUIRED** — Read a string-table length immediately after charset even when the table is empty.
   - Family: `wbxml`; force: `explicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.7 (5.7. String Table)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-STRING-TABLE-REQUIRED` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-STRING-TABLE-REQUIRED` (`binary-decoder`, `implemented`)
 - **WBXML-CL-SWITCH-PAGE-TOKEN** — Decode SWITCH_PAGE and its following page byte for the current parser state.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.7.2 (5.8.4.7.2. Code Page Switch Token)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-SWITCH-PAGE-TOKEN` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-SWITCH-PAGE-TOKEN` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TABLE-STRING** — Decode STR_T as a multi-byte byte offset into the string table.
   - Family: `wbxml`; force: `grammar`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.4.1 (5.8.4.1. Strings)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TABLE-STRING` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TABLE-STRING` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TAG-ATTRIBUTE-BIT** — Use tag bit seven to determine whether an END-terminated attribute list follows.
   - Family: `wbxml`; force: `table`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.2 (5.8.2. Tag Code Space)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TAG-ATTRIBUTE-BIT` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TAG-ATTRIBUTE-BIT` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT** — When a tag has attributes and content, decode the complete attribute list before content.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.2 (5.8.2. Tag Code Space)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TAG-ATTRIBUTES-BEFORE-CONTENT` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TAG-ATTRIBUTES-BEFORE-CONTENT` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TAG-CONTENT-BIT** — Use tag bit six to determine whether content and its terminating END follow.
   - Family: `wbxml`; force: `table`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.2 (5.8.2. Tag Code Space)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TAG-CONTENT-BIT` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TAG-CONTENT-BIT` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TAG-IDENTITY-BITS** — Use tag bits zero through five as the application tag identity.
   - Family: `wbxml`; force: `table`; level: `required`
   - Source: `WAP-192-WBXML` §5.8.2 (5.8.2. Tag Code Space)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TAG-IDENTITY-BITS` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TAG-IDENTITY-BITS` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TOKEN-CODE-PAGES** — Support 256 code pages per code space and reserve page 255 for implementation-specific use.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8 (5.8. Token Structure)
@@ -445,19 +445,31 @@ Evidence commands:
   - Source: `WAP-192-WBXML` §5.8 (5.8. Token Structure)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TOKEN-GLOBAL-APPLICATION-SPACES` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TOKEN-GLOBAL-APPLICATION-SPACES` (`binary-decoder`, `implemented`)
 - **WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES** — Interpret application token values in separate tag and attribute code spaces.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.8 (5.8. Token Structure)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-TOKEN-TAG-ATTRIBUTE-SPACES` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-TOKEN-TAG-ATTRIBUTE-SPACES` (`binary-decoder`, `implemented`)
 - **WBXML-CL-VERSION-BYTE** — Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.
   - Family: `wbxml`; force: `implicit-must`; level: `required`
   - Source: `WAP-192-WBXML` §5.4 (5.4. Version Number)
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
-  - Fixture: `WBXML-FX-VERSION-BYTE` (`binary-decoder`, `planned`)
+  - Fixture: `WBXML-FX-VERSION-BYTE` (`binary-decoder`, `implemented`)
+- **WML-CL-UNKNOWN-CONTENT-PRESERVED** — Continue rendering recognized content nested inside an unrecognized element.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §12.4 (12.4 Unknown DTD)
+  - Parents: `WML-C-17`
+  - Requirements: `RQ-RMK-009`
+  - Fixture: `WML-FX-UNKNOWN-CONTENT-PRESERVED` (`rendering`, `implemented`)
+- **WML-CL-UNKNOWN-MARKUP-IGNORED** — For an alternate DTD, ignore unrecognized element tags and attributes during presentation.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §12.4 (12.4 Unknown DTD)
+  - Parents: `WML-C-17`
+  - Requirements: `RQ-RMK-009`
+  - Fixture: `WML-FX-UNKNOWN-MARKUP-IGNORED` (`parser`, `implemented`)
 
 ### WML-204
 
@@ -609,7 +621,6 @@ Declared-family gaps:
 
 - `WML-201` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-202` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `WML-203` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-205` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents

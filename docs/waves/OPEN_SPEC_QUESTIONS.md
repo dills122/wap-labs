@@ -38,11 +38,13 @@ Track unresolved policy choices where implementation behavior must remain explic
 - Current lane: `T0-04`, `R0-03`
 - Needed decision: explicit eviction order and user-visible error/reset behavior.
 
-6. Unknown DTD handling policy in host/runtime boundary
-- Scope: WML 12.x policy lanes (`R0-07`)
-- Options: hard reject vs controlled fallback mode.
-- Current lane: `R0-07`
-- Needed decision: deterministic error class and recovery behavior.
+6. Unknown DTD host-policy completion
+- Scope: WML 12.x policy lanes (`R0-07`, `WML-203`)
+- Resolved parser policy: canonical WML 1.3 identity is recognized; alternate
+  external DTDs use controlled section 12.4 fallback; malformed declarations
+  fail deterministically; external DTDs are never fetched.
+- Remaining decision: host-visible error class and recovery behavior for
+  strict prologue/full-validation failures.
 
 ## Resolution protocol
 

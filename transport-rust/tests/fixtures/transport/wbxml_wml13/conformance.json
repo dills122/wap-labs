@@ -5,6 +5,50 @@
     "WAP-192-WBXML",
     "WAP-191_104-WML"
   ],
+  "implementedClauses": [
+    "WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
+    "WBXML-CL-ATTRIBUTE-SEQUENCE",
+    "WBXML-CL-ATTRIBUTE-START-RANGE",
+    "WBXML-CL-ATTRIBUTE-VALUE-RANGE",
+    "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+    "WBXML-CL-CHARSET-MIBENUM",
+    "WBXML-CL-CHARSET-STRING-TERMINATION",
+    "WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+    "WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+    "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
+    "WBXML-CL-DOCUMENT-HEADER-ORDER",
+    "WBXML-CL-EMPTY-ATTRIBUTE-STRING",
+    "WBXML-CL-END-TOKEN",
+    "WBXML-CL-ENTITY-UCS4",
+    "WBXML-CL-EXTENSION-SWITCH-CONTEXT",
+    "WBXML-CL-EXTENSION-TOKEN-FORMS",
+    "WBXML-CL-GLOBAL-TOKEN-INVARIANCE",
+    "WBXML-CL-INLINE-STRING",
+    "WBXML-CL-LITERAL-NAME-STATE",
+    "WBXML-CL-LITERAL-TAG-FLAGS",
+    "WBXML-CL-MULTIBYTE-CONTINUATION",
+    "WBXML-CL-MULTIBYTE-GROUP-ORDER",
+    "WBXML-CL-MULTIBYTE-UNUSED-ZERO",
+    "WBXML-CL-NETWORK-BYTE-ORDER",
+    "WBXML-CL-OPAQUE-LENGTH",
+    "WBXML-CL-PARSER-STATE-PAGES",
+    "WBXML-CL-PARSER-SWITCH-PERSISTENCE",
+    "WBXML-CL-PROCESSING-INSTRUCTION",
+    "WBXML-CL-PUBLIC-ID-NUMERIC",
+    "WBXML-CL-PUBLIC-ID-STRING-TABLE",
+    "WBXML-CL-STRING-TABLE-LENGTH",
+    "WBXML-CL-STRING-TABLE-OFFSETS",
+    "WBXML-CL-STRING-TABLE-REQUIRED",
+    "WBXML-CL-SWITCH-PAGE-TOKEN",
+    "WBXML-CL-TABLE-STRING",
+    "WBXML-CL-TAG-ATTRIBUTE-BIT",
+    "WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT",
+    "WBXML-CL-TAG-CONTENT-BIT",
+    "WBXML-CL-TAG-IDENTITY-BITS",
+    "WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES",
+    "WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES",
+    "WBXML-CL-VERSION-BYTE"
+  ],
   "fixtures": [
     {
       "id": "binary-basic-deck",
@@ -17,6 +61,7 @@
         "WBXML-CL-TAG-IDENTITY-BITS",
         "WBXML-CL-TAG-ATTRIBUTE-BIT",
         "WBXML-CL-TAG-CONTENT-BIT",
+        "WBXML-CL-TAG-ATTRIBUTES-BEFORE-CONTENT",
         "WBXML-CL-INLINE-STRING",
         "WBXML-CL-BINARY-LITERAL-EQUIVALENCE"
       ],
@@ -233,14 +278,217 @@
       "expectedXml": "<?test value?><wml/>"
     },
     {
+      "id": "version-and-numeric-public-identifier",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-HEADER-ORDER",
+        "WBXML-CL-VERSION-BYTE",
+        "WBXML-CL-PUBLIC-ID-NUMERIC",
+        "WBXML-CL-CHARSET-MIBENUM",
+        "WBXML-CL-STRING-TABLE-REQUIRED"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.3-5.7",
+        "WAP-191_104-WML §14.1"
+      ],
+      "bytesHex": "03 0a 6a 00 3f",
+      "expectedXml": "<wml/>"
+    },
+    {
+      "id": "multibyte-leading-zero-value-group",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-MULTIBYTE-CONTINUATION",
+        "WBXML-CL-MULTIBYTE-GROUP-ORDER",
+        "WBXML-CL-MULTIBYTE-UNUSED-ZERO",
+        "WBXML-CL-PUBLIC-ID-NUMERIC"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.1",
+        "WAP-192-WBXML §5.5"
+      ],
+      "bytesHex": "03 80 0a 6a 00 3f",
+      "expectedXml": "<wml/>"
+    },
+    {
+      "id": "charset-us-ascii-inline-and-table",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+        "WBXML-CL-CHARSET-MIBENUM",
+        "WBXML-CL-CHARSET-STRING-TERMINATION",
+        "WBXML-CL-INLINE-STRING",
+        "WBXML-CL-TABLE-STRING",
+        "WBXML-CL-STRING-TABLE-OFFSETS"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.2",
+        "WAP-192-WBXML §5.6-5.7",
+        "WAP-192-WBXML §5.8.4.1"
+      ],
+      "bytesHex": "03 0a 03 06 7461626c6500 7f 67 60 03 696e6c696e6520 00 83 00 01 01 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">inline table</p></card></wml>"
+    },
+    {
+      "id": "charset-iso-8859-1-inline-and-table",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+        "WBXML-CL-CHARSET-MIBENUM",
+        "WBXML-CL-CHARSET-STRING-TERMINATION",
+        "WBXML-CL-INLINE-STRING",
+        "WBXML-CL-TABLE-STRING"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.2",
+        "WAP-192-WBXML §5.6",
+        "WAP-192-WBXML §5.8.4.1"
+      ],
+      "bytesHex": "03 0a 04 02 e900 7f 67 60 03 e900 83 00 01 01 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">éé</p></card></wml>"
+    },
+    {
+      "id": "charset-utf-8-inline-and-table",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+        "WBXML-CL-CHARSET-MIBENUM",
+        "WBXML-CL-CHARSET-STRING-TERMINATION",
+        "WBXML-CL-INLINE-STRING",
+        "WBXML-CL-TABLE-STRING"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.2",
+        "WAP-192-WBXML §5.6",
+        "WAP-192-WBXML §5.8.4.1"
+      ],
+      "bytesHex": "03 0a 6a 03 c3a900 7f 67 60 03 c3a900 83 00 01 01 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">éé</p></card></wml>"
+    },
+    {
+      "id": "all-literal-tag-flag-forms",
+      "scr": [
+        "WBXML-C-001",
+        "WBXML-C-011"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
+        "WBXML-CL-LITERAL-NAME-STATE",
+        "WBXML-CL-LITERAL-TAG-FLAGS",
+        "WBXML-CL-TAG-ATTRIBUTE-BIT",
+        "WBXML-CL-TAG-CONTENT-BIT"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.3",
+        "WAP-192-WBXML §5.8.2",
+        "WAP-192-WBXML §5.8.4.5"
+      ],
+      "bytesHex": "03 0a 6a 11 776d6c00 7800 7900 7a00 6300 6100 696400 44 00 04 04 84 06 04 08 03 7600 01 44 0a 03 7400 01 c4 0c 04 0e 03 6b00 01 03 7500 01 01",
+      "expectedXml": "<wml><x/><y z=\"v\"/><c>t</c><a id=\"k\">u</a></wml>"
+    },
+    {
+      "id": "tag-and-attribute-application-token-spaces",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-TOKEN-GLOBAL-APPLICATION-SPACES",
+        "WBXML-CL-TOKEN-TAG-ATTRIBUTE-SPACES",
+        "WBXML-CL-TAG-IDENTITY-BITS",
+        "WBXML-CL-ATTRIBUTE-START-RANGE",
+        "WBXML-CL-END-TOKEN"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8",
+        "WAP-191_104-WML §14.3"
+      ],
+      "bytesHex": "03 0a 6a 00 7f 67 60 03 7800 01 ab 60 01 01 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">x</p><go enctype=\"application/x-www-form-urlencoded\" sendreferer=\"false\" method=\"get\"/></card></wml>"
+    },
+    {
+      "id": "extension-switch-context-and-forms",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-EXTENSION-SWITCH-CONTEXT",
+        "WBXML-CL-EXTENSION-TOKEN-FORMS",
+        "WBXML-CL-PARSER-STATE-PAGES",
+        "WBXML-CL-SWITCH-PAGE-TOKEN"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.8.1",
+        "WAP-192-WBXML §5.8.4.2"
+      ],
+      "bytesHex": "03 0a 6a 05 7573657200 7f 67 60 00 00 40 7573657200 80 00 01 9c 4a 00 00 41 7573657200 01 01 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">$(user:escape)$(user:escape)</p><a href=\"$(user:unesc)\"/></card></wml>"
+    },
+    {
+      "id": "complete-opaque-has-explicit-wml-outcome",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
+        "WBXML-CL-OPAQUE-LENGTH"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.3",
+        "WAP-192-WBXML §5.8.4.6"
+      ],
+      "bytesHex": "03 0a 6a 00 7f c3 02 aabb",
+      "expectedErrorContains": "OPAQUE content has no WML 1.3 mapping"
+    },
+    {
+      "id": "single-byte-extension-has-explicit-wml-outcome",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
+        "WBXML-CL-EXTENSION-TOKEN-FORMS"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.3",
+        "WAP-192-WBXML §5.8.4.2",
+        "WAP-191_104-WML §14.3.1"
+      ],
+      "bytesHex": "03 0a 6a 00 7f c0",
+      "expectedErrorContains": "reserved WML extension token 0xc0 is unsupported"
+    },
+    {
+      "id": "all-wml13-dtd-defaults",
+      "scr": [
+        "WBXML-C-010"
+      ],
+      "clauses": [
+        "WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+        "WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §6.3",
+        "WAP-191_104-WML §13.2 DTD"
+      ],
+      "bytesHex": "03 0a 6a 00 7f 27 28 30 2b 37 2f 2e 20 1b 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"/><do optional=\"false\"/><meta forua=\"false\"/><go sendreferer=\"false\" method=\"get\" enctype=\"application/x-www-form-urlencoded\"/><select multiple=\"false\"/><input type=\"text\"/><img vspace=\"0\" hspace=\"0\" align=\"bottom\"/><p align=\"left\"/><pre xml:space=\"preserve\"/></wml>"
+    },
+    {
       "id": "unsupported-charset-is-explicit",
       "scr": [
         "WBXML-C-001"
       ],
       "clauses": [
-        "WBXML-CL-CHARSET-MIBENUM",
-        "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
-        "WBXML-CL-CHARSET-STRING-TERMINATION"
+        "WBXML-CL-CHARSET-MIBENUM"
       ],
       "sourceSections": [
         "WAP-192-WBXML §5.2",
@@ -250,20 +498,83 @@
       "expectedErrorContains": "unsupported charset MIBenum 1013"
     },
     {
-      "id": "malformed-noncanonical-multibyte",
+      "id": "unknown-charset-is-explicit",
       "scr": [
         "WBXML-C-001"
       ],
       "clauses": [
-        "WBXML-CL-MULTIBYTE-UNUSED-ZERO",
-        "WBXML-CL-DOCUMENT-HEADER-ORDER"
+        "WBXML-CL-CHARSET-MIBENUM"
       ],
       "sourceSections": [
-        "WAP-192-WBXML §5.1",
+        "WAP-192-WBXML §5.2",
+        "WAP-192-WBXML §5.6"
+      ],
+      "bytesHex": "03 0a 00 00 3f",
+      "expectedErrorContains": "charset MIBenum 0 is unknown"
+    },
+    {
+      "id": "malformed-unterminated-utf8-string",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-CHARSET-STRING-TERMINATION",
+        "WBXML-CL-DOCUMENT-BODY-GRAMMAR",
+        "WBXML-CL-INLINE-STRING"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.2",
+        "WAP-192-WBXML §5.3",
+        "WAP-192-WBXML §5.8.4.1"
+      ],
+      "bytesHex": "03 0a 6a 00 7f 67 60 03 78",
+      "expectedErrorContains": "unterminated inline content string"
+    },
+    {
+      "id": "malformed-truncated-public-identifier",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-HEADER-ORDER",
+        "WBXML-CL-DOCUMENT-BODY-GRAMMAR"
+      ],
+      "sourceSections": [
         "WAP-192-WBXML §5.3"
       ],
-      "bytesHex": "03 80 01 6a 00 3f",
-      "expectedErrorContains": "non-canonical leading zero group"
+      "bytesHex": "03 80",
+      "expectedErrorContains": "truncated public identifier"
+    },
+    {
+      "id": "malformed-truncated-charset",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-HEADER-ORDER",
+        "WBXML-CL-DOCUMENT-BODY-GRAMMAR"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.3"
+      ],
+      "bytesHex": "03 0a",
+      "expectedErrorContains": "truncated charset"
+    },
+    {
+      "id": "malformed-missing-string-table-length",
+      "scr": [
+        "WBXML-C-001"
+      ],
+      "clauses": [
+        "WBXML-CL-DOCUMENT-HEADER-ORDER",
+        "WBXML-CL-STRING-TABLE-REQUIRED"
+      ],
+      "sourceSections": [
+        "WAP-192-WBXML §5.3",
+        "WAP-192-WBXML §5.7"
+      ],
+      "bytesHex": "03 0a 6a",
+      "expectedErrorContains": "truncated string-table length"
     },
     {
       "id": "malformed-multibyte-unused-high-bits",
@@ -352,7 +663,6 @@
         "WBXML-C-001"
       ],
       "clauses": [
-        "WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
         "WBXML-CL-DOCUMENT-BODY-GRAMMAR"
       ],
       "sourceSections": [

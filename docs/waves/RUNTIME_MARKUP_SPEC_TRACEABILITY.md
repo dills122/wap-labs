@@ -163,21 +163,23 @@ Legend:
   - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
 - Status:
   - `partial`: the pinned built-in decoder and direct source-derived corpus
-    establish a bounded baseline for all three selected rows. Exhaustive
-    clause/token, charset, PI/opaque, external typing, and deck-model parity
-    breadth remains planned.
+    establish direct evidence for all three selected rows. The bounded tranche
+    promotes 42/48 nested clauses while external charset/typing, non-page-zero
+    tables, and exhaustive token equivalence remain open.
 - AC:
   - Evidence: [x] `transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json`
     and the three exact `transport_wbxml_c_*` tests provide direct parent-row
     evidence.
   - [x] Decoder version/capability identity is pinned and available in the
     supported all-in-one packaging path.
-  - [ ] Header, multi-byte integer, string-table, code-page, global-token,
-    literal, entity, opaque, extension, and malformed-input behavior is
-    deterministic. The baseline covers each category except successful
-    application-defined opaque handling and exhaustive extension forms.
-  - [ ] Default-attribute and binary/literal fixtures reach equivalent textual
-    WML; direct equivalent engine deck-model execution remains open.
+  - [x] Header, multi-byte integer, supported-charset, string-table,
+    parser-state/page-zero, global-token, literal, entity, PI, opaque,
+    extension, and malformed-input behavior has deterministic fixed outcomes
+    for the selected tranche.
+  - [x] Every WML 1.3 DTD default/fixed attribute has direct reconstruction
+    evidence.
+  - [x] A canonical text-WML fixture and the exact textual output of the paired
+    WBXML fixture reach equal engine `Deck` values.
   - [x] Strict decode remains in `transport-rust`; `engine-wasm` receives
     normalized textual WML.
 

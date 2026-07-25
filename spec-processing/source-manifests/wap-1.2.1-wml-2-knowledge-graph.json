@@ -25,22 +25,22 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "fcb5278951c6cf0d1d1f03ca379b256bbd1610de8359c2615928ea498c3cf45c"
+        "sha256": "0bbd7fc423370988216e987a613eac4d18515509718f231ceaee9cfd75a3746c"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 208,
-    "edgeCount": 528,
+    "nodeCount": 214,
+    "edgeCount": 540,
     "nodesByType": {
-      "clause": 74,
-      "fixture": 74,
+      "clause": 76,
+      "fixture": 76,
       "legacy-ticket": 8,
       "owner-layer": 3,
       "profile": 1,
-      "requirement": 11,
-      "scr-row": 11,
+      "requirement": 12,
+      "scr-row": 12,
       "source-document": 13,
       "source-family": 4,
       "sprint": 4,
@@ -49,26 +49,26 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 11,
+      "belongs-to": 12,
       "contains": 5,
       "covers-family": 7,
       "depends-on": 3,
       "effective-document": 12,
-      "maps-to": 135,
+      "maps-to": 137,
       "owned-by": 11,
-      "planned-by": 82,
-      "refines": 84,
+      "planned-by": 85,
+      "refines": 86,
       "relates-to": 9,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 74,
+      "sourced-from": 76,
       "targets-profile": 1,
-      "verified-by": 74
+      "verified-by": 76
     },
     "directClauseCountsByWorkItem": {
       "WML-201": 3,
       "WML-202": 0,
-      "WML-203": 48,
+      "WML-203": 50,
       "WML-204": 23,
       "WML-205": 0
     },
@@ -78,7 +78,8 @@
       ],
       "WML-202": [],
       "WML-203": [
-        "wbxml"
+        "wbxml",
+        "wml"
       ],
       "WML-204": [
         "wml"
@@ -90,9 +91,6 @@
         "wml"
       ],
       "WML-202": [
-        "wml"
-      ],
-      "WML-203": [
         "wml"
       ],
       "WML-205": [
@@ -265,7 +263,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -301,7 +299,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -337,7 +335,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -373,7 +371,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -481,7 +479,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -517,7 +515,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -553,7 +551,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -624,7 +622,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -659,7 +657,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -695,7 +693,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -731,7 +729,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -767,7 +765,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -803,7 +801,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -839,7 +837,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -875,7 +873,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -911,7 +909,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -983,7 +981,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1019,7 +1017,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1056,7 +1054,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1093,7 +1091,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1165,7 +1163,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1201,7 +1199,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1237,7 +1235,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1273,7 +1271,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1309,7 +1307,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1345,7 +1343,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1381,7 +1379,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1417,7 +1415,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1453,7 +1451,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1489,7 +1487,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1525,7 +1523,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1561,7 +1559,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1597,7 +1595,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1633,7 +1631,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1669,7 +1667,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1705,7 +1703,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1741,7 +1739,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1777,7 +1775,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1813,7 +1811,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1885,7 +1883,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1921,7 +1919,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1957,7 +1955,7 @@
           "RQ-RMK-007",
           "RQ-RMK-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2743,6 +2741,78 @@
       }
     },
     {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "key": "WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "type": "clause",
+      "title": "Continue rendering recognized content nested inside an unrecognized element.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-17"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.4",
+          "heading": "12.4 Unknown DTD",
+          "normalizedTextSha256": "9baf0c88a816840e176f22ed82307041e281a99499bc4479b16410c26ab99a44"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "obligationSynopsis": "Continue rendering recognized content nested inside an unrecognized element.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-203"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-009"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "key": "WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "type": "clause",
+      "title": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-17"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.4",
+          "heading": "12.4 Unknown DTD",
+          "normalizedTextSha256": "9baf0c88a816840e176f22ed82307041e281a99499bc4479b16410c26ab99a44"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "obligationSynopsis": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-203"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-009"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
       "key": "WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
       "type": "clause",
@@ -2826,7 +2896,7 @@
       "title": "Do not interpret LITERAL as encoding any portion of an attribute value.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not interpret LITERAL as encoding any portion of an attribute value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2838,7 +2908,7 @@
       "title": "Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2850,7 +2920,7 @@
       "title": "Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2862,7 +2932,7 @@
       "title": "Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2898,7 +2968,7 @@
       "title": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2910,7 +2980,7 @@
       "title": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2922,7 +2992,7 @@
       "title": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2946,7 +3016,7 @@
       "title": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2958,7 +3028,7 @@
       "title": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2970,7 +3040,7 @@
       "title": "Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2982,7 +3052,7 @@
       "title": "Decode each document in version, public identifier, charset, string-table, then body order.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode each document in version, public identifier, charset, string-table, then body order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2994,7 +3064,7 @@
       "title": "Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3006,7 +3076,7 @@
       "title": "Use END to terminate the current attribute list or element as determined by parser state.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use END to terminate the current attribute list or element as determined by parser state.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3018,7 +3088,7 @@
       "title": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3030,7 +3100,7 @@
       "title": "Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3042,7 +3112,7 @@
       "title": "Decode single-byte, inline-string, and inline-integer extension token forms.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode single-byte, inline-string, and inline-integer extension token forms.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3066,7 +3136,7 @@
       "title": "Give each global token the same structure and meaning in every code space and page.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Give each global token the same structure and meaning in every code space and page.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3078,7 +3148,7 @@
       "title": "Decode STR_I as encoding-dependent terminated inline character data.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode STR_I as encoding-dependent terminated inline character data.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3090,7 +3160,7 @@
       "title": "Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3102,7 +3172,7 @@
       "title": "Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3126,7 +3196,7 @@
       "title": "Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3138,7 +3208,7 @@
       "title": "Combine multi-byte integer groups in most-significant-group-first order.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Combine multi-byte integer groups in most-significant-group-first order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3150,7 +3220,7 @@
       "title": "Require unused value bits in the initial multi-byte integer octet to be zero.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require unused value bits in the initial multi-byte integer octet to be zero.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3162,7 +3232,7 @@
       "title": "Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3174,7 +3244,7 @@
       "title": "Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3186,7 +3256,7 @@
       "title": "Maintain separate current code pages for tag and attribute parser states, each initialized to page zero.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Maintain separate current code pages for tag and attribute parser states, each initialized to page zero.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3198,7 +3268,7 @@
       "title": "Keep a selected code page active for its parser state until another switch in that state or document end.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Keep a selected code page active for its parser state until another switch in that state or document end.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3210,7 +3280,7 @@
       "title": "Decode PI target and optional value using attribute-start/value syntax terminated by END.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode PI target and optional value using attribute-start/value syntax terminated by END.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3222,7 +3292,7 @@
       "title": "Accept a positive multi-byte numeric public identifier for a known document type.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Accept a positive multi-byte numeric public identifier for a known document type.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3234,7 +3304,7 @@
       "title": "When public identifier is zero, resolve its following index through the string table.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When public identifier is zero, resolve its following index through the string table.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3246,7 +3316,7 @@
       "title": "Treat string-table length as its byte count excluding the encoded length field.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat string-table length as its byte count excluding the encoded length field.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3258,7 +3328,7 @@
       "title": "Resolve string-table references as byte offsets from the first table byte.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Resolve string-table references as byte offsets from the first table byte.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3270,7 +3340,7 @@
       "title": "Read a string-table length immediately after charset even when the table is empty.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Read a string-table length immediately after charset even when the table is empty.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3282,7 +3352,7 @@
       "title": "Decode SWITCH_PAGE and its following page byte for the current parser state.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode SWITCH_PAGE and its following page byte for the current parser state.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3294,7 +3364,7 @@
       "title": "Decode STR_T as a multi-byte byte offset into the string table.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode STR_T as a multi-byte byte offset into the string table.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3306,7 +3376,7 @@
       "title": "Use tag bit seven to determine whether an END-terminated attribute list follows.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use tag bit seven to determine whether an END-terminated attribute list follows.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3318,7 +3388,7 @@
       "title": "When a tag has attributes and content, decode the complete attribute list before content.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When a tag has attributes and content, decode the complete attribute list before content.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3330,7 +3400,7 @@
       "title": "Use tag bit six to determine whether content and its terminating END follow.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use tag bit six to determine whether content and its terminating END follow.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3342,7 +3412,7 @@
       "title": "Use tag bits zero through five as the application tag identity.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use tag bits zero through five as the application tag identity.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3366,7 +3436,7 @@
       "title": "Distinguish fixed global tokens from context-dependent application tokens.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Distinguish fixed global tokens from context-dependent application tokens.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3378,7 +3448,7 @@
       "title": "Interpret application token values in separate tag and attribute code spaces.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret application token values in separate tag and attribute code spaces.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3390,7 +3460,7 @@
       "title": "Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3660,6 +3730,30 @@
       }
     },
     {
+      "id": "fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "key": "WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "type": "fixture",
+      "title": "Continue rendering recognized content nested inside an unrecognized element.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Continue rendering recognized content nested inside an unrecognized element.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "key": "WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "type": "fixture",
+      "title": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
       "key": "WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
       "type": "fixture",
@@ -3848,6 +3942,15 @@
       "key": "RQ-RMK-007",
       "type": "requirement",
       "title": "RQ-RMK-007",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-009",
+      "key": "RQ-RMK-009",
+      "type": "requirement",
+      "title": "RQ-RMK-009",
       "properties": {
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4108,6 +4211,32 @@
         "workItems": [
           "R0-01",
           "R0-03"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-17",
+      "key": "WML-C-17",
+      "type": "scr-row",
+      "title": "Unknown DTD handling",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "12.4",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.4",
+          "changeSection": null
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-203"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8581,6 +8710,96 @@
       ]
     },
     {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|maps-to|requirement:RQ-RMK-009",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-009",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|refines|scr-row:WML-C-17",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "refines",
+      "to": "scr-row:WML-C-17",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|verified-by|fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|maps-to|requirement:RQ-RMK-009",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-009",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|refines|scr-row:WML-C-17",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "refines",
+      "to": "scr-row:WML-C-17",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|verified-by|fixture:WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
       "relation": "maps-to",
@@ -8810,6 +9029,24 @@
       "from": "scr-row:WML-C-12",
       "relation": "belongs-to",
       "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-17|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-17",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-17|planned-by|work-item:WML-203",
+      "from": "scr-row:WML-C-17",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

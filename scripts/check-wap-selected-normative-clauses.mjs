@@ -161,6 +161,8 @@ const allowedFixtureKinds = new Set([
   'binary-decoder'
 ]);
 const implementedWmlClauseIds = new Set([
+  'WML-CL-UNKNOWN-MARKUP-IGNORED',
+  'WML-CL-UNKNOWN-CONTENT-PRESERVED',
   'WML-CL-VARIABLE-COMMIT-BEFORE-TASK',
   'WML-CL-SELECT-STRUCTURE',
   'WML-CL-SELECT-SINGLE-MULTI-MODE',
@@ -184,6 +186,14 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-INPUT-PASSWORD-DISPLAY',
   'WML-CL-INPUT-FORMAT-LITERALS',
   'WML-CL-INPUT-MAXLENGTH'
+]);
+const deferredWbxmlClauseIds = new Set([
+  'WBXML-CL-BINARY-LITERAL-EQUIVALENCE',
+  'WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE',
+  'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
+  'WBXML-CL-EXTERNAL-TOKEN-TYPING',
+  'WBXML-CL-MIME-TOKEN-TYPING',
+  'WBXML-CL-TOKEN-CODE-PAGES'
 ]);
 const hashPattern = /^[a-f0-9]{64}$/;
 const releaseById = new Map(release.members.map((member) => [member.documentId, member]));
@@ -271,7 +281,7 @@ for (const family of ledger.families ?? []) {
   const expectedFamilyStatus =
     family.family === 'wcmp' || family.family === 'wdp'
       ? 'nested-clauses-fixture-backed'
-      : family.family === 'wml'
+      : family.family === 'wml' || family.family === 'wbxml'
         ? 'nested-clauses-partially-fixture-backed'
         : 'nested-clauses-anchored-fixtures-planned';
 
@@ -443,6 +453,8 @@ for (const family of ledger.families ?? []) {
     const directFixtureImplemented =
       candidate.family === 'wcmp' ||
       candidate.family === 'wdp' ||
+      (candidate.family === 'wbxml' &&
+        !deferredWbxmlClauseIds.has(candidate.id)) ||
       implementedWmlClauseIds.has(candidate.id);
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
@@ -504,6 +516,38 @@ for (const family of ledger.families ?? []) {
     if (candidate.obligationLevel === 'permitted') permittedClauseCount += 1;
   }
 
+  if (family.family === 'wbxml') {
+    const directEvidence = family.directEvidence;
+    const corpusPath = path.join(root, directEvidence?.corpusPath ?? '');
+    const testPath = path.join(root, directEvidence?.testPath ?? '');
+    const evidencePathsExist =
+      fs.existsSync(corpusPath) && fs.existsSync(testPath);
+    const corpus = evidencePathsExist ? readJson(corpusPath) : {};
+    const expectedImplementedIds = (family.clauses ?? [])
+      .filter((candidate) => !deferredWbxmlClauseIds.has(candidate.id))
+      .map((candidate) => candidate.id)
+      .sort();
+    const recordedImplementedIds = [
+      ...(directEvidence?.implementedClauseIds ?? [])
+    ].sort();
+    const corpusImplementedIds = [...(corpus.implementedClauses ?? [])].sort();
+    const tests = evidencePathsExist ? fs.readFileSync(testPath, 'utf8') : '';
+    if (
+      !evidencePathsExist ||
+      JSON.stringify(recordedImplementedIds) !==
+        JSON.stringify(expectedImplementedIds) ||
+      JSON.stringify(corpusImplementedIds) !==
+        JSON.stringify(expectedImplementedIds) ||
+      directEvidence?.commands?.length !== 3 ||
+      !directEvidence.commands.every((command) => {
+        const test = command.split(' ').at(-1);
+        return test && tests.includes(`fn ${test}`);
+      })
+    ) {
+      failures.push('wbxml: direct clause evidence registry is incomplete');
+    }
+  }
+
   selectedParentCount += family.parents?.length ?? 0;
 }
 
@@ -517,7 +561,7 @@ const expectedSummary = {
   recommendedClauseCount,
   permittedClauseCount,
   plannedFixtureCount: clauseCount,
-  assessedClauseCount: 100
+  assessedClauseCount: 144
 };
 if (
   selectedParentCount !== 201 ||

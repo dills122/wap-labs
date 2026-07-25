@@ -55,6 +55,59 @@ fn parses_cards_and_links() {
 }
 
 #[test]
+fn wml_203_canonical_wml13_doctype_and_decoded_wbxml_reach_equal_decks() {
+    let text_wml = r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main" newcontext="false" ordered="true"><p align="left">Hello</p></card></wml>"#;
+    // Exact textual output of the `binary-basic-deck` WBXML conformance
+    // fixture. The engine receives this text; it never parses the WBXML bytes.
+    let decoded_wbxml = r#"<wml><card id="main" newcontext="false" ordered="true"><p align="left">Hello</p></card></wml>"#;
+
+    let text_deck = parse_wml(text_wml).expect("canonical WML 1.3 text should parse");
+    let decoded_deck = parse_wml(decoded_wbxml).expect("transport-decoded WBXML text should parse");
+    assert_eq!(text_deck, decoded_deck);
+}
+
+#[test]
+fn wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content() {
+    let alternate = r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//VENDOR//DTD WML 1.3 PLUS//EN" "http://vendor.test/wml13-plus.dtd">
+<wml>
+  <card id="home">
+    <p>Before <vendor:badge data-vendor="x"><b>known</b></vendor:badge> after</p>
+  </card>
+</wml>"#;
+
+    let deck = parse_wml(alternate).expect("alternate DTD decks remain renderable");
+    assert_eq!(deck.cards.len(), 1);
+    match &deck.cards[0].nodes[0] {
+        Node::Paragraph(items) => {
+            assert!(items
+                .iter()
+                .any(|item| matches!(item, InlineNode::Text(text) if text.contains("known"))));
+        }
+        other => panic!("expected paragraph, got {other:?}"),
+    }
+}
+
+#[test]
+fn wml_203_rejects_mismatched_or_malformed_doctype_declarations_deterministically() {
+    let wrong_root = r#"<?xml version="1.0"?>
+<!DOCTYPE card PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="home"/></wml>"#;
+    let wrong_root_error =
+        parse_wml(wrong_root).expect_err("DOCTYPE root must describe the WML root");
+    assert!(wrong_root_error.contains("DOCTYPE root"));
+
+    let canonical_wrong_system = r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://vendor.test/not-wml13.dtd">
+<wml><card id="home"/></wml>"#;
+    let system_error = parse_wml(canonical_wrong_system)
+        .expect_err("canonical public identifier must keep its canonical system identifier");
+    assert!(system_error.contains("WML 1.3 system identifier"));
+}
+
+#[test]
 fn rejects_document_without_wml_root() {
     let xml = r#"
         <card id="home">

@@ -67,7 +67,9 @@ When `FetchDeckResponse.ok === false`:
 - Integration fixtures in `tests/fixtures/transport/` cover fixture-driven mapping expectations.
 - Source-derived WML 1.3 WBXML fixtures live in
   `tests/fixtures/transport/wbxml_wml13/conformance.json` and run through the
-  three exact `transport_wbxml_c_*` tests.
+  three exact `transport_wbxml_c_*` tests. The corpus contains 35 fixed
+  outcomes and a reviewed 42-clause implementation inventory; the selected
+  SCR parent rows remain partial where broader evidence is still open.
 
 ## Next implementation slice
 
@@ -88,8 +90,8 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add UA capability header conformance path (`T0-05`)
 - [x] Add URI-length and charset boundary conformance fixtures (`T0-06`)
 - [ ] Complete WBXML token/literal compatibility conformance (`T0-07` /
-  `R0-08`; pinned decoder and direct three-row baseline landed, exhaustive
-  clause closure remains open)
+  `R0-08`; pinned decoder and direct 42/48-clause tranche landed, exhaustive
+  token equivalence and external typing remain open)
 - [x] Add WSP assigned-number registry fixture lane (`T0-10`)
 - [x] Add WSP capability negotiation/bounds fixture lane (`T0-11`)
 - [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)

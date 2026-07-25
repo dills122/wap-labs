@@ -88,10 +88,20 @@ Do now:
 - keep clear module seams
 - preserve source metadata (`baseUrl`, `contentType`)
 - define stable event/error enums
+- classify an external WML `DOCTYPE` before building the deck:
+  - the canonical identity is `-//WAPFORUM//DTD WML 1.3//EN` with
+    `http://www.wapforum.org/DTD/wml13.dtd`;
+  - alternate external DTDs are accepted under WML 1.3 section 12.4, with
+    unknown tags/attributes ignored and recognized nested content retained;
+  - a mismatched root, canonical-public-ID/system-ID conflict, duplicate or
+    misplaced declaration, and internal subset produce deterministic parse
+    errors;
+  - no DTD is fetched, and transport-decoded WBXML remains normalized textual
+    WML before engine ingestion.
 
 Defer now:
 
-- full DTD validation
+- mandatory-prologue enforcement and full DTD content-model validation
 - full WMLScript execution
 - full event/timer matrix
 - pixel-perfect vendor quirks

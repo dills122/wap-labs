@@ -369,7 +369,10 @@ if (
   ledger.summary?.selectedClassCOptionalCount !== 0 ||
   ledger.summary?.selectedClassCNotApplicableCount !== 12 ||
   ledger.summary?.selectedDirectNormativeTestEvidenceCount !== 3 ||
-  ledger.summary?.selectedBoundaryTestEvidenceCount !== 0
+  ledger.summary?.selectedBoundaryTestEvidenceCount !== 0 ||
+  ledger.summary?.selectedImplementedClauseCount !== 42 ||
+  ledger.summary?.selectedNotAssessedClauseCount !== 6 ||
+  ledger.summary?.fixedOutcomeFixtureCount !== 35
 ) {
   failures.push('WBXML summary counts drift');
 }
@@ -391,6 +394,9 @@ const corpusFixtureIds = new Set();
 const corpusScrIds = new Set();
 const citedClauseIds = new Set();
 const equivalenceGroups = new Map();
+const implementedClauseIds = new Set(
+  conformanceCorpus.implementedClauses ?? []
+);
 
 if (
   conformanceCorpus.schemaVersion !== 1 ||
@@ -469,12 +475,47 @@ for (const fixture of corpusFixtures) {
 }
 
 if (
-  corpusFixtures.length !== 20 ||
-  citedClauseIds.size !== 39 ||
+  corpusFixtures.length !== 35 ||
+  citedClauseIds.size !== 44 ||
+  implementedClauseIds.size !== 42 ||
   JSON.stringify([...corpusScrIds].sort()) !==
     JSON.stringify([...expectedSelectedIds].sort())
 ) {
   failures.push('WBXML direct corpus coverage/count drift');
+}
+for (const clauseId of implementedClauseIds) {
+  const clause = (wbxmlClauseFamily?.clauses ?? []).find(
+    (candidate) => candidate.id === clauseId
+  );
+  if (
+    !citedClauseIds.has(clauseId) ||
+    clause?.fixturePlan?.status !== 'implemented' ||
+    clause?.mapping?.clauseImplementationStatus !== 'implemented'
+  ) {
+    failures.push(
+      `${clauseId}: implemented corpus evidence and clause status differ`
+    );
+  }
+}
+const deferredClauseIds = new Set(
+  (wbxmlClauseFamily?.clauses ?? [])
+    .filter((clause) => !implementedClauseIds.has(clause.id))
+    .map((clause) => clause.id)
+);
+if (
+  JSON.stringify([...deferredClauseIds].sort()) !==
+  JSON.stringify(
+    [
+      'WBXML-CL-BINARY-LITERAL-EQUIVALENCE',
+      'WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE',
+      'WBXML-CL-CHARSET-UNREPRESENTABLE-NAME',
+      'WBXML-CL-EXTERNAL-TOKEN-TYPING',
+      'WBXML-CL-MIME-TOKEN-TYPING',
+      'WBXML-CL-TOKEN-CODE-PAGES'
+    ].sort()
+  )
+) {
+  failures.push('WBXML deferred clause set drift');
 }
 const basicDeckOutputs = equivalenceGroups.get('basic-deck') ?? [];
 const attributeFragmentOutputs =
@@ -500,5 +541,6 @@ console.log('==> WAP 1.2.1 WBXML SCR ledger');
 console.log('PASS 15 effective rows (11 mandatory / 4 optional)');
 console.log('PASS WBXML:MCF selects 3 mandatory client rows');
 console.log('PASS selected implementation audit: 0 implemented / 3 partial / 0 missing');
-console.log('PASS 20 fixed-outcome fixtures cite 39 canonical nested clauses');
-console.log('PASS source locks, mappings, and conservative evidence links');
+console.log('PASS 35 fixed-outcome fixtures cite 44 canonical nested clauses');
+console.log('PASS 42 implemented / 6 conservatively unpromoted nested clauses');
+console.log('PASS source locks, mappings, and direct evidence links');
