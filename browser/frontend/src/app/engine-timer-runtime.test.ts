@@ -19,16 +19,14 @@ const createDeps = (
     getRunMode: vi.fn((): RunMode => 'local'),
     advanceLocal: vi.fn(async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })),
     advanceNetwork: vi.fn(async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })),
-    getSessionState: vi.fn(
-      (): HostSessionState => ({
-        runMode: 'local',
-        navigationStatus: 'loaded',
-        requestedUrl: 'http://local.test/start.wml',
-        finalUrl: 'http://local.test/start.wml',
-        activeCardId: 'home',
-        focusedLinkIndex: 0
-      })
-    ),
+    getSessionState: vi.fn((): HostSessionState => ({
+      runMode: 'local',
+      navigationStatus: 'loaded',
+      requestedUrl: 'http://local.test/start.wml',
+      finalUrl: 'http://local.test/start.wml',
+      activeCardId: 'home',
+      focusedLinkIndex: 0
+    })),
     renderLocalSnapshot,
     handleExternalIntent,
     recordTimeline
