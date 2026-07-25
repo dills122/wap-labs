@@ -1,0 +1,30 @@
+---
+id: "fixture:WML-FX-HISTORY-RESOLVES-VARIABLES"
+key: "WML-FX-HISTORY-RESOLVES-VARIABLES"
+type: "fixture"
+generated: true
+pilot: "WML-2"
+status: "planned"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/fixture"
+---
+
+# Resolve variable references before request data is stored in history.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `verified-by` ← [[clauses/WML-CL-HISTORY-RESOLVES-VARIABLES|WML-CL-HISTORY-RESOLVES-VARIABLES]]
+
+## Data
+
+```json
+{
+  "kind": "state-machine",
+  "status": "planned",
+  "assertion": "Resolve variable references before request data is stored in history.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

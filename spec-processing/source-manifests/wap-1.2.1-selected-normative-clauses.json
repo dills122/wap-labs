@@ -1156,7 +1156,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1167,7 +1168,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFERENCE-TRANSCODING-LOSS",
@@ -1197,7 +1201,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1208,7 +1213,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFERENCE-UNICODE-MAPPING",
@@ -1238,7 +1246,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1249,7 +1258,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFERENCE-ENTITY-CHARSET",
@@ -1279,7 +1291,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1290,7 +1303,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFERENCE-WBXML-PRECEDENCE",
@@ -1320,7 +1336,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1331,7 +1348,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ENTITY-FORMS",
@@ -1361,7 +1381,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1372,7 +1393,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ENTITY-UNICODE-IDENTITY",
@@ -1402,7 +1426,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1413,7 +1438,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ENTITY-REQUIRED-NAMES",
@@ -1443,7 +1471,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -1454,7 +1483,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-STACK-MODEL",
@@ -1484,7 +1516,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -1495,7 +1528,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-DUPLICATE-PUSH",
@@ -1525,7 +1561,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -1536,7 +1573,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-ENTRY-FIELDS",
@@ -1566,7 +1606,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -1577,7 +1618,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-EXCLUDES-CONTENT",
@@ -1607,7 +1651,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -1618,7 +1663,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-RESOLVES-VARIABLES",
@@ -1648,7 +1696,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -1659,7 +1708,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-PREV-POP",
@@ -1691,7 +1743,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -1704,7 +1757,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HISTORY-POST-REPLAY",
@@ -1736,7 +1792,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -1749,7 +1806,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SHADOW-MATCHING",
@@ -1788,6 +1848,7 @@
               "R0-02",
               "R0-04",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -1802,6 +1863,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -1842,6 +1904,7 @@
               "R0-02",
               "R0-04",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -1856,6 +1919,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -1894,6 +1958,7 @@
               "R0-01",
               "R0-02",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -1906,6 +1971,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -1945,6 +2011,7 @@
               "R0-01",
               "R0-02",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -1958,6 +2025,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -1989,7 +2057,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-004"
@@ -1999,7 +2068,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
@@ -2030,7 +2102,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -2042,7 +2115,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INTRINSIC-SCOPE",
@@ -2073,7 +2149,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -2085,7 +2162,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INTRINSIC-ILLEGAL-PARENT",
@@ -2116,7 +2196,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -2128,7 +2209,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INTRINSIC-CONFLICT-ERROR",
@@ -2158,7 +2242,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-004"
@@ -2168,7 +2253,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE",
@@ -2208,6 +2296,7 @@
               "R0-02",
               "R0-04",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -2224,6 +2313,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -2255,7 +2345,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -2266,7 +2357,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CONTEXT-SINGLE-SCOPE",
@@ -2296,7 +2390,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -2306,7 +2401,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CONTEXT-STATE-MEMBERS",
@@ -2336,7 +2434,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -2346,7 +2445,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-NEWCONTEXT-UNSET-VARIABLES",
@@ -2376,7 +2478,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -2386,7 +2489,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-NEWCONTEXT-CLEAR-HISTORY",
@@ -2416,7 +2522,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -2426,7 +2533,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-NEWCONTEXT-RESET-PRIVATE-STATE",
@@ -2456,7 +2566,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -2466,7 +2577,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-NEWCONTEXT-GO-ONLY",
@@ -2500,7 +2614,8 @@
               "R0-01",
               "R0-02",
               "R0-03",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -2513,7 +2628,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-SET-DEFINITION",
@@ -2543,7 +2661,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2554,7 +2673,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
@@ -2584,7 +2706,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2595,7 +2718,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-UNDEFINED-EMPTY",
@@ -2625,7 +2751,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2636,7 +2763,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-NAME-GRAMMAR",
@@ -2666,7 +2796,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2677,7 +2808,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-CONVERSION-MODES",
@@ -2707,7 +2841,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2718,7 +2853,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-DEFAULT-CONVERSION",
@@ -2748,7 +2886,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2759,7 +2898,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-PARSE-PRECEDENCE",
@@ -2789,7 +2931,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2800,7 +2943,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-DOLLAR-ESCAPE",
@@ -2830,7 +2976,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2841,7 +2988,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-TASK-SNAPSHOT",
@@ -2878,7 +3028,8 @@
               "R0-01",
               "R0-02",
               "R0-03",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -2895,7 +3046,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
@@ -2934,6 +3088,7 @@
               "R0-01",
               "R0-03",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -2948,7 +3103,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-VARIABLE-REFERENCE-VALIDATION",
@@ -2978,7 +3136,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2989,7 +3148,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
@@ -3019,7 +3181,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -3029,7 +3192,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT",
@@ -3059,7 +3225,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-03"
+              "R0-03",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -3069,7 +3236,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DECK-ACCESS-REQUIRED",
@@ -3101,7 +3271,8 @@
             "workItems": [
               "R0-01",
               "R0-04",
-              "R0-07"
+              "R0-07",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -3113,7 +3284,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-SINGLE-ELEMENT",
@@ -3142,7 +3316,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3152,7 +3327,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-ABSENT-ALLOWS",
@@ -3181,7 +3359,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3191,7 +3370,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-REFERRER-MATCH",
@@ -3220,7 +3402,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3230,7 +3413,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-COMPONENT-MATCH",
@@ -3259,7 +3445,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3269,7 +3456,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-DEFAULTS",
@@ -3298,7 +3488,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3308,7 +3499,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-RELATIVE-PATH",
@@ -3337,7 +3531,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3347,7 +3542,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ACCESS-URL-CASE-RULES",
@@ -3376,7 +3574,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3386,7 +3585,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ERROR-ENFORCEMENT",
@@ -3416,7 +3618,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-07"
+              "R0-07",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-012"
@@ -3426,7 +3629,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ERROR-NO-INTENT-INFERENCE",
@@ -3456,7 +3662,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-07"
+              "R0-07",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-012"
@@ -3466,7 +3673,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-UNKNOWN-MARKUP-IGNORED",
@@ -3502,6 +3712,7 @@
             "workItems": [
               "R0-01",
               "R0-07",
+              "WML-201",
               "WML-203"
             ],
             "requirementIds": [
@@ -3512,7 +3723,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-UNKNOWN-CONTENT-PRESERVED",
@@ -3548,6 +3762,7 @@
             "workItems": [
               "R0-01",
               "R0-07",
+              "WML-201",
               "WML-203"
             ],
             "requirementIds": [
@@ -3558,7 +3773,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-NAVIGATION-REFERENCE-MODEL",
@@ -3588,7 +3806,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-003"
@@ -3598,7 +3817,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-SETVAR-SNAPSHOT",
@@ -3630,7 +3852,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3642,7 +3865,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-TARGET-RESOLUTION",
@@ -3674,7 +3900,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3686,7 +3913,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-ACCESS-BEFORE-TRANSITION",
@@ -3720,7 +3950,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "R0-07"
+              "R0-07",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3734,7 +3965,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-FRAGMENT-FALLBACK",
@@ -3766,7 +4000,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3778,7 +4013,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-ASSIGNMENT-ORDER",
@@ -3810,7 +4048,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3822,7 +4061,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-HISTORY-PUSH",
@@ -3856,7 +4098,8 @@
               "R0-01",
               "R0-02",
               "R0-03",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3870,7 +4113,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-ENTRY-EVENT-PRECEDENCE",
@@ -3903,7 +4149,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3917,7 +4164,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-TIMER-THEN-DISPLAY",
@@ -3951,7 +4201,8 @@
               "R0-01",
               "R0-02",
               "R0-04",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -3966,7 +4217,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PREV-EMPTY-HISTORY",
@@ -3997,7 +4251,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4009,7 +4264,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PREV-ASSIGNMENT-ORDER",
@@ -4040,7 +4298,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4052,7 +4311,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PREV-ENTRY-EVENT-PRECEDENCE",
@@ -4084,7 +4346,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4098,7 +4361,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-NOOP-NO-PROCESSING",
@@ -4128,7 +4394,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4138,7 +4405,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFRESH-ASSIGNMENTS",
@@ -4169,7 +4439,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4181,7 +4452,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFRESH-TIMER-RESTART",
@@ -4214,7 +4488,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -4229,7 +4504,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-REFRESH-REDISPLAY",
@@ -4260,7 +4538,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4272,7 +4551,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TASK-FAILURE-ATOMICITY",
@@ -4307,7 +4589,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "R0-07"
+              "R0-07",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4322,7 +4605,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-POSTFIELD-STRUCTURE",
@@ -4353,7 +4639,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4363,7 +4650,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-POSTFIELD-REQUEST-PAIR",
@@ -4395,7 +4685,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4406,7 +4697,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SETVAR-STRUCTURE",
@@ -4437,7 +4731,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4447,7 +4742,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SETVAR-INVALID-NAME-IGNORED",
@@ -4478,7 +4776,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4488,7 +4787,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SETVAR-TASK-SIDE-EFFECT",
@@ -4519,7 +4821,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4529,7 +4832,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-STRUCTURE",
@@ -4560,7 +4866,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4570,7 +4877,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
@@ -4601,7 +4911,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4611,7 +4922,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-REFERER",
@@ -4644,7 +4958,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "R0-07"
+              "R0-07",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4656,7 +4971,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-METHOD",
@@ -4687,7 +5005,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4697,7 +5016,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-NO-CACHE",
@@ -4728,7 +5050,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4738,7 +5061,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-ENCTYPE-SUPPORT",
@@ -4769,7 +5095,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4779,7 +5106,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-PART-CONTENT-TYPE",
@@ -4810,7 +5140,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4820,7 +5151,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-ACCEPT-CHARSET",
@@ -4851,7 +5185,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4861,7 +5196,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-SUBMISSION-ORDER",
@@ -4893,7 +5231,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4904,7 +5243,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-GET-QUERY-MERGE",
@@ -4935,7 +5277,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4945,7 +5288,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
@@ -4976,7 +5322,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -4986,7 +5333,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-GO-FORM-URLENCODING",
@@ -5018,7 +5368,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-06"
+              "R0-06",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5029,7 +5380,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-STRUCTURE",
@@ -5059,7 +5413,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5069,7 +5424,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-ACTIVATION",
@@ -5099,7 +5457,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5109,7 +5468,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-UNIQUE-WIDGET",
@@ -5139,7 +5501,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5149,7 +5512,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-TYPE-ACCEPTANCE",
@@ -5179,7 +5545,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5189,7 +5556,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-LABEL-BEST-EFFORT",
@@ -5219,7 +5589,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5229,7 +5600,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-EFFECTIVE-NAME",
@@ -5267,6 +5641,7 @@
               "R0-01",
               "R0-02",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -5280,6 +5655,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -5311,7 +5687,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5321,7 +5698,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-ACTIVE-VISIBILITY",
@@ -5351,7 +5731,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5361,7 +5742,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-DO-INACTIVE-HIDDEN",
@@ -5399,6 +5783,7 @@
               "R0-01",
               "R0-02",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -5412,6 +5797,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -5443,7 +5829,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5453,7 +5840,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ANCHOR-ACTIVATION",
@@ -5483,7 +5873,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5493,7 +5884,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ANCHOR-PLACEMENT",
@@ -5523,7 +5917,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5533,7 +5928,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-ANCHOR-ACCESSKEY",
@@ -5563,7 +5961,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5573,7 +5972,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-A-GO-EQUIVALENCE",
@@ -5603,7 +6005,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5613,7 +6016,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-A-NO-NESTING",
@@ -5643,7 +6049,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5653,7 +6060,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-A-REQUIRED-TARGET",
@@ -5683,7 +6093,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-02"
+              "R0-02",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-006"
@@ -5693,7 +6104,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-WML-ROOT-STRUCTURE",
@@ -5722,7 +6136,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -5732,7 +6147,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-WML-ROOT-DECK-SCOPE",
@@ -5761,7 +6179,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -5771,7 +6190,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-WML-ROOT-LANGUAGE",
@@ -5800,7 +6222,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -5810,7 +6233,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HEAD-STRUCTURE",
@@ -5839,7 +6265,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -5849,7 +6276,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-HEAD-DECK-SCOPE",
@@ -5878,7 +6308,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -5888,7 +6319,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TEMPLATE-STRUCTURE",
@@ -5924,6 +6358,7 @@
               "R0-01",
               "R0-04",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -5936,6 +6371,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -5973,6 +6409,7 @@
               "R0-01",
               "R0-04",
               "R0-12",
+              "WML-201",
               "WML-202"
             ],
             "requirementIds": [
@@ -5985,6 +6422,7 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
+            "WML-201",
             "WML-202"
           ]
         },
@@ -6015,7 +6453,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6025,7 +6464,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CARD-STRUCTURE",
@@ -6054,7 +6496,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6064,7 +6507,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CARD-CONTENT-ORDER",
@@ -6093,7 +6539,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6103,7 +6550,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CARD-ID-FRAGMENT",
@@ -6135,7 +6585,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -6147,7 +6598,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CARD-CONTEXT-ATTRIBUTE",
@@ -6179,7 +6633,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -6191,7 +6646,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-CARD-TABLE-BOUNDARIES",
@@ -6223,7 +6681,8 @@
             "workItems": [
               "R0-01",
               "R0-04",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6234,7 +6693,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-STRUCTURE",
@@ -6269,6 +6731,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6279,7 +6742,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-SINGLE-MULTI-MODE",
@@ -6314,6 +6780,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6324,7 +6791,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-INIT-ORDER",
@@ -6360,6 +6830,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6371,7 +6842,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-INDEX-VALIDATION",
@@ -6406,6 +6880,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6416,7 +6891,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-DEFAULT-PRECEDENCE",
@@ -6451,6 +6929,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6461,7 +6940,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-VARIABLE-INITIALIZATION",
@@ -6496,6 +6978,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6506,7 +6989,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-PRESELECTION",
@@ -6541,6 +7027,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6551,7 +7038,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-USER-UPDATE",
@@ -6586,6 +7076,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6596,7 +7087,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-NO-IMPLICIT-REFRESH",
@@ -6631,6 +7125,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6641,7 +7136,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-SELECT-MULTI-SERIALIZATION",
@@ -6676,6 +7174,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6686,7 +7185,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-OPTION-VALUE-EVALUATION",
@@ -6722,6 +7224,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6733,7 +7236,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-OPTION-ONPICK-MULTI",
@@ -6771,6 +7277,7 @@
               "R0-01",
               "R0-02",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6783,7 +7290,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-OPTION-ONPICK-SINGLE",
@@ -6821,6 +7331,7 @@
               "R0-01",
               "R0-02",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6833,7 +7344,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-STRUCTURE",
@@ -6868,6 +7382,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6878,7 +7393,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-MASK-COMMIT",
@@ -6913,6 +7431,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6923,7 +7442,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-REJECTION-ATOMICITY",
@@ -6958,6 +7480,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -6968,7 +7491,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-INITIALIZATION",
@@ -7003,6 +7529,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -7013,7 +7540,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-INVALID-INITIAL-VALUE",
@@ -7048,6 +7578,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -7058,7 +7589,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-EMPTY-COMMIT",
@@ -7093,6 +7627,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -7103,7 +7638,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-PASSWORD-DISPLAY",
@@ -7138,6 +7676,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -7148,7 +7687,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-FORMAT-LITERALS",
@@ -7183,6 +7725,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -7193,7 +7736,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-INPUT-MAXLENGTH",
@@ -7228,6 +7774,7 @@
             "workItems": [
               "R0-01",
               "R0-04",
+              "WML-201",
               "WML-204"
             ],
             "requirementIds": [
@@ -7238,7 +7785,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-SINGLE-PER-CARD",
@@ -7267,7 +7817,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7278,7 +7829,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-START-STOP",
@@ -7307,7 +7861,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7318,7 +7873,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-EVENT-TRANSITION",
@@ -7350,7 +7908,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7362,7 +7921,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-UNITS",
@@ -7391,7 +7953,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7402,7 +7965,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-INVALID-VALUE",
@@ -7431,7 +7997,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7442,7 +8009,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-REFRESH-RESUME",
@@ -7474,7 +8044,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7487,7 +8058,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-NAME-PERSISTENCE",
@@ -7516,7 +8090,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7527,7 +8102,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
@@ -7556,7 +8134,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-04"
+              "R0-04",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7567,7 +8146,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-WRAP-MODE",
@@ -7597,7 +8179,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7607,7 +8190,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-NONBREAKING-SPACE",
@@ -7640,7 +8226,8 @@
             "workItems": [
               "R0-01",
               "R0-05",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7652,7 +8239,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-SOFT-HYPHEN",
@@ -7685,7 +8275,8 @@
             "workItems": [
               "R0-01",
               "R0-05",
-              "R0-08"
+              "R0-08",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -7697,7 +8288,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-MODE-INHERITANCE",
@@ -7727,7 +8321,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7737,7 +8332,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT",
@@ -7767,7 +8365,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7777,7 +8376,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-SIGNIFICANT-BREAK",
@@ -7807,7 +8409,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7817,7 +8420,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-PARAGRAPH-EMPTY-IGNORED",
@@ -7847,7 +8453,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7857,7 +8464,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-BR-LINE-BREAK",
@@ -7892,7 +8502,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7902,7 +8513,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-BR-TABLE-EFFORT",
@@ -7932,7 +8546,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7942,7 +8557,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TABLE-STRUCTURE",
@@ -7972,7 +8590,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -7982,7 +8601,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TABLE-EXACT-COLUMNS",
@@ -8012,7 +8634,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8022,7 +8645,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TABLE-SHORT-ROW-PADDING",
@@ -8053,7 +8679,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8064,7 +8691,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TABLE-LONG-ROW-AGGREGATION",
@@ -8095,7 +8725,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8106,7 +8737,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TABLE-ALIGNMENT-DESIGNATORS",
@@ -8136,7 +8770,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8146,7 +8781,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TABLE-NONZERO-GUTTER",
@@ -8176,7 +8814,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8186,7 +8825,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TR-STRUCTURE",
@@ -8216,7 +8858,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8226,7 +8869,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TR-EMPTY-SIGNIFICANT",
@@ -8256,7 +8902,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8266,7 +8913,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TD-STRUCTURE",
@@ -8296,7 +8946,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8306,7 +8957,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-TD-EMPTY-SIGNIFICANT",
@@ -8336,7 +8990,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -8346,7 +9001,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-IMAGE-STRUCTURE",
@@ -8376,7 +9034,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -8388,7 +9047,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-IMAGE-TEXT-FLOW",
@@ -8418,7 +9080,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -8430,7 +9093,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-IMAGE-LOCAL-PRECEDENCE",
@@ -8460,7 +9126,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -8472,7 +9139,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-IMAGE-REMOTE-FETCH",
@@ -8502,7 +9172,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -8514,7 +9185,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         },
         {
           "id": "WML-CL-IMAGE-ALT-FALLBACK",
@@ -8545,7 +9219,8 @@
             ],
             "workItems": [
               "R0-01",
-              "R0-05"
+              "R0-05",
+              "WML-201"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -8558,7 +9233,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-201"
+          ]
         }
       ]
     },

@@ -23,7 +23,13 @@ export const TARGET_CONFIGS = {
     graphOutput: KNOWLEDGE_GRAPH_OUTPUT,
     contextPackOutput: CONTEXT_PACK_OUTPUT,
     vaultOutput: OBSIDIAN_VAULT_OUTPUT,
-    title: 'WAP 1.2.1 WML-2 Knowledge Graph Pilot'
+    title: 'WAP 1.2.1 WML-2 Knowledge Graph Pilot',
+    familyLedgerInputs: {
+      wml: 'wmlScr'
+    },
+    inputPaths: {
+      wmlScr: 'spec-processing/source-manifests/wap-1.2.1-wml-scr.json'
+    }
   }
 };
 
@@ -136,8 +142,12 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
     );
   }
 
+  const inputPaths = {
+    ...INPUT_PATHS,
+    ...(targetConfig.inputPaths ?? {})
+  };
   const inputs = Object.fromEntries(
-    Object.entries(INPUT_PATHS).map(([key, relativePath]) => [
+    Object.entries(inputPaths).map(([key, relativePath]) => [
       key,
       {
         relativePath,
@@ -157,6 +167,25 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   }
 
   const targetWorkItemIds = new Set(targetSprint.workItems.map((workItem) => workItem.id));
+  const scrMatrices = targetSprint.workItems
+    .filter((workItem) => workItem.scrMatrix)
+    .map((workItem) => {
+      const { family, scope } = workItem.scrMatrix;
+      const inputKey = targetConfig.familyLedgerInputs?.[family];
+      const ledgerInput = inputKey ? inputs[inputKey] : undefined;
+      if (!ledgerInput || ledgerInput.data.family !== family) {
+        throw new Error(`${workItem.id}: no canonical ${family} SCR ledger input`);
+      }
+      if (scope !== 'all-effective-rows') {
+        throw new Error(`${workItem.id}: unsupported SCR matrix scope ${scope}`);
+      }
+      return {
+        workItemId: workItem.id,
+        family,
+        sourceRef: ledgerInput.relativePath,
+        rows: ledgerInput.data.obligations
+      };
+    });
   const allClauses = clauseManifest.families.flatMap((family) =>
     family.clauses.map((clause) => ({
       ...clause,
@@ -177,6 +206,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   );
   const familyIds = new Set([
     ...targetSprint.workItems.flatMap((workItem) => workItem.sourceFamilies),
+    ...scrMatrices.map((matrix) => matrix.family),
     ...selectedClauses.map((clause) => clause.family)
   ]);
   const effectiveFamilies = new Map(
@@ -395,6 +425,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       followUpWorkItems: workItem.followUpWorkItems,
       dependsOn: workItem.dependsOn,
       notes: workItem.notes,
+      scrMatrix: workItem.scrMatrix,
       specReferences: workItem.specReferences,
       existingTickets: workItem.existingTickets,
       outputs: workItem.outputs,
@@ -443,21 +474,85 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
     }
   }
 
-  for (const parent of selectedParents) {
-    const parentNode = addNode('scr-row', parent.id, parent.feature, {
-      family: parent.family,
-      referencedSection: parent.referencedSection,
-      sourceAnchor: parent.sourceAnchor,
-      implementationStatus: parent.implementationStatus,
-      ownerLayers: parent.ownerLayers,
-      workItems: parent.workItems,
-      source: clauseRef
-    });
-    addEdge(parentNode, 'belongs-to', nodeId('source-family', parent.family), [clauseRef]);
-    for (const workItem of parent.workItems.filter((candidate) =>
-      targetWorkItemIds.has(candidate)
-    )) {
-      addEdge(parentNode, 'planned-by', nodeId('work-item', workItem), [clauseRef]);
+  const selectedParentById = new Map(selectedParents.map((parent) => [parent.id, parent]));
+  const scrMatrixRowsById = new Map();
+  for (const matrix of scrMatrices) {
+    for (const row of matrix.rows) {
+      const existing = scrMatrixRowsById.get(row.id);
+      if (existing && existing.row !== row) {
+        throw new Error(`Conflicting canonical SCR matrix rows for ${row.id}`);
+      }
+      scrMatrixRowsById.set(row.id, {
+        row,
+        family: matrix.family,
+        sourceRef: matrix.sourceRef,
+        workItemIds: sortedUnique([
+          ...(existing?.workItemIds ?? []),
+          matrix.workItemId
+        ])
+      });
+    }
+  }
+  const scrRowIds = sortedUnique([
+    ...selectedParentById.keys(),
+    ...scrMatrixRowsById.keys()
+  ]);
+  for (const rowId of scrRowIds) {
+    const parent = selectedParentById.get(rowId);
+    const matrixRow = scrMatrixRowsById.get(rowId);
+    const row = matrixRow?.row;
+    const family = matrixRow?.family ?? parent.family;
+    const sourceRefs = sortedUnique([
+      ...(parent ? [clauseRef] : []),
+      ...(matrixRow ? [matrixRow.sourceRef] : [])
+    ]);
+    const plannedWorkItems = sortedUnique([
+      ...(parent?.workItems ?? []).filter((candidate) => targetWorkItemIds.has(candidate)),
+      ...(matrixRow?.workItemIds ?? [])
+    ]);
+    const parentWorkItems = row?.mapping?.workItems ?? parent?.workItems ?? [];
+    const rowNode = addNode('scr-row', rowId, row?.feature ?? parent.feature, row
+      ? {
+          family,
+          ordinal: row.ordinal,
+          actor: row.actor,
+          referencedSection: row.referencedSection,
+          specificationStatus: row.specificationStatus,
+          dependencyExpression: row.dependencyExpression,
+          sourceAnchor: row.sourceAnchor,
+          disposition: row.disposition,
+          reviewState: row.reviewState,
+          implementationStatus: row.mapping.implementationStatus,
+          evidenceState: row.mapping.evidenceState,
+          assessmentNote: row.mapping.assessmentNote,
+          implementationEvidence: row.mapping.implementationEvidence,
+          testEvidence: row.mapping.testEvidence,
+          ownerLayers: row.mapping.ownerLayers,
+          requirementIds: row.mapping.requirementIds,
+          matrixWorkItems: matrixRow.workItemIds,
+          workItems: sortedUnique([...parentWorkItems, ...plannedWorkItems]),
+          source: matrixRow.sourceRef
+        }
+      : {
+          family,
+          referencedSection: parent.referencedSection,
+          sourceAnchor: parent.sourceAnchor,
+          implementationStatus: parent.implementationStatus,
+          ownerLayers: parent.ownerLayers,
+          workItems: parent.workItems,
+          source: clauseRef
+        });
+    addEdge(rowNode, 'belongs-to', nodeId('source-family', family), sourceRefs);
+    for (const workItem of plannedWorkItems) {
+      addEdge(rowNode, 'planned-by', nodeId('work-item', workItem), sourceRefs);
+    }
+    if (row?.sourceAnchor?.documentId) {
+      addEdge(
+        rowNode,
+        'sourced-from',
+        nodeId('source-document', row.sourceAnchor.documentId),
+        [matrixRow.sourceRef]
+      );
     }
   }
 
@@ -542,6 +637,31 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       )
     ])
   );
+  const directScrRowCountsByWorkItem = Object.fromEntries(
+    targetSprint.workItems.map((workItem) => [
+      workItem.id,
+      orderedNodes.filter(
+        (node) =>
+          node.type === 'scr-row' &&
+          node.properties.matrixWorkItems?.includes(workItem.id)
+      ).length
+    ])
+  );
+  const directScrRowEvidenceStatesByWorkItem = Object.fromEntries(
+    targetSprint.workItems.map((workItem) => [
+      workItem.id,
+      countBy(
+        orderedNodes
+          .filter(
+            (node) =>
+              node.type === 'scr-row' &&
+              node.properties.matrixWorkItems?.includes(workItem.id)
+          )
+          .map((node) => node.properties.evidenceState)
+          .filter(Boolean)
+      )
+    ])
+  );
   const normativeFamilyIds = new Set(clauseManifest.families.map((family) => family.family));
   const unmappedNormativeFamiliesByWorkItem = Object.fromEntries(
     targetSprint.workItems
@@ -593,6 +713,8 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       edgesByRelation: countBy(orderedEdges.map((edge) => edge.relation)),
       directClauseCountsByWorkItem,
       directClauseFamiliesByWorkItem,
+      directScrRowCountsByWorkItem,
+      directScrRowEvidenceStatesByWorkItem,
       unmappedNormativeFamiliesByWorkItem,
       workItemsWithoutDirectClauses
     },
@@ -743,6 +865,20 @@ function directClausesForWorkItem(graph, workItemId) {
     .sort((left, right) => left.key.localeCompare(right.key));
 }
 
+function directScrRowsForWorkItem(graph, workItemId) {
+  return graph.nodes
+    .filter(
+      (node) =>
+        node.type === 'scr-row' &&
+        node.properties.matrixWorkItems?.includes(workItemId)
+    )
+    .sort((left, right) =>
+      (left.properties.ordinal ?? Number.MAX_SAFE_INTEGER) -
+        (right.properties.ordinal ?? Number.MAX_SAFE_INTEGER) ||
+      left.key.localeCompare(right.key)
+    );
+}
+
 export function renderContextPack(graph, focusWorkItemId = null) {
   const sprint = findNode(graph, nodeId('sprint', graph.target.sprint));
   const allWorkItems = graph.edges
@@ -767,6 +903,7 @@ export function renderContextPack(graph, focusWorkItemId = null) {
   const selectedFamilies = new Set(
     workItems.flatMap((workItem) => [
       ...workItem.properties.sourceFamilies,
+      ...directScrRowsForWorkItem(graph, workItem.key).map((row) => row.properties.family),
       ...directClausesForWorkItem(graph, workItem.key).map((clause) => clause.properties.family)
     ])
   );
@@ -789,6 +926,8 @@ export function renderContextPack(graph, focusWorkItemId = null) {
     .sort((left, right) => left.key.localeCompare(right.key));
   const workItemSections = workItems.map((workItem) => {
     const directClauses = directClausesForWorkItem(graph, workItem.key);
+    const directScrRows = directScrRowsForWorkItem(graph, workItem.key);
+    const evidenceStates = graph.summary.directScrRowEvidenceStatesByWorkItem[workItem.key];
     return `### ${workItem.key}: ${workItem.title}
 
 - Status: \`${workItem.properties.status}\`
@@ -796,6 +935,13 @@ export function renderContextPack(graph, focusWorkItemId = null) {
 - Source families: ${workItem.properties.sourceFamilies.map((item) => `\`${item}\``).join(', ')}
 - Existing tickets: ${
       workItem.properties.existingTickets.map((item) => `\`${item}\``).join(', ') || 'None'
+    }
+- Direct SCR rows: ${directScrRows.length}${
+      directScrRows.length
+        ? ` (${Object.entries(evidenceStates)
+            .map(([state, count]) => `${count} \`${state}\``)
+            .join(', ')})`
+        : ''
     }
 - Direct normative clauses: ${directClauses.length}
 
@@ -812,6 +958,56 @@ Evidence commands:
 ${codeList(workItem.properties.evidence)}
 `;
   });
+  const scrEvidenceSections = workItems
+    .map((workItem) => {
+      if (!workItem.properties.scrMatrix) {
+        return '';
+      }
+      const rows = directScrRowsForWorkItem(graph, workItem.key);
+      if (!rows.length) {
+        return '';
+      }
+      const lines = rows.map((row) => {
+        const codeEvidence = row.properties.implementationEvidence ?? [];
+        const testEvidence = row.properties.testEvidence ?? [];
+        return `- **${row.key}** — ${row.title}
+  - Actor/status/profile: \`${row.properties.actor}\`; \`${
+          row.properties.specificationStatus
+        }\`; \`${row.properties.disposition?.classCProfile}\`
+  - Spec: \`${row.properties.sourceAnchor?.documentId}\` §${
+          row.properties.referencedSection
+        } (SCR §${row.properties.sourceAnchor?.staticConformanceSection})
+  - Assessment: \`${row.properties.implementationStatus}\`; evidence \`${
+          row.properties.evidenceState
+        }\`
+  - Code: ${
+    codeEvidence.length
+      ? codeEvidence
+          .map((evidence) => `\`${evidence.path}#${evidence.symbol}\``)
+          .join(', ')
+      : 'None; the evidence state remains explicit.'
+  }
+  - Tests: ${
+    testEvidence.length
+      ? testEvidence
+          .map(
+            (evidence) =>
+              `\`${evidence.path}::${evidence.test}\` (\`${evidence.command}\`)`
+          )
+          .join(', ')
+      : 'None; use the mapped work items and assessment note rather than inferring coverage.'
+  }
+  - Work items: ${
+    row.properties.workItems.map((item) => `\`${item}\``).join(', ') || 'None'
+  }
+  - Assessment note: ${row.properties.assessmentNote}`;
+      });
+      return `### ${workItem.key}
+
+${lines.join('\n')}
+`;
+    })
+    .filter(Boolean);
   const obligationSections = workItems
     .map((workItem) => {
       const clauses = directClausesForWorkItem(graph, workItem.key);
@@ -876,6 +1072,10 @@ ${lines.join('\n')}
     (sum, workItem) => sum + directClausesForWorkItem(graph, workItem.key).length,
     0
   );
+  const directScrRowCount = workItems.reduce(
+    (sum, workItem) => sum + directScrRowsForWorkItem(graph, workItem.key).length,
+    0
+  );
   const focusLine = focusedWorkItem ? `- Focus work item: \`${focusedWorkItem.key}\`\n` : '';
   const selectionRule = focusedWorkItem
     ? 'include the target sprint, its direct dependency/downstream neighbors, the focused work item, and only normative clauses explicitly mapped to that work item.'
@@ -902,6 +1102,7 @@ ${focusLine}- Release/profile: ${graph.target.release}, ${graph.target.markup}, 
 - Nodes: ${graph.summary.nodeCount}
 - Edges: ${graph.summary.edgeCount}
 - Selected work items: ${workItems.length}
+- Direct SCR rows: ${directScrRowCount}
 - Direct normative clauses: ${directClauseCount}
 - Work items without direct clause mappings: ${workItemsWithoutDirectClauses.length}
 - Work items with unmapped declared normative families: ${
@@ -926,6 +1127,13 @@ ${markdownList(sprint.properties.exitGates)}
 ## Work items
 
 ${workItemSections.join('\n')}
+## Direct SCR evidence
+
+${
+  scrEvidenceSections.length
+    ? scrEvidenceSections.join('\n')
+    : '- No direct SCR matrix rows are mapped for this selection.'
+}
 ## Direct normative obligations
 
 ${

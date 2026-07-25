@@ -38,6 +38,14 @@ Status: Active
 - Sources:
   - `WAP-191*` (WML + SIN lineage)
   - `WAP-192*` (WBXML + SIN lineage)
+- WML ledger and WML-201 projection:
+  - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
+  - exact 76-row actor sequence: 39 required Class C client rows, 27 optional
+    client rows, and 10 server/encoder rows outside the client profile
+  - direct evidence states: 29 code/test-linked, 18 mapped mandatory gaps,
+    and 29 optional rows not assessed
+  - WML-201 directly maps all 76 SCR rows and all 174 selected WML clauses;
+    its declared WML-family graph gap is closed without changing row status
 - WBXML ledger:
   - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
   - 15 active rows and 3 selected Class C client rows
@@ -178,7 +186,8 @@ Status: Active
 
 0. Effective WAP-191 full-stack conformance closure (76 actor-specific SCR IDs)
 - Status: in progress (source and nested-clause ledgers plus mandatory code
-  audit complete; direct fixtures, optional-capability, and release evidence pending)
+  audit complete; WML-201 row/clause projection complete; remaining direct
+  fixtures, optional-capability, and release evidence pending)
 - Selected-profile scope: 39 required Class C client rows, 27 optional client
   rows, and 10 server/encoder rows not applicable to the client
 - Deliverables:

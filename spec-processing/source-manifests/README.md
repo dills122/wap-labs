@@ -111,8 +111,10 @@ informative, licensed-payload metadata-only dependency.
 `WML-2` compliance sprint. It connects the sprint and work items to their
 directly mapped SCR rows, normative clauses, fixtures, requirements, source
 documents, owner layers, and dependency neighbors. Canonical manifests remain
-authoritative; the graph deliberately reports work items without direct
-clause mappings.
+authoritative. The WML-201 projection imports the exact 76-row WML SCR matrix
+with direct spec/code/test or explicit gap evidence and maps all 174 selected
+WML clauses; the graph still reports other work items without direct clause
+mappings.
 
 Generate the lock from a separately retrieved official archive:
 

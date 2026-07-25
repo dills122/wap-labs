@@ -35,6 +35,8 @@ requirements, owner layers, and legacy ticket links.
 
 The pilot intentionally reports remaining gap levels:
 
+- `WML-201` directly projects the exact 76-row WML SCR matrix and maps all 174 selected WML
+  clauses while retaining direct-test, mapped-gap, and optional-not-assessed evidence states;
 - `WML-202` now directly maps the nine template/task-shadowing clauses adopted by `R0-12`;
 - `WML-204` also has direct WML clause mappings, while `WML-205` remains a zero-clause gap;
 - declared source families without direct clauses remain explicit rather than inferred from broad

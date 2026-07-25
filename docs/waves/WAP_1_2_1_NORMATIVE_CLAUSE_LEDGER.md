@@ -100,6 +100,12 @@ template/task-shadowing clauses. The validator allowlists the nine-clause
 `TRN-702` direct-work-item overlay so a broad parent-row mapping cannot
 silently substitute for slice adoption.
 
+WML-201 directly maps all 174 selected WML clauses for family ownership and
+retrieval. That mapping is not fixture evidence: clause assessment remains
+unchanged, and the canonical 76-row SCR ledger still distinguishes 29 rows
+with direct code/test links from 18 mapped mandatory gaps and 29 optional
+rows that have not been assessed.
+
 ## Redistribution boundary
 
 The committed ledger contains no source paragraphs, page images, PDFs, or

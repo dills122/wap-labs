@@ -145,6 +145,31 @@ for (const workItem of workItemNodes) {
       failures.push(`${workItem.key}: family ${family} cannot be both mapped and unmapped`);
     }
   }
+  const directScrRows = graph.nodes.filter(
+    (node) =>
+      node.type === 'scr-row' &&
+      node.properties.matrixWorkItems?.includes(workItem.key)
+  );
+  if (
+    graph.summary.directScrRowCountsByWorkItem[workItem.key] !==
+    directScrRows.length
+  ) {
+    failures.push(`${workItem.key}: direct SCR-row summary count drift`);
+  }
+  const evidenceStates = {};
+  for (const row of directScrRows) {
+    const state = row.properties.evidenceState;
+    if (state) {
+      evidenceStates[state] = (evidenceStates[state] ?? 0) + 1;
+    }
+  }
+  const sortedEvidenceStates = Object.fromEntries(Object.entries(evidenceStates).sort());
+  if (
+    JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem[workItem.key]) !==
+    JSON.stringify(sortedEvidenceStates)
+  ) {
+    failures.push(`${workItem.key}: direct SCR-row evidence-state summary drift`);
+  }
 }
 if (!graph.summary.workItemsWithoutDirectClauses.length) {
   failures.push('pilot must expose work items that lack direct normative-clause mappings');
@@ -171,6 +196,52 @@ if (
 ) {
   failures.push(
     'focused work-item context rendering must remain bounded to the selected work item'
+  );
+}
+
+const wml201Rows = graph.nodes
+  .filter(
+    (node) =>
+      node.type === 'scr-row' &&
+      node.properties.matrixWorkItems?.includes('WML-201')
+  )
+  .sort((left, right) => left.properties.ordinal - right.properties.ordinal);
+const expectedWml201RowIds = Array.from({ length: 76 }, (_, index) => {
+  const ordinal = index + 1;
+  const actorPrefix = ordinal >= 60 && ordinal <= 69 ? 'S' : 'C';
+  return `WML-${actorPrefix}-${String(ordinal).padStart(2, '0')}`;
+});
+const wml201Pack = renderContextPack(graph, 'WML-201');
+if (
+  JSON.stringify(wml201Rows.map((row) => row?.key)) !==
+    JSON.stringify(expectedWml201RowIds) ||
+  wml201Rows.some(
+    (row) =>
+      !row?.properties.sourceAnchor?.documentId ||
+      !row.properties.referencedSection ||
+      !row.properties.evidenceState ||
+      !row.properties.assessmentNote
+  ) ||
+  JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem['WML-201']) !==
+    JSON.stringify({
+      'direct-test-linked': 29,
+      'gap-work-item-mapped': 18,
+      'optional-not-assessed': 29
+    }) ||
+  graph.summary.directClauseCountsByWorkItem['WML-201'] !== 177 ||
+  JSON.stringify(graph.summary.directClauseFamiliesByWorkItem['WML-201']) !==
+    JSON.stringify(['wae', 'wml']) ||
+  graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
+  !wml201Pack.includes('- Direct SCR rows: 76') ||
+  !wml201Pack.includes('- Direct normative clauses: 177') ||
+  !wml201Pack.includes('29 `direct-test-linked`') ||
+  !wml201Pack.includes('18 `gap-work-item-mapped`') ||
+  !wml201Pack.includes('29 `optional-not-assessed`') ||
+  !wml201Pack.includes('**WML-C-01**') ||
+  !wml201Pack.includes('**WML-C-76**')
+) {
+  failures.push(
+    'WML-201 must expose the exact 76-row SCR matrix, all 177 direct WAE/WML clauses, and conservative direct-evidence states without a declared-family gap'
   );
 }
 try {

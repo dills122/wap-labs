@@ -265,9 +265,13 @@ const directWorkItemClauseIds = new Map([
   ]
 ]);
 function directWorkItemsForClause(clauseId) {
-  return [...directWorkItemClauseIds]
+  const mappedWorkItems = [...directWorkItemClauseIds]
     .filter(([, clauseIds]) => clauseIds.has(clauseId))
     .map(([workItem]) => workItem);
+  if (clauseId.startsWith('WML-CL-')) {
+    mappedWorkItems.push('WML-201');
+  }
+  return mappedWorkItems.sort();
 }
 
 function refreshStrictWcmpFamily(manifest) {
@@ -487,6 +491,7 @@ if (refreshDirectWorkItems) {
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(
     `Refreshed direct work-item mappings in ${outputPath} for ${[
+      'WML-201',
       ...directWorkItemClauseIds.keys()
     ].join(', ')}`
   );
