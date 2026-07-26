@@ -149,6 +149,16 @@ button,
   padding: 12px;
 }
 
+.handset-stage {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.handset-stage .device-frame {
+  flex: 1;
+}
+
 .device-frame {
   display: flex;
   min-width: 0;
@@ -175,10 +185,36 @@ button,
   white-space: nowrap;
 }
 
-.side-panel {
+.utility-rail {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.utility-rail-panel {
+  border: 2px solid;
+  border-bottom-color: #424242;
+  border-right-color: #424242;
+  border-left-color: #fff;
+  border-top-color: #fff;
+  background: silver;
+  color: #212529;
+}
+
+.utility-rail-panel > summary {
+  cursor: pointer;
+  padding: 4px 6px;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(90deg, #08216b, #a5cef7);
+}
+
+.utility-rail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid #7f7f7f;
+  padding: 8px;
 }
 
 .compact-field {
@@ -345,6 +381,10 @@ textarea.form-95 {
 
 .local-example-notes-body li {
   margin-bottom: 4px;
+}
+
+.developer-drawer-section {
+  padding: 0 12px 12px;
 }
 
 .dev-drawer {
