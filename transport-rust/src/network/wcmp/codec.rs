@@ -196,13 +196,10 @@ pub fn encode_wcmp(
 }
 
 fn require_len(input: &[u8], needed: usize) -> Result<(), WcmpDecodeError> {
-    if input.len() < needed {
-        return Err(WcmpDecodeError::Truncated {
-            needed,
-            actual: input.len(),
-        });
-    }
-    Ok(())
+    super::require_min_len(input, needed, |needed, actual| WcmpDecodeError::Truncated {
+        needed,
+        actual,
+    })
 }
 
 fn read_u16(input: &[u8], offset: usize) -> Result<u16, WcmpDecodeError> {
