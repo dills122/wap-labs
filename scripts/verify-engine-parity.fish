@@ -79,6 +79,7 @@ cd $ROOT
 
 run_step "Browser contract codegen drift check" "cd $ROOT; pnpm --dir browser run contracts:check"
 run_step "Worklist drift" "cd $ROOT; node scripts/check-worklist-drift.mjs"
+run_step "Ticket file reference drift" "cd $ROOT; node scripts/check-ticket-file-references.mjs"
 
 echo ""
 echo "All engine parity verification checks passed."
