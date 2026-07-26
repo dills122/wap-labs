@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "1e6fbb30c9b60fd8cad769d1c31c317d948e9e34491983fbd3752a66b5ac3c06"
+        "sha256": "07f1dfc99e11e291298f7f07f7e156c2e3054ba6468758cb09a74c9564946f19"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "c350fbcda21faf193cce877e071e219c78cc1c91d87a1745d173e77610a6a3d6"
+        "sha256": "10f4c5ac6224b1571ed5a388a8509cb2c866c6ebd552ecbd3f53b3ad37727e75"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
@@ -162,7 +162,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -205,7 +205,7 @@
           "RQ-TRN-010",
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -240,7 +240,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -280,7 +280,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -315,7 +315,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -658,7 +658,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -695,7 +695,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -732,7 +732,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1180,7 +1180,7 @@
           "RQ-TRN-010",
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1218,7 +1218,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1256,7 +1256,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1294,7 +1294,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1332,7 +1332,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1370,7 +1370,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1408,7 +1408,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1446,7 +1446,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1480,7 +1480,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1520,7 +1520,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1554,7 +1554,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1591,7 +1591,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1632,7 +1632,7 @@
           "RQ-TRN-012",
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1669,7 +1669,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1706,7 +1706,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1743,7 +1743,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1786,7 +1786,7 @@
           "RQ-TRN-010",
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1824,7 +1824,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1866,7 +1866,7 @@
           "RQ-TRN-012",
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1904,7 +1904,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1942,7 +1942,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1982,7 +1982,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2022,7 +2022,7 @@
         "requirementIds": [
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2056,7 +2056,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2091,7 +2091,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2132,7 +2132,7 @@
           "RQ-TRN-010",
           "RQ-TRN-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2166,7 +2166,7 @@
         "requirementIds": [
           "RQ-TRN-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2213,7 +2213,7 @@
       "title": "Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2225,7 +2225,7 @@
       "title": "Implement the connectionless method-invocation facility for selected GET and POST requests and replies.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement the connectionless method-invocation facility for selected GET and POST requests and replies.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2237,7 +2237,7 @@
       "title": "Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2249,7 +2249,7 @@
       "title": "Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2261,7 +2261,7 @@
       "title": "Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2381,7 +2381,7 @@
       "title": "Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2393,7 +2393,7 @@
       "title": "Encode the selected HTTP GET method using the Get PDU format.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode the selected HTTP GET method using the Get PDU format.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2405,7 +2405,7 @@
       "title": "Exclude a storage string terminator from the length-delimited Get URI field.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Exclude a storage string terminator from the length-delimited Get URI field.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2561,7 +2561,7 @@
       "title": "Encode multi-octet integer values in big-endian network octet order.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode multi-octet integer values in big-endian network octet order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2573,7 +2573,7 @@
       "title": "Do not provide a request body when the invoked HTTP method does not permit an entity body.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not provide a request body when the invoked HTTP method does not permit an entity body.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2585,7 +2585,7 @@
       "title": "When a result status is an error, preserve any response body that supplies human-displayable error information.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When a result status is an error, preserve any response body that supplies human-displayable error information.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2597,7 +2597,7 @@
       "title": "Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2609,7 +2609,7 @@
       "title": "Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2621,7 +2621,7 @@
       "title": "Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2633,7 +2633,7 @@
       "title": "Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2645,7 +2645,7 @@
       "title": "Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2657,7 +2657,7 @@
       "title": "Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2669,7 +2669,7 @@
       "title": "Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2681,7 +2681,7 @@
       "title": "Deliver an indication primitive when the corresponding peer request primitive is received.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Deliver an indication primitive when the corresponding peer request primitive is received.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2693,7 +2693,7 @@
       "title": "Treat every octet after the declared headers as request body data through the end of the transport SDU.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat every octet after the declared headers as request body data through the end of the transport SDU.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2705,7 +2705,7 @@
       "title": "Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2717,7 +2717,7 @@
       "title": "Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2729,7 +2729,7 @@
       "title": "Encode the selected HTTP POST method using the Post PDU format.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode the selected HTTP POST method using the Post PDU format.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2741,7 +2741,7 @@
       "title": "Exclude a storage string terminator from the length-delimited Post URI field.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Exclude a storage string terminator from the length-delimited Post URI field.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2753,7 +2753,7 @@
       "title": "Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2765,7 +2765,7 @@
       "title": "Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2777,7 +2777,7 @@
       "title": "Decode the Reply body media type before the remaining response headers.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode the Reply body media type before the remaining response headers.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2789,7 +2789,7 @@
       "title": "Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2801,7 +2801,7 @@
       "title": "Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2813,7 +2813,7 @@
       "title": "Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2825,7 +2825,7 @@
       "title": "Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2837,7 +2837,7 @@
       "title": "Ignore underlying transport error indications at the connectionless WSP protocol layer.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Ignore underlying transport error indications at the connectionless WSP protocol layer.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2849,7 +2849,7 @@
       "title": "Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2861,7 +2861,7 @@
       "title": "Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2873,7 +2873,7 @@
       "title": "Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3101,7 +3101,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3124,7 +3124,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3170,7 +3170,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3196,7 +3196,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3222,7 +3222,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3248,7 +3248,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3806,7 +3806,7 @@
       "type": "work-item",
       "title": "Effective WSP PDU, primitive, and method matrix",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "transport-rust",
           "qa"
@@ -3821,14 +3821,17 @@
         ],
         "outputs": [
           "Effective WSP PDU, primitive, and method matrix",
+          "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
           "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
         ],
         "acceptance": [
-          "All 109 WSP rows retain exact source disposition and the eight-row selected connectionless path maps to implementation evidence or corrective work."
+          "All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents have direct executable evidence while WSP-CL-C-003 and WSP-CL-C-020 retain their explicit WSP-802 residuals."
         ],
         "evidence": [
+          "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix",
           "cargo test --manifest-path transport-rust/Cargo.toml",
-          "node scripts/check-wap-transport-conformance-ledgers.mjs"
+          "node scripts/check-wap-transport-conformance-ledgers.mjs",
+          "node scripts/wap-context-pack.mjs WSP-801"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }

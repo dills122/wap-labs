@@ -34,15 +34,18 @@ Fixture lane:
 
 Current caveat:
 
-- Native GET/POST ingress and smoke slices are landed, but exact
-  WAP-203 connectionless conformance remains open under
-  `WSP-801`/`802`/`804`/`805`; the selected WAP-200 and WAP-202 rows are
+- Native GET/POST ingress and smoke slices are landed, and `WSP-801` now
+  directly evidences the selected WAP-203 connectionless PDU/primitive matrix.
+  Generic headers and Encoding-Version remain open under `WSP-802`, with host
+  ingress work under `WSP-804`/`805`; the selected WAP-200 and WAP-202 rows are
   directly evidenced by `TRN-701`, the narrow constrained-payload policy by
   `TRN-702`, the non-IP general-WCMP capability by `TRN-703`, and the selected
   CDPD/IPv4 ICMP profile by `TRN-708`.
 
 Fixture lane:
 
+- `transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/`
+  (WSP-801 source-linked PDU, status, primitive, and role matrix)
 - `transport-rust/src/wsp_registry.rs` (assigned-number policy fixtures)
 - `transport-rust/src/wsp_capability.rs` (capability-bound fixtures)
 - `transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/`

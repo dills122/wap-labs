@@ -41,7 +41,7 @@ Exit gates:
 
 ### WSP-801: Effective WSP PDU, primitive, and method matrix
 
-- Status: `in-progress`
+- Status: `done`
 - Owner layers: `transport-rust`, `qa`
 - Source families: `wsp`
 - Existing tickets: `T0-09`, `T0-11`, `T0-20`
@@ -56,16 +56,19 @@ Exit gates:
 Outputs:
 
 - Effective WSP PDU, primitive, and method matrix
+- transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json
 - spec-processing/source-manifests/wap-1.2.1-wsp-scr.json
 
 Acceptance:
 
-- All 109 WSP rows retain exact source disposition and the eight-row selected connectionless path maps to implementation evidence or corrective work.
+- All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents have direct executable evidence while WSP-CL-C-003 and WSP-CL-C-020 retain their explicit WSP-802 residuals.
 
 Evidence commands:
 
+- `cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix`
 - `cargo test --manifest-path transport-rust/Cargo.toml`
 - `node scripts/check-wap-transport-conformance-ledgers.mjs`
+- `node scripts/wap-context-pack.mjs WSP-801`
 
 ### WSP-802: WSP header/assigned-number/encoding-version closure
 
@@ -214,211 +217,211 @@ Evidence commands:
   - Source: `WAP-203-WSP` §6.4.4 (6.4.4 Error Handling)
   - Parents: `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-COMMUNICATION-FAILURE-LOCAL` (`error-policy`, `planned`)
+  - Fixture: `WSP-FX-COMMUNICATION-FAILURE-LOCAL` (`error-policy`, `implemented`)
 - **WSP-CL-CONNECTIONLESS-METHOD-FACILITY** — Implement the connectionless method-invocation facility for selected GET and POST requests and replies.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.1 (6.4.1 Overview)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-CONNECTIONLESS-METHOD-FACILITY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-METHOD-FACILITY` (`transport-boundary`, `implemented`)
 - **WSP-CL-CONNECTIONLESS-NONCONFIRMED** — Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.1 (6.4.1 Overview)
   - Parents: `WSP-C-001`, `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-CONNECTIONLESS-NONCONFIRMED` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-NONCONFIRMED` (`transport-boundary`, `implemented`)
 - **WSP-CL-CONNECTIONLESS-TID-REQUIRED** — Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-CONNECTIONLESS-TID-REQUIRED` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-TID-REQUIRED` (`binary-decoder`, `implemented`)
 - **WSP-CL-DEVICE-CONNECTIONLESS-MODE** — Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.1 (6.4.1 Overview)
   - Parents: `WSP-C-001`, `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-DEVICE-CONNECTIONLESS-MODE` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-DEVICE-CONNECTIONLESS-MODE` (`transport-boundary`, `implemented`)
 - **WSP-CL-GET-PDU-LAYOUT** — Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-PDU-METHOD** — Encode the selected HTTP GET method using the Get PDU format.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-PDU-METHOD` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-PDU-METHOD` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-URI-NO-NUL** — Exclude a storage string terminator from the length-delimited Get URI field.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-URI-NO-NUL` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-URI-NO-NUL` (`binary-decoder`, `implemented`)
 - **WSP-CL-INTEGER-NETWORK-ORDER** — Encode multi-octet integer values in big-endian network octet order.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.1.1 (8.1.1 Primitive Data Types)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-INTEGER-NETWORK-ORDER` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-INTEGER-NETWORK-ORDER` (`binary-decoder`, `implemented`)
 - **WSP-CL-METHOD-BODY-CONSTRAINT** — Do not provide a request body when the invoked HTTP method does not permit an entity body.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-BODY-CONSTRAINT` (`error-policy`, `planned`)
+  - Fixture: `WSP-FX-METHOD-BODY-CONSTRAINT` (`error-policy`, `implemented`)
 - **WSP-CL-METHOD-ERROR-BODY** — When a result status is an error, preserve any response body that supplies human-displayable error information.
   - Family: `wsp`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-ERROR-BODY` (`rendering`, `planned`)
+  - Fixture: `WSP-FX-METHOD-ERROR-BODY` (`rendering`, `implemented`)
 - **WSP-CL-METHOD-HTTP-SEMANTICS** — Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-HTTP-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-HTTP-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-INVOKE-PARAMETERS** — Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-INVOKE-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-INVOKE-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-INVOKE-TRANSPARENCY** — Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-INVOKE-TRANSPARENCY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-INVOKE-TRANSPARENCY` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-RESULT-HTTP-SEMANTICS** — Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-RESULT-HTTP-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-RESULT-HTTP-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-RESULT-PARAMETERS** — Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-RESULT-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-RESULT-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-OUT-OF-BAND-PARAMETERS** — Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.
   - Family: `wsp`; force: `explicit-may`; level: `permitted`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-OUT-OF-BAND-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-OUT-OF-BAND-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-PDU-TYPE-DISPATCH** — Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-PDU-TYPE-DISPATCH` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-PDU-TYPE-DISPATCH` (`binary-decoder`, `implemented`)
 - **WSP-CL-PEER-INDICATION-DELIVERY** — Deliver an indication primitive when the corresponding peer request primitive is received.
   - Family: `wsp`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-203-WSP` §6.4.3 (6.4.3 Constraints on Using the Service Primitives)
   - Parents: `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-PEER-INDICATION-DELIVERY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-PEER-INDICATION-DELIVERY` (`transport-boundary`, `implemented`)
 - **WSP-CL-POST-BODY-TO-SDU-END** — Treat every octet after the declared headers as request body data through the end of the transport SDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-BODY-TO-SDU-END` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-BODY-TO-SDU-END` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-CONTENT-TYPE** — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-PDU-LAYOUT** — Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-PDU-METHOD** — Encode the selected HTTP POST method using the Post PDU format.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-PDU-METHOD` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-PDU-METHOD` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-URI-NO-NUL** — Exclude a storage string terminator from the length-delimited Post URI field.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-URI-NO-NUL` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-URI-NO-NUL` (`binary-decoder`, `implemented`)
 - **WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS** — Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §6.4.3 (6.4.3 Constraints on Using the Service Primitives)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS` (`transport-boundary`, `implemented`)
 - **WSP-CL-REPLY-BODY-TO-SDU-END** — Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-BODY-TO-SDU-END` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-BODY-TO-SDU-END` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-CONTENT-TYPE** — Decode the Reply body media type before the remaining response headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-PDU-LAYOUT** — Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-STATUS-ASSIGNMENT** — Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-STATUS-ASSIGNMENT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-STATUS-ASSIGNMENT` (`binary-decoder`, `implemented`)
 - **WSP-CL-SELECTED-PDU-ASSIGNMENTS** — Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-SELECTED-PDU-ASSIGNMENTS` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-SELECTED-PDU-ASSIGNMENTS` (`binary-decoder`, `implemented`)
 - **WSP-CL-TID-PEER-CORRELATION** — Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-TID-PEER-CORRELATION` (`state-machine`, `planned`)
+  - Fixture: `WSP-FX-TID-PEER-CORRELATION` (`state-machine`, `implemented`)
 - **WSP-CL-TRANSPORT-ERROR-IGNORED** — Ignore underlying transport error indications at the connectionless WSP protocol layer.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-TRANSPORT-ERROR-IGNORED` (`error-policy`, `planned`)
+  - Fixture: `WSP-FX-TRANSPORT-ERROR-IGNORED` (`error-policy`, `implemented`)
 - **WSP-CL-UNITDATA-DIRECT-MAPPING** — Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-C-001`, `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-UNITDATA-DIRECT-MAPPING` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-UNITDATA-DIRECT-MAPPING` (`transport-boundary`, `implemented`)
 - **WSP-CL-UNITDATA-RECEIVE-DISPATCH** — Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `implemented`)
 - **WSP-CL-UNITDATA-SECURITY-EQUIVALENCE** — Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-CL-C-001`
   - Requirements: `RQ-TRN-010`
-  - Fixture: `WSP-FX-UNITDATA-SECURITY-EQUIVALENCE` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-UNITDATA-SECURITY-EQUIVALENCE` (`transport-boundary`, `implemented`)
 
 ### WSP-802
 
@@ -553,19 +556,19 @@ Evidence commands:
   - Source: `WAP-203-WSP` §8.1.1 (8.1.1 Primitive Data Types)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-INTEGER-NETWORK-ORDER` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-INTEGER-NETWORK-ORDER` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-CONTENT-TYPE** — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-CONTENT-TYPE** — Decode the Reply body media type before the remaining response headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-UNSUPPORTED-ENCODING-RETRY** — On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
@@ -580,157 +583,157 @@ Evidence commands:
   - Source: `WAP-203-WSP` §6.4.1 (6.4.1 Overview)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-CONNECTIONLESS-METHOD-FACILITY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-METHOD-FACILITY` (`transport-boundary`, `implemented`)
 - **WSP-CL-CONNECTIONLESS-TID-REQUIRED** — Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-CONNECTIONLESS-TID-REQUIRED` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-TID-REQUIRED` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-PDU-LAYOUT** — Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-PDU-METHOD** — Encode the selected HTTP GET method using the Get PDU format.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-PDU-METHOD` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-PDU-METHOD` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-URI-NO-NUL** — Exclude a storage string terminator from the length-delimited Get URI field.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-URI-NO-NUL` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-URI-NO-NUL` (`binary-decoder`, `implemented`)
 - **WSP-CL-METHOD-BODY-CONSTRAINT** — Do not provide a request body when the invoked HTTP method does not permit an entity body.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-BODY-CONSTRAINT` (`error-policy`, `planned`)
+  - Fixture: `WSP-FX-METHOD-BODY-CONSTRAINT` (`error-policy`, `implemented`)
 - **WSP-CL-METHOD-ERROR-BODY** — When a result status is an error, preserve any response body that supplies human-displayable error information.
   - Family: `wsp`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-ERROR-BODY` (`rendering`, `planned`)
+  - Fixture: `WSP-FX-METHOD-ERROR-BODY` (`rendering`, `implemented`)
 - **WSP-CL-METHOD-HTTP-SEMANTICS** — Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-HTTP-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-HTTP-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-INVOKE-PARAMETERS** — Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-INVOKE-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-INVOKE-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-INVOKE-TRANSPARENCY** — Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-INVOKE-TRANSPARENCY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-INVOKE-TRANSPARENCY` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-RESULT-HTTP-SEMANTICS** — Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-RESULT-HTTP-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-RESULT-HTTP-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-RESULT-PARAMETERS** — Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-RESULT-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-RESULT-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-PDU-TYPE-DISPATCH** — Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-PDU-TYPE-DISPATCH` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-PDU-TYPE-DISPATCH` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-BODY-TO-SDU-END** — Treat every octet after the declared headers as request body data through the end of the transport SDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-BODY-TO-SDU-END` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-BODY-TO-SDU-END` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-CONTENT-TYPE** — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-PDU-LAYOUT** — Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-PDU-METHOD** — Encode the selected HTTP POST method using the Post PDU format.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-PDU-METHOD` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-PDU-METHOD` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-URI-NO-NUL** — Exclude a storage string terminator from the length-delimited Post URI field.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-URI-NO-NUL` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-URI-NO-NUL` (`binary-decoder`, `implemented`)
 - **WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS** — Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §6.4.3 (6.4.3 Constraints on Using the Service Primitives)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS` (`transport-boundary`, `implemented`)
 - **WSP-CL-REPLY-BODY-TO-SDU-END** — Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-BODY-TO-SDU-END` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-BODY-TO-SDU-END` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-CONTENT-TYPE** — Decode the Reply body media type before the remaining response headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-PDU-LAYOUT** — Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-STATUS-ASSIGNMENT** — Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-STATUS-ASSIGNMENT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-STATUS-ASSIGNMENT` (`binary-decoder`, `implemented`)
 - **WSP-CL-SELECTED-PDU-ASSIGNMENTS** — Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-SELECTED-PDU-ASSIGNMENTS` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-SELECTED-PDU-ASSIGNMENTS` (`binary-decoder`, `implemented`)
 - **WSP-CL-TID-PEER-CORRELATION** — Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-TID-PEER-CORRELATION` (`state-machine`, `planned`)
+  - Fixture: `WSP-FX-TID-PEER-CORRELATION` (`state-machine`, `implemented`)
 - **WSP-CL-UNITDATA-RECEIVE-DISPATCH** — Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `implemented`)
 
 ### WSP-805
 
@@ -739,157 +742,157 @@ Evidence commands:
   - Source: `WAP-203-WSP` §6.4.1 (6.4.1 Overview)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-CONNECTIONLESS-METHOD-FACILITY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-METHOD-FACILITY` (`transport-boundary`, `implemented`)
 - **WSP-CL-CONNECTIONLESS-TID-REQUIRED** — Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-CONNECTIONLESS-TID-REQUIRED` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-CONNECTIONLESS-TID-REQUIRED` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-PDU-LAYOUT** — Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-PDU-METHOD** — Encode the selected HTTP GET method using the Get PDU format.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-PDU-METHOD` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-PDU-METHOD` (`binary-decoder`, `implemented`)
 - **WSP-CL-GET-URI-NO-NUL** — Exclude a storage string terminator from the length-delimited Get URI field.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.1 (8.2.3.1 Get)
   - Parents: `WSP-CL-C-004`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-GET-URI-NO-NUL` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-GET-URI-NO-NUL` (`binary-decoder`, `implemented`)
 - **WSP-CL-METHOD-BODY-CONSTRAINT** — Do not provide a request body when the invoked HTTP method does not permit an entity body.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-BODY-CONSTRAINT` (`error-policy`, `planned`)
+  - Fixture: `WSP-FX-METHOD-BODY-CONSTRAINT` (`error-policy`, `implemented`)
 - **WSP-CL-METHOD-ERROR-BODY** — When a result status is an error, preserve any response body that supplies human-displayable error information.
   - Family: `wsp`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-ERROR-BODY` (`rendering`, `planned`)
+  - Fixture: `WSP-FX-METHOD-ERROR-BODY` (`rendering`, `implemented`)
 - **WSP-CL-METHOD-HTTP-SEMANTICS** — Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-HTTP-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-HTTP-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-INVOKE-PARAMETERS** — Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-INVOKE-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-INVOKE-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-INVOKE-TRANSPARENCY** — Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-INVOKE-TRANSPARENCY` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-INVOKE-TRANSPARENCY` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-RESULT-HTTP-SEMANTICS** — Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-RESULT-HTTP-SEMANTICS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-RESULT-HTTP-SEMANTICS` (`transport-boundary`, `implemented`)
 - **WSP-CL-METHOD-RESULT-PARAMETERS** — Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-METHOD-RESULT-PARAMETERS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-METHOD-RESULT-PARAMETERS` (`transport-boundary`, `implemented`)
 - **WSP-CL-PDU-TYPE-DISPATCH** — Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-PDU-TYPE-DISPATCH` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-PDU-TYPE-DISPATCH` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-BODY-TO-SDU-END** — Treat every octet after the declared headers as request body data through the end of the transport SDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-BODY-TO-SDU-END` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-BODY-TO-SDU-END` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-CONTENT-TYPE** — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-PDU-LAYOUT** — Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-PDU-METHOD** — Encode the selected HTTP POST method using the Post PDU format.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-PDU-METHOD` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-PDU-METHOD` (`binary-decoder`, `implemented`)
 - **WSP-CL-POST-URI-NO-NUL** — Exclude a storage string terminator from the length-delimited Post URI field.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.2 (8.2.3.2 Post)
   - Parents: `WSP-CL-C-006`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-POST-URI-NO-NUL` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-POST-URI-NO-NUL` (`binary-decoder`, `implemented`)
 - **WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS** — Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §6.4.3 (6.4.3 Constraints on Using the Service Primitives)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS` (`transport-boundary`, `implemented`)
 - **WSP-CL-REPLY-BODY-TO-SDU-END** — Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-BODY-TO-SDU-END` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-BODY-TO-SDU-END` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-CONTENT-TYPE** — Decode the Reply body media type before the remaining response headers.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`, `WSP-CL-C-003`
   - Requirements: `RQ-TRN-012`, `RQ-TRN-014`
-  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-CONTENT-TYPE` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-PDU-LAYOUT** — Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.2.3.3 (8.2.3.3 Reply)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-PDU-LAYOUT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-PDU-LAYOUT` (`binary-decoder`, `implemented`)
 - **WSP-CL-REPLY-STATUS-ASSIGNMENT** — Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-REPLY-STATUS-ASSIGNMENT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-REPLY-STATUS-ASSIGNMENT` (`binary-decoder`, `implemented`)
 - **WSP-CL-SELECTED-PDU-ASSIGNMENTS** — Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-SELECTED-PDU-ASSIGNMENTS` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-SELECTED-PDU-ASSIGNMENTS` (`binary-decoder`, `implemented`)
 - **WSP-CL-TID-PEER-CORRELATION** — Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.2.1 (8.2.1 PDU Common Fields)
   - Parents: `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-012`
-  - Fixture: `WSP-FX-TID-PEER-CORRELATION` (`state-machine`, `planned`)
+  - Fixture: `WSP-FX-TID-PEER-CORRELATION` (`state-machine`, `implemented`)
 - **WSP-CL-UNITDATA-RECEIVE-DISPATCH** — Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §7.2 (7.2 Connectionless WSP)
   - Parents: `WSP-CL-C-001`, `WSP-CL-C-005`, `WSP-CL-C-007`
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
-  - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `implemented`)
 
 ## Explicit mapping gaps
 

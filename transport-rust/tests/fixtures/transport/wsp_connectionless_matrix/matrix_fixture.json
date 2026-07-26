@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "workItem": "WSP-801",
+  "profile": "strict-class-c-connectionless",
+  "effectiveSequence": [
+    "WAP-203-WSP",
+    "WAP-203_001-WSP",
+    "WAP-203_003-WSP",
+    "WAP-203_005-WSP"
+  ],
+  "sourceDocuments": [
+    {"id": "WAP-203-WSP", "sections": ["6.4.1", "6.4.2.1", "6.4.2.2", "6.4.3", "6.4.4", "7.2", "8.1.1", "8.2.1", "8.2.3.1", "8.2.3.2", "8.2.3.3", "Appendix A"]},
+    {"id": "WAP-203_001-WSP", "sections": ["effective SIN order"]},
+    {"id": "WAP-203_003-WSP", "sections": ["Appendix D effective SCR table"]},
+    {"id": "WAP-203_005-WSP", "sections": ["effective SIN order"]}
+  ],
+  "selectedRows": [
+    "WSP-C-001",
+    "WSP-CL-C-001",
+    "WSP-CL-C-003",
+    "WSP-CL-C-004",
+    "WSP-CL-C-005",
+    "WSP-CL-C-006",
+    "WSP-CL-C-007"
+  ],
+  "clauseIds": [
+    "WSP-CL-COMMUNICATION-FAILURE-LOCAL",
+    "WSP-CL-CONNECTIONLESS-METHOD-FACILITY",
+    "WSP-CL-CONNECTIONLESS-NONCONFIRMED",
+    "WSP-CL-CONNECTIONLESS-TID-REQUIRED",
+    "WSP-CL-DEVICE-CONNECTIONLESS-MODE",
+    "WSP-CL-GET-PDU-LAYOUT",
+    "WSP-CL-GET-PDU-METHOD",
+    "WSP-CL-GET-URI-NO-NUL",
+    "WSP-CL-INTEGER-NETWORK-ORDER",
+    "WSP-CL-METHOD-BODY-CONSTRAINT",
+    "WSP-CL-METHOD-ERROR-BODY",
+    "WSP-CL-METHOD-HTTP-SEMANTICS",
+    "WSP-CL-METHOD-INVOKE-PARAMETERS",
+    "WSP-CL-METHOD-INVOKE-TRANSPARENCY",
+    "WSP-CL-METHOD-RESULT-HTTP-SEMANTICS",
+    "WSP-CL-METHOD-RESULT-PARAMETERS",
+    "WSP-CL-OUT-OF-BAND-PARAMETERS",
+    "WSP-CL-PDU-TYPE-DISPATCH",
+    "WSP-CL-PEER-INDICATION-DELIVERY",
+    "WSP-CL-POST-BODY-TO-SDU-END",
+    "WSP-CL-POST-CONTENT-TYPE",
+    "WSP-CL-POST-PDU-LAYOUT",
+    "WSP-CL-POST-PDU-METHOD",
+    "WSP-CL-POST-URI-NO-NUL",
+    "WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS",
+    "WSP-CL-REPLY-BODY-TO-SDU-END",
+    "WSP-CL-REPLY-CONTENT-TYPE",
+    "WSP-CL-REPLY-PDU-LAYOUT",
+    "WSP-CL-REPLY-STATUS-ASSIGNMENT",
+    "WSP-CL-SELECTED-PDU-ASSIGNMENTS",
+    "WSP-CL-TID-PEER-CORRELATION",
+    "WSP-CL-TRANSPORT-ERROR-IGNORED",
+    "WSP-CL-UNITDATA-DIRECT-MAPPING",
+    "WSP-CL-UNITDATA-RECEIVE-DISPATCH",
+    "WSP-CL-UNITDATA-SECURITY-EQUIVALENCE"
+  ],
+  "pduCases": [
+    {
+      "name": "get-with-opaque-header-bytes",
+      "kind": "get",
+      "transactionId": 42,
+      "uri": "/deck.wml",
+      "contentType": null,
+      "headers": [128, 136],
+      "body": [],
+      "statusCode": null,
+      "encoded": [42, 64, 9, 47, 100, 101, 99, 107, 46, 119, 109, 108, 128, 136]
+    },
+    {
+      "name": "post-form-body-to-sdu-end",
+      "kind": "post",
+      "transactionId": 43,
+      "uri": "/submit",
+      "contentType": "application/x-www-form-urlencoded",
+      "headers": [],
+      "body": [97, 61, 49],
+      "statusCode": null,
+      "encoded": [43, 96, 7, 34, 47, 115, 117, 98, 109, 105, 116, 97, 112, 112, 108, 105, 99, 97, 116, 105, 111, 110, 47, 120, 45, 119, 119, 119, 45, 102, 111, 114, 109, 45, 117, 114, 108, 101, 110, 99, 111, 100, 101, 100, 0, 97, 61, 49]
+    },
+    {
+      "name": "reply-success-body-to-sdu-end",
+      "kind": "reply",
+      "transactionId": 43,
+      "uri": null,
+      "contentType": "application/vnd.wap.wmlc",
+      "headers": [],
+      "body": [60, 119, 109, 108, 47, 62],
+      "statusCode": 200,
+      "encoded": [43, 4, 32, 1, 148, 60, 119, 109, 108, 47, 62]
+    },
+    {
+      "name": "reply-error-preserves-display-body",
+      "kind": "reply",
+      "transactionId": 44,
+      "uri": null,
+      "contentType": "text/plain",
+      "headers": [],
+      "body": [110, 111, 116, 32, 102, 111, 117, 110, 100],
+      "statusCode": 404,
+      "encoded": [44, 4, 68, 1, 131, 110, 111, 116, 32, 102, 111, 117, 110, 100]
+    }
+  ],
+  "statusAssignments": [
+    [16, 100], [17, 101],
+    [32, 200], [33, 201], [34, 202], [35, 203], [36, 204], [37, 205], [38, 206],
+    [48, 300], [49, 301], [50, 302], [51, 303], [52, 304], [53, 305], [54, 306], [55, 307],
+    [64, 400], [65, 401], [66, 402], [67, 403], [68, 404], [69, 405], [70, 406], [71, 407], [72, 408], [73, 409], [74, 410], [75, 411], [76, 412], [77, 413], [78, 414], [79, 415], [80, 416], [81, 417],
+    [96, 500], [97, 501], [98, 502], [99, 503], [100, 504], [101, 505]
+  ],
+  "allowedPrimitiveMatrix": [
+    {"role": "client", "primitive": "methodInvoke", "direction": "req"},
+    {"role": "client", "primitive": "methodResult", "direction": "ind"},
+    {"role": "server", "primitive": "methodInvoke", "direction": "ind"},
+    {"role": "server", "primitive": "methodResult", "direction": "req"}
+  ],
+  "rejectedPrimitive": "push",
+  "unitdata": {
+    "client": {"address": [192, 0, 2, 10], "port": 49152},
+    "server": {"address": [192, 0, 2, 20], "port": 9200},
+    "providers": ["wdp", "securitySap"],
+    "outOfBand": {"maximumReceiveUnit": 1400, "persistentHeaders": true}
+  },
+  "decodeErrors": [
+    {"name": "missing-transaction-id", "encoded": [], "expected": "missing-transaction-id"},
+    {"name": "missing-pdu-type", "encoded": [1], "expected": "missing-pdu-type"},
+    {"name": "truncated-uri", "encoded": [1, 64, 2, 47], "expected": "truncated-uri"},
+    {"name": "uri-contains-nul", "encoded": [1, 64, 1, 0], "expected": "uri-contains-nul"},
+    {"name": "post-missing-content-type", "encoded": [1, 96, 1, 0, 47], "expected": "missing-content-type"},
+    {"name": "reply-truncated-headers", "encoded": [1, 4, 32, 2, 136], "expected": "truncated-header-section"},
+    {"name": "unsupported-reply-status", "encoded": [1, 4, 18, 1, 136], "expected": "unsupported-status"},
+    {"name": "uintvar-overflow", "encoded": [1, 64, 144, 128, 128, 128, 0], "expected": "uintvar-overflow"}
+  ]
+}

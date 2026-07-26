@@ -64,6 +64,7 @@ pub enum WspSessionEvent {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspSessionEventDecodeError {
+    ConnectionlessUsesDedicatedCodec,
     Pdu(WspPduDecodeError),
     InvalidPduForMode {
         mode: WspSessionMode,
@@ -74,6 +75,10 @@ pub enum WspSessionEventDecodeError {
 impl std::fmt::Display for WspSessionEventDecodeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::ConnectionlessUsesDedicatedCodec => write!(
+                f,
+                "connectionless WSP uses the TID-bearing WAP-203 connectionless codec"
+            ),
             Self::Pdu(error) => write!(f, "{error}"),
             Self::InvalidPduForMode { mode, pdu_type } => {
                 write!(f, "{pdu_type} is not valid for {mode}")
@@ -95,6 +100,7 @@ impl std::fmt::Display for WspSessionMode {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WspSessionEventEncodeError {
+    ConnectionlessUsesDedicatedCodec,
     UnsupportedMethodShape,
     Pdu(WspPduEncodeError),
 }
@@ -102,6 +108,10 @@ pub enum WspSessionEventEncodeError {
 impl std::fmt::Display for WspSessionEventEncodeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::ConnectionlessUsesDedicatedCodec => write!(
+                f,
+                "connectionless WSP uses the TID-bearing WAP-203 connectionless codec"
+            ),
             Self::UnsupportedMethodShape => write!(f, "unsupported WSP method event shape"),
             Self::Pdu(error) => write!(f, "{error}"),
         }
@@ -115,6 +125,9 @@ pub fn decode_wsp_session_event(
     mode: WspSessionMode,
     header_policy: WspHeaderBlockDecodePolicy,
 ) -> Result<WspSessionEvent, WspSessionEventDecodeError> {
+    if mode == WspSessionMode::Connectionless {
+        return Err(WspSessionEventDecodeError::ConnectionlessUsesDedicatedCodec);
+    }
     let pdu = decode_wsp_pdu(input, header_policy).map_err(WspSessionEventDecodeError::Pdu)?;
     validate_pdu_for_mode(mode, &pdu)?;
     Ok(classify_wsp_pdu(mode, pdu))
@@ -124,6 +137,15 @@ pub fn encode_wsp_session_event(
     event: &WspSessionEvent,
     header_policy: WspHeaderBlockEncodePolicy,
 ) -> Result<Vec<u8>, WspSessionEventEncodeError> {
+    let mode = match event {
+        WspSessionEvent::ConnectRequest(value) => value.mode,
+        WspSessionEvent::ConnectReply(value) => value.mode,
+        WspSessionEvent::MethodRequest(value) => value.mode,
+        WspSessionEvent::MethodResult(value) => value.mode,
+    };
+    if mode == WspSessionMode::Connectionless {
+        return Err(WspSessionEventEncodeError::ConnectionlessUsesDedicatedCodec);
+    }
     let pdu = match event {
         WspSessionEvent::ConnectRequest(connect) => WspPdu::Connect(WspConnectPdu {
             version_major: connect.version_major,
@@ -214,13 +236,7 @@ fn validate_pdu_for_mode(
         WspPdu::Reply(_) => "Reply",
     };
 
-    let valid = matches!(
-        (mode, pdu),
-        (
-            WspSessionMode::Connectionless,
-            WspPdu::MethodGet(_) | WspPdu::MethodPost(_) | WspPdu::Reply(_)
-        ) | (WspSessionMode::ConnectionOriented, _)
-    );
+    let valid = matches!((mode, pdu), (WspSessionMode::ConnectionOriented, _));
 
     if valid {
         Ok(())
@@ -468,6 +484,9 @@ mod tests {
         let fixture = load_fixture();
         for case in fixture.success_cases {
             let mode = mode(&case.mode);
+            if mode == WspSessionMode::Connectionless {
+                continue;
+            }
             let expected = fixture_event(mode, case.expected);
             let decoded =
                 decode_wsp_session_event(&case.encoded, mode, decode_policy(&case.decode_policy))
@@ -488,6 +507,9 @@ mod tests {
     fn session_fixture_reports_declared_decode_failures() {
         let fixture = load_fixture();
         for case in fixture.error_cases {
+            if mode(&case.mode) == WspSessionMode::Connectionless {
+                continue;
+            }
             let error = decode_wsp_session_event(
                 &case.encoded,
                 mode(&case.mode),
@@ -542,16 +564,13 @@ mod tests {
 
         assert_eq!(
             error,
-            WspSessionEventDecodeError::InvalidPduForMode {
-                mode: WspSessionMode::Connectionless,
-                pdu_type: "Connect",
-            }
+            WspSessionEventDecodeError::ConnectionlessUsesDedicatedCodec
         );
     }
 
     #[test]
-    fn accepts_reply_for_connectionless_mode() {
-        let decoded = decode_wsp_session_event(
+    fn connectionless_mode_uses_the_tid_bearing_wap_203_codec() {
+        let error = decode_wsp_session_event(
             &[4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62],
             WspSessionMode::Connectionless,
             WspHeaderBlockDecodePolicy {
@@ -559,9 +578,12 @@ mod tests {
                 ..WspHeaderBlockDecodePolicy::STRICT
             },
         )
-        .expect("reply should remain valid for connectionless mode");
+        .expect_err("the session codec must not accept TID-less connectionless framing");
 
-        assert!(matches!(decoded, WspSessionEvent::MethodResult(_)));
+        assert_eq!(
+            error,
+            WspSessionEventDecodeError::ConnectionlessUsesDedicatedCodec
+        );
     }
 
     #[test]

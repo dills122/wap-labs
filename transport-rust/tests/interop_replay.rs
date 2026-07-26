@@ -5,6 +5,7 @@ use lowband_transport_rust::network::wdp::{
     WdpServicePort,
 };
 use lowband_transport_rust::network::wsp::{
+    connectionless::{decode_connectionless_pdu, WspConnectionlessPdu},
     decode_wsp_session_event, WspEncodingVersion, WspHeaderBlockDecodePolicy, WspMethod,
     WspSessionEvent, WspSessionMode,
 };
@@ -776,6 +777,39 @@ fn replay_case(case: &ReplayCase) -> Vec<ReplayEvent> {
                 service_port,
                 payload_len: datagram.payload.len(),
             });
+
+            if mode == WspSessionMode::Connectionless {
+                let pdu = decode_connectionless_pdu(&datagram.payload).unwrap_or_else(|error| {
+                    panic!("case '{}' WSP decode failed: {error}", case.name)
+                });
+                match pdu {
+                    WspConnectionlessPdu::Get { uri, .. } => out.push(ReplayEvent::MethodRequest {
+                        direction: input.direction,
+                        mode,
+                        method: WspMethod::Get,
+                        uri,
+                        body_len: 0,
+                    }),
+                    WspConnectionlessPdu::Post { uri, body, .. } => {
+                        out.push(ReplayEvent::MethodRequest {
+                            direction: input.direction,
+                            mode,
+                            method: WspMethod::Post,
+                            uri,
+                            body_len: body.len(),
+                        })
+                    }
+                    WspConnectionlessPdu::Reply {
+                        status_code, body, ..
+                    } => out.push(ReplayEvent::MethodResult {
+                        direction: input.direction,
+                        mode,
+                        status_code,
+                        body_len: body.len(),
+                    }),
+                }
+                continue;
+            }
 
             let session_event =
                 decode_wsp_session_event(&datagram.payload, mode, decode_policy_for_mode(mode))

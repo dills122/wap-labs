@@ -34,11 +34,38 @@ if (refreshSelectedEvidence) {
       continue;
     }
     const evidence = selectedEvidence('wsp', obligation.id);
+    obligation.mapping.implementationStatus = selectedImplementationStatus(
+      'wsp',
+      obligation.id
+    );
     obligation.mapping.implementationEvidence =
       evidence.implementationEvidence;
     obligation.mapping.testEvidence = evidence.testEvidence;
     refreshed += 1;
   }
+  const selectedRows = manifest.obligations.filter(
+    (obligation) =>
+      obligation.disposition?.classCProfile ===
+      'required-by-selected-class-c-transport-path'
+  );
+  manifest.summary.selectedImplementationStatus = countBy(
+    selectedRows,
+    (row) => row.mapping.implementationStatus
+  );
+  manifest.summary.selectedDirectNormativeTestEvidenceCount =
+    selectedRows.filter((row) =>
+      row.mapping.testEvidence.some(
+        (evidence) => evidence.evidenceClass === 'direct-normative'
+      )
+    ).length;
+  manifest.summary.selectedProvisionalTestEvidenceCount =
+    selectedRows.filter(
+      (row) =>
+        row.mapping.testEvidence.length > 0 &&
+        !row.mapping.testEvidence.some(
+          (evidence) => evidence.evidenceClass === 'direct-normative'
+        )
+    ).length;
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(
     `Refreshed ${refreshed} selected WSP evidence mappings in ${outputPath}`
@@ -716,8 +743,11 @@ function workItems(family, id) {
   return ['WSP-801', 'WSP-804', 'WSP-805', 'T0-27', 'T0-30'];
 }
 
-function selectedImplementationStatus(family) {
-  return family === 'wdp' || family === 'wcmp' ? 'implemented' : 'partial';
+function selectedImplementationStatus(family, id) {
+  if (family === 'wdp' || family === 'wcmp') return 'implemented';
+  return id === 'WSP-CL-C-003' || id === 'WSP-CL-C-020'
+    ? 'partial'
+    : 'implemented';
 }
 
 function assessmentNote(family, id) {
@@ -755,12 +785,14 @@ function assessmentNote(family, id) {
     return 'Echo Reply type 179 code 0 retains byte-exact evidence for explicit non-IP bearers only.';
   }
   if (id === 'WSP-C-001' || id === 'WSP-CL-C-001') {
-    return 'Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.';
+    return 'The strict Class C connectionless profile maps role-legal non-confirmed WSP primitives directly to one Unitdata request and one canonical transaction-ID-prefixed PDU without WSP session state.';
   }
   if (id === 'WSP-CL-C-003' || id === 'WSP-CL-C-020') {
-    return 'Header and encoding-version modules provide substantial behavior, but their tables/defaults are successor-oriented and lack WAP-203 effective-source vectors.';
+    return id === 'WSP-CL-C-003'
+      ? 'The WSP-801 matrix directly closes its integer-order and POST/Reply Content-Type framing seams while generic header grammar, registry, version, code-page, and fallback closure remains assigned to WSP-802.'
+      : 'Header and encoding-version modules provide substantial behavior, but generic header registry, Encoding-Version, code-page, and unknown/fallback closure remains assigned to WSP-802.';
   }
-  return 'Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.';
+  return 'The canonical WAP-203 connectionless codec and stateless primitive adapter provide source-linked GET, POST, Reply, transaction, status, URI, body, header-byte preservation, and endpoint-role evidence.';
 }
 
 function selectedEvidence(family, id) {
@@ -902,25 +934,51 @@ function selectedEvidence(family, id) {
     return {
       implementationEvidence: [
         {
-          path: 'transport-rust/src/network/wsp/session.rs',
-          symbol: 'WspSessionMode::Connectionless'
+          path: 'transport-rust/src/wsp_connectionless_primitive_profile.rs',
+          symbol: 'pub fn primitive_request_to_unitdata'
         },
         {
-          path: 'transport-rust/src/native_fetch.rs',
-          symbol: 'execute_native_wap_request_with_transport'
+          path: 'transport-rust/src/network/wsp/connectionless.rs',
+          symbol: 'pub enum WspConnectionlessPdu'
         }
       ],
       testEvidence: [
         {
-          path: 'transport-rust/tests/fixtures/transport/wsp_connectionless_primitive_profile_mapped/primitive_profile_fixture.json',
-          test: 'connectionless-mode-gating-and-sequence',
+          path: 'transport-rust/tests/wsp_connectionless_matrix.rs',
+          test: 'primitives_map_one_to_one_through_both_unitdata_saps',
+          fixture: 'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json',
+          evidenceClass: 'direct-normative',
           limitation:
-            'Project-authored fixture; not derived from the WAP-203 effective table or protocol vectors.'
+            'Closes only the selected non-confirmed Class C connectionless primitive/PDU path; connection-oriented WSP and WTP remain inactive.'
         }
       ]
     };
   }
-  if (id === 'WSP-CL-C-003' || id === 'WSP-CL-C-020') {
+  if (id === 'WSP-CL-C-003') {
+    return {
+      implementationEvidence: [
+        {
+          path: 'transport-rust/src/network/wsp/connectionless.rs',
+          symbol: 'pub fn encode_connectionless_pdu'
+        },
+        {
+          path: 'transport-rust/src/network/wsp/header_block.rs',
+          symbol: 'encode_header_block'
+        }
+      ],
+      testEvidence: [
+        {
+          path: 'transport-rust/tests/wsp_connectionless_matrix.rs',
+          test: 'source_linked_get_post_and_reply_pdus_are_byte_exact_roundtrips',
+          fixture: 'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json',
+          evidenceClass: 'direct-normative',
+          limitation:
+            'Directly closes only WSP-801 integer ordering and POST/Reply Content-Type framing; generic header registry, Encoding-Version, code pages, and unknown/fallback policy remain WSP-802 residuals.'
+        }
+      ]
+    };
+  }
+  if (id === 'WSP-CL-C-020') {
     return {
       implementationEvidence: [
         {
@@ -946,22 +1004,21 @@ function selectedEvidence(family, id) {
     implementationEvidence: [
       {
         path: 'transport-rust/src/network/wsp/connectionless.rs',
-        symbol: 'encode_connectionless_request'
+        symbol: 'pub fn encode_connectionless_pdu'
       },
       {
-        path: 'transport-rust/src/network/wsp/connectionless.rs',
-        symbol: 'decode_connectionless_reply'
+        path: 'transport-rust/src/wsp_connectionless_primitive_profile.rs',
+        symbol: 'pub fn unitdata_indication_to_primitive'
       }
     ],
     testEvidence: [
       {
-        path: 'transport-rust/src/native_fetch.rs',
-        test:
-          id === 'WSP-CL-C-006' || id === 'WSP-CL-C-007'
-            ? 'native_connectionless_post_wire_format_encodes_header_block_and_body'
-            : 'native_connectionless_wire_format_prefixes_transaction_id',
+        path: 'transport-rust/tests/wsp_connectionless_matrix.rs',
+        test: 'source_linked_get_post_and_reply_pdus_are_byte_exact_roundtrips',
+        fixture: 'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json',
+        evidenceClass: 'direct-normative',
         limitation:
-          'Synthetic local wire test; not a source-derived WAP-203 conformance vector.'
+          'Closes only the selected WSP-801 GET/POST/Reply and primitive matrix; header registry/version closure remains WSP-802 and no connection-oriented path is claimed.'
       }
     ]
   };

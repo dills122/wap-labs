@@ -68,8 +68,8 @@ This produces 19 selected-path rows:
 |---|---:|---|---:|
 | WDP | 9 | 9 implemented / 0 partial / 0 missing | 9 |
 | WCMP | 2 | 2 implemented / 0 partial / 0 missing | 2 |
-| WSP | 8 | 0 implemented / 8 partial / 0 missing | 0 |
-| **Total** | **19** | **11 implemented / 8 partial / 0 missing** | **11** |
+| WSP | 8 | 6 implemented / 2 partial / 0 missing | 7 |
+| **Total** | **19** | **17 implemented / 2 partial / 0 missing** | **18** |
 
 The two optional WDP rows and three optional WCMP/WSP root-dependency rows are
 required by the selected alternatives. Their source `O` status is preserved;
@@ -172,21 +172,22 @@ and audit WAP-224 separately.
 
 ### WSP
 
-The Rust transport has native connectionless GET/POST/REPLY encoding, WSP
-session/mode types, header-block handling, encoding-version policy, fixture
-matrices, and a WDP/UDP fetch path. These are substantial architectural and
-behavioral evidence.
+The Rust transport now has a single canonical connectionless codec with
+transaction-ID-prefixed GET, POST, and Reply layouts, exact selected PDU and
+status assignments, URI/body constraints, and byte-preserving optional
+headers. A stateless primitive adapter enforces client/server role legality and
+maps each request directly to one WDP or security-SAP Unitdata operation.
 
-All eight selected rows remain partial because the current tables and fixtures
-were developed primarily from successor-era WSP material and project-authored
-synthetic cases. Exact WAP-203 base/SIN assigned numbers, header rules, status
-codes, primitive semantics, malformed cases, and end-to-end vectors remain
-open.
+The source-linked `wsp_connectionless_matrix` fixture directly assesses all 35
+WSP-801 clauses and seven selected parents. Six selected rows are implemented;
+`WSP-CL-C-003` remains partial because WSP-801 closes only its integer-order and
+Content-Type framing seams, while `WSP-CL-C-020` remains wholly within WSP-802.
+Generic header registry, Encoding-Version, code-page, and unknown/fallback
+closure therefore remains explicit follow-on work.
 
-`CONF-003` now expands those rows into 57 source-anchored clauses. The plan
-covers direct Unitdata mapping, GET/POST and Reply layouts, effective
-default-page header encoding, assigned-number matrices, and Encoding-Version
-negotiation without activating connection-oriented WSP/WTP.
+`CONF-003` retains 57 WSP clauses overall. The WSP-801 evidence does not
+activate connection-oriented WSP or WTP, and it does not claim the parent
+WSP-8 sprint complete before WAE-6.
 
 ## WTP boundary
 
@@ -244,9 +245,10 @@ adapter.
   remains explicit.
 - `TRN-708`: complete; the strict CDPD/IPv4 profile selects WAP-202 section
   5.3 ICMPv4 and the completed general-WCMP branch is explicit non-IP only.
-- `WSP-801`, `WSP-802`, `WSP-804`, `WSP-805`: close the eight-row
-  connectionless WSP path, exact WAP-203 registries, and browser GET/POST
-  ingress.
+- `WSP-801`: complete for the 35-clause connectionless PDU, primitive, method,
+  transaction, status, URI/body, and exact-byte matrix.
+- `WSP-802`, `WSP-804`, `WSP-805`: retain generic header/encoding-version
+  closure and browser GET/POST ingress without widening the WTP boundary.
 - `SRC-005`: complete; preserve the normalized `TIAEIA-732` dependency and
   licensed-access boundary.
 - `CONF-003`: promote direct normative fixtures for the completed WDP, WCMP,

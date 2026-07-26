@@ -1,0 +1,23 @@
+name = "wsp-801-connectionless-matrix"
+description = "Effective WAP-203 connectionless PDU, primitive, method, and direct Unitdata matrix."
+mode = "mapped"
+work_items = ["WSP-801"]
+spec_items = [
+  "WSP-C-001",
+  "WSP-CL-C-001",
+  "WSP-CL-C-003",
+  "WSP-CL-C-004",
+  "WSP-CL-C-005",
+  "WSP-CL-C-006",
+  "WSP-CL-C-007",
+  "RQ-TRN-010",
+  "RQ-TRN-012",
+  "RQ-TRN-014",
+]
+testing_ac = [
+  "Uses TID + selected PDU type + effective WAP-203 Get, Post, and Reply framing for every connectionless method SDU.",
+  "Maps each legal endpoint-role request directly to one WDP Unitdata request without connectionless WSP state.",
+  "Preserves addresses, ports, TID, URI, Content-Type bytes, optional header bytes, status, and bodies through peer indications.",
+  "Covers all assigned WSP response status octets and rejects invalid URI, body, length, type, and status inputs deterministically.",
+  "Keeps WTP, connection-oriented WSP, header registry, Encoding-Version, code-page, and unknown/fallback closure outside WSP-801.",
+]

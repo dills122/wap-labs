@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 208
+    "assessedClauseCount": 243
   },
   "families": [
     {
@@ -17640,7 +17640,7 @@
       "family": "wsp",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json",
-      "parentLedgerSha256": "4789dfc332a7ed7d3e62acbb55c2eab3783211ab13f8e1d60124ca678b9c9ab4",
+      "parentLedgerSha256": "0c33a4f492b109897f6802a4ac146368f5a328167dea2a3070ff1e0a3bb70cff",
       "effectiveSequence": [
         "WAP-203-WSP",
         "WAP-203_001-WSP",
@@ -17675,7 +17675,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -17697,7 +17697,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -17764,7 +17764,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -17799,7 +17799,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -17835,7 +17835,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -17872,7 +17872,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -17951,8 +17951,13 @@
           "fixturePlan": {
             "id": "WSP-FX-DEVICE-CONNECTIONLESS-MODE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP."
+            "status": "implemented",
+            "assertion": "Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -17966,10 +17971,10 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-C-001": "partial",
-              "WSP-CL-C-001": "partial"
+              "WSP-C-001": "implemented",
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -17992,8 +17997,13 @@
           "fixturePlan": {
             "id": "WSP-FX-CONNECTIONLESS-NONCONFIRMED",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Exchange method content through non-confirmed facilities and tolerate unreliable peer communication."
+            "status": "implemented",
+            "assertion": "Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18007,10 +18017,10 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-C-001": "partial",
-              "WSP-CL-C-001": "partial"
+              "WSP-C-001": "implemented",
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18036,8 +18046,13 @@
           "fixturePlan": {
             "id": "WSP-FX-CONNECTIONLESS-METHOD-FACILITY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Implement the connectionless method-invocation facility for selected GET and POST requests and replies."
+            "status": "implemented",
+            "assertion": "Implement the connectionless method-invocation facility for selected GET and POST requests and replies.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18056,13 +18071,13 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial",
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-006": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-001": "implemented",
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-006": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18085,8 +18100,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-INVOKE-PARAMETERS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body."
+            "status": "implemented",
+            "assertion": "Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18103,10 +18123,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18129,8 +18149,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-INVOKE-TRANSPARENCY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication."
+            "status": "implemented",
+            "assertion": "Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18147,10 +18172,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18173,8 +18198,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-HTTP-SEMANTICS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts."
+            "status": "implemented",
+            "assertion": "Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18191,10 +18221,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18217,8 +18247,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-BODY-CONSTRAINT",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Do not provide a request body when the invoked HTTP method does not permit an entity body."
+            "status": "implemented",
+            "assertion": "Do not provide a request body when the invoked HTTP method does not permit an entity body.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18235,10 +18270,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18261,8 +18296,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-RESULT-PARAMETERS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result."
+            "status": "implemented",
+            "assertion": "Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18279,10 +18319,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18305,8 +18345,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-RESULT-HTTP-SEMANTICS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1."
+            "status": "implemented",
+            "assertion": "Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18323,10 +18368,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18349,8 +18394,13 @@
           "fixturePlan": {
             "id": "WSP-FX-METHOD-ERROR-BODY",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "When a result status is an error, preserve any response body that supplies human-displayable error information."
+            "status": "implemented",
+            "assertion": "When a result status is an error, preserve any response body that supplies human-displayable error information.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18367,10 +18417,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18396,8 +18446,13 @@
           "fixturePlan": {
             "id": "WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results."
+            "status": "implemented",
+            "assertion": "Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18416,13 +18471,13 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial",
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-006": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-001": "implemented",
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-006": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18444,8 +18499,13 @@
           "fixturePlan": {
             "id": "WSP-FX-PEER-INDICATION-DELIVERY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Deliver an indication primitive when the corresponding peer request primitive is received."
+            "status": "implemented",
+            "assertion": "Deliver an indication primitive when the corresponding peer request primitive is received.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18459,9 +18519,9 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial"
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18483,8 +18543,13 @@
           "fixturePlan": {
             "id": "WSP-FX-COMMUNICATION-FAILURE-LOCAL",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter."
+            "status": "implemented",
+            "assertion": "Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18498,9 +18563,9 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial"
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18523,8 +18588,13 @@
           "fixturePlan": {
             "id": "WSP-FX-UNITDATA-DIRECT-MAPPING",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine."
+            "status": "implemented",
+            "assertion": "Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18538,10 +18608,10 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-C-001": "partial",
-              "WSP-CL-C-001": "partial"
+              "WSP-C-001": "implemented",
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18563,8 +18633,13 @@
           "fixturePlan": {
             "id": "WSP-FX-UNITDATA-SECURITY-EQUIVALENCE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP."
+            "status": "implemented",
+            "assertion": "Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18578,9 +18653,9 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial"
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18604,8 +18679,13 @@
           "fixturePlan": {
             "id": "WSP-FX-UNITDATA-RECEIVE-DISPATCH",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives."
+            "status": "implemented",
+            "assertion": "Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18624,11 +18704,11 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-001": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18650,8 +18730,13 @@
           "fixturePlan": {
             "id": "WSP-FX-TRANSPORT-ERROR-IGNORED",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Ignore underlying transport error indications at the connectionless WSP protocol layer."
+            "status": "implemented",
+            "assertion": "Ignore underlying transport error indications at the connectionless WSP protocol layer.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18665,9 +18750,9 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial"
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18689,8 +18774,13 @@
           "fixturePlan": {
             "id": "WSP-FX-OUT-OF-BAND-PARAMETERS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port."
+            "status": "implemented",
+            "assertion": "Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18704,9 +18794,9 @@
               "RQ-TRN-010"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial"
+              "WSP-CL-C-001": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18729,8 +18819,13 @@
           "fixturePlan": {
             "id": "WSP-FX-INTEGER-NETWORK-ORDER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode multi-octet integer values in big-endian network octet order."
+            "status": "implemented",
+            "assertion": "Encode multi-octet integer values in big-endian network octet order.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18747,10 +18842,10 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-001": "partial",
+              "WSP-CL-C-001": "implemented",
               "WSP-CL-C-003": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18775,8 +18870,13 @@
           "fixturePlan": {
             "id": "WSP-FX-CONNECTIONLESS-TID-REQUIRED",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU."
+            "status": "implemented",
+            "assertion": "Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18793,12 +18893,12 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-006": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-006": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18823,8 +18923,13 @@
           "fixturePlan": {
             "id": "WSP-FX-TID-PEER-CORRELATION",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request."
+            "status": "implemented",
+            "assertion": "Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18841,12 +18946,12 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-006": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-006": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18871,8 +18976,13 @@
           "fixturePlan": {
             "id": "WSP-FX-PDU-TYPE-DISPATCH",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use the PDU type octet to select the function and type-specific remainder of the WSP PDU."
+            "status": "implemented",
+            "assertion": "Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18889,12 +18999,12 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-006": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-006": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18919,8 +19029,13 @@
           "fixturePlan": {
             "id": "WSP-FX-SELECTED-PDU-ASSIGNMENTS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply."
+            "status": "implemented",
+            "assertion": "Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18937,12 +19052,12 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial",
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-006": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-004": "implemented",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-006": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -18964,8 +19079,13 @@
           "fixturePlan": {
             "id": "WSP-FX-GET-PDU-METHOD",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode the selected HTTP GET method using the Get PDU format."
+            "status": "implemented",
+            "assertion": "Encode the selected HTTP GET method using the Get PDU format.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -18982,9 +19102,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial"
+              "WSP-CL-C-004": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19006,8 +19126,13 @@
           "fixturePlan": {
             "id": "WSP-FX-GET-PDU-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU."
+            "status": "implemented",
+            "assertion": "Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19024,9 +19149,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial"
+              "WSP-CL-C-004": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19048,8 +19173,13 @@
           "fixturePlan": {
             "id": "WSP-FX-GET-URI-NO-NUL",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Exclude a storage string terminator from the length-delimited Get URI field."
+            "status": "implemented",
+            "assertion": "Exclude a storage string terminator from the length-delimited Get URI field.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19066,9 +19196,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-004": "partial"
+              "WSP-CL-C-004": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19090,8 +19220,13 @@
           "fixturePlan": {
             "id": "WSP-FX-POST-PDU-METHOD",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode the selected HTTP POST method using the Post PDU format."
+            "status": "implemented",
+            "assertion": "Encode the selected HTTP POST method using the Post PDU format.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19108,9 +19243,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19132,8 +19267,13 @@
           "fixturePlan": {
             "id": "WSP-FX-POST-PDU-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data."
+            "status": "implemented",
+            "assertion": "Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19150,9 +19290,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19174,8 +19314,13 @@
           "fixturePlan": {
             "id": "WSP-FX-POST-URI-NO-NUL",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Exclude a storage string terminator from the length-delimited Post URI field."
+            "status": "implemented",
+            "assertion": "Exclude a storage string terminator from the length-delimited Post URI field.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19192,9 +19337,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19217,8 +19362,13 @@
           "fixturePlan": {
             "id": "WSP-FX-POST-CONTENT-TYPE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers."
+            "status": "implemented",
+            "assertion": "Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19238,10 +19388,10 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-006": "partial",
+              "WSP-CL-C-006": "implemented",
               "WSP-CL-C-003": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19263,8 +19413,13 @@
           "fixturePlan": {
             "id": "WSP-FX-POST-BODY-TO-SDU-END",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Treat every octet after the declared headers as request body data through the end of the transport SDU."
+            "status": "implemented",
+            "assertion": "Treat every octet after the declared headers as request body data through the end of the transport SDU.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19281,9 +19436,9 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-006": "partial"
+              "WSP-CL-C-006": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19306,8 +19461,13 @@
           "fixturePlan": {
             "id": "WSP-FX-REPLY-PDU-LAYOUT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data."
+            "status": "implemented",
+            "assertion": "Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19324,10 +19484,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19350,8 +19510,13 @@
           "fixturePlan": {
             "id": "WSP-FX-REPLY-STATUS-ASSIGNMENT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36."
+            "status": "implemented",
+            "assertion": "Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19368,10 +19533,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19395,8 +19560,13 @@
           "fixturePlan": {
             "id": "WSP-FX-REPLY-CONTENT-TYPE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode the Reply body media type before the remaining response headers."
+            "status": "implemented",
+            "assertion": "Decode the Reply body media type before the remaining response headers.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19416,11 +19586,11 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial",
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented",
               "WSP-CL-C-003": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -19443,8 +19613,13 @@
           "fixturePlan": {
             "id": "WSP-FX-REPLY-BODY-TO-SDU-END",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Treat every octet after the declared Reply headers as response body data through the end of the transport SDU."
+            "status": "implemented",
+            "assertion": "Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
+              "testPath": "transport-rust/tests/wsp_connectionless_matrix.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -19461,10 +19636,10 @@
               "RQ-TRN-012"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-005": "partial",
-              "WSP-CL-C-007": "partial"
+              "WSP-CL-C-005": "implemented",
+              "WSP-CL-C-007": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },

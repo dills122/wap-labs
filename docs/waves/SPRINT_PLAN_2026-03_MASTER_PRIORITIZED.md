@@ -35,9 +35,10 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
 13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
-is 24 implemented, 76 partial, and 98 missing parent rows; clause-level
-assessment is 208/762 after WML-302 closed 18 newly implemented clauses and
-retained 2 already implemented shared clauses.
+is 30 implemented, 70 partial, and 98 missing parent rows; clause-level
+assessment is 243/762 after WML-302 closed 18 newly implemented clauses,
+retained 2 already implemented shared clauses, and WSP-801 directly closed
+its 35-clause connectionless matrix.
 
 Use this order for new completion work:
 
@@ -255,10 +256,10 @@ Current recommendation after all merged implementation workstreams:
 Preserve the `W1-06` boundary and completed `D0-01` baseline. Frame migration and
 general maintenance remain non-preemptive until separately authorized or
 required by an upstream Class C gate.
-`WSP-801`/`WSP-802` may continue on the selected connectionless path because
-`TRN-7-CL-C` is complete; `WSP-8` still cannot close before `WAE-6` and its own
-remaining gates. Connection-oriented WSP continues to require the dormant WTP
-work retained in `TRN-7`.
+`WSP-801` is complete on the selected connectionless path because `TRN-7-CL-C`
+is complete. `WSP-802` retains header/version closure; `WSP-8` still cannot
+close before `WAE-6` and its own remaining gates. Connection-oriented WSP
+continues to require the dormant WTP work retained in `TRN-7`.
 
 Completed this sprint:
 
