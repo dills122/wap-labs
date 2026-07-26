@@ -166,9 +166,9 @@ Cross-source selected-profile accounting is now executable:
 - every selected row has an owner and work-item mapping;
 - all 198 selected rows now expand into 762 deduplicated nested clauses with
   source anchors and fixture plans;
-- 148 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed; direct
+- 190 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed; direct
   conformance fixture implementation remains the principal evidence gap for
-  the other 614.
+  the other 572.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes
@@ -197,7 +197,8 @@ WTP is additionally conditional on connection-oriented WSP.
 - [x] Per-family SCR ledgers and all 762 selected nested clauses.
 - [x] Requirement, owner, work-item, and fixture-target crosswalk.
 - [x] Unified successor-delta register and deterministic drift controls.
-- [x] Dependency-ordered 13-sprint/78-item compliance program.
+- [x] Dependency-ordered 13-sprint/82-item compliance program plus the
+  machine-checked `TRN-7-CL-C` profile completion gate.
 
 The closure checkpoint and implementation handoff are in
 `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`.
@@ -211,8 +212,9 @@ The closure checkpoint and implementation handoff are in
    the closed selected-profile gate.
 4. Extract an effective WAP-201/WTP ledger only before claiming the optional
    connection-oriented WSP/WTP module.
-5. Obtain redistribution guidance before promoting the 76 privately recovered
-   release members or parsed derivatives into Git.
+5. Obtain written redistribution guidance before promoting privately recovered
+   release members or parsed derivatives into Git; the maintainer-ready request
+   package and 106-entry inventory remain unsent pending approval.
 6. Keep `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` synchronized with any
    implementation-facing contract changes.
 

@@ -444,6 +444,8 @@ Accept:
 ### WBP-15 Nokia 7110 profile
 
 - `Depends On`: stable Class C reference profile, compatibility registry, completed frame/input path
+- `Research status`: planning-ready from the locked historical evidence; implementation-blocked by
+  the declared runtime dependencies
 
 Plan only from the two concordant Nokia publications locked in the historical source baseline. Cover
 viewport metrics, typography, focus, roller behavior, softkey mapping, exact Options ordering,
@@ -458,6 +460,7 @@ blocked on the declared runtime dependencies.
 ### WBP-16 Openwave 4.x handset target and evidence lock
 
 - `Depends On`: `WBP-15` evidence method; no runtime dependency because this is research-only
+- `Research status`: ready to start as an evidence-lock task; no named Openwave profile is authorized
 
 Select one representative shipping handset and exact Phone.com/Openwave browser release. Pair the
 recovered browser-family style guide with that manufacturer's user/developer guide, then resolve

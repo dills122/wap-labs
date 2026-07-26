@@ -355,6 +355,8 @@ The `WBP-00` baseline adopts the following working decisions, with measurements 
    captures.
 3. `WBP-15` owner: apply the historical source baseline's provenance and coverage thresholds before
    naming and shipping a device-specific profile.
+4. `WBP-16` owner: select one shipped Openwave 4.x handset/browser pair and lock its manufacturer
+   evidence before proposing any named profile.
 
 ## Evidence Gaps
 
