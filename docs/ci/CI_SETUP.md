@@ -292,6 +292,8 @@ Triggers:
 Behavior:
 
 - starts Docker services (`kannel`, `wml-server`)
+- requests WBXML 1.3 from Kannel through the WML server's explicit
+  `Encoding-Version: 1.3` test response boundary; the server's default remains unset
 - runs `make smoke-transport-wap`
 - executes:
   - transport-rust ignored Kannel smoke tests
@@ -327,6 +329,7 @@ Behavior:
 - starts Kannel and the WML server, then opts into local/private access only with the existing
   `WAVES_FETCH_DESTINATION_POLICY=allow-private` host boundary
 - pins `wap-net-core` and disables gateway fallback
+- requests WBXML 1.3 through the same explicit WML-server test response boundary
 - uses Selenium to click the real Go and Select controls, assert the gateway-served home/menu UI,
   assert a visible invalid-URL failure, and recover with another real gateway load
 - uploads fixed-name screenshots, page source, structured evidence, driver logs, environment

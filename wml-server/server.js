@@ -5,6 +5,14 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const wmlEncodingVersion = process.env.WML_ENCODING_VERSION || '';
+const supportedWmlEncodingVersions = new Set(['', '1.1', '1.2', '1.3']);
+
+if (!supportedWmlEncodingVersions.has(wmlEncodingVersion)) {
+  throw new Error(
+    `unsupported WML_ENCODING_VERSION ${JSON.stringify(wmlEncodingVersion)}; expected 1.1, 1.2, or 1.3`
+  );
+}
 const gatewayBaseUrls = process.env.GATEWAY_BASE_URL
   ? [process.env.GATEWAY_BASE_URL]
   : ['http://kannel:13002', 'http://localhost:13002'];
@@ -64,6 +72,9 @@ function sendWml(res, body, statusCode = 200) {
   res.status(statusCode);
   res.set('Content-Type', 'text/vnd.wap.wml; charset=utf-8');
   res.set('Cache-Control', 'no-store');
+  if (wmlEncodingVersion) {
+    res.set('Encoding-Version', wmlEncodingVersion);
+  }
   res.send(document);
 }
 
@@ -80,6 +91,9 @@ function sendStaticWml(res, fileName) {
     }
     res.set('Content-Type', 'text/vnd.wap.wml; charset=utf-8');
     res.set('Cache-Control', 'no-store');
+    if (wmlEncodingVersion) {
+      res.set('Encoding-Version', wmlEncodingVersion);
+    }
     res.send(data);
   });
 }

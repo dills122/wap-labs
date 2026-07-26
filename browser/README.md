@@ -159,7 +159,8 @@ xvfb-run -a make smoke-native-tauri-kannel-ui
 
 The runner builds the production frontend and debug Tauri binary, provisions the local gateway,
 opts into `allow-private` only through the existing host test boundary, pins `wap-net-core` with
-fallback disabled, captures screenshots/DOM/driver/service logs, and always stops the GUI process
+fallback disabled, asks Kannel for WBXML 1.3 through an explicit test-only response header,
+captures screenshots/DOM/driver/service logs, and always stops the GUI process
 group and Docker services. This pilot is scheduled/manual until the promotion criteria in
 `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` are met.
 
