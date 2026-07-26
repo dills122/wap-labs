@@ -29,6 +29,21 @@
   /* Toast semantic tones */
   --toast-ok-bg: #d8f8d8;
   --toast-error-bg: #ffd6d6;
+
+  /* Handset housing + LCD semantic tones (reference-handset scaffold, WBP-02).
+     Housing is a restrained warm-silver/graphite chassis; the LCD uses a
+     low-saturation monochrome-green tint rather than a plain white page. */
+  --handset-housing-bg: #c7c2b4;
+  --handset-housing-highlight: #efece0;
+  --handset-housing-shadow: #6f6a5c;
+  --lcd-bg: #d7e4d2;
+  --lcd-fg: #1c2b1c;
+  --lcd-focus-bg: #1c2b1c;
+  --lcd-focus-fg: #d7e4d2;
+
+  /* Deterministic integer display-scale step; never changes engine-computed
+     rows/columns/wrapping, only the rendered pixel size of the handset frame. */
+  --handset-scale: 1;
 }
 
 * {
@@ -153,9 +168,30 @@ button,
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* Integer step only; falls back to no-op (1x) on WebKit builds predating
+     `zoom` support (Safari < 17), which is an acceptable static degradation. */
+  zoom: var(--handset-scale);
 }
 
-.handset-stage .device-frame {
+.handset-housing {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: 10px;
+  border-radius: 6px;
+  background: linear-gradient(
+    145deg,
+    var(--handset-housing-highlight),
+    var(--handset-housing-bg) 55%,
+    var(--handset-housing-shadow)
+  );
+  box-shadow:
+    inset 0 1px 0 var(--handset-housing-highlight),
+    0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.handset-housing .device-frame {
   flex: 1;
 }
 
@@ -275,8 +311,8 @@ textarea.form-95 {
   box-shadow: -1px -1px 0 #828282;
   min-height: 520px;
   padding: 8px;
-  background: #fff;
-  color: #111;
+  background: var(--lcd-bg);
+  color: var(--lcd-fg);
   font-family: 'Courier New', Courier, monospace;
   line-height: 1.4;
 }
@@ -321,8 +357,8 @@ textarea.form-95 {
 }
 
 .wml-segment-link.is-focused {
-  color: #fff;
-  background: #08216b;
+  color: var(--lcd-focus-fg);
+  background: var(--lcd-focus-bg);
   text-decoration: none;
 }
 
@@ -454,6 +490,17 @@ pre {
 
   to {
     background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line {
+    animation: none;
+    background: #eee;
+  }
+
+  .wv-shell-window {
+    transition: none;
   }
 }
 

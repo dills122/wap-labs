@@ -1,4 +1,5 @@
 import type { WvStatusPanel } from '../components/status-panel';
+import { bindHandsetScaleControl } from './handset-scale-control';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { developerDrawerTemplate } from './shell/developer-drawer-template';
@@ -142,6 +143,11 @@ export const mountBrowserShell = (
   const utilityRailPanelEl = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
   if (utilityRailPanelEl && utilityRailPrefersNarrow()) {
     utilityRailPanelEl.open = false;
+  }
+
+  const handsetScaleSelectEl = document.querySelector<HTMLSelectElement>('#handset-scale-select');
+  if (handsetScaleSelectEl) {
+    bindHandsetScaleControl(handsetScaleSelectEl, document.documentElement);
   }
 
   return {

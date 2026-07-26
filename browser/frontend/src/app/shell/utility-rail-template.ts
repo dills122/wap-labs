@@ -18,6 +18,14 @@ export const utilityRailTemplate = () => `
             min="1"
           />
         </label>
+        <label class="compact-field">
+          ${WAVES_COPY.shell.displayScale}
+          <select id="handset-scale-select" class="form-95">
+            <option value="1">1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+          </select>
+        </label>
         <wv-surface-panel heading="${WAVES_COPY.shell.status}">
           <wv-status-panel id="status"></wv-status-panel>
         </wv-surface-panel>
