@@ -1,8 +1,9 @@
 # Code Generation Audit and Target Standard
 
-Status: active architecture audit and implementation guidance  
-Audited baseline: `origin/main` at `258454e073fb98502823fd93a28c833d577a02d3`  
-Scope: active repository paths only; archived and date-stamped historical snapshots are non-normative
+- Status: active architecture guidance; prioritized remediation batch landed
+- Audited baseline: `origin/main` at `258454e073fb98502823fd93a28c833d577a02d3`
+- Implementation checkpoint: `origin/main` at `afef6125b2808a3c2e97e8f23979a1b951a1dd7c`
+- Scope: active repository paths only; archived and date-stamped historical snapshots are non-normative
 
 ## Executive Summary
 
@@ -12,7 +13,7 @@ are deterministic and meaningfully drift-checked. The handwritten WaveNav TypeSc
 compliance-derivative generation, source-clean provenance, and Tauri-owned generated assets have
 weaker source-of-truth or reproducibility controls.
 
-The audit found three current defects that existing checks do not catch:
+At the audited baseline, the audit found three defects that existing checks did not catch:
 
 1. `ScriptExecutionOutcome` and `ScriptInvocationOutcome` are serialized by Rust with flat
    `navigationIntent` and `requiresRefresh` fields, while the handwritten TypeScript engine contract
@@ -28,6 +29,24 @@ The audit found three current defects that existing checks do not catch:
 The original broad `M1-03` engine-API generator remains non-preemptive. A narrow additive correction
 for engine-owned serialized DTO generation is now justified and should be treated as the first
 code-generation remediation slice.
+
+## Implementation Checkpoint (2026-07-26)
+
+The seven prioritized slices below have landed on current `main`. Preserve their original ordering
+and acceptance criteria as audit history; use additive follow-ups for any newly discovered gaps.
+
+| Slice                                | Landing evidence   | Current result                                                                                                    |
+| ------------------------------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Engine serialized DTO parity         | `#361` / `abd99e2` | Engine-owned serialized runtime DTOs are generated and parity-tested.                                             |
+| Effective-spec regeneration guard    | `#360` / `ce9564e` | Canonical regeneration is deterministic, write-free checks reject drift, and strict CDPD/IP retains RFC 792 ICMP. |
+| Source-clean provenance repair       | `#359` / `7e32d86` | Docling provenance is policy-driven, complete for canonical cleaned sources, and strict checks are reproducible.  |
+| Derived compliance-fact surface      | `#360` / `ce9564e` | Active counts and strict-profile claims are checked against ledger and graph data.                                |
+| Tauri command-descriptor unification | `#363` / `afef612` | Rust-owned command metadata generates the client contract and rejects registration drift.                         |
+| Atlas manifest schema validation     | `#362` / `01042da` | Atlas validates all four source manifests before repository projection or build.                                  |
+| Icon and Tauri-schema policy         | `#363` / `afef612` | Pinned tooling, allowlisted icon outputs, and committed Tauri schemas have explicit drift policy.                 |
+
+The broad `M1-03` facade-generator umbrella remains `todo` and non-preemptive; these landed slices
+do not imply that the whole handwritten engine method facade should be generated.
 
 ## Generation Map
 
