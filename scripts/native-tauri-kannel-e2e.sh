@@ -67,6 +67,7 @@ wait_for_http() {
 cd "${ROOT_DIR}"
 
 echo "==> Starting isolated Kannel + WML services"
+export WML_DTD_VERSION=1.3
 export WML_ENCODING_VERSION=1.3
 docker compose up -d --build kannel wml-server
 wait_for_http "${KANNEL_ADMIN_URL}"
@@ -94,6 +95,7 @@ export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
   echo "transport-profile: ${WAVES_FETCH_TRANSPORT_PROFILE}"
   echo "transport-fallback: ${WAVES_FETCH_TRANSPORT_FALLBACK}"
   echo "destination-policy: ${WAVES_FETCH_DESTINATION_POLICY}"
+  echo "wml-dtd-version: ${WML_DTD_VERSION}"
   echo "wml-encoding-version: ${WML_ENCODING_VERSION}"
 } >"${ARTIFACT_DIR}/environment.txt"
 

@@ -24,6 +24,7 @@ permissions:
 env:
   RUST_SHARED_KEY: wavenav-rust
   TRANSPORT_WAP_SMOKE_ARTIFACT_DIR: ${{ github.workspace }}/test-results/transport-wap-smoke
+  WML_DTD_VERSION: '1.3'
   WML_ENCODING_VERSION: '1.3'
 
 jobs:

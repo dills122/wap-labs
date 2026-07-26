@@ -3,7 +3,7 @@ use std::fmt::Write as _;
 
 pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.3.0";
 
-const WBXML_VERSION_1_3: u8 = 0x03;
+const SUPPORTED_WBXML_VERSIONS: &[u8] = &[0x01, 0x02, 0x03];
 const WML_1_3_PUBLIC_ID: u32 = 0x0a;
 const WML_1_3_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD WML 1.3//EN";
 const MAX_NESTING_DEPTH: usize = 128;
@@ -248,9 +248,9 @@ impl<'a> Decoder<'a> {
 
     fn decode_header(&mut self) -> Result<Header<'a>, String> {
         let version = self.read_byte("version")?;
-        if version != WBXML_VERSION_1_3 {
+        if !SUPPORTED_WBXML_VERSIONS.contains(&version) {
             return Err(format!(
-                "unsupported WBXML version byte 0x{version:02x}; expected 0x{WBXML_VERSION_1_3:02x}"
+                "unsupported WBXML version byte 0x{version:02x}; expected 0x01, 0x02, or 0x03"
             ));
         }
 
@@ -1022,6 +1022,25 @@ fn decode_error(detail: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn wml13_decoder_accepts_supported_wbxml_envelope_versions() {
+        for version in SUPPORTED_WBXML_VERSIONS {
+            let payload = [*version, WML_1_3_PUBLIC_ID as u8, 0x6a, 0x00, 0x3f];
+            assert_eq!(
+                decode_wml13(&payload, 1024).as_deref(),
+                Ok("<wml/>"),
+                "WBXML version byte 0x{version:02x}"
+            );
+        }
+    }
+
+    #[test]
+    fn wml13_decoder_rejects_unknown_wbxml_envelope_version() {
+        let error = decode_wml13(&[0x00, 0x0a, 0x6a, 0x00, 0x3f], 1024)
+            .expect_err("WBXML version 1.0 must remain unsupported");
+        assert!(error.contains("expected 0x01, 0x02, or 0x03"));
+    }
 
     #[test]
     fn wml13_registry_classifies_all_256_pages_per_code_space() {
