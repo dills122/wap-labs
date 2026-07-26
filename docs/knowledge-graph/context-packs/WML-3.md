@@ -50,6 +50,7 @@ Exit gates:
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -76,6 +77,7 @@ Evidence commands:
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-005`, `RQ-WAE-016`
 - Spec references: `WAP-191_104-WML sections 9.2, 9.4, 10.3 through 10.3.5, and 12.5.1, 12.5.2, and 12.5.4`
 - Follow-up work items: `WML-301`, `WML-304`, `WML-305`
+- Depends on: None
 
 Outputs:
 
@@ -106,6 +108,7 @@ Evidence commands:
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-012`, `RQ-WAE-016`
 - Spec references: `WAP-191_104-WML sections 9.2, 9.5, 9.6, 9.7, 9.10, 11.4, and 12.5`, `RQ-WAE-017 / WAP-236 section 7.11.2 (successor delta evidence only)`
 - Follow-up work items: `WML-302`, `WML-304`, `WML-305`
+- Depends on: None
 
 Outputs:
 
@@ -138,6 +141,7 @@ Evidence commands:
 - Requirements: `RQ-RMK-001`, `RQ-RMK-011`
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -165,6 +169,7 @@ Evidence commands:
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -191,6 +196,7 @@ Evidence commands:
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -217,6 +223,7 @@ Evidence commands:
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -244,6 +251,7 @@ Evidence commands:
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 

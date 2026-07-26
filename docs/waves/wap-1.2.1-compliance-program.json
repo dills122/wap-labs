@@ -1373,6 +1373,7 @@
           "status": "in-progress",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wsp", "general-formats"],
+          "explicitUnmappedFamilies": ["general-formats"],
           "existingTickets": ["T0-10", "T0-20"],
           "outputs": [
             "WSP header/assigned-number/encoding-version closure"

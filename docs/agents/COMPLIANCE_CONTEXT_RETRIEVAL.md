@@ -11,7 +11,7 @@ When beginning a compliance implementation slice that is not yet represented, fi
 
 Retrieve a pack before acting when a task:
 
-- names `WML-2` or one of `WML-201` through `WML-205`;
+- names a supported WML, transport, or WSP sprint/work-item target listed below;
 - changes behavior governed by the WAP 1.2.1 / WML 1.3 compatibility target;
 - evaluates whether implementation or tests satisfy a mapped normative obligation; or
 - updates the selected clauses, compliance program, source manifests, or graph projections.
@@ -29,12 +29,23 @@ node scripts/wap-context-pack.mjs WML-2
 ```
 
 For a selected transport implementation slice, use the supported focused work
-item target (`TRN-702`, `TRN-703`, `TRN-706`, `TRN-707`, or `TRN-708`), or `TRN-7` only for
+item target (`TRN-702`, `TRN-703`, `TRN-706`, `TRN-707`, `TRN-708`, or `TRN-710`), or `TRN-7` only for
 sprint-wide transport planning:
 
 ```sh
 node scripts/wap-context-pack.mjs TRN-703
 ```
+
+For the selected connectionless WSP lane, use `WSP-801` for the PDU, primitive, and method
+slice or `WSP-802` for header and encoding-version work. Use `WSP-8` only for sprint-wide WSP
+planning:
+
+```sh
+node scripts/wap-context-pack.mjs WSP-801
+```
+
+The WML-3 focused targets are `WML-302`, `WML-303`, and `WML-305`. Use `WML-3` only for
+sprint-wide runtime planning.
 
 ## Retrieval workflow
 

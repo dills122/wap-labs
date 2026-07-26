@@ -52,6 +52,7 @@ Exit gates:
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -79,6 +80,7 @@ Evidence commands:
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -111,6 +113,7 @@ Evidence commands:
 - Requirements: None
 - Spec references: None
 - Follow-up work items: `TRN-710`
+- Depends on: None
 
 Outputs:
 
@@ -140,6 +143,7 @@ Evidence commands:
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -165,6 +169,7 @@ Evidence commands:
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
+- Depends on: None
 
 Outputs:
 
@@ -190,6 +195,7 @@ Evidence commands:
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
 - Spec references: None
 - Follow-up work items: `TRN-704`, `TRN-705`
+- Depends on: None
 
 Outputs:
 
@@ -220,6 +226,7 @@ Evidence commands:
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
 - Spec references: None
 - Follow-up work items: `TRN-708`
+- Depends on: None
 
 Outputs:
 
@@ -256,6 +263,7 @@ Evidence commands:
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
 - Spec references: `WAP-202-WCMP section 5.3 (CDPD and other IP bearers use ICMP)`, `WAP-202-WCMP section 5.4 and 5.5 (general WCMP is the non-IP message branch)`, `WAP-202-WCMP Appendix A rows WCMP-C-001, WCMP-SP-C-001, and WCMP-SP-C-002`, `WAP-200 effective CDPD/IPv4 path rows WDP-CT-C-002 and WDP-NA-C-003`, `WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)`
 - Follow-up work items: None
+- Depends on: `TRN-703`, `T0-17`
 
 Outputs:
 
@@ -290,6 +298,7 @@ Evidence commands:
 - Requirements: None
 - Spec references: `WAP-202-WCMP sections 5.4 and 5.5 (general WCMP message format and behavior for non-IP networks)`, `WAP-202-WCMP Appendix A rows WCMP-C-001 and WCMP-SP-C-002`, `WAP-159-WDPWCMPAdapt effective non-IP bearer adaptation clauses`
 - Follow-up work items: None
+- Depends on: `TRN-703`, `T0-17`
 
 Outputs:
 

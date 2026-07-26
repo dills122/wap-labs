@@ -577,6 +577,9 @@ const wspSprint = program.sprints.find((sprint) => sprint.id === 'WSP-8');
 const wspMatrix = wspSprint?.workItems.find(
   (workItem) => workItem.id === 'WSP-801'
 );
+const wspHeaders = wspSprint?.workItems.find(
+  (workItem) => workItem.id === 'WSP-802'
+);
 const wspPost = wspSprint?.workItems.find(
   (workItem) => workItem.id === 'WSP-805'
 );
@@ -595,6 +598,8 @@ if (
   !wspMatrix?.evidence?.includes(
     'node scripts/check-wap-transport-conformance-ledgers.mjs'
   ) ||
+  JSON.stringify(wspHeaders?.explicitUnmappedFamilies) !==
+    JSON.stringify(['general-formats']) ||
   !wspPost?.acceptance?.some(
     (line) =>
       line.includes('connectionless WSP') &&
@@ -602,7 +607,7 @@ if (
   )
 ) {
   failures.push(
-    'WSP-8 must retain the exact connectionless Class C path and WTP capability gate'
+    'WSP-8 must retain the exact connectionless Class C path, general-formats mapping gap, and WTP capability gate'
   );
 }
 const integrationSprint = program.sprints.find((sprint) => sprint.id === 'INT-9');

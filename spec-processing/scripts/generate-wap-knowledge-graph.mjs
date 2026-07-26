@@ -37,6 +37,13 @@ export const TARGET_CONFIGS = {
     contextPackOutput: 'docs/knowledge-graph/context-packs/WML-3.md',
     vaultOutput: 'docs/knowledge-graph/vault-WML-3',
     title: 'WAP 1.2.1 WML-3 Knowledge Graph Slice'
+  },
+  'WSP-8': {
+    graphId: 'wap-1.2.1-wsp-8-slice',
+    graphOutput: 'spec-processing/source-manifests/wap-1.2.1-wsp-8-knowledge-graph.json',
+    contextPackOutput: 'docs/knowledge-graph/context-packs/WSP-8.md',
+    vaultOutput: 'docs/knowledge-graph/vault-WSP-8',
+    title: 'WAP 1.2.1 WSP-8 Knowledge Graph Slice'
   }
 };
 
@@ -970,6 +977,9 @@ export function renderContextPack(graph, focusWorkItemId = null) {
     }
 - Follow-up work items: ${
       workItem.properties.followUpWorkItems?.map((item) => `\`${item}\``).join(', ') || 'None'
+    }
+- Depends on: ${
+      workItem.properties.dependsOn?.map((item) => `\`${item}\``).join(', ') || 'None'
     }
 
 Outputs:
