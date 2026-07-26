@@ -223,13 +223,9 @@ struct QuotedDatagramMetadata {
 }
 
 fn require_len(input: &[u8], needed: usize) -> Result<(), Icmpv4DecodeError> {
-    if input.len() < needed {
-        return Err(Icmpv4DecodeError::Truncated {
-            needed,
-            actual: input.len(),
-        });
-    }
-    Ok(())
+    super::require_min_len(input, needed, |needed, actual| {
+        Icmpv4DecodeError::Truncated { needed, actual }
+    })
 }
 
 fn quoted_datagram_metadata(

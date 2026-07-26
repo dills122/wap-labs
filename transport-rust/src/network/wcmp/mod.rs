@@ -29,5 +29,19 @@ pub use profile::{
     WdpControlHandlingOutcome, WdpControlHandlingPolicy, WdpControlMessage, WdpControlProfile,
 };
 
+// Shared by `codec` and `icmpv4`, whose decoders each require a minimum
+// input length before reading fixed-width fields, only differing in which
+// `Truncated`-shaped error variant they report.
+pub(super) fn require_min_len<E>(
+    input: &[u8],
+    needed: usize,
+    truncated: impl FnOnce(usize, usize) -> E,
+) -> Result<(), E> {
+    if input.len() < needed {
+        return Err(truncated(needed, input.len()));
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests;
