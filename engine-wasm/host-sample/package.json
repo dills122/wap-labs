@@ -6,6 +6,8 @@
   "author": "Dylan Steele <dylansteele57@gmail.com>",
   "type": "module",
   "scripts": {
+    "contracts:generate": "cargo run --manifest-path ../engine/Cargo.toml --no-default-features --features contract-codegen --bin generate_contracts",
+    "contracts:check": "pnpm run contracts:generate && git diff --exit-code -- ../contracts/generated/runtime-dtos.ts",
     "examples:generate": "node ./scripts/generate-example-manifest.mjs",
     "examples:check": "node ./scripts/generate-example-manifest.mjs --check",
     "predev": "pnpm run examples:generate",

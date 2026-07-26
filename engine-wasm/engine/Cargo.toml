@@ -12,14 +12,22 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["wasm-bindings"]
 wasm-bindings = ["dep:serde-wasm-bindgen", "dep:wasm-bindgen"]
+contract-codegen = ["dep:ts-rs"]
 
 [dependencies]
 quick-xml = "0.41"
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = { version = "0.6", optional = true }
+ts-rs = { version = "12", features = ["serde-compat"], optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 url = "2"
 
 [dev-dependencies]
 js-sys = "0.3"
+serde_json = "1"
 wasm-bindgen-test = "0.3"
+
+[[bin]]
+name = "generate_contracts"
+path = "src/bin/generate_contracts.rs"
+required-features = ["contract-codegen"]

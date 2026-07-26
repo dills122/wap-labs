@@ -94,6 +94,7 @@ mod navigation_metadata;
 mod panic_containment;
 mod script_runtime;
 mod select_semantics;
+mod serialized_contracts;
 mod traces_public_api;
 mod wml_202_residual;
 mod wml_load_errors;
