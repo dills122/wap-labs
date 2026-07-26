@@ -64,6 +64,7 @@ Project planning links:
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
 - Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
 - User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
+- Public WAP lab and pre-release plan: `docs/waves/PUBLIC_WAP_LAB_PRERELEASE_PLAN.md`
 - Transport planning/checklist: `transport-rust/README.md`
 - Browser planning/checklist: `browser/README.md`
 
@@ -76,6 +77,11 @@ Canonical sprint priority rule:
    order.
 3. Section-level lists below are lane-local or dated context and must not
    override either authority.
+
+The public network-preview plan is a separate product/release lane. Its `PRE-*`, `INF-*`,
+`GW-*`, `LAB-*`, `PERF-*`, `OPS-*`, `DESK-*`, `QA-*`, and `REL-*` identifiers do not assert WAP
+compliance closure or change the dependency order in the machine-readable compliance program.
+Public exposure remains blocked on the plan's access, threat-model, and release gates.
 
 ## Next In Line (WAP Compliance Sync - 2026-07-25)
 

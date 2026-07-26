@@ -43,6 +43,7 @@
 - `waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`: ticketized execution board for frame/input interface migration
 - `waves/ENGINE_HOST_FRAME_WORK_ITEMS_ARCHIVE.md`: archived/historical frame migration tickets
 - `waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`: planning-ready first-run, help-hub, tutorial, and guided-tour design for Waves
+- `waves/PUBLIC_WAP_LAB_PRERELEASE_PLAN.md`: low-cost public Kannel/WML interoperability lab, Go origin migration, OpenTofu infrastructure, and desktop network-preview release gates
 - `waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`: HTTP/TCP/HTTPSM/WCMP transport-adjacent requirements and interoperability-boundary traceability
 - `waves/SECURITY_BOUNDARY_TRACEABILITY.md`: WTLS/TLS/end-to-end security traceability and Waves boundary policy mapping
 - `waves/SECURITY_PKI_SPEC_TRACEABILITY.md`: WAPCert/WPKI/WIM trust and PKI-profile boundary traceability
