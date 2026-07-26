@@ -17,8 +17,7 @@ mod test_support;
 mod wbxml;
 mod wbxml_decoder;
 pub mod wsp_capability;
-#[cfg(test)]
-mod wsp_connectionless_primitive_profile;
+pub mod wsp_connectionless_primitive_profile;
 pub mod wsp_registry;
 #[cfg(test)]
 mod wtp_replay_window;

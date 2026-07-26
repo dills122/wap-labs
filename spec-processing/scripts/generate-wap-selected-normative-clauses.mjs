@@ -36,6 +36,7 @@ const outputPath =
   option('--output') ??
   'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json';
 const refreshDirectWorkItems = args.includes('--refresh-direct-work-items');
+const refreshWsp801Evidence = args.includes('--refresh-wsp-801-evidence');
 const strictWcmpImplemented = true;
 const strictWcmpFixtureEvidence = {
   path: 'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json',
@@ -392,6 +393,43 @@ const implementedWml205ClauseIds = new Set(
 const implementedWml303ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-303')
 );
+const implementedWsp801ClauseIds = new Set([
+  'WSP-CL-COMMUNICATION-FAILURE-LOCAL',
+  'WSP-CL-CONNECTIONLESS-METHOD-FACILITY',
+  'WSP-CL-CONNECTIONLESS-NONCONFIRMED',
+  'WSP-CL-CONNECTIONLESS-TID-REQUIRED',
+  'WSP-CL-DEVICE-CONNECTIONLESS-MODE',
+  'WSP-CL-GET-PDU-LAYOUT',
+  'WSP-CL-GET-PDU-METHOD',
+  'WSP-CL-GET-URI-NO-NUL',
+  'WSP-CL-INTEGER-NETWORK-ORDER',
+  'WSP-CL-METHOD-BODY-CONSTRAINT',
+  'WSP-CL-METHOD-ERROR-BODY',
+  'WSP-CL-METHOD-HTTP-SEMANTICS',
+  'WSP-CL-METHOD-INVOKE-PARAMETERS',
+  'WSP-CL-METHOD-INVOKE-TRANSPARENCY',
+  'WSP-CL-METHOD-RESULT-HTTP-SEMANTICS',
+  'WSP-CL-METHOD-RESULT-PARAMETERS',
+  'WSP-CL-OUT-OF-BAND-PARAMETERS',
+  'WSP-CL-PDU-TYPE-DISPATCH',
+  'WSP-CL-PEER-INDICATION-DELIVERY',
+  'WSP-CL-POST-BODY-TO-SDU-END',
+  'WSP-CL-POST-CONTENT-TYPE',
+  'WSP-CL-POST-PDU-LAYOUT',
+  'WSP-CL-POST-PDU-METHOD',
+  'WSP-CL-POST-URI-NO-NUL',
+  'WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS',
+  'WSP-CL-REPLY-BODY-TO-SDU-END',
+  'WSP-CL-REPLY-CONTENT-TYPE',
+  'WSP-CL-REPLY-PDU-LAYOUT',
+  'WSP-CL-REPLY-STATUS-ASSIGNMENT',
+  'WSP-CL-SELECTED-PDU-ASSIGNMENTS',
+  'WSP-CL-TID-PEER-CORRELATION',
+  'WSP-CL-TRANSPORT-ERROR-IGNORED',
+  'WSP-CL-UNITDATA-DIRECT-MAPPING',
+  'WSP-CL-UNITDATA-RECEIVE-DISPATCH',
+  'WSP-CL-UNITDATA-SECURITY-EQUIVALENCE'
+]);
 const residualWml202ClauseIds = new Set([
   'WML-CL-ACCESS-ABSENT-ALLOWS',
   'WML-CL-ACCESS-COMPONENT-MATCH',
@@ -488,6 +526,13 @@ const wml303FixtureEvidence = {
   path: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   testPath: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
+};
+
+const wsp801FixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json',
+  testPath: 'transport-rust/tests/wsp_connectionless_matrix.rs',
+  command:
+    'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'
 };
 
 function directWorkItemsForClause(clauseId) {
@@ -642,6 +687,55 @@ function refreshManifestTotals(manifest) {
   };
 }
 
+if (refreshWsp801Evidence) {
+  const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+  const family = manifest.families.find((candidate) => candidate.family === 'wsp');
+  if (!family) {
+    throw new Error('wsp: selected normative-clause family is missing');
+  }
+  const parentLedgerText = fs.readFileSync(family.parentLedger, 'utf8');
+  const parentLedger = JSON.parse(parentLedgerText);
+  const parentById = new Map(
+    parentLedger.obligations.map((parent) => [parent.id, parent])
+  );
+  family.parentLedgerSha256 = sha256(parentLedgerText);
+  for (const parent of family.parents) {
+    const source = parentById.get(parent.id);
+    if (!source) {
+      throw new Error(`wsp/${parent.id}: missing parent ledger row`);
+    }
+    parent.implementationStatus = source.mapping.implementationStatus;
+    parent.ownerLayers = source.mapping.ownerLayers;
+    parent.workItems = source.mapping.workItems;
+  }
+  let refreshed = 0;
+  for (const candidate of family.clauses) {
+    candidate.mapping.parentImplementationSnapshot = Object.fromEntries(
+      candidate.parentRows.map((parentId) => [
+        parentId,
+        parentById.get(parentId).mapping.implementationStatus
+      ])
+    );
+    if (implementedWsp801ClauseIds.has(candidate.id)) {
+      candidate.fixturePlan.status = 'implemented';
+      candidate.fixturePlan.evidence = wsp801FixtureEvidence;
+      candidate.mapping.clauseImplementationStatus = 'implemented';
+      refreshed += 1;
+    }
+  }
+  if (refreshed !== implementedWsp801ClauseIds.size) {
+    throw new Error(
+      `wsp: expected ${implementedWsp801ClauseIds.size} WSP-801 clauses, refreshed ${refreshed}`
+    );
+  }
+  refreshManifestTotals(manifest);
+  fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  console.log(
+    `Refreshed ${refreshed} WSP-801 clause evidence mappings in ${outputPath}`
+  );
+  process.exit(0);
+}
+
 if (refreshDirectWorkItems) {
   const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
   refreshStrictWcmpFamily(manifest);
@@ -721,6 +815,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml303ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
+      } else if (implementedWsp801ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wsp801FixtureEvidence;
       } else if (
         candidate.family === 'wml' &&
         candidate.fixturePlan.evidence?.command === wml303FixtureEvidence.command
@@ -789,7 +886,8 @@ if (
       '--rfc-2616-text /absolute/path/rfc2616.txt ' +
       '--rfc-2617-text /absolute/path/rfc2617.txt ' +
       '--recorded-on YYYY-MM-DD [--output path], or ' +
-      '--refresh-direct-work-items [--output path]'
+      '--refresh-direct-work-items [--output path], or ' +
+      '--refresh-wsp-801-evidence [--output path]'
   );
   process.exit(2);
 }
@@ -1634,7 +1732,8 @@ function clause(
     implementedWml202ClauseIds.has(clauseId) ||
     implementedWml204ClauseIds.has(clauseId) ||
     implementedWml205ClauseIds.has(clauseId) ||
-    implementedWml303ClauseIds.has(clauseId);
+    implementedWml303ClauseIds.has(clauseId) ||
+    implementedWsp801ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -1654,6 +1753,8 @@ function clause(
       ? wml205FixtureEvidence(clauseId)
       : implementedWml303ClauseIds.has(clauseId)
       ? wml303FixtureEvidence
+      : implementedWsp801ClauseIds.has(clauseId)
+      ? wsp801FixtureEvidence
       : family === 'wbxml'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',

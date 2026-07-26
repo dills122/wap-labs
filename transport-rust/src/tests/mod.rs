@@ -8,10 +8,6 @@ pub(super) use super::{
         },
     },
     preflight_wbxml_decoder,
-    wsp_connectionless_primitive_profile::{
-        decide_wsp_primitive_transition, WspPrimitiveDecision, WspPrimitiveDirection,
-        WspPrimitiveProfile, WspPrimitiveProfileMode, WspPrimitiveState, WspServicePrimitive,
-    },
     wtp_replay_window::{
         decide_initiator_tid, decide_responder_tid, WtpDuplicateAssumption, WtpInitiatorPolicy,
         WtpInitiatorState, WtpInitiatorTidDecision, WtpReplayCacheMode, WtpResponderPolicy,
@@ -483,83 +479,6 @@ fn run_duplicate_cache_fixture_case(case: &WtpDuplicateCacheCase) {
             "case '{}' failed at event index {}",
             case.name, index
         );
-    }
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct WspPrimitiveProfileInput {
-    mode: String,
-    push_allowed: bool,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct WspPrimitiveStateInput {
-    awaiting_result: bool,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct WspPrimitiveCaseInput {
-    name: String,
-    state: WspPrimitiveStateInput,
-    primitive: String,
-    direction: String,
-    expected: String,
-    expected_awaiting_result: bool,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct WspPrimitiveProfileScenario {
-    name: String,
-    policy: WspPrimitiveProfileInput,
-    cases: Vec<WspPrimitiveCaseInput>,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct WspPrimitiveProfileFixture {
-    scenarios: Vec<WspPrimitiveProfileScenario>,
-}
-
-fn parse_wsp_primitive_profile_mode(value: &str) -> WspPrimitiveProfileMode {
-    match value {
-        "connection-oriented" => WspPrimitiveProfileMode::ConnectionOriented,
-        "connectionless" => WspPrimitiveProfileMode::Connectionless,
-        "both" => WspPrimitiveProfileMode::Both,
-        other => panic!("unknown WSP profile mode {other}"),
-    }
-}
-
-fn parse_primitive(value: &str) -> WspServicePrimitive {
-    match value {
-        "S-Unit-MethodInvoke" => WspServicePrimitive::MethodInvoke,
-        "S-Unit-MethodResult" => WspServicePrimitive::MethodResult,
-        "S-Unit-Push" => WspServicePrimitive::Push,
-        other => panic!("unknown WSP primitive {other}"),
-    }
-}
-
-fn parse_direction(value: &str) -> WspPrimitiveDirection {
-    match value {
-        "req" => WspPrimitiveDirection::Req,
-        "ind" => WspPrimitiveDirection::Ind,
-        "res" => WspPrimitiveDirection::Res,
-        "cnf" => WspPrimitiveDirection::Cnf,
-        other => panic!("unknown WSP primitive direction {other}"),
-    }
-}
-
-fn expect_wsp_primitive_decision(expected: &str) -> WspPrimitiveDecision {
-    match expected {
-        "accept" => WspPrimitiveDecision::Accept,
-        "reject-unsupported-mode" => WspPrimitiveDecision::RejectUnsupportedMode,
-        "reject-primitive" => WspPrimitiveDecision::RejectPrimitive,
-        "reject-direction" => WspPrimitiveDecision::RejectDirection,
-        "reject-sequence" => WspPrimitiveDecision::RejectSequence,
-        other => panic!("unknown WSP primitive decision {other}"),
     }
 }
 

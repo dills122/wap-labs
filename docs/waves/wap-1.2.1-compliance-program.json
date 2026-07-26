@@ -1352,20 +1352,23 @@
       "workItems": [
         {
           "id": "WSP-801",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wsp"],
           "existingTickets": ["T0-09", "T0-11", "T0-20"],
           "outputs": [
             "Effective WSP PDU, primitive, and method matrix",
+            "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
             "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
           ],
           "acceptance": [
-            "All 109 WSP rows retain exact source disposition and the eight-row selected connectionless path maps to implementation evidence or corrective work."
+            "All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents have direct executable evidence while WSP-CL-C-003 and WSP-CL-C-020 retain their explicit WSP-802 residuals."
           ],
           "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix",
             "cargo test --manifest-path transport-rust/Cargo.toml",
-            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+            "node scripts/check-wap-transport-conformance-ledgers.mjs",
+            "node scripts/wap-context-pack.mjs WSP-801"
           ]
         },
         {

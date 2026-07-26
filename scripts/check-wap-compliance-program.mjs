@@ -595,12 +595,18 @@ if (
   JSON.stringify(wspSprint?.dependsOn) !== JSON.stringify(['CONF-1', 'WAE-6']) ||
   JSON.stringify(wspSprint?.profileGateDependencies) !==
     JSON.stringify(['TRN-7-CL-C']) ||
-  wspMatrix?.status !== 'in-progress' ||
+  wspMatrix?.status !== 'done' ||
   !wspMatrix?.outputs?.includes(
     'spec-processing/source-manifests/wap-1.2.1-wsp-scr.json'
   ) ||
-  !wspMatrix?.acceptance?.some((line) =>
-    line.includes('eight-row selected connectionless path')
+  !wspMatrix?.acceptance?.some(
+    (line) =>
+      line.includes('35 WSP-801 clauses') &&
+      line.includes('seven selected parents') &&
+      line.includes('WSP-802 residuals')
+  ) ||
+  !wspMatrix?.evidence?.includes(
+    'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'
   ) ||
   !wspMatrix?.evidence?.includes(
     'node scripts/check-wap-transport-conformance-ledgers.mjs'

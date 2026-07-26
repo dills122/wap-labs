@@ -16,6 +16,11 @@ const externalIngestion = readJson(
 );
 const effectiveSpec = readJson(path.join(manifestDirectory, 'wap-1.2.1-effective-spec.json'));
 const classConformance = readJson(path.join(manifestDirectory, 'wap-1.2.1-class-conformance.json'));
+const wsp801FixturePath =
+  'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json';
+const wsp801TestPath = 'transport-rust/tests/wsp_connectionless_matrix.rs';
+const wsp801Fixture = readJson(path.join(root, wsp801FixturePath));
+const implementedWsp801ClauseIds = new Set(wsp801Fixture.clauseIds ?? []);
 
 function readJson(filename) {
   return JSON.parse(fs.readFileSync(filename, 'utf8'));
@@ -634,7 +639,8 @@ for (const family of ledger.families ?? []) {
       candidate.family === 'wdp' ||
       (candidate.family === 'wbxml' &&
         !deferredWbxmlClauseIds.has(candidate.id)) ||
-      implementedWmlClauseIds.has(candidate.id));
+      implementedWmlClauseIds.has(candidate.id) ||
+      implementedWsp801ClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -685,7 +691,14 @@ for (const family of ledger.families ?? []) {
             candidate.id === 'WML-CL-TASK-FAILURE-ATOMICITY'
               ? 'pnpm test:story WML-205'
               : 'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
-          )))
+          ))) ||
+      (implementedWsp801ClauseIds.has(candidate.id) &&
+        (implementedWsp801ClauseIds.size !== 35 ||
+          candidate.fixturePlan.evidence?.path !== wsp801FixturePath ||
+          candidate.fixturePlan.evidence?.testPath !== wsp801TestPath ||
+          !fs.existsSync(path.join(root, wsp801TestPath)) ||
+          candidate.fixturePlan.evidence?.command !==
+            'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }

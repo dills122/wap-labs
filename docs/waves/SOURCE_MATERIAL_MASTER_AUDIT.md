@@ -161,7 +161,7 @@ Cross-source selected-profile accounting is now executable:
 - 712 effective SCR/source rows across the nine mandatory feature families;
 - 198 rows selected by the exact Class C client profile and transport
   dependency path;
-- 24 implemented, 76 partial, and 98 missing in the conservative
+- 30 implemented, 70 partial, and 98 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
 - all 198 selected rows now expand into 762 deduplicated nested clauses with

@@ -150,8 +150,8 @@ Immediate safety prerequisite, outside the deferred crypto implementation:
 - `WTLS-00` insecure-test labeling and release gating are not blocked on Phase D and should land
   with the native browser foundation.
 - Completed `T0-*` implementation lanes are provisional evidence. Exact
-  strict-profile closure is tracked by `TRN-701`, `TRN-702`, `TRN-703`, and
-  `WSP-801`/`802`/`804`/`805`.
+  strict-profile closure is tracked by `TRN-701`, `TRN-702`, `TRN-703`, the
+  completed `WSP-801` matrix, and residual `WSP-802`/`804`/`805` work.
 
 ## Dependency Guidance
 

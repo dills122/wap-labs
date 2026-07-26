@@ -112,7 +112,7 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 76 partial and 98 missing parent rows;
+1. close or correct the 70 partial and 98 missing parent rows;
 2. implement and assess the remaining 554 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;

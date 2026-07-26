@@ -1,12 +1,11 @@
 //! Connectionless (session-less) WSP framing used by the live native fetch path.
 //!
-//! WAP-230-WSP defines two framings for the same PDU set. The
-//! connection-oriented framing modelled by [`crate::network::wsp::pdu`] carries
-//! no transaction id and length-prefixes its blocks with a single octet. The
-//! connectionless framing used over WDP/UDP — the one the `wap-net-core`
-//! transport profile actually speaks to the gateway — prefixes every PDU with a
-//! transaction id and length-prefixes the request URI and header section with
-//! `uintvar` values, and encodes reply status as a single assigned-number octet.
+//! The effective WAP-203 connectionless framing used over WDP/UDP — the one the
+//! `wap-net-core` transport profile actually speaks to the gateway — prefixes
+//! every selected PDU with a transaction id, length-prefixes the request URI and
+//! header section with `uintvar` values, and encodes reply status as a single
+//! assigned-number octet. The effective source order is WAP-203-WSP followed by
+//! SINs 001, 003, and 005.
 //!
 //! The two framings are therefore not byte-compatible, which is why this module
 //! exists instead of `native_fetch.rs` calling [`crate::network::wsp::pdu::encode_wsp_pdu`]
@@ -24,7 +23,7 @@ use crate::network::wsp::header_registry::{
 
 /// High bit marking a well-known (binary) WSP field name or short-integer value.
 const WELL_KNOWN_MARKER: u8 = 0x80;
-/// Largest value representable by the five-octet `uintvar` form (WAP-230-WSP
+/// Largest value representable by the five-octet `uintvar` form (WAP-203-WSP
 /// caps `uintvar` at 32 bits; 5 octets of 7 bits each provide 35 bits of
 /// capacity, so the full 32-bit range fits).
 const MAX_UINTVAR_VALUE: usize = 0xFFFF_FFFF;
@@ -50,7 +49,7 @@ const WELL_KNOWN_MEDIA_TYPES: &[(u8, &str)] = &[
 const MEDIA_VALUED_HEADER_NAMES: &[&str] = &["Accept", "Content-Type"];
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum WspConnectionlessMethod {
+pub enum WspConnectionlessMethod {
     Get,
     Post,
 }
@@ -61,13 +60,6 @@ impl WspConnectionlessMethod {
             "GET" => Some(Self::Get),
             "POST" => Some(Self::Post),
             _ => None,
-        }
-    }
-
-    fn pdu_type_name(self) -> &'static str {
-        match self {
-            Self::Get => "Get",
-            Self::Post => "Post",
         }
     }
 }
@@ -85,36 +77,99 @@ pub(crate) struct WspConnectionlessRequest<'a> {
 pub(crate) struct WspConnectionlessReply {
     pub(crate) status_code: u16,
     pub(crate) content_type: String,
+    pub(crate) headers: Vec<u8>,
     pub(crate) body: Vec<u8>,
+}
+
+/// Effective WAP-203 connectionless PDU shapes selected by the Class C client
+/// profile. Header bytes remain opaque here so WSP-801 can preserve their exact
+/// order and contents without claiming the WSP-802 registry and encoding-version
+/// closure.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum WspConnectionlessPdu {
+    Get {
+        transaction_id: u8,
+        uri: String,
+        headers: Vec<u8>,
+    },
+    Post {
+        transaction_id: u8,
+        uri: String,
+        content_type: DecodedWspContentType,
+        headers: Vec<u8>,
+        body: Vec<u8>,
+    },
+    Reply {
+        transaction_id: u8,
+        status_code: u16,
+        content_type: DecodedWspContentType,
+        headers: Vec<u8>,
+        body: Vec<u8>,
+    },
+}
+
+impl WspConnectionlessPdu {
+    pub fn transaction_id(&self) -> u8 {
+        match self {
+            Self::Get { transaction_id, .. }
+            | Self::Post { transaction_id, .. }
+            | Self::Reply { transaction_id, .. } => *transaction_id,
+        }
+    }
 }
 
 /// A decoded WSP Content-Type value plus the carrying-protocol charset metadata.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct DecodedWspContentType {
+pub struct DecodedWspContentType {
     media_type: String,
     charset: Option<String>,
     consumed_bytes: usize,
+    encoded: Vec<u8>,
 }
 
 impl DecodedWspContentType {
-    fn new(media_type: String, charset: Option<String>, consumed_bytes: usize) -> Self {
+    fn new(
+        media_type: String,
+        charset: Option<String>,
+        consumed_bytes: usize,
+        encoded: Vec<u8>,
+    ) -> Self {
         Self {
             media_type,
             charset,
             consumed_bytes,
+            encoded,
         }
     }
 
-    pub(crate) fn media_type(&self) -> &str {
+    pub fn from_text(media_type: &str) -> Result<Self, WspConnectionlessEncodeError> {
+        let media_type = media_type.trim();
+        if media_type.is_empty() {
+            return Err(WspConnectionlessEncodeError::MissingPostContentType);
+        }
+        let encoded = encode_content_type_field(Some(media_type))?;
+        Ok(Self::new(
+            media_type.to_string(),
+            None,
+            encoded.len(),
+            encoded,
+        ))
+    }
+
+    pub fn media_type(&self) -> &str {
         &self.media_type
     }
 
-    pub(crate) fn charset(&self) -> Option<&str> {
+    pub fn charset(&self) -> Option<&str> {
         self.charset.as_deref()
     }
 
-    pub(crate) fn consumed_bytes(&self) -> usize {
+    pub fn consumed_bytes(&self) -> usize {
         self.consumed_bytes
+    }
+
+    pub fn encoded(&self) -> &[u8] {
+        &self.encoded
     }
 
     fn as_mime_value(&self) -> String {
@@ -156,9 +211,13 @@ impl DecodedWspText {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) enum WspConnectionlessEncodeError {
+pub enum WspConnectionlessEncodeError {
     UnassignedPduType(&'static str),
     ContentTypeContainsNul,
+    MissingPostContentType,
+    GetBodyNotAllowed,
+    UriContainsNul,
+    UnsupportedStatusCode(u16),
     LengthExceedsUintvarRange(usize),
 }
 
@@ -168,6 +227,18 @@ impl std::fmt::Display for WspConnectionlessEncodeError {
             Self::UnassignedPduType(name) => write!(f, "unassigned WSP PDU type: {name}"),
             Self::ContentTypeContainsNul => {
                 write!(f, "native WSP POST content type must not contain NUL bytes")
+            }
+            Self::MissingPostContentType => {
+                write!(f, "native WSP POST requires a Content-Type field")
+            }
+            Self::GetBodyNotAllowed => {
+                write!(f, "native WSP GET must not carry a request body")
+            }
+            Self::UriContainsNul => {
+                write!(f, "native WSP request URI must not contain NUL bytes")
+            }
+            Self::UnsupportedStatusCode(status) => {
+                write!(f, "unsupported native WSP HTTP status code: {status}")
             }
             Self::LengthExceedsUintvarRange(value) => {
                 write!(f, "value too large for uintvar encoding: {value}")
@@ -179,13 +250,17 @@ impl std::fmt::Display for WspConnectionlessEncodeError {
 impl std::error::Error for WspConnectionlessEncodeError {}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) enum WspConnectionlessDecodeError {
+pub enum WspConnectionlessDecodeError {
     MissingTransactionId,
     TransactionIdMismatch { expected: u8, actual: u8 },
     MissingPduType,
     UnexpectedPduType(u8),
     MissingStatus,
     TruncatedUintvar,
+    UintvarOverflow,
+    TruncatedUri,
+    UriContainsNul,
+    InvalidUriUtf8(String),
     TruncatedHeaderSection,
     MissingContentType,
     TruncatedContentType,
@@ -214,6 +289,14 @@ impl std::fmt::Display for WspConnectionlessDecodeError {
             ),
             Self::MissingStatus => write!(f, "truncated native WSP reply: missing status"),
             Self::TruncatedUintvar => write!(f, "truncated uintvar"),
+            Self::UintvarOverflow => write!(f, "uintvar exceeds the 32-bit WSP range"),
+            Self::TruncatedUri => write!(f, "truncated native WSP request URI"),
+            Self::UriContainsNul => {
+                write!(f, "native WSP request URI contains a forbidden NUL byte")
+            }
+            Self::InvalidUriUtf8(error) => {
+                write!(f, "invalid utf-8 in native WSP request URI: {error}")
+            }
             Self::TruncatedHeaderSection => {
                 write!(f, "truncated native WSP reply: headers section incomplete")
             }
@@ -251,39 +334,214 @@ impl std::error::Error for WspConnectionlessDecodeError {}
 pub(crate) fn encode_connectionless_request(
     request: &WspConnectionlessRequest<'_>,
 ) -> Result<Vec<u8>, WspConnectionlessEncodeError> {
-    let pdu_type = encode_pdu_type(request.method.pdu_type_name()).ok_or(
-        WspConnectionlessEncodeError::UnassignedPduType(request.method.pdu_type_name()),
-    )?;
-    let uri_bytes = request.uri.as_bytes();
-    let encoded_headers = encode_connectionless_header_block(request.headers);
-    let encoded_content_type = encode_content_type_field(request.content_type)?;
-
-    let mut wire = Vec::with_capacity(
-        uri_bytes.len()
-            + encoded_content_type.len()
-            + encoded_headers.len()
-            + request.body.len()
-            + 12,
-    );
-    wire.push(request.transaction_id);
-    wire.push(pdu_type);
-    match request.method {
-        WspConnectionlessMethod::Get => {
-            wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
-            wire.extend_from_slice(uri_bytes);
-            wire.extend_from_slice(&encoded_headers);
-        }
-        WspConnectionlessMethod::Post => {
-            let headers_len = encoded_content_type.len() + encoded_headers.len();
-            wire.extend_from_slice(&encode_uintvar(uri_bytes.len())?);
-            wire.extend_from_slice(&encode_uintvar(headers_len)?);
-            wire.extend_from_slice(uri_bytes);
-            wire.extend_from_slice(&encoded_content_type);
-            wire.extend_from_slice(&encoded_headers);
-            wire.extend_from_slice(request.body);
-        }
+    if request.uri.as_bytes().contains(&0x00) {
+        return Err(WspConnectionlessEncodeError::UriContainsNul);
     }
+    if request.method == WspConnectionlessMethod::Get && !request.body.is_empty() {
+        return Err(WspConnectionlessEncodeError::GetBodyNotAllowed);
+    }
+    let encoded_headers = encode_connectionless_header_block(request.headers);
+    let pdu = match request.method {
+        WspConnectionlessMethod::Get => WspConnectionlessPdu::Get {
+            transaction_id: request.transaction_id,
+            uri: request.uri.to_string(),
+            headers: encoded_headers,
+        },
+        WspConnectionlessMethod::Post => WspConnectionlessPdu::Post {
+            transaction_id: request.transaction_id,
+            uri: request.uri.to_string(),
+            content_type: DecodedWspContentType::from_text(
+                request
+                    .content_type
+                    .ok_or(WspConnectionlessEncodeError::MissingPostContentType)?,
+            )?,
+            headers: encoded_headers,
+            body: request.body.to_vec(),
+        },
+    };
+    encode_connectionless_pdu(&pdu)
+}
+
+/// Encodes one selected WAP-203 connectionless PDU. Each call produces exactly
+/// one WSP service-data unit; no connectionless session state is consulted.
+pub fn encode_connectionless_pdu(
+    pdu: &WspConnectionlessPdu,
+) -> Result<Vec<u8>, WspConnectionlessEncodeError> {
+    let (transaction_id, pdu_name, uri, content_type, headers, body, status_code) = match pdu {
+        WspConnectionlessPdu::Get {
+            transaction_id,
+            uri,
+            headers,
+        } => (
+            *transaction_id,
+            "Get",
+            Some(uri),
+            None,
+            headers,
+            &[][..],
+            None,
+        ),
+        WspConnectionlessPdu::Post {
+            transaction_id,
+            uri,
+            content_type,
+            headers,
+            body,
+        } => (
+            *transaction_id,
+            "Post",
+            Some(uri),
+            Some(content_type),
+            headers,
+            body.as_slice(),
+            None,
+        ),
+        WspConnectionlessPdu::Reply {
+            transaction_id,
+            status_code,
+            content_type,
+            headers,
+            body,
+        } => (
+            *transaction_id,
+            REPLY_PDU_TYPE_NAME,
+            None,
+            Some(content_type),
+            headers,
+            body.as_slice(),
+            Some(*status_code),
+        ),
+    };
+    let pdu_type = encode_pdu_type(pdu_name)
+        .ok_or(WspConnectionlessEncodeError::UnassignedPduType(pdu_name))?;
+    let mut wire = Vec::new();
+    wire.push(transaction_id);
+    wire.push(pdu_type);
+
+    if let Some(uri) = uri {
+        if uri.as_bytes().contains(&0x00) {
+            return Err(WspConnectionlessEncodeError::UriContainsNul);
+        }
+        wire.extend_from_slice(&encode_uintvar(uri.len())?);
+        if content_type.is_some() {
+            let header_length = content_type
+                .map(|value| value.encoded().len())
+                .unwrap_or_default()
+                .checked_add(headers.len())
+                .ok_or(WspConnectionlessEncodeError::LengthExceedsUintvarRange(
+                    usize::MAX,
+                ))?;
+            wire.extend_from_slice(&encode_uintvar(header_length)?);
+        }
+        wire.extend_from_slice(uri.as_bytes());
+    }
+
+    if let Some(status_code) = status_code {
+        wire.push(encode_wsp_status_code(status_code)?);
+        let header_length = content_type
+            .map(|value| value.encoded().len())
+            .unwrap_or_default()
+            .checked_add(headers.len())
+            .ok_or(WspConnectionlessEncodeError::LengthExceedsUintvarRange(
+                usize::MAX,
+            ))?;
+        wire.extend_from_slice(&encode_uintvar(header_length)?);
+    }
+    if let Some(content_type) = content_type {
+        wire.extend_from_slice(content_type.encoded());
+    }
+    wire.extend_from_slice(headers);
+    wire.extend_from_slice(body);
     Ok(wire)
+}
+
+/// Decodes one selected WAP-203 connectionless PDU while preserving optional
+/// header bytes exactly for the later WSP-802 header closure.
+pub fn decode_connectionless_pdu(
+    payload: &[u8],
+) -> Result<WspConnectionlessPdu, WspConnectionlessDecodeError> {
+    let Some((&transaction_id, body)) = payload.split_first() else {
+        return Err(WspConnectionlessDecodeError::MissingTransactionId);
+    };
+    let Some((&pdu_type, body)) = body.split_first() else {
+        return Err(WspConnectionlessDecodeError::MissingPduType);
+    };
+    let decoded_pdu_type = decode_pdu_type(pdu_type, WspAssignedNumberPolicy::STRICT)
+        .ok()
+        .flatten()
+        .ok_or(WspConnectionlessDecodeError::UnexpectedPduType(pdu_type))?;
+
+    match decoded_pdu_type {
+        "Get" => {
+            let (uri, headers) = decode_request_uri(body)?;
+            Ok(WspConnectionlessPdu::Get {
+                transaction_id,
+                uri,
+                headers: headers.to_vec(),
+            })
+        }
+        "Post" => {
+            let (uri_len, body) = decode_uintvar(body)?;
+            let (headers_len, body) = decode_uintvar(body)?;
+            let total_prefix = uri_len
+                .checked_add(headers_len)
+                .ok_or(WspConnectionlessDecodeError::TruncatedHeaderSection)?;
+            if body.len() < total_prefix {
+                return Err(if body.len() < uri_len {
+                    WspConnectionlessDecodeError::TruncatedUri
+                } else {
+                    WspConnectionlessDecodeError::TruncatedHeaderSection
+                });
+            }
+            let uri = decode_uri(&body[..uri_len])?;
+            let header_section = &body[uri_len..total_prefix];
+            let content_type = decode_content_type_value(header_section)?;
+            let headers = header_section[content_type.consumed_bytes()..].to_vec();
+            Ok(WspConnectionlessPdu::Post {
+                transaction_id,
+                uri,
+                content_type,
+                headers,
+                body: body[total_prefix..].to_vec(),
+            })
+        }
+        REPLY_PDU_TYPE_NAME => {
+            let Some((&status, body)) = body.split_first() else {
+                return Err(WspConnectionlessDecodeError::MissingStatus);
+            };
+            let (headers_len, body) = decode_uintvar(body)?;
+            if body.len() < headers_len {
+                return Err(WspConnectionlessDecodeError::TruncatedHeaderSection);
+            }
+            let (header_section, data) = body.split_at(headers_len);
+            let content_type = decode_content_type_value(header_section)?;
+            let headers = header_section[content_type.consumed_bytes()..].to_vec();
+            Ok(WspConnectionlessPdu::Reply {
+                transaction_id,
+                status_code: decode_wsp_status_code(status)?,
+                content_type,
+                headers,
+                body: data.to_vec(),
+            })
+        }
+        _ => Err(WspConnectionlessDecodeError::UnexpectedPduType(pdu_type)),
+    }
+}
+
+fn decode_request_uri(input: &[u8]) -> Result<(String, &[u8]), WspConnectionlessDecodeError> {
+    let (uri_len, body) = decode_uintvar(input)?;
+    if body.len() < uri_len {
+        return Err(WspConnectionlessDecodeError::TruncatedUri);
+    }
+    Ok((decode_uri(&body[..uri_len])?, &body[uri_len..]))
+}
+
+fn decode_uri(uri: &[u8]) -> Result<String, WspConnectionlessDecodeError> {
+    if uri.contains(&0x00) {
+        return Err(WspConnectionlessDecodeError::UriContainsNul);
+    }
+    String::from_utf8(uri.to_vec())
+        .map_err(|error| WspConnectionlessDecodeError::InvalidUriUtf8(error.to_string()))
 }
 
 /// Decodes a connectionless WSP `Reply` PDU addressed to `expected_transaction_id`.
@@ -295,44 +553,40 @@ pub(crate) fn decode_connectionless_reply(
     expected_transaction_id: u8,
     payload: &[u8],
 ) -> Result<WspConnectionlessReply, WspConnectionlessDecodeError> {
-    let Some((&transaction_id, body)) = payload.split_first() else {
-        return Err(WspConnectionlessDecodeError::MissingTransactionId);
-    };
+    if let Some(pdu_type) = payload.get(1).copied() {
+        if decode_pdu_type(pdu_type, WspAssignedNumberPolicy::STRICT)
+            .ok()
+            .flatten()
+            != Some(REPLY_PDU_TYPE_NAME)
+        {
+            return Err(WspConnectionlessDecodeError::UnexpectedPduType(pdu_type));
+        }
+    }
+    let pdu = decode_connectionless_pdu(payload)?;
+    let transaction_id = pdu.transaction_id();
     if transaction_id != expected_transaction_id {
         return Err(WspConnectionlessDecodeError::TransactionIdMismatch {
             expected: expected_transaction_id,
             actual: transaction_id,
         });
     }
-
-    let Some((&pdu_type, body)) = body.split_first() else {
-        return Err(WspConnectionlessDecodeError::MissingPduType);
-    };
-    let decoded_pdu_type = decode_pdu_type(pdu_type, WspAssignedNumberPolicy::STRICT)
-        .ok()
-        .flatten();
-    if decoded_pdu_type != Some(REPLY_PDU_TYPE_NAME) {
-        return Err(WspConnectionlessDecodeError::UnexpectedPduType(pdu_type));
+    match pdu {
+        WspConnectionlessPdu::Reply {
+            status_code,
+            content_type,
+            headers,
+            body,
+            ..
+        } => Ok(WspConnectionlessReply {
+            status_code,
+            content_type: content_type.as_mime_value(),
+            headers,
+            body,
+        }),
+        _ => Err(WspConnectionlessDecodeError::UnexpectedPduType(
+            payload.get(1).copied().unwrap_or_default(),
+        )),
     }
-
-    let Some((&status, body)) = body.split_first() else {
-        return Err(WspConnectionlessDecodeError::MissingStatus);
-    };
-    let (headers_len, body) = decode_uintvar(body)?;
-    if body.len() < headers_len {
-        return Err(WspConnectionlessDecodeError::TruncatedHeaderSection);
-    }
-    let (header_section, data) = body.split_at(headers_len);
-    let content_type = decode_content_type_value(header_section)?;
-    if content_type.consumed_bytes() > header_section.len() {
-        return Err(WspConnectionlessDecodeError::ContentTypeOverrunsHeaderSection);
-    }
-
-    Ok(WspConnectionlessReply {
-        status_code: decode_wsp_status_code(status)?,
-        content_type: content_type.as_mime_value(),
-        body: data.to_vec(),
-    })
 }
 
 /// Encodes a header block in the binary connectionless form.
@@ -436,17 +690,20 @@ pub(crate) fn encode_uintvar(value: usize) -> Result<Vec<u8>, WspConnectionlessE
 }
 
 pub(crate) fn decode_uintvar(input: &[u8]) -> Result<(usize, &[u8]), WspConnectionlessDecodeError> {
-    let mut value = 0usize;
+    let mut value = 0u64;
     for (index, byte) in input.iter().copied().enumerate().take(5) {
-        value = (value << 7) | usize::from(byte & 0x7F);
+        value = (value << 7) | u64::from(byte & 0x7F);
+        if value > u64::from(u32::MAX) {
+            return Err(WspConnectionlessDecodeError::UintvarOverflow);
+        }
         if byte & WELL_KNOWN_MARKER == 0 {
-            return Ok((value, &input[index + 1..]));
+            return Ok((value as usize, &input[index + 1..]));
         }
     }
     Err(WspConnectionlessDecodeError::TruncatedUintvar)
 }
 
-pub(crate) fn decode_content_type_value(
+pub fn decode_content_type_value(
     input: &[u8],
 ) -> Result<DecodedWspContentType, WspConnectionlessDecodeError> {
     let Some((&first, _)) = input.split_first() else {
@@ -457,7 +714,12 @@ pub(crate) fn decode_content_type_value(
         let media = well_known_media_name(code).ok_or(
             WspConnectionlessDecodeError::UnsupportedWellKnownMedia(code),
         )?;
-        return Ok(DecodedWspContentType::new(media.to_string(), None, 1));
+        return Ok(DecodedWspContentType::new(
+            media.to_string(),
+            None,
+            1,
+            input[..1].to_vec(),
+        ));
     }
     if first <= LENGTH_QUOTE {
         let (length, prefix_length) = if first <= MAX_SHORT_LENGTH {
@@ -477,6 +739,7 @@ pub(crate) fn decode_content_type_value(
             media_type,
             charset,
             prefix_length + length,
+            input[..prefix_length + length].to_vec(),
         ));
     }
     let media = decode_text_string(input)?;
@@ -484,6 +747,7 @@ pub(crate) fn decode_content_type_value(
         media.text().to_string(),
         None,
         media.consumed_bytes(),
+        input[..media.consumed_bytes()].to_vec(),
     ))
 }
 
@@ -560,7 +824,7 @@ pub(crate) fn decode_text_string(
     Ok(DecodedWspText::new(text, terminator + 1))
 }
 
-pub(crate) fn decode_wsp_status_code(status: u8) -> Result<u16, WspConnectionlessDecodeError> {
+pub fn decode_wsp_status_code(status: u8) -> Result<u16, WspConnectionlessDecodeError> {
     match status {
         0x10 => Ok(100),
         0x11 => Ok(101),
@@ -569,6 +833,17 @@ pub(crate) fn decode_wsp_status_code(status: u8) -> Result<u16, WspConnectionles
         0x40..=0x51 => Ok(400 + u16::from(status - 0x40)),
         0x60..=0x65 => Ok(500 + u16::from(status - 0x60)),
         _ => Err(WspConnectionlessDecodeError::UnsupportedStatusCode(status)),
+    }
+}
+
+pub fn encode_wsp_status_code(status: u16) -> Result<u8, WspConnectionlessEncodeError> {
+    match status {
+        100..=101 => Ok(0x10 + (status - 100) as u8),
+        200..=206 => Ok(0x20 + (status - 200) as u8),
+        300..=307 => Ok(0x30 + (status - 300) as u8),
+        400..=417 => Ok(0x40 + (status - 400) as u8),
+        500..=505 => Ok(0x60 + (status - 500) as u8),
+        _ => Err(WspConnectionlessEncodeError::UnsupportedStatusCode(status)),
     }
 }
 

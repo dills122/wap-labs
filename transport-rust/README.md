@@ -86,9 +86,9 @@ When `FetchDeckResponse.ok === false`:
    document-family gates remain open.
 2. Keep the completed selected-WDP replay boundary for `TRN-706` distinct from
    the work item's conditional WTP family gap.
-3. Keep WTP inactive unless connection-oriented WSP is explicitly claimed;
-   treat `WSP-801`/`WSP-802` as downstream foundation work and `M1-03` as a
-   non-priority follow-up.
+3. Keep the completed WSP-801 connectionless matrix distinct from WSP-802's
+   header registry, Encoding-Version, code-page, and unknown/fallback closure;
+   keep WTP inactive unless connection-oriented WSP is explicitly claimed.
 
 ## Current checklist (planning/execution)
 

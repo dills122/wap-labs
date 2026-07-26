@@ -44,7 +44,7 @@ tags:
     "documentId": "WAP-203_003-WSP",
     "staticConformanceSection": "Appendix D"
   },
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "ownerLayers": [
     "transport-rust"
   ],

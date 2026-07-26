@@ -192,8 +192,9 @@ Expected sprint outcome:
 - The strict profile is native WDP/UDP -> connectionless WSP with selected
   WCMP behavior; connection-oriented WSP/WTP is conditional extension scope.
 - `TRN-701`, `TRN-702`, and `TRN-703` now directly evidence the selected WDP,
-  constrained-payload, and WCMP slices. Exact connectionless WSP closure
-  remains open under `WSP-801`/`802`/`804`/`805`.
+  constrained-payload, and WCMP slices. `WSP-801` directly closes the
+  connectionless PDU/primitive matrix; header/version and ingress closure
+  remains under `WSP-802`/`804`/`805`.
 
 ### Rerun delta check (remaining 35-file wave)
 

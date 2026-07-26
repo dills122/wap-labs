@@ -103,8 +103,9 @@ Current priority order is:
 5. Preserve completed `WML-302` variable/substitution and `WML-303`
    action/event/BACK evidence and advance the unlocked engine baton through
    `WML-305`; treat
-   `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
-   until `TRN-7` and `WAE-6` close. Preserve the completed `D0-01` contract
+   completed `WSP-801` as the connectionless PDU/primitive foundation and
+   keep `WSP-802` as its header/version follow-on while `WSP-8` remains behind
+   `WAE-6`. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -243,12 +244,13 @@ Source-ledger reconciliation:
 1. The exact WAP-200/WAP-202/WAP-203 row authority is
    `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
    manifests. The selected connectionless Class C path is 19 rows with an
-   audit of 11 implemented / 8 partial / 0 missing and 11/19 direct normative
+   audit of 17 implemented / 2 partial / 0 missing and 18/19 direct normative
    tests. The nine selected WDP rows are fixture-backed under `TRN-701`, the
    adopted constrained-payload policy is closed under `TRN-702`, the five-row
    general-WCMP branch is preserved as a non-IP capability under `TRN-703`,
-   and both selected ICMP-backed WCMP rows are fixture-backed under `TRN-708`; WSP direct
-   normative evidence remains open.
+   and both selected ICMP-backed WCMP rows are fixture-backed under `TRN-708`;
+   WSP-801 directly evidences seven selected WSP parents, with WSP-802 residuals
+   preserving the two partial rows.
 2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
    reopened. Their existing evidence remains useful but provisional against
    the exact target-era rows.
