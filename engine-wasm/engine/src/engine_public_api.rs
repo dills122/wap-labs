@@ -179,7 +179,7 @@ impl WmlEngine {
         let card = self.active_card_internal()?;
         let mut runtime_card = card.clone();
         if let Some(edit) = &self.active_input_edit {
-            self.apply_input_value_to_card(&mut runtime_card, &edit.input_name, &edit.draft_value);
+            self.apply_input_value_to_card(&mut runtime_card, &edit.control_id, &edit.draft_value);
         }
         if let Some(edit) = &self.active_select_edit {
             self.apply_select_index_to_card(&mut runtime_card, &edit.select_name, edit.draft_index);
@@ -244,14 +244,14 @@ impl WmlEngine {
 
     /// Replace edit-session draft value for the focused input.
     pub fn set_focused_input_edit_draft(&mut self, value: String) -> bool {
-        let Some(input_name) = self
+        let Some(control_id) = self
             .active_input_edit
             .as_ref()
-            .map(|edit| edit.input_name.clone())
+            .map(|edit| edit.control_id.clone())
         else {
             return false;
         };
-        let max_len = self.input_max_len_on_active_card(&input_name);
+        let max_len = self.input_max_len_on_active_card(&control_id);
         let draft = truncate_to_chars(&value, max_len);
         if let Some(edit) = self.active_input_edit.as_mut() {
             edit.draft_value = draft;

@@ -11,6 +11,7 @@ use crate::runtime::node::{InlineNode, Node, SelectOption};
 
 /// Borrowed view of an [`InlineNode::Input`].
 pub(crate) struct InputRef<'a> {
+    pub(crate) control_id: &'a str,
     pub(crate) name: &'a str,
     pub(crate) value: &'a str,
     pub(crate) max_length: Option<usize>,
@@ -20,6 +21,7 @@ pub(crate) struct InputRef<'a> {
 
 /// Mutably borrowed view of an [`InlineNode::Input`].
 pub(crate) struct InputMut<'a> {
+    pub(crate) control_id: &'a str,
     pub(crate) name: &'a str,
     pub(crate) value: &'a mut String,
     pub(crate) default_value: &'a Option<String>,
@@ -55,21 +57,39 @@ pub(crate) struct SelectMut<'a> {
     pub(crate) selected_indices: &'a mut Vec<usize>,
 }
 
-/// First input named `input_name`, in document order.
-pub(crate) fn find_input<'a>(card: &'a Card, input_name: &str) -> Option<InputRef<'a>> {
-    inline_nodes(card)
-        .filter_map(as_input)
-        .find(|input| input.name == input_name)
+/// Mutable input/select view in document order.
+pub(crate) enum ControlMut<'a> {
+    Input(InputMut<'a>),
+    Select(SelectMut<'a>),
 }
 
-/// First input named `input_name`, in document order, for mutation.
-pub(crate) fn find_input_mut<'a>(card: &'a mut Card, input_name: &str) -> Option<InputMut<'a>> {
-    inputs_mut(card).find(|input| input.name == input_name)
+/// Input with `control_id`, in document order.
+pub(crate) fn find_input<'a>(card: &'a Card, control_id: &str) -> Option<InputRef<'a>> {
+    inline_nodes(card)
+        .filter_map(as_input)
+        .find(|input| input.control_id == control_id)
+}
+
+/// First input using `name`, for variable-name fallback semantics.
+pub(crate) fn find_input_by_name<'a>(card: &'a Card, name: &str) -> Option<InputRef<'a>> {
+    inline_nodes(card)
+        .filter_map(as_input)
+        .find(|input| input.name == name)
+}
+
+/// Input with `control_id`, in document order, for mutation.
+pub(crate) fn find_input_mut<'a>(card: &'a mut Card, control_id: &str) -> Option<InputMut<'a>> {
+    inputs_mut(card).find(|input| input.control_id == control_id)
 }
 
 /// Every input on the card, in document order, for mutation.
 pub(crate) fn inputs_mut<'a>(card: &'a mut Card) -> impl Iterator<Item = InputMut<'a>> + 'a {
     inline_nodes_mut(card).filter_map(as_input_mut)
+}
+
+/// Every input or select on the card, interleaved in document order.
+pub(crate) fn controls_mut<'a>(card: &'a mut Card) -> impl Iterator<Item = ControlMut<'a>> + 'a {
+    inline_nodes_mut(card).filter_map(as_control_mut)
 }
 
 /// First select with `control_id`, in document order.
@@ -85,6 +105,7 @@ pub(crate) fn selects<'a>(card: &'a Card) -> impl Iterator<Item = SelectRef<'a>>
 }
 
 /// Every select on the card, in document order, for mutation.
+#[cfg(test)]
 pub(crate) fn selects_mut<'a>(card: &'a mut Card) -> impl Iterator<Item = SelectMut<'a>> + 'a {
     inline_nodes_mut(card).filter_map(as_select_mut)
 }
@@ -128,6 +149,7 @@ fn inline_nodes_mut(card: &mut Card) -> impl Iterator<Item = &mut InlineNode> + 
 fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
     match item {
         InlineNode::Input {
+            control_id,
             name,
             value,
             max_length,
@@ -135,6 +157,7 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
             empty_ok,
             ..
         } => Some(InputRef {
+            control_id,
             name,
             value,
             max_length: *max_length,
@@ -151,6 +174,7 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
 fn as_input_mut(item: &mut InlineNode) -> Option<InputMut<'_>> {
     match item {
         InlineNode::Input {
+            control_id,
             name,
             value,
             default_value,
@@ -158,6 +182,7 @@ fn as_input_mut(item: &mut InlineNode) -> Option<InputMut<'_>> {
             empty_ok,
             ..
         } => Some(InputMut {
+            control_id: control_id.as_str(),
             name: name.as_str(),
             value,
             default_value: &*default_value,
@@ -225,12 +250,21 @@ fn as_select_mut(item: &mut InlineNode) -> Option<SelectMut<'_>> {
     }
 }
 
+fn as_control_mut(item: &mut InlineNode) -> Option<ControlMut<'_>> {
+    match item {
+        InlineNode::Input { .. } => as_input_mut(item).map(ControlMut::Input),
+        InlineNode::Select { .. } => as_select_mut(item).map(ControlMut::Select),
+        InlineNode::Text(_) | InlineNode::Break | InlineNode::Link { .. } => None,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn input_node(name: &str, value: &str) -> InlineNode {
         InlineNode::Input {
+            control_id: name.to_string(),
             name: name.to_string(),
             value: value.to_string(),
             default_value: None,

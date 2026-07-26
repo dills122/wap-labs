@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-204 23/23 mapped clauses, WML-203 49/49)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-204 23/23 complete, WML-203 49/49 mapped clauses)
 
 ## Purpose
 
@@ -97,9 +97,11 @@ Legend:
 - Spec:
   - `WAP-191*` variable/substitution semantics
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] The bounded WML-204 input/select/option lane is covered by `wml_204_input_vdata_conversions_preserve_source_variable`, `wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order`, `wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape`, and `wml_204_invalid_control_variable_references_reject_load_atomically`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204` and `pnpm test:story WML-204`.
+  - Evidence: [x] WASM boundary parity and load-failure atomicity are covered by `wasm_wml_204_invalid_variable_reference_rejection_is_atomic` and `wasm_wml_204_conversion_order_empty_option_and_href_match_native`; run `wasm-pack test --node engine-wasm/engine`.
   - [ ] Substitution timing is fixed in runtime pipeline (post-parse, pre-render/task use).
-  - [ ] Undefined-variable behavior is covered by parser/runtime fixtures.
+  - [x] Undefined-variable behavior is covered for the completed WML-204 control contexts.
+  - Broader non-control substitution contexts remain additive RQ-RMK-005 work and do not reopen WML-204.
 
 ### RQ-RMK-006 Anchor shorthand semantics
 

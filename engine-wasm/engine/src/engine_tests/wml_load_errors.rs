@@ -136,3 +136,69 @@ fn wml_205_payload_rejection_is_structured_and_atomic() {
     );
     assert_eq!(engine.active_card_id().as_deref(), Ok("stable"));
 }
+
+#[test]
+fn wml_204_invalid_control_variable_references_reject_load_atomically() {
+    let invalid_controls = [
+        ("input value", r#"<input name="pin" value="$(bad-name)"/>"#),
+        (
+            "select ivalue",
+            r#"<select name="choice" ivalue="$(index:bogus)"><option>A</option></select>"#,
+        ),
+        (
+            "option value",
+            r#"<select name="choice"><option value="$9bad">A</option></select>"#,
+        ),
+        (
+            "option onpick",
+            r#"<select><option onpick="$(target:bogus)">A</option></select>"#,
+        ),
+        (
+            "non-vdata input format",
+            r#"<input name="pin" format="$mask"/>"#,
+        ),
+    ];
+
+    for (case, control) in invalid_controls {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck_context(
+                r#"<wml><card id="stable"><p>Stable</p></card></wml>"#,
+                "http://local.test/stable.wml",
+                "text/vnd.wap.wml",
+                None,
+            )
+            .expect("baseline deck should load");
+        assert!(engine.set_var("session".to_string(), "preserved".to_string()));
+
+        let invalid = format!(r#"<wml><card id="invalid">{control}</card></wml>"#);
+        let message = engine
+            .load_deck(&invalid)
+            .expect_err("invalid control variable syntax must reject the deck");
+
+        assert!(!message.is_empty(), "case {case}");
+        let diagnostics = engine.last_wml_load_diagnostics();
+        assert_eq!(diagnostics.len(), 1, "case {case}");
+        assert_diagnostic(
+            &diagnostics[0],
+            WmlLoadDiagnosticClassLiteral::Invalid,
+            WmlLoadDiagnosticCodeLiteral::InvalidWml,
+            WmlLoadDiagnosticOutcomeLiteral::Rejected,
+        );
+        assert_eq!(
+            engine.active_card_id().as_deref(),
+            Ok("stable"),
+            "case {case}"
+        );
+        assert_eq!(
+            engine.base_url(),
+            "http://local.test/stable.wml",
+            "case {case}"
+        );
+        assert_eq!(
+            engine.get_var("session".to_string()).as_deref(),
+            Some("preserved"),
+            "case {case}"
+        );
+    }
+}

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "9bf8ee1fdf4993089a49f31c71604b76da4e15e5e31307f1cc6b0258fbe01be3"
+        "sha256": "f99431d5bff7a1249505789b12d1ea507d20f9fd14a61e93fbcab2faaec5df9f"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "74568958daf8f48f211f867eac3ddc97afbfb44677836bd988562b27ea0dc87c"
+        "sha256": "6d2d34c4ff917b1cc9d1ab84d954659109acf116c68b2d6109da6d8fa3e43080"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "60e674c2e9725b1b322db32b99f3ed17c8541832e3bbc5b1a21b585839a2eeb6"
+        "sha256": "7cc4ba1081399ca6f71623a855e1535ae6b2e962df2110816624d4f2fcd09841"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -13511,7 +13511,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Input value vdata defaults are evaluated at card entry; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values and visible password mask literals stay unobscured while the actual variable remains intact. General vdata validation/conversion beyond input value defaults and language-aware non-Basic-Latin mask repertoires remain incomplete.",
+        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics keep this parent row partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -13520,6 +13520,10 @@
           {
             "path": "engine-wasm/engine/src/runtime/input_mask.rs",
             "symbol": "InputMask"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/variable.rs",
+            "symbol": "SubstitutionContext"
           },
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
@@ -13590,6 +13594,16 @@
             "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
             "test": "wml_fx_select_init_order_precedence_validation_and_serialization",
             "command": "cd engine-wasm/engine && cargo test wml_fx_select_init_order_precedence_validation_and_serialization"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+            "test": "wml_204_input_vdata_conversions_preserve_source_variable",
+            "command": "cd engine-wasm/engine && cargo test wml_204_input_vdata_conversions_preserve_source_variable"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+            "test": "wml_204_invalid_control_variable_references_reject_load_atomically",
+            "command": "cd engine-wasm/engine && cargo test wml_204_invalid_control_variable_references_reject_load_atomically"
           }
         ],
         "ownerLayers": [
@@ -14036,11 +14050,15 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; text labels, explicit empty values, evaluated value references, and onpick dispatch for single selection plus multiple selection/deselection are represented. Option title/xml:lang retention, onevent task forms, and general HREF conversion remain incomplete.",
+        "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, and onpick HREF conversion/dispatch for single selection plus multiple selection/deselection are represented. The selected WML-204 tranche is complete; option title/xml:lang presentation and onevent task forms remain outside it and keep this parent row partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
             "symbol": "parse_select_inline_node"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/variable.rs",
+            "symbol": "SubstitutionContext"
           }
         ],
         "testEvidence": [
@@ -14068,6 +14086,16 @@
             "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
             "test": "wml_fx_option_onpick_multi_fires_for_deselection_after_state_update",
             "command": "cd engine-wasm/engine && cargo test wml_fx_option_onpick_multi_fires_for_deselection_after_state_update"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape",
+            "command": "cd engine-wasm/engine && cargo test wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_204_absent_option_value_is_empty_while_label_remains_visible",
+            "command": "cd engine-wasm/engine && cargo test wml_204_absent_option_value_is_empty_while_label_remains_visible"
           }
         ],
         "ownerLayers": [
@@ -14176,7 +14204,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Select has deterministic DTD-derived syntax validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, evaluated option values, task-time variable synchronization, onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. General vdata/HREF validation and conversion, tabindex behavior, and optional optgroup capability declaration remain incomplete.",
+        "assessmentNote": "Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain separate and keep this parent row partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -14193,6 +14221,10 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
             "symbol": "sync_select_variables"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/variable.rs",
+            "symbol": "SubstitutionContext"
           }
         ],
         "testEvidence": [
@@ -14230,6 +14262,16 @@
             "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
             "test": "wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls",
             "command": "cd engine-wasm/engine && cargo test wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order",
+            "command": "cd engine-wasm/engine && cargo test wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+            "test": "wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape",
+            "command": "cd engine-wasm/engine && cargo test wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"
           }
         ],
         "ownerLayers": [
@@ -16416,13 +16458,18 @@
       "type": "work-item",
       "title": "Complete field/control syntax and attribute validation",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
           "qa"
         ],
         "sourceFamilies": [
           "wml"
+        ],
+        "notes": [
+          "All 23 directly mapped WML-204 clauses have source-derived fixtures for input masks and failure atomicity, document-order input/select initialization, select precedence and serialization, option-value vdata evaluation, and onpick HREF conversion.",
+          "The shared native/WASM variable-reference path validates $name and $(name:conversion), preserves exact CDATA and literal-dollar handling, applies noesc defaults to vdata and escape defaults to HREF, and rejects invalid control references atomically.",
+          "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 and WML-205 retain their separate parser/error gates."
         ],
         "existingTickets": [
           "R0-04",
@@ -16438,6 +16485,7 @@
         ],
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+          "wasm-pack test --node engine-wasm/engine",
           "pnpm test:story WML-204"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"

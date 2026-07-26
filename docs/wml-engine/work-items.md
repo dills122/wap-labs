@@ -33,8 +33,8 @@ current aligned engine priorities are:
    174/174 direct WML-clause mapping.
 2. Preserve the mapped `WML-205` malformed/invalid/unsupported/recoverable load taxonomy, then
    close its residual exhaustive error-enforcement and host fetch/access failure-atomicity gates.
-3. Close the residual `WML-204` field/control validation gate without reopening
-   completed WML-202 evidence.
+3. Preserve the completed `WML-204` field/control validation gate without
+   reopening completed WML-202 evidence.
 4. Preserve the completed `WML-202` 30/30, `WML-203` 49/49, and `WML-204` 23/23
    direct-clause slices; WML-202 has no remaining work-item acceptance gate.
 5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive until the upstream
@@ -234,7 +234,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### B5-01 Input mask and commit semantics conformance follow-up
 
 1. `Requirement IDs`: `WML-R-019`
-2. `Status`: `in-progress`
+2. `Status`: `done`
 3. `Depends On`: `A5-02`
 4. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/*`
@@ -248,7 +248,8 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Input/form commit flow is deterministic and spec-aligned for baseline text input semantics.
 8. `Notes`:
 - Additive follow-up over Phase C planning scope to close compliance-critical gaps earlier.
-- Basic Latin mask codes, escaped literals, invalid-mask fallback, emptyok precedence, rejection atomicity, maxlength, password display, and name/value initialization are implemented with native/WASM parity and Waves-browser story evidence. Input `value` vdata defaults now evaluate in document order. General vdata validation/conversion beyond input defaults and language-aware non-Basic-Latin input repertoires remain before this item can close; the mandatory Basic Latin floor is directly tested.
+- Basic Latin mask codes, escaped literals, invalid-mask fallback, emptyok precedence, rejection atomicity, maxlength, password display, and document-order name/value initialization are implemented with native/WASM parity and executable story evidence.
+- Input vdata references now validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion behavior. Non-selected language repertoires remain separate from this completed Class C baseline.
 
 ### B5-02 Inline flow layout conformance follow-up
 
@@ -406,6 +407,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 8. `Notes`:
 - Spec anchor refs: WAP-191 section `11.6`.
 - WML-204 grouped-control evidence validates fieldset/optgroup attributes and content, rejects empty grouping leaves, preserves transparent child processing across native/WASM parsing, and exercises the fallback through both canonical stories. Optional grouping presentation and capability declaration remain unassessed follow-up scope.
+- Select/option initialization, serialization, empty-value defaults, exact vdata evaluation, HREF conversion for onpick, and duplicate-name control identity now have deterministic native/WASM evidence. Optional tabindex and optgroup capability declaration remain separate optional scope.
 
 ## Suggested First Sprint (7 tickets)
 

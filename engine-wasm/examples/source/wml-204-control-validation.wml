@@ -1,7 +1,7 @@
 <!--
 label: WML 1.3 Control Validation
 work-items: B5-01, R0-04, WML-204
-spec-items: WML-C-28, WML-C-33, WML-C-41, WML-C-43
+spec-items: WML-C-33, WML-C-41, WML-C-43
 description: Source-valid WML fieldset, input, select, and option controls with declared attributes exercised by the strict parser.
 goal: Verify the simulator accepts the declared grouped-control grammar, processes fieldset children, and renders deterministic text, password, and single-select controls.
 testing-ac:
@@ -9,6 +9,7 @@ testing-ac:
 - Focus the PIN field, clear it, enter alphabetic text, and confirm the mask rejects the commit while preserving the retry draft.
 - Correct the PIN to one through four digits, commit it, and confirm its rendered value remains visually masked.
 - Follow Verify PIN variable and confirm the committed password value initializes the proof field through vdata without being lost.
+- Confirm escaped literal dollars and undefined variables are evaluated deterministically in the proof controls.
 - Focus Country, move to France, press Enter, and confirm the committed option is rendered.
 -->
 <wml>
@@ -63,5 +64,7 @@ testing-ac:
   <card id="proof" title="PIN Variable Proof">
     <p>Committed PIN:</p>
     <p><input name="PinProof" value="$(Pin)" format="4N"/></p>
+    <p><input name="DollarProof" value="$$$(Pin)"/></p>
+    <p><input name="MissingProof" value="pre$(Missing)post"/></p>
   </card>
 </wml>

@@ -698,3 +698,111 @@ fn wasm_wml_204_select_initialization_and_commit_match_native_state() {
         Some("1".to_string())
     );
 }
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_invalid_variable_reference_rejection_is_atomic() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_context_wasm(
+            r#"<wml><card id="stable"><p>Stable</p></card></wml>"#,
+            "https://example.test/stable.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("baseline deck should load");
+    assert!(engine.set_var_wasm("session".to_string(), "preserved".to_string()));
+
+    engine
+        .load_deck_wasm(
+            r#"<wml><card id="invalid"><input name="pin" value="$(bad-name)"/></card></wml>"#,
+        )
+        .expect_err("invalid vdata reference must reject the wasm load");
+
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("prior active card should remain available"),
+        "stable"
+    );
+    assert_eq!(
+        engine.get_var_wasm("session".to_string()).as_deref(),
+        Some("preserved")
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_204_conversion_order_empty_option_and_href_match_native() {
+    let mut engine = WmlEngine::wasm_new();
+    let raw = "A B/C?D=E&F";
+    engine
+        .load_deck_context_wasm(
+            r##"
+            <wml>
+              <card id="start"><a href="#controls">Controls</a></card>
+              <card id="controls">
+                <select name="Selected" value="beta">
+                  <option value="alpha">Alpha</option>
+                  <option value="beta">Beta</option>
+                </select>
+                <input name="Copied" value="$(Selected)"/>
+                <input name="Escaped" value="$(Raw:escape)"/>
+                <select name="Choice">
+                  <option value="$(Raw)" onpick="/choose/$(Raw)">Choose raw value</option>
+                </select>
+                <select name="EmptyChoice" iname="EmptyIndex" ivalue="1">
+                  <option>Visible label</option>
+                </select>
+              </card>
+            </wml>
+            "##,
+            "https://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("deck should load");
+    assert!(engine.set_var_wasm("Raw".to_string(), raw.to_string()));
+    engine
+        .navigate_to_card_wasm("controls".to_string())
+        .expect("controls should initialize");
+
+    assert_eq!(
+        engine.get_var_wasm("Copied".to_string()).as_deref(),
+        Some("beta")
+    );
+    assert_eq!(
+        engine.get_var_wasm("Escaped".to_string()).as_deref(),
+        Some("A%20B%2FC%3FD%3DE%26F")
+    );
+    assert_eq!(
+        engine.get_var_wasm("Choice".to_string()).as_deref(),
+        Some(raw)
+    );
+    assert_eq!(engine.get_var_wasm("EmptyChoice".to_string()), None);
+    assert_eq!(
+        engine.get_var_wasm("EmptyIndex".to_string()).as_deref(),
+        Some("1")
+    );
+
+    engine
+        .handle_key_wasm("down".to_string())
+        .expect("focus should move to copied input");
+    engine
+        .handle_key_wasm("down".to_string())
+        .expect("focus should move to escaped input");
+    engine
+        .handle_key_wasm("down".to_string())
+        .expect("focus should move to choice select");
+    assert!(engine
+        .begin_focused_select_edit_wasm()
+        .expect("select edit should begin"));
+    assert!(engine
+        .commit_focused_select_edit_wasm()
+        .expect("onpick navigation should succeed"));
+    assert_eq!(
+        engine.external_navigation_intent_wasm().as_deref(),
+        Some("https://example.test/choose/A%20B%2FC%3FD%3DE%26F")
+    );
+    assert_eq!(engine.get_var_wasm("Raw".to_string()).as_deref(), Some(raw));
+}

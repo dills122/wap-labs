@@ -58,7 +58,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Select has deterministic DTD-derived syntax validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, evaluated option values, task-time variable synchronization, onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. General vdata/HREF validation and conversion, tabindex behavior, and optional optgroup capability declaration remain incomplete.",
+  "assessmentNote": "Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain separate and keep this parent row partial.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -75,6 +75,10 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
       "symbol": "sync_select_variables"
+    },
+    {
+      "path": "engine-wasm/engine/src/runtime/variable.rs",
+      "symbol": "SubstitutionContext"
     }
   ],
   "testEvidence": [
@@ -112,6 +116,16 @@ tags:
       "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
       "test": "wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls",
       "command": "cd engine-wasm/engine && cargo test wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+      "test": "wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order",
+      "command": "cd engine-wasm/engine && cargo test wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
+      "test": "wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape",
+      "command": "cd engine-wasm/engine && cargo test wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"
     }
   ],
   "ownerLayers": [

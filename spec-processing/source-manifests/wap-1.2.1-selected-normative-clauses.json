@@ -50,7 +50,7 @@
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "60e674c2e9725b1b322db32b99f3ed17c8541832e3bbc5b1a21b585839a2eeb6",
+      "parentLedgerSha256": "7cc4ba1081399ca6f71623a855e1535ae6b2e962df2110816624d4f2fcd09841",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -3111,9 +3111,9 @@
             "status": "implemented",
             "assertion": "Commit input and selection variables before invoking any task.",
             "evidence": {
-              "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_variables_are_resynchronized_before_link_task_execution"
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_variable_commit_before_task_commits_active_select_before_accept"
             }
           },
           "mapping": {
@@ -3142,7 +3142,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -6930,7 +6931,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -6979,7 +6981,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7006,7 +7009,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
               "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order"
             }
           },
           "mapping": {
@@ -7030,7 +7033,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7079,7 +7083,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7128,7 +7133,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7154,7 +7160,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
               "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order"
             }
           },
           "mapping": {
@@ -7177,7 +7183,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7226,7 +7233,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7275,7 +7283,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7324,7 +7333,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7350,7 +7360,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
               "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_init_order_precedence_validation_and_serialization"
             }
           },
           "mapping": {
@@ -7373,7 +7383,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7400,7 +7411,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
               "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"
             }
           },
           "mapping": {
@@ -7424,7 +7435,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7478,7 +7490,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7505,7 +7518,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
               "testPath": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_option_onpick_single_updates_state_before_only_selected_task"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"
             }
           },
           "mapping": {
@@ -7532,7 +7545,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7558,7 +7572,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
               "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_structure"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_structure_rejects_invalid_syntax_deterministically"
             }
           },
           "mapping": {
@@ -7581,7 +7595,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7630,7 +7645,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7654,9 +7670,9 @@
             "status": "implemented",
             "assertion": "On invalid input, notify the user, preserve the original variable value, and allow another entry attempt.",
             "evidence": {
-              "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
-              "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic"
+              "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml invalid_masked_input_blocks_task_without_navigation_side_effects"
             }
           },
           "mapping": {
@@ -7679,7 +7695,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7705,7 +7722,7 @@
             "evidence": {
               "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
               "testPath": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
-              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_input_initialization"
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204_input_vdata_conversions_preserve_source_variable"
             }
           },
           "mapping": {
@@ -7728,7 +7745,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7777,7 +7795,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7826,7 +7845,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7875,7 +7895,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7924,7 +7945,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {
@@ -7973,7 +7995,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-204"
           ]
         },
         {

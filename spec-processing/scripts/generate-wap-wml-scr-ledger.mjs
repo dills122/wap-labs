@@ -609,7 +609,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-33': {
       status: 'partial',
       note:
-        'Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Input value vdata defaults are evaluated at card entry; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values and visible password mask literals stay unobscured while the actual variable remains intact. General vdata validation/conversion beyond input value defaults and language-aware non-Basic-Latin mask repertoires remain incomplete.',
+        'Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -618,6 +618,10 @@ const mandatoryImplementationAudit = new Map(
         codeEvidence(
           'engine-wasm/engine/src/runtime/input_mask.rs',
           'InputMask'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/runtime/variable.rs',
+          'SubstitutionContext'
         ),
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal.rs',
@@ -676,6 +680,14 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/engine_tests/select_semantics.rs',
           'wml_fx_select_init_order_precedence_validation_and_serialization'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/navigation_metadata.rs',
+          'wml_204_input_vdata_conversions_preserve_source_variable'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
+          'wml_204_invalid_control_variable_references_reject_load_atomically'
         )
       ]
     },
@@ -767,11 +779,15 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-41': {
       status: 'partial',
       note:
-        'Option content and allowed attributes receive deterministic DTD-derived syntax validation; text labels, explicit empty values, evaluated value references, and onpick dispatch for single selection plus multiple selection/deselection are represented. Option title/xml:lang retention, onevent task forms, and general HREF conversion remain incomplete.',
+        'Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, and onpick HREF conversion/dispatch for single selection plus multiple selection/deselection are represented. The selected WML-204 tranche is complete; option title/xml:lang presentation and onevent task forms remain outside it and keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
           'parse_select_inline_node'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/runtime/variable.rs',
+          'SubstitutionContext'
         )
       ],
       testEvidence: [
@@ -794,6 +810,14 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/engine_tests/select_semantics.rs',
           'wml_fx_option_onpick_multi_fires_for_deselection_after_state_update'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/select_semantics.rs',
+          'wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/select_semantics.rs',
+          'wml_204_absent_option_value_is_empty_while_label_remains_visible'
         )
       ]
     },
@@ -817,7 +841,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-43': {
       status: 'partial',
       note:
-        'Select has deterministic DTD-derived syntax validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, evaluated option values, task-time variable synchronization, onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. General vdata/HREF validation and conversion, tabindex behavior, and optional optgroup capability declaration remain incomplete.',
+        'Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain separate and keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -834,6 +858,10 @@ const mandatoryImplementationAudit = new Map(
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal.rs',
           'sync_select_variables'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/runtime/variable.rs',
+          'SubstitutionContext'
         )
       ],
       testEvidence: [
@@ -864,6 +892,14 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/engine_tests/select_semantics.rs',
           'wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/select_semantics.rs',
+          'wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/select_semantics.rs',
+          'wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape'
         )
       ]
     },

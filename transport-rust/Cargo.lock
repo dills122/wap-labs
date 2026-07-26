@@ -1382,6 +1382,7 @@ dependencies = [
 name = "wavenav_engine"
 version = "0.3.0"
 dependencies = [
+ "percent-encoding",
  "quick-xml",
  "serde",
  "url",

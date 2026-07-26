@@ -63,9 +63,9 @@ gap.
 
 The 79 work items currently roll up to:
 
-- 18 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-201 evidence projection, and the frontend production-build defect closure);
+- 20 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-201 evidence projection, WML-202 and WML-204 closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 14 in progress (WML evidence plus existing runtime, WAE, transport, and WSP foundations);
+- 12 in progress (remaining WML evidence plus existing runtime, WAE, transport, and WSP foundations);
 - 46 todo.
 
 New completion claims should follow the machine dependency graph:

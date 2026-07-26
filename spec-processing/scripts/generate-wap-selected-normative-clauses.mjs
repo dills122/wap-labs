@@ -231,6 +231,34 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-204',
+    new Set([
+      'WML-CL-INPUT-EMPTY-COMMIT',
+      'WML-CL-INPUT-FORMAT-LITERALS',
+      'WML-CL-INPUT-INITIALIZATION',
+      'WML-CL-INPUT-INVALID-INITIAL-VALUE',
+      'WML-CL-INPUT-MASK-COMMIT',
+      'WML-CL-INPUT-MAXLENGTH',
+      'WML-CL-INPUT-PASSWORD-DISPLAY',
+      'WML-CL-INPUT-REJECTION-ATOMICITY',
+      'WML-CL-INPUT-STRUCTURE',
+      'WML-CL-OPTION-ONPICK-MULTI',
+      'WML-CL-OPTION-ONPICK-SINGLE',
+      'WML-CL-OPTION-VALUE-EVALUATION',
+      'WML-CL-SELECT-DEFAULT-PRECEDENCE',
+      'WML-CL-SELECT-INDEX-VALIDATION',
+      'WML-CL-SELECT-INIT-ORDER',
+      'WML-CL-SELECT-MULTI-SERIALIZATION',
+      'WML-CL-SELECT-NO-IMPLICIT-REFRESH',
+      'WML-CL-SELECT-PRESELECTION',
+      'WML-CL-SELECT-SINGLE-MULTI-MODE',
+      'WML-CL-SELECT-STRUCTURE',
+      'WML-CL-SELECT-USER-UPDATE',
+      'WML-CL-SELECT-VARIABLE-INITIALIZATION',
+      'WML-CL-VARIABLE-COMMIT-BEFORE-TASK'
+    ])
+  ],
+  [
     'WML-205',
     new Set([
       'WML-CL-ERROR-ENFORCEMENT',
@@ -296,6 +324,9 @@ const directWorkItemClauseIds = new Map([
 const implementedWml202ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-202')
 );
+const implementedWml204ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-204')
+);
 const residualWml202ClauseIds = new Set([
   'WML-CL-ACCESS-ABSENT-ALLOWS',
   'WML-CL-ACCESS-COMPONENT-MATCH',
@@ -321,6 +352,52 @@ function wml202TestPath(clauseId, fixtureKind) {
     ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
     : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
 }
+
+const wml204FixtureTests = new Map([
+  ['WML-CL-INPUT-EMPTY-COMMIT', 'wml_fx_input_empty_commit_applies_format_and_emptyok_precedence'],
+  ['WML-CL-INPUT-FORMAT-LITERALS', 'wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic'],
+  ['WML-CL-INPUT-INITIALIZATION', 'wml_204_input_vdata_conversions_preserve_source_variable'],
+  ['WML-CL-INPUT-INVALID-INITIAL-VALUE', 'wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default'],
+  ['WML-CL-INPUT-MASK-COMMIT', 'wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic'],
+  ['WML-CL-INPUT-MAXLENGTH', 'wml_fx_input_maxlength_limits_draft_and_committed_value'],
+  ['WML-CL-INPUT-PASSWORD-DISPLAY', 'wml_fx_input_password_display_conceals_entry_and_preserves_variable'],
+  ['WML-CL-INPUT-REJECTION-ATOMICITY', 'invalid_masked_input_blocks_task_without_navigation_side_effects'],
+  ['WML-CL-INPUT-STRUCTURE', 'wml_fx_input_structure_rejects_invalid_syntax_deterministically'],
+  ['WML-CL-OPTION-ONPICK-MULTI', 'wml_fx_option_onpick_multi_fires_for_deselection_after_state_update'],
+  ['WML-CL-OPTION-ONPICK-SINGLE', 'wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape'],
+  ['WML-CL-OPTION-VALUE-EVALUATION', 'wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape'],
+  ['WML-CL-SELECT-DEFAULT-PRECEDENCE', 'wml_fx_select_default_precedence_covers_every_source_and_fallback'],
+  ['WML-CL-SELECT-INDEX-VALIDATION', 'wml_fx_select_init_order_precedence_validation_and_serialization'],
+  ['WML-CL-SELECT-INIT-ORDER', 'wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order'],
+  ['WML-CL-SELECT-MULTI-SERIALIZATION', 'wml_fx_select_init_order_precedence_validation_and_serialization'],
+  ['WML-CL-SELECT-NO-IMPLICIT-REFRESH', 'wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls'],
+  ['WML-CL-SELECT-PRESELECTION', 'wml_fx_select_init_order_precedence_validation_and_serialization'],
+  ['WML-CL-SELECT-SINGLE-MULTI-MODE', 'wml_fx_select_default_precedence_covers_every_source_and_fallback'],
+  ['WML-CL-SELECT-STRUCTURE', 'wml_fx_select_structure_flattens_nested_optgroups_in_document_order'],
+  ['WML-CL-SELECT-USER-UPDATE', 'wml_fx_select_variables_are_resynchronized_before_link_task_execution'],
+  ['WML-CL-SELECT-VARIABLE-INITIALIZATION', 'wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order'],
+  ['WML-CL-VARIABLE-COMMIT-BEFORE-TASK', 'wml_fx_variable_commit_before_task_commits_active_select_before_accept']
+]);
+
+function wml204FixtureEvidence(clauseId) {
+  const testName = wml204FixtureTests.get(clauseId);
+  if (!testName) {
+    throw new Error(`${clauseId}: missing WML-204 fixture evidence`);
+  }
+  const testPath = clauseId.endsWith('-STRUCTURE')
+    ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
+    : ['WML-CL-INPUT-REJECTION-ATOMICITY', 'WML-CL-VARIABLE-COMMIT-BEFORE-TASK'].includes(clauseId)
+      ? 'engine-wasm/engine/src/engine_tests/actions_timers.rs'
+      : clauseId.startsWith('WML-CL-INPUT-')
+        ? 'engine-wasm/engine/src/engine_tests/navigation_metadata.rs'
+        : 'engine-wasm/engine/src/engine_tests/select_semantics.rs';
+  return {
+    path: testPath,
+    testPath,
+    command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${testName}`
+  };
+}
+
 function directWorkItemsForClause(clauseId) {
   const mappedWorkItems = [...directWorkItemClauseIds]
     .filter(([, clauseIds]) => clauseIds.has(clauseId))
@@ -537,6 +614,9 @@ if (refreshDirectWorkItems) {
           command:
             'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202'
         };
+      } else if (implementedWml204ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml204FixtureEvidence(candidate.id);
       }
       candidate.mapping.clauseImplementationStatus =
         candidate.fixturePlan.status === 'implemented'
@@ -1439,7 +1519,8 @@ function clause(
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
     family === 'wbxml' ||
-    implementedWml202ClauseIds.has(clauseId);
+    implementedWml202ClauseIds.has(clauseId) ||
+    implementedWml204ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -1451,6 +1532,8 @@ function clause(
           command:
             'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202'
         }
+      : implementedWml204ClauseIds.has(clauseId)
+      ? wml204FixtureEvidence(clauseId)
       : family === 'wbxml'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',

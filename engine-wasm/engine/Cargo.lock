@@ -643,6 +643,7 @@ name = "wavenav_engine"
 version = "0.3.0"
 dependencies = [
  "js-sys",
+ "percent-encoding",
  "quick-xml",
  "serde",
  "serde-wasm-bindgen",
