@@ -1,5 +1,5 @@
 pub(super) use super::{
-    fetch_deck_in_process,
+    fetch_deck_in_process, fetch_deck_in_process_with_profile,
     network::wtp::{
         duplicate_cache::{WtpDuplicateCacheState, WtpDuplicateDecision, WtpDuplicatePolicy},
         retransmission::{
@@ -18,8 +18,8 @@ pub(super) use super::{
         WtpResponderState, WtpResponderTidDecision,
     },
     FetchCacheControlPolicy, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy,
-    FetchPostContext, FetchRequestPolicy, FetchUaCapabilityProfile, MAX_RESPONSE_BODY_BYTES,
-    MAX_URI_OCTETS,
+    FetchPostContext, FetchRequestPolicy, FetchTransportProfile, FetchUaCapabilityProfile,
+    MAX_RESPONSE_BODY_BYTES, MAX_URI_OCTETS,
 };
 pub(super) use crate::fetch_policy::{
     apply_request_policy, classify_destination_host, classify_ip, resolve_fetch_destination_policy,

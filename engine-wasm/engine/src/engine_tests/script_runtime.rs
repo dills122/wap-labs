@@ -1074,3 +1074,155 @@ fn convert_script_call_args_maps_number_to_int_when_whole() {
         ]
     );
 }
+
+#[test]
+fn convert_script_call_args_maps_invalid_false_to_empty_string() {
+    let args = vec![ScriptCallArgLiteral::Invalid { invalid: false }];
+    let converted = convert_script_call_args(&args);
+    assert_eq!(converted, vec![ScriptValue::String(String::new())]);
+}
+
+#[test]
+fn format_decode_error_covers_every_variant() {
+    use crate::wavescript::decoder::DecodeError;
+
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::EmptyUnit),
+        "decode: empty compilation unit"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::UnitTooLarge { size: 10, limit: 5 }),
+        "decode: unit too large (size=10, limit=5)"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::UnsupportedOpcode {
+            pc: 1,
+            opcode: 0xff
+        }),
+        "decode: unsupported opcode 0xff at pc=1"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::TruncatedImmediate {
+            pc: 2,
+            opcode: 0x03
+        }),
+        "decode: truncated immediate for opcode 0x03 at pc=2"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::InvalidLocalIndex {
+            pc: 3,
+            index: 9,
+            limit: 4
+        }),
+        "decode: invalid local index 9 at pc=3 (limit=4)"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::InvalidCallArity {
+            pc: 4,
+            arg_count: 2,
+            local_count: 1,
+            frame_locals: 3,
+            limit: 8
+        }),
+        "decode: invalid call arity at pc=4 (args=2, locals=1, frame=3, limit=8)"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::InvalidHostArgCount {
+            pc: 5,
+            arg_count: 6,
+            limit: 4
+        }),
+        "decode: invalid host arg count at pc=5 (args=6, limit=4)"
+    );
+    assert_eq!(
+        super::super::format_decode_error(DecodeError::InvalidCallTarget { pc: 6, target: 99 }),
+        "decode: invalid call target 99 from pc=6"
+    );
+}
+
+#[test]
+fn format_vm_trap_covers_every_variant() {
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::EmptyUnit),
+        "vm: empty unit"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::InvalidEntryPoint { entry_pc: 7 }),
+        "vm: invalid entry point (7)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::UnsupportedOpcode(0xab)),
+        "vm: unsupported opcode 0xab"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::TruncatedImmediate { opcode: 0x02 }),
+        "vm: truncated immediate for opcode 0x02"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::StackOverflow { limit: 64 }),
+        "vm: stack overflow (limit=64)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::InvalidLocalIndex { index: 3 }),
+        "vm: invalid local index (3)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::InvalidCallTarget { target: 12 }),
+        "vm: invalid call target (12)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::CallDepthExceeded { limit: 8 }),
+        "vm: call depth exceeded (limit=8)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::ExecutionLimitExceeded { limit: 1000 }),
+        "vm: execution step limit exceeded (1000)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::Utf8ImmediateDecode),
+        "vm: invalid utf-8 string immediate"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::HostCallUnavailable { function_id: 4 }),
+        "vm: host call unavailable (function=4)"
+    );
+    assert_eq!(
+        crate::engine_script_types::format_vm_trap(VmTrap::HostCallError {
+            function_id: 5,
+            message: "boom".to_string()
+        }),
+        "vm: host call error (function=5, message=boom)"
+    );
+}
+
+#[test]
+fn script_dialog_request_to_literal_maps_confirm_and_prompt() {
+    use crate::runtime::events::ScriptDialogRequest;
+
+    assert_eq!(
+        super::super::script_dialog_request_to_literal(&ScriptDialogRequest::Confirm {
+            message: "sure?".to_string()
+        }),
+        ScriptDialogRequestLiteral::Confirm {
+            message: "sure?".to_string()
+        }
+    );
+    assert_eq!(
+        super::super::script_dialog_request_to_literal(&ScriptDialogRequest::Prompt {
+            message: "name?".to_string(),
+            default_value: Some("anon".to_string())
+        }),
+        ScriptDialogRequestLiteral::Prompt {
+            message: "name?".to_string(),
+            default_value: Some("anon".to_string())
+        }
+    );
+}
+
+#[test]
+fn is_valid_var_name_rejects_empty_and_bad_leading_char() {
+    assert!(!super::super::is_valid_var_name(""));
+    assert!(!super::super::is_valid_var_name("1abc"));
+    assert!(super::super::is_valid_var_name("_abc"));
+    assert!(super::super::is_valid_var_name("a.b-c"));
+}
