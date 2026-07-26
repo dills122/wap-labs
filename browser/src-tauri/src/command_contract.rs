@@ -324,6 +324,9 @@ macro_rules! with_tauri_commands {
     };
 }
 
+// Required to make the macro_rules! macro path-addressable as
+// `crate::command_contract::with_tauri_commands!` from bootstrap.rs; the
+// lint can't see that cross-module macro-path usage from this re-export.
 #[allow(unused_imports)]
 pub(crate) use with_tauri_commands;
 

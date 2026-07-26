@@ -1,6 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_imports)]
-
 pub mod datagram;
 pub mod ipv4_reassembly;
 pub mod ipv4_udp;
