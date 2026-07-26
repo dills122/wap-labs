@@ -33,7 +33,8 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
-13-sprint/80-item execution program. The conservative implementation snapshot
+13-sprint/81-item execution program plus the `TRN-7-CL-C` selected-profile
+transport gate. The conservative implementation snapshot
 is 24 implemented, 76 partial, and 98 missing parent rows; clause-level
 assessment is 176/762.
 
@@ -44,7 +45,9 @@ Use this order for new completion work:
    `WML-305`.
 3. `REN-4` and `WMLS-5` follow `WML-3`.
 4. `WAE-6` follows runtime, rendering, and script closure.
-5. `WSP-8` follows `TRN-7` and `WAE-6`.
+5. The selected connectionless `WSP-8` path follows completed gate
+   `TRN-7-CL-C` and `WAE-6`; the whole `TRN-7` sprint remains open only for
+   separately activated capabilities and their evidence.
 6. `INT-9` and then `REL-10` close cross-layer and release evidence.
 7. `OPT-11` and `ENH-12` remain post-`REL-10` capability lanes.
 
@@ -231,7 +234,9 @@ Current recommendation after all merged implementation workstreams:
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
-   WSP to manufacture completion.
+   WSP to manufacture completion. Use completed gate `TRN-7-CL-C` for the
+   selected connectionless profile, and track the zero-direct-clause
+   `TRN-703` gap additively in `TRN-710` without reopening TRN-703.
 5. **Browser lane:** preserve the completed `WBP-00` through additive `WBP-05A`
    accessibility evidence closure without reopening `WBP-05`. Keep `WBP-06` inactive until `WML-2`,
    `WML-303`, and the overlapping `D0-01` contract sequence satisfy the gate
@@ -239,8 +244,10 @@ Current recommendation after all merged implementation workstreams:
 
 `W1-06`, `D0-01`, frame migration, and general maintenance remain
 non-preemptive until these upstream Class C gates materially change.
-`WSP-801`/`WSP-802` may continue only as isolated downstream foundation work;
-`WSP-8` cannot close before `TRN-7` and `WAE-6`.
+`WSP-801`/`WSP-802` may continue on the selected connectionless path because
+`TRN-7-CL-C` is complete; `WSP-8` still cannot close before `WAE-6` and its own
+remaining gates. Connection-oriented WSP continues to require the dormant WTP
+work retained in `TRN-7`.
 
 Completed this sprint:
 

@@ -109,6 +109,10 @@ All nine selected Class C family increments are complete at SCR level:
   all nine selected WDP rows and both selected WCMP rows have direct
   normative evidence, while the eight connectionless WSP rows remain partial;
 - connection-oriented WSP and WTP remain a separately activated capability;
+- `TRN-7-CL-C` records the completed selected-profile transport gate from the
+  nine WDP rows, two ICMP-backed WCMP rows, deterministic replay evidence, and
+  the selected WDP/WCMP delta tranche; `WSP-8` and `INT-9` depend on this gate
+  rather than dormant connection-oriented WSP/WTP closure;
   the selected CDPD `TIAEIA-732` family citation is authority-locked as a
   licensed-payload, metadata-only informative capability reference.
 
@@ -151,7 +155,7 @@ executable evidence.
 
 ## Dependency-ordered program
 
-The program contains 13 sprints and 79 unique work items. Existing completed
+The program contains 13 sprints and 81 unique work items. Existing completed
 tickets remain historical facts; the program maps to them where relevant and
 adds work only for uncovered obligations.
 
@@ -165,7 +169,7 @@ adds work only for uncovered obligations.
 | `WMLS-5` | WMLScript language, bytecode, VM, and libraries | `CONF-1`, `WML-3` | Script execution and failure behavior are bounded and compliant |
 | `WAE-6` | WAE integration, caching, formats, and content behavior | `CONF-1`, `WML-3`, `REN-4`, `WMLS-5` | Browser-environment behavior closes across engine features |
 | `TRN-7` | WDP, WCMP, and conditional WTP core | `CONF-1` | Protocol PDUs, state, bounds, and errors meet vectors |
-| `WSP-8` | WSP session/connectionless behavior and host fetch | `CONF-1`, `TRN-7`, `WAE-6` | Native transport reaches the browser contract correctly |
+| `WSP-8` | WSP session/connectionless behavior and host fetch | `CONF-1`, `WAE-6`, completed profile gate `TRN-7-CL-C` | Native transport reaches the browser contract correctly without claiming WTP |
 | `INT-9` | Native/WASM parity and end-to-end interoperability | Runtime and transport sprints | Cross-layer strict scenarios have auditable evidence |
 | `REL-10` | Strict Class C-compatible release gate | `INT-9` | No mandatory obligation is unmapped and all build gates pass |
 | `OPT-11` | Security, Push, telephony, identity, and other optional profiles | `CONF-1`, `REL-10` | Optional capabilities are independently declared and tested |

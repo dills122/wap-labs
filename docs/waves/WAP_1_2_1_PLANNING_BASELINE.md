@@ -31,7 +31,7 @@ explicit capability/mode.
 | Fixtures | All 762 clause fixtures have target locations; 173 clauses now have direct conformance assessment and 589 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
-| Execution program | 13 dependency-ordered sprints contain 79 unique work items with machine-checked rollups |
+| Execution program | 13 dependency-ordered sprints contain 81 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
 
 `SRC-006` is the only blocked source item. It prevents public promotion of
 recovered source binaries/derivatives, not internal evidence use,
@@ -61,12 +61,12 @@ gap.
 
 ## Work-program state
 
-The 80 work items currently roll up to:
+The 81 work items currently roll up to:
 
 - 22 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-2/WML-205 closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
 - 10 in progress (existing runtime, WAE, transport, and WSP foundations);
-- 47 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203.
+- 48 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `TRN-710` direct general-WCMP clause mapping without reopening TRN-703.
 
 New completion claims should follow the machine dependency graph:
 
@@ -75,7 +75,9 @@ New completion claims should follow the machine dependency graph:
 2. Advance `WML-3` through `WML-303`, `WML-302`, and `WML-305` after `WML-2`.
 3. Complete `REN-4` and `WMLS-5` after `WML-3`.
 4. Complete `WAE-6` after runtime, rendering, and script dependencies.
-5. Complete `WSP-8` after both `TRN-7` and `WAE-6`.
+5. Advance the selected connectionless `WSP-8` path after the completed
+   `TRN-7-CL-C` profile gate, and complete it after `WAE-6`; dormant WTP work
+   does not gate this path.
 6. Close native/WASM/end-to-end evidence in `INT-9`.
 7. Apply the strict compatibility and build gate in `REL-10`.
 8. Activate `OPT-11` profiles and `ENH-12` improvements only after the strict

@@ -1027,6 +1027,34 @@
       "status": "in-progress",
       "dependsOn": ["CONF-1"],
       "goal": "Complete the historical datagram and transaction mechanics required beneath WSP.",
+      "profileCompletionGates": [
+        {
+          "id": "TRN-7-CL-C",
+          "profile": "class-c-data-client",
+          "status": "done",
+          "scope": "Selected non-secure connectionless WSP over the CDPD-shaped WDP/UDP/IPv4 and ICMPv4 control path.",
+          "satisfiedBy": [
+            "TRN-701",
+            "TRN-702",
+            "TRN-708",
+            "TRN-706 selected WDP replay tranche",
+            "TRN-707 selected WDP/WCMP delta tranche"
+          ],
+          "conditionalFollowUps": ["TRN-704", "TRN-705", "TRN-706", "TRN-707"],
+          "acceptance": [
+            "All nine selected WDP rows and both selected ICMP-backed WCMP rows have direct normative executable evidence, including deterministic constrained-payload, replay, and error-boundary fixtures.",
+            "The gate is sufficient only for the selected connectionless Class C WSP path; it does not activate WTP, connection-oriented WSP, or the non-IP general-WCMP capability."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay --test wdp_constrained_replay --test wcmp_cdpd_icmp_profile",
+            "node scripts/check-wap-transport-conformance-ledgers.mjs",
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "node scripts/check-wap-delta-register.mjs",
+            "node scripts/wap-context-pack.mjs TRN-7",
+            "node scripts/check-wap-knowledge-graph.mjs"
+          ]
+        }
+      ],
       "workItems": [
         {
           "id": "TRN-701",
@@ -1074,6 +1102,8 @@
           "status": "done",
           "ownerLayers": ["transport-rust", "qa"],
           "sourceFamilies": ["wcmp", "wdp-wcmp-adaptation"],
+          "explicitUnmappedFamilies": ["wcmp"],
+          "followUpWorkItems": ["TRN-710"],
           "existingTickets": ["T0-17"],
           "outputs": [
             "WCMP generation/handling and error mapping",
@@ -1209,10 +1239,42 @@
             "node scripts/wap-context-pack.mjs TRN-708",
             "node scripts/check-wap-knowledge-graph.mjs"
           ]
+        },
+        {
+          "id": "TRN-710",
+          "status": "todo",
+          "ownerLayers": ["documentation", "spec-processing", "transport-rust", "qa"],
+          "sourceFamilies": ["wcmp"],
+          "explicitUnmappedFamilies": ["wcmp"],
+          "existingTickets": [],
+          "dependsOn": ["TRN-703", "T0-17"],
+          "notes": [
+            "Additive evidence correction only. Preserve completed TRN-703/T0-17 as the canonical history of the implemented non-IP general-WCMP capability.",
+            "Defer only the mechanical clause mapping while the WML-3 lane edits spec-processing/scripts/generate-wap-selected-normative-clauses.mjs, spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json, spec-processing/scripts/generate-wap-knowledge-graph.mjs, and their generated graph projections."
+          ],
+          "specReferences": [
+            "WAP-202-WCMP sections 5.4 and 5.5 (general WCMP message format and behavior for non-IP networks)",
+            "WAP-202-WCMP Appendix A rows WCMP-C-001 and WCMP-SP-C-002",
+            "WAP-159-WDPWCMPAdapt effective non-IP bearer adaptation clauses"
+          ],
+          "outputs": [
+            "Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability"
+          ],
+          "acceptance": [
+            "Map the applicable WAP-202 sections 5.4/5.5 and effective adaptation clauses directly to TRN-710, the existing general-WCMP fixtures, and implementation tests without changing TRN-703 status.",
+            "Keep the mapping explicitly outside the selected CDPD/IPv4 profile and do not use it to satisfy the TRN-7-CL-C gate or activate WTP or connection-oriented WSP."
+          ],
+          "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp",
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "node scripts/wap-context-pack.mjs TRN-703",
+            "node scripts/check-wap-knowledge-graph.mjs"
+          ]
         }
       ],
       "exitGates": [
         "The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.",
+        "The completed TRN-7-CL-C profile gate allows selected connectionless WSP and downstream integration to proceed without waiting for dormant WTP work or claiming the non-IP general-WCMP capability.",
         "WTP evidence is required only when connection-oriented WSP is claimed.",
         "Timing tests are deterministic and do not require live networks.",
         "WAP 2.0 transport deltas are explicit."
@@ -1222,7 +1284,8 @@
       "id": "WSP-8",
       "title": "WSP session, connectionless, headers, and host fetch",
       "status": "in-progress",
-      "dependsOn": ["CONF-1", "TRN-7", "WAE-6"],
+      "dependsOn": ["CONF-1", "WAE-6"],
+      "profileGateDependencies": ["TRN-7-CL-C"],
       "goal": "Complete the WAP 1.2.1 session layer and make it the real desktop ingress path.",
       "workItems": [
         {
@@ -1340,7 +1403,8 @@
       "id": "INT-9",
       "title": "Cross-layer parity and interoperability closure",
       "status": "todo",
-      "dependsOn": ["WML-3", "REN-4", "WMLS-5", "WAE-6", "TRN-7", "WSP-8"],
+      "dependsOn": ["WML-3", "REN-4", "WMLS-5", "WAE-6", "WSP-8"],
+      "profileGateDependencies": ["TRN-7-CL-C"],
       "goal": "Prove the complete selected-profile behavior across source, engine, transport, gateway compatibility, and desktop host.",
       "workItems": [
         {

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "bdfaa9fe9401ac10d51a6d557cdbfb3a30ee9086ba0f421eb7594d7093c59602"
+        "sha256": "8b9893f280a19729a625744d03e178dd225c22cd9648d5cd4c631170dbbb2ee6"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -35,30 +35,30 @@
   },
   "summary": {
     "nodeCount": 176,
-    "edgeCount": 548,
+    "edgeCount": 552,
     "nodesByType": {
       "clause": 58,
       "fixture": 58,
       "legacy-ticket": 6,
-      "owner-layer": 3,
+      "owner-layer": 4,
       "profile": 1,
       "requirement": 6,
       "scr-row": 11,
       "source-document": 17,
       "source-family": 4,
-      "sprint": 4,
-      "work-item": 8
+      "sprint": 2,
+      "work-item": 9
     },
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
       "belongs-to": 11,
-      "contains": 8,
-      "covers-family": 14,
-      "depends-on": 3,
+      "contains": 9,
+      "covers-family": 15,
+      "depends-on": 1,
       "effective-document": 12,
       "maps-to": 109,
-      "owned-by": 18,
+      "owned-by": 22,
       "planned-by": 102,
       "refines": 126,
       "relates-to": 8,
@@ -77,7 +77,8 @@
       "TRN-705": 0,
       "TRN-706": 11,
       "TRN-707": 9,
-      "TRN-708": 13
+      "TRN-708": 13,
+      "TRN-710": 0
     },
     "directClauseFamiliesByWorkItem": {
       "TRN-701": [
@@ -99,7 +100,8 @@
       "TRN-708": [
         "wcmp",
         "wdp"
-      ]
+      ],
+      "TRN-710": []
     },
     "directScrRowCountsByWorkItem": {
       "TRN-701": 0,
@@ -109,7 +111,8 @@
       "TRN-705": 0,
       "TRN-706": 0,
       "TRN-707": 0,
-      "TRN-708": 0
+      "TRN-708": 0,
+      "TRN-710": 0
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "TRN-701": {},
@@ -119,7 +122,8 @@
       "TRN-705": {},
       "TRN-706": {},
       "TRN-707": {},
-      "TRN-708": {}
+      "TRN-708": {},
+      "TRN-710": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
       "TRN-703": [
@@ -130,12 +134,16 @@
       ],
       "TRN-707": [
         "wtp"
+      ],
+      "TRN-710": [
+        "wcmp"
       ]
     },
     "workItemsWithoutDirectClauses": [
       "TRN-703",
       "TRN-704",
-      "TRN-705"
+      "TRN-705",
+      "TRN-710"
     ]
   },
   "nodes": [
@@ -3023,6 +3031,15 @@
       }
     },
     {
+      "id": "owner-layer:spec-processing",
+      "key": "spec-processing",
+      "type": "owner-layer",
+      "title": "spec-processing",
+      "properties": {
+        "source": "docs/waves/wap-1.2.1-compliance-program.json"
+      }
+    },
+    {
       "id": "owner-layer:transport-rust",
       "key": "transport-rust",
       "type": "owner-layer",
@@ -3728,17 +3745,6 @@
       }
     },
     {
-      "id": "sprint:INT-9",
-      "key": "INT-9",
-      "type": "sprint",
-      "title": "Cross-layer parity and interoperability closure",
-      "properties": {
-        "status": "todo",
-        "goal": "Prove the complete selected-profile behavior across source, engine, transport, gateway compatibility, and desktop host.",
-        "source": "docs/waves/wap-1.2.1-compliance-program.json"
-      }
-    },
-    {
       "id": "sprint:TRN-7",
       "key": "TRN-7",
       "type": "sprint",
@@ -3751,21 +3757,11 @@
         ],
         "exitGates": [
           "The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.",
+          "The completed TRN-7-CL-C profile gate allows selected connectionless WSP and downstream integration to proceed without waiting for dormant WTP work or claiming the non-IP general-WCMP capability.",
           "WTP evidence is required only when connection-oriented WSP is claimed.",
           "Timing tests are deterministic and do not require live networks.",
           "WAP 2.0 transport deltas are explicit."
         ],
-        "source": "docs/waves/wap-1.2.1-compliance-program.json"
-      }
-    },
-    {
-      "id": "sprint:WSP-8",
-      "key": "WSP-8",
-      "type": "sprint",
-      "title": "WSP session, connectionless, headers, and host fetch",
-      "properties": {
-        "status": "in-progress",
-        "goal": "Complete the WAP 1.2.1 session layer and make it the real desktop ingress path.",
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
     },
@@ -3851,6 +3847,12 @@
         "sourceFamilies": [
           "wcmp",
           "wdp-wcmp-adaptation"
+        ],
+        "explicitUnmappedFamilies": [
+          "wcmp"
+        ],
+        "followUpWorkItems": [
+          "TRN-710"
         ],
         "existingTickets": [
           "T0-17"
@@ -4070,6 +4072,55 @@
           "node scripts/check-wap-selected-normative-clauses.mjs",
           "node scripts/check-requirement-status-drift.mjs",
           "node scripts/wap-context-pack.mjs TRN-708",
+          "node scripts/check-wap-knowledge-graph.mjs"
+        ],
+        "source": "docs/waves/wap-1.2.1-compliance-program.json"
+      }
+    },
+    {
+      "id": "work-item:TRN-710",
+      "key": "TRN-710",
+      "type": "work-item",
+      "title": "Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability",
+      "properties": {
+        "status": "todo",
+        "ownerLayers": [
+          "documentation",
+          "spec-processing",
+          "transport-rust",
+          "qa"
+        ],
+        "sourceFamilies": [
+          "wcmp"
+        ],
+        "explicitUnmappedFamilies": [
+          "wcmp"
+        ],
+        "dependsOn": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "notes": [
+          "Additive evidence correction only. Preserve completed TRN-703/T0-17 as the canonical history of the implemented non-IP general-WCMP capability.",
+          "Defer only the mechanical clause mapping while the WML-3 lane edits spec-processing/scripts/generate-wap-selected-normative-clauses.mjs, spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json, spec-processing/scripts/generate-wap-knowledge-graph.mjs, and their generated graph projections."
+        ],
+        "specReferences": [
+          "WAP-202-WCMP sections 5.4 and 5.5 (general WCMP message format and behavior for non-IP networks)",
+          "WAP-202-WCMP Appendix A rows WCMP-C-001 and WCMP-SP-C-002",
+          "WAP-159-WDPWCMPAdapt effective non-IP bearer adaptation clauses"
+        ],
+        "existingTickets": [],
+        "outputs": [
+          "Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability"
+        ],
+        "acceptance": [
+          "Map the applicable WAP-202 sections 5.4/5.5 and effective adaptation clauses directly to TRN-710, the existing general-WCMP fixtures, and implementation tests without changing TRN-703 status.",
+          "Keep the mapping explicitly outside the selected CDPD/IPv4 profile and do not use it to satisfy the TRN-7-CL-C gate or activate WTP or connection-oriented WSP."
+        ],
+        "evidence": [
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp",
+          "node scripts/check-wap-selected-normative-clauses.mjs",
+          "node scripts/wap-context-pack.mjs TRN-703",
           "node scripts/check-wap-knowledge-graph.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
@@ -8533,15 +8584,6 @@
       ]
     },
     {
-      "id": "sprint:INT-9|depends-on|sprint:TRN-7",
-      "from": "sprint:INT-9",
-      "relation": "depends-on",
-      "to": "sprint:TRN-7",
-      "sourceRefs": [
-        "docs/waves/wap-1.2.1-compliance-program.json"
-      ]
-    },
-    {
       "id": "sprint:TRN-7|contains|work-item:TRN-701",
       "from": "sprint:TRN-7",
       "relation": "contains",
@@ -8614,6 +8656,15 @@
       ]
     },
     {
+      "id": "sprint:TRN-7|contains|work-item:TRN-710",
+      "from": "sprint:TRN-7",
+      "relation": "contains",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
       "id": "sprint:TRN-7|depends-on|sprint:CONF-1",
       "from": "sprint:TRN-7",
       "relation": "depends-on",
@@ -8630,15 +8681,6 @@
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json",
         "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
-      ]
-    },
-    {
-      "id": "sprint:WSP-8|depends-on|sprint:TRN-7",
-      "from": "sprint:WSP-8",
-      "relation": "depends-on",
-      "to": "sprint:TRN-7",
-      "sourceRefs": [
-        "docs/waves/wap-1.2.1-compliance-program.json"
       ]
     },
     {
@@ -9005,6 +9047,51 @@
     {
       "id": "work-item:TRN-708|owned-by|owner-layer:transport-rust",
       "from": "work-item:TRN-708",
+      "relation": "owned-by",
+      "to": "owner-layer:transport-rust",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:TRN-710|covers-family|source-family:wcmp",
+      "from": "work-item:TRN-710",
+      "relation": "covers-family",
+      "to": "source-family:wcmp",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:TRN-710|owned-by|owner-layer:documentation",
+      "from": "work-item:TRN-710",
+      "relation": "owned-by",
+      "to": "owner-layer:documentation",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:TRN-710|owned-by|owner-layer:qa",
+      "from": "work-item:TRN-710",
+      "relation": "owned-by",
+      "to": "owner-layer:qa",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:TRN-710|owned-by|owner-layer:spec-processing",
+      "from": "work-item:TRN-710",
+      "relation": "owned-by",
+      "to": "owner-layer:spec-processing",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:TRN-710|owned-by|owner-layer:transport-rust",
+      "from": "work-item:TRN-710",
       "relation": "owned-by",
       "to": "owner-layer:transport-rust",
       "sourceRefs": [

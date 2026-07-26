@@ -14,12 +14,12 @@
 ## Graph summary
 
 - Nodes: 176
-- Edges: 548
-- Selected work items: 8
+- Edges: 552
+- Selected work items: 9
 - Direct SCR rows: 0
 - Direct normative clauses: 91
-- Work items without direct clause mappings: 3
-- Work items with unmapped declared normative families: 3
+- Work items without direct clause mappings: 4
+- Work items with unmapped declared normative families: 4
 
 ## Execution target
 
@@ -28,11 +28,12 @@
 - Status: `in-progress`
 - Goal: Complete the historical datagram and transaction mechanics required beneath WSP.
 - Depends on: `CONF-1`
-- Direct downstream sprints: `INT-9`, `WSP-8`
+- Direct downstream sprints: None
 
 Exit gates:
 
 - The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.
+- The completed TRN-7-CL-C profile gate allows selected connectionless WSP and downstream integration to proceed without waiting for dormant WTP work or claiming the non-IP general-WCMP capability.
 - WTP evidence is required only when connection-oriented WSP is claimed.
 - Timing tests are deterministic and do not require live networks.
 - WAP 2.0 transport deltas are explicit.
@@ -243,6 +244,31 @@ Evidence commands:
 - `node scripts/check-wap-selected-normative-clauses.mjs`
 - `node scripts/check-requirement-status-drift.mjs`
 - `node scripts/wap-context-pack.mjs TRN-708`
+- `node scripts/check-wap-knowledge-graph.mjs`
+
+### TRN-710: Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability
+
+- Status: `todo`
+- Owner layers: `documentation`, `spec-processing`, `transport-rust`, `qa`
+- Source families: `wcmp`
+- Existing tickets: None
+- Direct SCR rows: 0
+- Direct normative clauses: 0
+
+Outputs:
+
+- Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability
+
+Acceptance:
+
+- Map the applicable WAP-202 sections 5.4/5.5 and effective adaptation clauses directly to TRN-710, the existing general-WCMP fixtures, and implementation tests without changing TRN-703 status.
+- Keep the mapping explicitly outside the selected CDPD/IPv4 profile and do not use it to satisfy the TRN-7-CL-C gate or activate WTP or connection-oriented WSP.
+
+Evidence commands:
+
+- `cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/wap-context-pack.mjs TRN-703`
 - `node scripts/check-wap-knowledge-graph.mjs`
 
 ## Direct SCR evidence
@@ -816,12 +842,14 @@ Evidence commands:
 - `TRN-703` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-704` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `TRN-705` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
+- `TRN-710` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
 - `TRN-703` declares `wcmp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-706` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-707` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `TRN-710` declares `wcmp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Source documents
 
