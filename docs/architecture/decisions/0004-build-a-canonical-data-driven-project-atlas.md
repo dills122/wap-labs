@@ -30,6 +30,13 @@ The portal is a projection, not a new source of truth:
 - long-form content comes from active Markdown under `docs/`;
 - archive folders, archive ledgers, and date-stamped historical snapshots are excluded by default.
 
+Before page assembly, Atlas validates its four JSON inputs against package-local, machine-readable
+JSON Schemas and then checks cross-file references, summary counts, uniqueness, and ordering rules.
+The validator may normalize presentation order, but it does not rewrite or copy canonical data.
+Handwritten planning and Markdown remain handwritten; evidence-family generators remain responsible
+for generated manifests and their provenance. Astro alone owns portal generation, producing the
+ignored static `docs-portal/dist/` package with generator metadata.
+
 Stable detail routes expose sources, sprints, work items, and documents. Search and filters use
 small browser-native scripts; the content remains navigable without a client framework runtime.
 
@@ -55,6 +62,6 @@ the long-form documentation surface later needs its full navigation or search ec
 - Repository changes appear in the portal on the next static build.
 - There is no second planning database to reconcile.
 - The static output can be hosted below `/wap-labs/atlas`.
-- Broken canonical schemas fail visibly at type-check or build time.
+- Broken canonical schemas, enums, references, or ordering fail before type-check and page build.
 - Full-text search, graph visualization, deployment automation, and Git-history-derived progress
   are follow-on slices; they must also remain projections over canonical repository evidence.

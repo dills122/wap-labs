@@ -1,11 +1,4 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-
-const repositoryRoot = resolve(process.cwd(), '..');
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(`${repositoryRoot}/${path}`, 'utf8')) as T;
-}
+import { loadAtlasData } from './atlas-data.mjs';
 
 export interface WorkItem {
   id: string;
@@ -121,11 +114,12 @@ export interface SpecFamily {
 }
 
 interface EffectiveSpec {
+  releaseId: string;
   summary: {
     familyCount: number;
     byTargetDisposition: Record<string, number>;
   };
-  semantics: string[];
+  semantics: Record<string, string>;
   families: SpecFamily[];
 }
 
@@ -147,18 +141,17 @@ interface ClauseManifest {
   }>;
 }
 
-export const program = readJson<ComplianceProgram>(
-  'docs/waves/wap-1.2.1-compliance-program.json'
-);
-export const releaseManifest = readJson<ReleaseManifest>(
-  'spec-processing/source-manifests/wap-1.2.1-release.json'
-);
-export const effectiveSpec = readJson<EffectiveSpec>(
-  'spec-processing/source-manifests/wap-1.2.1-effective-spec.json'
-);
-export const clauseManifest = readJson<ClauseManifest>(
-  'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json'
-);
+const atlasData = loadAtlasData() as {
+  program: ComplianceProgram;
+  releaseManifest: ReleaseManifest;
+  effectiveSpec: EffectiveSpec;
+  clauseManifest: ClauseManifest;
+};
+
+export const program = atlasData.program;
+export const releaseManifest = atlasData.releaseManifest;
+export const effectiveSpec = atlasData.effectiveSpec;
+export const clauseManifest = atlasData.clauseManifest;
 
 export const workItems = program.sprints.flatMap((sprint) =>
   sprint.workItems.map((item) => ({
