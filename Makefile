@@ -8,8 +8,8 @@ RUST_FUNCTION_COVERAGE_MIN ?= 85
 .PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap smoke-native-tauri-kannel-ui init-refresh \
 	fmt lint test test-fast verify-fast verify-change verify-full verify-extended ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
-	lint-rust lint-rust-engine lint-rust-transport lint-node \
-	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node \
+	lint-rust lint-rust-engine lint-rust-transport lint-node lint-go \
+	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node test-go \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
 	install-marketing-site dev-marketing-site build-marketing-site \
@@ -61,10 +61,16 @@ fmt:
 	else \
 		echo "skip: cargo not found (engine-wasm fmt)"; \
 	fi
+	@if command -v go >/dev/null 2>&1; then \
+		echo "==> gofmt (wml-server)"; \
+		cd wml-server && gofmt -w $$(find . -name '*.go' -type f); \
+	else \
+		echo "skip: go not found (wml-server fmt)"; \
+	fi
 
-lint: lint-rust lint-node
+lint: lint-rust lint-node lint-go
 
-test: test-rust test-node
+test: test-rust test-node test-go
 
 test-fast: test-rust
 
@@ -178,7 +184,16 @@ lint-node:
 	fi
 	@echo "==> pnpm lint:node"
 	@pnpm lint:node
-	@echo "[INTENTIONAL EXCLUSION] wml-server lint — no lint script is defined"
+
+lint-go:
+	@if ! command -v go >/dev/null 2>&1; then \
+		echo "FAIL: go not found (wml-server lint)"; \
+		exit 1; \
+	fi
+	@echo "==> gofmt -l (wml-server)"
+	@test -z "$$(find wml-server -name '*.go' -type f -exec gofmt -l {} +)"
+	@echo "==> go vet ./... (wml-server)"
+	@cd wml-server && go vet ./...
 
 test-node:
 	@if ! command -v pnpm >/dev/null 2>&1; then \
@@ -197,8 +212,14 @@ test-node:
 	@pnpm test:node
 	@echo "==> pnpm build:node"
 	@pnpm build:node
-	@echo "==> wml-server syntax"
-	@node --check wml-server/server.js
+
+test-go:
+	@if ! command -v go >/dev/null 2>&1; then \
+		echo "FAIL: go not found (wml-server tests)"; \
+		exit 1; \
+	fi
+	@echo "==> go test ./... (wml-server)"
+	@cd wml-server && go test ./...
 
 # --- Git hooks (pre-commit) ---
 

@@ -7,7 +7,7 @@ targets:
 | -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Fast     | `pnpm verify:fast`                    | Runs the verification-orchestrator tests, whitespace check, and managed-version check.                                                                                                                                                           |
 | Change   | `pnpm verify` or `pnpm verify:change` | Runs strict common checks plus every deterministic lane selected by changed paths relative to `origin/main`. Override the base with `WAP_VERIFY_BASE=<ref>` or `--base <ref>`.                                                                   |
-| Full     | `pnpm verify:full`                    | Runs every deterministic offline lane, including compliance/status drift, graph drift, native and WASM engine checks, contracts, stories, transport, browser host/frontend unit/rendered accessibility, Atlas, marketing, and WML server checks. |
+| Full     | `pnpm verify:full`                    | Runs every deterministic offline lane, including compliance/status drift, graph drift, native and WASM engine checks, contracts, stories, transport, browser host/frontend unit/rendered accessibility, Atlas, marketing, and Go WML origin checks. |
 | Extended | `pnpm verify:extended`                | Runs the full profile, then requires the already-running live Kannel/WML stack and runs the browser baseline as a non-blocking stability signal.                                                                                                 |
 
 Equivalent Make targets are `verify-fast`, `verify-change`, `verify-full`, and `verify-extended`.
@@ -29,7 +29,8 @@ Every known lane is reported with one of these explicit outcomes:
 There is no successful skip for a missing prerequisite in a selected required lane. Run
 `./scripts/init-refresh.sh` to refresh workspace dependencies. Install the repository Node/pnpm
 versions first when absent; use `AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh` when the
-pinned `wasm-pack` or Tauri CLI must be installed.
+pinned `wasm-pack` or Tauri CLI must be installed. Go 1.25 or newer is required when the selected
+lane includes `wml-server/`.
 
 ## Selection and evidence boundaries
 

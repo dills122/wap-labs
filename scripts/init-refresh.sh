@@ -66,6 +66,7 @@ log "repo root: ${ROOT_DIR}"
 need_cmd node || true
 need_cmd pnpm || true
 need_cmd cargo || true
+need_cmd go || true
 
 if command -v cargo >/dev/null 2>&1; then
   ensure_wasm_pack
@@ -86,14 +87,15 @@ if [ "${SKIP_NODE_INSTALLS}" != "1" ]; then
     warn "pnpm not found; skipping node installs"
   fi
 
-  if command -v npm >/dev/null 2>&1 && [ -f "${ROOT_DIR}/wml-server/package.json" ]; then
-    log "install wml-server dependencies"
-    (cd "${ROOT_DIR}" && npm --prefix wml-server install)
-  else
-    warn "npm not found; skipping wml-server dependency install"
-  fi
 else
   log "skipping node installs (SKIP_NODE_INSTALLS=1)"
+fi
+
+if command -v go >/dev/null 2>&1; then
+  log "verify wml-server Go module"
+  (cd "${ROOT_DIR}/wml-server" && go mod verify)
+else
+  warn "go not found; skipping wml-server module verification"
 fi
 
 if [ "${SKIP_HOOKS}" != "1" ]; then

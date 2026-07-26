@@ -1,10 +1,4 @@
-# Node dependencies
-node_modules/
-
 # Runtime logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 *.log
 
 # Local env
@@ -13,9 +7,8 @@ yarn-error.log*
 !.env.example
 
 # Coverage/build outputs
-coverage/
-dist/
-.nyc_output/
+coverage.out
+wml-server
 
 # OS/editor noise
 .DS_Store

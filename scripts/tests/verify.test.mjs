@@ -30,6 +30,15 @@ test('change selects browser, engine stories, and transport for contract changes
   assert.equal(byId(plan, 'transport').selected, true);
 });
 
+test('change selects Go origin checks for WML server changes', () => {
+  const lane = byId(buildPlan('change', ['wml-server/internal/origin/app.go']), 'wml-server');
+  assert.equal(lane.selected, true);
+  assert.deepEqual(
+    lane.commands.map((command) => command.label),
+    ['Go format check', 'Go vet', 'Go tests']
+  );
+});
+
 test('root verification surfaces select every ordinary change lane', () => {
   const plan = buildPlan('change', ['package.json']);
   for (const lane of plan.filter((item) => !item.extendedOnly)) {

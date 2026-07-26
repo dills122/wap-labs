@@ -7,6 +7,7 @@ Canonical prerequisite + setup reference for local development across all reposi
 - `git`
 - `node` 20.19+ (or 22.12+) and `npm`
 - `pnpm` 10+
+- Go 1.25+
 - Rust toolchain (`rustup`, `cargo`, `rustc`)
 - `pre-commit` (recommended for local hook parity)
 
@@ -27,7 +28,7 @@ From repo root:
 The script is idempotent and will:
 
 - install/update workspace Node dependencies
-- install `wml-server` dependencies
+- verify the standard-library-only `wml-server` Go module
 - optionally install hooks (if `pre-commit` is available)
 - optionally install Rust CLI tools (`wasm-pack`, `cargo-tauri`) when enabled
 
@@ -59,7 +60,11 @@ Environment variables supported by `scripts/init-refresh.sh`:
 
 ### `wml-server/`
 
-- Start local WML demo server: `npm --prefix wml-server start`
+- Format: `make fmt`
+- Lint: `cd wml-server && go vet ./...`
+- Tests: `cd wml-server && go test ./...`
+- Start the origin directly: `cd wml-server && go run ./cmd/wml-server`
+- Public WML listens on `:3000`; internal health and metrics listen on `:3001`.
 
 ## CI Parity Commands
 

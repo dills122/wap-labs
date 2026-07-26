@@ -3,7 +3,7 @@ set -eu
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
-WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3000/health}"
+WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo "native Tauri WebDriver smoke requires Linux (tauri-driver does not support macOS)" >&2

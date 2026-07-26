@@ -39,7 +39,6 @@ updates:
     open-pull-requests-limit: 5
     exclude-paths:
       - 'marketing-site/**'
-      - 'wml-server/**'
     groups:
       root-pnpm-non-major:
         applies-to: version-updates
@@ -76,20 +75,16 @@ updates:
       - dependencies
       - javascript
 
-  - package-ecosystem: npm
+  - package-ecosystem: gomod
     directory: /wml-server
     schedule:
       interval: weekly
       day: tuesday
       time: '07:00'
       timezone: Etc/UTC
-    cooldown:
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 3
     open-pull-requests-limit: 3
     groups:
-      wml-server-non-major:
+      wml-server-go-non-major:
         applies-to: version-updates
         patterns:
           - '*'
@@ -98,7 +93,7 @@ updates:
           - patch
     labels:
       - dependencies
-      - javascript
+      - go
 
   - package-ecosystem: cargo
     directory: /engine-wasm/engine

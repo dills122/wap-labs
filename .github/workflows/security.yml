@@ -91,12 +91,22 @@ jobs:
       - name: Audit workspace dependencies (high+)
         run: pnpm audit --audit-level high
 
-      - name: Setup Node cache for wml-server npm audit
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+  go-audit:
+    name: Go Vulnerability Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: wml-server/package-lock.json
+          persist-credentials: false
 
-      - name: Audit npm-only wml-server dependencies (high+)
-        run: npm --prefix wml-server audit --audit-level=high
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: '1.25'
+          cache-dependency-path: wml-server/go.mod
+
+      - name: Audit WML origin and Go standard library
+        working-directory: wml-server
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...

@@ -290,11 +290,18 @@ export const LANES = Object.freeze([
   },
   {
     id: 'wml-server',
-    label: 'WML server syntax',
+    label: 'WML origin checks',
     profiles: ['change', 'full', 'extended'],
     paths: ['wml-server/'],
-    prerequisites: [prerequisite('node', 'install the repository Node version')],
-    commands: [command('server syntax', 'node', ['--check', 'wml-server/server.js'])]
+    prerequisites: [prerequisite('go', 'install Go 1.25 or newer')],
+    commands: [
+      command('Go format check', 'sh', [
+        '-c',
+        "test -z \"$(find . -name '*.go' -type f -exec gofmt -l {} +)\""
+      ], { cwd: 'wml-server' }),
+      command('Go vet', 'go', ['vet', './...'], { cwd: 'wml-server' }),
+      command('Go tests', 'go', ['test', './...'], { cwd: 'wml-server' })
+    ]
   },
   {
     id: 'live-kannel',
