@@ -8,7 +8,7 @@
 
 # Coverage/build outputs
 coverage.out
-wml-server
+/wml-server
 
 # OS/editor noise
 .DS_Store

@@ -588,6 +588,9 @@ jobs:
         working-directory: wml-server
         run: go test -race ./...
 
+      - name: Verify container entrypoint is committed
+        run: git ls-files --error-unmatch wml-server/cmd/wml-server/main.go
+
       - name: Static container build and Compose validation
         run: |
           docker build --tag wap-labs-wml-origin:ci wml-server
