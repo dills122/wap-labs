@@ -1,7 +1,7 @@
 # Waves Desktop Product and Interaction Design
 
 Status: planning-ready
-Last updated: 2026-07-25
+Last updated: 2026-07-26
 Owner lane: `browser` with contract dependencies on `engine-wasm` and `transport-rust`
 
 ## Purpose
@@ -40,6 +40,7 @@ Implementation remains subordinate to:
 - [user onboarding experience plan](USER_ONBOARDING_EXPERIENCE_PLAN.md)
 - [engine debug connector plan](ENGINE_DEBUG_CONNECTOR_PLAN.md)
 - [usability and resilience backlog](USABILITY_RESILIENCE_BACKLOG.md)
+- [historical browser profile source baseline](HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md)
 
 Browser-only presentation work may proceed while core work continues when it preserves the current
 contracts and does not infer or hard-code future WML semantics. Contract-dependent capabilities must
@@ -89,11 +90,18 @@ imply one canonical handset skin. See the [OMA WML 1.3 specification](https://ww
 The Nokia 7110 is a useful later profile: its 96 by 65 display, small proportional font, inverse-video
 focus, left `Options` and right `Back` softkeys, and roller-based movement create a recognizable WAP
 interaction model. Those are Nokia-specific observations rather than generic Class C requirements.
-See the [Nokia 7110 Service Developer's Guide](https://www.filibeto.org/mobile/files/sservice_dev_guide.pdf).
+Two recovered Nokia publications now support detailed profile planning; see the
+[historical browser profile source baseline](HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md).
 
-Ericsson's R320 exposed a different service-menu rhythm, including Suspend, Resume, Reload, Add
-bookmark, and Exit. The difference reinforces the need for base behavior plus explicit device
-overlays. See the [Ericsson R320 user manual](https://manuals.plus/wp-content/uploads/2026/02/man-er-r320s-1.pdf).
+Phone.com/Openwave's recovered browser-vendor guidance defines a logical primary action, secondary
+options access, and fixed Back behavior, but it also documents broad OEM variation and conflicts on
+physical left/right placement. A generic browser-family skin would therefore overstate the evidence;
+one shipped handset and browser release must be selected before an Openwave profile is named.
+
+Ericsson's R320 exposed a different keypad and service-menu rhythm. Its browser Options menu includes
+content-dependent actions plus fixed actions such as Suspend, Reload, Add bookmark, and Exit, while
+Resume is reached later from the phone's WAP Services menu. The distinction reinforces the need for
+base behavior plus explicit device overlays rather than an inferred cross-OEM menu.
 
 Kannel distinguishes operational states such as Running, Suspended, Isolated, Full, and Shutdown.
 These are useful host diagnostics but are not handset-content states and must remain outside the WML
@@ -345,11 +353,15 @@ The `WBP-00` baseline adopts the following working decisions, with measurements 
 1. `WBP-08` owner: whether pointer assistance defaults on or is selected during first-run setup.
 2. `WBP-12`/`WBP-13` owners: persistence and redaction policy for form fields and diagnostic
    captures.
-3. `WBP-15` owner: evidence threshold required before naming and shipping a device-specific profile.
+3. `WBP-15` owner: apply the historical source baseline's provenance and coverage thresholds before
+   naming and shipping a device-specific profile.
 
 ## Evidence Gaps
 
-- Primary Openwave and several OEM interaction guides have not yet been recovered.
+- Primary Phone.com/Openwave browser guides and Nokia 7110 interaction guides are recovered for
+  private research; device-specific Openwave physical controls, byte-verified Ericsson R320
+  developer material, Motorola application guidance, firmware defects, and redistribution
+  permissions remain open.
 - Current stories do not provide broad automated coverage of the complete Tauri UI path.
 - Dynamic softkey order, menu overflow, modal form editing, and pointer acceleration need focused
   prototypes and user testing.

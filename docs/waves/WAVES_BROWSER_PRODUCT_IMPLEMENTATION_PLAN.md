@@ -1,7 +1,7 @@
 # Waves Browser Product Implementation Plan
 
 Status: planning-ready
-Last updated: 2026-07-25
+Last updated: 2026-07-26
 Design source: [Waves Desktop Product and Interaction Design](WAVES_DESKTOP_PRODUCT_DESIGN.md)
 
 ## Purpose
@@ -22,13 +22,14 @@ permit browser work to infer unfinished engine or transport behavior.
 
 ## Source Plans and Ownership
 
-| Capability | Authoritative plan or backlog |
-|---|---|
-| Class C sequence and adoption gates | [WAP 1.2.1 planning baseline](WAP_1_2_1_PLANNING_BASELINE.md) |
-| Frame, Canvas, hit regions, typed input | [engine-host frame plan](ENGINE_HOST_FRAME_MIGRATION_PLAN.md) and [work items](ENGINE_HOST_FRAME_WORK_ITEMS.md) |
-| Welcome, help, tours, tutorials | [user onboarding plan](USER_ONBOARDING_EXPERIENCE_PLAN.md) |
-| Read-only runtime observation | [engine debug connector plan](ENGINE_DEBUG_CONNECTOR_PLAN.md) |
-| Existing host usability follow-ups | [usability and resilience backlog](USABILITY_RESILIENCE_BACKLOG.md) |
+| Capability                                 | Authoritative plan or backlog                                                                                   |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Class C sequence and adoption gates        | [WAP 1.2.1 planning baseline](WAP_1_2_1_PLANNING_BASELINE.md)                                                   |
+| Frame, Canvas, hit regions, typed input    | [engine-host frame plan](ENGINE_HOST_FRAME_MIGRATION_PLAN.md) and [work items](ENGINE_HOST_FRAME_WORK_ITEMS.md) |
+| Welcome, help, tours, tutorials            | [user onboarding plan](USER_ONBOARDING_EXPERIENCE_PLAN.md)                                                      |
+| Read-only runtime observation              | [engine debug connector plan](ENGINE_DEBUG_CONNECTOR_PLAN.md)                                                   |
+| Existing host usability follow-ups         | [usability and resilience backlog](USABILITY_RESILIENCE_BACKLOG.md)                                             |
+| Historical profile evidence and provenance | [historical browser profile source baseline](HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md)                     |
 
 When a slice starts, update the owning work-item ledger rather than creating a second status source in
 this document.
@@ -444,11 +445,29 @@ Accept:
 
 - `Depends On`: stable Class C reference profile, compatibility registry, completed frame/input path
 
-Build only from primary evidence. Cover viewport metrics, typography, focus, roller behavior, softkey
-mapping, Options ordering, editors, history, and documented failures with profile-specific goldens.
+Plan only from the two concordant Nokia publications locked in the historical source baseline. Cover
+viewport metrics, typography, focus, roller behavior, softkey mapping, exact Options ordering,
+editors, history, and documented limitations with profile-specific fixtures and goldens. Preserve
+device-specific timer cadence, firmware/version coverage, and reproducible failure behavior as
+explicit evidence gaps until primary material or physical-device traces close them.
 
-Do not start an Openwave, Ericsson, Motorola, or other named profile until comparable primary evidence
-and fixtures exist.
+Accept planning readiness only when every behavior maps to a cited primary source or an explicit gap;
+do not infer missing behavior from neutral Class C or another Nokia handset. Implementation remains
+blocked on the declared runtime dependencies.
+
+### WBP-16 Openwave 4.x handset target and evidence lock
+
+- `Depends On`: `WBP-15` evidence method; no runtime dependency because this is research-only
+
+Select one representative shipping handset and exact Phone.com/Openwave browser release. Pair the
+recovered browser-family style guide with that manufacturer's user/developer guide, then resolve
+viewport and typography, focus controls, physical softkey placement, overflow-menu ordering,
+editor modes, Back/history, timers, and documented failures. Record hashes, provenance, conflicts,
+availability, and redistribution constraints while keeping restricted payloads outside Git.
+
+Accept only an evidence-locked planning candidate. Do not add a generic `Openwave` profile, implement
+runtime behavior, or use the 5.0 graphical guide to fill 4.x/OEM gaps. Ericsson and Motorola remain
+source-recovery candidates until comparable primary evidence exists.
 
 ## Proposed Delivery Order
 
@@ -462,22 +481,23 @@ and fixtures exist.
 7. Integrate loading, recovery, and persistence (`WBP-11`, `WBP-12`).
 8. Land diagnostics/replay after both contract surfaces stabilize (`WBP-13`).
 9. Close MVP with complete-path evidence (`WBP-14`).
-10. Begin named compatibility profiles only after Class C reference behavior is stable (`WBP-15`).
+10. Begin named compatibility profiles only after Class C reference behavior is stable (`WBP-15`);
+    conduct the additive Openwave target/source lock independently as research (`WBP-16`).
 
 ## Parallel Ownership and Conflict Controls
 
-| Work | Safe parallel owner | High-conflict files or surfaces |
-|---|---|---|
-| Shell structure | Browser UI integrator | shell template, controller, global styles |
-| Theme and handset scaffold | Browser visual owner after shell seams exist | global tokens and handset component |
-| Onboarding content | Browser/docs owner | start-shell integration; example manifest generation |
-| Host accessibility | Browser accessibility owner | shared component templates and focus styles |
-| Frame contract | Engine-contract owner | engine contract, generated host types, Tauri engine adapter |
-| Canvas/input | Renderer owner after frame contract | presenter, controller, keyboard/input adapter |
-| Transport cancellation | Transport-contract owner | Rust exports, generated transport types, fetch host, navigation state |
-| Persistence | Browser/Tauri owner after history identity | bootstrap/session modules and settings UI |
-| Debug connector | Diagnostics owner after contracts stabilize | engine contract, Tauri adapter, developer drawer |
-| End-to-end evidence | Test owner | shared story manifest and test harness configuration |
+| Work                       | Safe parallel owner                          | High-conflict files or surfaces                                       |
+| -------------------------- | -------------------------------------------- | --------------------------------------------------------------------- |
+| Shell structure            | Browser UI integrator                        | shell template, controller, global styles                             |
+| Theme and handset scaffold | Browser visual owner after shell seams exist | global tokens and handset component                                   |
+| Onboarding content         | Browser/docs owner                           | start-shell integration; example manifest generation                  |
+| Host accessibility         | Browser accessibility owner                  | shared component templates and focus styles                           |
+| Frame contract             | Engine-contract owner                        | engine contract, generated host types, Tauri engine adapter           |
+| Canvas/input               | Renderer owner after frame contract          | presenter, controller, keyboard/input adapter                         |
+| Transport cancellation     | Transport-contract owner                     | Rust exports, generated transport types, fetch host, navigation state |
+| Persistence                | Browser/Tauri owner after history identity   | bootstrap/session modules and settings UI                             |
+| Debug connector            | Diagnostics owner after contracts stabilize  | engine contract, Tauri adapter, developer drawer                      |
+| End-to-end evidence        | Test owner                                   | shared story manifest and test harness configuration                  |
 
 Rules:
 
