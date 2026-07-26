@@ -12,6 +12,7 @@ import { route } from '../lib/routes';
 
 const repository = 'https://github.com/dills122/wap-labs';
 const source = (path: string) => `${repository}/blob/main/${path}`;
+const tree = (path: string) => `${repository}/tree/main/${path}`;
 
 const confidenceLevels = [
   {
@@ -123,14 +124,15 @@ const lanes = [
     title: 'Merge gate and change selection',
     tags: ['required', 'path-scoped'],
     runs:
-      'Detect Changed Areas selects layer jobs for ordinary pull requests. Repo Hygiene always runs; CI Required Gate rejects failed or cancelled prerequisites and accepts intentional path skips.',
+      'Detect Changed Areas selects layer jobs for ordinary pull requests. Repo Hygiene always runs; CI Required Gate and Extended Quality Required Gate reject failed or cancelled selected prerequisites and accept intentional path skips. Compliance-affecting paths also select WAP Compliance and Status Drift.',
     proves:
-      'The required repository-wide checks ran and every layer selected for the diff completed successfully.',
+      'The required repository-wide checks and both aggregate gates ran, and every layer selected for the diff completed successfully.',
     doesNot:
       'A skipped layer was retested. Pushes to main, manual CI, and repository-owned Dependabot pull requests deliberately run the full matrix.',
-    command: 'pnpm typecheck:node && pnpm lint:node && pnpm format:check:node',
+    command: 'pnpm verify',
     links: [
       ['Workflow', source('.github/workflows/ci.yml')],
+      ['Extended quality', source('.github/workflows/extended-quality.yml')],
       ['Required-check policy', source('docs/ci/REQUIRED_CHECKS.md')]
     ]
   },
@@ -138,13 +140,16 @@ const lanes = [
     title: 'Native WaveNav engine',
     tags: ['required', 'path-scoped'],
     runs:
-      'Rust parser, runtime, navigation, focus, scripting, layout, render, fixture, and failure-path tests run under the engine coverage gate when engine paths change.',
+      'Rust parser, runtime, navigation, focus, scripting, layout, render, fixture, and failure-path tests run under the engine coverage gate when engine paths change. The Extended Quality aggregate also selects zero-warning Clippy for engine changes.',
     proves:
       'Native engine behavior is deterministic for the tested inputs and meets the configured line and function coverage floors.',
     doesNot:
       'The WASM binding, browser host, transport path, or an unselected normative clause behaves correctly.',
     command: 'cd engine-wasm/engine && cargo test',
-    links: [['Engine tests', source('engine-wasm/engine/src/engine_tests')]]
+    links: [
+      ['Engine tests', tree('engine-wasm/engine/src/engine_tests')],
+      ['Extended quality', source('.github/workflows/extended-quality.yml')]
+    ]
   },
   {
     title: 'Native/WASM boundary and executable stories',
@@ -180,12 +185,12 @@ const lanes = [
     title: 'Tauri host and browser frontend',
     tags: ['required', 'path-scoped'],
     runs:
-      'Tauri Rust library coverage exercises commands, engine flow, wrappers, and fetch adapters. Vitest covers frontend state and presentation; type, lint, format, capability, permission, and command-schema checks guard the host boundary.',
+      'Tauri Rust library coverage exercises commands, engine flow, wrappers, and fetch adapters. Local Vitest covers frontend state and presentation; GitHub CI owns the platform-sensitive coverage threshold. Type, lint, format, capability, permission, and command-schema checks guard the host boundary.',
     proves:
       'The tested native command adapters and frontend behavior agree with generated contracts and configured coverage floors.',
     doesNot:
       'A packaged desktop window, platform accessibility bridge, real remote gateway, or every operating-system integration was exercised.',
-    command: 'pnpm --dir browser run contracts:check && pnpm --dir browser/frontend run test:coverage',
+    command: 'pnpm --dir browser run tauri:generated:check && pnpm --dir browser/frontend test',
     links: [
       ['Browser host', source('browser/README.md')],
       ['Frontend checks', source('browser/frontend/README.md')]
@@ -195,7 +200,7 @@ const lanes = [
     title: 'Contracts, schemas, ledgers, and Atlas drift',
     tags: ['required', 'path-scoped'],
     runs:
-      'Rust-owned TypeScript projections, Tauri schemas, story manifests, Atlas JSON Schemas, transport evidence references, and the WAP knowledge graph are regenerated or validated against committed inputs.',
+      'Rust-owned TypeScript projections, Tauri schemas, story manifests, Atlas JSON Schemas, transport evidence references, requirement/status rollups, and the WAP knowledge graph are regenerated or validated against committed inputs. CI exposes a path-aware WAP Compliance and Status Drift job.',
     proves:
       'Consumers and projections match their canonical active sources, references resolve, ordering is stable, and generated views have not silently drifted.',
     doesNot:
@@ -210,12 +215,12 @@ const lanes = [
     title: 'Kannel real-stack smoke',
     tags: ['on-demand'],
     runs:
-      'The manual workflow starts Kannel and the WML server, then exercises ignored transport, browser-host, and native engine/render smoke tests against that stack.',
+      'Extended requires an already-running Kannel/WML stack, then exercises transport and browser-host smoke paths against it. The same real-stack lane is available through a manual GitHub workflow.',
     proves:
       'One real gateway path can fetch, hand off, load, render, and navigate the smoke scenario across process and protocol boundaries.',
     doesNot:
       'Broad gateway interoperability, production reliability, every transport profile, or a required pull-request gate.',
-    command: 'make smoke-transport-wap',
+    command: 'pnpm verify:extended',
     links: [['Manual workflow', source('.github/workflows/transport-wap-smoke.yml')]]
   },
   {
@@ -231,19 +236,33 @@ const lanes = [
     links: [['Fuzz workflow', source('.github/workflows/engine-fuzz.yml')]]
   },
   {
-    title: 'Accessibility and product baselines',
-    tags: ['on-demand', 'manual'],
+    title: 'Rendered accessibility',
+    tags: ['required', 'path-scoped'],
     runs:
-      'Rendered Chromium checks cover axe, target geometry, visible focus, overflow, and 200 percent layouts. A separate repeated-run baseline records startup, input, navigation, window, and keyboard evidence. Packaged macOS VoiceOver remains manual.',
+      'The Full and selected Change profiles run production-built Chromium checks for axe, target geometry, visible focus, overflow, and 200 percent layouts. GitHub repeats the gate for browser frontend and its engine, contract, and build inputs.',
     proves:
-      'The production-built deterministic browser surface meets the asserted web accessibility and reference-environment baselines at configured window sizes.',
+      'The production-built deterministic browser surface meets the asserted web accessibility behaviors at configured window sizes.',
     doesNot:
-      'A release performance budget, device compatibility, native macOS announcement timing, or platform-drawn chrome quality.',
-    command:
-      'pnpm --dir browser/frontend test:accessibility:rendered && WAVES_BASELINE_RUNS=20 pnpm test:baseline:waves',
+      'Device compatibility, native macOS announcement timing, platform-drawn chrome quality, or an accessibility certification.',
+    command: 'pnpm --dir browser/frontend run test:accessibility:rendered',
     links: [
       ['Accessibility evidence', source('docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md')],
-      ['Reference baseline', source('docs/waves/WAVES_BROWSER_BASELINE.md')]
+      ['Required workflow', source('.github/workflows/extended-quality.yml')]
+    ]
+  },
+  {
+    title: 'Browser stability baseline',
+    tags: ['scheduled', 'advisory', 'on-demand', 'manual'],
+    runs:
+      'The weekly/manual workflow records startup, input, navigation, window, and keyboard behavior with 20 runs by default. Extended reports a bounded three-run signal as advisory. Packaged macOS VoiceOver remains a separate manual observation.',
+    proves:
+      'Deterministic behavior assertions passed and the run retained reference-environment latency samples and screenshots.',
+    doesNot:
+      'A release performance budget, cross-device timing guarantee, or native accessibility behavior. Recorded latency has no pass/fail threshold.',
+    command: 'WAVES_BASELINE_RUNS=20 pnpm test:baseline:waves',
+    links: [
+      ['Reference baseline', source('docs/waves/WAVES_BROWSER_BASELINE.md')],
+      ['Advisory workflow', source('.github/workflows/extended-quality.yml')]
     ]
   },
   {
