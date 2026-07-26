@@ -25,6 +25,9 @@ Implemented now:
 - Closed `WBP-00`/`WBP-01` baseline with a neutral 20-column Class C reference, reproducible
   startup/navigation/input measurements, stable complete keyboard order, and default/minimum-window
   evidence
+- Closed `WBP-02` through `WBP-05` browser foundation with the reference-handset scaffold,
+  source/route/profile toolbar separation, ordinary-path Welcome/Help tutorial, and host-chrome
+  accessibility baseline
 - Responsive full-window shell plus gateway-aware startup status that names the probed URL and
   preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
@@ -108,15 +111,16 @@ pnpm --dir browser run tauri:icons
 
 ## Next implementation slice
 
-1. Continue with browser-owned `WBP-05` host accessibility using the safe seam in
-   `docs/waves/WAVES_BROWSER_BASELINE.md`; `WBP-02`, `WBP-03`, and `WBP-04` landed in `#344`,
-   `#346`, and `#347` without changing engine or transport contracts.
-2. Keep one owner for root shell, global-style, copy, and generated example-manifest integration.
-3. Keep `WBP-06` and later frame, input, transport lifecycle, persistence, and diagnostics work
-   dependency-gated on their engine/transport contracts.
-4. Defer `D0-01`, `W1-06`, and `M1-09` (`F0-F4` frame migration) until the
-   upstream runtime boundary is stable enough not to churn the host contract.
-5. Keep `M1-03` as non-priority generator follow-up.
+1. Preserve the completed `WBP-00` through `WBP-05` Phase 1 implementation. Use additive
+   `WBP-05A` for the single-announcement and rendered accessibility evidence gap; do not reopen
+   `WBP-05`.
+2. Treat `WBP-06` as planning-ready but implementation-blocked. Do not start `F0-01` or change the
+   frame/input contracts until `WML-2` is `done`, `WML-303` has closed engine-owned task/softkey
+   precedence, and `D0-01` has settled or explicitly sequenced its overlapping debug-contract edits.
+3. After that authorization gate, activate `WBP-06` with one contract owner and execute `F0-01`,
+   then dependency-ordered `F0-02`/`F0-03`; keep later renderer/input work behind those gates.
+4. Keep `M1-09` (`F0-F4` frame migration) dependency-gated and `M1-03` as a non-priority generator
+   follow-up.
 
 ## Planning + Traceability
 
