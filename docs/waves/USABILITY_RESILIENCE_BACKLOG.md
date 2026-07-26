@@ -68,6 +68,11 @@ acceptance. Pull one into a branch when picked up; update status in place.
 - Track back-availability in render state and toggle `disabled`/`aria-disabled` on `#btn-back` accordingly. Low effort, matches an established platform convention.
 6. `Accept`:
 - Back button is disabled exactly when there is no engine or host history to go back to.
+7. `Superseded by normative evidence`:
+- U3 remains completed product-history documentation, but WML-303/R0-09 supersedes its
+  disablement policy: WAP-236 section 7.11.2 requires BACK to remain end-user accessible.
+  The control now stays enabled while `data-history-available` retains the passive history
+  signal, and an empty activation produces the existing deterministic no-history status.
 
 ### U4 Color palette hardcoded and duplicated, no shared design tokens
 

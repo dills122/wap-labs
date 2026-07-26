@@ -1,0 +1,30 @@
+---
+id: "fixture:WML-FX-INTRINSIC-SCOPE"
+key: "WML-FX-INTRINSIC-SCOPE"
+type: "fixture"
+generated: true
+slice: "WML-3"
+status: "implemented"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/fixture"
+---
+
+# Keep an intrinsic event binding active only within the element where it is declared.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `verified-by` ← [[clauses/WML-CL-INTRINSIC-SCOPE|WML-CL-INTRINSIC-SCOPE]]
+
+## Data
+
+```json
+{
+  "kind": "runtime",
+  "status": "implemented",
+  "assertion": "Keep an intrinsic event binding active only within the element where it is declared.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

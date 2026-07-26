@@ -27,6 +27,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     focusedSelectEditValue: engine.focusedSelectEditValue(),
     baseUrl: engine.baseUrl(),
     contentType: engine.contentType(),
+    lastBackNavigationHandled: engine.lastBackNavigationHandled(),
     externalNavigationIntent: engine.externalNavigationIntent(),
     externalNavigationRequestPolicy: engine.externalNavigationRequestPolicy(),
     lastScriptExecutionOk: engine.lastScriptExecutionOk(),

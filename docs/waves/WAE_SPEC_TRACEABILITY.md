@@ -290,10 +290,10 @@ Legend:
   - `WAP-236` 7.11.2
   - SCRs: `WAESpec-UAB-C-002 (M)`, `WAESpec-UAB-C-003 (M)`, `WAESpec-UAB-C-004 (O)`, `WAESpec-UAB-C-005 (O)`
 - AC:
-  - Evidence: [x] Engine back-pop semantics are covered in `engine-wasm/engine/src/engine_tests/actions_timers.rs` and `engine-wasm/engine/src/engine_tests/traces_public_api.rs`; browser fallback and deterministic restore behavior are covered in `browser/frontend/src/app/navigation-state.history.test.ts` and `browser/frontend/src/app/navigation-state.load.test.ts`.
-  - [ ] UI always exposes BACK action path.
+  - Evidence: [x] Engine back-pop and WML1 override semantics are covered in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs` plus the existing action/public-API suites; native/WASM handled-result parity is covered in `browser/src-tauri/src/tests/engine_wrappers.rs` and `engine-wasm/engine/src/engine_wasm_bindings_tests.rs`; browser fallback and hard-availability evidence is in `browser/frontend/src/app/navigation-state.history.test.ts`, `browser/frontend/src/app/browser-controller.behavior.test.ts`, and `browser/frontend/src/app/shell-event-bindings.test.ts`; four host/Waves flows run from `engine-wasm/examples/source/wml-303-actions-softkeys.flow.json` with `pnpm test:story WML-303`.
+  - [x] UI always exposes BACK action path.
   - [x] BACK-to-pop behavior verified in runtime integration tests.
-  - [ ] WML1-specific prev/override semantics covered in fixture tests.
+  - [x] WML1-specific prev/override semantics covered in fixture tests.
 
 ### RQ-WAE-018 WBMP baseline format support
 

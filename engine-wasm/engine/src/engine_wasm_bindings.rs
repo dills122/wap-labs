@@ -126,6 +126,11 @@ impl WmlEngine {
         self.navigate_back()
     }
 
+    #[wasm_bindgen(js_name = lastBackNavigationHandled)]
+    pub fn last_back_navigation_handled_wasm(&self) -> bool {
+        self.last_back_navigation_handled()
+    }
+
     #[wasm_bindgen(js_name = advanceTimeMs)]
     pub fn advance_time_ms_wasm(&mut self, delta_ms: u32) -> Result<(), JsValue> {
         self.advance_time_ms(delta_ms).map_err(as_js_err)

@@ -132,6 +132,7 @@ describe('BrowserPresenter', () => {
       focusedLinkIndex: 0,
       baseUrl: 'http://local.test/start.wml',
       contentType: 'text/vnd.wap.wml',
+      lastBackNavigationHandled: false,
       lastScriptDialogRequests: [],
       lastScriptTimerRequests: []
     });
@@ -281,6 +282,7 @@ describe('BrowserPresenter', () => {
         focusedLinkIndex: 0,
         baseUrl: 'http://local.test/start.wml',
         contentType: 'text/vnd.wap.wml',
+        lastBackNavigationHandled: false,
         lastScriptDialogRequests: [{ type: 'confirm', message: 'Proceed?' }],
         lastScriptTimerRequests: []
       });
@@ -301,6 +303,7 @@ describe('BrowserPresenter', () => {
         focusedLinkIndex: 0,
         baseUrl: 'http://local.test/start.wml',
         contentType: 'text/vnd.wap.wml',
+        lastBackNavigationHandled: false,
         lastScriptDialogRequests: [{ type: 'alert' as const, message: 'Hi' }],
         lastScriptTimerRequests: []
       };
@@ -417,6 +420,7 @@ describe('BrowserPresenter', () => {
         focusedLinkIndex: 0,
         baseUrl: 'http://local.test/start.wml',
         contentType: 'text/vnd.wap.wml',
+        lastBackNavigationHandled: false,
         lastScriptDialogRequests: [],
         lastScriptTimerRequests: [],
         lastScriptExecutionOk: false,
@@ -456,6 +460,7 @@ describe('BrowserPresenter', () => {
         focusedLinkIndex: 0,
         baseUrl: 'http://local.test/start.wml',
         contentType: 'text/vnd.wap.wml',
+        lastBackNavigationHandled: false,
         lastScriptDialogRequests: [],
         lastScriptTimerRequests: [],
         lastScriptExecutionOk: false,
@@ -482,6 +487,7 @@ describe('BrowserPresenter', () => {
         focusedLinkIndex: 0,
         baseUrl: 'http://local.test/start.wml',
         contentType: 'text/vnd.wap.wml',
+        lastBackNavigationHandled: false,
         lastScriptDialogRequests: [],
         lastScriptTimerRequests: [],
         lastScriptExecutionOk: false,

@@ -100,8 +100,9 @@ Current priority order is:
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
    complete but intentionally remains open while its declared WTP family is
    inactive and unmapped.
-5. Advance the unlocked engine baton through `WML-303`, `WML-302`, and
-   `WML-305`; treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
+5. Preserve completed `WML-303` action/event/BACK evidence and advance the
+   unlocked engine baton through `WML-302`, then `WML-305`; treat
+   `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
    until `TRN-7` and `WAE-6` close. Keep `D0-01`, frame migration, generators,
    and maintenance non-preemptive unless they directly unblock a strict
    obligation.
@@ -151,7 +152,9 @@ true in the active authorities:
 
 1. `WML-2` is `done`, including the residual `WML-203`, `WML-204`, and `WML-205` gates.
 2. `WML-303` has closed the engine-owned `do`/`onevent` task, BACK, activation-order, and softkey
-   precedence semantics that the frame contract would expose.
+   precedence semantics that the frame contract would expose. The three dynamic `do`
+   presentation clauses remain planned for that frame/affordance slice rather than being
+   inferred from the engine-semantic closure.
 3. `D0-01` has settled the overlapping debug-contract surface, or an explicit single contract owner
    has approved a combined sequence that prevents concurrent edits to `wml-engine.ts` and generated
    host contracts.
@@ -1990,7 +1993,13 @@ Reference:
 - Input name/value initialization now runs in document order on load, navigation, back, and refresh; input `value` vdata defaults are evaluated at entry, and invalid existing values are unset before valid-default fallback. Active input/select edits commit before card task execution, and invalid masked input blocks task side effects.
 - Select initialization, multiple selection, `iname`/`ivalue` precedence, option-value evaluation, serialization, onpick dispatch, and no-implicit-refresh behavior have direct runtime evidence.
 - Control vdata and onpick HREF references now share source-derived validation and evaluation semantics, including exact CDATA, literal dollars, undefined variables, conversion defaults/aliases, document-order initialization, empty option values, and atomic invalid-load rejection across native/WASM boundaries.
-- Remaining R0-04 scope: `do`/`onevent`, optional `fieldset`/`optgroup` capability declaration and grouping presentation, `timer`, substitution outside the bounded input/select/option paths, and language-aware non-Basic-Latin mask repertoires. Those gates are not residual WML-204 acceptance work; the mandatory Unicode Basic Latin input floor is implemented and directly tested.
+- WML-303 closes the `do`/`onevent` parser/runtime portion with effective-name identity,
+  optionality/language retention, same-scope conflict validation, illegal-parent ignoring,
+  card/template shadowing, and deterministic activation order. Remaining R0-04 scope is
+  optional `fieldset`/`optgroup` capability declaration and grouping presentation, native
+  timer lifecycle, substitution outside the bounded input/select/option paths, and
+  language-aware non-Basic-Latin mask repertoires. Those gates are not residual WML-204
+  acceptance work; the mandatory Unicode Basic Latin input floor is implemented and directly tested.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 
@@ -2079,7 +2088,7 @@ Reference:
 
 ### R0-09 BACK key hard-availability and `do type=prev` precedence
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `R0-02`, `R0-03`
 3. `Files`:
 - `engine-wasm/engine/src/runtime/*`
@@ -2096,6 +2105,16 @@ Reference:
 - BACK semantics are always available and precedence rules are deterministic across runtime + host UI paths.
 7. `Spec`:
 - `RQ-WAE-017`, section `9.2`, section `9.7`
+8. `Notes`:
+- WML-303 makes the browser BACK control permanently reachable, preserves history
+  availability as non-disabling metadata, resolves the first active `do type="prev"` in
+  card-before-template/document order, honors noop masking, and reports handled status
+  explicitly across native/WASM/host snapshots so unchanged-card overrides cannot trigger
+  host-history fallback.
+- Evidence: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs`,
+  `browser/src-tauri/src/tests/engine_wrappers.rs`, browser navigation/shell tests, and
+  `engine-wasm/examples/source/wml-303-actions-softkeys.flow.json` via
+  `pnpm test:story WML-303`.
 
 ### R0-10 Cross-layer acceptance fixture ledger
 

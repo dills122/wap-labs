@@ -3910,6 +3910,274 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n        <a href=\"http://fixtures.test/examples/wml205MissingTarget.wml\">Missing target</a>\n        <a href=\"http://fixtures.test/examples/wml202TemplateShadowing.wml\">Restricted target</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml303ActionsSoftkeys",
+    "label": "WML-303 Actions and Softkey Precedence",
+    "description": "Exercises deterministic BACK activation across optional, card, template, and noop-masked do bindings.",
+    "goal": "Verify WML-owned action identity and precedence before the host falls back to intrinsic history.",
+    "workItems": [
+      "WML-303"
+    ],
+    "specItems": [
+      "WML-C-08",
+      "WML-C-18",
+      "WML-C-26",
+      "WML-C-35",
+      "WML-C-38",
+      "WML-C-47",
+      "RQ-WAE-017"
+    ],
+    "testingAc": [
+      "Follow First precedence and press Back; the first active card do type prev reaches card-wins.",
+      "Follow Noop mask and press Back; the card noop masks the matching template do and intrinsic history returns home.",
+      "Run both paths through the host sample and Waves browser story targets."
+    ],
+    "flows": [
+      {
+        "id": "host-card-first-prev-precedence",
+        "title": "Host sample BACK uses the first active card prev binding",
+        "target": "host-sample",
+        "workItems": [
+          "WML-303"
+        ],
+        "specItems": [
+          "WML-C-08",
+          "WML-C-18",
+          "WML-C-26",
+          "WML-C-38",
+          "WML-C-47",
+          "RQ-WAE-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "ordered",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "card-wins",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK_OVERRIDE",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "host-noop-mask-falls-back-to-history",
+        "title": "Host sample noop mask suppresses template prev before intrinsic BACK",
+        "target": "host-sample",
+        "workItems": [
+          "WML-303"
+        ],
+        "specItems": [
+          "WML-C-08",
+          "WML-C-18",
+          "WML-C-35",
+          "WML-C-38",
+          "WML-C-47",
+          "RQ-WAE-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "masked",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-card-first-prev-precedence",
+        "title": "Waves BACK uses the engine-selected first active card prev binding",
+        "target": "waves-browser",
+        "workItems": [
+          "WML-303"
+        ],
+        "specItems": [
+          "WML-C-08",
+          "WML-C-18",
+          "WML-C-26",
+          "WML-C-38",
+          "WML-C-47",
+          "RQ-WAE-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "ordered",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "card-wins",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK_OVERRIDE",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-noop-mask-falls-back-to-history",
+        "title": "Waves BACK honors noop masking before intrinsic history",
+        "target": "waves-browser",
+        "workItems": [
+          "WML-303"
+        ],
+        "specItems": [
+          "WML-C-08",
+          "WML-C-18",
+          "WML-C-35",
+          "WML-C-38",
+          "WML-C-47",
+          "RQ-WAE-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "masked",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <template>\n    <do name=\"back\" type=\"prev\" label=\"Template back\">\n      <go href=\"#template-wins\"/>\n    </do>\n  </template>\n\n  <card id=\"home\">\n    <p>\n      WML action precedence.\n      <a href=\"#ordered\">First precedence</a>\n      <a href=\"#masked\">Noop mask</a>\n    </p>\n  </card>\n\n  <card id=\"ordered\">\n    <do name=\"optional-prev\" type=\"prev\" label=\"Optional\" optional=\"true\">\n      <go href=\"#optional-wins\"/>\n    </do>\n    <do name=\"card-first\" type=\"prev\" label=\"Card back\">\n      <go href=\"#card-wins\"/>\n    </do>\n    <do name=\"card-second\" type=\"prev\" label=\"Second card back\">\n      <go href=\"#second-wins\"/>\n    </do>\n    <p>Back resolves the first active card binding.</p>\n  </card>\n\n  <card id=\"masked\">\n    <do name=\"back\" type=\"prev\"><noop/></do>\n    <p>Back ignores the masked template action and pops history.</p>\n  </card>\n\n  <card id=\"card-wins\"><p>First card BACK binding won.</p></card>\n  <card id=\"second-wins\"><p>The second card binding must not win.</p></card>\n  <card id=\"template-wins\"><p>The template binding must not win.</p></card>\n  <card id=\"optional-wins\"><p>The optional binding must not be presented.</p></card>\n</wml>\n"
+  },
+  {
     "key": "wmlbrowserContextFidelity",
     "label": "WMLBrowser Context Fidelity",
     "description": "Exercises getCurrentCard and newContext semantics, including context reset side effects and prev suppression.",

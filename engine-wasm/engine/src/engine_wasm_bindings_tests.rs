@@ -255,6 +255,7 @@ fn wasm_m1_02_handle_key_render_and_navigate_back_boundary_flow() {
     );
 
     assert!(engine.navigate_back_wasm());
+    assert!(engine.last_back_navigation_handled_wasm());
     assert_eq!(
         engine
             .active_card_id_wasm()
@@ -263,6 +264,29 @@ fn wasm_m1_02_handle_key_render_and_navigate_back_boundary_flow() {
     );
     assert_eq!(engine.focused_link_index_wasm(), 0);
     assert!(!engine.navigate_back_wasm());
+    assert!(!engine.last_back_navigation_handled_wasm());
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_303_back_override_reports_handled_without_snapshot_change() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r#"<wml><card id="home">
+              <do name="refresh-back" type="prev"><refresh/></do>
+              <p>Home</p>
+            </card></wml>"#,
+        )
+        .expect("deck should load");
+
+    assert!(engine.navigate_back_wasm());
+    assert!(engine.last_back_navigation_handled_wasm());
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be available"),
+        "home"
+    );
 }
 
 #[wasm_bindgen_test]

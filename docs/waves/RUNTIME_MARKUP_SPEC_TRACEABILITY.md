@@ -62,9 +62,10 @@ Legend:
 - Spec:
   - `WAP-191*` task model and `do`/`onevent` DTD usage
 - AC:
-  - Evidence: [x] Template/card binding identity, precedence, noop masking, and navigation persistence: `engine-wasm/engine/src/engine_tests/actions_timers.rs` plus `engine-wasm/examples/source/wml-202-template-shadowing.wml`; `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202` and `pnpm test:story WML-202`.
-  - [ ] Each task path has explicit runtime behavior and observable state transitions.
-  - [ ] Unsupported task attributes fail deterministically without host/runtime crash.
+  - Evidence: [x] WML-303 task identity, optional/noop filtering, card/template shadowing, intrinsic conflicts/scope, BACK/accept precedence, entry order, and rollback are covered in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs`, the native/WASM host boundary suites, and `engine-wasm/examples/source/wml-303-actions-softkeys.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-303`.
+  - [x] Each task path has explicit runtime behavior and observable state transitions.
+  - [x] Unsupported task attributes fail deterministically without host/runtime crash.
+  - Dynamic do visibility, labels, and widget exposure remain planned for the existing WBP-06/D0-01 frame gate; variable/setvar task ordering is WML-302.
 
 ### RQ-RMK-003 Card context and navigation semantics
 
@@ -86,9 +87,10 @@ Legend:
 - Spec:
   - `WAP-191*` event and timer model
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Enter/timer events are dispatched in deterministic order.
+  - Evidence: [x] WML-303 covers intrinsic attribute/element equivalence, same-scope conflict rejection, illegal-parent ignoring, card-over-template precedence, forward/backward entry order, and the entry-handler-before-timer boundary in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs` plus the existing `actions_timers.rs` suite.
+  - [x] Enter events are dispatched in deterministic order before the entered card timer/display boundary.
   - [ ] Timer start/stop/expiry behavior is card-scoped and test-checklisted.
+  - Native timer lifecycle closure remains WML-305; this residual does not reopen WML-303.
 
 ### RQ-RMK-005 Variable substitution behavior
 

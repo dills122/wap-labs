@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "8b9893f280a19729a625744d03e178dd225c22cd9648d5cd4c631170dbbb2ee6"
+        "sha256": "b67e817aaed70f0a02dd6f6489b49abad54a4eb698412cc92d72049978af367b"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "47fe9dc916f9bc0ad70d3037b56a786f8b4541a8ea7bf6bbd93955a7a312b79c"
+        "sha256": "2cb01517e20fada088a8c646b72bc4fc7eb99affd3941cbbb92c514b5f13782a"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "1081ac830c59467b13ead90a98c50463b2cb9735c7b18f7fe30ab43c66275359"
+        "sha256": "3098bb51792c65caaef69371933cd036701cc682506f8d65e6ab6f6d7d68cc5f"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -2120,7 +2120,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2158,7 +2159,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2196,7 +2198,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2234,7 +2237,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2272,7 +2276,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2310,7 +2315,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2348,7 +2354,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2603,7 +2610,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-301"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2641,7 +2649,8 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-203"
+          "WML-203",
+          "WML-301"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2680,7 +2689,8 @@
           "R0-03",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -2720,7 +2730,8 @@
           "R0-01",
           "R0-02",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -2760,7 +2771,8 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-203"
+          "WML-203",
+          "WML-301"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2798,7 +2810,8 @@
           "R0-01",
           "R0-04",
           "R0-05",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -2909,7 +2922,8 @@
           "R0-01",
           "R0-04",
           "R0-07",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -2946,7 +2960,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -2955,7 +2970,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3021,7 +3036,8 @@
           "R0-02",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -3060,7 +3076,8 @@
           "R0-02",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -3132,7 +3149,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -3141,7 +3159,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3169,7 +3187,8 @@
           "R0-01",
           "R0-02",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -3205,7 +3224,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -3214,7 +3234,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3696,7 +3716,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -3707,7 +3728,7 @@
           "RQ-RMK-003",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4156,7 +4177,8 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -4273,7 +4295,8 @@
           "R0-02",
           "R0-04",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "browser",
@@ -4538,7 +4561,8 @@
           "R0-01",
           "R0-02",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -4549,7 +4573,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4843,7 +4867,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4879,7 +4904,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4915,7 +4941,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4951,7 +4978,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4987,7 +5015,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -5023,7 +5052,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -5059,7 +5089,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -5095,7 +5126,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -5132,7 +5164,8 @@
           "R0-04",
           "WML-201",
           "WML-203",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -5168,7 +5201,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5178,7 +5212,7 @@
           "RQ-RMK-002",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5210,7 +5244,8 @@
           "R0-04",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5248,7 +5283,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5257,7 +5293,7 @@
         "requirementIds": [
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5284,7 +5320,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5293,7 +5330,7 @@
         "requirementIds": [
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5321,7 +5358,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5331,7 +5369,7 @@
           "RQ-RMK-002",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5359,7 +5397,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5369,7 +5408,7 @@
           "RQ-RMK-002",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5589,7 +5628,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5598,7 +5638,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5626,7 +5666,8 @@
           "R0-01",
           "R0-02",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -5666,7 +5707,8 @@
           "R0-02",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "browser",
@@ -5706,7 +5748,8 @@
           "R0-02",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "browser",
@@ -5745,7 +5788,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6157,7 +6201,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -6167,7 +6212,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6196,7 +6241,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -6207,7 +6253,7 @@
           "RQ-RMK-003",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6500,7 +6546,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -6510,7 +6557,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6540,7 +6587,8 @@
           "R0-01",
           "R0-02",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "browser",
@@ -6580,7 +6628,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6616,7 +6665,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6653,7 +6703,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6689,7 +6740,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6725,7 +6777,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6761,7 +6814,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6797,7 +6851,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6834,7 +6889,8 @@
           "R0-04",
           "WML-201",
           "WML-203",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6870,7 +6926,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -6906,7 +6963,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7055,7 +7113,8 @@
           "R0-02",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -7095,7 +7154,8 @@
           "R0-04",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -7136,7 +7196,8 @@
           "R0-04",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -7176,7 +7237,8 @@
           "R0-02",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -7437,7 +7499,8 @@
           "R0-06",
           "R0-07",
           "WML-201",
-          "WML-205"
+          "WML-205",
+          "WML-303"
         ],
         "ownerLayers": [
           "browser",
@@ -7550,7 +7613,8 @@
           "R0-04",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-303"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7588,7 +7652,8 @@
           "R0-12",
           "WML-201",
           "WML-202",
-          "WML-203"
+          "WML-203",
+          "WML-303"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7625,7 +7690,8 @@
           "R0-01",
           "R0-02",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "browser",
@@ -7662,7 +7728,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7698,7 +7765,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7734,7 +7802,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7772,7 +7841,8 @@
           "R0-01",
           "R0-02",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "browser",
@@ -7810,7 +7880,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7846,7 +7917,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7882,7 +7954,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -8069,7 +8142,8 @@
           "R0-03",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "ownerLayers": [
           "browser",
@@ -9482,7 +9556,7 @@
       "title": "Execute the bound task when the user activates a presented do action.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Execute the bound task when the user activates a presented do action.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9542,7 +9616,7 @@
       "title": "The user agent may omit a do explicitly marked optional.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "The user agent may omit a do explicitly marked optional.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9566,7 +9640,7 @@
       "title": "Accept every do type and treat an unrecognized type as unknown when no specialized mapping exists.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Accept every do type and treat an unrecognized type as unknown when no specialized mapping exists.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9722,7 +9796,7 @@
       "title": "Run a destination forward-entry handler before starting its timer or displaying the card, and stop the current traversal when it runs.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Run a destination forward-entry handler before starting its timer or displaying the card, and stop the current traversal when it runs.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9986,7 +10060,7 @@
       "title": "A prev task pops the current entry and returns to the prior history entry.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "A prev task pops the current entry and returns to the prior history entry.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10190,7 +10264,7 @@
       "title": "Treat intrinsic-event attributes as abbreviated onevent bindings with equivalent go-task behavior.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat intrinsic-event attributes as abbreviated onevent bindings with equivalent go-task behavior.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10214,7 +10288,7 @@
       "title": "Treat conflicting bindings for the same intrinsic event within one element as a deck error.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat conflicting bindings for the same intrinsic event within one element as a deck error.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10226,7 +10300,7 @@
       "title": "Recognize timer, forward-entry, backward-entry, and option-pick intrinsic events on their defined elements.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Recognize timer, forward-entry, backward-entry, and option-pick intrinsic events on their defined elements.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10238,7 +10312,7 @@
       "title": "Ignore onevent bindings whose event type is not legal for the immediately enclosing element.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Ignore onevent bindings whose event type is not legal for the immediately enclosing element.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10250,7 +10324,7 @@
       "title": "Keep an intrinsic event binding active only within the element where it is declared.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Keep an intrinsic event binding active only within the element where it is declared.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10322,7 +10396,7 @@
       "title": "Perform no processing for a noop task.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Perform no processing for a noop task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10502,7 +10576,7 @@
       "title": "Stop prev processing without a transition when the history stack has no prior card.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Stop prev processing without a transition when the history stack has no prior card.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10514,7 +10588,7 @@
       "title": "Run a backward-entry handler before starting the restored card timer or displaying the card.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Run a backward-entry handler before starting the restored card timer or displaying the card.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10610,7 +10684,7 @@
       "title": "Redisplay the current card from the updated variable state even when refresh contains no setvar elements.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Redisplay the current card from the updated variable state even when refresh contains no setvar elements.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12950,7 +13024,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior outside WML-202, remains not assessed.",
+        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -12991,7 +13065,8 @@
           "C5-03",
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -13200,7 +13275,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain separate WML-201 gaps outside WML-202.",
+        "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
@@ -13236,7 +13311,8 @@
           "C5-03",
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -13269,7 +13345,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Named do bindings retain type/name/label and execute with template precedence; optional presentation and complete user-interface exposure remain incomplete.",
+        "assessmentNote": "Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -13278,9 +13354,9 @@
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "enter_triggers_accept_do_action_when_no_links_exist",
-            "command": "cd engine-wasm/engine && cargo test enter_triggers_accept_do_action_when_no_links_exist"
+            "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
+            "test": "active_do_order_retains_metadata_effective_identity_and_optional_policy",
+            "command": "cd engine-wasm/engine && cargo test active_do_order_retains_metadata_effective_identity_and_optional_policy"
           }
         ],
         "ownerLayers": [
@@ -13653,7 +13729,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics keep this parent row partial.",
+        "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics remain assigned to additive WML-308 and keep this parent row partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -13761,7 +13837,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -14083,7 +14160,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card/template intrinsic onevent bindings parse, reject same-scope conflicts, and execute with shadowing; intrinsic events outside the card/deck lifecycle remain incomplete.",
+        "assessmentNote": "Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -14092,9 +14169,9 @@
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "navigate_runs_onenterforward_action",
-            "command": "cd engine-wasm/engine && cargo test navigate_runs_onenterforward_action"
+            "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
+            "test": "option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict",
+            "command": "cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict"
           }
         ],
         "ownerLayers": [
@@ -14192,7 +14269,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, and onpick HREF conversion/dispatch for single selection plus multiple selection/deselection are represented. The selected WML-204 tranche is complete; option title/xml:lang presentation and onevent task forms remain outside it and keep this parent row partial.",
+        "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, onpick HREF conversion/dispatch, and immediately scoped onevent task forms are represented. The selected WML-204 and WML-303 tranches are complete; option title/xml:lang presentation remains assigned to additive WML-308 and keeps this parent row partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -14253,7 +14330,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -14346,7 +14424,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain separate and keep this parent row partial.",
+        "assessmentNote": "Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain assigned to additive WML-308 and keep this parent row partial.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -14429,7 +14507,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-204"
+          "WML-204",
+          "WML-308"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -14678,7 +14757,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior are not closed.",
+        "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/timers.rs",
@@ -14705,7 +14784,8 @@
         "workItems": [
           "R0-01",
           "R0-04",
-          "WML-201"
+          "WML-201",
+          "WML-305"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -16456,7 +16536,7 @@
       "type": "sprint",
       "title": "WML state, tasks, events, forms, and navigation",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "goal": "Close the observable runtime mechanics that define historical WML browser behavior.",
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }

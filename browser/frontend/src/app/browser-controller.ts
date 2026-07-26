@@ -414,10 +414,8 @@ export class BrowserController {
     }
   }
 
-  // U3: toggles disabled/aria-disabled on #btn-back to match Chrome/Firefox's
-  // "dim the back button at the start of history" convention, instead of
-  // requiring a click + status-message read to discover there's nowhere to
-  // go back to.
+  // BACK is a hard WML user-agent affordance. History availability remains
+  // presentation metadata, but never makes the control unreachable.
   private updateBackButtonAvailability(): void {
     const available =
       this.runMode === 'local'
@@ -653,16 +651,9 @@ export class BrowserController {
     const endNavigationProgress = this.presenter.beginNavigationProgress();
     try {
       if (this.runMode === 'local') {
-        const before = {
-          activeCardId: this.presenter.getSessionState().activeCardId,
-          focusedLinkIndex: this.presenter.getSessionState().focusedLinkIndex ?? 0
-        };
         const frame = await this.hostClient.engineNavigateBackFrame();
         const after = frame.snapshot;
-        const engineHandled =
-          before.activeCardId !== after.activeCardId ||
-          before.focusedLinkIndex !== after.focusedLinkIndex;
-        if (!engineHandled) {
+        if (!after.lastBackNavigationHandled) {
           // Definitive ground truth: the engine's nav stack was already empty.
           this.localBackAvailable = false;
           return 'none';

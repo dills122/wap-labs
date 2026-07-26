@@ -1,8 +1,10 @@
+use crate::runtime::card::{CardPostField, CardTaskAction};
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
 use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
 use std::collections::HashMap;
 
+use super::actions::parse_first_task_action_xml;
 use super::xml::{normalize_text, XmlElement, XmlNode};
 use super::ParseBudget;
 
@@ -435,10 +437,11 @@ fn collect_select_options(
                         .collect::<String>(),
                 );
                 let value = child.attr("value").unwrap_or_default().to_string();
+                let onpick = parse_option_onpick_action(child, budget, depth + 1)?;
                 options.push(SelectOption {
                     label,
                     value,
-                    onpick: child.attr("onpick").map(str::to_string),
+                    onpick,
                 });
             }
             XmlNode::Element(child) if child.name == "optgroup" => {
@@ -455,6 +458,35 @@ fn collect_select_options(
         }
     }
     Ok(choice_child_count)
+}
+
+fn parse_option_onpick_action(
+    option: &XmlElement,
+    budget: &mut ParseBudget,
+    depth: usize,
+) -> Result<Option<CardTaskAction>, String> {
+    let mut action = option.attr("onpick").map(|href| CardTaskAction::Go {
+        href: href.to_string(),
+        method: None,
+        post_fields: Vec::<CardPostField>::new(),
+    });
+    for child in &option.children {
+        let XmlNode::Element(onevent) = child else {
+            continue;
+        };
+        if onevent.name != "onevent"
+            || !onevent
+                .attr("type")
+                .is_some_and(|event_type| event_type.eq_ignore_ascii_case("onpick"))
+        {
+            continue;
+        }
+        if action.is_some() {
+            return Err("Invalid <option>: conflicting 'onpick' event bindings".to_string());
+        }
+        action = parse_first_task_action_xml(&onevent.children, budget, depth)?;
+    }
+    Ok(action)
 }
 
 fn validate_optgroup_element(element: &XmlElement) -> Result<(), String> {

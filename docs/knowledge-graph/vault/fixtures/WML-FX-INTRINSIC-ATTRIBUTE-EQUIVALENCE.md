@@ -4,7 +4,7 @@ key: "WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Treat intrinsic-event attributes as abbreviated onevent bindings with equivalent go-task behavior.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

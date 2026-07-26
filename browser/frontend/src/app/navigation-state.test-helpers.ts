@@ -12,6 +12,7 @@ export const snapshot = (
   focusedLinkIndex: 0,
   baseUrl: 'http://example.test/start.wml',
   contentType: 'text/vnd.wap.wml',
+  lastBackNavigationHandled: false,
   lastScriptDialogRequests: [],
   lastScriptTimerRequests: [],
   ...overrides

@@ -1,3 +1,4 @@
+use super::card::CardTaskAction;
 use super::input_mask::InputMask;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -10,7 +11,7 @@ pub enum Node {
 pub struct SelectOption {
     pub label: String,
     pub value: String,
-    pub onpick: Option<String>,
+    pub onpick: Option<CardTaskAction>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

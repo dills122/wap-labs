@@ -156,6 +156,7 @@ pub struct EngineRuntimeSnapshot {
     pub deck_language: Option<String>,
     #[ts(optional)]
     pub active_card_language: Option<String>,
+    pub last_back_navigation_handled: bool,
     #[ts(optional)]
     pub external_navigation_intent: Option<String>,
     #[ts(optional)]

@@ -45,7 +45,11 @@ Exit gates:
 - Source families: `wml`
 - Existing tickets: `R0-01`
 - Direct SCR rows: 76 (30 `direct-test-linked`, 17 `gap-work-item-mapped`, 29 `optional-not-assessed`)
+- Selected SCR parents: 42 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`, `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-19`, `WML-C-20`, `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-35`, `WML-C-36`, `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-41`, `WML-C-42`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-48`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`, `WML-C-54`)
 - Direct normative clauses: 178
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`, `RQ-RMK-006`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-006`, `RQ-WAE-012`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WAE-018`, `RQ-WMLS-001`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -73,7 +77,11 @@ Evidence commands:
 - Source families: `wml`
 - Existing tickets: `R0-04`, `R0-12`, `C5-03`
 - Direct SCR rows: 0
+- Selected SCR parents: 13 (`WML-C-08`, `WML-C-09`, `WML-C-11`, `WML-C-14`, `WML-C-18`, `WML-C-21`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-35`, `WML-C-47`, `WML-C-53`)
 - Direct normative clauses: 30
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-011`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -100,7 +108,11 @@ Evidence commands:
 - Source families: `wml`, `wbxml`, `associated-assets`
 - Existing tickets: `R0-08`, `T0-07`
 - Direct SCR rows: 0
+- Selected SCR parents: 21 (`WBXML-C-001`, `WBXML-C-010`, `WBXML-C-011`, `WML-C-17`, `WML-C-19`, `WML-C-20`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-37`, `WML-C-39`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`)
 - Direct normative clauses: 68
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-004`, `RQ-RMK-006`, `RQ-RMK-007`, `RQ-RMK-009`, `RQ-RMK-010`, `RQ-WAE-006`, `RQ-WAE-018`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -133,7 +145,11 @@ Evidence commands:
 - Source families: `wml`
 - Existing tickets: `R0-04`, `B5-01`, `C5-05`
 - Direct SCR rows: 0
+- Selected SCR parents: 5 (`WML-C-09`, `WML-C-12`, `WML-C-33`, `WML-C-41`, `WML-C-43`)
 - Direct normative clauses: 23
+- Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -157,7 +173,11 @@ Evidence commands:
 - Source families: `wml`
 - Existing tickets: `R0-07`
 - Direct SCR rows: 0
+- Selected SCR parents: 4 (`WML-C-16`, `WML-C-18`, `WML-C-29`, `WML-C-38`)
 - Direct normative clauses: 3
+- Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -349,8 +369,8 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_access`, `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `browser/frontend/src/app/navigation-state.ts#loadTransportUrl`
   - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`)
-  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior outside WML-202, remains not assessed.
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`, `WML-304`
+  - Assessment note: The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.
 - **WML-C-22** — b
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -381,16 +401,16 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`, `engine-wasm/engine/src/runtime/card.rs#Card`
   - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_enforces_card_event_timer_content_order` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_card_content_order_is_preserved_in_render_output` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output`)
-  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain separate WML-201 gaps outside WML-202.
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`, `WML-301`
+  - Assessment note: Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.
 - **WML-C-26** — do
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.7 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#push_do_binding`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_triggers_accept_do_action_when_no_links_exist` (`cd engine-wasm/engine && cargo test enter_triggers_accept_do_action_when_no_links_exist`)
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::active_do_order_retains_metadata_effective_identity_and_optional_policy` (`cd engine-wasm/engine && cargo test active_do_order_retains_metadata_effective_identity_and_optional_policy`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Named do bindings retain type/name/label and execute with template precedence; optional presentation and complete user-interface exposure remain incomplete.
+  - Assessment note: Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.
 - **WML-C-27** — em
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -445,8 +465,8 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#parse_input_inline_node`, `engine-wasm/engine/src/runtime/input_mask.rs#InputMask`, `engine-wasm/engine/src/runtime/variable.rs#SubstitutionContext`, `engine-wasm/engine/src/engine_runtime_internal.rs#commit_focused_input_edit_internal`, `engine-wasm/engine/src/engine_runtime_internal.rs#initialize_controls_on_active_card`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::focused_input_edit_commit_updates_render_and_runtime_var` (`cd engine-wasm/engine && cargo test focused_input_edit_commit_updates_render_and_runtime_var`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_fx_input_structure_rejects_invalid_syntax_deterministically` (`cd engine-wasm/engine && cargo test wml_fx_input_structure_rejects_invalid_syntax_deterministically`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic` (`cd engine-wasm/engine && cargo test wml_fx_input_mask_commit_preserves_literals_and_rejection_is_atomic`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_empty_commit_applies_format_and_emptyok_precedence` (`cd engine-wasm/engine && cargo test wml_fx_input_empty_commit_applies_format_and_emptyok_precedence`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::invalid_input_format_is_ignored_in_favor_of_default_mask` (`cd engine-wasm/engine && cargo test invalid_input_format_is_ignored_in_favor_of_default_mask`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_initialization_prefers_existing_valid_name_value` (`cd engine-wasm/engine && cargo test wml_fx_input_initialization_prefers_existing_valid_name_value`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default` (`cd engine-wasm/engine && cargo test wml_fx_input_invalid_initial_value_unsets_name_and_uses_valid_default`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_initialization_evaluates_vdata_default_in_document_order` (`cd engine-wasm/engine && cargo test wml_fx_input_initialization_evaluates_vdata_default_in_document_order`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_maxlength_limits_draft_and_committed_value` (`cd engine-wasm/engine && cargo test wml_fx_input_maxlength_limits_draft_and_committed_value`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_fx_input_password_display_conceals_entry_and_preserves_variable` (`cd engine-wasm/engine && cargo test wml_fx_input_password_display_conceals_entry_and_preserves_variable`), `engine-wasm/engine/src/engine_tests/actions_timers.rs::invalid_masked_input_blocks_task_without_navigation_side_effects` (`cd engine-wasm/engine && cargo test invalid_masked_input_blocks_task_without_navigation_side_effects`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_select_init_order_precedence_validation_and_serialization` (`cd engine-wasm/engine && cargo test wml_fx_select_init_order_precedence_validation_and_serialization`), `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::wml_204_input_vdata_conversions_preserve_source_variable` (`cd engine-wasm/engine && cargo test wml_204_input_vdata_conversions_preserve_source_variable`), `engine-wasm/engine/src/engine_tests/wml_load_errors.rs::wml_204_invalid_control_variable_references_reject_load_atomically` (`cd engine-wasm/engine && cargo test wml_204_invalid_control_variable_references_reject_load_atomically`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-204`
-  - Assessment note: Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics keep this parent row partial.
+  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-204`, `WML-308`
+  - Assessment note: Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics remain assigned to additive WML-308 and keep this parent row partial.
 - **WML-C-34** — meta
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.3.2 (SCR §15.1.5)
@@ -492,9 +512,9 @@ Evidence commands:
   - Spec: `WAP-191_104-WML` §9.10.1 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#push_onevent_binding`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::navigate_runs_onenterforward_action` (`cd engine-wasm/engine && cargo test navigate_runs_onenterforward_action`)
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict` (`cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Card/template intrinsic onevent bindings parse, reject same-scope conflicts, and execute with shadowing; intrinsic events outside the card/deck lifecycle remain incomplete.
+  - Assessment note: Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.
 - **WML-C-40** — optgroup
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.6.2.3 (SCR §15.1.5)
@@ -509,8 +529,8 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#parse_select_inline_node`, `engine-wasm/engine/src/runtime/variable.rs#SubstitutionContext`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::select_control_renders_first_option_by_default` (`cd engine-wasm/engine && cargo test select_control_renders_first_option_by_default`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_fx_select_structure_rejects_invalid_syntax_deterministically` (`cd engine-wasm/engine && cargo test wml_fx_select_structure_rejects_invalid_syntax_deterministically`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment` (`cd engine-wasm/engine && cargo test wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_option_onpick_single_updates_state_before_only_selected_task` (`cd engine-wasm/engine && cargo test wml_fx_option_onpick_single_updates_state_before_only_selected_task`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_option_onpick_multi_fires_for_deselection_after_state_update` (`cd engine-wasm/engine && cargo test wml_fx_option_onpick_multi_fires_for_deselection_after_state_update`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape` (`cd engine-wasm/engine && cargo test wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_204_absent_option_value_is_empty_while_label_remains_visible` (`cd engine-wasm/engine && cargo test wml_204_absent_option_value_is_empty_while_label_remains_visible`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-204`
-  - Assessment note: Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, and onpick HREF conversion/dispatch for single selection plus multiple selection/deselection are represented. The selected WML-204 tranche is complete; option title/xml:lang presentation and onevent task forms remain outside it and keep this parent row partial.
+  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-204`, `WML-308`
+  - Assessment note: Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, onpick HREF conversion/dispatch, and immediately scoped onevent task forms are represented. The selected WML-204 and WML-303 tranches are complete; option title/xml:lang presentation remains assigned to additive WML-308 and keeps this parent row partial.
 - **WML-C-42** — refresh
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.3 (SCR §15.1.5)
@@ -525,8 +545,8 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#parse_select_inline_node`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#execute_card_task_action`, `engine-wasm/engine/src/engine_runtime_internal.rs#initial_select_indices`, `engine-wasm/engine/src/engine_runtime_internal.rs#sync_select_variables`, `engine-wasm/engine/src/runtime/variable.rs#SubstitutionContext`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::focused_select_edit_cycle_commit_updates_render_and_runtime_var` (`cd engine-wasm/engine && cargo test focused_select_edit_cycle_commit_updates_render_and_runtime_var`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_fx_select_structure_accepts_declared_control_grammar` (`cd engine-wasm/engine && cargo test wml_fx_select_structure_accepts_declared_control_grammar`), `engine-wasm/engine/src/engine_tests/actions_timers.rs::wml_fx_variable_commit_before_task_commits_active_select_before_accept` (`cd engine-wasm/engine && cargo test wml_fx_variable_commit_before_task_commits_active_select_before_accept`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_select_default_precedence_covers_every_source_and_fallback` (`cd engine-wasm/engine && cargo test wml_fx_select_default_precedence_covers_every_source_and_fallback`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_select_init_order_precedence_validation_and_serialization` (`cd engine-wasm/engine && cargo test wml_fx_select_init_order_precedence_validation_and_serialization`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_select_variables_are_resynchronized_before_link_task_execution` (`cd engine-wasm/engine && cargo test wml_fx_select_variables_are_resynchronized_before_link_task_execution`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls` (`cd engine-wasm/engine && cargo test wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order` (`cd engine-wasm/engine && cargo test wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order`), `engine-wasm/engine/src/engine_tests/select_semantics.rs::wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape` (`cd engine-wasm/engine && cargo test wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-204`
-  - Assessment note: Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain separate and keep this parent row partial.
+  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-204`, `WML-308`
+  - Assessment note: Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain assigned to additive WML-308 and keep this parent row partial.
 - **WML-C-44** — small
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -565,8 +585,8 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/engine_runtime_internal/timers.rs#advance_time_ms_internal`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::timer_non_zero_expires_after_deterministic_advance` (`cd engine-wasm/engine && cargo test timer_non_zero_expires_after_deterministic_advance`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior are not closed.
+  - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-305`
+  - Assessment note: Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.
 - **WML-C-49** — td
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.8.7 (SCR §15.1.5)
@@ -969,7 +989,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-ACTIVATION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-DO-ACTIVATION` (`runtime`, `implemented`)
 - **WML-CL-DO-ACTIVE-VISIBILITY** — Make every active, non-optional do accessible for user activation.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -999,7 +1019,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-OPTIONAL-PERMISSION` (`rendering`, `planned`)
+  - Fixture: `WML-FX-DO-OPTIONAL-PERMISSION` (`rendering`, `implemented`)
 - **WML-CL-DO-STRUCTURE** — Parse do as exactly one task with a required type and optional label, name, optionality, and language metadata.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1011,7 +1031,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-TYPE-ACCEPTANCE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-DO-TYPE-ACCEPTANCE` (`runtime`, `implemented`)
 - **WML-CL-DO-UNIQUE-WIDGET** — Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1089,7 +1109,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-09`, `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
-  - Fixture: `WML-FX-GO-ENTRY-EVENT-PRECEDENCE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-GO-ENTRY-EVENT-PRECEDENCE` (`state-machine`, `implemented`)
 - **WML-CL-GO-FORM-URLENCODING** — URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1221,7 +1241,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-PREV-POP` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-HISTORY-PREV-POP` (`state-machine`, `implemented`)
 - **WML-CL-HISTORY-RESOLVES-VARIABLES** — Resolve variable references before request data is stored in history.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
@@ -1323,7 +1343,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.10 (9.10 Intrinsic Events)
   - Parents: `WML-C-09`, `WML-C-39`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-004`
-  - Fixture: `WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE` (`runtime`, `implemented`)
 - **WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE** — Give a card-level forward-entry, backward-entry, or timer handler precedence over a template handler regardless of syntax.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.10.2 (9.10.2 Card/Deck Intrinsic Events)
@@ -1335,25 +1355,25 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.10 (9.10 Intrinsic Events)
   - Parents: `WML-C-09`
   - Requirements: `RQ-RMK-004`
-  - Fixture: `WML-FX-INTRINSIC-CONFLICT-ERROR` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-INTRINSIC-CONFLICT-ERROR` (`error-policy`, `implemented`)
 - **WML-CL-INTRINSIC-EVENT-TYPES** — Recognize timer, forward-entry, backward-entry, and option-pick intrinsic events on their defined elements.
   - Family: `wml`; force: `table`; level: `required`
   - Source: `WAP-191_104-WML` §9.10 (9.10 Intrinsic Events)
   - Parents: `WML-C-09`
   - Requirements: `RQ-RMK-004`
-  - Fixture: `WML-FX-INTRINSIC-EVENT-TYPES` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INTRINSIC-EVENT-TYPES` (`runtime`, `implemented`)
 - **WML-CL-INTRINSIC-ILLEGAL-PARENT** — Ignore onevent bindings whose event type is not legal for the immediately enclosing element.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.10.1 (9.10.1 The Onevent Element)
   - Parents: `WML-C-09`, `WML-C-39`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-004`
-  - Fixture: `WML-FX-INTRINSIC-ILLEGAL-PARENT` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-INTRINSIC-ILLEGAL-PARENT` (`error-policy`, `implemented`)
 - **WML-CL-INTRINSIC-SCOPE** — Keep an intrinsic event binding active only within the element where it is declared.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.10 (9.10 Intrinsic Events)
   - Parents: `WML-C-09`, `WML-C-39`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-004`
-  - Fixture: `WML-FX-INTRINSIC-SCOPE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-INTRINSIC-SCOPE` (`runtime`, `implemented`)
 - **WML-CL-NAVIGATION-REFERENCE-MODEL** — Implement inter-card traversal with behavior indistinguishable from the WML reference process.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5 (12.5 Reference Processing Behaviour - Inter-card Navigation)
@@ -1389,7 +1409,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.3 (12.5.3 The Noop Task)
   - Parents: `WML-C-35`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-NOOP-NO-PROCESSING` (`runtime`, `planned`)
+  - Fixture: `WML-FX-NOOP-NO-PROCESSING` (`runtime`, `implemented`)
 - **WML-CL-ONEVENT-SINGLE-TASK** — Parse onevent as exactly one go, prev, noop, or refresh task associated with its immediately enclosing element.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.10.1 (9.10.1 The Onevent Element)
@@ -1479,13 +1499,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.2 (12.5.2 The Prev Task)
   - Parents: `WML-C-18`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-PREV-EMPTY-HISTORY` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-PREV-EMPTY-HISTORY` (`state-machine`, `implemented`)
 - **WML-CL-PREV-ENTRY-EVENT-PRECEDENCE** — Run a backward-entry handler before starting the restored card timer or displaying the card.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.2 (12.5.2 The Prev Task)
   - Parents: `WML-C-09`, `WML-C-18`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
-  - Fixture: `WML-FX-PREV-ENTRY-EVENT-PRECEDENCE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-PREV-ENTRY-EVENT-PRECEDENCE` (`state-machine`, `implemented`)
 - **WML-CL-PROLOGUE-REQUIRED** — Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.1 (11.1 Document Prologue)
@@ -1533,7 +1553,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
   - Parents: `WML-C-18`, `WML-C-42`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-REFRESH-REDISPLAY` (`rendering`, `planned`)
+  - Fixture: `WML-FX-REFRESH-REDISPLAY` (`rendering`, `implemented`)
 - **WML-CL-REFRESH-TIMER-RESTART** — Restart the current card timer during refresh after context updates.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
@@ -2628,6 +2648,13 @@ Evidence commands:
 Declared-family gaps:
 
 - None
+
+## Effective source order
+
+- `associated-assets`: No effective sequence recorded; treat as an explicit source-order gap.
+- `wae`: `WAP-190-WAESpec` -> `WAP-190_101-WAESpec` -> `WAP-190_102-WAESpec` -> `WAP-190_103-WAESpec` -> `WAP-190_104-WAE-Spec`
+- `wbxml`: `WAP-192-WBXML` -> `WAP-192_105-WBXML`
+- `wml`: `WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`
 
 ## Source documents
 

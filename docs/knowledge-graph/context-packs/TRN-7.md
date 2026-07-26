@@ -47,7 +47,11 @@ Exit gates:
 - Source families: `wdp`, `wdp-wcmp-adaptation`
 - Existing tickets: `T0-19`
 - Direct SCR rows: 0
+- Selected SCR parents: 9 (`WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-000`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 49
+- Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -70,7 +74,11 @@ Evidence commands:
 - Source families: `wdp`
 - Existing tickets: `T0-19`
 - Direct SCR rows: 0
+- Selected SCR parents: 6 (`WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 9
+- Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -98,7 +106,11 @@ Evidence commands:
 - Source families: `wcmp`, `wdp-wcmp-adaptation`
 - Existing tickets: `T0-17`
 - Direct SCR rows: 0
+- Selected SCR parents: 0
 - Direct normative clauses: 0
+- Requirements: None
+- Spec references: None
+- Follow-up work items: `TRN-710`
 
 Outputs:
 
@@ -123,7 +135,11 @@ Evidence commands:
 - Source families: `wtp`
 - Existing tickets: `T0-08`, `T0-18`
 - Direct SCR rows: 0
+- Selected SCR parents: 0
 - Direct normative clauses: 0
+- Requirements: None
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -144,7 +160,11 @@ Evidence commands:
 - Source families: `wtp`
 - Existing tickets: `T0-18`
 - Direct SCR rows: 0
+- Selected SCR parents: 0
 - Direct normative clauses: 0
+- Requirements: None
+- Spec references: None
+- Follow-up work items: None
 
 Outputs:
 
@@ -165,7 +185,11 @@ Evidence commands:
 - Source families: `wdp`, `wtp`
 - Existing tickets: `T0-22`, `T0-24`
 - Direct SCR rows: 0
+- Selected SCR parents: 8 (`WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 11
+- Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
+- Spec references: None
+- Follow-up work items: `TRN-704`, `TRN-705`
 
 Outputs:
 
@@ -191,7 +215,11 @@ Evidence commands:
 - Source families: `wdp`, `wtp`, `wcmp`
 - Existing tickets: None
 - Direct SCR rows: 0
+- Selected SCR parents: 9 (`WCMP-C-001`, `WCMP-SP-C-001`, `WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 9
+- Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+- Spec references: None
+- Follow-up work items: `TRN-708`
 
 Outputs:
 
@@ -223,7 +251,11 @@ Evidence commands:
 - Source families: `wdp`, `wcmp`
 - Existing tickets: None
 - Direct SCR rows: 0
+- Selected SCR parents: 6 (`WCMP-C-001`, `WCMP-SP-C-001`, `WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`)
 - Direct normative clauses: 13
+- Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
+- Spec references: `WAP-202-WCMP section 5.3 (CDPD and other IP bearers use ICMP)`, `WAP-202-WCMP section 5.4 and 5.5 (general WCMP is the non-IP message branch)`, `WAP-202-WCMP Appendix A rows WCMP-C-001, WCMP-SP-C-001, and WCMP-SP-C-002`, `WAP-200 effective CDPD/IPv4 path rows WDP-CT-C-002 and WDP-NA-C-003`, `WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)`
+- Follow-up work items: None
 
 Outputs:
 
@@ -253,7 +285,11 @@ Evidence commands:
 - Source families: `wcmp`
 - Existing tickets: None
 - Direct SCR rows: 0
+- Selected SCR parents: 0
 - Direct normative clauses: 0
+- Requirements: None
+- Spec references: `WAP-202-WCMP sections 5.4 and 5.5 (general WCMP message format and behavior for non-IP networks)`, `WAP-202-WCMP Appendix A rows WCMP-C-001 and WCMP-SP-C-002`, `WAP-159-WDPWCMPAdapt effective non-IP bearer adaptation clauses`
+- Follow-up work items: None
 
 Outputs:
 
@@ -850,6 +886,13 @@ Declared-family gaps:
 - `TRN-706` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-707` declares `wtp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `TRN-710` declares `wcmp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+
+## Effective source order
+
+- `wcmp`: `WAP-202-WCMP`
+- `wdp`: `WAP-200-WDP` -> `WAP-200_001-WDP` -> `WAP-200_002-WDP` -> `WAP-200_003-WDP` -> `WAP-200_004-WDP` -> `WAP-200_005-WDP`
+- `wdp-wcmp-adaptation`: `WAP-159-WDPWCMPAdapt`
+- `wtp`: `WAP-201-WTP` -> `WAP-201_001-WTP` -> `WAP-201_002-WTP` -> `OMA-WAP-201_003-WTP-SIN`
 
 ## Source documents
 

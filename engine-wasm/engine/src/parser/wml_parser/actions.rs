@@ -149,6 +149,8 @@ fn push_do_binding(
             name: name.to_string(),
             do_type: do_type.to_string(),
             label: element.attr("label").map(str::to_string),
+            optional: element.attr("optional") == Some("true"),
+            language: element.attr("xml:lang").map(str::to_string),
         },
         action,
     });
@@ -194,7 +196,7 @@ fn push_unique_onevent(
     Ok(())
 }
 
-fn parse_first_task_action_xml(
+pub(super) fn parse_first_task_action_xml(
     nodes: &[XmlNode],
     budget: &mut ParseBudget,
     depth: usize,

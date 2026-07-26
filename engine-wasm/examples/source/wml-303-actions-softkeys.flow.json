@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "example": "wml303ActionsSoftkeys",
+  "flows": [
+    {
+      "id": "host-card-first-prev-precedence",
+      "title": "Host sample BACK uses the first active card prev binding",
+      "workItems": ["WML-303"],
+      "specItems": ["WML-C-08", "WML-C-18", "WML-C-26", "WML-C-38", "WML-C-47", "RQ-WAE-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "ordered", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "card-wins", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK_OVERRIDE", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "host-noop-mask-falls-back-to-history",
+      "title": "Host sample noop mask suppresses template prev before intrinsic BACK",
+      "workItems": ["WML-303"],
+      "specItems": ["WML-C-08", "WML-C-18", "WML-C-35", "WML-C-38", "WML-C-47", "RQ-WAE-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "masked", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "waves-card-first-prev-precedence",
+      "title": "Waves BACK uses the engine-selected first active card prev binding",
+      "target": "waves-browser",
+      "workItems": ["WML-303"],
+      "specItems": ["WML-C-08", "WML-C-18", "WML-C-26", "WML-C-38", "WML-C-47", "RQ-WAE-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "ordered", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "card-wins", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK_OVERRIDE", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "waves-noop-mask-falls-back-to-history",
+      "title": "Waves BACK honors noop masking before intrinsic history",
+      "target": "waves-browser",
+      "workItems": ["WML-303"],
+      "specItems": ["WML-C-08", "WML-C-18", "WML-C-35", "WML-C-38", "WML-C-47", "RQ-WAE-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "masked", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        }
+      ]
+    }
+  ]
+}

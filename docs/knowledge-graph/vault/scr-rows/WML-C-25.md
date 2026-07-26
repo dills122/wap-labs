@@ -51,7 +51,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain separate WML-201 gaps outside WML-202.",
+  "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
@@ -87,7 +87,8 @@ tags:
     "C5-03",
     "R0-01",
     "R0-04",
-    "WML-201"
+    "WML-201",
+    "WML-301"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

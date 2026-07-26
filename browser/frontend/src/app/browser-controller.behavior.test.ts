@@ -314,16 +314,17 @@ describe('BrowserController behavior coverage', () => {
       frame({
         activeCardId: 'previous-card',
         focusedLinkIndex: 0,
-        baseUrl: 'http://local.test/previous.wml'
+        baseUrl: 'http://local.test/previous.wml',
+        lastBackNavigationHandled: true
       })
     );
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
     const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
-    // Fresh boot: no forward navigation has happened yet, so back starts
-    // disabled (see U3) -- a plain forward key press establishes history.
-    expect(backBtn?.disabled).toBe(true);
+    // BACK remains accessible even before history exists.
+    expect(backBtn?.disabled).toBe(false);
+    expect(backBtn?.dataset.historyAvailable).toBe('false');
     document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
     await flushAsyncWork();
     expect(backBtn?.disabled).toBe(false);
@@ -359,8 +360,7 @@ describe('BrowserController behavior coverage', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
-    // Establish forward history first so the back button isn't disabled
-    // (see U3) and the click below actually reaches the handler.
+    // Establish forward history before checking the no-op transition.
     document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
     await flushAsyncWork();
     presenter.setSessionState({
@@ -380,9 +380,9 @@ describe('BrowserController behavior coverage', () => {
     expect(drawRenderListSpy).not.toHaveBeenCalled();
     expect(setSnapshotSpy).not.toHaveBeenCalled();
     expect(refs.statusMessages.at(-1)).toBe(WAVES_COPY.status.navigateBackNone);
-    // The engine just proved there is no history; the button should reflect
-    // that definitively rather than staying enabled (see U3).
-    expect(document.querySelector<HTMLButtonElement>('#btn-back')?.disabled).toBe(true);
+    const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
+    expect(backBtn?.disabled).toBe(false);
+    expect(backBtn?.dataset.historyAvailable).toBe('false');
   });
 
   it('marks a keyboard action in-flight synchronously so a concurrent timer tick cannot interleave', async () => {
@@ -570,17 +570,20 @@ describe('BrowserController behavior coverage', () => {
     await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
     const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
     // No page has been fetched yet in this mode -- nothing to go back to.
-    expect(backBtn?.disabled).toBe(true);
+    expect(backBtn?.disabled).toBe(false);
+    expect(backBtn?.dataset.historyAvailable).toBe('false');
 
     refs.fetchUrlInput.value = 'http://example.test/page-one.wml';
     document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
     await flushAsyncWork();
     // Still the first page fetched in this mode -- nothing before it yet.
-    expect(backBtn?.disabled).toBe(true);
+    expect(backBtn?.disabled).toBe(false);
+    expect(backBtn?.dataset.historyAvailable).toBe('false');
 
     refs.fetchUrlInput.value = 'http://example.test/page-two.wml';
     document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
     await flushAsyncWork();
     expect(backBtn?.disabled).toBe(false);
+    expect(backBtn?.dataset.historyAvailable).toBe('true');
   });
 });

@@ -484,7 +484,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-21': {
       status: 'partial',
       note:
-        "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
+        'The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/head.rs',
@@ -542,7 +542,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-25': {
       status: 'partial',
       note:
-        'Card identity, ordering, and content are parsed; mandatory card attributes and lifecycle semantics are only partially retained.',
+        'Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/mod.rs',
@@ -559,7 +559,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-26': {
       status: 'partial',
       note:
-        'Named do bindings retain type/name/label and execute with template precedence; optional presentation and complete user-interface exposure remain incomplete.',
+        'Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/actions.rs',
@@ -568,8 +568,8 @@ const mandatoryImplementationAudit = new Map(
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
-          'enter_triggers_accept_do_action_when_no_links_exist'
+          'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
+          'active_do_order_retains_metadata_effective_identity_and_optional_policy'
         )
       ]
     },
@@ -621,7 +621,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-33': {
       status: 'partial',
       note:
-        'Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics keep this parent row partial.',
+        'Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics remain assigned to additive WML-308 and keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -774,7 +774,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-39': {
       status: 'partial',
       note:
-        'Card/template intrinsic onevent bindings parse, reject same-scope conflicts, and execute with shadowing; intrinsic events outside the card/deck lifecycle remain incomplete.',
+        'Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/actions.rs',
@@ -783,15 +783,15 @@ const mandatoryImplementationAudit = new Map(
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
-          'navigate_runs_onenterforward_action'
+          'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
+          'option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict'
         )
       ]
     },
     'WML-C-41': {
       status: 'partial',
       note:
-        'Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, and onpick HREF conversion/dispatch for single selection plus multiple selection/deselection are represented. The selected WML-204 tranche is complete; option title/xml:lang presentation and onevent task forms remain outside it and keep this parent row partial.',
+        'Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, onpick HREF conversion/dispatch, and immediately scoped onevent task forms are represented. The selected WML-204 and WML-303 tranches are complete; option title/xml:lang presentation remains assigned to additive WML-308 and keeps this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -853,7 +853,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-43': {
       status: 'partial',
       note:
-        'Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain separate and keep this parent row partial.',
+        'Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain assigned to additive WML-308 and keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -950,7 +950,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-48': {
       status: 'partial',
       note:
-        'Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior are not closed.',
+        'Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/timers.rs',
@@ -1183,8 +1183,17 @@ function mappingFor(row) {
   if (number === 17) {
     workItems.push('WML-203');
   }
+  if (number === 21) {
+    workItems.push('WML-304');
+  }
+  if (number === 25) {
+    workItems.push('WML-301');
+  }
   if ([33, 41, 43].includes(number)) {
-    workItems.push('WML-204');
+    workItems.push('WML-204', 'WML-308');
+  }
+  if (number === 48) {
+    workItems.push('WML-305');
   }
 
   return {

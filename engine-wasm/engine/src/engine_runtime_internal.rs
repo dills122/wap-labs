@@ -389,9 +389,26 @@ impl WmlEngine {
         self.active_select_edit = None;
         self.push_trace("SELECT_EDIT_COMMIT", edit.select_name.clone());
         if let Some(onpick) = onpick {
-            let onpick = evaluate_href(&onpick, &self.vars)?;
-            self.push_trace("ACTION_ONPICK", onpick.clone());
-            self.execute_action_href(&onpick, None, &[])?;
+            let onpick = match onpick {
+                CardTaskAction::Go {
+                    href,
+                    method,
+                    post_fields,
+                } => CardTaskAction::Go {
+                    href: evaluate_href(&href, &self.vars)?,
+                    method,
+                    post_fields,
+                },
+                action => action,
+            };
+            let detail = match &onpick {
+                CardTaskAction::Go { href, .. } => href.clone(),
+                CardTaskAction::Prev => "prev".to_string(),
+                CardTaskAction::Refresh => "refresh".to_string(),
+                CardTaskAction::Noop => "noop".to_string(),
+            };
+            self.push_trace("ACTION_ONPICK", detail);
+            self.execute_card_task_action(&onpick)?;
         }
         Ok(true)
     }
@@ -516,7 +533,7 @@ impl WmlEngine {
         &self,
         select_name: &str,
         selected_index: usize,
-    ) -> Option<(bool, Vec<usize>, Option<String>)> {
+    ) -> Option<(bool, Vec<usize>, Option<CardTaskAction>)> {
         let card = self.active_card_internal().ok()?;
         let select = node_lookup::find_select(card, select_name)?;
         let option = select.options.get(selected_index)?;

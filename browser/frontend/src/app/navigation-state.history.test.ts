@@ -53,7 +53,12 @@ describe('navigation-state history behavior', () => {
             finalUrl: request.url
           }),
         engineSnapshot: async () => snapshot({ activeCardId: 'next', focusedLinkIndex: 0 }),
-        engineNavigateBackFrame: async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: 'home',
+            focusedLinkIndex: 0,
+            lastBackNavigationHandled: true
+          })
       }),
       'http://seed.test'
     );
@@ -88,7 +93,8 @@ describe('navigation-state history behavior', () => {
           frame({
             activeCardId: 'home',
             focusedLinkIndex: 0,
-            baseUrl: 'http://example.test/flow-a.wml'
+            baseUrl: 'http://example.test/flow-a.wml',
+            lastBackNavigationHandled: true
           })
       }),
       'http://seed.test'
@@ -106,6 +112,26 @@ describe('navigation-state history behavior', () => {
     expect(fetchCalls).toEqual(['http://example.test/a.wml']);
     expect(machine.getSessionState().activeCardId).toBe('home');
     expect(machine.getSessionState().finalUrl).toBe('http://example.test/a.wml');
+  });
+
+  it('trusts the engine back result when a WML prev override leaves the snapshot unchanged', async () => {
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        engineSnapshot: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }),
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: 'home',
+            focusedLinkIndex: 0,
+            lastBackNavigationHandled: true
+          })
+      }),
+      'http://seed.test'
+    );
+
+    const mode = await machine.navigateBackWithFallback();
+
+    expect(mode).toBe('engine');
+    expect(machine.getSessionState().activeCardId).toBe('home');
   });
 
   it('falls back to host history when engine back is a no-op', async () => {

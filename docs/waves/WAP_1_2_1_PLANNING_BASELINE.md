@@ -61,18 +61,18 @@ gap.
 
 ## Work-program state
 
-The 81 work items currently roll up to:
+The 82 work items currently roll up to:
 
-- 22 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-2/WML-205 closure, and the frontend production-build defect closure);
+- 23 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-2/WML-205 closure, WML-303 action/event/BACK closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
 - 10 in progress (existing runtime, WAE, transport, and WSP foundations);
-- 48 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `TRN-710` direct general-WCMP clause mapping without reopening TRN-703.
+- 48 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203, `TRN-710` direct general-WCMP clause mapping without reopening TRN-703, and `WML-308` form-control presentation/capability residual closure without preempting the `WML-302` then `WML-305` baton.
 
 New completion claims should follow the machine dependency graph:
 
 1. Preserve the completed `WML-2` baseline while `TRN-7` continues after the
    completed `CONF-1` planning gate.
-2. Advance `WML-3` through `WML-303`, `WML-302`, and `WML-305` after `WML-2`.
+2. Preserve completed `WML-303`, then advance `WML-3` through `WML-302` and `WML-305` after `WML-2`.
 3. Complete `REN-4` and `WMLS-5` after `WML-3`.
 4. Complete `WAE-6` after runtime, rendering, and script dependencies.
 5. Advance the selected connectionless `WSP-8` path after the completed

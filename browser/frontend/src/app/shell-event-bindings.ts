@@ -114,15 +114,15 @@ export class ShellEventBindings {
     this.bound = false;
   }
 
-  // U3: back-button dim/enable is driven by BrowserController (which knows
-  // run-mode + history state), but the DOM element itself belongs to this
-  // module since it owns the #btn-back binding.
+  // History availability is useful presentation metadata, but WML requires
+  // the BACK action path itself to remain user-accessible at all times.
   setBackButtonAvailable(available: boolean): void {
     if (!this.backBtnEl) {
       return;
     }
-    this.backBtnEl.disabled = !available;
-    this.backBtnEl.setAttribute('aria-disabled', String(!available));
+    this.backBtnEl.disabled = false;
+    this.backBtnEl.setAttribute('aria-disabled', 'false');
+    this.backBtnEl.dataset.historyAvailable = String(available);
   }
 
   private bindButton(selector: string, handler: EventListenerOrEventListenerObject): void {

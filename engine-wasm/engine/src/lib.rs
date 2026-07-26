@@ -166,6 +166,7 @@ pub struct WmlEngine {
     active_timer: Option<CardTimerState>,
     active_input_edit: Option<InputEditState>,
     active_select_edit: Option<SelectEditState>,
+    last_back_navigation_handled: bool,
     last_wml_load_diagnostics: Vec<WmlLoadDiagnostic>,
 }
 
