@@ -218,17 +218,23 @@ Current recommendation after all merged implementation workstreams:
 
 1. **Mapping/evidence lane:** preserve `WML-201`'s completed 76-row evidence
    projection and 174/174 direct WML-clause mapping.
-2. **Engine lane, first:** preserve `WML-205`'s direct three-clause mapping and deterministic
-   malformed/invalid/unsupported/recoverable engine-boundary taxonomy, then close exhaustive WML
-   error enforcement and host fetch/access failure atomicity as explicit residual gates.
-3. **Engine lane, next:** close the remaining `WML-202` access-policy/card-context
-   gate while preserving its completed 14-clause direct slice. Follow with the
-   residual `WML-204` field/control validation gate;
-   these tasks share parser/runtime test files and should land serially.
+2. **Engine lane, first:** close `WML-202` referring-URI access policy,
+   root-language, and card-context/grammar, followed by the residual mandatory
+   `WML-204` vdata/HREF conversion and field/control validation gate. Preserve
+   their completed direct-clause and grouped-control evidence.
+3. **Engine lane, next:** close `WML-203` mandatory prologue and DTD
+   content-model enforcement, then extend `WML-205`'s deterministic load
+   taxonomy across remaining element errors and host fetch/access failure
+   atomicity. All four residual WML-2 slices overlap parser/runtime validation
+   tests and should land serially.
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
    WSP to manufacture completion.
+5. **Browser lane:** finish `WBP-00` baseline decisions and `WBP-01`
+   integration evidence around the shell seams landed in `#343`. Then run
+   `WBP-02` through `WBP-05` as parallel leaf-component slices with one owner
+   for root-shell, global-style, copy, and example-manifest integration.
 `W1-06`, `D0-01`, frame migration, and general maintenance remain
 non-preemptive until these upstream Class C gates materially change.
 `WSP-801`/`WSP-802` may continue only as isolated downstream foundation work;
@@ -246,6 +252,11 @@ Completed this sprint:
 8. TRN-701 WDP, TRN-702 constrained payload, and TRN-703 WCMP direct evidence
 9. WML-203 schema-v2 WDP SDU -> fetch/WBXML decode -> native engine parity,
    paired with executable WASM text-deck rendering evidence
+10. WML-201 direct SCR/clause evidence projection and declared-family mapping
+11. WML-202 root/head/access/meta retention and deterministic parser evidence
+12. WML-205 structured engine load diagnostics and recovery story
+13. WML-204 grouped-control syntax validation and executable story coverage
+14. Waves desktop product direction plus the first WBP-01 shell component seams
 
 ## Capacity and WIP Rules
 
