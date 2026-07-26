@@ -1850,7 +1850,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timed card</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"15\"/>\n    <onevent type=\"ontimer\"><go href=\"#done\"/></onevent>\n    <p>Auto tick should move this card after 1.5 seconds.</p>\n  </card>\n  <card id=\"done\">\n    <p>Timer completed through host clock lifecycle.</p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timed card</a>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#done\"/></onevent>\n    <timer value=\"15\"/>\n    <p>Auto tick should move this card after 1.5 seconds.</p>\n  </card>\n  <card id=\"done\">\n    <p>Timer completed through host clock lifecycle.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerOntimerImmediate",
@@ -1909,7 +1909,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">To timed</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"0\"/>\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">To timed</a>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <timer value=\"0\"/>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerScriptDialog",
@@ -1996,7 +1996,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timer</a>\n  </card>\n  <card id=\"timed\">\n    <timer value=\"10\"/>\n    <onevent type=\"ontimer\">\n      <go href=\"script:timer-dialog.wmlsc#showExpiryAlert\"/>\n    </onevent>\n    <p>Waiting for the runtime timer.</p>\n  </card>\n</wml>\n"
+    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timer</a>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\">\n      <go href=\"script:timer-dialog.wmlsc#showExpiryAlert\"/>\n    </onevent>\n    <timer value=\"10\"/>\n    <p>Waiting for the runtime timer.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wavescriptGoCancel",
@@ -2230,9 +2230,9 @@ export const EXAMPLES: HostExample[] = [
   },
   {
     "key": "wml202TemplateShadowing",
-    "label": "WML Deck Head Metadata and Template Task Shadowing",
-    "description": "Ordered deck access/meta data coexists with a deck-level accept binding that is inherited, overridden, and then masked by card-level bindings with the same effective name.",
-    "goal": "Verify a stable deck/head/access/meta parse path plus deterministic template inheritance, card precedence, and inactive noop masking across card navigation.",
+    "label": "WML Deck Metadata, Card Context, and Template Task Shadowing",
+    "description": "Root language plus ordered deck access/meta data coexist with a deck-level accept binding that is inherited, overridden, and then masked by a newcontext card binding with the same effective name.",
+    "goal": "Verify a stable deck/head/access/meta/language parse path plus deterministic template inheritance, card precedence, inactive noop masking, and go-only newcontext history clearing.",
     "workItems": [
       "R0-04",
       "R0-12",
@@ -2251,7 +2251,8 @@ export const EXAMPLES: HostExample[] = [
       "Load the example; its ordered head access/meta model is accepted without changing the first-card render.",
       "Load the example and activate Enter on inherited; the unshadowed template binding navigates to override.",
       "Activate Enter on override; the same-named card binding replaces the template task and navigates to masked.",
-      "Activate Enter on masked; the card-level noop masks both bindings and produces no task action."
+      "Activate Enter on masked; the card-level noop masks both bindings and produces no task action.",
+      "Navigate Back from masked; newcontext has cleared the prior card history, so masked remains active."
     ],
     "flows": [
       {
@@ -2340,11 +2341,27 @@ export const EXAMPLES: HostExample[] = [
                 "KEY"
               ]
             }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "masked",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "NEWCONTEXT",
+                "ACTION_BACK_EMPTY"
+              ]
+            }
           }
         ]
       }
     ],
-    "wml": "<wml>\n  <head>\n    <meta name=\"scenario\" content=\"wml-202\" scheme=\"work-item\"/>\n    <access domain=\"example.test\" path=\"/examples\"/>\n    <meta http-equiv=\"Cache-Control\" content=\"max-age=60\" forua=\"true\"/>\n  </head>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
+    "wml": "<wml xml:lang=\"en\">\n  <head>\n    <meta name=\"scenario\" content=\"wml-202\" scheme=\"work-item\"/>\n    <access domain=\"example.test\" path=\"/examples\"/>\n    <meta http-equiv=\"Cache-Control\" content=\"max-age=60\" forua=\"true\"/>\n  </head>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\" xml:lang=\"fr\" ordered=\"false\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\" newcontext=\"true\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml203WbxmlParity",

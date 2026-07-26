@@ -26,6 +26,7 @@ fn apply_load_deck_context_rejects_oversized_wml_payload() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect_err("oversized wml should fail");
@@ -44,10 +45,48 @@ fn apply_load_deck_context_rejects_oversized_raw_payload() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some(raw),
+            referring_url: None,
         },
     )
     .expect_err("oversized raw payload should fail");
     assert!(error.contains("Raw deck payload exceeds"));
+}
+
+#[test]
+fn apply_load_deck_context_enforces_referring_uri_and_exposes_language_atomically() {
+    let mut engine = WmlEngine::new();
+    let stable = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: r#"<wml xml:lang="en"><card id="stable"><p>Stable</p></card></wml>"#
+                .to_string(),
+            base_url: "https://stable.test/deck.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+        },
+    )
+    .expect("stable deck should load");
+    assert_eq!(stable.deck_language.as_deref(), Some("en"));
+    assert_eq!(stable.active_card_language.as_deref(), Some("en"));
+
+    let error = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: r#"<wml><head><access domain="trusted.test"/></head><card id="blocked"><p>Blocked</p></card></wml>"#
+                .to_string(),
+            base_url: "https://service.test/blocked.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: Some("https://attacker.test/source.wml".to_string()),
+        },
+    )
+    .expect_err("mismatched referring URI must be denied");
+    assert_eq!(error, "Deck access denied for referring URI");
+
+    let snapshot = apply_engine_snapshot(&engine);
+    assert_eq!(snapshot.active_card_id.as_deref(), Some("stable"));
+    assert_eq!(snapshot.base_url, "https://stable.test/deck.wml");
 }
 
 #[test]
@@ -60,6 +99,7 @@ fn apply_navigate_to_card_returns_error_for_unknown_card() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -124,6 +164,7 @@ fn apply_set_viewport_cols_clamps_to_minimum_one() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -155,6 +196,7 @@ fn apply_navigate_back_on_empty_history_keeps_state() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -174,6 +216,7 @@ fn command_engine_wrappers_drive_state_transitions() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load deck context should succeed");
@@ -235,6 +278,7 @@ fn command_engine_load_deck_context_surfaces_oversized_raw_payload_error() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some(raw),
+            referring_url: None,
         },
     )
     .expect_err("oversized raw payload should fail");
@@ -251,6 +295,7 @@ fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
             base_url: "http://local.test/task-order.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -421,8 +466,8 @@ fn command_engine_advance_time_ms_is_callable() {
         <a href="#timed">To timed</a>
       </card>
       <card id="timed">
-        <timer value="1"/>
         <onevent type="ontimer"><go href="#done"/></onevent>
+        <timer value="1"/>
         <p>Timed</p>
       </card>
       <card id="done"><p>Done</p></card>
@@ -435,6 +480,7 @@ fn command_engine_advance_time_ms_is_callable() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");

@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-RMK-003|RQ-RMK-003]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
+- `planned-by` → [[work-items/WML-202|WML-202]]
 - `refines` → [[scr-rows/WML-C-11|WML-C-11]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 - `verified-by` → [[fixtures/WML-FX-NEWCONTEXT-CLEAR-HISTORY|WML-FX-NEWCONTEXT-CLEAR-HISTORY]]
@@ -39,9 +40,11 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "On newcontext initialization, clear navigation history.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-03",
-    "WML-201"
+    "WML-201",
+    "WML-202"
   ],
   "ownerLayers": [
     "browser",
@@ -50,7 +53,7 @@ tags:
   "requirementIds": [
     "RQ-RMK-003"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

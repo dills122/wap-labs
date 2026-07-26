@@ -4,7 +4,7 @@ key: "WML-FX-ACCESS-RELATIVE-PATH"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "security-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Resolve a relative access path to an absolute path before applying the prefix check.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

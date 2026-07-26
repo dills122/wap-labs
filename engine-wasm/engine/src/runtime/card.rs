@@ -76,6 +76,9 @@ impl CardEventBinding {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Card {
     pub id: String,
+    pub language: Option<String>,
+    pub new_context: bool,
+    pub ordered: bool,
     pub nodes: Vec<Node>,
     pub event_bindings: Vec<CardEventBinding>,
     pub timer_value_ds: Option<u32>,

@@ -198,12 +198,27 @@ const directWorkItemClauseIds = new Map([
   [
     'WML-202',
     new Set([
+      'WML-CL-ACCESS-ABSENT-ALLOWS',
+      'WML-CL-ACCESS-COMPONENT-MATCH',
+      'WML-CL-ACCESS-DEFAULTS',
+      'WML-CL-ACCESS-REFERRER-MATCH',
+      'WML-CL-ACCESS-RELATIVE-PATH',
       'WML-CL-DO-EFFECTIVE-NAME',
       'WML-CL-DO-INACTIVE-HIDDEN',
       'WML-CL-ACCESS-SINGLE-ELEMENT',
+      'WML-CL-ACCESS-URL-CASE-RULES',
+      'WML-CL-CARD-COLLECTION',
+      'WML-CL-CARD-CONTENT-ORDER',
+      'WML-CL-CARD-CONTEXT-ATTRIBUTE',
+      'WML-CL-CARD-STRUCTURE',
+      'WML-CL-GO-ACCESS-BEFORE-TRANSITION',
       'WML-CL-HEAD-DECK-SCOPE',
       'WML-CL-HEAD-STRUCTURE',
       'WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE',
+      'WML-CL-NEWCONTEXT-CLEAR-HISTORY',
+      'WML-CL-NEWCONTEXT-GO-ONLY',
+      'WML-CL-NEWCONTEXT-RESET-PRIVATE-STATE',
+      'WML-CL-NEWCONTEXT-UNSET-VARIABLES',
       'WML-CL-SHADOW-ACTIVE-SET',
       'WML-CL-SHADOW-CARD-PRECEDENCE',
       'WML-CL-SHADOW-MATCHING',
@@ -211,6 +226,7 @@ const directWorkItemClauseIds = new Map([
       'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
       'WML-CL-TEMPLATE-STRUCTURE',
       'WML-CL-WML-ROOT-DECK-SCOPE',
+      'WML-CL-WML-ROOT-LANGUAGE',
       'WML-CL-WML-ROOT-STRUCTURE'
     ])
   ],
@@ -277,6 +293,34 @@ const directWorkItemClauseIds = new Map([
     ])
   ]
 ]);
+const implementedWml202ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-202')
+);
+const residualWml202ClauseIds = new Set([
+  'WML-CL-ACCESS-ABSENT-ALLOWS',
+  'WML-CL-ACCESS-COMPONENT-MATCH',
+  'WML-CL-ACCESS-DEFAULTS',
+  'WML-CL-ACCESS-REFERRER-MATCH',
+  'WML-CL-ACCESS-RELATIVE-PATH',
+  'WML-CL-ACCESS-URL-CASE-RULES',
+  'WML-CL-CARD-CONTENT-ORDER',
+  'WML-CL-CARD-CONTEXT-ATTRIBUTE',
+  'WML-CL-GO-ACCESS-BEFORE-TRANSITION',
+  'WML-CL-NEWCONTEXT-CLEAR-HISTORY',
+  'WML-CL-NEWCONTEXT-GO-ONLY',
+  'WML-CL-NEWCONTEXT-RESET-PRIVATE-STATE',
+  'WML-CL-NEWCONTEXT-UNSET-VARIABLES',
+  'WML-CL-WML-ROOT-LANGUAGE'
+]);
+
+function wml202TestPath(clauseId, fixtureKind) {
+  if (residualWml202ClauseIds.has(clauseId)) {
+    return 'engine-wasm/engine/src/engine_tests/wml_202_residual.rs';
+  }
+  return fixtureKind === 'parser'
+    ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
+    : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
+}
 function directWorkItemsForClause(clauseId) {
   const mappedWorkItems = [...directWorkItemClauseIds]
     .filter(([, clauseIds]) => clauseIds.has(clauseId))
@@ -481,11 +525,11 @@ if (refreshDirectWorkItems) {
           parentById.get(parentId).mapping.implementationStatus
         ])
       );
-      if (directWorkItems.includes('WML-202')) {
-        const testPath =
-          candidate.fixturePlan.kind === 'parser'
-            ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
-            : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
+      if (implementedWml202ClauseIds.has(candidate.id)) {
+        const testPath = wml202TestPath(
+          candidate.id,
+          candidate.fixturePlan.kind
+        );
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = {
           path: testPath,
@@ -1395,18 +1439,15 @@ function clause(
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
     family === 'wbxml' ||
-    directWorkItems.includes('WML-202');
+    implementedWml202ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
-  const wml202TestPath =
-    fixtureKind === 'parser'
-      ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
-      : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
+  const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
   const evidence =
-    directWorkItems.includes('WML-202')
+    implementedWml202ClauseIds.has(clauseId)
       ? {
-          path: wml202TestPath,
-          testPath: wml202TestPath,
+          path: wml202EvidencePath,
+          testPath: wml202EvidencePath,
           command:
             'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202'
         }

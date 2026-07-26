@@ -48,11 +48,22 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "missing",
-  "evidenceState": "gap-work-item-mapped",
-  "assessmentNote": "The WML card newcontext attribute is not parsed or applied during go traversal; WMLScript newContext support is not a substitute.",
-  "implementationEvidence": [],
-  "testEvidence": [],
+  "implementationStatus": "implemented",
+  "evidenceState": "direct-test-linked",
+  "assessmentNote": "The parser retains the card newcontext flag with its false default. Go traversal into a newcontext card clears variables and navigation history and resets implementation-private entry state atomically; direct host navigation does not apply the flag.",
+  "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+      "symbol": "reset_browser_context_for_newcontext"
+    }
+  ],
+  "testEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+      "test": "wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
+    }
+  ],
   "ownerLayers": [
     "engine-wasm",
     "browser"
@@ -64,6 +75,7 @@ tags:
     "WML-201"
   ],
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-03",
     "WML-201"

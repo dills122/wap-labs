@@ -227,8 +227,8 @@ if (
   ) ||
   JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem['WML-201']) !==
     JSON.stringify({
-      'direct-test-linked': 29,
-      'gap-work-item-mapped': 18,
+      'direct-test-linked': 30,
+      'gap-work-item-mapped': 17,
       'optional-not-assessed': 29
     }) ||
   graph.summary.directClauseCountsByWorkItem['WML-201'] !== 177 ||
@@ -237,8 +237,8 @@ if (
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
   !wml201Pack.includes('- Direct normative clauses: 177') ||
-  !wml201Pack.includes('29 `direct-test-linked`') ||
-  !wml201Pack.includes('18 `gap-work-item-mapped`') ||
+  !wml201Pack.includes('30 `direct-test-linked`') ||
+  !wml201Pack.includes('17 `gap-work-item-mapped`') ||
   !wml201Pack.includes('29 `optional-not-assessed`') ||
   !wml201Pack.includes('**WML-C-01**') ||
   !wml201Pack.includes('**WML-C-76**')

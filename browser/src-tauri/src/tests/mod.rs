@@ -153,6 +153,7 @@ fn load_transport_response_into_engine(
             base_url: deck.base_url,
             content_type: deck.content_type,
             raw_bytes_base64: deck.raw_bytes_base64,
+            referring_url: None,
         },
     )
 }

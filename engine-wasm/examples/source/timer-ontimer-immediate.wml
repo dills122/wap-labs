@@ -14,8 +14,8 @@ testing-ac:
     <a href="#timed">To timed</a>
   </card>
   <card id="timed">
-    <timer value="0"/>
     <onevent type="ontimer"><go href="#next"/></onevent>
+    <timer value="0"/>
     <p>Timed card should auto-advance.</p>
   </card>
   <card id="next">

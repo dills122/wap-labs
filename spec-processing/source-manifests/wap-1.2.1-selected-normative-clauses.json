@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 761,
-    "assessedClauseCount": 145
+    "assessedClauseCount": 161
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "6efde57306a5413da8c00b9c778af47cb774cbb00c4d5f4e448fe571ae3458c3",
+      "parentLedgerSha256": "60e674c2e9725b1b322db32b99f3ed17c8541832e3bbc5b1a21b585839a2eeb6",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -244,14 +244,15 @@
             "staticConformanceSection": "15.1.3",
             "changeSection": null
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
           ],
           "workItems": [
             "R0-01",
-            "R0-03"
+            "R0-03",
+            "C5-03"
           ],
           "clauseIds": [
             "WML-CL-CARD-CONTEXT-ATTRIBUTE",
@@ -488,11 +489,13 @@
           },
           "implementationStatus": "partial",
           "ownerLayers": [
-            "engine-wasm"
+            "engine-wasm",
+            "browser"
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "C5-03"
           ],
           "clauseIds": [
             "WML-CL-ACCESS-ABSENT-ALLOWS",
@@ -543,7 +546,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "C5-03"
           ],
           "clauseIds": [
             "WML-CL-CARD-COLLECTION",
@@ -1096,7 +1100,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-04"
+            "R0-04",
+            "C5-03"
           ],
           "clauseIds": [
             "WML-CL-WML-ROOT-DECK-SCOPE",
@@ -2468,8 +2473,13 @@
           "fixturePlan": {
             "id": "WML-FX-NEWCONTEXT-UNSET-VARIABLES",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "On newcontext initialization, remove all variables from the current browser context."
+            "status": "implemented",
+            "assertion": "On newcontext initialization, remove all variables from the current browser context.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2477,21 +2487,24 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-003"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-11": "missing"
+              "WML-C-11": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -2512,8 +2525,13 @@
           "fixturePlan": {
             "id": "WML-FX-NEWCONTEXT-CLEAR-HISTORY",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "On newcontext initialization, clear navigation history."
+            "status": "implemented",
+            "assertion": "On newcontext initialization, clear navigation history.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2521,21 +2539,24 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-003"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-11": "missing"
+              "WML-C-11": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -2556,8 +2577,13 @@
           "fixturePlan": {
             "id": "WML-FX-NEWCONTEXT-RESET-PRIVATE-STATE",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "On newcontext initialization, reset implementation-specific context state to a documented initial value."
+            "status": "implemented",
+            "assertion": "On newcontext initialization, reset implementation-specific context state to a documented initial value.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2565,21 +2591,24 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-003"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-11": "missing"
+              "WML-C-11": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -2602,8 +2631,13 @@
           "fixturePlan": {
             "id": "WML-FX-NEWCONTEXT-GO-ONLY",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Apply newcontext only during go-task navigation into the destination card."
+            "status": "implemented",
+            "assertion": "Apply newcontext only during go-task navigation into the destination card.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2611,26 +2645,29 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-02",
               "R0-03",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-002",
               "RQ-RMK-003"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-11": "missing",
+              "WML-C-11": "implemented",
               "WML-C-18": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3269,6 +3306,7 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
               "R0-07",
@@ -3317,9 +3355,11 @@
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
               "WML-201",
@@ -3357,17 +3397,25 @@
           "fixturePlan": {
             "id": "WML-FX-ACCESS-ABSENT-ALLOWS",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "When no access element is present, allow referrals from any deck."
+            "status": "implemented",
+            "assertion": "When no access element is present, allow referrals from any deck.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3375,11 +3423,12 @@
             "parentImplementationSnapshot": {
               "WML-C-21": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3400,17 +3449,25 @@
           "fixturePlan": {
             "id": "WML-FX-ACCESS-REFERRER-MATCH",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Require a referring URI to satisfy each declared domain and path restriction."
+            "status": "implemented",
+            "assertion": "Require a referring URI to satisfy each declared domain and path restriction.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3418,11 +3475,12 @@
             "parentImplementationSnapshot": {
               "WML-C-21": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3443,17 +3501,25 @@
           "fixturePlan": {
             "id": "WML-FX-ACCESS-COMPONENT-MATCH",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Match domains by complete suffix components and paths by complete prefix components."
+            "status": "implemented",
+            "assertion": "Match domains by complete suffix components and paths by complete prefix components.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3461,11 +3527,12 @@
             "parentImplementationSnapshot": {
               "WML-C-21": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3486,17 +3553,25 @@
           "fixturePlan": {
             "id": "WML-FX-ACCESS-DEFAULTS",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Default an omitted access domain to the current deck domain and an omitted path to slash."
+            "status": "implemented",
+            "assertion": "Default an omitted access domain to the current deck domain and an omitted path to slash.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3504,11 +3579,12 @@
             "parentImplementationSnapshot": {
               "WML-C-21": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3529,17 +3605,25 @@
           "fixturePlan": {
             "id": "WML-FX-ACCESS-RELATIVE-PATH",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Resolve a relative access path to an absolute path before applying the prefix check."
+            "status": "implemented",
+            "assertion": "Resolve a relative access path to an absolute path before applying the prefix check.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3547,11 +3631,12 @@
             "parentImplementationSnapshot": {
               "WML-C-21": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3572,17 +3657,25 @@
           "fixturePlan": {
             "id": "WML-FX-ACCESS-URL-CASE-RULES",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Apply URL component capitalization rules when evaluating domain and path restrictions."
+            "status": "implemented",
+            "assertion": "Apply URL component capitalization rules when evaluating domain and path restrictions.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
+              "browser",
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -3590,11 +3683,12 @@
             "parentImplementationSnapshot": {
               "WML-C-21": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -3949,8 +4043,13 @@
           "fixturePlan": {
             "id": "WML-FX-GO-ACCESS-BEFORE-TRANSITION",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Evaluate destination-deck access control before committing the card transition."
+            "status": "implemented",
+            "assertion": "Evaluate destination-deck access control before committing the card transition.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3962,7 +4061,8 @@
               "R0-02",
               "R0-06",
               "R0-07",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3974,11 +4074,12 @@
               "WML-C-18": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -6153,6 +6254,7 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
               "WML-201",
@@ -6203,6 +6305,7 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
               "WML-201",
@@ -6240,17 +6343,24 @@
           "fixturePlan": {
             "id": "WML-FX-WML-ROOT-LANGUAGE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply optional root language metadata as the deck language input to inherited language resolution."
+            "status": "implemented",
+            "assertion": "Apply optional root language metadata as the deck language input to inherited language resolution.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6258,11 +6368,12 @@
             "parentImplementationSnapshot": {
               "WML-C-53": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -6485,17 +6596,24 @@
           "fixturePlan": {
             "id": "WML-FX-CARD-COLLECTION",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Represent a WML deck as a collection containing at least one card."
+            "status": "implemented",
+            "assertion": "Represent a WML deck as a collection containing at least one card.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6503,11 +6621,12 @@
             "parentImplementationSnapshot": {
               "WML-C-25": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -6528,17 +6647,24 @@
           "fixturePlan": {
             "id": "WML-FX-CARD-STRUCTURE",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Enforce card child ordering: event handlers, optional timer, then declared action or flow content."
+            "status": "implemented",
+            "assertion": "Enforce card child ordering: event handlers, optional timer, then declared action or flow content.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6546,11 +6672,12 @@
             "parentImplementationSnapshot": {
               "WML-C-25": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -6571,17 +6698,24 @@
           "fixturePlan": {
             "id": "WML-FX-CARD-CONTENT-ORDER",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Preserve significant card element order during presentation."
+            "status": "implemented",
+            "assertion": "Preserve significant card element order during presentation.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001"
@@ -6589,11 +6723,12 @@
             "parentImplementationSnapshot": {
               "WML-C-25": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -6624,6 +6759,7 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-02",
               "R0-04",
@@ -6663,8 +6799,13 @@
           "fixturePlan": {
             "id": "WML-FX-CARD-CONTEXT-ATTRIBUTE",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Apply the card newcontext flag when entering through the defined go process."
+            "status": "implemented",
+            "assertion": "Apply the card newcontext flag when entering through the defined go process.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6672,10 +6813,12 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-03",
               "R0-04",
-              "WML-201"
+              "WML-201",
+              "WML-202"
             ],
             "requirementIds": [
               "RQ-RMK-001",
@@ -6683,13 +6826,14 @@
             ],
             "parentImplementationSnapshot": {
               "WML-C-25": "partial",
-              "WML-C-11": "missing"
+              "WML-C-11": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-202"
           ]
         },
         {
@@ -6720,6 +6864,7 @@
               "engine-wasm"
             ],
             "workItems": [
+              "C5-03",
               "R0-01",
               "R0-04",
               "R0-05",

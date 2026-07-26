@@ -182,6 +182,8 @@ export const createNavigationStateMachine = (
       : defaultRequestPolicy;
     const method = resolveTransportMethod(options.method, requestPolicy);
     const pushHistory = options.pushHistory ?? true;
+    const referringUrl =
+      options.source === 'external-intent' ? hostSessionState.finalUrl : undefined;
 
     hooks.onStateEvent?.('load-transport-url', {
       source: options.source,
@@ -252,12 +254,27 @@ export const createNavigationStateMachine = (
       return null;
     }
 
-    const frame = await hostClient.engineLoadDeckContextFrame({
-      wmlXml: deckInput.wmlXml,
-      baseUrl: deckInput.baseUrl,
-      contentType: deckInput.contentType,
-      rawBytesBase64: deckInput.rawBytesBase64
-    });
+    let frame: EngineFrame;
+    try {
+      frame = await hostClient.engineLoadDeckContextFrame({
+        wmlXml: deckInput.wmlXml,
+        baseUrl: deckInput.baseUrl,
+        contentType: deckInput.contentType,
+        rawBytesBase64: deckInput.rawBytesBase64,
+        referringUrl
+      });
+    } catch (error) {
+      if (!isCurrentNavigation(generation)) {
+        return null;
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      mergeSessionState({
+        navigationStatus: 'error',
+        lastError: message
+      });
+      hooks.onNavigationError?.(message, 'parse');
+      return null;
+    }
     if (!isCurrentNavigation(generation)) {
       return null;
     }

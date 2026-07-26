@@ -42,6 +42,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Use a card id as its fragment-navigation anchor.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-02",
     "R0-04",

@@ -607,9 +607,6 @@ fn parses_accept_do_and_card_entry_go_actions() {
     let xml = r##"
         <wml>
           <card id="home">
-            <do type="accept">
-              <go href="script:calc.wmlsc#main"/>
-            </do>
             <onevent type="onenterforward">
               <go href="#next"/>
             </onevent>
@@ -620,6 +617,9 @@ fn parses_accept_do_and_card_entry_go_actions() {
               <go href="#timer"/>
             </onevent>
             <timer value="0"/>
+            <do type="accept">
+              <go href="script:calc.wmlsc#main"/>
+            </do>
             <p>Home</p>
           </card>
           <card id="next"><p>Next</p></card>
@@ -1357,5 +1357,80 @@ fn wml_202_rejects_invalid_head_access_and_meta_structure_deterministically() {
             err.contains(expected),
             "expected {expected:?}, got {err:?} for {xml}"
         );
+    }
+}
+
+#[test]
+fn wml_202_retains_root_and_card_language_context_metadata_with_defaults() {
+    let deck = parse_wml(
+        r#"
+        <wml xml:lang="en-US">
+          <card id="default"><p>Default</p></card>
+          <card id="override" xml:lang="fr" newcontext="true" ordered="false">
+            <p>Override</p>
+          </card>
+        </wml>
+        "#,
+    )
+    .expect("valid root/card metadata should parse");
+
+    assert_eq!(deck.language.as_deref(), Some("en-US"));
+    assert_eq!(deck.cards[0].language.as_deref(), None);
+    assert_eq!(deck.card_language(0), Some("en-US"));
+    assert!(!deck.cards[0].new_context);
+    assert!(deck.cards[0].ordered);
+    assert_eq!(deck.cards[1].language.as_deref(), Some("fr"));
+    assert_eq!(deck.card_language(1), Some("fr"));
+    assert!(deck.cards[1].new_context);
+    assert!(!deck.cards[1].ordered);
+}
+
+#[test]
+fn wml_202_rejects_invalid_root_and_card_context_attributes() {
+    let cases = [
+        (
+            r#"<wml xml:lang=""><card id="home"><p>Home</p></card></wml>"#,
+            "Invalid <wml>: attribute 'xml:lang' must be an XML NMTOKEN",
+        ),
+        (
+            r#"<wml><card id="home" xml:lang="bad value"><p>Home</p></card></wml>"#,
+            "Invalid <card>: attribute 'xml:lang' must be an XML NMTOKEN",
+        ),
+        (
+            r#"<wml><card id="home" newcontext="yes"><p>Home</p></card></wml>"#,
+            "Invalid <card>: attribute 'newcontext' must be 'true' or 'false'",
+        ),
+        (
+            r#"<wml><card id="home" ordered="yes"><p>Home</p></card></wml>"#,
+            "Invalid <card>: attribute 'ordered' must be 'true' or 'false'",
+        ),
+    ];
+
+    for (xml, expected) in cases {
+        let err = parse_wml(xml).expect_err("invalid context metadata must be rejected");
+        assert_eq!(err, expected);
+    }
+}
+
+#[test]
+fn wml_202_enforces_card_event_timer_content_order() {
+    let cases = [
+        (
+            r#"<wml><card id="home"><p>Home</p><onevent type="onenterforward"><noop/></onevent></card></wml>"#,
+            "<onevent> must precede <timer> and card content",
+        ),
+        (
+            r#"<wml><card id="home"><p>Home</p><timer value="1"/></card></wml>"#,
+            "<timer> must precede card content",
+        ),
+        (
+            r#"<wml><card id="home"><timer value="1"/><timer value="2"/><p>Home</p></card></wml>"#,
+            "only one <timer> element is allowed",
+        ),
+    ];
+
+    for (xml, expected) in cases {
+        let err = parse_wml(xml).expect_err("invalid card child order must be rejected");
+        assert!(err.contains(expected), "expected {expected:?}, got {err:?}");
     }
 }

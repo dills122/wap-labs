@@ -24,9 +24,16 @@ impl WmlEngine {
         base_url: &str,
         content_type: &str,
         raw_bytes_base64: Option<String>,
+        referring_url: Option<String>,
     ) -> Result<(), JsValue> {
-        self.load_deck_context(wml_xml, base_url, content_type, raw_bytes_base64)
-            .map_err(as_js_err)
+        self.load_deck_context_with_referring_url(
+            wml_xml,
+            base_url,
+            content_type,
+            raw_bytes_base64,
+            referring_url.as_deref(),
+        )
+        .map_err(as_js_err)
     }
 
     #[wasm_bindgen(js_name = getVar)]
@@ -147,6 +154,16 @@ impl WmlEngine {
     #[wasm_bindgen(js_name = contentType)]
     pub fn content_type_wasm(&self) -> String {
         self.content_type()
+    }
+
+    #[wasm_bindgen(js_name = deckLanguage)]
+    pub fn deck_language_wasm(&self) -> Option<String> {
+        self.deck_language()
+    }
+
+    #[wasm_bindgen(js_name = activeCardLanguage)]
+    pub fn active_card_language_wasm(&self) -> Option<String> {
+        self.active_card_language()
     }
 
     #[wasm_bindgen(js_name = lastWmlLoadDiagnostics)]

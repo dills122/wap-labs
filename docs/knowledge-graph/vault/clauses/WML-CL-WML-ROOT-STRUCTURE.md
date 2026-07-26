@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Require a wml root containing optional head, optional template, and one or more cards in that order.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "WML-201",

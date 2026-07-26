@@ -41,6 +41,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "R0-05",

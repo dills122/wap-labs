@@ -160,7 +160,7 @@ Partially supported (phase W0 baseline and active follow-ons):
 ## WASM API
 
 - `loadDeck(xml: string)`
-- `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string)`
+- `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string, referringUrl?: string)`
 - `render(): RenderList`
 - `handleKey(key: 'up' | 'down' | 'enter')`
 - `advanceTimeMs(deltaMs: number)` (deterministic timer simulation)
@@ -173,6 +173,8 @@ Additional helpers:
 - `focusedLinkIndex()`
 - `baseUrl()`
 - `contentType()`
+- `deckLanguage()`
+- `activeCardLanguage()`
 - `externalNavigationIntent()`
 - `clearExternalNavigationIntent()`
 - `getVar(name: string)`
@@ -206,9 +208,8 @@ Type contract:
 
 1. Preserve the completed `WML-201` 76-row evidence projection and 174/174 direct WML-clause
    mapping.
-2. Close the remaining `WML-202` referring-URI access policy, root-language,
-   and card-context/grammar gate while preserving its completed direct-clause
-   evidence.
+2. Preserve completed `WML-202` referring-URI access, root-language, and
+   card-context/grammar evidence (30/30 direct clauses).
 3. Close the residual mandatory `WML-204` vdata/HREF conversion and control
    validation gate, preserving the grouped-control syntax and story evidence
    landed in `#342`.
@@ -217,7 +218,7 @@ Type contract:
    and host fetch/access failure atomicity. Keep these parser/runtime slices
    serial where they touch the same validation and test files.
 5. Preserve the completed direct mappings for `WML-201` (174/174 WML
-   clauses), `WML-202` (14/14 clauses), `WML-203` (49/49 mapped clauses), and
+   clauses), `WML-202` (30/30 clauses), `WML-203` (49/49 mapped clauses), and
    `WML-204` (23/23 clauses); broader implementation acceptance remains open.
 6. Keep `D0-01`, `W1-06`, `A5-03`, `B5-01`, and `M1-03` queued as downstream
    or non-preemptive work rather than current sprint drivers.

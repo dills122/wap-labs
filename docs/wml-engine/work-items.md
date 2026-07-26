@@ -26,18 +26,17 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 ## Next In Line (Cross-Project Alignment Refresh)
 
-With the WML-202 deck/head/access/meta parser and WML-205 engine-boundary taxonomy slices implemented,
+With WML-202 deck/access/card-context closure and the WML-205 engine-boundary taxonomy slice implemented,
 current aligned engine priorities are:
 
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and its
    174/174 direct WML-clause mapping.
 2. Preserve the mapped `WML-205` malformed/invalid/unsupported/recoverable load taxonomy, then
    close its residual exhaustive error-enforcement and host fetch/access failure-atomicity gates.
-3. Close the remaining `WML-202` access-policy/card-context gate, followed by
-   the residual `WML-204` field/control validation gate; keep these serial because
-   they overlap parser/runtime tests.
-4. Preserve the completed `WML-202` 14/14, `WML-203` 49/49, and `WML-204` 23/23
-   direct-clause slices while their broader work-item gates remain open.
+3. Close the residual `WML-204` field/control validation gate without reopening
+   completed WML-202 evidence.
+4. Preserve the completed `WML-202` 30/30, `WML-203` 49/49, and `WML-204` 23/23
+   direct-clause slices; WML-202 has no remaining work-item acceptance gate.
 5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive until the upstream
    `WML-2` gate materially changes.
 
@@ -339,7 +338,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### C5-03 Deck structure and metadata semantics completion
 
 1. `Requirement IDs`: `WML-R-010`, `WML-R-018`
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Depends On`: `M1-07`
 4. `Files`:
 - `engine-wasm/engine/src/parser/wml_parser/*`
@@ -359,7 +358,11 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Spec anchor refs: WAP-191 section `11.3` through `11.5`, section `10.2`.
 - Progress: WML root/head ordering, access uniqueness/retention, and ordered meta
   validation/retention are directly tested across native and WASM entry paths.
-  Referring-URI access enforcement and card `newcontext`/`ordered` retention remain open.
+- Referring-URI access defaults/matching are enforced before deck transition at the
+  engine/host boundary; root/card language and `newcontext`/`ordered` metadata are
+  retained and exposed across native/WASM/host contracts.
+- Card event/timer/content grammar, source render order, and go-only newcontext reset
+  behavior have focused native/WASM/host tests plus executable `WML-202` story evidence.
 
 ### C5-04 Task/event pipeline and variable-substitution conformance
 

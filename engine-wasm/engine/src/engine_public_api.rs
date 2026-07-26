@@ -48,8 +48,33 @@ impl WmlEngine {
         content_type: &str,
         raw_bytes_base64: Option<String>,
     ) -> Result<(), String> {
+        self.load_deck_context_with_referring_url(
+            wml_xml,
+            base_url,
+            content_type,
+            raw_bytes_base64,
+            None,
+        )
+    }
+
+    /// Load a WML deck and, when supplied by the host, enforce its access
+    /// policy against the URI of the deck that initiated the go traversal.
+    pub fn load_deck_context_with_referring_url(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+        referring_url: Option<&str>,
+    ) -> Result<(), String> {
         let result = match catch_engine_panic(|| {
-            self.load_deck_context_bounded(wml_xml, base_url, content_type, raw_bytes_base64)
+            self.load_deck_context_bounded(
+                wml_xml,
+                base_url,
+                content_type,
+                raw_bytes_base64,
+                referring_url,
+            )
         }) {
             Ok(result) => result,
             Err(message) => Err(WmlLoadDiagnostic::recoverable_rejection(message)),
@@ -71,6 +96,7 @@ impl WmlEngine {
         base_url: &str,
         content_type: &str,
         raw_bytes_base64: Option<String>,
+        referring_url: Option<&str>,
     ) -> Result<(), WmlLoadDiagnostic> {
         if wml_xml.len() > MAX_DECK_WML_XML_BYTES {
             return Err(WmlLoadDiagnostic::invalid(format!(
@@ -91,6 +117,15 @@ impl WmlEngine {
         }
 
         let parsed = parse_wml_report(wml_xml)?;
+        let access_allowed = parsed
+            .deck
+            .allows_referring_uri(base_url, referring_url)
+            .map_err(WmlLoadDiagnostic::invalid)?;
+        if !access_allowed {
+            return Err(WmlLoadDiagnostic::invalid(
+                "Deck access denied for referring URI",
+            ));
+        }
         let mut next = WmlEngine::new();
         next.viewport_cols = self.viewport_cols;
         next.deck = Some(parsed.deck);
@@ -167,7 +202,7 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn navigate_to_card(&mut self, id: String) -> Result<(), String> {
-        catch_engine_panic(|| self.navigate_to_card_internal(&id))?
+        catch_engine_panic(|| self.navigate_to_card_without_newcontext_internal(&id))?
     }
 
     /// Navigate back in history. Returns `false` when history is empty.
@@ -334,6 +369,19 @@ impl WmlEngine {
     /// Get content type metadata from last `loadDeckContext`.
     pub fn content_type(&self) -> String {
         self.content_type.clone()
+    }
+
+    /// Get authored deck-level `xml:lang` metadata.
+    pub fn deck_language(&self) -> Option<String> {
+        self.deck.as_ref().and_then(|deck| deck.language.clone())
+    }
+
+    /// Get the active card language after card-over-deck inheritance.
+    pub fn active_card_language(&self) -> Option<String> {
+        self.deck
+            .as_ref()
+            .and_then(|deck| deck.card_language(self.active_card_idx))
+            .map(str::to_string)
     }
 
     /// Get host-resolved external navigation intent when one is pending.

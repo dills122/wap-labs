@@ -29,6 +29,8 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         focused_select_edit_value: engine.focused_select_edit_value(),
         base_url: engine.base_url(),
         content_type: engine.content_type(),
+        deck_language: engine.deck_language(),
+        active_card_language: engine.active_card_language(),
         external_navigation_intent: engine.external_navigation_intent(),
         external_navigation_request_policy: engine
             .external_navigation_request_policy()
@@ -91,11 +93,12 @@ pub fn apply_load_deck_context(
     engine: &mut WmlEngine,
     request: LoadDeckContextRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
-    engine.load_deck_context(
+    engine.load_deck_context_with_referring_url(
         &request.wml_xml,
         &request.base_url,
         &request.content_type,
         request.raw_bytes_base64,
+        request.referring_url.as_deref(),
     )?;
     Ok(snapshot(engine))
 }
@@ -178,11 +181,12 @@ pub fn apply_load_deck_context_frame(
     engine: &mut WmlEngine,
     request: LoadDeckContextRequest,
 ) -> Result<EngineFrame, String> {
-    engine.load_deck_context(
+    engine.load_deck_context_with_referring_url(
         &request.wml_xml,
         &request.base_url,
         &request.content_type,
         request.raw_bytes_base64,
+        request.referring_url.as_deref(),
     )?;
     frame(engine)
 }

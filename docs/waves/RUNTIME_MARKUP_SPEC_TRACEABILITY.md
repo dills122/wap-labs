@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 14/14, WML-204 23/23 mapped clauses, WML-203 49/49)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-204 23/23 mapped clauses, WML-203 49/49)
 
 ## Purpose
 
@@ -49,8 +49,9 @@ Legend:
 - AC:
   - Evidence: [x] Template grammar and ordering: `wml_202_parses_template_and_card_bindings_independently` and `wml_202_rejects_invalid_template_structure_deterministically` in `engine-wasm/engine/src/parser/wml_parser/tests.rs`; `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202`.
   - Evidence: [x] Root/head ordering, access uniqueness/retention, and ordered meta validation/retention: `wml_202_retains_access_and_ordered_meta_for_the_whole_deck`, `wml_202_rejects_invalid_wml_root_structure_deterministically`, and `wml_202_rejects_invalid_head_access_and_meta_structure_deterministically`; WASM boundary parity: `wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior`.
+  - Evidence: [x] Card collection and onevent/timer/content grammar plus language/context defaults: `wml_202_retains_root_and_card_language_context_metadata_with_defaults` and `wml_202_enforces_card_event_timer_content_order`.
   - [x] Parser accepts valid deck structure and rejects invalid root/card omissions.
-  - [ ] Runtime activation is deterministic for first-card selection and card ordering.
+  - [x] Runtime activation and source card-content order are deterministic: `wml_202_card_content_order_is_preserved_in_render_output`.
 
 ### RQ-RMK-002 Task model support and execution
 
@@ -72,9 +73,9 @@ Legend:
 - Spec:
   - `WAP-191*` card attributes + navigation semantics
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] `#cardId` resolution is deterministic and missing target handling is explicit.
-  - [ ] History behavior is stable across forward/back transitions and refresh paths.
+  - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_202_residual.rs` proves newcontext defaults, go-only variable/history/private-state reset, direct-navigation exclusion, and rollback-safe state; `pnpm test:story WML-202` proves empty history after the stable newcontext flow.
+  - [x] `#cardId` resolution is deterministic and missing target handling is explicit in the existing navigation tests.
+  - [x] History behavior is stable across forward/back transitions and refresh paths for the covered card-context lane; broader request identity remains tracked separately.
 
 ### RQ-RMK-004 Event and timer lifecycle
 
