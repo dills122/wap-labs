@@ -15,9 +15,10 @@ dependency. WBXML parsing remains transport-owned, and the engine receives
 only normalized textual WML plus the original bytes as metadata.
 
 The native connectionless WSP profile advertises `Encoding-Version: 1.3` as a compact
-version-value. The local Kannel image carries a narrow connectionless-path patch so that this
-device request header selects Kannel's WBXML compiler version just as it does for a session-bound
-request; the decoder remains strict about the selected WBXML 1.3 envelope and WML 1.3 public ID.
+version-value. The local Kannel image carries a narrow connectionless-path patch so Kannel accepts
+that spec-valid short-integer value and carries the device request header into WML compilation,
+just as it does for a session-bound request. The decoder remains strict about the selected WBXML
+1.3 envelope and WML 1.3 public ID.
 
 ## Engine Handoff Normalization Guarantees (`T0-02`)
 

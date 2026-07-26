@@ -293,8 +293,9 @@ Behavior:
 
 - starts Docker services (`kannel`, `wml-server`)
 - serves WML 1.3 through an explicit test-only DTD setting; the server default remains WML 1.1
-- sends `Encoding-Version: 1.3` at the WSP client boundary, and uses the locally patched Kannel
-  connectionless path to carry that request negotiation into WML compilation
+- sends `Encoding-Version: 1.3` as the WSP-defined short-integer version-value, and uses the
+  locally patched Kannel connectionless path to decode and carry that request negotiation into WML
+  compilation
 - runs `make smoke-transport-wap`
 - executes:
   - transport-rust ignored Kannel smoke tests
