@@ -242,7 +242,10 @@ button,
   gap: 8px;
 }
 
-.utility-rail-panel {
+/* Shared silver-bezel disclosure-widget chrome reused by the utility rail,
+   welcome/help, local-example-notes, and developer-drawer panels instead of
+   repeating the same border/summary declarations per widget. */
+.chrome-disclosure {
   border: 2px solid;
   border-bottom-color: #424242;
   border-right-color: #424242;
@@ -252,7 +255,7 @@ button,
   color: #212529;
 }
 
-.utility-rail-panel > summary {
+.chrome-disclosure > summary {
   cursor: pointer;
   padding: 4px 6px;
   color: #fff;
@@ -388,24 +391,6 @@ textarea.form-95 {
   font-weight: 700;
 }
 
-.local-example-notes {
-  border: 2px solid;
-  border-bottom-color: #424242;
-  border-right-color: #424242;
-  border-left-color: #fff;
-  border-top-color: #fff;
-  background: silver;
-  color: #212529;
-}
-
-.local-example-notes > summary {
-  cursor: pointer;
-  padding: 4px 6px;
-  color: #fff;
-  font-weight: 700;
-  background: linear-gradient(90deg, #08216b, #a5cef7);
-}
-
 .local-example-notes-body {
   border-top: 1px solid #7f7f7f;
   padding: 8px;
@@ -434,25 +419,23 @@ textarea.form-95 {
   margin-bottom: 4px;
 }
 
+.welcome-help-body {
+  border-top: 1px solid #7f7f7f;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.welcome-help-body p {
+  margin: 0 0 6px;
+}
+
+.welcome-help-body h3 {
+  margin: 8px 0 4px;
+  font-size: 12px;
+}
+
 .developer-drawer-section {
   padding: 0 12px 12px;
-}
-
-.dev-drawer {
-  border: 2px solid;
-  border-bottom-color: #424242;
-  border-right-color: #424242;
-  border-left-color: #fff;
-  border-top-color: #fff;
-  background: silver;
-}
-
-.dev-drawer > summary {
-  cursor: pointer;
-  padding: 4px 6px;
-  color: #fff;
-  font-weight: 700;
-  background: linear-gradient(90deg, #08216b, #a5cef7);
 }
 
 .panel-body {

@@ -2,7 +2,7 @@ import { WAVES_COPY } from '../waves-copy';
 
 export const developerDrawerTemplate = () => `
   <section class="developer-drawer-section" aria-label="Developer tools">
-    <details id="dev-drawer" class="dev-drawer">
+    <details id="dev-drawer" class="dev-drawer chrome-disclosure">
       <summary>${WAVES_COPY.shell.developerTools}</summary>
       <div class="panel-body">
         <div class="actions">

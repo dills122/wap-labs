@@ -1,13 +1,15 @@
 import { WAVES_CONFIG } from '../waves-config';
 import { WAVES_COPY } from '../waves-copy';
+import { welcomeHelpTemplate } from './welcome-help-template';
 
 export const UTILITY_RAIL_NARROW_MEDIA_QUERY = '(max-width: 900px)';
 
 export const utilityRailTemplate = () => `
   <aside class="utility-rail" aria-label="Utility rail">
-    <details id="utility-rail-panel" class="utility-rail-panel" open>
+    <details id="utility-rail-panel" class="utility-rail-panel chrome-disclosure" open>
       <summary>${WAVES_COPY.shell.utilityRail}</summary>
       <div class="utility-rail-body">
+        ${welcomeHelpTemplate()}
         <label class="compact-field">
           ${WAVES_COPY.shell.viewportCols}
           <input
@@ -29,7 +31,11 @@ export const utilityRailTemplate = () => `
         <wv-surface-panel heading="${WAVES_COPY.shell.status}">
           <wv-status-panel id="status"></wv-status-panel>
         </wv-surface-panel>
-        <details id="local-example-notes" class="local-example-notes" aria-live="polite">
+        <details
+          id="local-example-notes"
+          class="local-example-notes chrome-disclosure"
+          aria-live="polite"
+        >
           <summary>${WAVES_COPY.shell.localExampleNotes}</summary>
           <div class="local-example-notes-body">
             <p id="local-example-coverage" class="local-example-notes-coverage"></p>

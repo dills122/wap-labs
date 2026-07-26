@@ -1,0 +1,35 @@
+<!--
+label: Your First Deck
+description: Guided first-run tutorial deck teaching the Up/Down/Select/Back softkey controls.
+goal: Verify a newcomer can move focus, select a link, and use Back to return through engine card history using only the four softkey controls.
+work-items: WBP-04
+spec-items: WBP-04
+testing-ac:
+- Press Select on "Select this link to continue"; activeCardId should become next.
+- Press Down then Up; focus should move to the second link then back to the first.
+- Press Down then Select; activeCardId should become detail-two.
+- Press Back; activeCardId should return to next.
+- Press Select on "First option"; activeCardId should become detail-one.
+-->
+<wml>
+  <card id="start">
+    <p>Welcome to Waves.</p>
+    <p>Up and Down move focus between links. Select activates the focused link.</p>
+    <a href="#next">Select this link to continue</a>
+  </card>
+  <card id="next">
+    <p>Nice work. You selected a link.</p>
+    <p>Try Down, then Select, to open the second option.</p>
+    <a href="#detail-one">First option</a>
+    <a href="#detail-two">Second option</a>
+  </card>
+  <card id="detail-one">
+    <p>You selected the first option.</p>
+    <a href="#next">Back to options</a>
+  </card>
+  <card id="detail-two">
+    <p>You moved focus with Down, then selected the second option.</p>
+    <p>Now try Back to return through history.</p>
+    <a href="#next">Back to options</a>
+  </card>
+</wml>
