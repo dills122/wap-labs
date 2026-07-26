@@ -16,6 +16,7 @@ const createRefs = (): BrowserShellRefs => {
   const activeUrlLabelEl = document.createElement('span');
   const devDrawerEl = document.createElement('details');
   const toastEl = document.createElement('div');
+  const liveAnnouncerEl = document.createElement('div');
   const wmlInput = document.createElement('textarea');
   const baseUrlInput = document.createElement('input');
   const viewportColsInput = document.createElement('input');
@@ -55,6 +56,7 @@ const createRefs = (): BrowserShellRefs => {
     activeUrlLabelEl,
     devDrawerEl,
     toastEl,
+    liveAnnouncerEl,
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,

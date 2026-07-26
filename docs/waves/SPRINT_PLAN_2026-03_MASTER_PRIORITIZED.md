@@ -231,9 +231,8 @@ Current recommendation after all merged implementation workstreams:
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
    WSP to manufacture completion.
-5. **Browser lane:** preserve the completed `WBP-00` through `WBP-05` Phase 1
-   foundation. Close the additive `WBP-05A` accessibility evidence delta
-   without reopening completed history. Keep `WBP-06` inactive until `WML-2`,
+5. **Browser lane:** preserve the completed `WBP-00` through additive `WBP-05A`
+   accessibility evidence closure without reopening `WBP-05`. Keep `WBP-06` inactive until `WML-2`,
    `WML-303`, and the overlapping `D0-01` contract sequence satisfy the gate
    recorded in the browser implementation plan.
 

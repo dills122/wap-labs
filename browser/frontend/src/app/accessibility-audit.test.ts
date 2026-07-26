@@ -6,10 +6,10 @@ import { mountBrowserShell } from './browser-shell-template';
 // jsdom has no real layout engine (getBoundingClientRect returns zeros) and
 // no <canvas> 2D context, so the two rules that depend on actual rendered
 // geometry/pixels -- color-contrast and target-size -- cannot run
-// meaningfully here. Those were checked manually against the live rendered
-// shell instead (see the WBP-05 PR description); every other axe rule stays
-// enabled because it only depends on DOM/ARIA structure, which jsdom models
-// correctly.
+// meaningfully here. WBP-05A covers those rules and explicit target/focus
+// geometry against production-built Chromium at both configured window sizes;
+// every other axe rule stays enabled here because it only depends on DOM/ARIA
+// structure, which jsdom models correctly.
 const JSDOM_UNSUPPORTED_RULES = ['color-contrast', 'target-size'];
 
 describe('host-chrome accessibility baseline', () => {

@@ -20,20 +20,24 @@ export const developerDrawerTemplate = () => `
               ${WAVES_COPY.shell.baseUrl}
               <input id="base-url" class="form-95" type="text" value="" />
             </label>
-            <textarea id="wml-input" class="form-95"></textarea>
+            <textarea
+              id="wml-input"
+              class="form-95"
+              aria-label="${WAVES_COPY.shell.rawWmlPaste}"
+            ></textarea>
             <div class="actions">
               <button id="btn-load-context" class="btn wv95-btn">${WAVES_COPY.shell.loadRawWml}</button>
             </div>
           </div>
         </details>
-        <h3>${WAVES_COPY.shell.sessionState}</h3>
+        <h2>${WAVES_COPY.shell.sessionState}</h2>
         <pre id="session-state"></pre>
-        <h3>${WAVES_COPY.shell.transportResponse}</h3>
+        <h2>${WAVES_COPY.shell.transportResponse}</h2>
         <pre id="transport-response"></pre>
-        <h3>${WAVES_COPY.shell.runtimeSnapshot}</h3>
+        <h2>${WAVES_COPY.shell.runtimeSnapshot}</h2>
         <pre id="snapshot"></pre>
-        <h3>${WAVES_COPY.shell.eventTimeline}</h3>
-        <pre id="timeline"></pre>
+        <h2>${WAVES_COPY.shell.eventTimeline}</h2>
+        <pre id="timeline" tabindex="0"></pre>
       </div>
     </details>
   </section>

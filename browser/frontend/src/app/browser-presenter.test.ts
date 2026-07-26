@@ -14,6 +14,7 @@ const createRefs = (): BrowserShellRefs => {
   const activeUrlLabelEl = document.createElement('span');
   const devDrawerEl = document.createElement('details');
   const toastEl = document.createElement('div');
+  const liveAnnouncerEl = document.createElement('div');
   const wmlInput = document.createElement('textarea');
   const baseUrlInput = document.createElement('input');
   const viewportColsInput = document.createElement('input');
@@ -46,6 +47,7 @@ const createRefs = (): BrowserShellRefs => {
     activeUrlLabelEl,
     devDrawerEl,
     toastEl,
+    liveAnnouncerEl,
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,
@@ -250,6 +252,7 @@ describe('BrowserPresenter', () => {
       presenter.showToast('first message', 'error', 1000);
       expect(refs.toastEl.textContent).toBe('first message');
       expect(refs.toastEl.className).toBe('toast toast-error');
+      expect(refs.liveAnnouncerEl.textContent).toBe('first message');
 
       // Fired before the first toast's TTL elapses -- must not clobber it.
       presenter.showToast('second message', 'ok', 1000);
@@ -258,6 +261,7 @@ describe('BrowserPresenter', () => {
       vi.advanceTimersByTime(1000);
       expect(refs.toastEl.textContent).toBe('second message');
       expect(refs.toastEl.className).toBe('toast toast-ok');
+      expect(refs.liveAnnouncerEl.textContent).toBe('second message');
 
       vi.advanceTimersByTime(1000);
       expect(refs.toastEl.className).toBe('toast toast-hidden');
