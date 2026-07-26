@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

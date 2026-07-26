@@ -4,7 +4,7 @@ key: "WML-2"
 type: "sprint"
 generated: true
 pilot: "WML-2"
-status: "in-progress"
+status: "done"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/sprint"
@@ -30,7 +30,7 @@ tags:
 
 ```json
 {
-  "status": "in-progress",
+  "status": "done",
   "goal": "Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.",
   "dependsOn": [
     "CONF-1"

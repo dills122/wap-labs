@@ -118,10 +118,12 @@ Do now:
   - unsupported optional constructs are ignored with an `unsupported` diagnostic;
   - content errors with an explicit recovery rule are ignored with a `recoverable` diagnostic;
   - a clean successful load clears diagnostics from the prior attempt.
+- preserve the invoking engine/session state and pending external intent when
+  host fetch or destination access control fails; notification remains at the
+  browser boundary and the production-WASM story covers both paths.
 
 Defer now:
 
-- exhaustive per-element error-condition coverage and host fetch/access failure atomicity
 - full WMLScript execution
 - full event/timer matrix
 - pixel-perfect vendor quirks

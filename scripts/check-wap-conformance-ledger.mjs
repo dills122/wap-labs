@@ -374,7 +374,7 @@ if (
 }
 if (
   JSON.stringify(sortedMandatoryStatusCounts) !==
-  JSON.stringify({ implemented: 7, missing: 17, partial: 23 })
+  JSON.stringify({ implemented: 8, missing: 17, partial: 22 })
 ) {
   failures.push(
     `mandatory implementation audit drift: ${JSON.stringify(sortedMandatoryStatusCounts)}`
@@ -622,7 +622,7 @@ if (aggregateRowCount !== 712 || aggregateSelectedCount !== 198) {
 }
 if (
   JSON.stringify(aggregateStatusCounts) !==
-  JSON.stringify({ implemented: 23, partial: 77, missing: 98 })
+  JSON.stringify({ implemented: 24, partial: 76, missing: 98 })
 ) {
   aggregateFailures.push(
     `selected-profile status aggregate drift: ${JSON.stringify(aggregateStatusCounts)}`

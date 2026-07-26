@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Use END to terminate the current attribute list or element as determined by parser state.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

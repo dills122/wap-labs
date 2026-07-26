@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Support 256 code pages per code space and reserve page 255 for implementation-specific use.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

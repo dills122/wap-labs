@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Maintain separate current code pages for tag and attribute parser states, each initialized to page zero.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

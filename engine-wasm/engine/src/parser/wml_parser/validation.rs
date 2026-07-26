@@ -88,20 +88,27 @@ fn validate_attributes(element: &XmlElement, ids: &mut HashSet<String>) -> Resul
         }
         "do" => {
             required(element, &["type"])?;
+            literal(element, &["type"])?;
             vdata(element, &["label"])?;
             nmtokens(element, &["name", "xml:lang"])?;
             enums(element, &[("optional", &["true", "false"])])
         }
-        "onevent" => required(element, &["type"]),
+        "onevent" => {
+            required(element, &["type"])?;
+            literal(element, &["type"])
+        }
         "template" => vdata(element, &["onenterforward", "onenterbackward", "ontimer"]),
-        "access" | "head" | "tr" | "br" | "noop" => Ok(()),
+        "access" => literal(element, &["domain", "path"]),
+        "head" | "tr" | "br" | "noop" => Ok(()),
         "meta" => {
             required(element, &["content"])?;
+            literal(element, &["http-equiv", "name", "content", "scheme"])?;
             enums(element, &[("forua", &["true", "false"])])
         }
         "go" => {
             required(element, &["href"])?;
             vdata(element, &["href", "enctype"])?;
+            literal(element, &["accept-charset"])?;
             enums(
                 element,
                 &[
@@ -109,7 +116,8 @@ fn validate_attributes(element: &XmlElement, ids: &mut HashSet<String>) -> Resul
                     ("method", &["post", "get"]),
                     ("cache-control", &["no-cache"]),
                 ],
-            )
+            )?;
+            validate_go_method_enctype(element)
         }
         "prev" | "refresh" => Ok(()),
         "postfield" | "setvar" => {
@@ -134,6 +142,7 @@ fn validate_attributes(element: &XmlElement, ids: &mut HashSet<String>) -> Resul
             required(element, &["name"])?;
             nmtokens(element, &["name", "xml:lang"])?;
             vdata(element, &["value", "title", "accesskey"])?;
+            literal(element, &["format"])?;
             numbers(element, &["size", "maxlength", "tabindex"])?;
             enums(
                 element,
@@ -155,6 +164,7 @@ fn validate_attributes(element: &XmlElement, ids: &mut HashSet<String>) -> Resul
         "img" => {
             required(element, &["alt", "src"])?;
             vdata(element, &["alt", "src", "localsrc"])?;
+            lengths(element, &["vspace", "hspace", "height", "width"])?;
             nmtokens(element, &["xml:lang"])?;
             enums(element, &[("align", &["top", "middle", "bottom"])])
         }
@@ -171,6 +181,10 @@ fn validate_attributes(element: &XmlElement, ids: &mut HashSet<String>) -> Resul
             required(element, &["columns"])?;
             vdata(element, &["title"])?;
             numbers(element, &["columns"])?;
+            if element.attr("columns") == Some("0") {
+                return Err("Invalid <table>: attribute 'columns' must not be zero".to_string());
+            }
+            literal(element, &["align"])?;
             nmtokens(element, &["xml:lang"])
         }
         "td" | "em" | "strong" | "i" | "b" | "u" | "big" | "small" => {
@@ -279,6 +293,20 @@ fn vdata(element: &XmlElement, names: &[&str]) -> Result<(), String> {
     Ok(())
 }
 
+fn literal(element: &XmlElement, names: &[&str]) -> Result<(), String> {
+    for name in names {
+        if let Some(value) = element.attr(name) {
+            validate_literal_only(value).map_err(|error| {
+                format!(
+                    "Invalid <{}>: attribute '{}' contains an invalid variable reference: {error}",
+                    element.name, name
+                )
+            })?;
+        }
+    }
+    Ok(())
+}
+
 fn nmtokens(element: &XmlElement, names: &[&str]) -> Result<(), String> {
     for name in names {
         if let Some(value) = element.attr(name) {
@@ -298,6 +326,31 @@ fn numbers(element: &XmlElement, names: &[&str]) -> Result<(), String> {
                 ));
             }
         }
+    }
+    Ok(())
+}
+
+fn lengths(element: &XmlElement, names: &[&str]) -> Result<(), String> {
+    for name in names {
+        if let Some(value) = element.attr(name) {
+            let magnitude = value.strip_suffix('%').unwrap_or(value);
+            if !is_decimal_number(magnitude) {
+                return Err(format!(
+                    "Invalid <{}>: attribute '{}' must be decimal digits with an optional percent suffix",
+                    element.name, name
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn validate_go_method_enctype(element: &XmlElement) -> Result<(), String> {
+    let method = element.attr("method").unwrap_or("get");
+    if method == "get" && element.attr("enctype") == Some("multipart/form-data") {
+        return Err(
+            "Invalid <go>: method 'get' cannot use enctype 'multipart/form-data'".to_string(),
+        );
     }
     Ok(())
 }

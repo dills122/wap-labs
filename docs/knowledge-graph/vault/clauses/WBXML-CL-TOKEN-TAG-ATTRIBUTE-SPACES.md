@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Interpret application token values in separate tag and attribute code spaces.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

@@ -26,19 +26,19 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 
 ## Next In Line (Cross-Project Alignment Refresh)
 
-With WML-202 deck/access/card-context closure and the WML-205 engine-boundary taxonomy slice implemented,
-current aligned engine priorities are:
+With WML-2 and its WML-205 residual error-handling gate complete, current
+aligned engine priorities are:
 
 1. Preserve the generated `WML-201` evidence projection. Machine-derived fact:
    WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE composition clauses.
-2. Preserve the mapped `WML-205` malformed/invalid/unsupported/recoverable load taxonomy, then
-   close its residual exhaustive error-enforcement and host fetch/access failure-atomicity gates.
-3. Preserve the completed `WML-204` field/control validation gate without
-   reopening completed WML-202 evidence.
-4. Preserve the completed `WML-202` 30/30, `WML-203` 68/68, and `WML-204` 23/23
-   direct-clause slices; WML-202 has no remaining work-item acceptance gate.
-5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive until the upstream
-   `WML-2` gate materially changes.
+2. Preserve completed `WML-202` 30/30, `WML-203` 68/68, `WML-204` 23/23,
+   and `WML-205` 3/3 direct-clause evidence without reopening their history.
+3. Advance `WML-303` task/event/softkey precedence, then `WML-302`
+   variable/setvar closure, then `WML-305` native timer lifecycle.
+4. Preserve WML-205 failure atomicity as WML-302 adds richer pending task
+   assignments; keep host fetching outside the engine.
+5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive unless they directly
+   unblock the active WML-3 baton.
 
 Source of truth for these items:
 

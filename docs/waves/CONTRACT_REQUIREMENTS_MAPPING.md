@@ -31,8 +31,8 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `activeCardId()` | `RQ-RMK-003` |
 | `focusedLinkIndex()` | `RQ-RMK-006` |
 | `deckLanguage()` / `activeCardLanguage()` | `RQ-RMK-001`, `WML-202` |
-| `externalNavigationIntent()` | `RQ-RMK-003`, `RQ-WAE-010` |
-| `clearExternalNavigationIntent()` | `RQ-RMK-003` |
+| `externalNavigationIntent()` | `RQ-RMK-003`, `RQ-RMK-012`, `RQ-WAE-010`, `WML-205` |
+| `clearExternalNavigationIntent()` | `RQ-RMK-003`, `RQ-RMK-012`, `WML-205` |
 | `ScriptInvocationContext` (`callSite`, `cardId`, `sourceHref`) | `RQ-WMLS-001`, `RQ-WMLS-003`, `RQ-WAE-003` |
 | `ScriptInvocationRef.context` | `RQ-WMLS-001`, `RQ-WMLS-003` |
 | `ScriptInvocationOutcome.navigationIntent` / `requiresRefresh` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |

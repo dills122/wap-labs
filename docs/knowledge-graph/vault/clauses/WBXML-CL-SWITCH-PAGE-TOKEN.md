@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode SWITCH_PAGE and its following page byte for the current parser state.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

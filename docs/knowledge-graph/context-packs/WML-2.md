@@ -14,7 +14,7 @@
 ## Graph summary
 
 - Nodes: 591
-- Edges: 1728
+- Edges: 1729
 - Selected work items: 5
 - Direct SCR rows: 76
 - Direct normative clauses: 302
@@ -25,7 +25,7 @@
 
 ### WML-2: WML parser, deck model, and validation baseline
 
-- Status: `in-progress`
+- Status: `done`
 - Goal: Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.
 - Depends on: `CONF-1`
 - Direct downstream sprints: `REN-4`, `WML-3`
@@ -152,8 +152,8 @@ Evidence commands:
 
 ### WML-205: WML parse/error taxonomy
 
-- Status: `in-progress`
-- Owner layers: `engine-wasm`, `qa`
+- Status: `done`
+- Owner layers: `engine-wasm`, `browser`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-07`
 - Direct SCR rows: 0
@@ -162,14 +162,19 @@ Evidence commands:
 Outputs:
 
 - WML parse/error taxonomy
+- Exhaustive declared-element invalid-WML enforcement
+- Atomic host fetch/access-control failure notification
 
 Acceptance:
 
 - Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes.
+- Every declared WML element has a rejected invalid form, and literal, length, table, task, event, variable, prologue, structural, and case-sensitive constraints fail atomically without intent inference.
+- Fetch and destination access-control failures notify the user while preserving the invoking card, context, pending external intent, event/focus state, committed session metadata, and history across the native/WASM host boundary.
 
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205`
+- `pnpm --dir browser/frontend test`
 - `pnpm test:story WML-205`
 - `node scripts/check-wap-selected-normative-clauses.mjs`
 - `node scripts/check-wap-knowledge-graph.mjs`
@@ -216,7 +221,7 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `transport-rust/src/responses.rs#decode_textual_wml_payload`
   - Tests: `transport-rust/src/tests/fetch_mapping.rs::transport_map_success_payload_utf16le_textual_wml_maps_ok` (`cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok`)
-  - Work items: `R0-01`, `R0-08`, `WML-201`
+  - Work items: `C5-06`, `R0-01`, `R0-08`, `WML-201`
   - Assessment note: The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.
 - **WML-C-06** — Character entities
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
@@ -224,7 +229,7 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/xml.rs#decode_general_entity`
   - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::decodes_entities_and_uses_href_as_fallback_link_text` (`cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text`)
-  - Work items: `R0-01`, `R0-08`, `WML-201`
+  - Work items: `C5-06`, `R0-01`, `R0-08`, `WML-201`
   - Assessment note: Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.
 - **WML-C-07** — History
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
@@ -301,11 +306,11 @@ Evidence commands:
 - **WML-C-16** — Error handling
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §12.3 (SCR §15.1.4)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#navigate_to_card_internal`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::fixture_accept_failure_rolls_back_and_trace_order_is_deterministic` (`cd engine-wasm/engine && cargo test fixture_accept_failure_rolls_back_and_trace_order_is_deterministic`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/validation.rs#validate_wml13_document`, `engine-wasm/engine/src/parser/wml_parser/xml.rs#start_to_element`, `browser/frontend/src/app/navigation-state.ts#loadTransportUrl`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_load_errors.rs::wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically`), `engine-wasm/engine/src/engine_tests/wml_load_errors.rs::wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions`)
   - Work items: `R0-01`, `R0-07`, `WML-201`
-  - Assessment note: Parsing and task failures are surfaced deterministically with rollback in covered paths, but all WML-defined error conditions are not enforced.
+  - Assessment note: Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.
 - **WML-C-17** — Unknown DTD handling
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §12.4 (SCR §15.1.4)
@@ -1036,13 +1041,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
   - Parents: `WML-C-16`
   - Requirements: `RQ-RMK-012`
-  - Fixture: `WML-FX-ERROR-ENFORCEMENT` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-ERROR-ENFORCEMENT` (`error-policy`, `implemented`)
 - **WML-CL-ERROR-NO-INTENT-INFERENCE** — Do not hide invalid decks by guessing author or origin-server intent.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
   - Parents: `WML-C-16`
   - Requirements: `RQ-RMK-012`
-  - Fixture: `WML-FX-ERROR-NO-INTENT-INFERENCE` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-ERROR-NO-INTENT-INFERENCE` (`error-policy`, `implemented`)
 - **WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT** — Establish a new browser context when navigation is initiated independently of the current content.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.4 (10.4 Context Restrictions)
@@ -1678,7 +1683,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.5 (12.5.5 Task Execution Failure)
   - Parents: `WML-C-16`, `WML-C-18`, `WML-C-29`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
-  - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `implemented`)
 - **WML-CL-TD-EMPTY-SIGNIFICANT** — Preserve empty table cells during layout.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.7 (11.8.7 The Td Element)
@@ -2602,19 +2607,19 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
   - Parents: `WML-C-16`
   - Requirements: `RQ-RMK-012`
-  - Fixture: `WML-FX-ERROR-ENFORCEMENT` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-ERROR-ENFORCEMENT` (`error-policy`, `implemented`)
 - **WML-CL-ERROR-NO-INTENT-INFERENCE** — Do not hide invalid decks by guessing author or origin-server intent.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
   - Parents: `WML-C-16`
   - Requirements: `RQ-RMK-012`
-  - Fixture: `WML-FX-ERROR-NO-INTENT-INFERENCE` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-ERROR-NO-INTENT-INFERENCE` (`error-policy`, `implemented`)
 - **WML-CL-TASK-FAILURE-ATOMICITY** — On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.5 (12.5.5 Task Execution Failure)
   - Parents: `WML-C-16`, `WML-C-18`, `WML-C-29`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
-  - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `implemented`)
 
 ## Explicit mapping gaps
 

@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

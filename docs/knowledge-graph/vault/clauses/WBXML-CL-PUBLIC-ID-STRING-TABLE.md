@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "When public identifier is zero, resolve its following index through the string table.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

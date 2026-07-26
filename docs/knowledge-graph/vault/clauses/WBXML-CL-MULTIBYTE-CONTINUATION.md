@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

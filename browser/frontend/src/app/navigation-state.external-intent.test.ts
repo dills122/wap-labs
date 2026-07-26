@@ -43,9 +43,71 @@ describe('navigation-state external intent behavior', () => {
       followExternalIntent: true
     });
 
-    expect(clearCount).toBe(2);
+    expect(clearCount).toBe(0);
     expect(machine.getSessionState().navigationStatus).toBe('error');
     expect(machine.getSessionState().lastError).toContain('hop limit');
+  });
+
+  it('preserves the invoking engine state and pending intent when the target fetch fails', async () => {
+    let fetchCount = 0;
+    let clearCount = 0;
+    const navigationErrors: string[] = [];
+    const host = createHostClientMock({
+      fetchDeck: async (request) => {
+        fetchCount += 1;
+        if (fetchCount === 1) {
+          return fetchOk({ finalUrl: request.url });
+        }
+        return fetchOk({
+          ok: false,
+          status: 504,
+          finalUrl: request.url,
+          contentType: 'text/plain',
+          error: { code: 'GATEWAY_TIMEOUT', message: 'target fetch failed' },
+          engineDeckInput: undefined,
+          wml: undefined
+        });
+      },
+      engineLoadDeckContext: async () =>
+        snapshot({
+          activeCardId: 'invoking-card',
+          focusedLinkIndex: 1,
+          baseUrl: 'http://example.test/start.wml',
+          externalNavigationIntent: 'http://example.test/target.wml'
+        }),
+      engineClearExternalNavigationIntent: async () => {
+        clearCount += 1;
+        return snapshot({ activeCardId: 'cleared' });
+      }
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNavigationError: (message) => navigationErrors.push(message)
+    });
+
+    const result = await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: true
+    });
+
+    expect(result).toMatchObject({
+      activeCardId: 'invoking-card',
+      focusedLinkIndex: 1,
+      externalNavigationIntent: 'http://example.test/target.wml'
+    });
+    expect(clearCount).toBe(0);
+    expect(machine.getSessionState()).toMatchObject({
+      navigationStatus: 'error',
+      requestedUrl: 'http://example.test/target.wml',
+      finalUrl: 'http://example.test/start.wml',
+      contentType: 'text/vnd.wap.wml',
+      activeCardId: 'invoking-card',
+      focusedLinkIndex: 1,
+      externalNavigationIntent: 'http://example.test/target.wml',
+      lastError: 'target fetch failed'
+    });
+    expect(machine.getHistoryState().entries).toHaveLength(1);
+    expect(navigationErrors).toEqual(['target fetch failed']);
   });
 
   it('uses runtime-provided external intent request policy when following intents', async () => {

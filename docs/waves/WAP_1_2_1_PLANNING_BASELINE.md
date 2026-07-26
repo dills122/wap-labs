@@ -43,7 +43,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 175 | 6 | 23 | 10 |
+| WML | 39 | 175 | 8 | 22 | 9 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 23 | 18 |
@@ -52,27 +52,27 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 0 | 8 | 0 |
-| **Total** | **198** | **762** | **23** | **77** | **98** |
+| **Total** | **198** | **762** | **24** | **76** | **98** |
 
-Parent-row status is not a substitute for direct clause evidence. With 173 of
+Parent-row status is not a substitute for direct clause evidence. With 176 of
 762 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
 
 ## Work-program state
 
-The 79 work items currently roll up to:
+The 80 work items currently roll up to:
 
-- 20 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-201 evidence projection, WML-202 and WML-204 closure, and the frontend production-build defect closure);
+- 22 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-2/WML-205 closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 12 in progress (remaining WML evidence plus existing runtime, WAE, transport, and WSP foundations);
-- 46 todo.
+- 10 in progress (existing runtime, WAE, transport, and WSP foundations);
+- 47 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203.
 
 New completion claims should follow the machine dependency graph:
 
-1. Run `WML-2` and `TRN-7` in parallel after the completed `CONF-1` planning
-   gate.
-2. Complete `WML-3` after `WML-2`.
+1. Preserve the completed `WML-2` baseline while `TRN-7` continues after the
+   completed `CONF-1` planning gate.
+2. Advance `WML-3` through `WML-303`, `WML-302`, and `WML-305` after `WML-2`.
 3. Complete `REN-4` and `WMLS-5` after `WML-3`.
 4. Complete `WAE-6` after runtime, rendering, and script dependencies.
 5. Complete `WSP-8` after both `TRN-7` and `WAE-6`.

@@ -209,23 +209,17 @@ Type contract:
 
 ## Next implementation slice
 
-1. Preserve the completed `WML-201` 76-row evidence projection and 175/175 direct WML-clause
-   mapping.
-2. Preserve completed `WML-202` referring-URI access, root-language, and
-   card-context/grammar evidence (30/30 direct clauses).
-3. Preserve completed `WML-204` vdata/HREF conversion, control validation,
-   grouped-control syntax, deterministic failure, and native/WASM parity
-   evidence (23/23 direct clauses).
-4. Preserve completed `WML-203` mandatory prologue, selected DTD content-model,
-   native/WASM parity, and broader document-family evidence (68/68 direct
-   clauses), then extend the mapped `WML-205` taxonomy across the remaining
-   element errors and host fetch/access failure atomicity.
-5. Preserve the completed direct mappings for `WML-201` (175/175 WML
-   clauses), `WML-202` (30/30 clauses), `WML-203` (68/68 clauses), and
-   `WML-204` (23/23 clauses); WML-205 broader implementation acceptance
-   remains open.
-6. Keep `D0-01`, `W1-06`, `A5-03`, and `M1-03` queued as downstream
-   or non-preemptive work rather than current sprint drivers.
+1. Preserve the completed `WML-2` parser/validation baseline: `WML-201`
+   (175/175 mapped WML clauses), `WML-202` (30/30), `WML-203` (68/68),
+   `WML-204` (23/23), and `WML-205` (3/3).
+2. Advance `WML-303` task/event/softkey precedence as the first unlocked
+   `WML-3` dependency slice.
+3. Follow with `WML-302` variable/setvar closure, preserving WML-205 failure
+   atomicity as task data becomes richer.
+4. Then advance `WML-305` native timer lifecycle and target-parity evidence.
+5. Keep host fetching at the browser boundary, WBXML decoding in transport,
+   and `D0-01`, `W1-06`, `A5-03`, and `M1-03` queued unless they directly
+   unblock that baton.
 
 ## Current checklist (planning/execution)
 

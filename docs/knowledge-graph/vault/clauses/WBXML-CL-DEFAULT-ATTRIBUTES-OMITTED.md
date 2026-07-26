@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "permitted",
   "obligationSynopsis": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "WML-203"
   ],

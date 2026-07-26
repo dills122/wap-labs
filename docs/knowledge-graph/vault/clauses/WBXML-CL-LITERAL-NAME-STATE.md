@@ -42,6 +42,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

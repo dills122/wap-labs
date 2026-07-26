@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "When a tag has attributes and content, decode the complete attribute list before content.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

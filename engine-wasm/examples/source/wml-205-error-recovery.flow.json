@@ -39,6 +39,126 @@
           }
         }
       ]
+    },
+    {
+      "id": "fetch-failure-preserves-invoking-task-state",
+      "title": "A failed external fetch notifies the user without committing task state",
+      "target": "waves-browser",
+      "setup": { "runMode": "network" },
+      "workItems": ["WML-205"],
+      "specItems": ["WML-C-16", "WML-C-18", "WML-C-29"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "session": {
+          "runMode": "network",
+          "navigationStatus": "loaded",
+          "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+        },
+        "render": {
+          "textIncludes": ["Recovered extension content.", "Missing target"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": "http://fixtures.test/examples/wml205MissingTarget.wml"
+            },
+            "session": {
+              "navigationStatus": "error",
+              "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+            },
+            "statusIncludes": "Fetch failed:",
+            "render": {
+              "textIncludes": ["Recovered extension content.", "Missing target"]
+            },
+            "traceKinds": ["KEY", "ACTION_EXTERNAL"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "access-denial-preserves-invoking-task-state",
+      "title": "Destination access denial notifies the user without committing task state",
+      "target": "waves-browser",
+      "setup": { "runMode": "network" },
+      "workItems": ["WML-205"],
+      "specItems": ["WML-C-16", "WML-C-18", "WML-C-29"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "session": {
+          "runMode": "network",
+          "navigationStatus": "loaded",
+          "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+        },
+        "render": {
+          "textIncludes": ["Recovered extension content.", "Restricted target"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": null
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 2,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY", "KEY"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 2,
+              "externalNavigationIntent": "http://fixtures.test/examples/wml202TemplateShadowing.wml"
+            },
+            "session": {
+              "navigationStatus": "error",
+              "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+            },
+            "statusIncludes": "Deck parse failed: Deck access denied for referring URI",
+            "render": {
+              "textIncludes": ["Recovered extension content.", "Restricted target"]
+            },
+            "traceKinds": ["KEY", "ACTION_EXTERNAL"]
+          }
+        }
+      ]
     }
   ]
 }

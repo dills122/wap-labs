@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

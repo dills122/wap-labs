@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

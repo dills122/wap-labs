@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Distinguish fixed global tokens from context-dependent application tokens.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

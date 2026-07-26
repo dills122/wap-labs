@@ -93,14 +93,15 @@ Current priority order is:
    at 30/30 direct clauses and WML-204 is complete at 23/23 direct clauses.
 3. Preserve completed `WML-203` mandatory prologue, selected DTD content-model,
    text/WBXML parity, and broader document-family evidence (68/68 direct
-   clauses). Next extend `WML-205`'s direct three-clause taxonomy across
-   remaining element errors and host fetch/access failure atomicity.
+   clauses), plus completed `WML-205` exhaustive invalid-WML and atomic
+   host-failure evidence (3/3 direct clauses). `WML-2` is closed.
 4. Preserve `TRN-706`'s completed schema-v2 selected-WDP replay boundary and
    keep the conditional WTP mapping gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
    complete but intentionally remains open while its declared WTP family is
    inactive and unmapped.
-5. Treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
+5. Advance the unlocked engine baton through `WML-303`, `WML-302`, and
+   `WML-305`; treat `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
    until `TRN-7` and `WAE-6` close. Keep `D0-01`, frame migration, generators,
    and maintenance non-preemptive unless they directly unblock a strict
    obligation.
@@ -1886,7 +1887,7 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  7 implemented, 23 partial, and 17 missing rows, with validated code/test
+  8 implemented, 22 partial, and 17 missing rows, with validated code/test
   evidence for 30 rows. `WML-201` directly projects all 76 rows and maps all
   175 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this

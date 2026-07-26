@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Process character entities in the document character set.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

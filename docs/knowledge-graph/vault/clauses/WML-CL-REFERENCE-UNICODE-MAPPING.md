@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Map every character in each recognized source encoding to its Unicode character.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Read a string-table length immediately after charset even when the table is empty.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

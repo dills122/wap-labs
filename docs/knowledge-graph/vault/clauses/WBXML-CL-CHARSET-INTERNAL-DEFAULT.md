@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

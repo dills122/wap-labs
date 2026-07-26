@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

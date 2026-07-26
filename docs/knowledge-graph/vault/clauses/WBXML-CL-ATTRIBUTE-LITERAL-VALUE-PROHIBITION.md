@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Do not interpret LITERAL as encoding any portion of an attribute value.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

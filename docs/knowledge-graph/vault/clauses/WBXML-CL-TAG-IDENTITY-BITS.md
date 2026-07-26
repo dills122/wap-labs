@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Use tag bits zero through five as the application tag identity.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

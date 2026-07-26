@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode STR_T as a multi-byte byte offset into the string table.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

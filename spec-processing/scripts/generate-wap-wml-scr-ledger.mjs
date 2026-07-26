@@ -385,19 +385,31 @@ const mandatoryImplementationAudit = new Map(
       testEvidence: []
     },
     'WML-C-16': {
-      status: 'partial',
+      status: 'implemented',
       note:
-        'Parsing and task failures are surfaced deterministically with rollback in covered paths, but all WML-defined error conditions are not enforced.',
+        'Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.',
       implementationEvidence: [
         codeEvidence(
-          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
-          'navigate_to_card_internal'
+          'engine-wasm/engine/src/parser/wml_parser/validation.rs',
+          'validate_wml13_document'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/parser/wml_parser/xml.rs',
+          'start_to_element'
+        ),
+        codeEvidence(
+          'browser/frontend/src/app/navigation-state.ts',
+          'loadTransportUrl'
         )
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
-          'fixture_accept_failure_rolls_back_and_trace_order_is_deterministic'
+          'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
+          'wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
+          'wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions'
         )
       ]
     },
@@ -1099,6 +1111,7 @@ function mappingFor(row) {
     implementationDomain = 'parsing-and-character-processing';
     ownerLayers = ['engine-wasm', 'transport-rust'];
     workItems.push('R0-08');
+    if ([5, 6].includes(number)) workItems.push('C5-06');
     requirementIds.push('RQ-RMK-001', 'RQ-WAE-012');
   } else if (number <= 13) {
     implementationDomain =

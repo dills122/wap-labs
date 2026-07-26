@@ -15,7 +15,7 @@ Target: [[sprints/WML-2|WML-2]]
 ## Graph summary
 
 - Nodes: 591
-- Edges: 1728
+- Edges: 1729
 
 - `clause`: 225
 - `fixture`: 225

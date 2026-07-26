@@ -184,7 +184,8 @@ const loadDeckContext = (
     request.wmlXml,
     request.baseUrl,
     request.contentType,
-    request.rawBytesBase64
+    request.rawBytesBase64,
+    request.referringUrl
   );
 };
 

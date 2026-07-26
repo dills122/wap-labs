@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

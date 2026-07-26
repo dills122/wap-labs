@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

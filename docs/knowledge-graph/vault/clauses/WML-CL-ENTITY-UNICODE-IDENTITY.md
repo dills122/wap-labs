@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Resolve numeric character references against Unicode independently of the document byte encoding.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

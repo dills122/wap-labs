@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

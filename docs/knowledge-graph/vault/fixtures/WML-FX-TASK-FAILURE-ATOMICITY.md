@@ -4,7 +4,7 @@ key: "WML-FX-TASK-FAILURE-ATOMICITY"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "error-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "recommended",
   "obligationSynopsis": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"
