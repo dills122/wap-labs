@@ -13,6 +13,8 @@ on:
       - 'engine-wasm/contracts/**'
       - 'engine-wasm/engine/**'
       - 'gateway-kannel/**'
+      - 'scripts/lib/run-and-tee.sh'
+      - 'scripts/tests/transport-wap-smoke-status.sh'
       - 'scripts/transport-wap-smoke.sh'
       - 'transport-rust/**'
       - 'wml-server/**'
@@ -25,7 +27,6 @@ env:
   RUST_SHARED_KEY: wavenav-rust
   TRANSPORT_WAP_SMOKE_ARTIFACT_DIR: ${{ github.workspace }}/test-results/transport-wap-smoke
   WML_DTD_VERSION: '1.3'
-  WML_ENCODING_VERSION: '1.3'
 
 jobs:
   transport-wap-smoke:
@@ -52,7 +53,9 @@ jobs:
             transport-rust -> target
 
       - name: Run WAP smoke
-        run: make smoke-transport-wap
+        run: |
+          ./scripts/tests/transport-wap-smoke-status.sh
+          make smoke-transport-wap
 
       - name: Dump service logs on failure
         if: failure()

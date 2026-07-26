@@ -2,6 +2,7 @@
 set -eu
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+. "${ROOT_DIR}/scripts/lib/run-and-tee.sh"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
 WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3000/health}"
 WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
@@ -14,19 +15,6 @@ if [ -n "${TRANSPORT_WAP_SMOKE_ARTIFACT_DIR:-}" ]; then
 else
   SMOKE_ARTIFACT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/transport-wap-smoke.XXXXXX")"
 fi
-
-# Run a piped command and fail if the *command* (not `tee`) exited nonzero.
-# POSIX sh has no `pipefail`/`PIPESTATUS`, so the command's real exit code is
-# written to a scratch file from inside the pipeline and read back afterward.
-run_and_tee() {
-  log_file="$1"
-  shift
-  status_file="$(mktemp "${TMPDIR:-/tmp}/transport-wap-smoke-status.XXXXXX")"
-  { "$@"; echo "$?" >"$status_file"; } | tee "$log_file"
-  cmd_status="$(cat "$status_file")"
-  rm -f "$status_file"
-  return "$cmd_status"
-}
 
 print_failure_diagnostics() {
   exit_code="$?"

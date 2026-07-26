@@ -1,0 +1,12 @@
+--- a/gw/wap-appl.c
++++ b/gw/wap-appl.c
+@@ -912,3 +912,8 @@ static void return_reply(int status, Octstr *content_body, List *headers,
+         } else {
+-            content.version = NULL;
++            /*
++             * Connectionless WSP has no session machine. Preserve the
++             * device's Encoding-Version request for WML compilation.
++             */
++            content.version = http_header_value(device_headers,
++                                                octstr_imm("Encoding-Version"));
+         }

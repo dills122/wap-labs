@@ -46,6 +46,8 @@ pub(crate) struct NativeFetchPlan {
 
 /// Media type this transport negotiates when the caller sends no `Accept`.
 const DEFAULT_ACCEPT_MEDIA: &str = "application/vnd.wap.wmlc";
+/// WSP/WBXML version supported by the selected WML 1.3 native profile.
+const NATIVE_WSP_ENCODING_VERSION: &str = "1.3";
 
 /// Failure while building the connectionless request for a native fetch plan.
 #[derive(Debug)]
@@ -463,6 +465,13 @@ fn connectionless_request_headers(headers: &HashMap<String, String>) -> WspHeade
             },
         });
     }
+    block.headers.push(WspHeaderField {
+        name: "Encoding-Version".to_string(),
+        value: NATIVE_WSP_ENCODING_VERSION.to_string(),
+        name_encoding: WspHeaderNameEncoding::Binary {
+            page: DEFAULT_HEADER_CODE_PAGE,
+        },
+    });
     block
 }
 
@@ -663,7 +672,7 @@ mod tests {
         let (uri_len, rest) = decode_uintvar(&sent.payload[2..]).expect("uri length should decode");
         let uri = std::str::from_utf8(&rest[..uri_len]).expect("uri should be utf8");
         assert_eq!(uri, "http://127.0.0.1:13002/login");
-        assert_eq!(&rest[uri_len..], &[0x80, 0x88]);
+        assert_eq!(&rest[uri_len..], &[0x80, 0x88, 0xc3, 0x93]);
     }
 
     #[test]
@@ -782,7 +791,7 @@ mod tests {
         let (uri_len, rest) = decode_uintvar(&encoded[2..]).expect("uri len should decode");
         let uri = std::str::from_utf8(&rest[..uri_len]).expect("uri should decode");
         assert_eq!(uri, "http://localhost:13002/");
-        assert_eq!(&rest[uri_len..], &[0x80, 0x94]);
+        assert_eq!(&rest[uri_len..], &[0x80, 0x94, 0xc3, 0x93]);
     }
 
     #[test]
@@ -868,12 +877,13 @@ mod tests {
             None,
             "unrepresentable Accept values advertise nothing"
         );
-        assert!(connectionless_request_headers(&HashMap::from([(
+        let headers = connectionless_request_headers(&HashMap::from([(
             "Accept".to_string(),
-            "application/json".to_string()
-        )]))
-        .headers
-        .is_empty());
+            "application/json".to_string(),
+        )]));
+        assert_eq!(headers.headers.len(), 1);
+        assert_eq!(headers.headers[0].name, "Encoding-Version");
+        assert_eq!(headers.headers[0].value, NATIVE_WSP_ENCODING_VERSION);
     }
 
     #[test]
@@ -964,13 +974,13 @@ mod tests {
         let uri = std::str::from_utf8(&remainder[..uri_len]).expect("uri should decode");
         assert_eq!(uri, "http://localhost:13002/login");
         let remainder = &remainder[uri_len..];
-        assert_eq!(headers_len, 36);
+        assert_eq!(headers_len, 38);
         assert_eq!(
             &remainder[..headers_len],
             &[
                 b'a', b'p', b'p', b'l', b'i', b'c', b'a', b't', b'i', b'o', b'n', b'/', b'x', b'-',
                 b'w', b'w', b'w', b'-', b'f', b'o', b'r', b'm', b'-', b'u', b'r', b'l', b'e', b'n',
-                b'c', b'o', b'd', b'e', b'd', 0x00, 0x80, 0x88,
+                b'c', b'o', b'd', b'e', b'd', 0x00, 0x80, 0x88, 0xc3, 0x93,
             ]
         );
         assert_eq!(&remainder[headers_len..], b"username=alice&pin=0000");

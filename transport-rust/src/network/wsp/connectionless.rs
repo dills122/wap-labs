@@ -365,6 +365,15 @@ fn encode_connectionless_header_block(block: &WspHeaderBlock) -> Vec<u8> {
             .flatten();
         match media_code {
             Some(code) => out.push(WELL_KNOWN_MARKER | code),
+            None if header.name.eq_ignore_ascii_case("Encoding-Version") => {
+                match encode_version_value(&header.value) {
+                    Some(version) => out.push(WELL_KNOWN_MARKER | version),
+                    None => {
+                        out.extend_from_slice(header.value.as_bytes());
+                        out.push(0x00);
+                    }
+                }
+            }
             None => {
                 out.extend_from_slice(header.value.as_bytes());
                 out.push(0x00);
@@ -372,6 +381,13 @@ fn encode_connectionless_header_block(block: &WspHeaderBlock) -> Vec<u8> {
         }
     }
     out
+}
+
+fn encode_version_value(value: &str) -> Option<u8> {
+    let (major, minor) = value.trim().split_once('.')?;
+    let major = major.parse::<u8>().ok()?;
+    let minor = minor.parse::<u8>().ok()?;
+    (major <= 0x07 && minor <= 0x0e).then_some((major << 4) | minor)
 }
 
 /// Encodes the `ContentType` field that precedes a `Post` header section.
@@ -636,6 +652,31 @@ mod tests {
         .expect("request should encode");
 
         assert_eq!(&encoded[encoded.len() - 2..], &[0x80, 0x88]);
+    }
+
+    #[test]
+    fn get_request_encodes_wbxml_version_as_compact_version_value() {
+        let block = WspHeaderBlock {
+            headers: vec![WspHeaderField {
+                name: "Encoding-Version".to_string(),
+                value: "1.3".to_string(),
+                name_encoding: WspHeaderNameEncoding::Binary {
+                    page: DEFAULT_HEADER_CODE_PAGE,
+                },
+            }],
+            encoding_version_headers: Vec::new(),
+        };
+        let encoded = encode_connectionless_request(&WspConnectionlessRequest {
+            transaction_id: TRANSACTION_ID,
+            method: WspConnectionlessMethod::Get,
+            uri: "/",
+            headers: &block,
+            content_type: None,
+            body: &[],
+        })
+        .expect("request should encode");
+
+        assert_eq!(&encoded[encoded.len() - 2..], &[0xc3, 0x93]);
     }
 
     #[test]
