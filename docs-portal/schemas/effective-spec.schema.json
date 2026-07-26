@@ -11,18 +11,19 @@
     "governingConformanceDocument",
     "governingClassProfileDocument",
     "classProfileLedger",
+    "strictTransportProfile",
     "graphStatus",
     "semantics",
     "summary",
     "families"
   ],
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": { "const": 2 },
     "releaseId": {
       "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
     },
     "generatedFrom": {
-      "const": "spec-processing/source-manifests/wap-1.2.1-release.json"
+      "$ref": "#/$defs/generatedFrom"
     },
     "governingConformanceDocument": {
       "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
@@ -32,6 +33,9 @@
     },
     "classProfileLedger": {
       "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+    },
+    "strictTransportProfile": {
+      "$ref": "#/$defs/strictTransportProfile"
     },
     "graphStatus": {
       "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
@@ -76,6 +80,211 @@
     }
   },
   "$defs": {
+    "generatedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generator", "inputs"],
+      "properties": {
+        "generator": {
+          "const": "spec-processing/scripts/generate-wap-effective-spec.mjs"
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "release",
+            "classConformance",
+            "ingestion",
+            "externalDependencies",
+            "externalIngestion"
+          ],
+          "properties": {
+            "release": {
+              "$ref": "#/$defs/releaseInput"
+            },
+            "classConformance": {
+              "$ref": "#/$defs/classConformanceInput"
+            },
+            "ingestion": {
+              "$ref": "#/$defs/ingestionInput"
+            },
+            "externalDependencies": {
+              "$ref": "#/$defs/externalDependenciesInput"
+            },
+            "externalIngestion": {
+              "$ref": "#/$defs/externalIngestionInput"
+            }
+          }
+        }
+      }
+    },
+    "releaseInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "spec-processing/source-manifests/wap-1.2.1-release.json"
+        },
+        "sha256": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "classConformanceInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "spec-processing/source-manifests/wap-1.2.1-class-conformance.json"
+        },
+        "sha256": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "ingestionInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "spec-processing/source-manifests/wap-1.2.1-ingestion-status.json"
+        },
+        "sha256": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "externalDependenciesInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "spec-processing/source-manifests/wap-1.2.1-external-dependencies.json"
+        },
+        "sha256": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "externalIngestionInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "const": "spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json"
+        },
+        "sha256": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sha256"
+        }
+      }
+    },
+    "strictTransportProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileId", "deviceRole", "deviceClass", "selectedBearer", "families"],
+      "properties": {
+        "profileId": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+        },
+        "deviceRole": { "const": "client" },
+        "deviceClass": { "const": "C" },
+        "selectedBearer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "networkProtocol",
+            "datagramProtocol",
+            "sourceDocument",
+            "sourceSection",
+            "externalContext"
+          ],
+          "properties": {
+            "id": { "const": "cdpd-ipv4" },
+            "networkProtocol": { "const": "ipv4" },
+            "datagramProtocol": { "const": "udp" },
+            "sourceDocument": { "const": "WAP-200-WDP" },
+            "sourceSection": { "const": "5.4.3" },
+            "externalContext": { "const": "tiaeia-is-732-cdpd-set" }
+          }
+        },
+        "families": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["wdp", "wcmp", "wsp", "wtp"],
+          "properties": {
+            "wdp": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["selectedFeatureGroup", "selectedPath", "sourceDocuments"],
+              "properties": {
+                "selectedFeatureGroup": { "const": "WDP:MCF" },
+                "selectedPath": { "const": "udp-over-ipv4" },
+                "sourceDocuments": {
+                  "const": ["WAP-200-WDP", "rfc-768", "rfc-791"]
+                }
+              }
+            },
+            "wcmp": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "selectedFeatureGroup",
+                "selectedPath",
+                "sourceDocument",
+                "sourceSection",
+                "normativeDependency",
+                "generalWcmpDisposition"
+              ],
+              "properties": {
+                "selectedFeatureGroup": { "const": "WCMP:MCF" },
+                "selectedPath": { "const": "rfc-792-icmpv4" },
+                "sourceDocument": { "const": "WAP-202-WCMP" },
+                "sourceSection": { "const": "5.3" },
+                "normativeDependency": { "const": "rfc-792" },
+                "generalWcmpDisposition": {
+                  "const": "capability-gated-non-ip-bearer"
+                }
+              }
+            },
+            "wsp": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "selectedFeatureGroup",
+                "selectedPath",
+                "sourceDocument",
+                "connectionOrientedDisposition"
+              ],
+              "properties": {
+                "selectedFeatureGroup": { "const": "WSP:MCF" },
+                "selectedPath": { "const": "connectionless" },
+                "sourceDocument": { "const": "WAP-203-WSP" },
+                "connectionOrientedDisposition": {
+                  "const": "conditional-capability"
+                }
+              }
+            },
+            "wtp": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["selected", "activationCondition"],
+              "properties": {
+                "selected": { "const": false },
+                "activationCondition": {
+                  "const": "connection-oriented-wsp-selected"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "family": {
       "type": "object",
       "additionalProperties": false,
@@ -178,6 +387,21 @@
             },
             "selectedFeatureGroup": {
               "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+            },
+            "applicability": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["profile", "family"],
+              "properties": {
+                "profile": { "const": "#/strictTransportProfile" },
+                "family": {
+                  "enum": [
+                    "#/strictTransportProfile/families/wdp",
+                    "#/strictTransportProfile/families/wcmp",
+                    "#/strictTransportProfile/families/wsp"
+                  ]
+                }
+              }
             },
             "note": {
               "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
