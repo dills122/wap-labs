@@ -5,7 +5,7 @@ export type EngineKey = "up" | "down" | "enter";
 
 export type LoadDeckRequest = { wmlXml: string, };
 
-export type LoadDeckContextRequest = { wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string, };
+export type LoadDeckContextRequest = { wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string, referringUrl?: string, };
 
 export type HandleKeyRequest = { key: EngineKey, };
 
@@ -29,7 +29,7 @@ export type ExternalNavigationPostContextSnapshot = { sameDeck?: boolean, conten
 
 export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalNavigationCacheControlPolicySnapshot, refererUrl?: string, postContext?: ExternalNavigationPostContextSnapshot, };
 
-export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
+export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, deckLanguage?: string, activeCardLanguage?: string, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
 export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, };
 

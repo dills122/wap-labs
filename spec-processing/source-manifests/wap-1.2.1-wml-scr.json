@@ -61,10 +61,10 @@
       "wbxml-encoding-and-validation": 4,
       "wml-document-validation": 11
     },
-    "testEvidenceLinkedCount": 29,
+    "testEvidenceLinkedCount": 30,
     "mandatoryImplementationStatus": {
-      "implemented": 6,
-      "missing": 18,
+      "implemented": 7,
+      "missing": 17,
       "partial": 23
     }
   },
@@ -605,13 +605,25 @@
         ],
         "workItems": [
           "R0-01",
-          "R0-03"
+          "R0-03",
+          "C5-03"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "The WML card newcontext attribute is not parsed or applied during go traversal; WMLScript newContext support is not a substitute.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The parser retains the card newcontext flag with its false default. Go traversal into a newcontext card clears variables and navigation history and resets implementation-private entry state atomically; direct host navigation does not apply the flag.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "reset_browser_context_for_newcontext"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1090,17 +1102,19 @@
       "mapping": {
         "implementationDomain": "deck-parser-and-form-runtime",
         "ownerLayers": [
-          "engine-wasm"
+          "engine-wasm",
+          "browser"
         ],
         "requirementIds": [
           "RQ-RMK-001"
         ],
         "workItems": [
           "R0-01",
-          "R0-04"
+          "R0-04",
+          "C5-03"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
+        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior outside WML-202, remains not assessed.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -1108,7 +1122,11 @@
           },
           {
             "path": "engine-wasm/engine/src/runtime/deck.rs",
-            "symbol": "DeckAccessControl"
+            "symbol": "allows_referring_uri"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "loadTransportUrl"
           }
         ],
         "testEvidence": [
@@ -1118,9 +1136,9 @@
             "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
           },
           {
-            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
-            "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -1313,21 +1331,31 @@
         ],
         "workItems": [
           "R0-01",
-          "R0-04"
+          "R0-04",
+          "C5-03"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Card identity, ordering, and content are parsed; mandatory card attributes and lifecycle semantics are only partially retained.",
+        "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain separate WML-201 gaps outside WML-202.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
             "symbol": "parse_wml"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/card.rs",
+            "symbol": "Card"
           }
         ],
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "parses_cards_and_links",
-            "command": "cd engine-wasm/engine && cargo test parses_cards_and_links"
+            "test": "wml_202_enforces_card_event_timer_content_order",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_card_content_order_is_preserved_in_render_output",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2800,14 +2828,19 @@
         ],
         "workItems": [
           "R0-01",
-          "R0-04"
+          "R0-04",
+          "C5-03"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
+        "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, retains all recognized deck-level information, and exposes root xml:lang for card language inheritance. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
             "symbol": "parse_wml"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "card_language"
           }
         ],
         "testEvidence": [
@@ -2815,6 +2848,11 @@
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_202_rejects_invalid_wml_root_structure_deterministically",
             "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_root_language_and_card_language_are_exposed_with_inheritance",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_root_language_and_card_language_are_exposed_with_inheritance"
           }
         ],
         "evidenceState": "direct-test-linked"

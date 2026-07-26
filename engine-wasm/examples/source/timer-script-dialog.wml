@@ -15,10 +15,10 @@ testing-ac:
     <a href="#timed">Start timer</a>
   </card>
   <card id="timed">
-    <timer value="10"/>
     <onevent type="ontimer">
       <go href="script:timer-dialog.wmlsc#showExpiryAlert"/>
     </onevent>
+    <timer value="10"/>
     <p>Waiting for the runtime timer.</p>
   </card>
 </wml>

@@ -57,7 +57,7 @@ WML card ordering guidance (`ordered` as hint, not strict layout algorithm).
 
 ### A4. Boundary metadata stability
 - Build:
-1. Keep `loadDeckContext(wmlXml, baseUrl, contentType, rawBytesBase64?)` primary.
+1. Keep `loadDeckContext(wmlXml, baseUrl, contentType, rawBytesBase64?, referringUrl?)` primary.
 2. Preserve backwards-compatible `loadDeck(xml)`.
 - Sources:
 WML/WBXML media-type and transport-normalization boundary.

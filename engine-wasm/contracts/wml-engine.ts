@@ -9,6 +9,8 @@ export interface WmlDeckInput {
   contentType: string;
   // Optional raw source payload bytes (base64) for diagnostics and parity checks.
   rawBytesBase64?: string;
+  // Referring deck URI supplied by the host for destination access checks.
+  referringUrl?: string;
 }
 
 export type WmlLoadDiagnosticClass =
@@ -177,6 +179,8 @@ export interface WmlEngineCommon {
   focusedLinkIndex(): number;
   baseUrl(): string;
   contentType(): string;
+  deckLanguage(): string | undefined;
+  activeCardLanguage(): string | undefined;
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
   beginFocusedInputEdit(): boolean;
@@ -237,7 +241,8 @@ export interface WmlEngineWasm extends WmlEngineCommon {
     wmlXml: string,
     baseUrl: string,
     contentType: string,
-    rawBytesBase64?: string
+    rawBytesBase64?: string,
+    referringUrl?: string
   ): void;
 }
 

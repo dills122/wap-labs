@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-RMK-002|RQ-RMK-002]]
 - `maps-to` → [[requirements/RQ-RMK-003|RQ-RMK-003]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
+- `planned-by` → [[work-items/WML-202|WML-202]]
 - `refines` → [[scr-rows/WML-C-11|WML-C-11]]
 - `refines` → [[scr-rows/WML-C-18|WML-C-18]]
 - `refines` → [[scr-rows/WML-C-29|WML-C-29]]
@@ -44,11 +45,13 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Apply newcontext only during go-task navigation into the destination card.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-02",
     "R0-03",
     "R0-06",
-    "WML-201"
+    "WML-201",
+    "WML-202"
   ],
   "ownerLayers": [
     "browser",
@@ -58,7 +61,7 @@ tags:
     "RQ-RMK-002",
     "RQ-RMK-003"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

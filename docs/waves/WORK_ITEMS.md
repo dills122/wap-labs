@@ -87,12 +87,11 @@ Current priority order is:
 
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and
    174/174 direct WML-clause mapping.
-2. Close the remaining `WML-202` referring-URI access policy,
-   root-language, and card-context/grammar gate, then the residual mandatory
-   `WML-204` vdata/HREF conversion and field/control validation gate. Preserve
-   their completed 14/14 and 23/23 direct-clause slices and the grouped-control
-   evidence from `#342`; the remaining work shares engine parser/runtime tests,
-   so keep it in one serial lane.
+2. Preserve completed `WML-202` referring-URI access, root-language, and
+   card-context/grammar evidence, then close the residual mandatory `WML-204`
+   vdata/HREF conversion and field/control validation gate. WML-202 is complete
+   at 30/30 direct clauses; WML-204 retains its completed 23/23 mapped slice and
+   grouped-control evidence from `#342` while its broader gate remains open.
 3. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
    extend `WML-205`'s direct three-clause taxonomy across remaining element
    errors and host fetch/access failure atomicity. Sequence validation-file
@@ -1823,8 +1822,8 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  6 implemented, 23 partial, and 18 missing rows, with validated code/test
-  evidence for 29 rows. `WML-201` directly projects all 76 rows and maps all
+  7 implemented, 23 partial, and 17 missing rows, with validated code/test
+  evidence for 30 rows. `WML-201` directly projects all 76 rows and maps all
   174 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this
   ticket is not done.
@@ -2092,7 +2091,7 @@ Reference:
 - Added ordered, independent card/template `do[name]` and `onevent[type]` bindings in the shared Rust deck model, including effective-name matching, cross-syntax intrinsic precedence, and inactive `noop` masking.
 - Added deterministic parser rejection for duplicate templates, misplaced/invalid template content, duplicate effective do names, and conflicting intrinsic bindings.
 - Added native parser/runtime tests, a WASM boundary parity test, and executable `wml-202-template-shadowing.wml` + `.flow.json` evidence (`pnpm test:story WML-202`).
-- Direct evidence closes the 14 mapped WML-202 root/head/access, template, and task-shadowing clauses. Optional `WML-C-34`/`WML-C-72` behavior has parser tests but remains `optional-not-assessed` until the capability pass; the broader gate also remains open for access-policy enforcement, root language metadata, and card context/grammar completion.
+- Direct evidence closes the original 14 mapped WML-202 root/head/access, template, and task-shadowing clauses. The additive C5-03 closure supplies the remaining 16 access-policy, root-language, card-grammar/context, and newcontext clauses without rewriting this completed ticket's history. Optional `WML-C-34`/`WML-C-72` behavior remains `optional-not-assessed` until the capability pass.
 
 ## Phase S (Archived)
 

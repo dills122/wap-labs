@@ -53,7 +53,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.",
+  "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior outside WML-202, remains not assessed.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -61,7 +61,11 @@ tags:
     },
     {
       "path": "engine-wasm/engine/src/runtime/deck.rs",
-      "symbol": "DeckAccessControl"
+      "symbol": "allows_referring_uri"
+    },
+    {
+      "path": "browser/frontend/src/app/navigation-state.ts",
+      "symbol": "loadTransportUrl"
     }
   ],
   "testEvidence": [
@@ -71,13 +75,14 @@ tags:
       "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
     },
     {
-      "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "wml_202_rejects_invalid_head_access_and_meta_structure_deterministically",
-      "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically"
+      "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+      "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
     }
   ],
   "ownerLayers": [
-    "engine-wasm"
+    "engine-wasm",
+    "browser"
   ],
   "requirementIds": [
     "RQ-RMK-001"
@@ -86,6 +91,7 @@ tags:
     "WML-201"
   ],
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "WML-201"

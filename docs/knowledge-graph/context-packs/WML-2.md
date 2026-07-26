@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 588
-- Edges: 1687
+- Nodes: 589
+- Edges: 1704
 - Selected work items: 5
 - Direct SCR rows: 76
-- Direct normative clauses: 266
+- Direct normative clauses: 282
 - Work items without direct clause mappings: 0
 - Work items with unmapped declared normative families: 0
 
@@ -44,7 +44,7 @@ Exit gates:
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-01`
-- Direct SCR rows: 76 (29 `direct-test-linked`, 18 `gap-work-item-mapped`, 29 `optional-not-assessed`)
+- Direct SCR rows: 76 (30 `direct-test-linked`, 17 `gap-work-item-mapped`, 29 `optional-not-assessed`)
 - Direct normative clauses: 177
 
 Outputs:
@@ -55,7 +55,7 @@ Outputs:
 Acceptance:
 
 - The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.
-- All 76 rows are directly planned by WML-201 in the graph: 29 retain validated code/test links, 18 retain additive gap work items, and 29 optional rows remain explicitly not assessed.
+- All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.
 - All 174 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
 
 Evidence commands:
@@ -68,12 +68,12 @@ Evidence commands:
 
 ### WML-202: Complete deck/head/template/card/access/meta parser model
 
-- Status: `in-progress`
-- Owner layers: `engine-wasm`, `qa`
+- Status: `done`
+- Owner layers: `engine-wasm`, `browser`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-04`, `R0-12`, `C5-03`
 - Direct SCR rows: 0
-- Direct normative clauses: 14
+- Direct normative clauses: 30
 
 Outputs:
 
@@ -82,10 +82,13 @@ Outputs:
 Acceptance:
 
 - Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors.
+- Destination access policy applies WML domain/path defaults, component-aware matching, relative-path resolution, and URL case rules against a host-supplied referring URI before a deck transition commits.
+- Root and card language metadata, card newcontext/ordered defaults, card content order, and go-only browser-context reset behavior are retained and parity-backed across native, WASM, and host boundaries.
 
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `pnpm --dir browser test`
 - `pnpm test:story WML-202`
 - `node scripts/check-wap-conformance-ledger.mjs`
 - `node scripts/check-wap-selected-normative-clauses.mjs`
@@ -252,11 +255,11 @@ Evidence commands:
 - **WML-C-11** — Initialisation (newcontext)
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §10.2 (SCR §15.1.3)
-  - Assessment: `missing`; evidence `gap-work-item-mapped`
-  - Code: None; the evidence state remains explicit.
-  - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
-  - Work items: `R0-01`, `R0-03`, `WML-201`
-  - Assessment note: The WML card newcontext attribute is not parsed or applied during go traversal; WMLScript newContext support is not a substitute.
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#reset_browser_context_for_newcontext`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go`)
+  - Work items: `C5-03`, `R0-01`, `R0-03`, `WML-201`
+  - Assessment note: The parser retains the card newcontext flag with its false default. Go traversal into a newcontext card clears variables and navigation history and resets implementation-private entry state atomically; direct host navigation does not apply the flag.
 - **WML-C-12** — Variables
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §10.3 (SCR §15.1.3)
@@ -333,10 +336,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3.1 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_access`, `engine-wasm/engine/src/runtime/deck.rs#DeckAccessControl`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_rejects_invalid_head_access_and_meta_structure_deterministically` (`cd engine-wasm/engine && cargo test wml_202_rejects_invalid_head_access_and_meta_structure_deterministically`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: The access element's authored domain/path attributes are parsed and retained on the deck model, its EMPTY grammar is validated, and a second access element is rejected deterministically. Enforcement of defaults and referring-URI suffix/prefix policy remains the cross-boundary R0-07 scope, so this parent obligation stays partial.
+  - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_access`, `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `browser/frontend/src/app/navigation-state.ts#loadTransportUrl`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`)
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`
+  - Assessment note: The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior outside WML-202, remains not assessed.
 - **WML-C-22** — b
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -365,10 +368,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.5 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::parses_cards_and_links` (`cd engine-wasm/engine && cargo test parses_cards_and_links`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: Card identity, ordering, and content are parsed; mandatory card attributes and lifecycle semantics are only partially retained.
+  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`, `engine-wasm/engine/src/runtime/card.rs#Card`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_enforces_card_event_timer_content_order` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_card_content_order_is_preserved_in_render_output` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output`)
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`
+  - Assessment note: Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain separate WML-201 gaps outside WML-202.
 - **WML-C-26** — do
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.7 (SCR §15.1.5)
@@ -589,10 +592,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.2 (SCR §15.1.5)
   - Assessment: `implemented`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_rejects_invalid_wml_root_structure_deterministically` (`cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically`)
-  - Work items: `R0-01`, `R0-04`, `WML-201`
-  - Assessment note: The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.
+  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`, `engine-wasm/engine/src/runtime/deck.rs#card_language`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_rejects_invalid_wml_root_structure_deterministically` (`cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_root_language_and_card_language_are_exposed_with_inheritance` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_root_language_and_card_language_are_exposed_with_inheritance`)
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`
+  - Assessment note: The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, retains all recognized deck-level information, and exposes root xml:lang for card language inheritance. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.
 - **WML-C-54** — Display of alt attribute of <img>
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.9 (SCR §15.1.6)
@@ -823,31 +826,31 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-ABSENT-ALLOWS` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-ACCESS-ABSENT-ALLOWS` (`security-policy`, `implemented`)
 - **WML-CL-ACCESS-COMPONENT-MATCH** — Match domains by complete suffix components and paths by complete prefix components.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-COMPONENT-MATCH` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-ACCESS-COMPONENT-MATCH` (`security-policy`, `implemented`)
 - **WML-CL-ACCESS-DEFAULTS** — Default an omitted access domain to the current deck domain and an omitted path to slash.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-DEFAULTS` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-ACCESS-DEFAULTS` (`security-policy`, `implemented`)
 - **WML-CL-ACCESS-REFERRER-MATCH** — Require a referring URI to satisfy each declared domain and path restriction.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-REFERRER-MATCH` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-ACCESS-REFERRER-MATCH` (`security-policy`, `implemented`)
 - **WML-CL-ACCESS-RELATIVE-PATH** — Resolve a relative access path to an absolute path before applying the prefix check.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-RELATIVE-PATH` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-ACCESS-RELATIVE-PATH` (`security-policy`, `implemented`)
 - **WML-CL-ACCESS-SINGLE-ELEMENT** — Reject a deck containing more than one access element.
   - Family: `wml`; force: `error-condition`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
@@ -859,7 +862,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-URL-CASE-RULES` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-ACCESS-URL-CASE-RULES` (`security-policy`, `implemented`)
 - **WML-CL-ANCHOR-ACCESSKEY** — When access keys are supported, assign usable requested keys where possible and focus or activate the corresponding anchor.
   - Family: `wml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-191_104-WML` §9.8 (9.8 The Anchor Element)
@@ -901,19 +904,19 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.5 (11.5 The Card Element)
   - Parents: `WML-C-25`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-COLLECTION` (`parser`, `planned`)
+  - Fixture: `WML-FX-CARD-COLLECTION` (`parser`, `implemented`)
 - **WML-CL-CARD-CONTENT-ORDER** — Preserve significant card element order during presentation.
   - Family: `wml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-CONTENT-ORDER` (`rendering`, `planned`)
+  - Fixture: `WML-FX-CARD-CONTENT-ORDER` (`rendering`, `implemented`)
 - **WML-CL-CARD-CONTEXT-ATTRIBUTE** — Apply the card newcontext flag when entering through the defined go process.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`, `WML-C-11`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
-  - Fixture: `WML-FX-CARD-CONTEXT-ATTRIBUTE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-CARD-CONTEXT-ATTRIBUTE` (`state-machine`, `implemented`)
 - **WML-CL-CARD-ID-FRAGMENT** — Use a card id as its fragment-navigation anchor.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
@@ -925,7 +928,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-CARD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-CARD-TABLE-BOUNDARIES** — Insert table boundary line breaks unless the table is respectively the first or last significant card content.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
@@ -1057,7 +1060,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-14`, `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-011`
-  - Fixture: `WML-FX-GO-ACCESS-BEFORE-TRANSITION` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-GO-ACCESS-BEFORE-TRANSITION` (`security-policy`, `implemented`)
 - **WML-CL-GO-ASSIGNMENT-ORDER** — Apply temporary setvar assignments before newcontext processing and history insertion.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1351,25 +1354,25 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
   - Parents: `WML-C-11`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-NEWCONTEXT-CLEAR-HISTORY` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-NEWCONTEXT-CLEAR-HISTORY` (`state-machine`, `implemented`)
 - **WML-CL-NEWCONTEXT-GO-ONLY** — Apply newcontext only during go-task navigation into the destination card.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
   - Parents: `WML-C-11`, `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-NEWCONTEXT-GO-ONLY` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-NEWCONTEXT-GO-ONLY` (`state-machine`, `implemented`)
 - **WML-CL-NEWCONTEXT-RESET-PRIVATE-STATE** — On newcontext initialization, reset implementation-specific context state to a documented initial value.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
   - Parents: `WML-C-11`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-NEWCONTEXT-RESET-PRIVATE-STATE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-NEWCONTEXT-RESET-PRIVATE-STATE` (`state-machine`, `implemented`)
 - **WML-CL-NEWCONTEXT-UNSET-VARIABLES** — On newcontext initialization, remove all variables from the current browser context.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
   - Parents: `WML-C-11`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-NEWCONTEXT-UNSET-VARIABLES` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-NEWCONTEXT-UNSET-VARIABLES` (`state-machine`, `implemented`)
 - **WML-CL-NOOP-NO-PROCESSING** — Perform no processing for a noop task.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.3 (12.5.3 The Noop Task)
@@ -1837,7 +1840,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
   - Parents: `WML-C-53`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-WML-ROOT-LANGUAGE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-WML-ROOT-LANGUAGE` (`runtime`, `implemented`)
 - **WML-CL-WML-ROOT-STRUCTURE** — Require a wml root containing optional head, optional template, and one or more cards in that order.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
@@ -1847,12 +1850,72 @@ Evidence commands:
 
 ### WML-202
 
+- **WML-CL-ACCESS-ABSENT-ALLOWS** — When no access element is present, allow referrals from any deck.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-ABSENT-ALLOWS` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-COMPONENT-MATCH** — Match domains by complete suffix components and paths by complete prefix components.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-COMPONENT-MATCH` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-DEFAULTS** — Default an omitted access domain to the current deck domain and an omitted path to slash.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-DEFAULTS` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-REFERRER-MATCH** — Require a referring URI to satisfy each declared domain and path restriction.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-REFERRER-MATCH` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-RELATIVE-PATH** — Resolve a relative access path to an absolute path before applying the prefix check.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-RELATIVE-PATH` (`security-policy`, `implemented`)
 - **WML-CL-ACCESS-SINGLE-ELEMENT** — Reject a deck containing more than one access element.
   - Family: `wml`; force: `error-condition`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
   - Parents: `WML-C-21`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-ACCESS-SINGLE-ELEMENT` (`parser`, `implemented`)
+- **WML-CL-ACCESS-URL-CASE-RULES** — Apply URL component capitalization rules when evaluating domain and path restrictions.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-URL-CASE-RULES` (`security-policy`, `implemented`)
+- **WML-CL-CARD-COLLECTION** — Represent a WML deck as a collection containing at least one card.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5 (11.5 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-COLLECTION` (`parser`, `implemented`)
+- **WML-CL-CARD-CONTENT-ORDER** — Preserve significant card element order during presentation.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-CONTENT-ORDER` (`rendering`, `implemented`)
+- **WML-CL-CARD-CONTEXT-ATTRIBUTE** — Apply the card newcontext flag when entering through the defined go process.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`, `WML-C-11`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
+  - Fixture: `WML-FX-CARD-CONTEXT-ATTRIBUTE` (`state-machine`, `implemented`)
+- **WML-CL-CARD-STRUCTURE** — Enforce card child ordering: event handlers, optional timer, then declared action or flow content.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-DO-EFFECTIVE-NAME** — Use the declared do name for binding identity and default a missing name to the type value.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1865,6 +1928,12 @@ Evidence commands:
   - Parents: `WML-C-26`, `WML-C-08`
   - Requirements: `RQ-RMK-002`
   - Fixture: `WML-FX-DO-INACTIVE-HIDDEN` (`rendering`, `implemented`)
+- **WML-CL-GO-ACCESS-BEFORE-TRANSITION** — Evaluate destination-deck access control before committing the card transition.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-14`, `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-011`
+  - Fixture: `WML-FX-GO-ACCESS-BEFORE-TRANSITION` (`security-policy`, `implemented`)
 - **WML-CL-HEAD-DECK-SCOPE** — Treat head children as metadata and access-control information for the whole deck.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3 (11.3 The Head Element)
@@ -1883,6 +1952,30 @@ Evidence commands:
   - Parents: `WML-C-08`, `WML-C-09`, `WML-C-47`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-004`
   - Fixture: `WML-FX-INTRINSIC-CARD-OVERRIDES-TEMPLATE` (`runtime`, `implemented`)
+- **WML-CL-NEWCONTEXT-CLEAR-HISTORY** — On newcontext initialization, clear navigation history.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
+  - Parents: `WML-C-11`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-NEWCONTEXT-CLEAR-HISTORY` (`state-machine`, `implemented`)
+- **WML-CL-NEWCONTEXT-GO-ONLY** — Apply newcontext only during go-task navigation into the destination card.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
+  - Parents: `WML-C-11`, `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-NEWCONTEXT-GO-ONLY` (`state-machine`, `implemented`)
+- **WML-CL-NEWCONTEXT-RESET-PRIVATE-STATE** — On newcontext initialization, reset implementation-specific context state to a documented initial value.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
+  - Parents: `WML-C-11`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-NEWCONTEXT-RESET-PRIVATE-STATE` (`state-machine`, `implemented`)
+- **WML-CL-NEWCONTEXT-UNSET-VARIABLES** — On newcontext initialization, remove all variables from the current browser context.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)
+  - Parents: `WML-C-11`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-NEWCONTEXT-UNSET-VARIABLES` (`state-machine`, `implemented`)
 - **WML-CL-SHADOW-ACTIVE-SET** — Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.6 (9.6 Card/Deck Task Shadowing)
@@ -1925,6 +2018,12 @@ Evidence commands:
   - Parents: `WML-C-53`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-WML-ROOT-DECK-SCOPE` (`parser`, `implemented`)
+- **WML-CL-WML-ROOT-LANGUAGE** — Apply optional root language metadata as the deck language input to inherited language resolution.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
+  - Parents: `WML-C-53`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-WML-ROOT-LANGUAGE` (`runtime`, `implemented`)
 - **WML-CL-WML-ROOT-STRUCTURE** — Require a wml root containing optional head, optional template, and one or more cards in that order.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)

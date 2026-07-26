@@ -58,7 +58,7 @@ Phase 3 additions:
 
 Input boundary:
 
-- `loadDeckContext(wmlXml, baseUrl, contentType, rawBytesBase64?)`
+- `loadDeckContext(wmlXml, baseUrl, contentType, rawBytesBase64?, referringUrl?)`
 
 Output boundary:
 
@@ -92,7 +92,9 @@ Compatibility policy:
 Do now:
 
 - keep clear module seams
-- preserve source metadata (`baseUrl`, `contentType`)
+- preserve source metadata (`baseUrl`, `contentType`, root/card language)
+- enforce destination access against an optional host-supplied referring URI
+  before replacing the active deck
 - define stable event/error enums
 - classify an external WML `DOCTYPE` before building the deck:
   - the canonical identity is `-//WAPFORUM//DTD WML 1.3//EN` with

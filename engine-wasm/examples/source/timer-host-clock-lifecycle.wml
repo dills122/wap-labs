@@ -14,8 +14,8 @@ testing-ac:
     <a href="#timed">Start timed card</a>
   </card>
   <card id="timed">
-    <timer value="15"/>
     <onevent type="ontimer"><go href="#done"/></onevent>
+    <timer value="15"/>
     <p>Auto tick should move this card after 1.5 seconds.</p>
   </card>
   <card id="done">

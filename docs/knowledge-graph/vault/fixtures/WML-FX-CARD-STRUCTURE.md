@@ -4,7 +4,7 @@ key: "WML-FX-CARD-STRUCTURE"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "parser",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Enforce card child ordering: event handlers, optional timer, then declared action or flow content.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

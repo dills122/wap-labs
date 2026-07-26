@@ -91,19 +91,19 @@ Each clause records:
 
 A planned fixture is not test evidence. An implemented fixture must name its
 fixture path, test path, and command, and clause implementation status changes
-only after that direct evidence is reviewed. The current ledger records 145
-implemented clauses with reviewed direct evidence and keeps 616 clauses
+only after that direct evidence is reviewed. The current ledger records 161
+implemented clauses with reviewed direct evidence and keeps 600 clauses
 `not-assessed`. The WML-203 slice contributes 47 implemented WBXML clauses and
 two implemented WML unknown-markup clauses; WML-204 adds 23 implemented WML
-clauses, WML-C-24 adds the inline line-break clause, and WML-202 adds 14
-root/head/access, template, and task-shadowing clauses. The validator allowlists the 14-clause
+clauses, WML-C-24 adds the inline line-break clause, and WML-202 adds 30
+root/head/access, template, task-shadowing, card-context, and newcontext clauses. The validator allowlists the 14-clause
 `TRN-702` direct-work-item overlay so a broad parent-row mapping cannot
 silently substitute for slice adoption.
 
 WML-201 directly maps all 174 selected WML clauses for family ownership and
 retrieval. That mapping is not fixture evidence: clause assessment remains
-unchanged, and the canonical 76-row SCR ledger still distinguishes 29 rows
-with direct code/test links from 18 mapped mandatory gaps and 29 optional
+unchanged, and the canonical 76-row SCR ledger now distinguishes 30 rows
+with direct code/test links from 17 mapped mandatory gaps and 29 optional
 rows that have not been assessed.
 
 ## Redistribution boundary

@@ -1,11 +1,10 @@
 use crate::runtime::card::{Card, CardEventBinding, CardEventBindingIdentity, CardTaskAction};
 use std::collections::{HashMap, HashSet};
+use url::Url;
 
 /// Deck-level access control from a WML `<head><access domain=".." path=".."/></head>`
 /// element (WML-C-21, section 11.3.1). Values are stored exactly as authored, including
 /// the distinction between an omitted attribute and an explicitly empty CDATA value.
-/// Resolving defaults and enforcing the referring-URI policy remain the separate R0-07
-/// host-boundary slice.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DeckAccessControl {
     pub domain: Option<String>,
@@ -34,6 +33,7 @@ pub struct DeckMeta {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Deck {
     pub cards: Vec<Card>,
+    pub language: Option<String>,
     pub template_bindings: Vec<CardEventBinding>,
     pub access_control: Option<DeckAccessControl>,
     pub metadata: Vec<DeckMeta>,
@@ -43,6 +43,7 @@ pub struct Deck {
 impl Deck {
     pub fn with_template(
         cards: Vec<Card>,
+        language: Option<String>,
         template_bindings: Vec<CardEventBinding>,
         access_control: Option<DeckAccessControl>,
         metadata: Vec<DeckMeta>,
@@ -54,6 +55,7 @@ impl Deck {
         }
         Deck {
             cards,
+            language,
             template_bindings,
             access_control,
             metadata,
@@ -63,6 +65,55 @@ impl Deck {
 
     pub fn card_index(&self, id: &str) -> Option<usize> {
         self.id_index.get(id).copied()
+    }
+
+    pub fn card_language(&self, card_idx: usize) -> Option<&str> {
+        self.cards
+            .get(card_idx)
+            .and_then(|card| card.language.as_deref())
+            .or(self.language.as_deref())
+    }
+
+    /// Evaluate the WML 1.3 referring-deck access policy before a destination
+    /// deck replaces the active runtime state. A missing referring URI denotes
+    /// a host/user initiated context and therefore has no referring deck to
+    /// restrict.
+    pub fn allows_referring_uri(
+        &self,
+        destination_uri: &str,
+        referring_uri: Option<&str>,
+    ) -> Result<bool, String> {
+        let Some(access) = &self.access_control else {
+            return Ok(true);
+        };
+        let Some(referring_uri) = referring_uri.filter(|value| !value.trim().is_empty()) else {
+            return Ok(true);
+        };
+        let destination = Url::parse(destination_uri)
+            .map_err(|_| "Deck access policy requires a valid destination URI".to_string())?;
+        let referring = Url::parse(referring_uri)
+            .map_err(|_| "Deck access policy received an invalid referring URI".to_string())?;
+        let destination_domain = destination
+            .host_str()
+            .ok_or_else(|| "Deck access policy requires a destination domain".to_string())?;
+        let referring_domain = referring
+            .host_str()
+            .ok_or_else(|| "Deck access policy requires a referring domain".to_string())?;
+
+        let allowed_domain = access.domain.as_deref().unwrap_or(destination_domain);
+        let allowed_path = match access.path.as_deref() {
+            None => "/".to_string(),
+            Some("") => String::new(),
+            Some(path) if path.starts_with('/') => path.to_string(),
+            Some(path) => destination
+                .join(path)
+                .map_err(|_| "Deck access policy contains an invalid relative path".to_string())?
+                .path()
+                .to_string(),
+        };
+
+        Ok(domain_suffix_matches(referring_domain, allowed_domain)
+            && path_prefix_matches(referring.path(), &allowed_path))
     }
 
     /// Resolve the active event set for one card in deterministic UI order.
@@ -109,6 +160,29 @@ impl Deck {
     }
 }
 
+fn domain_suffix_matches(candidate: &str, restriction: &str) -> bool {
+    let candidate = candidate.trim_end_matches('.').to_ascii_lowercase();
+    let restriction = restriction
+        .trim()
+        .trim_end_matches('.')
+        .to_ascii_lowercase();
+    restriction.is_empty()
+        || candidate == restriction
+        || candidate.ends_with(&format!(".{restriction}"))
+}
+
+fn path_prefix_matches(candidate: &str, restriction: &str) -> bool {
+    if restriction.is_empty() || restriction == "/" || candidate == restriction {
+        return true;
+    }
+    if restriction.ends_with('/') {
+        return candidate.starts_with(restriction);
+    }
+    candidate
+        .strip_prefix(restriction)
+        .is_some_and(|suffix| suffix.starts_with('/'))
+}
+
 #[cfg(test)]
 mod tests {
     use super::Deck;
@@ -120,17 +194,24 @@ mod tests {
             vec![
                 Card {
                     id: "dup".to_string(),
+                    language: None,
+                    new_context: false,
+                    ordered: true,
                     nodes: vec![],
                     event_bindings: vec![],
                     timer_value_ds: None,
                 },
                 Card {
                     id: "dup".to_string(),
+                    language: None,
+                    new_context: false,
+                    ordered: true,
                     nodes: vec![],
                     event_bindings: vec![],
                     timer_value_ds: None,
                 },
             ],
+            None,
             vec![],
             None,
             vec![],
@@ -144,10 +225,14 @@ mod tests {
         let deck = Deck::with_template(
             vec![Card {
                 id: "home".to_string(),
+                language: None,
+                new_context: false,
+                ordered: true,
                 nodes: vec![],
                 event_bindings: vec![],
                 timer_value_ds: None,
             }],
+            None,
             vec![],
             None,
             vec![],

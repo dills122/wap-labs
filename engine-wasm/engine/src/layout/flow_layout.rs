@@ -241,6 +241,9 @@ mod tests {
     fn wraps_and_marks_focus() {
         let card = Card {
             id: "home".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
             nodes: vec![Node::Paragraph(vec![
                 InlineNode::Text("Hello world from wap".to_string()),
                 InlineNode::Link {
@@ -270,6 +273,9 @@ mod tests {
         // "collapse to a space" as it might appear from the WML source alone.
         let card = Card {
             id: "home".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
             nodes: vec![Node::Paragraph(vec![
                 InlineNode::Text("before".to_string()),
                 InlineNode::Break,
@@ -302,6 +308,9 @@ mod tests {
     fn hard_wraps_single_token_longer_than_width() {
         let card = Card {
             id: "home".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
             nodes: vec![Node::Paragraph(vec![InlineNode::Text(
                 "supercalifragilistic".to_string(),
             )])],
@@ -327,6 +336,9 @@ mod tests {
     fn wrapped_link_keeps_single_logical_focus_index() {
         let card = Card {
             id: "home".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
             nodes: vec![Node::Paragraph(vec![InlineNode::Link {
                 text: "abcdefghijkl".to_string(),
                 href: "#next".to_string(),
@@ -358,6 +370,9 @@ mod tests {
     fn input_nodes_render_as_focusable_segments_and_mask_passwords() {
         let card = Card {
             id: "home".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
             nodes: vec![Node::Paragraph(vec![
                 InlineNode::Input {
                     name: "UserName".to_string(),

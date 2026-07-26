@@ -21,14 +21,16 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `WmlDeckInput.baseUrl` | `RQ-WAE-010`, `RQ-RMK-003` |
 | `WmlDeckInput.contentType` | `RQ-WAE-001`, `RQ-WMLS-011` |
 | `WmlDeckInput.rawBytesBase64` | `RQ-RMK-007`, `RQ-WAE-005` |
+| `WmlDeckInput.referringUrl` | `RQ-RMK-001`, `RQ-RMK-003`, `WML-202` |
 | `loadDeck(xml)` compatibility path | `RQ-RMK-001`, `RQ-RMK-007` |
-| `loadDeckContext(...)` | `RQ-RMK-001`, `RQ-RMK-007`, `RQ-WAE-001` |
+| `loadDeckContext(...)` | `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-007`, `RQ-WAE-001`, `WML-202` |
 | `WmlLoadDiagnostic` + `lastWmlLoadDiagnostics()` | `RQ-RMK-012`, `WML-205` |
 | `render()` / `RenderList` | `RQ-RMK-001`, `RQ-RMK-009` |
 | `handleKey('up'|'down'|'enter')` | `RQ-RMK-003`, `RQ-WAE-017` |
 | `navigateToCard(id)` | `RQ-RMK-003` |
 | `activeCardId()` | `RQ-RMK-003` |
 | `focusedLinkIndex()` | `RQ-RMK-006` |
+| `deckLanguage()` / `activeCardLanguage()` | `RQ-RMK-001`, `WML-202` |
 | `externalNavigationIntent()` | `RQ-RMK-003`, `RQ-WAE-010` |
 | `clearExternalNavigationIntent()` | `RQ-RMK-003` |
 | `ScriptInvocationContext` (`callSite`, `cardId`, `sourceHref`) | `RQ-WMLS-001`, `RQ-WMLS-003`, `RQ-WAE-003` |

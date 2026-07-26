@@ -17,6 +17,9 @@ pub struct LoadDeckContextRequest {
     #[serde(default)]
     #[ts(optional)]
     pub raw_bytes_base64: Option<String>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub referring_url: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, TS)]
@@ -149,6 +152,10 @@ pub struct EngineRuntimeSnapshot {
     pub focused_select_edit_value: Option<String>,
     pub base_url: String,
     pub content_type: String,
+    #[ts(optional)]
+    pub deck_language: Option<String>,
+    #[ts(optional)]
+    pub active_card_language: Option<String>,
     #[ts(optional)]
     pub external_navigation_intent: Option<String>,
     #[ts(optional)]

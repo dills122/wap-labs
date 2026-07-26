@@ -881,8 +881,8 @@ fn ontimer_zero_dispatches_immediately_on_card_entry() {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="0"/>
             <onevent type="ontimer"><go href="#next"/></onevent>
+            <timer value="0"/>
             <p>Timed card</p>
           </card>
           <card id="next"><p>Next</p></card>
@@ -913,8 +913,8 @@ fn ontimer_failure_on_entry_rolls_back_navigation_state() {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="0"/>
             <onevent type="ontimer"><go href="#missing"/></onevent>
+            <timer value="0"/>
             <p>Timed card</p>
           </card>
         </wml>
@@ -937,8 +937,8 @@ fn timer_non_zero_expires_after_deterministic_advance() {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="5"/>
             <onevent type="ontimer"><go href="#next"/></onevent>
+            <timer value="5"/>
             <p>Timed card</p>
           </card>
           <card id="next"><p>Next</p></card>
@@ -979,10 +979,10 @@ fn timer_expiry_invokes_script_and_publishes_dialog_in_order() {
             <a href="#timed">Start timer</a>
           </card>
           <card id="timed">
-            <timer value="5"/>
             <onevent type="ontimer">
               <go href="script:timer-dialog.wmlsc#showExpiryAlert"/>
             </onevent>
+            <timer value="5"/>
             <p>Waiting</p>
           </card>
         </wml>
@@ -1038,8 +1038,8 @@ fn timer_large_single_tick_expires_once_for_host_coarse_clock() {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="5"/>
             <onevent type="ontimer"><go href="#next"/></onevent>
+            <timer value="5"/>
             <p>Timed card</p>
           </card>
           <card id="next"><p>Next</p></card>
@@ -1083,8 +1083,8 @@ fn timer_stops_on_card_exit() {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="10"/>
             <onevent type="ontimer"><go href="#timer-target"/></onevent>
+            <timer value="10"/>
             <a href="#manual-next">Manual next</a>
           </card>
           <card id="manual-next"><p>Manual next</p></card>
@@ -1124,8 +1124,8 @@ fn timer_refresh_resumes_remaining_time() {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="5"/>
             <onevent type="ontimer"><go href="#next"/></onevent>
+            <timer value="5"/>
             <do type="accept"><refresh/></do>
             <p>Refresh should resume timer.</p>
           </card>

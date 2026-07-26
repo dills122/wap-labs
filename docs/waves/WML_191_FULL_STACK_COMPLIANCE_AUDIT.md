@@ -53,19 +53,19 @@ WAE, WSP, WTP, WDP, or security-domain traceability docs.
 | `postfield`/`setvar` behavior | 9.3-9.4 | parser + runtime + transport | missing | Not implemented end-to-end | Add request-field generation, substitution order, and same-deck suppression rules |
 | `do`/`onevent` model and conflict constraints | 9.6-9.10, 15.3/15.4 (`WML-66/67/68/69/71/72/73/74`) | parser + runtime | partial | Limited accept/onenterforward support | Add full element coverage, conflict validation, and deterministic handling |
 | Browser context/history fidelity | 9.2, 10.1-10.4, 12.2 | engine runtime + browser session | partial | Index-based back-stack baseline | Expand history entries to spec-shaped request identity and context semantics |
-| Deck structure (`head/template/card/access/meta`) | 11.1-11.5 | parser + runtime + browser policy | partial | `card` subset implemented | Parse/retain/access metadata, template inheritance, and deck access-control policy hooks |
+| Deck structure (`head/template/card/access/meta`) | 11.1-11.5 | parser + runtime + browser policy | partial | WML-202 closes its 30 direct structure, metadata, access, language, and card-context clauses | Complete the separately mapped card-fragment/table-boundary and exhaustive WML-203 DTD gaps |
 | Control/form model (`select/option/optgroup/input/fieldset`) | 11.6, 15.1.5 | parser + runtime + renderer | partial | Early link/text-only subset | Add initialization order, commit rules, mask validation, and variable update timing |
 | Timer lifecycle | 11.7, 9.10, 12.5, 15.1.2 | runtime + host timing adapter | partial | Script-side timer hostcall work in progress | Add native WML timer semantics (start/stop/resume/ontimer ordering) |
 | Text layout semantics | 11.8.1-11.8.9 | parser + renderer | partial | Baseline wrap/focus implemented | Complete inline flow, paragraph mode/alignment, table semantics, preformatted handling |
 | Image semantics | 11.9, 15.1.6 | parser + renderer + host media | missing/partial | Minimal/none in engine renderer | Implement `img` element semantics and capability-gated hints |
-| UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | partial | Unknown-tag robustness exists | Add access control enforcement path, low-memory policy behavior, deterministic unknown-DTD handling |
+| UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | partial | Referring-URI access enforcement and unknown-tag robustness exist | Add sendreferer, low-memory policy behavior, and remaining deterministic DTD handling |
 | WML binary representation and token tables | 14.x, 15.2 | transport/encoder tooling | partial | WBXML decode boundary present | Add encoder/validation tooling path and WBXML token/literal conformance fixtures |
-| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | WML-201 directly projects all 76 source rows and maps all 174 selected WML clauses; WAP-215 selects 39 required Class C client rows assessed as 6 implemented / 23 partial / 10 missing; 29 exact test-linked rows, 18 mapped mandatory gaps, and 29 optional rows remain explicit | Execute remaining direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
+| Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | WML-201 directly projects all 76 source rows and maps all 174 selected WML clauses; WAP-215 selects 39 required Class C client rows assessed as 7 implemented / 23 partial / 9 missing; 30 exact test-linked rows, 17 mapped mandatory gaps, and 29 optional rows remain explicit | Execute remaining direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
 
 ## Major Gaps Not Fully Tracked Before This Audit
 
 1. The 76-row source ledger and first mandatory implementation audit now
-   exist. Exact direct tests are linked for 29 rows; 18 mandatory rows are
+   exist. Exact direct tests are linked for 30 rows; 17 mandatory rows are
    explicitly missing. WML-201 now exposes every row, its direct spec anchor,
    evidence state, code/test links or mapped gap, and all 174 selected WML
    clauses through the generated graph. The exact identifiers are `WML-C-01..59`,

@@ -20,7 +20,7 @@ Status: Active
   - nine mandatory feature families
   - 712 effective source rows
   - 198 selected strict rows
-  - implementation audit: 22 implemented, 77 partial, 99 missing
+  - implementation audit: 23 implemented, 77 partial, 98 missing
   - all 198 selected rows have owner/work-item mappings
 - Important: `deep-extracted` describes review of the current WAP 2.0-heavy
   local corpus. It is not evidence that the WAP 1.2.1 target source set or
@@ -42,7 +42,7 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
   - exact 76-row actor sequence: 39 required Class C client rows, 27 optional
     client rows, and 10 server/encoder rows outside the client profile
-  - direct evidence states: 29 code/test-linked, 18 mapped mandatory gaps,
+  - direct evidence states: 30 code/test-linked, 17 mapped mandatory gaps,
     and 29 optional rows not assessed
   - WML-201 directly maps all 76 SCR rows and all 174 selected WML clauses;
     its declared WML-family graph gap is closed without changing row status
@@ -62,7 +62,7 @@ Status: Active
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - 145 fixture-backed clauses assessed; 616 fixture plans remain unassessed
+  - 161 fixture-backed clauses assessed; 600 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
   - all 198 selected rows classified

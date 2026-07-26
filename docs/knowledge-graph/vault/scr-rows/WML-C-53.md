@@ -48,11 +48,15 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
+  "assessmentNote": "The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, retains all recognized deck-level information, and exposes root xml:lang for card language inheritance. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
       "symbol": "parse_wml"
+    },
+    {
+      "path": "engine-wasm/engine/src/runtime/deck.rs",
+      "symbol": "card_language"
     }
   ],
   "testEvidence": [
@@ -60,6 +64,11 @@ tags:
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
       "test": "wml_202_rejects_invalid_wml_root_structure_deterministically",
       "command": "cd engine-wasm/engine && cargo test wml_202_rejects_invalid_wml_root_structure_deterministically"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+      "test": "wml_202_root_language_and_card_language_are_exposed_with_inheritance",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_root_language_and_card_language_are_exposed_with_inheritance"
     }
   ],
   "ownerLayers": [
@@ -72,6 +81,7 @@ tags:
     "WML-201"
   ],
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "WML-201"
