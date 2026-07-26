@@ -1,10 +1,21 @@
 #!/usr/bin/env node
 
+import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
 const root = process.cwd();
+const generatorPath = 'spec-processing/scripts/generate-wap-effective-spec.mjs';
+const generatedInputPaths = {
+  release: 'spec-processing/source-manifests/wap-1.2.1-release.json',
+  classConformance: 'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
+  ingestion: 'spec-processing/source-manifests/wap-1.2.1-ingestion-status.json',
+  externalDependencies: 'spec-processing/source-manifests/wap-1.2.1-external-dependencies.json',
+  externalIngestion: 'spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json'
+};
+const sha256 = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const manifest = JSON.parse(
   fs.readFileSync(
     path.join(root, 'spec-processing/source-manifests/wap-1.2.1-release.json'),
@@ -19,34 +30,81 @@ const graph = JSON.parse(
 );
 const classConformance = JSON.parse(
   fs.readFileSync(
-    path.join(
-      root,
-      'spec-processing/source-manifests/wap-1.2.1-class-conformance.json'
-    ),
+    path.join(root, 'spec-processing/source-manifests/wap-1.2.1-class-conformance.json'),
     'utf8'
   )
 );
+const externalDependencies = JSON.parse(
+  fs.readFileSync(path.join(root, generatedInputPaths.externalDependencies), 'utf8')
+);
 
 const failures = [];
-const membersById = new Map(
-  manifest.members.map((member) => [member.documentId, member])
-);
+const regenerationCheck = spawnSync(process.execPath, [path.join(root, generatorPath), '--check'], {
+  cwd: root,
+  encoding: 'utf8'
+});
+if (regenerationCheck.status !== 0) {
+  failures.push(
+    `generated output does not match canonical inputs:\n${[
+      regenerationCheck.stdout,
+      regenerationCheck.stderr
+    ]
+      .filter(Boolean)
+      .join('')
+      .trim()}`
+  );
+}
+const membersById = new Map(manifest.members.map((member) => [member.documentId, member]));
 const seenDocuments = new Set();
 const dispositionCounts = {};
 
-if (graph.schemaVersion !== 1) {
-  failures.push(`schemaVersion=${graph.schemaVersion}; expected 1`);
+if (graph.schemaVersion !== 2) {
+  failures.push(`schemaVersion=${graph.schemaVersion}; expected 2`);
 }
 if (graph.releaseId !== manifest.release.id) {
   failures.push(`releaseId=${graph.releaseId}; expected ${manifest.release.id}`);
 }
 if (
-  graph.governingClassProfileDocument !==
-    classConformance.authority?.documentId ||
-  graph.classProfileLedger !==
-    'spec-processing/source-manifests/wap-1.2.1-class-conformance.json'
+  graph.governingClassProfileDocument !== classConformance.authority?.documentId ||
+  graph.classProfileLedger !== 'spec-processing/source-manifests/wap-1.2.1-class-conformance.json'
 ) {
   failures.push('effective graph class-profile authority is missing or stale');
+}
+if (graph.generatedFrom?.generator !== generatorPath) {
+  failures.push('effective graph generator identity is missing or stale');
+}
+for (const [key, relativePath] of Object.entries(generatedInputPaths)) {
+  const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
+  if (
+    graph.generatedFrom?.inputs?.[key]?.path !== relativePath ||
+    graph.generatedFrom?.inputs?.[key]?.sha256 !== sha256(source)
+  ) {
+    failures.push(`${key}: canonical input path/hash is missing or stale`);
+  }
+}
+
+const strictTransport = graph.strictTransportProfile;
+const rfc792 = externalDependencies.dependencies?.find((dependency) => dependency.id === 'rfc-792');
+if (
+  strictTransport?.profileId !== classConformance.selectedTarget?.identifier ||
+  strictTransport?.deviceRole !== classConformance.selectedTarget?.deviceRole ||
+  strictTransport?.deviceClass !== classConformance.selectedTarget?.deviceClass ||
+  strictTransport?.selectedBearer?.id !== 'cdpd-ipv4' ||
+  strictTransport?.selectedBearer?.networkProtocol !== 'ipv4' ||
+  strictTransport?.selectedBearer?.datagramProtocol !== 'udp' ||
+  strictTransport?.families?.wdp?.selectedPath !== 'udp-over-ipv4' ||
+  strictTransport?.families?.wcmp?.selectedPath !== 'rfc-792-icmpv4' ||
+  strictTransport?.families?.wcmp?.sourceDocument !== 'WAP-202-WCMP' ||
+  strictTransport?.families?.wcmp?.sourceSection !== '5.3' ||
+  strictTransport?.families?.wcmp?.normativeDependency !== 'rfc-792' ||
+  strictTransport?.families?.wcmp?.generalWcmpDisposition !== 'capability-gated-non-ip-bearer' ||
+  strictTransport?.families?.wsp?.selectedPath !== 'connectionless' ||
+  strictTransport?.families?.wtp?.selected !== false ||
+  rfc792?.applicability !== 'conditional-ip-control'
+) {
+  failures.push(
+    'strict CDPD/IPv4 transport applicability must select UDP, RFC 792 ICMP, and connectionless WSP while capability-gating general WCMP and WTP'
+  );
 }
 
 for (const family of graph.families ?? []) {
@@ -64,9 +122,7 @@ for (const family of graph.families ?? []) {
   if (JSON.stringify(family.effectiveSequence) !== JSON.stringify(approvedIds)) {
     failures.push(`${family.family}: effective sequence does not match approved order`);
   }
-  if (
-    JSON.stringify(family.historicalDocuments) !== JSON.stringify(historicalIds)
-  ) {
+  if (JSON.stringify(family.historicalDocuments) !== JSON.stringify(historicalIds)) {
     failures.push(`${family.family}: historical sequence does not match source status`);
   }
 
@@ -94,15 +150,11 @@ for (const family of graph.families ?? []) {
   for (const relationship of family.relationships ?? []) {
     if (
       !seenDocuments.has(relationship.from) &&
-      !familyDocuments.some(
-        (document) => document.documentId === relationship.from
-      )
+      !familyDocuments.some((document) => document.documentId === relationship.from)
     ) {
       failures.push(`${family.family}: relationship source is unknown`);
     }
-    if (
-      !familyDocuments.some((document) => document.documentId === relationship.to)
-    ) {
+    if (!familyDocuments.some((document) => document.documentId === relationship.to)) {
       failures.push(`${family.family}: relationship target is unknown`);
     }
   }
@@ -110,8 +162,7 @@ for (const family of graph.families ?? []) {
 
 const wmlFamily = graph.families?.find((family) => family.family === 'wml');
 if (
-  wmlFamily?.scrExtraction?.status !==
-    'line-item-ledger-complete-class-c-applied' ||
+  wmlFamily?.scrExtraction?.status !== 'line-item-ledger-complete-class-c-applied' ||
   wmlFamily?.scrExtraction?.governingClassProfileDocument !==
     classConformance.authority?.documentId ||
   wmlFamily?.scrExtraction?.classProfileLedger !== graph.classProfileLedger
@@ -120,40 +171,29 @@ if (
 }
 const waeFamily = graph.families?.find((family) => family.family === 'wae');
 if (
-  waeFamily?.scrExtraction?.status !==
-    'line-item-ledger-complete-class-c-applied' ||
+  waeFamily?.scrExtraction?.status !== 'line-item-ledger-complete-class-c-applied' ||
   waeFamily?.scrExtraction?.governingClassProfileDocument !==
     classConformance.authority?.documentId ||
   waeFamily?.scrExtraction?.classProfileLedger !== graph.classProfileLedger ||
   waeFamily?.scrExtraction?.selectedFeatureGroup !== 'WAESpec:MCF' ||
-  waeFamily?.successorEvidence?.find(
-    (source) => source.documentId === 'WAP-236-WAESpec-20020207-a'
-  )?.deltaStatus !== 'selected-profile-delta-complete'
+  waeFamily?.successorEvidence?.find((source) => source.documentId === 'WAP-236-WAESpec-20020207-a')
+    ?.deltaStatus !== 'selected-profile-delta-complete'
 ) {
   failures.push(
     'WAE family must apply the selected WAP-215 Class C profile and retain the completed WAP-236 selected-profile delta'
   );
 }
-const wbxmlFamily = graph.families?.find(
-  (family) => family.family === 'wbxml'
-);
+const wbxmlFamily = graph.families?.find((family) => family.family === 'wbxml');
 if (
-  wbxmlFamily?.scrExtraction?.status !==
-    'line-item-ledger-complete-class-c-applied' ||
+  wbxmlFamily?.scrExtraction?.status !== 'line-item-ledger-complete-class-c-applied' ||
   wbxmlFamily?.scrExtraction?.governingClassProfileDocument !==
     classConformance.authority?.documentId ||
-  wbxmlFamily?.scrExtraction?.classProfileLedger !==
-    graph.classProfileLedger ||
+  wbxmlFamily?.scrExtraction?.classProfileLedger !== graph.classProfileLedger ||
   wbxmlFamily?.scrExtraction?.selectedFeatureGroup !== 'WBXML:MCF'
 ) {
-  failures.push(
-    'WBXML family must apply the selected WAP-215 Class C profile'
-  );
+  failures.push('WBXML family must apply the selected WAP-215 Class C profile');
 }
-for (const [
-  familyName,
-  selectedFeatureGroup
-] of [
+for (const [familyName, selectedFeatureGroup] of [
   ['caching', 'WAPCachingMod:MCF'],
   ['wdp', 'WDP:MCF'],
   ['wcmp', 'WCMP:MCF'],
@@ -161,12 +201,9 @@ for (const [
   ['wmlscript', 'WMLScript:MCF'],
   ['wmlscript-libraries', 'WMLScriptLibs:MCF']
 ]) {
-  const family = graph.families?.find(
-    (entry) => entry.family === familyName
-  );
+  const family = graph.families?.find((entry) => entry.family === familyName);
   if (
-    family?.scrExtraction?.status !==
-      'line-item-ledger-complete-class-c-applied' ||
+    family?.scrExtraction?.status !== 'line-item-ledger-complete-class-c-applied' ||
     family?.scrExtraction?.governingClassProfileDocument !==
       classConformance.authority?.documentId ||
     family?.scrExtraction?.classProfileLedger !== graph.classProfileLedger ||
@@ -174,6 +211,16 @@ for (const [
   ) {
     failures.push(
       `${familyName} family must apply ${selectedFeatureGroup} from the selected WAP-215 Class C profile`
+    );
+  }
+  if (
+    ['wdp', 'wcmp', 'wsp'].includes(familyName) &&
+    (family?.scrExtraction?.applicability?.profile !== '#/strictTransportProfile' ||
+      family?.scrExtraction?.applicability?.family !==
+        `#/strictTransportProfile/families/${familyName}`)
+  ) {
+    failures.push(
+      `${familyName} family must reference the generated strict transport applicability`
     );
   }
 }
@@ -206,3 +253,5 @@ console.log(
   `PASS ${graph.families.length} families cover all ${seenDocuments.size} release members`
 );
 console.log('PASS approved/proposed precedence and release hashes are consistent');
+console.log('PASS canonical-input regeneration is byte-identical');
+console.log('PASS strict CDPD/IPv4 selects RFC 792 ICMP and capability-gates general WCMP');

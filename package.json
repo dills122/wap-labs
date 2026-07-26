@@ -21,6 +21,8 @@
   },
   "scripts": {
     "codex:links": "node scripts/setup-codex-links.mjs",
+    "wap-compliance:regenerate": "node spec-processing/scripts/generate-wap-effective-spec.mjs && node spec-processing/scripts/generate-wap-knowledge-graph.mjs",
+    "wap-compliance:check": "node --test spec-processing/scripts/generate-wap-effective-spec.test.mjs && node spec-processing/scripts/check-wap-effective-spec.mjs && node scripts/check-wap-selected-normative-clauses.mjs && node scripts/check-wap-transport-conformance-ledgers.mjs && node scripts/check-active-compliance-facts.mjs && node scripts/check-wap-knowledge-graph.mjs",
     "wap-graph:generate": "node spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "wap-graph:check": "node scripts/check-wap-knowledge-graph.mjs",
     "lint:node": "pnpm -r --if-present run lint",

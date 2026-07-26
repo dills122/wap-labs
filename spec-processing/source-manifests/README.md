@@ -98,22 +98,23 @@ rows remain outside the selected feature group.
 `wap-1.2.1-wdp-scr.json`, `wap-1.2.1-wcmp-scr.json`, and
 `wap-1.2.1-wsp-scr.json` preserve all 317 effective transport SCR rows plus
 the exact connectionless Class C dependency path. The selected path uses
-CDPD-shaped WDP over UDP/IPv4, general WCMP rather than host ICMP, and
-connectionless WSP; connection-oriented WSP and WTP remain conditional.
-
-The three transport ledgers select 22 dependency-closed rows: 9 WDP, 5 WCMP,
-and 8 WSP. Their conservative audit is 17 partial and 5 missing with zero
-direct source-derived normative tests. RFC 768/RFC 791 are artifact-locked;
-the selected CDPD `TIAEIA-732` family citation is authority-locked as an
-informative, licensed-payload metadata-only dependency.
+CDPD-shaped WDP over UDP/IPv4, RFC 792 ICMP as required by WAP-202 section
+5.3, and connectionless WSP. General WCMP is capability-gated for non-IP
+bearers; connection-oriented WSP and WTP remain conditional. Current selected
+row, clause, and evidence totals are derived from the family ledgers and
+checked by `node scripts/check-active-compliance-facts.mjs` rather than copied
+into this overview. RFC 768/RFC 791/RFC 792 are artifact-locked; the selected
+CDPD `TIAEIA-732` family citation is authority-locked as an informative,
+licensed-payload metadata-only dependency.
 
 `wap-1.2.1-wml-2-knowledge-graph.json` is a generated pilot projection of the
 `WML-2` compliance sprint. It connects the sprint and work items to their
 directly mapped SCR rows, normative clauses, fixtures, requirements, source
 documents, owner layers, and dependency neighbors. Canonical manifests remain
-authoritative. The WML-201 projection imports the exact 76-row WML SCR matrix
-with direct spec/code/test or explicit gap evidence and maps all 174 selected
-WML clauses; the graph still reports other work items without direct clause
+authoritative. Machine-derived fact: WML-201 has 177 direct clauses: 174
+selected WML clauses plus 3 WAE composition clauses. The projection also
+imports the exact WML SCR matrix with direct spec/code/test or explicit gap
+evidence; the graph still reports other work items without direct clause
 mappings.
 
 Generate the lock from a separately retrieved official archive:
@@ -144,7 +145,12 @@ node spec-processing/scripts/check-wap-class-conformance.mjs
 Generate and validate the family-level base/SIN precedence graph:
 
 ```sh
+pnpm wap-compliance:regenerate
+pnpm wap-compliance:check
+
+# Focused effective-spec commands:
 node spec-processing/scripts/generate-wap-effective-spec.mjs
+node spec-processing/scripts/generate-wap-effective-spec.mjs --check
 node spec-processing/scripts/check-wap-effective-spec.mjs
 node scripts/check-wap-external-dependencies.mjs
 node scripts/check-wap-conformance-ledger.mjs
@@ -154,6 +160,7 @@ node scripts/check-wap-wmlscript-conformance-ledger.mjs
 node scripts/check-wap-caching-conformance-ledger.mjs
 node scripts/check-wap-transport-conformance-ledgers.mjs
 node scripts/check-wap-delta-register.mjs
+node scripts/check-active-compliance-facts.mjs
 node scripts/check-wap-knowledge-graph.mjs
 ```
 
