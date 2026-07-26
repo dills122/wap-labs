@@ -10,6 +10,7 @@
     "contracts:check": "pnpm run contracts:generate && git diff --exit-code -- ../contracts/generated/runtime-dtos.ts",
     "examples:generate": "node ./scripts/generate-example-manifest.mjs",
     "examples:check": "node ./scripts/generate-example-manifest.mjs --check",
+    "examples:story-coverage": "node ./scripts/check-story-coverage.mjs",
     "predev": "pnpm run examples:generate",
     "dev": "vite",
     "prebuild": "pnpm run examples:generate",
