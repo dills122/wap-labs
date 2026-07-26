@@ -215,9 +215,10 @@ closes `SRC-004` without changing the redistribution boundary.
 
 The program status now reflects those facts directly: `CONF-1` is complete;
 `SRC-0` is blocked only by `SRC-006`; runtime sprints are `todo` or
-`in-progress` according to their child work items. The validator derives and
-checks each sprint status so planning rollups cannot drift from work-item
-state.
+`in-progress` according to their child work items. The validator checks each
+sprint status against child-work constraints while allowing completed
+foundation items in a not-yet-started sprint, so planning rollups cannot drift
+from work-item state.
 
 ## Source blockers
 

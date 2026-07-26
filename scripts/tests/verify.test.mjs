@@ -138,8 +138,9 @@ test('unselected lane is reported as an intentional exclusion', () => {
   assert.match(lines[0], /INTENTIONAL EXCLUSION/);
 });
 
-test('root compliance wrapper and CI both enforce requirement status drift', () => {
+test('root compliance wrapper and CI enforce program and requirement status drift', () => {
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  assert.match(packageJson.scripts['wap-compliance:check'], /check-wap-compliance-program\.mjs/);
   assert.match(packageJson.scripts['wap-compliance:check'], /check-requirement-status-drift\.mjs/);
 
   const workflow = fs.readFileSync('.github/workflows/ci.yml', 'utf8');

@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      '190 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
+      '208 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
     ]
   ],
   [

@@ -29,7 +29,7 @@ pnpm wap-graph:check
 
 The generated WML-201 projection treats this ledger as the direct 76-row
 matrix authority. Every row retains its spec anchor and one conservative
-evidence state: 29 `direct-test-linked`, 18 `gap-work-item-mapped`, or 29
+evidence state: 30 `direct-test-linked`, 17 `gap-work-item-mapped`, or 29
 `optional-not-assessed`. All 175 selected WML clauses directly map to
 `WML-201`; the graph does not infer implementation from family ownership or
 prose.
@@ -134,11 +134,11 @@ still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. Seventy-one clauses now have
-reviewed direct evidence, including the `WML-C-24` line-break clause, the two `WML-C-17` unknown-DTD clauses,
-the completed 23-clause WML-204 field/control tranche, and the completed 30-clause WML-202 root/head/access,
-template, task-shadowing, card-context, and newcontext tranche, plus the three WML-205 error-policy clauses; the remaining clauses stay `not-assessed`. The
-parent-row implementation audit remains conservative.
+owner/work mapping and a direct fixture plan. The WML family now has 103
+implemented clause fixtures with reviewed direct evidence, including the
+completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
+slices; shared clauses are deduplicated. The other 72 clauses stay
+`not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the
 `WML-C-72` mutually exclusive property identity rule now have parser tests.
