@@ -11,6 +11,7 @@ const locale = {
     reload: 'Reload',
     go: 'Go',
     deckView: 'Deck View',
+    deckViewport: 'Deck viewport',
     idle: 'idle',
     up: 'Up',
     select: 'Select',

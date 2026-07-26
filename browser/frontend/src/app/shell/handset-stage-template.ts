@@ -1,5 +1,11 @@
 import { WAVES_COPY } from '../waves-copy';
 
+// #viewport is tabindex="0" so keyboard/softkey input reaches the engine,
+// and gets a minimal aria-label so it isn't a silently unnamed stop in the
+// tab order. It is still a plain rendered box, not an accessible tree of the
+// deck's cards/focus/actions -- that semantic frame adapter is WBP-09's
+// scope (see WAVES_DESKTOP_PRODUCT_DESIGN.md "Accessibility Model"), not
+// this host-chrome baseline slice (WBP-05).
 export const handsetStageTemplate = () => `
   <section class="handset-stage" aria-label="Handset display">
     <div class="handset-housing">
@@ -12,6 +18,7 @@ export const handsetStageTemplate = () => `
           id="viewport"
           class="viewport viewport-skeleton"
           aria-busy="true"
+          aria-label="${WAVES_COPY.shell.deckViewport}"
           tabindex="0"
         >
           <div class="skeleton-line"></div>

@@ -44,6 +44,11 @@
   /* Deterministic integer display-scale step; never changes engine-computed
      rows/columns/wrapping, only the rendered pixel size of the handset frame. */
   --handset-scale: 1;
+
+  /* Host-chrome keyboard-focus ring (WBP-05). Kept as one semantic token so
+     the win95 vendor theme's outline suppression can be overridden in a
+     single place instead of per selector. */
+  --focus-ring-color: #ffbf47;
 }
 
 * {
@@ -163,12 +168,30 @@ body[data-boot-phase='deck-ready'] .wv-shell-window {
 button,
 .btn {
   padding: 2px 10px 4px;
-  min-height: 23px;
+  /* WCAG 2.2 SC 2.5.8 Target Size (Minimum): 24 CSS px. */
+  min-height: 24px;
 }
 
 .browser-chrome .chrome-btn.primary {
   padding-left: 12px;
   padding-right: 12px;
+}
+
+/* The win95 vendor theme suppresses the default focus outline on buttons and
+   form fields (`outline: 0 !important`) in favor of a subtle inset-border
+   treatment. That's too easy to miss under keyboard navigation, so restore
+   an explicit, high-contrast focus-visible ring on top of it (WBP-05: "all
+   browser-owned actions are keyboard reachable with visible focus"). This
+   must stay `!important` and after the win95 import to win the cascade. */
+button:focus-visible,
+.btn:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus-ring-color) !important;
+  outline-offset: 2px !important;
 }
 
 .browser-main {
