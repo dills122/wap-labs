@@ -25,9 +25,9 @@ Implemented now:
 - Closed `WBP-00`/`WBP-01` baseline with a neutral 20-column Class C reference, reproducible
   startup/navigation/input measurements, stable complete keyboard order, and default/minimum-window
   evidence
-- Closed `WBP-02` through `WBP-05` browser foundation with the reference-handset scaffold,
+- Closed `WBP-02` through `WBP-05A` browser foundation with the reference-handset scaffold,
   source/route/profile toolbar separation, ordinary-path Welcome/Help tutorial, and host-chrome
-  accessibility baseline
+  accessibility baseline plus single-channel announcements and rendered 200 percent evidence
 - Responsive full-window shell plus gateway-aware startup status that names the probed URL and
   preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
@@ -147,9 +147,8 @@ generation gate.
 
 ## Next implementation slice
 
-1. Preserve the completed `WBP-00` through `WBP-05` Phase 1 implementation. Use additive
-   `WBP-05A` for the single-announcement and rendered accessibility evidence gap; do not reopen
-   `WBP-05`.
+1. Preserve completed `WBP-00` through `WBP-05A`, including the additive single-announcement and
+   rendered accessibility evidence closure; do not reopen `WBP-05`.
 2. Treat `WBP-06` as planning-ready but implementation-blocked. Do not start `F0-01` or change the
    frame/input contracts until `WML-2` is `done`, `WML-303` has closed engine-owned task/softkey
    precedence, and `D0-01` has settled or explicitly sequenced its overlapping debug-contract edits.
@@ -163,6 +162,7 @@ generation gate.
 - Desktop product and interaction design: `docs/waves/WAVES_DESKTOP_PRODUCT_DESIGN.md`
 - Browser product implementation plan: `docs/waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md`
 - WBP-00/WBP-01 decisions, measurements, and integration seams: `docs/waves/WAVES_BROWSER_BASELINE.md`
+- WBP-05A rendered accessibility evidence: `docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`
 - Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
 - User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`

@@ -35,7 +35,12 @@ export class BrowserPresenter {
 
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private toastShowing = false;
-  private toastQueue: Array<{ message: string; tone: 'error' | 'ok'; ttlMs: number }> = [];
+  private toastQueue: Array<{
+    message: string;
+    tone: 'error' | 'ok';
+    ttlMs: number;
+    announce: boolean;
+  }> = [];
   private hasRenderedContent = false;
   private announcedDialogRequests: readonly ScriptDialogRequestSnapshot[] = [];
   private announcedScriptFailure: {
@@ -145,6 +150,7 @@ export class BrowserPresenter {
     this.statusText = message;
     const tone = inferStatusTone(message);
     this.refs.statusEl.setStatus(message, tone);
+    this.announce(message);
     uiEvents.emit('status', { message, tone });
   }
 
@@ -258,19 +264,28 @@ export class BrowserPresenter {
   showToast(
     message: string,
     tone: 'error' | 'ok' = 'error',
-    ttlMs: number = WAVES_CONFIG.toastTtlMs
+    ttlMs: number = WAVES_CONFIG.toastTtlMs,
+    announce = true
   ): void {
     if (this.toastShowing) {
-      this.toastQueue.push({ message, tone, ttlMs });
+      this.toastQueue.push({ message, tone, ttlMs, announce });
       return;
     }
-    this.presentToast(message, tone, ttlMs);
+    this.presentToast(message, tone, ttlMs, announce);
   }
 
-  private presentToast(message: string, tone: 'error' | 'ok', ttlMs: number): void {
+  private presentToast(
+    message: string,
+    tone: 'error' | 'ok',
+    ttlMs: number,
+    announce: boolean
+  ): void {
     this.toastShowing = true;
     this.refs.toastEl.textContent = message;
     this.refs.toastEl.className = `toast toast-${tone}`;
+    if (announce) {
+      this.announce(message);
+    }
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
     }
@@ -285,8 +300,12 @@ export class BrowserPresenter {
     this.toastTimer = undefined;
     const next = this.toastQueue.shift();
     if (next) {
-      this.presentToast(next.message, next.tone, next.ttlMs);
+      this.presentToast(next.message, next.tone, next.ttlMs, next.announce);
     }
+  }
+
+  private announce(message: string): void {
+    this.refs.liveAnnouncerEl.textContent = message;
   }
 
   setSnapshot(snapshot: EngineRuntimeSnapshot): void {

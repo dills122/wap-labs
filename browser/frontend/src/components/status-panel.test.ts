@@ -20,7 +20,7 @@ describe('WvStatusPanel', () => {
     el.remove();
   });
 
-  it('exposes the status text as a polite live region for screen readers', async () => {
+  it('keeps status text visual while the shell owns live announcements', async () => {
     if (!customElements.get(TAG)) {
       customElements.define(TAG, WvStatusPanel);
     }
@@ -30,8 +30,8 @@ describe('WvStatusPanel', () => {
     el.setStatus('Ready.', 'ok');
     await el.updateComplete;
     const root = el.shadowRoot?.querySelector<HTMLDivElement>('#status-root');
-    expect(root?.getAttribute('aria-live')).toBe('polite');
-    expect(root?.getAttribute('role')).toBe('status');
+    expect(root?.hasAttribute('aria-live')).toBe(false);
+    expect(root?.hasAttribute('role')).toBe(false);
 
     el.remove();
   });

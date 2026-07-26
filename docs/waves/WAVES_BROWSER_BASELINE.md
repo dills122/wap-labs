@@ -129,7 +129,7 @@ Phase 1 slices; they are no longer next-work pointers:
 | `WBP-02` | `app/shell/handset-stage-template.ts` plus scoped component styles/tokens              | Do not change 20 logical columns or infer frame, softkey, or hit-region semantics. Root `styles.css` integration remains single-owner.                    |
 | `WBP-03` | `app/shell/navigation-toolbar-template.ts` and browser-owned controller callbacks      | Preserve `ShellEventBindingActions`, current navigation ordering, Local/Network behavior, and transport truthfulness.                                     |
 | `WBP-04` | new start/help leaf templates and distinct `engine-wasm/examples/source/*` story files | Root-shell insertion, `waves-copy.ts`, and generated example-manifest updates require the integration owner. Tutorial decks use the ordinary engine path. |
-| `WBP-05` | landmark/ARIA/focus changes within existing leaf templates and scoped tests            | Reuse native-control keyboard behavior. Do not create a DOM interpretation of WML or add future engine action semantics. The additive `WBP-05A` follow-up owns the single-announcement and rendered-evidence gap found at the Phase 1 checkpoint. |
+| `WBP-05` | landmark/ARIA/focus changes within existing leaf templates and scoped tests            | Reuse native-control keyboard behavior. Do not create a DOM interpretation of WML or add future engine action semantics. The now-completed additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap found at the Phase 1 checkpoint. |
 
 The root `browser-shell-template.ts`, global `styles.css`, `waves-copy.ts`, and generated example
 manifest are high-conflict integration surfaces. The phase slot remains the reserved browser-owned

@@ -53,6 +53,7 @@ const createRefs = (): BrowserShellRefs => {
     activeUrlLabelEl: document.createElement('span'),
     devDrawerEl: document.createElement('details'),
     toastEl: document.createElement('div'),
+    liveAnnouncerEl: document.createElement('div'),
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,

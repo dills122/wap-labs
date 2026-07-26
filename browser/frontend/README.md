@@ -104,6 +104,18 @@ pnpm --dir browser/frontend test:coverage
 pnpm --dir browser/frontend build
 ```
 
+Rendered WBP-05A accessibility evidence uses the production-built browser-story entry, real
+Chromium, the configured Tauri default/minimum windows at effective 200 percent zoom, full
+`axe-core`, explicit 24 by 24 CSS-pixel target geometry, and keyboard focus-style assertions:
+
+```bash
+pnpm --dir browser/frontend test:accessibility:rendered
+```
+
+Set `WAVES_ACCESSIBILITY_OUTPUT_DIR` to retain JSON and screenshots outside the default ignored
+test-results directory. The accepted artifacts and remaining native macOS VoiceOver limitation are
+documented in `docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`.
+
 Fast ordinary-browser story lane from the repository root:
 
 ```bash
@@ -144,8 +156,6 @@ VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
 
 Current priority follows the main Waves board:
 
-1. `WBP-05` as a leaf-component slice using the accepted shell seam; `WBP-02` through `WBP-04` are
-   landed
-2. One integration owner for the root template, global stylesheet, copy, and example manifest
-3. `WBP-06` and later frame/input work only after their engine contract gate
-4. Preserve the current engine and transport contracts throughout the browser-owned slices
+1. Preserve completed `WBP-00` through additive `WBP-05A`; do not reopen `WBP-05`
+2. Keep `WBP-06` and later frame/input work behind their engine contract gate
+3. Preserve the current engine and transport contracts throughout browser-owned slices
