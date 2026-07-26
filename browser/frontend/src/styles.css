@@ -141,6 +141,21 @@ body[data-boot-phase='deck-ready'] .wv-shell-window {
   font-size: 12px;
 }
 
+.toolbar-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+  color: #fff;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.toolbar-meta-label {
+  margin-right: 4px;
+  font-weight: 700;
+}
+
 .form-95 {
   margin-top: 0;
 }

@@ -1,5 +1,6 @@
 import type { WvStatusPanel } from '../components/status-panel';
 import { bindHandsetScaleControl } from './handset-scale-control';
+import { bindRouteIndicator } from './route-indicator';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { developerDrawerTemplate } from './shell/developer-drawer-template';
@@ -148,6 +149,11 @@ export const mountBrowserShell = (
   const handsetScaleSelectEl = document.querySelector<HTMLSelectElement>('#handset-scale-select');
   if (handsetScaleSelectEl) {
     bindHandsetScaleControl(handsetScaleSelectEl, document.documentElement);
+  }
+
+  const routeLabelEl = document.querySelector<HTMLSpanElement>('#route-label');
+  if (routeLabelEl) {
+    bindRouteIndicator(routeLabelEl, runModeSelectEl, fetchUrlInput);
   }
 
   return {
