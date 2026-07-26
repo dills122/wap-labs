@@ -26,7 +26,7 @@ const familyDefinitions = [
     expectedRows: 76,
     expectedSelected: 39,
     expectedClauses: 175,
-    expectedStatus: { implemented: 8, partial: 22, missing: 9 },
+    expectedStatus: { implemented: 9, partial: 21, missing: 9 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 26, blocked: 1, 'in-progress': 9, todo: 46 })
+  JSON.stringify({ done: 27, blocked: 1, 'in-progress': 9, todo: 45 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 30, partial: 70, missing: 98 })
+  JSON.stringify({ implemented: 31, partial: 69, missing: 98 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      '243 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed'
+      '253 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed'
     ]
   ],
   [
@@ -368,14 +368,14 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '208 fixture-backed clauses assessed'
+      '253 fixture-backed clauses assessed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **762** | **30** | **70** | **98** |',
+      '| **Total** | **198** | **762** | **31** | **69** | **98** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -390,8 +390,8 @@ const requiredDocumentFragments = new Map([
   [
     'README.md',
     [
-      '30/198 selected parent rows are implemented',
-      '243/762 clauses are directly assessed'
+      '31/198 selected parent rows are implemented',
+      '253/762 clauses are directly assessed'
     ]
   ]
 ]);

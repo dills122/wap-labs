@@ -35,16 +35,17 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
 13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
-is 30 implemented, 70 partial, and 98 missing parent rows; clause-level
-assessment is 243/762 after WML-302 closed 18 newly implemented clauses,
-retained 2 already implemented shared clauses, and WSP-801 directly closed
-its 35-clause connectionless matrix.
+is 31 implemented, 69 partial, and 98 missing parent rows; clause-level
+assessment is 253/762 after WML-302 closed 18 newly implemented clauses,
+retained 2 already implemented shared clauses, WSP-801 directly closed its
+35-clause connectionless matrix, and WML-305 closed its 10 directly mapped
+timer clauses and completed parent row WML-C-48.
 
 Use this order for new completion work:
 
 1. Preserve the completed `WML-2` baseline while `TRN-7` continues.
-2. Preserve completed `WML-302` and `WML-303`, then advance the unlocked
-   `WML-3` baton through `WML-305`.
+2. Preserve completed `WML-302`, `WML-303`, and `WML-305` evidence while
+   advancing the remaining `WML-3` work.
 3. `REN-4` and `WMLS-5` follow `WML-3`.
 4. `WAE-6` follows runtime, rendering, and script closure.
 5. The selected connectionless `WSP-8` path follows completed gate
@@ -235,7 +236,8 @@ Current recommendation after all merged implementation workstreams:
    (68/68 direct clauses), plus completed `WML-205` exhaustive invalid-WML and
    atomic fetch/access failure evidence (3/3), completed `WML-302`
    variable/substitution evidence (20/20), and completed `WML-303`
-   action/event/BACK evidence (27/27), then advance `WML-305`.
+   action/event/BACK evidence (27/27), plus completed `WML-305` native timer
+   lifecycle evidence (10/10).
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented

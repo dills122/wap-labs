@@ -873,7 +873,7 @@ fn onenterforward_noop_binding_is_inactive_and_keeps_navigation_state() {
 }
 
 #[test]
-fn ontimer_zero_dispatches_immediately_on_card_entry() {
+fn ontimer_zero_is_disabled_on_card_entry() {
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -892,20 +892,13 @@ fn ontimer_zero_dispatches_immediately_on_card_entry() {
     engine
         .handle_key("enter".to_string())
         .expect("fragment nav should succeed");
-    assert_eq!(engine.active_card_id().expect("active card"), "next");
-    assert_trace_kinds_subsequence(
-        &engine,
-        &[
-            "ACTION_FRAGMENT",
-            "TIMER_START",
-            "ACTION_ONTIMER",
-            "ACTION_FRAGMENT",
-        ],
-    );
+    assert_eq!(engine.active_card_id().expect("active card"), "timed");
+    assert_eq!(engine.next_timer_wakeup_ms(), None);
+    assert_trace_kinds_subsequence(&engine, &["ACTION_FRAGMENT", "TIMER_IGNORE"]);
 }
 
 #[test]
-fn ontimer_failure_on_entry_rolls_back_navigation_state() {
+fn ontimer_failure_on_expiry_preserves_invoking_card_and_history() {
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -914,18 +907,21 @@ fn ontimer_failure_on_entry_rolls_back_navigation_state() {
           </card>
           <card id="timed">
             <onevent type="ontimer"><go href="#missing"/></onevent>
-            <timer value="0"/>
+            <timer value="1"/>
             <p>Timed card</p>
           </card>
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    let err = engine
+    engine
         .handle_key("enter".to_string())
+        .expect("fragment navigation should succeed");
+    let err = engine
+        .advance_time_ms(100)
         .expect_err("ontimer missing fragment should fail");
     assert!(err.contains("Card id not found"));
-    assert_eq!(engine.active_card_id().expect("active card"), "home");
-    assert!(engine.nav_stack.is_empty());
+    assert_eq!(engine.active_card_id().expect("active card"), "timed");
+    assert_eq!(engine.nav_stack.len(), 1);
 }
 
 #[test]
@@ -1116,7 +1112,7 @@ fn timer_stops_on_card_exit() {
 }
 
 #[test]
-fn timer_refresh_resumes_remaining_time() {
+fn named_timer_refresh_persists_and_resumes_remaining_time() {
     let mut engine = WmlEngine::new();
     let xml = r##"
         <wml>
@@ -1125,7 +1121,7 @@ fn timer_refresh_resumes_remaining_time() {
           </card>
           <card id="timed">
             <onevent type="ontimer"><go href="#next"/></onevent>
-            <timer value="5"/>
+            <timer name="remaining" value="5"/>
             <do type="accept"><refresh/></do>
             <p>Refresh should resume timer.</p>
           </card>
@@ -1156,7 +1152,9 @@ fn timer_refresh_resumes_remaining_time() {
             "TIMER_TICK",
             "ACTION_ACCEPT",
             "ACTION_REFRESH",
-            "TIMER_RESUME",
+            "TIMER_PERSIST",
+            "TIMER_STOP",
+            "TIMER_START",
             "TIMER_TICK",
             "TIMER_TICK",
             "TIMER_EXPIRE",

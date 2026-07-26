@@ -4,7 +4,7 @@ key: "WML-FX-TIMER-UNITS"
 type: "fixture"
 generated: true
 slice: "WML-3"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Interpret timer values in tenths of a second without requiring a particular scheduling resolution.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

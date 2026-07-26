@@ -304,7 +304,7 @@ mod tests {
             ordered: true,
             nodes,
             event_bindings: vec![],
-            timer_value_ds: None,
+            timer: None,
         }
     }
 

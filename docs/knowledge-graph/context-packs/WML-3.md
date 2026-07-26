@@ -159,7 +159,7 @@ Evidence commands:
 
 ### WML-305: Native WML timer lifecycle
 
-- Status: `todo`
+- Status: `done`
 - Owner layers: `engine-wasm`, `browser`, `qa`
 - Source families: `wml`
 - Existing tickets: `A5-03`, `W0-05`
@@ -167,8 +167,8 @@ Evidence commands:
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-18`, `WML-C-29`, `WML-C-42`, `WML-C-48`)
 - Direct normative clauses: 10
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
-- Spec references: None
-- Follow-up work items: None
+- Spec references: `WAP-191_104-WML sections 11.7, 12.5.1, and 12.5.4`
+- Follow-up work items: `WML-301`, `WML-304`, `WML-306`
 - Depends on: None
 
 Outputs:
@@ -181,8 +181,14 @@ Acceptance:
 
 Evidence commands:
 
-- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305`
+- `wasm-pack test --node engine-wasm/engine`
 - `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `pnpm --dir browser/frontend test`
+- `pnpm test:story WML-305`
+- `node scripts/wap-context-pack.mjs WML-305`
+- `pnpm wap-compliance:check`
+- `pnpm wap-graph:check`
 
 ### WML-306: Access control, low-memory, and runtime error policy
 
@@ -675,61 +681,61 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-18`, `WML-C-29`, `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
-  - Fixture: `WML-FX-GO-TIMER-THEN-DISPLAY` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-GO-TIMER-THEN-DISPLAY` (`state-machine`, `implemented`)
 - **WML-CL-REFRESH-TIMER-RESTART** — Restart the current card timer during refresh after context updates.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
   - Parents: `WML-C-18`, `WML-C-42`, `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
-  - Fixture: `WML-FX-REFRESH-TIMER-RESTART` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-REFRESH-TIMER-RESTART` (`state-machine`, `implemented`)
 - **WML-CL-TIMER-EVENT-TRANSITION** — Dispatch ontimer when a running timer transitions from one to zero while its card remains active.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`, `WML-C-09`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-EVENT-TRANSITION` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-TIMER-EVENT-TRANSITION` (`state-machine`, `implemented`)
 - **WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE** — Initialize a named timer from its set variable, otherwise from value; always use value when no name is declared.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-INITIAL-VALUE-PRECEDENCE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-TIMER-INITIAL-VALUE-PRECEDENCE` (`state-machine`, `implemented`)
 - **WML-CL-TIMER-INVALID-VALUE** — Ignore a timer whose resolved timeout is not a non-negative integer, with zero disabling it.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-INVALID-VALUE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-TIMER-INVALID-VALUE` (`runtime`, `implemented`)
 - **WML-CL-TIMER-NAME-PERSISTENCE** — Store the current timer value in its name variable on card exit or expiration.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-NAME-PERSISTENCE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-TIMER-NAME-PERSISTENCE` (`state-machine`, `implemented`)
 - **WML-CL-TIMER-REFRESH-RESUME** — Treat refresh as timer exit and re-entry: stop and persist the current value, update context, then resume.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`, `WML-C-42`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-REFRESH-RESUME` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-TIMER-REFRESH-RESUME` (`state-machine`, `implemented`)
 - **WML-CL-TIMER-SINGLE-PER-CARD** — Reject a card containing more than one timer element.
   - Family: `wml`; force: `error-condition`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-SINGLE-PER-CARD` (`parser`, `planned`)
+  - Fixture: `WML-FX-TIMER-SINGLE-PER-CARD` (`parser`, `implemented`)
 - **WML-CL-TIMER-START-STOP** — Initialize and start the timer on card entry and stop it on card exit.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-START-STOP` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-TIMER-START-STOP` (`state-machine`, `implemented`)
 - **WML-CL-TIMER-UNITS** — Interpret timer values in tenths of a second without requiring a particular scheduling resolution.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.7 (11.7 The Timer Element)
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
-  - Fixture: `WML-FX-TIMER-UNITS` (`runtime`, `planned`)
+  - Fixture: `WML-FX-TIMER-UNITS` (`runtime`, `implemented`)
 
 ### WML-308
 

@@ -40,6 +40,14 @@ export class ScriptTimerRegistry {
     return this.nowMs;
   }
 
+  nextWakeupMs(): number | undefined {
+    let nextDueMs: number | undefined;
+    for (const entry of this.entries.values()) {
+      nextDueMs = nextDueMs === undefined ? entry.dueMs : Math.min(nextDueMs, entry.dueMs);
+    }
+    return nextDueMs === undefined ? undefined : Math.max(0, nextDueMs - this.nowMs);
+  }
+
   applyRequests(requests: ScriptTimerRequestSnapshot[]): ScriptTimerApplyResult {
     const scheduled: Array<{ id: string; token?: string; delayMs: number; dueMs: number }> = [];
     const cancelled: string[] = [];

@@ -127,17 +127,17 @@ The eight implemented rows are `WML-C-08` (card/deck task shadowing),
 the element's `domain`/`path` defaults and component-aware policy are now enforced
 against the host-supplied referring URI before deck commit, but the broader
 `DECK-ACCESS-REQUIRED` clause still includes unassessed `sendreferer` behavior.
-Across the 39 required Class C client rows, the audit currently records 8
-implemented, 22 partial, and 9 missing. This is not a compliance percentage: nested normative
+Across the 39 required Class C client rows, the audit currently records 9
+implemented, 21 partial, and 9 missing. This is not a compliance percentage: nested normative
 clauses, optional capabilities, cross-target parity, and release evidence
 still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 103
+owner/work mapping and a direct fixture plan. The WML family now has 113
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
-slices; shared clauses are deduplicated. The other 72 clauses stay
+slices plus WML-305 timer closure; shared clauses are deduplicated. The other 62 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the

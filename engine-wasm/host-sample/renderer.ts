@@ -27,6 +27,7 @@ export interface EngineSnapshot {
   focusedLinkIndex: number;
   baseUrl: string;
   contentType: string;
+  nextTimerWakeupMs?: number;
   nextCardVar?: string;
   externalNavigationIntent?: string;
   externalNavigationRequestPolicy?: WmlGoRequestPolicy;
@@ -150,6 +151,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         focusedLinkIndex: engine.focusedLinkIndex(),
         baseUrl: engine.baseUrl(),
         contentType: engine.contentType(),
+        nextTimerWakeupMs: engine.nextTimerWakeupMs(),
         nextCardVar: engine.getVar('nextCard'),
         externalNavigationIntent: engine.externalNavigationIntent(),
         externalNavigationRequestPolicy:

@@ -23,6 +23,7 @@ const STATE_KEYS = new Set([
   'lastScriptExecutionOk',
   'lastScriptExecutionTrap',
   'lastScriptRequiresRefresh',
+  'nextTimerWakeupMs',
   'nextCardVar'
 ]);
 const SESSION_KEYS = new Set([
@@ -179,6 +180,12 @@ function parseExpectedState(value, filename, location) {
   }
   for (const [key, expected] of Object.entries(state)) {
     if (key === 'focusedLinkIndex') {
+      if (!Number.isInteger(expected) || expected < 0) {
+        throw new Error(`${filename}: ${location}.${key} must be a non-negative integer`);
+      }
+      continue;
+    }
+    if (key === 'nextTimerWakeupMs') {
       if (!Number.isInteger(expected) || expected < 0) {
         throw new Error(`${filename}: ${location}.${key} must be a non-negative integer`);
       }
@@ -572,6 +579,7 @@ export interface StoryStateExpectation {
   lastScriptExecutionOk?: boolean | null;
   lastScriptExecutionTrap?: string | null;
   lastScriptRequiresRefresh?: boolean | null;
+  nextTimerWakeupMs?: number;
   nextCardVar?: string | null;
 }
 

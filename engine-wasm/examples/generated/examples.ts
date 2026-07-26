@@ -23,6 +23,7 @@ export interface StoryStateExpectation {
   lastScriptExecutionOk?: boolean | null;
   lastScriptExecutionTrap?: string | null;
   lastScriptRequiresRefresh?: boolean | null;
+  nextTimerWakeupMs?: number;
   nextCardVar?: string | null;
 }
 
@@ -2623,30 +2624,30 @@ export const EXAMPLES: HostExample[] = [
   },
   {
     "key": "timerOntimerImmediate",
-    "label": "Timer Ontimer Immediate",
-    "description": "Demonstrates immediate ontimer dispatch for `<timer value=\"0\"/>` at card-entry boundaries.",
-    "goal": "Verify runtime-owned timer dispatch executes ontimer action deterministically on entry.",
+    "label": "Timer Zero Disabled",
+    "description": "Demonstrates that `<timer value=\"0\"/>` disables ontimer dispatch at card-entry boundaries.",
+    "goal": "Verify a zero timer remains inactive and publishes no host wakeup.",
     "workItems": [
-      "A5-03"
+      "WML-305"
     ],
     "specItems": [
-      "WML-R-014"
+      "WML-CL-TIMER-INVALID-VALUE"
     ],
     "testingAc": [
       "Press Enter on \"To timed\" from home.",
-      "Confirm activeCardId becomes next immediately (timed card should not remain active).",
-      "Confirm trace includes TIMER_START and ACTION_ONTIMER before the final ACTION_FRAGMENT to next."
+      "Confirm activeCardId remains timed after a deterministic one-second tick.",
+      "Confirm trace includes TIMER_IGNORE and does not include ACTION_ONTIMER."
     ],
     "flows": [
       {
-        "id": "zero-timer-dispatch",
-        "title": "Zero-value timer dispatches ontimer during card entry",
+        "id": "zero-timer-disabled",
+        "title": "Zero-value timer disables ontimer dispatch",
         "target": "host-sample",
         "workItems": [
-          "A5-03"
+          "WML-305"
         ],
         "specItems": [
-          "WML-R-014"
+          "WML-CL-TIMER-INVALID-VALUE"
         ],
         "initial": {
           "state": {
@@ -2663,22 +2664,33 @@ export const EXAMPLES: HostExample[] = [
             },
             "expect": {
               "state": {
-                "activeCardId": "next",
+                "activeCardId": "timed",
                 "focusedLinkIndex": 0,
                 "externalNavigationIntent": null
               },
               "traceKinds": [
                 "ACTION_FRAGMENT",
-                "TIMER_START",
-                "ACTION_ONTIMER",
-                "ACTION_FRAGMENT"
+                "TIMER_IGNORE"
               ]
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 1000
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "timed",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              }
             }
           }
         ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#timed\">To timed</a></p>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <timer value=\"0\"/>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#timed\">To timed</a></p>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <timer value=\"0\"/>\n    <p>Zero timer remains disabled.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerScriptDialog",
@@ -4379,6 +4391,291 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <template>\n    <do name=\"back\" type=\"prev\" label=\"Template back\">\n      <go href=\"#template-wins\"/>\n    </do>\n  </template>\n\n  <card id=\"home\">\n    <p>\n      WML action precedence.\n      <a href=\"#ordered\">First precedence</a>\n      <a href=\"#masked\">Noop mask</a>\n    </p>\n  </card>\n\n  <card id=\"ordered\">\n    <do name=\"optional-prev\" type=\"prev\" label=\"Optional\" optional=\"true\">\n      <go href=\"#optional-wins\"/>\n    </do>\n    <do name=\"card-first\" type=\"prev\" label=\"Card back\">\n      <go href=\"#card-wins\"/>\n    </do>\n    <do name=\"card-second\" type=\"prev\" label=\"Second card back\">\n      <go href=\"#second-wins\"/>\n    </do>\n    <p>Back resolves the first active card binding.</p>\n  </card>\n\n  <card id=\"masked\">\n    <do name=\"back\" type=\"prev\"><noop/></do>\n    <p>Back ignores the masked template action and pops history.</p>\n  </card>\n\n  <card id=\"card-wins\"><p>First card BACK binding won.</p></card>\n  <card id=\"second-wins\"><p>The second card binding must not win.</p></card>\n  <card id=\"template-wins\"><p>The template binding must not win.</p></card>\n  <card id=\"optional-wins\"><p>The optional binding must not be presented.</p></card>\n</wml>\n"
+  },
+  {
+    "key": "wml305TimerLifecycle",
+    "label": "WML-305 Native Timer Lifecycle",
+    "description": "Exercises named WML timer initialization, refresh resume, exit persistence, expiry, and host wakeup boundaries.",
+    "goal": "Verify native timer semantics stay deterministic through the production WASM host and Waves browser adapters.",
+    "workItems": [
+      "WML-305"
+    ],
+    "specItems": [
+      "WML-CL-GO-TIMER-THEN-DISPLAY",
+      "WML-CL-REFRESH-TIMER-RESTART",
+      "WML-CL-TIMER-EVENT-TRANSITION",
+      "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+      "WML-CL-TIMER-NAME-PERSISTENCE",
+      "WML-CL-TIMER-REFRESH-RESUME",
+      "WML-CL-TIMER-START-STOP",
+      "WML-CL-TIMER-UNITS"
+    ],
+    "testingAc": [
+      "Run the refresh path and confirm the timer restarts from the refresh assignment before expiring at zero.",
+      "Run the exit path and confirm the current timer value is persisted in tenths on the destination card.",
+      "Confirm host snapshots expose the exact remaining native-timer wakeup delay."
+    ],
+    "flows": [
+      {
+        "id": "host-refresh-resume-and-expire",
+        "title": "Host sample refreshes a named timer and dispatches at one-to-zero",
+        "target": "host-sample",
+        "workItems": [
+          "WML-305"
+        ],
+        "specItems": [
+          "WML-CL-GO-TIMER-THEN-DISPLAY",
+          "WML-CL-REFRESH-TIMER-RESTART",
+          "WML-CL-TIMER-EVENT-TRANSITION",
+          "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+          "WML-CL-TIMER-NAME-PERSISTENCE",
+          "WML-CL-TIMER-REFRESH-RESUME",
+          "WML-CL-TIMER-START-STOP",
+          "WML-CL-TIMER-UNITS"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-timer",
+                "focusedLinkIndex": 0,
+                "nextTimerWakeupMs": 500
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-timer",
+                "nextTimerWakeupMs": 400
+              },
+              "traceKinds": [
+                "TIMER_TICK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-timer",
+                "nextTimerWakeupMs": 200
+              },
+              "traceKinds": [
+                "ACTION_REFRESH",
+                "TIMER_PERSIST",
+                "TIMER_STOP",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-timer",
+                "nextTimerWakeupMs": 100
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "tick",
+              "ms": 100
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "expired"
+              },
+              "traceKinds": [
+                "TIMER_TICK",
+                "TIMER_PERSIST",
+                "TIMER_EXPIRE",
+                "ACTION_ONTIMER",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-refresh-resume-and-expire",
+        "title": "Waves refreshes a named timer through deterministic host wakeups",
+        "target": "waves-browser",
+        "workItems": [
+          "WML-305"
+        ],
+        "specItems": [
+          "WML-CL-GO-TIMER-THEN-DISPLAY",
+          "WML-CL-REFRESH-TIMER-RESTART",
+          "WML-CL-TIMER-EVENT-TRANSITION",
+          "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+          "WML-CL-TIMER-NAME-PERSISTENCE",
+          "WML-CL-TIMER-REFRESH-RESUME",
+          "WML-CL-TIMER-START-STOP",
+          "WML-CL-TIMER-UNITS"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-timer",
+                "nextTimerWakeupMs": 500
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-timer",
+                "nextTimerWakeupMs": 200
+              },
+              "traceKinds": [
+                "ACTION_REFRESH",
+                "TIMER_PERSIST",
+                "TIMER_STOP",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "up"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "expired"
+              },
+              "traceKinds": [
+                "TIMER_EXPIRE",
+                "ACTION_ONTIMER",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Expired at 0."
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-exit-persists-current-value",
+        "title": "Waves persists a named timer when its card exits",
+        "target": "waves-browser",
+        "workItems": [
+          "WML-305"
+        ],
+        "specItems": [
+          "WML-CL-GO-TIMER-THEN-DISPLAY",
+          "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+          "WML-CL-TIMER-NAME-PERSISTENCE",
+          "WML-CL-TIMER-START-STOP",
+          "WML-CL-TIMER-UNITS"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "exit-timer",
+                "nextTimerWakeupMs": 500
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_START"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "persisted"
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT",
+                "TIMER_PERSIST",
+                "TIMER_STOP"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Persisted timer value: 5."
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      WML timer lifecycle.\n      <a href=\"#refresh-timer\">Refresh lifecycle</a>\n      <a href=\"#exit-timer\">Exit persistence</a>\n    </p>\n  </card>\n\n  <card id=\"refresh-timer\">\n    <onevent type=\"ontimer\"><go href=\"#expired\"/></onevent>\n    <timer name=\"remaining\" value=\"5\"/>\n    <do type=\"accept\" label=\"Refresh timer\">\n      <refresh><setvar name=\"remaining\" value=\"2\"/></refresh>\n    </do>\n    <p>Press Enter after one tick to refresh the timer.</p>\n  </card>\n\n  <card id=\"exit-timer\">\n    <timer name=\"saved\" value=\"5\"/>\n    <p><a href=\"#persisted\">Leave timer card</a></p>\n  </card>\n\n  <card id=\"expired\"><p>Expired at $(remaining).</p></card>\n  <card id=\"persisted\"><p>Persisted timer value: $(saved).</p></card>\n</wml>\n"
   },
   {
     "key": "wmlbrowserContextFidelity",

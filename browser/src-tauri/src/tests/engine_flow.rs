@@ -93,9 +93,13 @@ fn advance_time_command_expires_timer_card_deterministically() {
     )
     .expect("enter should navigate to timer card");
 
+    let waiting = apply_engine_snapshot(&engine);
+    assert_eq!(waiting.next_timer_wakeup_ms, Some(200));
+
     let snapshot = apply_advance_time_ms(&mut engine, AdvanceTimeRequest { delta_ms: 200 })
         .expect("advance should trigger ontimer");
     assert_eq!(snapshot.active_card_id.as_deref(), Some("done"));
+    assert_eq!(snapshot.next_timer_wakeup_ms, None);
 }
 
 #[test]

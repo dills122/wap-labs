@@ -100,9 +100,8 @@ Current priority order is:
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
    complete but intentionally remains open while its declared WTP family is
    inactive and unmapped.
-5. Preserve completed `WML-302` variable/substitution and `WML-303`
-   action/event/BACK evidence and advance the unlocked engine baton through
-   `WML-305`; treat
+5. Preserve completed `WML-302` variable/substitution, `WML-303`
+   action/event/BACK, and `WML-305` native timer evidence; treat
    completed `WSP-801` as the connectionless PDU/primitive foundation and
    keep `WSP-802` as its header/version follow-on while `WSP-8` remains behind
    `WAE-6`. Preserve the completed `D0-01` contract
@@ -2003,15 +2002,14 @@ Reference:
 - WML-303 closes the `do`/`onevent` parser/runtime portion with effective-name identity,
   optionality/language retention, same-scope conflict validation, illegal-parent ignoring,
   card/template shadowing, and deterministic activation order. Remaining R0-04 scope is
-  optional `fieldset`/`optgroup` capability declaration and grouping presentation, native
-  timer lifecycle and
+  optional `fieldset`/`optgroup` capability declaration and grouping presentation, plus
   language-aware non-Basic-Latin mask repertoires. Those gates are not residual WML-204
   acceptance work; the mandatory Unicode Basic Latin input floor is implemented and directly tested.
 - WML-302 closes post-XML variable substitution in text, vdata, and HREF contexts; undefined,
   escaping/default, literal-dollar, validation, task-snapshot, go/prev/refresh order, and
   resolved history/navigation-boundary behavior have direct native/WASM/story evidence.
   Broader history modeling remains WML-301, request/postfield serialization remains WML-304,
-  and native timer lifecycle remains WML-305.
+  while native timer lifecycle is completed by WML-305.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 

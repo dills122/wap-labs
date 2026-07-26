@@ -33,6 +33,52 @@ fn sorted_object_keys(value: &JsValue) -> Vec<String> {
     keys
 }
 
+#[wasm_bindgen_test]
+fn wasm_wml_305_named_timer_lifecycle_matches_native_boundary() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <do type="accept">
+              <go href="#timed"><setvar name="remaining" value="2"/></go>
+            </do>
+          </card>
+          <card id="timed">
+            <onevent type="ontimer"><go href="#expired"/></onevent>
+            <timer name="remaining" value="5"/>
+            <p>Timed</p>
+          </card>
+          <card id="expired"><p>Expired</p></card>
+        </wml>
+        "##;
+    engine.load_deck_wasm(xml).expect("deck should load");
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("timer card should open");
+    assert_eq!(engine.next_timer_wakeup_ms_wasm(), Some(200));
+
+    engine
+        .advance_time_ms_wasm(199)
+        .expect("timer should advance");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("timed"));
+    assert_eq!(engine.next_timer_wakeup_ms_wasm(), Some(1));
+    engine.advance_time_ms_wasm(1).expect("timer should expire");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("expired"));
+    assert_eq!(
+        engine.get_var_wasm("remaining".to_string()).as_deref(),
+        Some("0")
+    );
+
+    let mut zero = WmlEngine::new();
+    zero.load_deck_wasm(
+        r##"<wml><card id="zero"><onevent type="ontimer"><go href="#bad"/></onevent>
+        <timer value="0"/><p>Zero</p></card><card id="bad"><p>Bad</p></card></wml>"##,
+    )
+    .expect("zero timer deck should load");
+    assert_eq!(zero.next_timer_wakeup_ms_wasm(), None);
+    assert_eq!(zero.active_card_id_wasm().as_deref(), Ok("zero"));
+}
+
 fn draw_text(render_value: &JsValue) -> Vec<String> {
     let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
     Array::from(&draw)

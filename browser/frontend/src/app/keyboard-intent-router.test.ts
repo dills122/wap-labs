@@ -90,6 +90,9 @@ describe('KeyboardIntentRouter', () => {
 
     expect(deps.applyEngineKey).toHaveBeenCalledWith('up');
     expect(deps.setStatus).toHaveBeenCalledTimes(1);
+    expect(deps.setStatus.mock.invocationCallOrder[0]).toBeLessThan(
+      deps.applyEngineKey.mock.invocationCallOrder[0]
+    );
     expect(router.isActionInFlight()).toBe(false);
   });
 

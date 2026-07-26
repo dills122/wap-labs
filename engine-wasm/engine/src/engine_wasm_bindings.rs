@@ -136,6 +136,11 @@ impl WmlEngine {
         self.advance_time_ms(delta_ms).map_err(as_js_err)
     }
 
+    #[wasm_bindgen(js_name = nextTimerWakeupMs)]
+    pub fn next_timer_wakeup_ms_wasm(&self) -> Option<u32> {
+        self.next_timer_wakeup_ms()
+    }
+
     #[wasm_bindgen(js_name = setViewportCols)]
     pub fn set_viewport_cols_wasm(&mut self, cols: usize) {
         self.set_viewport_cols(cols);

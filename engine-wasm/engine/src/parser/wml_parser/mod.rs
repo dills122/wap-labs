@@ -264,7 +264,7 @@ fn parse_wml_report_with_source(
             .attr("id")
             .map(str::to_string)
             .unwrap_or_else(|| format!("card-{}", cards.len() + 1));
-        let (event_bindings, timer_value_ds) =
+        let (event_bindings, timer) =
             parse_card_bindings(card, &mut budget).map_err(WmlLoadDiagnostic::invalid)?;
         let nodes = parse_card_nodes_xml(card, &mut budget).map_err(WmlLoadDiagnostic::invalid)?;
         cards.push(Card {
@@ -274,7 +274,7 @@ fn parse_wml_report_with_source(
             ordered: card.attr("ordered") != Some("false"),
             nodes,
             event_bindings,
-            timer_value_ds,
+            timer,
         });
     }
 

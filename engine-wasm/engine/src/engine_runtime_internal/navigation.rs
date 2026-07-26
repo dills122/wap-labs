@@ -128,7 +128,7 @@ impl WmlEngine {
             nav.commit();
             return Ok(());
         }
-        nav.engine.start_or_resume_timer_for_active_card(false)?;
+        nav.engine.start_timer_for_active_card()?;
         nav.commit();
         Ok(())
     }
@@ -200,7 +200,7 @@ impl WmlEngine {
                 return true;
             }
         }
-        if let Err(err) = nav.engine.start_or_resume_timer_for_active_card(false) {
+        if let Err(err) = nav.engine.start_timer_for_active_card() {
             nav.engine.push_trace("ACTION_ONTIMER_ERROR", err);
             return true;
         }
@@ -266,10 +266,11 @@ impl WmlEngine {
                 Ok(())
             }
             CardTaskAction::Refresh => {
-                self.apply_set_var_assignments(&assignments);
                 self.push_trace("ACTION_REFRESH", String::new());
+                self.stop_active_timer_for_exit();
+                self.apply_set_var_assignments(&assignments);
                 self.initialize_controls_on_active_card()?;
-                self.start_or_resume_timer_for_active_card(true)?;
+                self.start_timer_for_active_card()?;
                 Ok(())
             }
             CardTaskAction::Noop => {
@@ -624,53 +625,42 @@ pub(crate) fn parse_script_href(href: &str) -> Option<ParsedScriptRef<'_>> {
 mod tests {
     use crate::WmlEngine;
 
-    /// Covers the third fallible step of back navigation (timer start/resume),
-    /// which the deck-level tests only exercise for forward navigation.
+    /// A failed back-entry handler must restore a timer stopped while attempting
+    /// to leave the invoking card, including its named-variable persistence.
     #[test]
-    fn ontimer_failure_on_back_entry_rolls_back_navigation_state() {
+    fn failed_back_entry_restores_invoking_named_timer_state() {
         let mut engine = WmlEngine::new();
         let xml = r##"
         <wml>
           <card id="home">
+            <onevent type="onenterbackward"><go href="#missing"/></onevent>
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <onevent type="ontimer"><go href="script:timer.wmlsc#main"/></onevent>
-            <timer value="0"/>
-            <a href="#next">To next</a>
+            <timer name="remaining" value="5"/>
+            <p>Timed</p>
           </card>
-          <card id="next"><p>Next</p></card>
         </wml>
         "##;
         engine.load_deck(xml).expect("deck should load");
-        // HALT-only unit: the ontimer task succeeds while the unit is registered.
-        engine.register_script_unit("timer.wmlsc".to_string(), vec![0x00]);
-
         engine
             .handle_key("enter".to_string())
             .expect("home enter should navigate to timed card");
         assert_eq!(engine.active_card_id().expect("active card"), "timed");
-        engine
-            .handle_key("enter".to_string())
-            .expect("timed enter should navigate to next card");
-        assert_eq!(engine.active_card_id().expect("active card"), "next");
-        assert_eq!(engine.nav_stack.len(), 2);
+        engine.advance_time_ms(200).expect("timer should advance");
+        assert_eq!(engine.next_timer_wakeup_ms(), Some(300));
 
-        // Re-entering the timed card now fails inside the timer step.
-        engine.clear_script_units();
         let handled = engine.navigate_back();
 
         assert!(handled, "back should report handled when history exists");
         assert_eq!(
             engine.active_card_id().expect("active card"),
-            "next",
-            "failed entry timer task should roll back back-navigation state"
+            "timed",
+            "failed entry handler should roll back back-navigation state"
         );
-        assert_eq!(engine.nav_stack.len(), 2);
+        assert_eq!(engine.nav_stack.len(), 1);
         assert_eq!(engine.focused_link_index(), 0);
-        assert!(engine
-            .trace_entries()
-            .iter()
-            .any(|entry| entry.kind == "ACTION_ONTIMER_ERROR"));
+        assert_eq!(engine.next_timer_wakeup_ms(), Some(300));
+        assert_eq!(engine.get_var("remaining".to_string()), None);
     }
 }

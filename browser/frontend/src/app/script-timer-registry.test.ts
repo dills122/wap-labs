@@ -2,6 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { ScriptTimerRegistry } from './script-timer-registry';
 
 describe('script-timer-registry', () => {
+  it('reports the exact next deterministic wakeup', () => {
+    const registry = new ScriptTimerRegistry();
+    expect(registry.nextWakeupMs()).toBeUndefined();
+    registry.applyRequests([{ type: 'schedule', token: 'later', delayMs: 250 }]);
+    registry.applyRequests([{ type: 'schedule', token: 'first', delayMs: 100 }]);
+    expect(registry.nextWakeupMs()).toBe(100);
+    registry.advance(40);
+    expect(registry.nextWakeupMs()).toBe(60);
+  });
+
   it('schedules token timer and expires exactly once', () => {
     const registry = new ScriptTimerRegistry();
     const applied = registry.applyRequests([{ type: 'schedule', delayMs: 300, token: 'otp' }]);

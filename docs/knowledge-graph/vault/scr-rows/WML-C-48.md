@@ -53,20 +53,47 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.",
+  "assessmentNote": "WML-305 closes the native timer lifecycle: one timer per card, variable-precedence initialization, tenths units, invalid and zero disabling, entry start, exit persistence and stop, refresh stop-update-resume, start-before-display ordering, one-to-zero ontimer dispatch, rollback, and exact target-neutral host wakeups.",
   "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+      "symbol": "parse_timer_xml"
+    },
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/timers.rs",
       "symbol": "advance_time_ms_internal"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_public_api.rs",
+      "symbol": "next_timer_wakeup_ms"
+    },
+    {
+      "path": "browser/frontend/src/app/engine-timer-runtime.ts",
+      "symbol": "scheduleNextWakeup"
     }
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-      "test": "timer_non_zero_expires_after_deterministic_advance",
-      "command": "cd engine-wasm/engine && cargo test timer_non_zero_expires_after_deterministic_advance"
+      "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+      "test": "wml_305_dispatches_only_when_positive_timer_transitions_to_zero",
+      "command": "cd engine-wasm/engine && cargo test wml_305_dispatches_only_when_positive_timer_transitions_to_zero"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+      "test": "wasm_wml_305_named_timer_lifecycle_matches_native_boundary",
+      "command": "cd engine-wasm/engine && cargo test wasm_wml_305_named_timer_lifecycle_matches_native_boundary"
+    },
+    {
+      "path": "engine-wasm/examples/source/wml-305-timer-lifecycle.flow.json",
+      "test": "WML-305 executable stories",
+      "command": "pnpm test:story WML-305"
+    },
+    {
+      "path": "browser/frontend/src/app/engine-timer-runtime.test.ts",
+      "test": "EngineTimerRuntime exact wakeup scheduling",
+      "command": "pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts"
     }
   ],
   "ownerLayers": [

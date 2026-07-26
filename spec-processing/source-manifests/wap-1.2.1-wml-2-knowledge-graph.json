@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "6242255f0cfdc1209b12c447dce36217acb5fa36e360c9155db1ee87cea1eaec"
+        "sha256": "164c4b8383327b747383f1235921d694a58ca99866762b935a6c66734708fa44"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "e50b22c69a179894253fd43166fd9f0649c29436a7e3b06d3ce38e7192b93559"
+        "sha256": "4abe52834ddbd8d4f2f7a358e13e11299a3ff3cfee3ef90f3b2960a37a00921a"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "68266ffe01105d2afd46c96e04c10327703a50836739576127dd84e151a1bf95"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "3098bb51792c65caaef69371933cd036701cc682506f8d65e6ab6f6d7d68cc5f"
+        "sha256": "25f8386771c805dbd92e3174c9a043de8aa5622a525f2f03ef119bf18690c316"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -4311,7 +4311,7 @@
           "RQ-RMK-003",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6606,7 +6606,7 @@
           "RQ-RMK-003",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7710,7 +7710,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7747,7 +7747,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7784,7 +7784,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7821,7 +7821,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7862,7 +7862,7 @@
           "RQ-RMK-002",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7899,7 +7899,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7936,7 +7936,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7973,7 +7973,7 @@
           "RQ-RMK-001",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9996,7 +9996,7 @@
       "title": "If no forward-entry handler diverts processing, start the destination timer before rendering with current variables.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "If no forward-entry handler diverts processing, start the destination timer before rendering with current variables.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10716,7 +10716,7 @@
       "title": "Restart the current card timer during refresh after context updates.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Restart the current card timer during refresh after context updates.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11064,7 +11064,7 @@
       "title": "Dispatch ontimer when a running timer transitions from one to zero while its card remains active.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Dispatch ontimer when a running timer transitions from one to zero while its card remains active.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11076,7 +11076,7 @@
       "title": "Initialize a named timer from its set variable, otherwise from value; always use value when no name is declared.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Initialize a named timer from its set variable, otherwise from value; always use value when no name is declared.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11088,7 +11088,7 @@
       "title": "Ignore a timer whose resolved timeout is not a non-negative integer, with zero disabling it.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Ignore a timer whose resolved timeout is not a non-negative integer, with zero disabling it.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11100,7 +11100,7 @@
       "title": "Store the current timer value in its name variable on card exit or expiration.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Store the current timer value in its name variable on card exit or expiration.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11112,7 +11112,7 @@
       "title": "Treat refresh as timer exit and re-entry: stop and persist the current value, update context, then resume.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat refresh as timer exit and re-entry: stop and persist the current value, update context, then resume.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11124,7 +11124,7 @@
       "title": "Reject a card containing more than one timer element.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reject a card containing more than one timer element.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11136,7 +11136,7 @@
       "title": "Initialize and start the timer on card entry and stop it on card exit.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Initialize and start the timer on card entry and stop it on card exit.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11148,7 +11148,7 @@
       "title": "Interpret timer values in tenths of a second without requiring a particular scheduling resolution.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret timer values in tenths of a second without requiring a particular scheduling resolution.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14775,20 +14775,47 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.",
+        "assessmentNote": "WML-305 closes the native timer lifecycle: one timer per card, variable-precedence initialization, tenths units, invalid and zero disabling, entry start, exit persistence and stop, refresh stop-update-resume, start-before-display ordering, one-to-zero ontimer dispatch, rollback, and exact target-neutral host wakeups.",
         "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_timer_xml"
+          },
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/timers.rs",
             "symbol": "advance_time_ms_internal"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_public_api.rs",
+            "symbol": "next_timer_wakeup_ms"
+          },
+          {
+            "path": "browser/frontend/src/app/engine-timer-runtime.ts",
+            "symbol": "scheduleNextWakeup"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "timer_non_zero_expires_after_deterministic_advance",
-            "command": "cd engine-wasm/engine && cargo test timer_non_zero_expires_after_deterministic_advance"
+            "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+            "test": "wml_305_dispatches_only_when_positive_timer_transitions_to_zero",
+            "command": "cd engine-wasm/engine && cargo test wml_305_dispatches_only_when_positive_timer_transitions_to_zero"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wml_305_named_timer_lifecycle_matches_native_boundary",
+            "command": "cd engine-wasm/engine && cargo test wasm_wml_305_named_timer_lifecycle_matches_native_boundary"
+          },
+          {
+            "path": "engine-wasm/examples/source/wml-305-timer-lifecycle.flow.json",
+            "test": "WML-305 executable stories",
+            "command": "pnpm test:story WML-305"
+          },
+          {
+            "path": "browser/frontend/src/app/engine-timer-runtime.test.ts",
+            "test": "EngineTimerRuntime exact wakeup scheduling",
+            "command": "pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts"
           }
         ],
         "ownerLayers": [

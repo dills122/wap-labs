@@ -89,8 +89,8 @@ export class KeyboardIntentRouter {
               return;
             }
           }
-          await this.deps.applyEngineKey(intent.key);
           this.deps.setStatus(WAVES_COPY.status.keyboard(intent.key));
+          await this.deps.applyEngineKey(intent.key);
         })();
       });
       return;

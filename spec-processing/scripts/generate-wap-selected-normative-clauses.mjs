@@ -335,6 +335,31 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-302',
+    new Set([
+      'WML-CL-GO-ASSIGNMENT-ORDER',
+      'WML-CL-GO-SETVAR-SNAPSHOT',
+      'WML-CL-GO-TARGET-RESOLUTION',
+      'WML-CL-HISTORY-RESOLVES-VARIABLES',
+      'WML-CL-PREV-ASSIGNMENT-ORDER',
+      'WML-CL-REFRESH-ASSIGNMENTS',
+      'WML-CL-SETVAR-INVALID-NAME-IGNORED',
+      'WML-CL-SETVAR-STRUCTURE',
+      'WML-CL-SETVAR-TASK-SIDE-EFFECT',
+      'WML-CL-VARIABLE-COMMIT-BEFORE-TASK',
+      'WML-CL-VARIABLE-CONVERSION-MODES',
+      'WML-CL-VARIABLE-DEFAULT-CONVERSION',
+      'WML-CL-VARIABLE-DOLLAR-ESCAPE',
+      'WML-CL-VARIABLE-NAME-GRAMMAR',
+      'WML-CL-VARIABLE-PARSE-PRECEDENCE',
+      'WML-CL-VARIABLE-REFERENCE-VALIDATION',
+      'WML-CL-VARIABLE-SET-DEFINITION',
+      'WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS',
+      'WML-CL-VARIABLE-TASK-SNAPSHOT',
+      'WML-CL-VARIABLE-UNDEFINED-EMPTY'
+    ])
+  ],
+  [
     'WML-303',
     new Set([
       'WML-CL-DO-ACTIVATION',
@@ -364,6 +389,21 @@ const directWorkItemClauseIds = new Map([
       'WML-CL-TASK-FAILURE-ATOMICITY',
       'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
       'WML-CL-TEMPLATE-STRUCTURE'
+    ])
+  ],
+  [
+    'WML-305',
+    new Set([
+      'WML-CL-GO-TIMER-THEN-DISPLAY',
+      'WML-CL-REFRESH-TIMER-RESTART',
+      'WML-CL-TIMER-EVENT-TRANSITION',
+      'WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE',
+      'WML-CL-TIMER-INVALID-VALUE',
+      'WML-CL-TIMER-NAME-PERSISTENCE',
+      'WML-CL-TIMER-REFRESH-RESUME',
+      'WML-CL-TIMER-SINGLE-PER-CARD',
+      'WML-CL-TIMER-START-STOP',
+      'WML-CL-TIMER-UNITS'
     ])
   ],
   [
@@ -477,6 +517,9 @@ const implementedWsp801ClauseIds = new Set([
   'WSP-CL-UNITDATA-RECEIVE-DISPATCH',
   'WSP-CL-UNITDATA-SECURITY-EQUIVALENCE'
 ]);
+const implementedWml305ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-305')
+);
 const residualWml202ClauseIds = new Set([
   'WML-CL-ACCESS-ABSENT-ALLOWS',
   'WML-CL-ACCESS-COMPONENT-MATCH',
@@ -581,6 +624,34 @@ const wsp801FixtureEvidence = {
   command:
     'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'
 };
+const wml305FixtureTests = new Map([
+  ['WML-CL-GO-TIMER-THEN-DISPLAY', 'wml_305_go_starts_destination_timer_before_host_render_boundary'],
+  ['WML-CL-REFRESH-TIMER-RESTART', 'wml_305_refresh_stops_updates_and_resumes_named_timer'],
+  ['WML-CL-TIMER-EVENT-TRANSITION', 'wml_305_dispatches_only_when_positive_timer_transitions_to_zero'],
+  ['WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE', 'wml_305_named_timer_uses_existing_variable_then_falls_back_to_value'],
+  ['WML-CL-TIMER-INVALID-VALUE', 'wml_305_invalid_and_zero_values_disable_the_timer'],
+  ['WML-CL-TIMER-NAME-PERSISTENCE', 'wml_305_exit_stops_and_persists_named_timer_before_reentry'],
+  ['WML-CL-TIMER-REFRESH-RESUME', 'wml_305_refresh_stops_updates_and_resumes_named_timer'],
+  ['WML-CL-TIMER-SINGLE-PER-CARD', 'wml_202_enforces_card_event_timer_content_order'],
+  ['WML-CL-TIMER-START-STOP', 'wml_305_exit_stops_and_persists_named_timer_before_reentry'],
+  ['WML-CL-TIMER-UNITS', 'wml_305_unnamed_timer_uses_value_and_tenths_of_a_second_units']
+]);
+
+function wml305FixtureEvidence(clauseId) {
+  const testName = wml305FixtureTests.get(clauseId);
+  if (!testName) {
+    throw new Error(`${clauseId}: missing WML-305 fixture evidence`);
+  }
+  const testPath =
+    clauseId === 'WML-CL-TIMER-SINGLE-PER-CARD'
+      ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
+      : 'engine-wasm/engine/src/engine_tests/wml_305_timers.rs';
+  return {
+    path: testPath,
+    testPath,
+    command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${testName}`
+  };
+}
 
 function directWorkItemsForClause(clauseId) {
   const mappedWorkItems = [...directWorkItemClauseIds]
@@ -936,6 +1007,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWsp801ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wsp801FixtureEvidence;
+      } else if (implementedWml305ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml305FixtureEvidence(candidate.id);
       } else if (
         candidate.family === 'wml' &&
         candidate.fixturePlan.evidence?.command === wml303FixtureEvidence.command
@@ -1852,7 +1926,8 @@ function clause(
     implementedWml204ClauseIds.has(clauseId) ||
     implementedWml205ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
-    implementedWsp801ClauseIds.has(clauseId);
+    implementedWsp801ClauseIds.has(clauseId) ||
+    implementedWml305ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -1874,6 +1949,8 @@ function clause(
       ? wml303FixtureEvidence
       : implementedWsp801ClauseIds.has(clauseId)
       ? wsp801FixtureEvidence
+      : implementedWml305ClauseIds.has(clauseId)
+      ? wml305FixtureEvidence(clauseId)
       : family === 'wbxml'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
