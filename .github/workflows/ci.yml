@@ -487,8 +487,10 @@ jobs:
         working-directory: browser/src-tauri
         run: cargo fmt --check
 
-      - name: Browser contract codegen drift check
-        run: pnpm --dir browser run contracts:check
+      - name: Browser contract and Tauri schema drift checks
+        run: |
+          pnpm --dir browser run contracts:check
+          pnpm --dir browser run tauri:schemas:check
 
       - name: Browser Rust coverage gate
         working-directory: browser/src-tauri

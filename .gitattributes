@@ -8,3 +8,15 @@
 *.py text eol=lf
 *.js text eol=lf
 *.ts text eol=lf
+
+browser/contracts/generated/* linguist-generated=true
+browser/src-tauri/capabilities/default.json linguist-generated=true
+browser/src-tauri/gen/schemas/* linguist-generated=true
+browser/src-tauri/icons/128x128.png linguist-generated=true
+browser/src-tauri/icons/128x128@2x.png linguist-generated=true
+browser/src-tauri/icons/32x32.png linguist-generated=true
+browser/src-tauri/icons/generated-assets.json linguist-generated=true
+browser/src-tauri/icons/icon.icns linguist-generated=true
+browser/src-tauri/icons/icon.ico linguist-generated=true
+browser/src-tauri/icons/icon.png linguist-generated=true
+browser/src-tauri/permissions/waves-host.toml linguist-generated=true

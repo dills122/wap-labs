@@ -8,6 +8,9 @@ use lowband_transport_rust::{
 };
 use ts_rs::{Config, TS};
 use wavenav_engine::SCRIPT_ERROR_CATEGORY_METADATA;
+use wavenav_host_lib::command_contract::{
+    render_default_capability, render_host_permission, TauriCommandDescriptor, TAURI_COMMANDS,
+};
 use wavenav_host_lib::contract_types::{
     AdvanceTimeRequest, DrawCmd, EngineFrame, EngineKey, EngineRuntimeSnapshot,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationPostContextSnapshot,
@@ -26,6 +29,62 @@ fn push_decl<T: TS>(out: &mut String) {
 
 fn contracts_out_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../contracts/generated")
+}
+
+fn command_type_json(
+    command_type: wavenav_host_lib::command_contract::CommandType,
+) -> serde_json::Value {
+    serde_json::json!({
+        "name": command_type.name,
+        "source": command_type.source.as_str(),
+    })
+}
+
+fn command_descriptor_json(descriptor: &TauriCommandDescriptor) -> serde_json::Value {
+    serde_json::json!({
+        "command": descriptor.command,
+        "clientMethod": descriptor.client_method,
+        "parameter": descriptor.parameter.map(|parameter| serde_json::json!({
+            "name": parameter.name,
+            "type": command_type_json(parameter.ty),
+        })),
+        "response": command_type_json(descriptor.response),
+        "facadeMethod": descriptor.facade_method.map(|facade| serde_json::json!({
+            "facade": facade.facade.as_str(),
+            "method": facade.method,
+        })),
+    })
+}
+
+fn write_tauri_command_contract() -> Result<(), Box<dyn std::error::Error>> {
+    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let descriptor_path = contracts_out_dir().join("tauri-command-contract.json");
+    let descriptor = serde_json::json!({
+        "schemaVersion": 1,
+        "generatedBy": "cargo run --bin generate_contracts",
+        "source": "browser/src-tauri/src/command_contract.rs",
+        "commands": TAURI_COMMANDS
+            .iter()
+            .map(command_descriptor_json)
+            .collect::<Vec<_>>(),
+    });
+    fs::write(
+        &descriptor_path,
+        format!("{}\n", serde_json::to_string_pretty(&descriptor)?),
+    )?;
+    println!("generated {}", descriptor_path.display());
+
+    let permission_path = manifest_dir.join("permissions/waves-host.toml");
+    if let Some(parent) = permission_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(&permission_path, render_host_permission())?;
+    println!("generated {}", permission_path.display());
+
+    let capability_path = manifest_dir.join("capabilities/default.json");
+    fs::write(&capability_path, render_default_capability())?;
+    println!("generated {}", capability_path.display());
+    Ok(())
 }
 
 fn render_script_error_category_labels(
@@ -114,6 +173,7 @@ fn write_transport_contracts() -> Result<(), Box<dyn std::error::Error>> {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     write_engine_contracts()?;
     write_transport_contracts()?;
+    write_tauri_command_contract()?;
     Ok(())
 }
 
