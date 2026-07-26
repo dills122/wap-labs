@@ -1,4 +1,15 @@
 import type {
+  EngineDebugCloseSessionOutcome,
+  EngineDebugCloseSessionRequest,
+  EngineDebugConnector,
+  EngineDebugEvent,
+  EngineDebugOpenSessionOutcome,
+  EngineDebugOpenSessionRequest,
+  EngineDebugPollEventsOutcome,
+  EngineDebugPollEventsRequest,
+  EngineDebugSnapshot,
+  EngineDebugSnapshotOutcome,
+  EngineDebugSnapshotRequest,
   EngineTraceEntry,
   RenderList,
   ScriptCallArgLiteral,
@@ -12,8 +23,40 @@ import type {
   WmlLoadDiagnostic
 } from './generated/runtime-dtos';
 
+export { ENGINE_DEBUG_CONTRACT_BASELINE } from './generated/runtime-dtos';
+
 export type {
   DrawCmd,
+  EngineDebugBufferSnapshot,
+  EngineDebugCapabilities,
+  EngineDebugCloseSessionOutcome,
+  EngineDebugCloseSessionRequest,
+  EngineDebugCloseSessionResult,
+  EngineDebugCollectionSummary,
+  EngineDebugConnector,
+  EngineDebugError,
+  EngineDebugErrorCode,
+  EngineDebugEvent,
+  EngineDebugEventBatch,
+  EngineDebugEventKind,
+  EngineDebugEventPayload,
+  EngineDebugExternalNavigationSnapshot,
+  EngineDebugMaskingPolicy,
+  EngineDebugNamedValue,
+  EngineDebugOpenSessionOutcome,
+  EngineDebugOpenSessionRequest,
+  EngineDebugPollEventsOutcome,
+  EngineDebugPollEventsRequest,
+  EngineDebugPostfieldResolution,
+  EngineDebugPostfieldResolutionSource,
+  EngineDebugRedactionReason,
+  EngineDebugSession,
+  EngineDebugSnapshot,
+  EngineDebugSnapshotOutcome,
+  EngineDebugSnapshotRequest,
+  EngineDebugTimerSnapshot,
+  EngineDebugTimestampKind,
+  EngineDebugValue,
   EngineTraceEntry,
   RenderList,
   ScriptCallArgLiteral,
@@ -33,6 +76,26 @@ export type {
   WmlLoadDiagnosticCode,
   WmlLoadDiagnosticOutcome
 } from './generated/runtime-dtos';
+
+// The debug connector is a separate, host-owned session broker contract.
+// It is intentionally not part of WmlEngineCommon: D0-01 defines DTOs and
+// lifecycle sequencing only, while D0-02 and D0-03 retain engine-recording and
+// browser-host implementation ownership respectively.
+export type WmlEngineDebugConnector = EngineDebugConnector;
+export type WmlEngineDebugEvent = EngineDebugEvent;
+export type WmlEngineDebugSnapshot = EngineDebugSnapshot;
+export type WmlEngineDebugOpen = (
+  request: EngineDebugOpenSessionRequest
+) => Promise<EngineDebugOpenSessionOutcome>;
+export type WmlEngineDebugPoll = (
+  request: EngineDebugPollEventsRequest
+) => Promise<EngineDebugPollEventsOutcome>;
+export type WmlEngineDebugGetSnapshot = (
+  request: EngineDebugSnapshotRequest
+) => Promise<EngineDebugSnapshotOutcome>;
+export type WmlEngineDebugClose = (
+  request: EngineDebugCloseSessionRequest
+) => Promise<EngineDebugCloseSessionOutcome>;
 
 export type EngineKey = 'up' | 'down' | 'enter';
 

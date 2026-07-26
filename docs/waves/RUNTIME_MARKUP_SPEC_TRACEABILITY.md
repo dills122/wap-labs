@@ -65,7 +65,7 @@ Legend:
   - Evidence: [x] WML-303 task identity, optional/noop filtering, card/template shadowing, intrinsic conflicts/scope, BACK/accept precedence, entry order, and rollback are covered in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs`, the native/WASM host boundary suites, and `engine-wasm/examples/source/wml-303-actions-softkeys.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-303`.
   - [x] Each task path has explicit runtime behavior and observable state transitions.
   - [x] Unsupported task attributes fail deterministically without host/runtime crash.
-  - Dynamic do visibility, labels, and widget exposure remain planned for the existing WBP-06/D0-01 frame gate; variable/setvar task ordering is WML-302.
+  - Dynamic do visibility, labels, and widget exposure remain planned for the WBP-06 frame/affordance gate after the completed D0-01 contract sequence; variable/setvar task ordering is WML-302.
 
 ### RQ-RMK-003 Card context and navigation semantics
 

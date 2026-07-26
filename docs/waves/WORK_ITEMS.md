@@ -103,9 +103,9 @@ Current priority order is:
 5. Preserve completed `WML-303` action/event/BACK evidence and advance the
    unlocked engine baton through `WML-302`, then `WML-305`; treat
    `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
-   until `TRN-7` and `WAE-6` close. Keep `D0-01`, frame migration, generators,
-   and maintenance non-preemptive unless they directly unblock a strict
-   obligation.
+   until `TRN-7` and `WAE-6` close. Preserve the completed `D0-01` contract
+   baseline; keep frame migration, generators, and maintenance non-preemptive
+   unless separately authorized or needed to unblock a strict obligation.
 
 The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path,
 strict native/WASM validation fixtures, and paired executable stories now
@@ -146,22 +146,20 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
 
 Phase 1 implementation is complete on current `main`; the original seams remain documented in
-`WAVES_BROWSER_BASELINE.md` for maintenance history. `WBP-06` is merely planning-ready and remains
-implementation-blocked. Do not mark it active or start `F0-01` until all of these prerequisites are
-true in the active authorities:
+`WAVES_BROWSER_BASELINE.md` for maintenance history. All declared prerequisites for `WBP-06` are
+now satisfied, including the additive D0-01 debug namespace and sequencing rule. `WBP-06` is ready
+for a separately authorized activation task but remains inactive in this lane:
 
 1. `WML-2` is `done`, including the residual `WML-203`, `WML-204`, and `WML-205` gates.
 2. `WML-303` has closed the engine-owned `do`/`onevent` task, BACK, activation-order, and softkey
    precedence semantics that the frame contract would expose. The three dynamic `do`
    presentation clauses remain planned for that frame/affordance slice rather than being
    inferred from the engine-semantic closure.
-3. `D0-01` has settled the overlapping debug-contract surface, or an explicit single contract owner
-   has approved a combined sequence that prevents concurrent edits to `wml-engine.ts` and generated
-   host contracts.
+3. `D0-01` has settled the overlapping `EngineDebug*` surface and reserved frame/input work for a
+   later additive namespace owned by one F0 contract lane.
 
-Once those gates are recorded, a dedicated `WBP-06`/`F0` task may activate `F0-01`; `F0-02` and
-`F0-03` remain ordered by their declared dependencies. Until then, no frame/input contract should be
-implemented.
+A dedicated future `WBP-06`/`F0` task may now activate `F0-01`; `F0-02` and `F0-03` remain ordered
+by their declared dependencies. D0-01 does not activate WBP-06 or implement frame/input contracts.
 
 ### WBP-05A Host accessibility announcement and rendered-evidence closure
 
@@ -1379,7 +1377,7 @@ Reference plan:
 
 ### D0-01 Debug connector contract and architecture baseline
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `A5-06`
 3. `Owner`: `engine-wasm`, `browser`, `docs`
 4. `Files`:
@@ -1402,6 +1400,10 @@ Reference plan:
 - `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`
 9. `Notes`:
 - this ticket establishes interfaces only; no runtime emission implementation in this slice
+- completed with Rust-owned DTO generation into both engine and browser TypeScript surfaces,
+  consumer type tests, deterministic shape guards, and non-value-bearing masked/omitted variants
+- `D0-02` still owns emission, ring-buffer/polling behavior, snapshot construction, and masking
+  implementation; `D0-03` still owns enablement, sessions, Tauri commands, and host wiring
 
 ### D0-02 Engine event stream and snapshot emitter
 

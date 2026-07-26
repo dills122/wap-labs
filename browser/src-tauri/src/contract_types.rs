@@ -2,6 +2,19 @@ use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 use wavenav_engine as engine;
 
+pub use engine::{
+    EngineDebugBufferSnapshot, EngineDebugCapabilities, EngineDebugCloseSessionOutcome,
+    EngineDebugCloseSessionRequest, EngineDebugCloseSessionResult, EngineDebugCollectionSummary,
+    EngineDebugError, EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch,
+    EngineDebugEventKind, EngineDebugEventPayload, EngineDebugExternalNavigationSnapshot,
+    EngineDebugMaskingPolicy, EngineDebugNamedValue, EngineDebugOpenSessionOutcome,
+    EngineDebugOpenSessionRequest, EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest,
+    EngineDebugPostfieldResolution, EngineDebugPostfieldResolutionSource,
+    EngineDebugRedactionReason, EngineDebugSession, EngineDebugSnapshot,
+    EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
+    EngineDebugTimestampKind, EngineDebugValue,
+};
+
 #[derive(Clone, Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct LoadDeckRequest {

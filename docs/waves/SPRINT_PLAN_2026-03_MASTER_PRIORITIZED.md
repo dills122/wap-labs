@@ -74,7 +74,7 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 | `W0-05` | wavescript/runtime | `done` | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream |
 | `W0-06` | engine/wavescript | `done` | strict structural closure continues in `W1-02` |
 | `W1-06` | wavescript/runtime | `in-progress` | finalize remaining fatal/non-fatal fixture classes and close checklist split |
-| `D0-01` | engine + browser + docs | `todo` | next planning-ready contract/architecture slice after active runtime correctness work |
+| `D0-01` | engine + browser + docs | `done` | additive debug DTOs, lifecycle outcomes, security/bounds policy, and WBP-06 sequencing are settled; implementation remains D0-02/D0-03 |
 | `T0-18` | transport | `done` | retransmission/duplicate/NACK hold-off baseline is closed |
 | `T0-19` | transport | `done` | WDP ingress and UDP mapping baseline is closed |
 | `T0-20` | transport | `done` | WSP registry/header/session baseline is closed |
@@ -187,7 +187,7 @@ Now that the interactive forms lane and browser responsiveness remediation are l
 
 ### Must Complete (P0/P1)
 
-1. `D0-01` debug connector contract and architecture baseline.
+1. Preserve the completed `D0-01` debug connector contract and architecture baseline.
 2. `W1-06` fatal/non-fatal script error taxonomy closure.
 
 Completed foundation:
@@ -240,18 +240,19 @@ Current recommendation after all merged implementation workstreams:
    selected connectionless profile, and track the zero-direct-clause
    `TRN-703` gap additively in `TRN-710` without reopening TRN-703.
 5. **Browser lane:** preserve the completed `WBP-00` through additive `WBP-05A`
-   accessibility evidence closure without reopening `WBP-05`. `WML-2` and
-   `WML-303` now satisfy their prerequisites; keep `WBP-06` inactive because
-   the overlapping `D0-01` contract sequence remains the gate recorded in the
-   browser implementation plan.
+   accessibility evidence closure without reopening `WBP-05`. `WML-2`,
+   `WML-303`, and `D0-01` now satisfy the declared prerequisites; keep
+   `WBP-06` inactive until a separately authorized F0 lane assumes the single
+   frame/input contract ownership recorded in the browser implementation plan.
 6. **Profile research lane:** treat `WBP-15` as ready for evidence-bounded Nokia
    7110 profile planning while its implementation dependencies remain closed;
    advance `WBP-16` independently only as an Openwave handset/browser
    evidence-lock task, without changing runtime behavior or naming a generic
    Openwave profile.
 
-`W1-06`, `D0-01`, frame migration, and general maintenance remain
-non-preemptive until these upstream Class C gates materially change.
+Preserve the `W1-06` boundary and completed `D0-01` baseline. Frame migration and
+general maintenance remain non-preemptive until separately authorized or
+required by an upstream Class C gate.
 `WSP-801`/`WSP-802` may continue on the selected connectionless path because
 `TRN-7-CL-C` is complete; `WSP-8` still cannot close before `WAE-6` and its own
 remaining gates. Connection-oriented WSP continues to require the dormant WTP

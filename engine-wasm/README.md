@@ -217,9 +217,9 @@ Type contract:
 3. Advance `WML-302` variable/setvar closure, preserving WML-205 failure
    atomicity as task data becomes richer.
 4. Then advance `WML-305` native timer lifecycle and target-parity evidence.
-5. Keep host fetching at the browser boundary, WBXML decoding in transport,
-   and `D0-01`, `W1-06`, `A5-03`, and `M1-03` queued unless they directly
-   unblock that baton.
+5. Keep host fetching at the browser boundary and WBXML decoding in transport;
+   preserve the completed `D0-01` baseline and the `W1-06` boundary while leaving
+   `A5-03` and `M1-03` queued unless they directly unblock that baton.
 
 ## Current checklist (planning/execution)
 
