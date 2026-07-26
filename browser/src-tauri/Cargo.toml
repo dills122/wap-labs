@@ -20,7 +20,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2", features = [] }
 ts-rs = { version = "12", features = ["serde-compat"] }
-wavenav_engine = { path = "../../engine-wasm/engine", default-features = false }
+wavenav_engine = { path = "../../engine-wasm/engine", default-features = false, features = ["contract-codegen"] }
 
 [features]
 default = ["custom-protocol"]

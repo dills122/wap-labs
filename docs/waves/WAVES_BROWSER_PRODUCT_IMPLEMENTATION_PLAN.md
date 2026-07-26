@@ -539,9 +539,9 @@ target geometry, and contrast at both configured window sizes. The accepted arti
 packaged macOS VoiceOver manual-only smoke are recorded in
 `WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`; `WBP-05` remains completed history.
 
-`WBP-06` is merely planning-ready and remains implementation-blocked. The canonical compliance
-program now records both `WML-2` and the engine-owned WML-303 task/BACK/softkey precedence as
-`done`; `D0-01` must still settle or explicitly sequence its overlapping engine/debug contract
-edits before a future `WBP-06`/`F0` task is authorized. The authorized task starts with
-`F0-01`; `F0-02` and `F0-03` follow their declared dependencies. Do not mark `WBP-06` active or
-implement frame/input contracts before that gate.
+The canonical compliance program records both `WML-2` and engine-owned WML-303
+task/BACK/softkey precedence as `done`, and D0-01 has now settled the additive `EngineDebug*`
+namespace and merge sequence. `WBP-06` is ready for a separately authorized activation task but
+remains inactive in this lane. That future task starts with one F0 contract owner and `F0-01`;
+`F0-02` and `F0-03` follow their declared dependencies without renaming or folding debug DTOs into
+frame/input types.

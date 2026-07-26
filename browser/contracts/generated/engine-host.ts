@@ -33,6 +33,86 @@ export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: n
 
 export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, };
 
+export type EngineDebugMaskingPolicy = "required";
+
+export type EngineDebugTimestampKind = "monotonic";
+
+export type EngineDebugRedactionReason = "password-input" | "sensitive-name" | "credential-bearing-url" | "transport-secret" | "policy" | "bounded-output";
+
+export type EngineDebugValue = { "state": "visible", value: string, } | { "state": "masked", reason: EngineDebugRedactionReason, } | { "state": "omitted", reason: EngineDebugRedactionReason, };
+
+export type EngineDebugNamedValue = { name: string, value: EngineDebugValue, };
+
+export type EngineDebugPostfieldResolutionSource = "variable" | "draft" | "card" | "fallback";
+
+export type EngineDebugPostfieldResolution = { name: string, value: EngineDebugValue, source: EngineDebugPostfieldResolutionSource, };
+
+export type EngineDebugEventKind = "deck.load" | "card.enter" | "card.exit" | "focus.change" | "input.edit.start" | "input.edit.draft" | "input.edit.commit" | "input.edit.cancel" | "action.accept" | "action.external" | "nav.intent" | "postfield.resolve" | "script.invoke" | "script.trap" | "timer.schedule" | "timer.fire" | "timer.cancel";
+
+export type EngineDebugEventPayload = { "type": "deck-load", baseUrl: EngineDebugValue, contentType: string, cardCount: number, } | { "type": "card-enter" } | { "type": "card-exit" } | { "type": "focus-change", previousIndex?: number, currentIndex?: number, } | { "type": "input-edit-start", name: string, } | { "type": "input-edit-draft", name: string, value: EngineDebugValue, } | { "type": "input-edit-commit", name: string, value: EngineDebugValue, } | { "type": "input-edit-cancel", name: string, } | { "type": "action-accept", actionType: string, name?: string, } | { "type": "action-external", target: EngineDebugValue, } | { "type": "navigation-intent", target: EngineDebugValue, } | { "type": "postfield-resolve", fields: Array<EngineDebugPostfieldResolution>, } | { "type": "script-invoke", source: EngineDebugValue, functionName: string, } | { "type": "script-trap", source: EngineDebugValue, functionName: string, detail: EngineDebugValue, } | { "type": "timer-schedule", delayMs: number, token: EngineDebugValue, } | { "type": "timer-fire", token: EngineDebugValue, } | { "type": "timer-cancel", token: EngineDebugValue, };
+
+export type EngineDebugEvent = { seq: string, kind: EngineDebugEventKind, monotonicTimeMs: number, cardId?: string, payload: EngineDebugEventPayload, };
+
+export type EngineDebugBufferSnapshot = { oldestSeq?: string, latestSeq?: string, droppedCount: number, capacity: number, };
+
+export type EngineDebugCollectionSummary = { totalCount: number, returnedCount: number, truncated: boolean, };
+
+export type EngineDebugTimerSnapshot = { remainingMs: number, token: EngineDebugValue, };
+
+export type EngineDebugExternalNavigationSnapshot = { target: EngineDebugValue, method?: string, refererUrl?: EngineDebugValue, postBody?: EngineDebugValue, };
+
+export type EngineDebugSnapshot = { protocolVersion: number, capturedSeq: string, activeCardId?: string, focusedLinkIndex: number, focusedInputEdit?: EngineDebugNamedValue, runtimeVars: Array<EngineDebugNamedValue>, runtimeVarsSummary: EngineDebugCollectionSummary, pendingExternalNavigation?: EngineDebugExternalNavigationSnapshot, timers: Array<EngineDebugTimerSnapshot>, timersSummary: EngineDebugCollectionSummary, buffer: EngineDebugBufferSnapshot, viewportCols: number, baseUrl: EngineDebugValue, contentType: string, };
+
+export type EngineDebugCapabilities = { protocolVersion: number, supportsPolling: boolean, supportsSnapshots: boolean, supportsSensitiveUnmasking: boolean, maskingPolicy: EngineDebugMaskingPolicy, timestampKind: EngineDebugTimestampKind, sessionLimit: number, eventBufferCapacity: number, defaultMaxEventsPerPoll: number, maxEventsPerPoll: number, maxSnapshotVariables: number, maxSnapshotTimers: number, maxTextBytes: number, };
+
+export type EngineDebugOpenSessionRequest = { protocolVersion: number, };
+
+export type EngineDebugSession = { sessionId: string, cursor: string, capabilities: EngineDebugCapabilities, };
+
+export type EngineDebugPollEventsRequest = { sessionId: string, cursor: string, maxEvents: number, };
+
+export type EngineDebugEventBatch = { events: Array<EngineDebugEvent>, nextCursor: string, droppedCount: number, hasMore: boolean, };
+
+export type EngineDebugSnapshotRequest = { sessionId: string, };
+
+export type EngineDebugCloseSessionRequest = { sessionId: string, };
+
+export type EngineDebugCloseSessionResult = { closed: boolean, };
+
+export type EngineDebugErrorCode = "DEBUG_DISABLED" | "UNSUPPORTED_PROTOCOL_VERSION" | "SESSION_LIMIT_REACHED" | "SESSION_NOT_FOUND" | "INVALID_CURSOR" | "INVALID_REQUEST" | "DEBUG_SOURCE_UNAVAILABLE" | "INTERNAL_ERROR";
+
+export type EngineDebugError = { code: EngineDebugErrorCode, message: string, retryable: boolean, };
+
+export type EngineDebugOpenSessionOutcome = { "status": "success", session: EngineDebugSession, } | { "status": "failure", error: EngineDebugError, };
+
+export type EngineDebugPollEventsOutcome = { "status": "success", batch: EngineDebugEventBatch, } | { "status": "failure", error: EngineDebugError, };
+
+export type EngineDebugSnapshotOutcome = { "status": "success", snapshot: EngineDebugSnapshot, } | { "status": "failure", error: EngineDebugError, };
+
+export type EngineDebugCloseSessionOutcome = { "status": "success", result: EngineDebugCloseSessionResult, } | { "status": "failure", error: EngineDebugError, };
+
+export const ENGINE_DEBUG_CONTRACT_BASELINE = {
+  protocolVersion: 1,
+  enabledByDefault: false,
+  sessionLimit: 1,
+  eventBufferCapacity: 2048,
+  defaultMaxEventsPerPoll: 100,
+  maxEventsPerPoll: 256,
+  maxSnapshotVariables: 256,
+  maxSnapshotTimers: 64,
+  maxTextBytes: 4096,
+  maskingPolicy: "required",
+  timestampKind: "monotonic",
+  supportsSensitiveUnmasking: false
+} as const;
+
+export interface EngineDebugConnector {
+  openDebugSession(request: EngineDebugOpenSessionRequest): Promise<EngineDebugOpenSessionOutcome>;
+  pollDebugEvents(request: EngineDebugPollEventsRequest): Promise<EngineDebugPollEventsOutcome>;
+  getDebugSnapshot(request: EngineDebugSnapshotRequest): Promise<EngineDebugSnapshotOutcome>;
+  closeDebugSession(request: EngineDebugCloseSessionRequest): Promise<EngineDebugCloseSessionOutcome>;
+}
+
 export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | { "type": "link", x: number, y: number, text: string, focused: boolean, href: string, };
 
 export type RenderList = { draw: Array<DrawCmd>, };

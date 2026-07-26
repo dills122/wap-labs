@@ -168,12 +168,10 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 
 1. Preserve completed `WBP-00` through `WBP-05A`, including the additive single-announcement and
    rendered accessibility evidence closure; do not reopen `WBP-05`.
-2. Treat `WBP-06` as planning-ready but implementation-blocked. `WML-2` and the engine-owned
-   `WML-303` task/softkey precedence slice are now `done`; do not start `F0-01` or change the
-   frame/input contracts until the remaining `D0-01` gate has settled or explicitly sequenced its
-   overlapping debug-contract edits.
-3. After that authorization gate, activate `WBP-06` with one contract owner and execute `F0-01`,
-   then dependency-ordered `F0-02`/`F0-03`; keep later renderer/input work behind those gates.
+2. `WML-2`, `WML-303`, and `D0-01` now satisfy the declared `WBP-06` prerequisites. Keep WBP-06
+   inactive in this lane, but treat it as ready for a separately authorized `F0-01` contract task.
+3. That future task must use one frame/input contract owner, preserve the additive `EngineDebug*`
+   namespace, and execute `F0-01` before dependency-ordered `F0-02`/`F0-03`.
 4. Keep `M1-09` (`F0-F4` frame migration) dependency-gated and `M1-03` as a non-priority generator
    follow-up.
 5. Treat `WBP-15` as ready for evidence-bounded Nokia 7110 profile planning, not implementation;

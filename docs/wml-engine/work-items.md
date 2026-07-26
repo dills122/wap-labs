@@ -38,8 +38,8 @@ aligned engine priorities are:
    followed by `WML-305` native timer lifecycle.
 4. Preserve WML-205 failure atomicity as WML-302 adds richer pending task
    assignments; keep host fetching outside the engine.
-5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive unless they directly
-   unblock the active WML-3 baton.
+5. Preserve the completed `D0-01` baseline and the `W1-06` boundary; keep
+   `M1-03` non-preemptive unless it directly unblocks the active WML-3 baton.
 
 Source of truth for these items:
 

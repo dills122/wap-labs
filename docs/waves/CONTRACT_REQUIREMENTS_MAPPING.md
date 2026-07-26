@@ -41,6 +41,11 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `ScriptHostCapabilities` side-effect-only host adapters | `RQ-WMLS-003`, `RQ-WAE-003` |
 | `lastScriptDialogRequests()` (`alert`/`confirm`/`prompt`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `lastScriptTimerRequests()` (`schedule`/`cancel`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
+| `EngineDebugConnector` (`openDebugSession`, `pollDebugEvents`, `getDebugSnapshot`, `closeDebugSession`) | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`, `D0-01` |
+| `EngineDebugEvent` / `EngineDebugEventPayload` deterministic event surface | `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`, `D0-01` |
+| `EngineDebugSnapshot` bounded read-only runtime view | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-016`, `D0-01` |
+| `EngineDebugValue` masking/omission union | `RQ-RMK-008`, `RQ-WAE-017`, `D0-01` |
+| `EngineDebugError` / lifecycle outcome unions | `RQ-RMK-002`, `RQ-WAE-017`, `D0-01` |
 
 ## Transport mapping (`transport-rust/src/lib.rs`)
 
@@ -74,6 +79,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `HostSessionState.history` / `historyIndex` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
 | `HostHistoryEntry.url` / `activeCardId` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
 | `EngineRuntimeSnapshot.lastBackNavigationHandled` | `RQ-RMK-002`, `RQ-WAE-017`, `WML-303` |
+| Generated `EngineDebug*` DTOs and `EngineDebugConnector` projection | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`, `D0-01` |
 
 Deterministic transport error trigger mapping:
 

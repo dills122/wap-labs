@@ -112,9 +112,9 @@ Active promotion note:
 
 - The transport-side native submit baseline is now landed.
 - The first interactive subset of this phase (`A5-04`, `A5-05`, `A5-06`) is now landed on `docs/wml-engine/work-items.md`.
-- Keep the remainder of Phase C deferred unless it directly supports the
-  current runtime-fidelity lane (`D0-01`, `W1-06`) or preserves the completed
-  `W0-05` baseline.
+- Keep the remainder of Phase C deferred unless it preserves the completed
+  `D0-01` or `W0-05` baselines, preserves the `W1-06` boundary, or directly
+  supports the active runtime-fidelity lane.
 
 ### C1. Field model
 - Build:

@@ -4151,6 +4151,7 @@ dependencies = [
  "percent-encoding",
  "quick-xml",
  "serde",
+ "ts-rs",
  "url",
 ]
 

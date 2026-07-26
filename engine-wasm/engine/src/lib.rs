@@ -11,6 +11,7 @@ use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "contract-codegen")]
 pub mod contract_codegen;
+mod engine_debug_contract;
 mod engine_public_api;
 mod engine_runtime_internal;
 mod engine_script_types;
@@ -39,6 +40,25 @@ use wavescript::stdlib::wmlbrowser::WmlBrowserHost;
 use wavescript::value::ScriptValue;
 use wavescript::vm::{Vm, VmTrap};
 
+#[cfg(feature = "contract-codegen")]
+pub use engine_debug_contract::{
+    engine_debug_typescript_contract, ENGINE_DEBUG_CONNECTOR_TS_INTERFACE,
+};
+pub use engine_debug_contract::{
+    EngineDebugBufferSnapshot, EngineDebugCapabilities, EngineDebugCloseSessionOutcome,
+    EngineDebugCloseSessionRequest, EngineDebugCloseSessionResult, EngineDebugCollectionSummary,
+    EngineDebugError, EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch,
+    EngineDebugEventKind, EngineDebugEventPayload, EngineDebugExternalNavigationSnapshot,
+    EngineDebugMaskingPolicy, EngineDebugNamedValue, EngineDebugOpenSessionOutcome,
+    EngineDebugOpenSessionRequest, EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest,
+    EngineDebugPostfieldResolution, EngineDebugPostfieldResolutionSource,
+    EngineDebugRedactionReason, EngineDebugSession, EngineDebugSnapshot,
+    EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
+    EngineDebugTimestampKind, EngineDebugValue, ENGINE_DEBUG_DEFAULT_MAX_EVENTS_PER_POLL,
+    ENGINE_DEBUG_EVENT_BUFFER_CAPACITY, ENGINE_DEBUG_MAX_EVENTS_PER_POLL,
+    ENGINE_DEBUG_MAX_SNAPSHOT_TIMERS, ENGINE_DEBUG_MAX_SNAPSHOT_VARIABLES,
+    ENGINE_DEBUG_MAX_TEXT_BYTES, ENGINE_DEBUG_PROTOCOL_VERSION, ENGINE_DEBUG_SESSION_LIMIT,
+};
 pub use engine_script_types::{
     EngineTraceEntry, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptExecutionOutcome, ScriptInvocationOutcome,

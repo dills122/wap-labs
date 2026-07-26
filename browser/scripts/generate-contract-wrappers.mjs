@@ -488,12 +488,19 @@ const commandEngineTypes = typeImportsFor(commands, 'engine');
 const commandTransportTypes = typeImportsFor(commands, 'transport');
 
 ensureRequired('engine-host.ts', engineExportedTypes, [
+  'EngineDebugConnector',
+  'EngineDebugEvent',
+  'EngineDebugSnapshot',
+  'EngineDebugOpenSessionOutcome',
   'EngineFrame',
   'LoadDeckContextRequest',
   'ScriptDialogRequestSnapshot',
   'ScriptTimerRequestSnapshot'
 ]);
-ensureRequired('engine-host.ts values', engineExportedValues, ['SCRIPT_ERROR_CATEGORY_LABELS']);
+ensureRequired('engine-host.ts values', engineExportedValues, [
+  'ENGINE_DEBUG_CONTRACT_BASELINE',
+  'SCRIPT_ERROR_CATEGORY_LABELS'
+]);
 ensureRequired('transport-host.ts', transportExportedTypes, ['FetchDeckRequest']);
 ensureRequired('engine-host.ts command types', engineExportedTypes, commandEngineTypes);
 ensureRequired('transport-host.ts command types', transportExportedTypes, commandTransportTypes);
