@@ -1,16 +1,9 @@
 package origin
 
 import (
+	"html"
 	"strings"
 	"time"
-)
-
-var xmlEscaper = strings.NewReplacer(
-	"&", "&amp;",
-	"<", "&lt;",
-	">", "&gt;",
-	`"`, "&quot;",
-	"'", "&apos;",
 )
 
 var sampleMessages = []string{
@@ -22,7 +15,7 @@ var sampleMessages = []string{
 }
 
 func xmlEscape(value string) string {
-	return xmlEscaper.Replace(value)
+	return html.EscapeString(value)
 }
 
 func renderHomeDeck() string {

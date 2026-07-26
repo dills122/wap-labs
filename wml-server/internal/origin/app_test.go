@@ -204,7 +204,7 @@ func TestValidationAndEscaping(t *testing.T) {
 		t.Fatalf("bad PIN = %d %s", badPIN.Code, badPIN.Body.String())
 	}
 	escaped := perform(handler, http.MethodPost, "/register", "username=a%26b%3Cc%3E%22%27&pin=1234", "application/x-www-form-urlencoded")
-	if escaped.Code != http.StatusOK || !strings.Contains(escaped.Body.String(), "a&amp;b&lt;c&gt;&quot;&apos;") {
+	if escaped.Code != http.StatusOK || !strings.Contains(escaped.Body.String(), "a&amp;b&lt;c&gt;&#34;&#39;") {
 		t.Fatalf("escaped username = %d %s", escaped.Code, escaped.Body.String())
 	}
 	wrongType := perform(handler, http.MethodPost, "/login", `{}`, "application/json")
