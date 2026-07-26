@@ -216,6 +216,19 @@ pub(crate) fn execute_native_wap_request_with_transport(
         match transport.receive() {
             Ok(reply_datagram) => {
                 let elapsed_ms = send_start.elapsed().as_secs_f64() * 1000.0;
+                if reply_datagram.src_addr != WdpAddress::from_socket_addr(peer)
+                    || reply_datagram.src_port != peer.port()
+                {
+                    failure.record(
+                        format!(
+                            "discarded reply from unexpected source (expected {peer}, got {:?}:{})",
+                            reply_datagram.src_addr, reply_datagram.src_port
+                        ),
+                        true,
+                        elapsed_ms,
+                    );
+                    continue;
+                }
                 let reply =
                     match decode_connectionless_reply(transaction_id, &reply_datagram.payload) {
                         Ok(reply) => reply,
@@ -683,6 +696,68 @@ mod tests {
         assert_eq!(
             detail_string(&response, "requestId").as_deref(),
             Some("req-native-timeout")
+        );
+    }
+
+    #[test]
+    fn native_fetch_discards_reply_from_unexpected_source() {
+        let request_url = "wap://127.0.0.1/login".to_string();
+        let peer: SocketAddr = "127.0.0.1:9200".parse().expect("literal should parse");
+        let encoded_reply = build_connectionless_reply_wire(
+            CONNECTIONLESS_INITIAL_TRANSACTION_ID,
+            0x20,
+            0x08,
+            br#"<?xml version="1.0"?><wml><card id="forged"/></wml>"#,
+        );
+        // Same payload a legitimate gateway reply would carry, but arriving from a
+        // different source than the peer the request was sent to (spoofed sender).
+        let spoofed_reply = WdpDatagram {
+            src_addr: WdpAddress::ipv4([10, 0, 0, 66]),
+            dst_addr: WdpAddress::ipv4([127, 0, 0, 1]),
+            src_port: 9200,
+            dst_port: 49152,
+            payload: encoded_reply,
+        };
+        let mut transport = FakeDatagramTransport {
+            sent: Vec::new(),
+            next_receive: Ok(spoofed_reply),
+        };
+
+        let response = execute_native_wap_request_with_transport(
+            &mut transport,
+            peer,
+            NativeFetchPlan {
+                request_url: request_url.clone(),
+                method: "GET".to_string(),
+                outbound_headers: HashMap::new(),
+                post_body: None,
+                post_content_type: None,
+                timeout_ms: 100,
+                attempts: 2,
+                request_id: Some("req-native-spoofed".to_string()),
+                destination_policy: FetchDestinationPolicy::AllowPrivate,
+            },
+        );
+
+        assert!(!response.ok);
+        assert!(
+            response.wml.is_none(),
+            "forged deck body must never surface as engine input"
+        );
+        assert_eq!(
+            response.error.as_ref().map(|error| error.code.as_str()),
+            Some("GATEWAY_TIMEOUT")
+        );
+        assert!(response
+            .error
+            .as_ref()
+            .expect("error should be present")
+            .message
+            .contains("unexpected source"));
+        assert_eq!(
+            transport.sent.len(),
+            2,
+            "every attempt should retry, not accept the spoofed reply"
         );
     }
 

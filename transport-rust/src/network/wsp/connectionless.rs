@@ -24,8 +24,10 @@ use crate::network::wsp::header_registry::{
 
 /// High bit marking a well-known (binary) WSP field name or short-integer value.
 const WELL_KNOWN_MARKER: u8 = 0x80;
-/// Largest value representable by the five-octet `uintvar` form.
-const MAX_UINTVAR_VALUE: usize = 0x0FFF_FFFF;
+/// Largest value representable by the five-octet `uintvar` form (WAP-230-WSP
+/// caps `uintvar` at 32 bits; 5 octets of 7 bits each provide 35 bits of
+/// capacity, so the full 32-bit range fits).
+const MAX_UINTVAR_VALUE: usize = 0xFFFF_FFFF;
 /// Highest first octet still interpreted as a content-type short-length prefix.
 const MAX_SHORT_LENGTH: u8 = 30;
 /// WSP length-quote introducing a `uintvar` length.
