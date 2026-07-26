@@ -29,8 +29,8 @@ Keep wider Phase B+/C expansion deferred unless it directly serves the active ru
 With WML-202 deck/access/card-context closure and the WML-205 engine-boundary taxonomy slice implemented,
 current aligned engine priorities are:
 
-1. Preserve `WML-201`'s completed 76-row SCR evidence projection and its
-   174/174 direct WML-clause mapping.
+1. Preserve the generated `WML-201` evidence projection. Machine-derived fact:
+   WML-201 has 177 direct clauses: 174 selected WML clauses plus 3 WAE composition clauses.
 2. Preserve the mapped `WML-205` malformed/invalid/unsupported/recoverable load taxonomy, then
    close its residual exhaustive error-enforcement and host fetch/access failure-atomicity gates.
 3. Preserve the completed `WML-204` field/control validation gate without

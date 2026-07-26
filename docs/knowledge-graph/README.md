@@ -35,8 +35,9 @@ requirements, owner layers, and legacy ticket links.
 
 The pilot intentionally reports remaining gap levels:
 
-- `WML-201` directly projects the exact 76-row WML SCR matrix and maps all 174 selected WML
-  clauses while retaining direct-test, mapped-gap, and optional-not-assessed evidence states;
+- Machine-derived fact: WML-201 has 177 direct clauses: 174 selected WML clauses plus 3 WAE
+  composition clauses. It also projects the exact WML SCR matrix while retaining direct-test,
+  mapped-gap, and optional-not-assessed evidence states;
 - `WML-202` now directly maps 14 root/head/access, template, and task-shadowing clauses adopted by `R0-04` and `R0-12`;
 - `WML-204` has 23 completed direct WML clause mappings with exact fixture commands, and `WML-205` directly maps the three selected
   error-policy clauses for its deterministic taxonomy slice;
@@ -56,8 +57,8 @@ Its focused `TRN-702`, `TRN-703`, `TRN-706`, and `TRN-707` retrieval targets inc
 obligations directly mapped to the selected work item and keep unrelated transport work-item
 details out of the pack. `TRN-706` and `TRN-707` intentionally retain declared WTP-family gaps
 while connection-oriented WSP/WTP remains conditional. The `TRN-707` pack also includes the
-explicit WAP-259 successor context linked by that work item. The resulting `TRN-708` WCMP/IP
-correction remains a zero-clause follow-up gap until that implementation slice is adopted.
+explicit WAP-259 successor context linked by that work item. `TRN-708` projects the adopted
+CDPD/IPv4 correction, including its directly mapped WDP and RFC 792 ICMP obligations.
 
 ## Commands
 
@@ -86,7 +87,7 @@ node scripts/wap-context-pack.mjs WML-203
 ```
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `TRN-7`, `TRN-702`,
-`TRN-703`, `TRN-706`, and `TRN-707`. A work-item target keeps sprint dependencies and
+`TRN-703`, and `TRN-706` through `TRN-708`. A work-item target keeps sprint dependencies and
 conformance governance in view while limiting work-item details, direct obligations, mapping
 gaps, and source documents to the selected slice. Other targets remain rejected until their
 implementation slice starts, so graph expansion is explicit and reviewable.
