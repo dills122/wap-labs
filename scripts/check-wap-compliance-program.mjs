@@ -139,17 +139,24 @@ for (const sprint of program.sprints ?? []) {
   }
 
   const workStatuses = sprint.workItems.map((item) => item.status);
-  const expectedSprintStatus = workStatuses.every((status) => status === 'done')
-    ? 'done'
-    : workStatuses.some((status) => status === 'in-progress')
-      ? 'in-progress'
-      : workStatuses.some((status) => status === 'blocked') &&
-          workStatuses.every((status) => ['done', 'blocked'].includes(status))
-        ? 'blocked'
-        : 'todo';
-  if (sprint.status !== expectedSprintStatus) {
+  let allowedSprintStatuses;
+  if (workStatuses.every((status) => status === 'done')) {
+    allowedSprintStatuses = ['done'];
+  } else if (workStatuses.some((status) => status === 'in-progress')) {
+    allowedSprintStatuses = ['in-progress'];
+  } else if (
+    workStatuses.some((status) => status === 'blocked') &&
+    workStatuses.every((status) => ['done', 'blocked'].includes(status))
+  ) {
+    allowedSprintStatuses = ['blocked'];
+  } else if (workStatuses.some((status) => status === 'done')) {
+    allowedSprintStatuses = ['todo', 'in-progress'];
+  } else {
+    allowedSprintStatuses = ['todo'];
+  }
+  if (!allowedSprintStatuses.includes(sprint.status)) {
     failures.push(
-      `${sprint.id}: status=${sprint.status}; expected ${expectedSprintStatus} from work items`
+      `${sprint.id}: status=${sprint.status}; expected ${allowedSprintStatuses.join(' or ')} from work items`
     );
   }
 
@@ -647,6 +654,16 @@ if (
   )
 ) {
   failures.push('WML-203 must retain exact WBXML:MCF closure evidence');
+}
+const wmlRuntimeSprint = program.sprints.find((sprint) => sprint.id === 'WML-3');
+const wml302 = wmlRuntimeSprint?.workItems.find((workItem) => workItem.id === 'WML-302');
+const wml303 = wmlRuntimeSprint?.workItems.find((workItem) => workItem.id === 'WML-303');
+if (
+  wmlRuntimeSprint?.status !== 'in-progress' ||
+  wml302?.status !== 'done' ||
+  wml303?.status !== 'done'
+) {
+  failures.push('WML-3 must remain in progress after the evidence-backed WML-302/WML-303 closures');
 }
 
 if (failures.length > 0) {

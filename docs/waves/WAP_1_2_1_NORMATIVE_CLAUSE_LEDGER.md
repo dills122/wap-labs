@@ -91,17 +91,23 @@ Each clause records:
 
 A planned fixture is not test evidence. An implemented fixture must name its
 fixture path, test path, and command, and clause implementation status changes
-only after that direct evidence is reviewed. The current ledger records 190
-implemented clauses with reviewed direct evidence and keeps 572 clauses
+only after that direct evidence is reviewed. The current ledger records 208
+implemented clauses with reviewed direct evidence and keeps 554 clauses
 `not-assessed`. The WML-203 slice contributes 47 implemented WBXML clauses and
 21 implemented WML clauses covering alternate-DTD behavior, the mandatory
 text prologue, and selected DTD structures; WML-204 adds 23 implemented WML
-clauses, WML-205 adds three implemented error-policy clauses, WML-C-24 adds the inline line-break clause, and WML-202 adds 30
-root/head/access, template, task-shadowing, card-context, and newcontext clauses. WML-303 now has 27
-directly mapped action/event clauses; shared clauses across these completed slices are deduplicated in
-the ledger totals. The validator allowlists the 14-clause
+clauses, WML-205 adds three implemented error-policy clauses, WML-C-24 adds the
+inline line-break clause, and WML-202 adds 30 root/head/access, template,
+task-shadowing, card-context, and newcontext clauses. WML-302 and WML-303 add
+their reviewed variable/substitution and action/event evidence; shared clauses
+across these completed slices are deduplicated in the ledger totals. The
+validator allowlists the 14-clause
 `TRN-702` direct-work-item overlay so a broad parent-row mapping cannot
 silently substitute for slice adoption.
+
+The generated WML graph has 225 directly mapped clause nodes. That projection
+count describes planning relationships and is not the 208-clause assessed
+evidence count.
 
 WML-201 directly maps all 175 selected WML clauses for family ownership and
 retrieval. That mapping is not fixture evidence: clause assessment remains
