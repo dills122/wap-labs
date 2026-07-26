@@ -24,7 +24,9 @@ export const uiEvents = createNanoEvents<UiEvents>();
 export const inferStatusTone = (message: string): StatusTone => {
   if (
     message.startsWith(WAVES_COPY.statusPrefix.error) ||
-    message.startsWith(WAVES_COPY.statusPrefix.fetchFailed)
+    message.startsWith(WAVES_COPY.statusPrefix.fetchFailed) ||
+    message.startsWith(WAVES_COPY.statusPrefix.deckParseFailed) ||
+    message.startsWith(WAVES_COPY.statusPrefix.scriptExecutionFailed)
   ) {
     return 'error';
   }
