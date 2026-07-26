@@ -97,7 +97,11 @@ wasm-pack build --target web --out-dir ../pkg
 Quality checks:
 
 ```bash
-make ci-local
+pnpm verify:fast
+pnpm verify
+pnpm verify:full
+# requires an already-running local Kannel/WML stack:
+pnpm verify:extended
 make lint-rust-transport
 make test-rust-transport
 pnpm test:story all
@@ -148,13 +152,19 @@ Local GitHub Pages-style preview (build + assemble only):
 Repo quality checks and hooks:
 
 ```bash
-make ci-local
+make verify-fast
+make verify-change
+make verify-full
 make lint-rust-transport
 make test-rust-transport
 make coverage-rust-transport
 make hooks-install
-ENABLE_NODE_CHECKS=1 make ci-local
 ```
+
+`make ci-local` remains a deprecated compatibility alias for `make verify-full` and prints an
+advisory because local verification cannot reproduce GitHub-hosted CI, security, coverage, or OS
+packaging exactly. See [Local Verification Contract](docs/ci/LOCAL_VERIFICATION.md) for profile
+selection, outcome labels, prerequisites, and intentionally external lanes.
 
 Bootstrap/refresh local tool and dependency setup:
 

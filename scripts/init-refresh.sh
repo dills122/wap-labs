@@ -77,14 +77,6 @@ if [ "${SKIP_NODE_INSTALLS}" != "1" ]; then
     log "pnpm install (workspace)"
     (cd "${ROOT_DIR}" && pnpm install)
 
-    log "install browser frontend dependencies"
-    (cd "${ROOT_DIR}" && pnpm --dir browser/frontend install)
-
-    if [ -f "${ROOT_DIR}/engine-wasm/host-sample/package.json" ]; then
-      log "install host-sample dependencies"
-      (cd "${ROOT_DIR}" && pnpm --dir engine-wasm/host-sample install --ignore-workspace)
-    fi
-
     if [ -f "${ROOT_DIR}/marketing-site/package.json" ]; then
       log "install marketing-site dependencies"
       (cd "${ROOT_DIR}" && pnpm --dir marketing-site --ignore-workspace install)

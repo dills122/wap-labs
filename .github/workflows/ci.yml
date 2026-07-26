@@ -28,6 +28,7 @@ jobs:
     outputs:
       full_ci: ${{ steps.scope.outputs.full_ci }}
       ci: ${{ steps.filter.outputs.ci }}
+      compliance: ${{ steps.filter.outputs.compliance }}
       rust_engine: ${{ steps.filter.outputs.rust_engine }}
       rust_transport: ${{ steps.filter.outputs.rust_transport }}
       host_sample: ${{ steps.filter.outputs.host_sample }}
@@ -65,6 +66,16 @@ jobs:
               - "eslint.shared.mjs"
               - ".prettierrc.json"
               - ".prettierignore"
+            compliance:
+              - "docs/knowledge-graph/**"
+              - "docs/waves/**"
+              - "spec-processing/**"
+              - "scripts/check-active-compliance-facts.mjs"
+              - "scripts/check-requirement-status-drift.mjs"
+              - "scripts/check-wap-*.mjs"
+              - "scripts/wap-context-pack.mjs"
+              - "package.json"
+              - "pnpm-lock.yaml"
             rust_engine:
               - "engine-wasm/engine/**"
               - "engine-wasm/contracts/**"
@@ -175,6 +186,37 @@ jobs:
 
       - name: Networking profile gate check
         run: node scripts/check-networking-profile-gates.mjs
+
+      - name: Canonical verification orchestration tests
+        run: pnpm run verify:test
+
+  compliance:
+    name: WAP Compliance and Status Drift
+    needs: [changes]
+    if: ${{ needs.changes.outputs.full_ci == 'true' || needs.changes.outputs.ci == 'true' || needs.changes.outputs.compliance == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install root Node deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Validate complete compliance wrapper and active status rollups
+        run: pnpm run wap-compliance:check
 
   rust-engine:
     name: Rust Engine
@@ -570,6 +612,7 @@ jobs:
     needs:
       - changes
       - repo-hygiene
+      - compliance
       - rust-engine
       - rust-transport
       - host-sample
@@ -585,6 +628,7 @@ jobs:
           FULL_CI: ${{ needs.changes.outputs.full_ci }}
           CHANGES_RESULT: ${{ needs.changes.result }}
           REPO_HYGIENE_RESULT: ${{ needs.repo-hygiene.result }}
+          COMPLIANCE_RESULT: ${{ needs.compliance.result }}
           RUST_ENGINE_RESULT: ${{ needs.rust-engine.result }}
           RUST_TRANSPORT_RESULT: ${{ needs.rust-transport.result }}
           HOST_SAMPLE_RESULT: ${{ needs.host-sample.result }}
@@ -600,6 +644,7 @@ jobs:
           )
           conditional=(
             "${RUST_ENGINE_RESULT}"
+            "${COMPLIANCE_RESULT}"
             "${RUST_TRANSPORT_RESULT}"
             "${HOST_SAMPLE_RESULT}"
             "${MARKETING_SITE_RESULT}"
