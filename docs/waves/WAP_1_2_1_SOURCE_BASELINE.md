@@ -266,8 +266,8 @@ Until explicit redistribution approval is recorded:
 - do not promote them through `spec-processing/new-source-material/`.
 
 After approval, use the existing staged parser, cleanup review, verified
-promotion, and append-only provenance workflow. Never place historical
-predecessors into a competing mirror tree.
+promotion, and single-current-snapshot provenance workflow. Never place
+historical predecessors into a competing mirror tree.
 
 The exact OMA contact route, ready-to-send redistribution/preservation draft,
 WAP-215 recovery record, and Wayback procedure are in

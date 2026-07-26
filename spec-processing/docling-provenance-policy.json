@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "docling-cleaned-current-v1-2026-07-25",
+  "recordedOn": "2026-07-25",
+  "profileId": "docling:dlparse_v4,no-ocr,image-placeholder",
+  "qualityDispositions": [
+    {
+      "rule": "unescaped-dtd-token",
+      "path": "spec-processing/source-material/parsed-markdown/docling-cleaned/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.cleaned.md",
+      "sha256": "e3c934ff65eb1ba66277f1f265afd4fa2fff9673e8c780e978620a25241a24e2",
+      "expectedCount": 43,
+      "disposition": "preserve-source-literal",
+      "rationale": "The reviewed Wiley source reproduces literal WML DTD declarations. These tokens are source content, not Docling cleanup artifacts, and are retained verbatim."
+    }
+  ]
+}
