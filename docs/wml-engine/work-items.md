@@ -402,6 +402,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Form/control behavior aligns with defined WML runtime semantics for implemented profile.
 8. `Notes`:
 - Spec anchor refs: WAP-191 section `11.6`.
+- WML-204 grouped-control evidence validates fieldset/optgroup attributes and content, rejects empty grouping leaves, preserves transparent child processing across native/WASM parsing, and exercises the fallback through both canonical stories. Optional grouping presentation and capability declaration remain unassessed follow-up scope.
 
 ## Suggested First Sprint (7 tickets)
 

@@ -468,7 +468,48 @@ fn validate_optgroup_element(element: &XmlElement) -> Result<(), String> {
 fn validate_fieldset_element(element: &XmlElement) -> Result<(), String> {
     validate_allowed_attributes(element, &["class", "id", "title", "xml:lang"])?;
     validate_optional_xml_name(element, "id")?;
-    validate_optional_nmtoken(element, "xml:lang")
+    validate_optional_nmtoken(element, "xml:lang")?;
+
+    let mut has_content = false;
+    for child in &element.children {
+        match child {
+            XmlNode::Text(text) if text.trim().is_empty() => {}
+            XmlNode::Text(_) => has_content = true,
+            XmlNode::Element(child)
+                if matches!(
+                    child.name.as_str(),
+                    "a" | "anchor"
+                        | "b"
+                        | "big"
+                        | "br"
+                        | "do"
+                        | "em"
+                        | "fieldset"
+                        | "i"
+                        | "img"
+                        | "input"
+                        | "select"
+                        | "small"
+                        | "strong"
+                        | "table"
+                        | "u"
+                ) =>
+            {
+                has_content = true;
+            }
+            XmlNode::Element(child) => {
+                return Err(format!(
+                    "Invalid <fieldset>: unexpected child <{}>",
+                    child.name
+                ));
+            }
+        }
+    }
+
+    if !has_content {
+        return Err("Invalid <fieldset>: element must not be empty".to_string());
+    }
+    Ok(())
 }
 
 fn validate_option_element(element: &XmlElement) -> Result<(), String> {

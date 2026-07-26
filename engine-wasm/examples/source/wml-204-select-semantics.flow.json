@@ -6,7 +6,7 @@
       "id": "initialization-and-user-commit",
       "title": "Select initialization and committed user state stay deterministic",
       "workItems": ["R0-04", "C5-05", "WML-204"],
-      "specItems": ["WML-C-41", "WML-C-43"],
+      "specItems": ["WML-C-40", "WML-C-41", "WML-C-43"],
       "initial": {
         "state": {
           "activeCardId": "select-semantics",

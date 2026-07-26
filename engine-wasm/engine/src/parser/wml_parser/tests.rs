@@ -551,6 +551,18 @@ fn wml_fx_select_structure_flattens_nested_optgroups_in_document_order() {
 fn wml_fx_grouped_control_structure_rejects_invalid_syntax_deterministically() {
     let cases = [
         (
+            r#"<fieldset></fieldset>"#,
+            "Invalid <fieldset>: element must not be empty",
+        ),
+        (
+            "<fieldset>\n  \t</fieldset>",
+            "Invalid <fieldset>: element must not be empty",
+        ),
+        (
+            r#"<fieldset><p>wrong</p></fieldset>"#,
+            "Invalid <fieldset>: unexpected child <p>",
+        ),
+        (
             r#"<select name="choice"><optgroup title="Empty"></optgroup></select>"#,
             "Invalid <optgroup>: expected one or more <option> or <optgroup> children",
         ),
