@@ -21,6 +21,7 @@ The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`,
 - Frame-interface migration plan: `docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md`
 - Frame-interface phase board (`F0-F4`): `docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md`
 - Project Atlas (generated planning/compliance portal): `docs-portal/README.md`
+- Code-generation audit and target standard: `docs/architecture/code-generation-audit.md`
 - WAP 1.2.1 compliance program: `docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md`
 - Development prerequisites + bootstrap: `docs/development-prerequisites.md`
 - Documentation index: `docs/README.md`
