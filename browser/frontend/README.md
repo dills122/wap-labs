@@ -154,6 +154,18 @@ Optional startup URL override:
 VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
 ```
 
+The Linux-only native UI pilot is separate from the ordinary-browser stories. It uses Selenium
+through `tauri-driver` to control the actual Tauri WebView, load `wap://localhost/` through the
+native Rust transport and Kannel, navigate to the menu card, assert a visible invalid-URL failure,
+and recover by loading the gateway deck again:
+
+```bash
+xvfb-run -a make smoke-native-tauri-kannel-ui
+```
+
+Failure and success evidence is written under ignored `test-results/native-tauri-kannel.*`
+directories unless `NATIVE_E2E_ARTIFACT_DIR` selects a stable CI artifact path.
+
 Current priority follows the main Waves board:
 
 1. Preserve completed `WBP-00` through additive `WBP-05A`; do not reopen `WBP-05`

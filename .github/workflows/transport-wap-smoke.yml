@@ -1,18 +1,40 @@
 name: Transport WAP Smoke
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/transport-wap-smoke.yml'
+      - 'Makefile'
+      - 'browser/contracts/**'
+      - 'browser/src-tauri/**'
+      - 'docker-compose.yml'
+      - 'docker/kannel/**'
+      - 'engine-wasm/contracts/**'
+      - 'engine-wasm/engine/**'
+      - 'gateway-kannel/**'
+      - 'scripts/transport-wap-smoke.sh'
+      - 'transport-rust/**'
+      - 'wml-server/**'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 env:
   RUST_SHARED_KEY: wavenav-rust
+  TRANSPORT_WAP_SMOKE_ARTIFACT_DIR: ${{ github.workspace }}/test-results/transport-wap-smoke
 
 jobs:
   transport-wap-smoke:
     name: Transport WAP Smoke (Kannel)
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Start Kannel + WML stack
         run: docker compose up -d --build kannel wml-server
@@ -34,6 +56,15 @@ jobs:
         if: failure()
         run: |
           docker compose logs --tail=200 kannel wml-server || true
+
+      - name: Upload smoke diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: transport-wap-smoke-${{ github.run_attempt }}
+          path: test-results/transport-wap-smoke
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Stop stack
         if: always()

@@ -12,7 +12,8 @@ This document describes all active GitHub Actions automation for this repository
 - Dependabot auto-merge workflow: `.github/workflows/dependabot-auto-merge.yml`
 - Code scanning workflow: `.github/workflows/codeql.yml`
 - Pages deployment workflow: `.github/workflows/pages.yml`
-- Manual transport smoke workflow: `.github/workflows/transport-wap-smoke.yml`
+- Path-scoped PR/manual transport smoke workflow: `.github/workflows/transport-wap-smoke.yml`
+- Self-validating PR/scheduled/manual native Tauri/Kannel UI pilot: `.github/workflows/native-tauri-kannel-e2e.yml`
 - Canonical local verification contract: `docs/ci/LOCAL_VERIFICATION.md`
 - Dependency updates: `.github/dependabot.yml`
 - Branch protection check policy: `docs/ci/REQUIRED_CHECKS.md`
@@ -280,21 +281,62 @@ Behavior:
 
 Purpose:
 
-- On-demand end-to-end smoke for Kannel + WML stack integration.
+- Path-scoped pull-request and on-demand smoke for Kannel + WML stack integration.
 
 Triggers:
 
-- `workflow_dispatch` only
+- `pull_request` targeting `main` when gateway/Kannel, transport, engine contracts/runtime,
+  browser host/contracts, WML server, smoke runner, or its workflow changes
+- `workflow_dispatch`
 
 Behavior:
 
 - starts Docker services (`kannel`, `wml-server`)
 - runs `make smoke-transport-wap`
-- executes both:
+- executes:
   - transport-rust ignored Kannel smoke tests
   - browser host ignored Kannel smoke test
+  - browser engine/render ignored Kannel smoke test
 - dumps service logs on failure
+- uploads the deterministic smoke logs for every run with 14-day retention
 - always tears down stack
+
+This is a relevant-PR signal, but it is not a globally required context because workflow-level
+path filters mean the check correctly does not exist on unrelated pull requests.
+
+### 8) Native Tauri Kannel E2E (`.github/workflows/native-tauri-kannel-e2e.yml`)
+
+Purpose:
+
+- Non-optimistic Linux pilot for the complete visible path from production Tauri frontend controls
+  through generated IPC, the native Rust host/engine, `transport-rust`, and local Kannel.
+
+Triggers:
+
+- `pull_request` only when the pilot workflow, runner, Selenium client, package declaration, or
+  Make target itself changes; this bootstraps executable validation without claiming general
+  browser/transport PR coverage
+- weekly schedule (`17 5 * * 1`)
+- `workflow_dispatch`
+
+Behavior:
+
+- installs the Linux WebKit WebDriver and Xvfb dependencies documented by Tauri
+- installs pinned `tauri-cli` 2.10.0 and `tauri-driver` 2.0.6
+- builds the production frontend and an unbundled debug Tauri application
+- starts Kannel and the WML server, then opts into local/private access only with the existing
+  `WAVES_FETCH_DESTINATION_POLICY=allow-private` host boundary
+- pins `wap-net-core` and disables gateway fallback
+- uses Selenium to click the real Go and Select controls, assert the gateway-served home/menu UI,
+  assert a visible invalid-URL failure, and recover with another real gateway load
+- uploads fixed-name screenshots, page source, structured evidence, driver logs, environment
+  versions, service logs, and pre/post-teardown state with 21-day retention
+- closes the WebDriver session, terminates the isolated GUI process group, and always tears down
+  Docker services
+
+The pilot is intentionally not a required or product-change pull-request check yet. Its narrow PR
+filter validates the pilot implementation itself. Widen it additively to relevant product paths
+only after all criteria in the active E2E readiness scorecard are met.
 
 ## Dependency Update Automation
 
@@ -386,7 +428,8 @@ At minimum, require:
 
 Do not require:
 
-- `Transport WAP Smoke` (manual)
+- `Transport WAP Smoke` globally (it is a path-scoped PR signal and does not run for unrelated PRs)
+- `Native Tauri Kannel E2E` until its documented pilot promotion criteria are met
 - `Deploy Pages` (deployment workflow)
 
 ## Common Failure Modes

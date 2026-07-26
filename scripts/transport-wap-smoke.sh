@@ -8,7 +8,12 @@ WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
 WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL:-wap://localhost/login}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
-SMOKE_ARTIFACT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/transport-wap-smoke.XXXXXX")"
+if [ -n "${TRANSPORT_WAP_SMOKE_ARTIFACT_DIR:-}" ]; then
+  SMOKE_ARTIFACT_DIR="${TRANSPORT_WAP_SMOKE_ARTIFACT_DIR}"
+  mkdir -p "${SMOKE_ARTIFACT_DIR}"
+else
+  SMOKE_ARTIFACT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/transport-wap-smoke.XXXXXX")"
+fi
 
 # Run a piped command and fail if the *command* (not `tee`) exited nonzero.
 # POSIX sh has no `pipefail`/`PIPESTATUS`, so the command's real exit code is
@@ -56,6 +61,8 @@ print_failure_diagnostics() {
 
 trap print_failure_diagnostics EXIT
 
+export RUST_TEST_THREADS=1
+
 wait_for_http() {
   url="$1"
   retries="${2:-40}"
@@ -85,7 +92,6 @@ echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
   export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
-  export RUST_TEST_THREADS=1
   run_and_tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log" \
     cargo test --test kannel_smoke -- --ignored --test-threads=1
 )
@@ -94,7 +100,6 @@ echo "==> Running browser host native Kannel smoke unit test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
   export WAP_SMOKE_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
-  export RUST_TEST_THREADS=1
   run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-host-native-smoke.log" \
     cargo test host_fetch_deck_command_native_wap_home_smoke_succeeds --lib -- --ignored --test-threads=1
 )
@@ -103,7 +108,6 @@ echo "==> Running browser engine/render native Kannel smoke integration test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
   export WAP_SMOKE_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
-  export RUST_TEST_THREADS=1
   run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-render-native-smoke.log" \
     cargo test kannel_fetch_deck_smoke_navigates_into_menu_card -- --ignored --test-threads=1
 )

@@ -145,6 +145,24 @@ generation gate.
   `lowband-wml13-wbxml/0.3.0` implementation with bounded output and parser
   depth. No external `wbxml2xml` installation or bundled sidecar is required.
 
+## Native Tauri/Kannel UI pilot
+
+Linux can drive the production Tauri window through the supported `tauri-driver` WebDriver
+bridge. The pilot clicks the real address/softkey controls and crosses the generated Tauri IPC
+contract, native Rust host, `transport-rust`, and Kannel; it does not install a mock invoke layer.
+
+With `tauri-driver` 2.0.6, `WebKitWebDriver`, Docker, and an X11 display available:
+
+```bash
+xvfb-run -a make smoke-native-tauri-kannel-ui
+```
+
+The runner builds the production frontend and debug Tauri binary, provisions the local gateway,
+opts into `allow-private` only through the existing host test boundary, pins `wap-net-core` with
+fallback disabled, captures screenshots/DOM/driver/service logs, and always stops the GUI process
+group and Docker services. This pilot is scheduled/manual until the promotion criteria in
+`docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` are met.
+
 ## Next implementation slice
 
 1. Preserve completed `WBP-00` through `WBP-05A`, including the additive single-announcement and
