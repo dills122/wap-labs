@@ -2,12 +2,11 @@ SHELL := /bin/bash
 
 COMPOSE := docker compose
 PROJECT_DIR := $(CURDIR)
-ENABLE_NODE_CHECKS ?= 0
 RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
 .PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap init-refresh \
-	fmt lint test test-fast ci-local \
+	fmt lint test test-fast verify-fast verify-change verify-full verify-extended ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
 	lint-rust lint-rust-engine lint-rust-transport lint-node \
 	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node \
@@ -66,7 +65,22 @@ test: test-rust test-node
 
 test-fast: test-rust
 
-ci-local: lint test
+verify-fast:
+	pnpm run verify:fast
+
+verify-change:
+	pnpm run verify:change
+
+verify-full:
+	pnpm run verify:full
+
+verify-extended:
+	pnpm run verify:extended
+
+ci-local:
+	@echo "[ADVISORY] make ci-local is deprecated: local verification is not identical to GitHub-hosted CI."
+	@echo "[ADVISORY] Running the strict deterministic offline profile; use make verify-full directly."
+	@$(MAKE) verify-full
 
 lint-rust:
 	@$(MAKE) lint-rust-engine
@@ -155,50 +169,33 @@ coverage-rust-transport:
 	fi
 
 lint-node:
-	@if [ "$(ENABLE_NODE_CHECKS)" != "1" ]; then \
-		echo "skip: node lint checks disabled (set ENABLE_NODE_CHECKS=1 to enable)"; \
-	elif [ -f engine-wasm/host-sample/package.json ] && command -v pnpm >/dev/null 2>&1; then \
-		echo "==> host-sample lint (if configured)"; \
-		cd engine-wasm/host-sample && pnpm run lint || echo "skip: no lint script for host-sample"; \
-	else \
-		echo "skip: pnpm or host-sample package missing (node lint)"; \
+	@if ! command -v pnpm >/dev/null 2>&1; then \
+		echo "FAIL: pnpm not found (node lint)"; \
+		exit 1; \
 	fi
-	@echo "skip: electron-app lint (no package/scripts configured yet)"
-	@echo "skip: wml-server lint (no lint script configured yet)"
+	@echo "==> pnpm lint:node"
+	@pnpm lint:node
+	@echo "[INTENTIONAL EXCLUSION] wml-server lint — no lint script is defined"
 
 test-node:
-	@if [ "$(ENABLE_NODE_CHECKS)" != "1" ]; then \
-		echo "skip: node tests/build checks disabled (set ENABLE_NODE_CHECKS=1 to enable)"; \
-	elif [ -f engine-wasm/host-sample/package.json ] && command -v pnpm >/dev/null 2>&1; then \
-		if [ ! -f engine-wasm/pkg/wavenav_engine.js ]; then \
-			if command -v wasm-pack >/dev/null 2>&1; then \
-				echo "==> build WaveNav wasm pkg (required by host-sample)"; \
-				cd engine-wasm/engine && wasm-pack build --target web --out-dir ../pkg; \
-				cd ../..; \
-			else \
-				echo "skip: missing engine-wasm/pkg/wavenav_engine.js and wasm-pack not installed"; \
-				exit 0; \
-			fi; \
-		fi; \
-		echo "==> host-sample build sanity"; \
-		cd engine-wasm/host-sample && pnpm run build; \
-		if [ -f marketing-site/package.json ]; then \
-			echo "==> marketing-site build sanity"; \
-			pnpm --dir marketing-site --ignore-workspace run build; \
-		else \
-			echo "skip: marketing-site package missing (node test/build)"; \
-		fi; \
-		if [ -f docs-portal/package.json ]; then \
-			echo "==> project Atlas build sanity"; \
-			pnpm --dir docs-portal run build; \
-		else \
-			echo "skip: docs-portal package missing (node test/build)"; \
-		fi; \
-	else \
-		echo "skip: pnpm or host-sample package missing (node test/build)"; \
+	@if ! command -v pnpm >/dev/null 2>&1; then \
+		echo "FAIL: pnpm not found (node tests/builds)"; \
+		exit 1; \
 	fi
-	@echo "skip: electron-app tests (no package/tests configured yet)"
-	@echo "skip: wml-server tests (no test script configured yet)"
+	@if [ ! -f engine-wasm/pkg/wavenav_engine.js ]; then \
+		if ! command -v wasm-pack >/dev/null 2>&1; then \
+			echo "FAIL: missing engine-wasm/pkg/wavenav_engine.js and wasm-pack not installed"; \
+			exit 1; \
+		fi; \
+		echo "==> build WaveNav wasm pkg (required by host-sample)"; \
+		cd engine-wasm/engine && wasm-pack build --target web --out-dir ../pkg; \
+	fi
+	@echo "==> pnpm test:node"
+	@pnpm test:node
+	@echo "==> pnpm build:node"
+	@pnpm build:node
+	@echo "==> wml-server syntax"
+	@node --check wml-server/server.js
 
 # --- Git hooks (pre-commit) ---
 

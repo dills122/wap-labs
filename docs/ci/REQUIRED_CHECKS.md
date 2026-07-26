@@ -21,6 +21,7 @@ Configure the active `main` ruleset to require these exact GitHub Actions check 
 
 - `Detect Changed Areas`
 - `Repo Hygiene`
+- `WAP Compliance and Status Drift`
 - `Rust Engine`
 - `Rust Transport`
 - `WaveNav Host Sample Build`

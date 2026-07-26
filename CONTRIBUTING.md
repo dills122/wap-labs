@@ -72,17 +72,26 @@ cd engine-wasm/engine
 cargo test
 ```
 
-- Repo-wide CI-equivalent checks:
+- Canonical changed-path verification:
 
 ```bash
-make ci-local
+pnpm verify
 ```
 
-Node checks are disabled by default in `make` to avoid blocking environments without stable pnpm/corepack setup. Enable them explicitly when needed:
+- Strict deterministic offline verification before opening a PR:
 
 ```bash
-ENABLE_NODE_CHECKS=1 make ci-local
+pnpm verify:full
 ```
+
+The smaller `pnpm verify:fast` profile covers orchestration, whitespace, and version checks.
+`pnpm verify:extended` adds the explicit live Kannel gate and an advisory browser baseline; it is
+not part of ordinary offline verification. Selected required prerequisites never silently skip:
+the command reports `UNAVAILABLE PREREQUISITE` and exits nonzero with a remediation hint.
+
+See [Local Verification Contract](docs/ci/LOCAL_VERIFICATION.md) for path selection, exact outcome
+labels, Make aliases, and the local-versus-GitHub CI boundary. `make ci-local` is a deprecated
+compatibility alias that prints that boundary before running `make verify-full`.
 
 Pre-push node hooks are opt-in:
 
@@ -96,6 +105,8 @@ WAP_ENABLE_NODE_HOOKS=1 pre-commit run --all-files
 - `.githooks/pre-commit` runs `lint-staged` and `.githooks/pre-push` runs `.pre-commit-config.yaml` checks.
 - CI runs in GitHub Actions:
   - `.github/workflows/ci.yml` (required PR/push checks)
+    - complete WAP compliance and active status drift run in a path-aware job under the aggregate
+      required gate
   - `.github/workflows/transport-wap-smoke.yml` (manual WAP smoke against Kannel stack)
 - Branch protection required-check policy: `docs/ci/REQUIRED_CHECKS.md`
 - Some layer checks are intentionally disabled until those layers are bootstrapped:

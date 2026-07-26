@@ -13,6 +13,7 @@ This document describes all active GitHub Actions automation for this repository
 - Code scanning workflow: `.github/workflows/codeql.yml`
 - Pages deployment workflow: `.github/workflows/pages.yml`
 - Manual transport smoke workflow: `.github/workflows/transport-wap-smoke.yml`
+- Canonical local verification contract: `docs/ci/LOCAL_VERIFICATION.md`
 - Dependency updates: `.github/dependabot.yml`
 - Branch protection check policy: `docs/ci/REQUIRED_CHECKS.md`
 
@@ -39,6 +40,8 @@ Core behavior:
 - Requires a Dependabot-authored PR to use a repository-owned head branch before granting it
   full-matrix treatment.
 - Runs repository-wide hygiene checks and layer-specific Rust/Node checks.
+- Runs the complete compliance wrapper, including active requirement/status drift, when
+  compliance inputs or CI surfaces change and on full-matrix events.
 - Reports the stable aggregate check `CI Required Gate`.
 - Keeps PR validation read-only, does not persist checkout credentials for later build steps, and
   does not expose a write token or repository secrets to checked-out PR code.
@@ -53,6 +56,13 @@ Jobs:
   - Host-sample example manifest generation
   - Browser frontend typecheck contract drift guard
   - Transport contract parity script
+  - canonical verification selection/failure-propagation tests
+- `WAP Compliance and Status Drift`
+  - path-selected for active compliance docs, canonical manifests/generators, graph inputs, and
+    compliance/status scripts
+  - runs `pnpm wap-compliance:check`, including effective-spec determinism, selected-clause and
+    transport ledgers, active fact derivation, requirement/status drift, and graph drift
+  - participates in `CI Required Gate`; a selected failure cannot be accepted as a path skip
 - `Rust Engine`
   - verifies the engine and engine-fuzz lockfiles with `cargo metadata --locked`
   - `cargo fmt --check`
@@ -90,6 +100,10 @@ Jobs:
   - fails on failed/cancelled prerequisites
   - permits job-level path-filter skips only for ordinary pull requests
   - requires every validation job to succeed for Dependabot PRs and other full-CI events
+
+Local `fast`, `change`, `full`, and `extended` profiles are documented separately in
+`docs/ci/LOCAL_VERIFICATION.md`. They do not claim to reproduce GitHub-hosted coverage, security,
+or OS-specific jobs.
 
 Caching:
 
