@@ -98,6 +98,14 @@
         "dependsOn": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
         },
+        "profileCompletionGates": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/profileCompletionGate" }
+        },
+        "profileGateDependencies": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
         "goal": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
         },
@@ -110,6 +118,44 @@
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
         },
         "strictDifferentialGate": { "type": "boolean" }
+      }
+    },
+    "profileCompletionGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "profile",
+        "status",
+        "scope",
+        "satisfiedBy",
+        "conditionalFollowUps",
+        "acceptance",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+        },
+        "profile": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+        },
+        "status": { "const": "done" },
+        "scope": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "satisfiedBy": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "conditionalFollowUps": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "acceptance": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "evidence": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        }
       }
     },
     "workItem": {

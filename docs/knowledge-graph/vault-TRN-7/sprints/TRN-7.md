@@ -24,8 +24,7 @@ tags:
 - `contains` → [[work-items/TRN-706|TRN-706]]
 - `contains` → [[work-items/TRN-707|TRN-707]]
 - `contains` → [[work-items/TRN-708|TRN-708]]
-- `depends-on` ← [[sprints/INT-9|INT-9]]
-- `depends-on` ← [[sprints/WSP-8|WSP-8]]
+- `contains` → [[work-items/TRN-710|TRN-710]]
 - `depends-on` → [[sprints/CONF-1|CONF-1]]
 - `targets-profile` → [[profiles/CCR-CLASSC-C-001|CCR-CLASSC-C-001]]
 
@@ -40,6 +39,7 @@ tags:
   ],
   "exitGates": [
     "The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.",
+    "The completed TRN-7-CL-C profile gate allows selected connectionless WSP and downstream integration to proceed without waiting for dormant WTP work or claiming the non-IP general-WCMP capability.",
     "WTP evidence is required only when connection-oriented WSP is claimed.",
     "Timing tests are deterministic and do not require live networks.",
     "WAP 2.0 transport deltas are explicit."

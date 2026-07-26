@@ -57,6 +57,7 @@ const requiredFamilies = new Set(
 const failures = [];
 const sprintIds = new Set();
 const workItemIds = new Set();
+const profileGateIds = new Set();
 const coveredFamilies = new Set();
 
 if (program.schemaVersion !== 1) {
@@ -96,6 +97,32 @@ for (const sprint of program.sprints ?? []) {
   for (const dependency of sprint.dependsOn ?? []) {
     if (!sprintIds.has(dependency)) {
       failures.push(`${sprint.id}: dependency ${dependency} is missing or not earlier`);
+    }
+  }
+  for (const gate of sprint.profileCompletionGates ?? []) {
+    if (profileGateIds.has(gate.id)) {
+      failures.push(`duplicate profile completion gate ID: ${gate.id}`);
+    }
+    if (
+      !gate.id ||
+      !gate.profile ||
+      gate.status !== 'done' ||
+      !Array.isArray(gate.satisfiedBy) ||
+      gate.satisfiedBy.length === 0 ||
+      !Array.isArray(gate.acceptance) ||
+      gate.acceptance.length === 0 ||
+      !Array.isArray(gate.evidence) ||
+      gate.evidence.length === 0
+    ) {
+      failures.push(`${sprint.id}: invalid profile completion gate`);
+    }
+    profileGateIds.add(gate.id);
+  }
+  for (const dependency of sprint.profileGateDependencies ?? []) {
+    if (!profileGateIds.has(dependency)) {
+      failures.push(
+        `${sprint.id}: profile gate dependency ${dependency} is missing or not earlier`
+      );
     }
   }
   sprintIds.add(sprint.id);
@@ -418,6 +445,12 @@ const successorDeltaAudit = transportSprint?.workItems.find(
 const wcmpIpProfileCorrection = transportSprint?.workItems.find(
   (workItem) => workItem.id === 'TRN-708'
 );
+const wcmpClauseMappingFollowUp = transportSprint?.workItems.find(
+  (workItem) => workItem.id === 'TRN-710'
+);
+const connectionlessTransportGate = transportSprint?.profileCompletionGates?.find(
+  (gate) => gate.id === 'TRN-7-CL-C'
+);
 if (
   transportSprint?.status !== 'in-progress' ||
   wdpCore?.status !== 'done' ||
@@ -444,6 +477,10 @@ if (
   !wcmpCore?.acceptance?.some(
     (line) => line.includes('five general-WCMP') && line.includes('non-IP capability')
   ) ||
+  JSON.stringify(wcmpCore?.explicitUnmappedFamilies) !==
+    JSON.stringify(['wcmp']) ||
+  JSON.stringify(wcmpCore?.followUpWorkItems) !==
+    JSON.stringify(['TRN-710']) ||
   replayCorpus?.status !== 'in-progress' ||
   JSON.stringify(replayCorpus?.explicitUnmappedFamilies) !==
     JSON.stringify(['wtp']) ||
@@ -494,8 +531,42 @@ if (
   !wcmpIpProfileCorrection?.evidence?.includes(
     'node scripts/wap-context-pack.mjs TRN-708'
   ) ||
+  wcmpClauseMappingFollowUp?.status !== 'todo' ||
+  JSON.stringify(wcmpClauseMappingFollowUp?.dependsOn) !==
+    JSON.stringify(['TRN-703', 'T0-17']) ||
+  JSON.stringify(wcmpClauseMappingFollowUp?.explicitUnmappedFamilies) !==
+    JSON.stringify(['wcmp']) ||
+  !wcmpClauseMappingFollowUp?.notes?.some(
+    (line) =>
+      line.includes('Preserve completed TRN-703/T0-17') &&
+      line.includes('canonical history')
+  ) ||
+  !wcmpClauseMappingFollowUp?.notes?.some((line) =>
+    line.includes('generate-wap-selected-normative-clauses.mjs')
+  ) ||
+  connectionlessTransportGate?.status !== 'done' ||
+  connectionlessTransportGate?.profile !== 'class-c-data-client' ||
+  JSON.stringify(connectionlessTransportGate?.satisfiedBy) !==
+    JSON.stringify([
+      'TRN-701',
+      'TRN-702',
+      'TRN-708',
+      'TRN-706 selected WDP replay tranche',
+      'TRN-707 selected WDP/WCMP delta tranche'
+    ]) ||
+  JSON.stringify(connectionlessTransportGate?.conditionalFollowUps) !==
+    JSON.stringify(['TRN-704', 'TRN-705', 'TRN-706', 'TRN-707']) ||
+  !connectionlessTransportGate?.acceptance?.some(
+    (line) => line.includes('nine selected WDP rows') && line.includes('both selected')
+  ) ||
+  !connectionlessTransportGate?.acceptance?.some(
+    (line) => line.includes('does not activate WTP') && line.includes('connection-oriented WSP')
+  ) ||
   !transportSprint?.exitGates?.some((line) =>
     line.includes('only when connection-oriented WSP is claimed')
+  ) ||
+  !transportSprint?.exitGates?.some((line) =>
+    line.includes('TRN-7-CL-C') && line.includes('without waiting for dormant WTP')
   )
 ) {
   failures.push(
@@ -511,6 +582,9 @@ const wspPost = wspSprint?.workItems.find(
 );
 if (
   wspSprint?.status !== 'in-progress' ||
+  JSON.stringify(wspSprint?.dependsOn) !== JSON.stringify(['CONF-1', 'WAE-6']) ||
+  JSON.stringify(wspSprint?.profileGateDependencies) !==
+    JSON.stringify(['TRN-7-CL-C']) ||
   wspMatrix?.status !== 'in-progress' ||
   !wspMatrix?.outputs?.includes(
     'spec-processing/source-manifests/wap-1.2.1-wsp-scr.json'
@@ -529,6 +603,16 @@ if (
 ) {
   failures.push(
     'WSP-8 must retain the exact connectionless Class C path and WTP capability gate'
+  );
+}
+const integrationSprint = program.sprints.find((sprint) => sprint.id === 'INT-9');
+if (
+  integrationSprint?.dependsOn?.includes('TRN-7') ||
+  JSON.stringify(integrationSprint?.profileGateDependencies) !==
+    JSON.stringify(['TRN-7-CL-C'])
+) {
+  failures.push(
+    'INT-9 must use the selected connectionless transport gate without depending on dormant WTP closure'
   );
 }
 const wmlSprint = program.sprints.find((sprint) => sprint.id === 'WML-2');

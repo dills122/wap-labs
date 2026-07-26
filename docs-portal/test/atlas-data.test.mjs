@@ -101,6 +101,40 @@ test('invalid cross-record references fail with the owning record', () => {
   assertValidationFailure(data, /CONF-1\.dependsOn references unknown sprint UNKNOWN-SPRINT/);
 });
 
+test('profile completion gates require known profiles and conditional follow-ups', () => {
+  const unknownProfile = clone(baseline());
+  unknownProfile.program.sprints[7].profileCompletionGates[0].profile = 'unknown-profile';
+  assertValidationFailure(
+    unknownProfile,
+    /TRN-7-CL-C\.profile references unknown profile unknown-profile/
+  );
+
+  const unknownFollowUp = clone(baseline());
+  unknownFollowUp.program.sprints[7].profileCompletionGates[0].conditionalFollowUps = [
+    'UNKNOWN-WORK-ITEM'
+  ];
+  assertValidationFailure(
+    unknownFollowUp,
+    /TRN-7-CL-C\.conditionalFollowUps references unknown work item UNKNOWN-WORK-ITEM/
+  );
+});
+
+test('profile gate dependencies require an earlier declared gate', () => {
+  const unknownGate = clone(baseline());
+  unknownGate.program.sprints[8].profileGateDependencies = ['UNKNOWN-GATE'];
+  assertValidationFailure(
+    unknownGate,
+    /WSP-8\.profileGateDependencies references unknown profile gate UNKNOWN-GATE/
+  );
+
+  const laterGate = clone(baseline());
+  laterGate.program.sprints[0].profileGateDependencies = ['TRN-7-CL-C'];
+  assertValidationFailure(
+    laterGate,
+    /SRC-0\.profileGateDependencies must reference a gate declared on an earlier sprint: TRN-7-CL-C/
+  );
+});
+
 test('invalid cross-file source references fail before portal assembly', () => {
   const data = clone(baseline());
   data.effectiveSpec.families[0].documents[0].documentId = 'UNKNOWN-DOCUMENT';

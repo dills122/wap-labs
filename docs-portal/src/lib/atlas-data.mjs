@@ -107,7 +107,38 @@ function validateReferencesAndOrder(input, failures) {
     'compliance program work item',
     failures
   );
-  uniqueIndex(program.profiles, (profile) => profile.id, 'compliance profile', failures);
+  const profileIds = uniqueIndex(
+    program.profiles,
+    (profile) => profile.id,
+    'compliance profile',
+    failures
+  );
+  const profileCompletionGates = program.sprints.flatMap(
+    (sprint) => sprint.profileCompletionGates ?? []
+  );
+  const profileGateIds = uniqueIndex(
+    profileCompletionGates,
+    (gate) => gate.id,
+    'profile completion gate',
+    failures
+  );
+  const profileGatePosition = new Map();
+
+  for (const [index, sprint] of program.sprints.entries()) {
+    for (const gate of sprint.profileCompletionGates ?? []) {
+      if (!profileGatePosition.has(gate.id)) {
+        profileGatePosition.set(gate.id, index);
+      }
+      if (!profileIds.has(gate.profile)) {
+        failures.push(`${gate.id}.profile references unknown profile ${gate.profile}`);
+      }
+      for (const followUp of gate.conditionalFollowUps) {
+        if (!workItemIds.has(followUp)) {
+          failures.push(`${gate.id}.conditionalFollowUps references unknown work item ${followUp}`);
+        }
+      }
+    }
+  }
 
   for (const sprint of program.sprints) {
     requireSorted(
@@ -120,6 +151,17 @@ function validateReferencesAndOrder(input, failures) {
         failures.push(`${sprint.id}.dependsOn references unknown sprint ${dependency}`);
       } else if (sprintPosition.get(dependency) >= sprintPosition.get(sprint.id)) {
         failures.push(`${sprint.id}.dependsOn must reference an earlier sprint: ${dependency}`);
+      }
+    }
+    for (const dependency of sprint.profileGateDependencies ?? []) {
+      if (!profileGateIds.has(dependency)) {
+        failures.push(
+          `${sprint.id}.profileGateDependencies references unknown profile gate ${dependency}`
+        );
+      } else if (profileGatePosition.get(dependency) >= sprintPosition.get(sprint.id)) {
+        failures.push(
+          `${sprint.id}.profileGateDependencies must reference a gate declared on an earlier sprint: ${dependency}`
+        );
       }
     }
   }
