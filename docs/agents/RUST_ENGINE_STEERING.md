@@ -228,9 +228,13 @@ CI also enforces engine coverage through `cargo llvm-cov` with the current thres
 1. 90% line coverage
 2. 85% function coverage
 
-Optional/disabled gate (enable intentionally later):
+Required path-scoped gate in `.github/workflows/extended-quality.yml`:
 
 1. `cargo clippy --all-targets --all-features -- -D warnings`
+
+The primary coverage job in `.github/workflows/ci.yml` does not duplicate this command. The
+stable `Extended Quality Required Gate` aggregate selects the Clippy job whenever engine or
+extended-quality workflow paths change.
 
 Rustdoc lint escalation remains optional for later public-crate hardening.
 

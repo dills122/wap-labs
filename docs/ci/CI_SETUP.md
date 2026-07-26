@@ -5,6 +5,7 @@ This document describes all active GitHub Actions automation for this repository
 ## Quick Reference
 
 - Main validation workflow: `.github/workflows/ci.yml`
+- Extended deterministic quality workflow: `.github/workflows/extended-quality.yml`
 - Release branch preparation workflow: `.github/workflows/release-prepare.yml`
 - Milestone GitHub release workflow: `.github/workflows/milestone-release.yml`
 - Security workflow: `.github/workflows/security.yml`
@@ -96,7 +97,43 @@ Caching:
 - Rust build artifact cache (`Swatinem/rust-cache`)
 - `wasm-pack` binary cache (`actions/cache`)
 
-### 2) Security (`.github/workflows/security.yml`)
+### 2) Extended Quality (`.github/workflows/extended-quality.yml`)
+
+Purpose:
+
+- Required, path-scoped engine lint and rendered browser accessibility gates.
+- Scheduled and manually dispatchable advisory browser stability measurements.
+
+Triggers and classification:
+
+- `pull_request` and `push` to `main`
+  - `Required - Engine Clippy (path-scoped)` runs for engine or workflow changes and enforces
+    `cargo clippy --all-targets --all-features -- -D warnings` without warning suppression.
+  - `Required - Rendered Accessibility (path-scoped)` runs for browser frontend and its
+    engine/contract/build inputs. It preserves the deterministic unit accessibility test and adds
+    the production-built Chromium/axe rendered check.
+  - `Extended Quality Required Gate` is the stable required aggregate. It succeeds when selected
+    jobs pass and permits only intentional path-filter skips.
+- Weekly schedule (`17 7 * * 0`) and `workflow_dispatch`
+  - `Advisory - Browser Stability Baseline (scheduled/manual)` exercises startup, navigation,
+    input/render, layout, and keyboard behavior with `WAVES_BASELINE_RUNS` (20 by default; manual
+    runs accept 5 through 100).
+  - Deterministic behavior assertions can fail the advisory run. Recorded latency samples have no
+    pass/fail threshold until the project accepts a stable reference, so timing variability never
+    blocks a pull request.
+
+Prerequisites and artifacts:
+
+- Uses the repository Node 22 and pnpm lockfile, stable Rust, pinned `wasm-pack` 0.13.1, and the
+  Playwright-lockfile Chromium version.
+- Rendered accessibility failures upload JSON, screenshots, and Playwright traces when a page was
+  available. The dedicated failure artifact is retained for 14 days.
+- Baseline runs always attempt to upload the JSON and screenshots produced before completion for
+  14 days. These runtime outputs remain ignored local/generated evidence and are not committed.
+- All actions are pinned to full commit SHAs, permissions are read-only, and checkout credentials
+  are not persisted.
+
+### 3) Security (`.github/workflows/security.yml`)
 
 Purpose:
 
@@ -130,7 +167,7 @@ Caching:
 - pnpm cache for workspace audit
 - npm cache for `wml-server` audit
 
-### 3) Release Prepare (`.github/workflows/release-prepare.yml`)
+### 4) Release Prepare (`.github/workflows/release-prepare.yml`)
 
 Purpose:
 
@@ -148,7 +185,7 @@ Behavior:
 - commits the release version bump only if needed
 - pushes a new `release/vX.Y.Z` branch and fails if it already exists
 
-### 4) Milestone Release (`.github/workflows/milestone-release.yml`)
+### 5) Milestone Release (`.github/workflows/milestone-release.yml`)
 
 Purpose:
 
@@ -166,7 +203,7 @@ Behavior:
 - creates an annotated `vX.Y.Z` tag
 - publishes a GitHub release with downloadable source and site-bundle assets
 
-### 5) CodeQL (`.github/workflows/codeql.yml`)
+### 6) CodeQL (`.github/workflows/codeql.yml`)
 
 Purpose:
 
@@ -200,7 +237,7 @@ Config:
   - includes core source paths: `browser`, `engine-wasm`, `transport-rust`, `wml-server`, `scripts`
   - excludes generated/build paths such as `target`, `dist`, `node_modules`, `engine-wasm/pkg`, and generated browser contracts
 
-### 6) Deploy Pages (`.github/workflows/pages.yml`)
+### 7) Deploy Pages (`.github/workflows/pages.yml`)
 
 Purpose:
 
@@ -225,7 +262,7 @@ Behavior:
 - assembles the three applications under `/`, `/simulator/`, and `/atlas/`
 - deploys to `gh-pages` branch with `peaceiris/actions-gh-pages`
 
-### 7) Transport WAP Smoke (`.github/workflows/transport-wap-smoke.yml`)
+### 8) Transport WAP Smoke (`.github/workflows/transport-wap-smoke.yml`)
 
 Purpose:
 
@@ -329,6 +366,7 @@ For immutable release branches, use `docs/ci/RELEASE_BRANCH_RULESET.md` as the s
 At minimum, require:
 
 - `CI Required Gate` from `ci.yml`
+- `Extended Quality Required Gate` from `extended-quality.yml`
 - Security jobs from `security.yml`
 - CodeQL matrix checks from `codeql.yml`
 
