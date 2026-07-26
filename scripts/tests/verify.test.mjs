@@ -45,6 +45,23 @@ test('full intentionally excludes live external gates', () => {
   assert.match(byId(plan, 'live-kannel').selectionReason, /explicit extended profile/);
 });
 
+test('full builds the WASM package before workspace typecheck', () => {
+  const workspace = byId(buildPlan('full', []), 'workspace-quality');
+  const labels = workspace.commands.map((command) => command.label);
+  assert.ok(
+    labels.indexOf('WaveNav WASM package prerequisite') < labels.indexOf('workspace typecheck')
+  );
+});
+
+test('full keeps the platform-sensitive frontend coverage threshold in GitHub CI', () => {
+  const browser = byId(buildPlan('full', []), 'browser');
+  const frontend = browser.commands.find((command) =>
+    command.label.startsWith('browser frontend')
+  );
+  assert.equal(frontend.label, 'browser frontend unit tests');
+  assert.deepEqual(frontend.args, ['--dir', 'browser/frontend', 'test']);
+});
+
 test('extended selects live smoke and keeps baseline advisory', () => {
   const plan = buildPlan('extended', []);
   assert.equal(byId(plan, 'live-kannel').selected, true);

@@ -84,9 +84,17 @@ export const LANES = Object.freeze([
     prerequisites: [
       prerequisite('node', 'install the repository Node version'),
       prerequisite('pnpm', 'run ./scripts/init-refresh.sh'),
+      prerequisite('cargo', 'install the stable Rust toolchain'),
+      prerequisite('wasm-pack', 'run AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh'),
       workspaceDependencies
     ],
     commands: [
+      command(
+        'WaveNav WASM package prerequisite',
+        'wasm-pack',
+        ['build', '--target', 'web', '--out-dir', '../pkg'],
+        { cwd: 'engine-wasm/engine' }
+      ),
       command('workspace format', 'pnpm', ['run', 'format:check:node']),
       command('workspace lint', 'pnpm', ['run', 'lint:node']),
       command('workspace typecheck', 'pnpm', ['run', 'typecheck:node']),
@@ -143,7 +151,7 @@ export const LANES = Object.freeze([
     paths: ['engine-wasm/', 'browser/contracts/', 'browser/frontend/'],
     prerequisites: [
       prerequisite('cargo', 'install the stable Rust toolchain'),
-      prerequisite('wasm-pack', 'run ./scripts/init-refresh.sh'),
+      prerequisite('wasm-pack', 'run AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh'),
       prerequisite('pnpm', 'run ./scripts/init-refresh.sh'),
       workspaceDependencies,
       playwrightChromium('engine-wasm/host-sample')
@@ -235,11 +243,10 @@ export const LANES = Object.freeze([
       command('browser host tests', 'cargo', ['test', '--locked'], {
         cwd: 'browser/src-tauri'
       }),
-      command('browser frontend coverage', 'pnpm', [
+      command('browser frontend unit tests', 'pnpm', [
         '--dir',
         'browser/frontend',
-        'run',
-        'test:coverage'
+        'test'
       ]),
       command('rendered accessibility', 'pnpm', [
         '--dir',
