@@ -117,18 +117,19 @@ The first browser keyboard pass directly exposed global `Enter` interception on 
 The routing fix now leaves buttons, inputs, selects, summaries, links, and editable host content to
 their native behavior while the focused handset viewport continues to route engine keys.
 
-## Safe Follow-on Integration Seams
+## Phase 1 Integration Seams (Historical)
 
 The `#343` decomposition remains authoritative. `WBP-02` through `WBP-04` landed in `#344`, `#346`,
-and `#347` while this integration gate was in progress; their rows therefore document the
-maintenance seams they used, while `WBP-05` remains the available follow-on seam:
+and `#347` while this integration gate was in progress; `WBP-05` then landed in `#356` before the
+final `#348` integration merge. These rows preserve the maintenance seams used by the completed
+Phase 1 slices; they are no longer next-work pointers:
 
 | Slice    | Safe leaf seam                                                                         | Integration constraint                                                                                                                                    |
 | -------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `WBP-02` | `app/shell/handset-stage-template.ts` plus scoped component styles/tokens              | Do not change 20 logical columns or infer frame, softkey, or hit-region semantics. Root `styles.css` integration remains single-owner.                    |
 | `WBP-03` | `app/shell/navigation-toolbar-template.ts` and browser-owned controller callbacks      | Preserve `ShellEventBindingActions`, current navigation ordering, Local/Network behavior, and transport truthfulness.                                     |
 | `WBP-04` | new start/help leaf templates and distinct `engine-wasm/examples/source/*` story files | Root-shell insertion, `waves-copy.ts`, and generated example-manifest updates require the integration owner. Tutorial decks use the ordinary engine path. |
-| `WBP-05` | landmark/ARIA/focus changes within existing leaf templates and scoped tests            | Reuse native-control keyboard behavior. Do not create a DOM interpretation of WML or add future engine action semantics.                                  |
+| `WBP-05` | landmark/ARIA/focus changes within existing leaf templates and scoped tests            | Reuse native-control keyboard behavior. Do not create a DOM interpretation of WML or add future engine action semantics. The additive `WBP-05A` follow-up owns the single-announcement and rendered-evidence gap found at the Phase 1 checkpoint. |
 
 The root `browser-shell-template.ts`, global `styles.css`, `waves-copy.ts`, and generated example
 manifest are high-conflict integration surfaces. The phase slot remains the reserved browser-owned

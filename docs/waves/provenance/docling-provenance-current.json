@@ -1,0 +1,506 @@
+{
+  "schemaVersion": 2,
+  "generatedBy": "spec-processing/scripts/generate-docling-provenance.mjs",
+  "generatedNotice": "DO NOT EDIT: regenerate with the generatedBy command.",
+  "snapshot": {
+    "id": "docling-cleaned-current-v1-2026-07-25",
+    "status": "current",
+    "recordedOn": "2026-07-25",
+    "sourceRoot": "spec-processing/source-material",
+    "cleanedRoot": "spec-processing/source-material/parsed-markdown/docling-cleaned",
+    "policyPath": "spec-processing/docling-provenance-policy.json",
+    "policySha256": "42e23e8fdc3f08bc12bf99564d0cb00073f35ce2bf61d8c420272380b54c2ed2",
+    "recordCount": 52,
+    "inventorySha256": "9e266c589c2f8d3820b6d2d29bb23a9efc2bfdd364f4b691637b5c297abb4d3f",
+    "docling": {
+      "requiredVersion": "2.114.0",
+      "requirementsPath": "spec-processing/requirements-docling.txt",
+      "requirementsSha256": "4c4f8db566ae16403f3a69b8be3ebbba515d9275d8ad2b1821bb985c5ee2e81e",
+      "profileId": "docling:dlparse_v4,no-ocr,image-placeholder",
+      "profilePath": "spec-processing/scripts/docling-profile.fish",
+      "profileSha256": "f8bcbcedfbac1500a38a1c52094787d9b658de4a234f80c7885160588ca8562c",
+      "flags": [
+        "--from",
+        "pdf",
+        "--to",
+        "md",
+        "--image-export-mode",
+        "placeholder",
+        "--no-ocr",
+        "--no-force-ocr",
+        "--pdf-backend",
+        "dlparse_v4"
+      ]
+    }
+  },
+  "records": [
+    {
+      "sourcePdfPath": "spec-processing/source-material/OMA-WAP-211_105-WAPCert-SIN-20020520-a.pdf",
+      "sourcePdfSha256": "2909c0b54d03835b03f3b9d4a6e42947de5f20468c8976395d2062f069e6cdc8",
+      "sourcePdfBytes": 35829,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-211_105-WAPCert-SIN-20020520-a.cleaned.md",
+      "cleanedMarkdownSha256": "683b02044745c6733f578b17f6acb55d039fde71d4cddfceac83102b481f0266",
+      "cleanedMarkdownBytes": 6647,
+      "cleanedMarkdownLines": 83
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/OMA-WAP-217_105-WPKI-SIN-20020816-a.pdf",
+      "sourcePdfSha256": "42d636e83dd767b41aa97a7416ccd760f9a9109a4b23ffcbdae9d2a323820c8b",
+      "sourcePdfBytes": 35412,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-217_105-WPKI-SIN-20020816-a.cleaned.md",
+      "cleanedMarkdownSha256": "bad6d85493e4f72fe1e8ce949bf395f935fd6b272896eb837b92af6f160b2ad5",
+      "cleanedMarkdownBytes": 4986,
+      "cleanedMarkdownLines": 70
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/OMA-WAP-224_002-WTP-SIN-20020827-a.PDF",
+      "sourcePdfSha256": "411c1d6f78b4a55521ad2df7fc18c54996904bd8b9ea91aa44794efd3535b94f",
+      "sourcePdfBytes": 38688,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-224_002-WTP-SIN-20020827-a.cleaned.md",
+      "cleanedMarkdownSha256": "1a5ddcd63a3fd0efb54381c568f3d170cdae67091f6fde9942c4f39fb8681299",
+      "cleanedMarkdownBytes": 6234,
+      "cleanedMarkdownLines": 105
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/OMA-WAP-260_100-WIM-SIN-20010725-a.pdf",
+      "sourcePdfSha256": "9c414640a38d8ffc509510c1a3b98cd63522a5d1bd16379b4aaa69e2abe42ae5",
+      "sourcePdfBytes": 67405,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-260_100-WIM-SIN-20010725-a.cleaned.md",
+      "cleanedMarkdownSha256": "bd53e07a8d5689b92effe48b735c4209ca5ce85894336f6dc0ebcbb8cec564f0",
+      "cleanedMarkdownBytes": 37526,
+      "cleanedMarkdownLines": 272
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/OMA-WAP-260_101-WIM-SIN-20020107-a.pdf",
+      "sourcePdfSha256": "e83cad737f412210aa78d062b98fa30f728b2fe3798d32e749028de8b68ca33c",
+      "sourcePdfBytes": 38031,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-260_101-WIM-SIN-20020107-a.cleaned.md",
+      "cleanedMarkdownSha256": "0a7ad7c8099f8a206aec691077b6874ab37c77a8e9bfa2d1728b178ccb068c33",
+      "cleanedMarkdownBytes": 7927,
+      "cleanedMarkdownLines": 102
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/OMA-WAP-TS-WSP-V1_0-20020920-C.pdf",
+      "sourcePdfSha256": "38eab2c90aa4994623550471dcb93a258d3b77507e25a40e4ad6ea7c0c7675a3",
+      "sourcePdfBytes": 1123303,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/OMA-WAP-TS-WSP-V1_0-20020920-C.cleaned.md",
+      "cleanedMarkdownSha256": "34cf8a0a8718c19946687cefbcd8dcd9e792d41c5814ef647b41e7694db68566",
+      "cleanedMarkdownBytes": 413629,
+      "cleanedMarkdownLines": 4044
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-159-WDPWCMPAdapt-20010713-a.pdf",
+      "sourcePdfSha256": "dbce0885ef85163751679bfb4fe7e28df3e95cbd45a713babe597a44a18ad7a0",
+      "sourcePdfBytes": 94211,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-159-WDPWCMPAdapt-20010713-a.cleaned.md",
+      "cleanedMarkdownSha256": "f66aa3e9725d44472d210a5a6525cede4b5666633bec51ab90ac660165c517d4",
+      "cleanedMarkdownBytes": 60667,
+      "cleanedMarkdownLines": 659
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-161-WMLScriptCrypto-20010620-a.pdf",
+      "sourcePdfSha256": "79cf826c90499c6835b93394e73364c2b0c57aad72cd9dcc003f4b7a69c68bf7",
+      "sourcePdfBytes": 74653,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-161-WMLScriptCrypto-20010620-a.cleaned.md",
+      "cleanedMarkdownSha256": "695cca4a873928d889ce49082c6b143ec5b8d483cba85a2f716ebb81a56815d7",
+      "cleanedMarkdownBytes": 40466,
+      "cleanedMarkdownLines": 558
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-161_101-WMLScriptCrypto-20010730-a.pdf",
+      "sourcePdfSha256": "894d3efd1859887160e908fa5459fbc3f44a3b56c9dba57783429a5223b8d0be",
+      "sourcePdfBytes": 32515,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-161_101-WMLScriptCrypto-20010730-a.cleaned.md",
+      "cleanedMarkdownSha256": "b138c9766dbc7c07a56b27555e9b28a895485e894187a6ccefa7488824e2f6f0",
+      "cleanedMarkdownBytes": 7363,
+      "cleanedMarkdownLines": 131
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-187-TransportE2ESec-20010628-a.pdf",
+      "sourcePdfSha256": "351ba1b4af1778642a345aa9fe64b044c1edc8134564d0732c241d0026491f1b",
+      "sourcePdfBytes": 86998,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-187-TransportE2ESec-20010628-a.cleaned.md",
+      "cleanedMarkdownSha256": "c6005ae92b272bd9d8dd0a84bbf0ed60940f9147cd3a07ce876c1e94c3364b02",
+      "cleanedMarkdownBytes": 45101,
+      "cleanedMarkdownLines": 534
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-187_101-TransportE2ESec-20011009-a.pdf",
+      "sourcePdfSha256": "cf94908ce9659982d286500d6f1145473763376596db1fcbc5fdf97468f8d8d2",
+      "sourcePdfBytes": 29555,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-187_101-TransportE2ESec-20011009-a.cleaned.md",
+      "cleanedMarkdownSha256": "93c4437103fea770d646a20bc9b47fbcbb391058353d9a074922298f89f4f7f1",
+      "cleanedMarkdownBytes": 3110,
+      "cleanedMarkdownLines": 49
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-188-WAPGenFormats-20010710-a.pdf",
+      "sourcePdfSha256": "3022c1a842191981cde92448ce8dc45eae4c3a9782f94fbee3befc2146375599",
+      "sourcePdfBytes": 32627,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-188-WAPGenFormats-20010710-a.cleaned.md",
+      "cleanedMarkdownSha256": "410f66b19ae4460cea88752f94cb479ee9a13027e1eea5bdaedb5b13cbc630aa",
+      "cleanedMarkdownBytes": 9148,
+      "cleanedMarkdownLines": 131
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-191-WML-20000219-a.pdf",
+      "sourcePdfSha256": "4b1301be200bf7d06020f78f05ac2ae7056f00c30a741a62f73d9b6ab867ae9c",
+      "sourcePdfBytes": 543004,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191-WML-20000219-a.cleaned.md",
+      "cleanedMarkdownSha256": "a2aa79b5a6b66b44848c8584a3023a9085864cedb99516a4ebfa41632b59d6d7",
+      "cleanedMarkdownBytes": 184118,
+      "cleanedMarkdownLines": 3006
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-191_102-WML-20001213-a.pdf",
+      "sourcePdfSha256": "4900fd9f728a3f3d6d698b06398c29e2861f5fd774dd8478553aadedc9721011",
+      "sourcePdfBytes": 20185,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191_102-WML-20001213-a.cleaned.md",
+      "cleanedMarkdownSha256": "ecfe387a96502323d14122ffa43adec476cbba8fbc249a8079137afa5da79fc3",
+      "cleanedMarkdownBytes": 6692,
+      "cleanedMarkdownLines": 77
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-191_104-WML-20010718-a.pdf",
+      "sourcePdfSha256": "4c4a616f14204556045b9cbcebfdbc9a2408ae843e047b0730382abfbc8493f0",
+      "sourcePdfBytes": 303180,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191_104-WML-20010718-a.cleaned.md",
+      "cleanedMarkdownSha256": "47d886214a299496a3dcacf56abf5067893b5729bd4a1c8d8c133583429beeb0",
+      "cleanedMarkdownBytes": 191644,
+      "cleanedMarkdownLines": 2953
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-191_105-WML-20020212-a.pdf",
+      "sourcePdfSha256": "3d803628d1cc67a6e08ce4e0d1f6e82f44651eb3a1bfa5160d7f98206bea4cc3",
+      "sourcePdfBytes": 47283,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-191_105-WML-20020212-a.cleaned.md",
+      "cleanedMarkdownSha256": "45fbc5c407316f2d9577c8ed3dfca1e521dde0304c3beb7b624f669e912300a8",
+      "cleanedMarkdownBytes": 13294,
+      "cleanedMarkdownLines": 173
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-192-WBXML-20010725-a.pdf",
+      "sourcePdfSha256": "a6312060b4488680b1f56858b350bc97021c314fa315ca20e25a33521a4df92b",
+      "sourcePdfBytes": 107898,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-192-WBXML-20010725-a.cleaned.md",
+      "cleanedMarkdownSha256": "20a2e3812ea189d44663c47100fd0f9a5609273cee7745ff6c4de9b3f6352476",
+      "cleanedMarkdownBytes": 54747,
+      "cleanedMarkdownLines": 758
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-192_105-WBXML-20011015-a.pdf",
+      "sourcePdfSha256": "e4c0bc05a51e27697d07a4d46f710b4daabdc7039950aa472b1d7de0e080ca98",
+      "sourcePdfBytes": 42513,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-192_105-WBXML-20011015-a.cleaned.md",
+      "cleanedMarkdownSha256": "46144532bb37732c0e5ca260c45839a8755ac6994fd478ed5f609f085c4bbb00",
+      "cleanedMarkdownBytes": 9611,
+      "cleanedMarkdownLines": 137
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-193-WMLScript-20001025-a.pdf",
+      "sourcePdfSha256": "7ace9baac33f0e648642ff539deaf234331adc95e1525e1c8f66ff88fb9c876a",
+      "sourcePdfBytes": 395176,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193-WMLScript-20001025-a.cleaned.md",
+      "cleanedMarkdownSha256": "1625d5c497d58d0d205f4f3c4d90fdb4811b1480a04121f17f7942bf9e186257",
+      "cleanedMarkdownBytes": 227846,
+      "cleanedMarkdownLines": 6018
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-193_101-WMLScript-20010928-a.pdf",
+      "sourcePdfSha256": "ea1535b36e49f80ac4ad80de3efe985c5af94068121afc4cfebe0528dd389ea0",
+      "sourcePdfBytes": 399416,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-193_101-WMLScript-20010928-a.cleaned.md",
+      "cleanedMarkdownSha256": "c8e0bba199fd9fade7ec3664ff998f7fdba89b8e86bb33cb638a8ead4a19d4cf",
+      "cleanedMarkdownBytes": 248281,
+      "cleanedMarkdownLines": 6105
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-194-WMLScriptLibraries-20000925-a.pdf",
+      "sourcePdfSha256": "cf8ced8446a62fbc958a0beed5097aa3a0a41a864abcdfee86e7ad4f5c3d5680",
+      "sourcePdfBytes": 182952,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-194-WMLScriptLibraries-20000925-a.cleaned.md",
+      "cleanedMarkdownSha256": "c45eb3594b108521a66ada22bc40f2d142b7f75a4b56518d08ea5d0d97f89ef8",
+      "cleanedMarkdownBytes": 88457,
+      "cleanedMarkdownLines": 2250
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-194_103-WMLScriptLibraries-20020318-a.pdf",
+      "sourcePdfSha256": "7716dbaf7289a1335e9c46a21d0ce209be711f9917f946ca88fab17f1e6a446c",
+      "sourcePdfBytes": 29777,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-194_103-WMLScriptLibraries-20020318-a.cleaned.md",
+      "cleanedMarkdownSha256": "4dc6e473ca181d8cadd0f7243042decf6e321a3253a8caa62989078ee08a2c3b",
+      "cleanedMarkdownBytes": 3359,
+      "cleanedMarkdownLines": 53
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-196-ClientID-20010409-a.pdf",
+      "sourcePdfSha256": "362d72a4179eab5723c8957d63a8efa1a7117d912afa63b837bb3af2d7be3551",
+      "sourcePdfBytes": 45063,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-196-ClientID-20010409-a.cleaned.md",
+      "cleanedMarkdownSha256": "01e6273ef36012d9f2bc8bc74eb66dfdd9ffff800eb9928d3c4d4b136a0e33fb",
+      "cleanedMarkdownBytes": 21348,
+      "cleanedMarkdownLines": 200
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-199-WTLS-20000218-a.pdf",
+      "sourcePdfSha256": "f15f2a243d6a1d7f89bc279679ca31a6b1599b2c490dcf12a0c02e4d30e6675c",
+      "sourcePdfBytes": 273967,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-199-WTLS-20000218-a.cleaned.md",
+      "cleanedMarkdownSha256": "37a8982d7e84971024d6a21429fb1c9f16eefdbea8ad1bf18014007d73380d71",
+      "cleanedMarkdownBytes": 345494,
+      "cleanedMarkdownLines": 2750
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-202-WCMP-20010624-a.pdf",
+      "sourcePdfSha256": "2bfb16eaee4c03d27fd9755cc9a49c3f20b2ca309de79a83ce7ab1b6af70b6b2",
+      "sourcePdfBytes": 103696,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-202-WCMP-20010624-a.cleaned.md",
+      "cleanedMarkdownSha256": "ce245cfe1bfd920b50b986e8636ed731b5e54a8c74b10787844a3186db5e805f",
+      "cleanedMarkdownBytes": 86584,
+      "cleanedMarkdownLines": 786
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-210-WAPArch-20010712-a.pdf",
+      "sourcePdfSha256": "89d6f7eccba900de74621eec08efc94199e29882cc8d8045409a023293a8b01b",
+      "sourcePdfBytes": 640213,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-210-WAPArch-20010712-a.cleaned.md",
+      "cleanedMarkdownSha256": "72f1b44ddf90251800cc586c19f5380f9cdb578eb55814347a7c27057d1d3f95",
+      "cleanedMarkdownBytes": 69981,
+      "cleanedMarkdownLines": 582
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-211-WAPCert-20010522-a.pdf",
+      "sourcePdfSha256": "007ff25ffbde19d2284b9a5a9ea8014541cab8ce2c52b39beb85374ebf13635a",
+      "sourcePdfBytes": 103751,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-211-WAPCert-20010522-a.cleaned.md",
+      "cleanedMarkdownSha256": "a4834c16fe635b02208d8694cf8abdfd0dd0666628812c8c0f06558e8af4a302",
+      "cleanedMarkdownBytes": 79590,
+      "cleanedMarkdownLines": 617
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-211_104-WAPCert-20010928-a.pdf",
+      "sourcePdfSha256": "cc50172443791f1a1fbbaf5d626236ef1066970b0183a71d1433b482cbb2dc05",
+      "sourcePdfBytes": 46040,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-211_104-WAPCert-20010928-a.cleaned.md",
+      "cleanedMarkdownSha256": "d8e915869b424ffa15696729769fe79e5926729bbb5b0b2a37a9cfdc8f715f53",
+      "cleanedMarkdownBytes": 19534,
+      "cleanedMarkdownLines": 133
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-217-WPKI-20010424-a.pdf",
+      "sourcePdfSha256": "62ec9c3c2fb639f9e5eddb63c938217da09b52804d0574aa525016265fd5d100",
+      "sourcePdfBytes": 154633,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-217-WPKI-20010424-a.cleaned.md",
+      "cleanedMarkdownSha256": "04a6dd6ae7775e34c912cbd05fcbf7d3a2f4871a0d93ec8297134b52d13ca7cd",
+      "cleanedMarkdownBytes": 106535,
+      "cleanedMarkdownLines": 1098
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-217_103-WPKI-20011102-a.pdf",
+      "sourcePdfSha256": "0d037a4c6528bb57dbb3aae980d42dd9c7695ca9ce6730e0d8fad31ac5af9302",
+      "sourcePdfBytes": 51646,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-217_103-WPKI-20011102-a.cleaned.md",
+      "cleanedMarkdownSha256": "349169f0cd5f5d2e7862a7c62d2941a134c5793cf7a168791335542f85b36f3b",
+      "cleanedMarkdownBytes": 16953,
+      "cleanedMarkdownLines": 186
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-219-TLS-20010411-a.pdf",
+      "sourcePdfSha256": "f0d933f2a1d822f7c3473a7295c6aeac458e122af9dcf2c1f65c44bfee42af46",
+      "sourcePdfBytes": 90156,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-219-TLS-20010411-a.cleaned.md",
+      "cleanedMarkdownSha256": "a6b92470f6a6c568aea7fd4f5c32aafeb2ebecaa56d69c90adb1f199c62c11a3",
+      "cleanedMarkdownBytes": 22824,
+      "cleanedMarkdownLines": 295
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-219_100-TLS-20011029-a.pdf",
+      "sourcePdfSha256": "91f220c88103c348473e657950fe315c3cb11e9e3f55b556c8d0882a3f22b63b",
+      "sourcePdfBytes": 43017,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-219_100-TLS-20011029-a.cleaned.md",
+      "cleanedMarkdownSha256": "ed1bfc7a040b28976734fdafdae0f7ab28960b91f6f09d50cc4e4f79c959d8c9",
+      "cleanedMarkdownBytes": 10978,
+      "cleanedMarkdownLines": 130
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-223-HTTPSM-20001213-a.pdf",
+      "sourcePdfSha256": "49f7681f6c39c0c899d4bafa435c5db7d6d5e67a577dd86e1c32b49cd89ad4a8",
+      "sourcePdfBytes": 69044,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-223-HTTPSM-20001213-a.cleaned.md",
+      "cleanedMarkdownSha256": "b8a01f3c70cb67c1276fee8eb94d0bf417dd9ebf751a61c845cd55e8938b5a63",
+      "cleanedMarkdownBytes": 28968,
+      "cleanedMarkdownLines": 288
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-223_101-HTTPSM-20010928-a.pdf",
+      "sourcePdfSha256": "ff29172fe17d461030449d72442d198598373b94a8b1b78f45fba9e4394cac18",
+      "sourcePdfBytes": 61434,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-223_101-HTTPSM-20010928-a.cleaned.md",
+      "cleanedMarkdownSha256": "894e3ed3063b2417212cda24bf815aa2ef1044093b965cf09f03e53a1a48c869",
+      "cleanedMarkdownBytes": 28501,
+      "cleanedMarkdownLines": 295
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-224-WTP-20010710-a.pdf",
+      "sourcePdfSha256": "015a91190e8a4f4ebd02e3c75979f31c6ed3c605bfc3a3d230da9ce0f083f42b",
+      "sourcePdfBytes": 286794,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-224-WTP-20010710-a.cleaned.md",
+      "cleanedMarkdownSha256": "79e33c0e2e3180618738606b1361cc8b1b306ee3e9d746d45bf7e1ae0994caaf",
+      "cleanedMarkdownBytes": 295208,
+      "cleanedMarkdownLines": 2481
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-225-TCP-20010331-a.pdf",
+      "sourcePdfSha256": "188db23a7726038be2ba3afb79613bb3cdb27617a6cb4522fc1a18331de08d91",
+      "sourcePdfBytes": 91559,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-225-TCP-20010331-a.cleaned.md",
+      "cleanedMarkdownSha256": "e7ffed24675c50c9f74acf00926f4ad0743ce3ac1d8e1a5c074e454585ccd744",
+      "cleanedMarkdownBytes": 26771,
+      "cleanedMarkdownLines": 341
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-229-HTTP-20010329-a.pdf",
+      "sourcePdfSha256": "d34307bb76de7efce3e2c10577b2bf4487efd7f50dde599767bd1d9698d1a0a3",
+      "sourcePdfBytes": 57496,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-229-HTTP-20010329-a.cleaned.md",
+      "cleanedMarkdownSha256": "0a5ca6bb88de7158d0b21d86818452fed13ef313bdc2ed2d883f31df6061376f",
+      "cleanedMarkdownBytes": 22613,
+      "cleanedMarkdownLines": 336
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-229_001-HTTP-20011031-a.pdf",
+      "sourcePdfSha256": "5ac8008a3338099fca314a3312efb6c002bfe151e5178054008a44cf9fb8fbd6",
+      "sourcePdfBytes": 45463,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-229_001-HTTP-20011031-a.cleaned.md",
+      "cleanedMarkdownSha256": "ffd6912451cdc84a204247fda26fcfc47ce6e0541ccecb44609facca46c6d659",
+      "cleanedMarkdownBytes": 14652,
+      "cleanedMarkdownLines": 130
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-230-WSP-20010705-a.pdf",
+      "sourcePdfSha256": "d01fe22e48a17f156e15d45551a2b622012651f10b08ebee572a66a0ea45c355",
+      "sourcePdfBytes": 602580,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-230-WSP-20010705-a.cleaned.md",
+      "cleanedMarkdownSha256": "5ff75efc8d7af2af35327da102f31e5ec646f8fa2892b89032bca80eb8065a68",
+      "cleanedMarkdownBytes": 347740,
+      "cleanedMarkdownLines": 3864
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-236-WAESpec-20020207-a.pdf",
+      "sourcePdfSha256": "4e87f8028613ea3cfa19cea0c2244fd502e50b896e6440c297b14e016ae04adf",
+      "sourcePdfBytes": 224590,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-236-WAESpec-20020207-a.cleaned.md",
+      "cleanedMarkdownSha256": "1ba612c5dcfd5fa4aa6f4e4287bae8dab60544bd05f7ec4ba08309b7b4922109",
+      "cleanedMarkdownBytes": 139432,
+      "cleanedMarkdownLines": 1515
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-237-WAEMT-20010515-a.pdf",
+      "sourcePdfSha256": "02ffa7d27a8f369cbeddbd51ccd3a13ce851aff8d53eafa8da993b0a28bc87d8",
+      "sourcePdfBytes": 57885,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-237-WAEMT-20010515-a.cleaned.md",
+      "cleanedMarkdownSha256": "644e4b1aec3d3e73abe01a8cf0d7f7a8e87738b909a8028d68f0595243598a90",
+      "cleanedMarkdownBytes": 19834,
+      "cleanedMarkdownLines": 334
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-238-WML-20010911-a.pdf",
+      "sourcePdfSha256": "395ffca45177f50e9b37d2810a4dfc71d35916c75d89efb4d564927cddab7104",
+      "sourcePdfBytes": 398807,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-238-WML-20010911-a.cleaned.md",
+      "cleanedMarkdownSha256": "050e0888ea66000fc4489cc75e00483e1d89f220a14f2e08d8a2817c46f33134",
+      "cleanedMarkdownBytes": 220247,
+      "cleanedMarkdownLines": 1994
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-248-UAProf-20011020-a.pdf",
+      "sourcePdfSha256": "26ab5db2ec3833fd85043e58001a23b545fb6959d54b95b725122ced0b0a40d8",
+      "sourcePdfBytes": 309969,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-248-UAProf-20011020-a.cleaned.md",
+      "cleanedMarkdownSha256": "1e5ea8e86f61eb116efc3009047e415c07361c014ff6e2dfa7c1eba2fef75735",
+      "cleanedMarkdownBytes": 217104,
+      "cleanedMarkdownLines": 1786
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-259-WDP-20010614-a.pdf",
+      "sourcePdfSha256": "73dab5af5a1afb4ec320788e19ef04bfd4f1897dfcc8aa8c74eed7e304b58f3e",
+      "sourcePdfBytes": 748031,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-259-WDP-20010614-a.cleaned.md",
+      "cleanedMarkdownSha256": "c65baa681fdfacac0c1624f53fc85de18e280f28c9f9f4e70e04924d39b4ee21",
+      "cleanedMarkdownBytes": 247563,
+      "cleanedMarkdownLines": 2031
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-260-WIM-20010712-a.pdf",
+      "sourcePdfSha256": "8556935082e194769fa845cd969e80fe62c8bcae1bb7b8f0678a167a2e5cb224",
+      "sourcePdfBytes": 343667,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-260-WIM-20010712-a.cleaned.md",
+      "cleanedMarkdownSha256": "73382556a5c75d21a5fbb2b6928c372960b7b280a3cea891d454f97754c15475",
+      "cleanedMarkdownBytes": 230904,
+      "cleanedMarkdownLines": 3200
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-261-WTLS-20010406-a.pdf",
+      "sourcePdfSha256": "527417389494e3a0313b77e36c4ce02cf79be666cce9fcc910233849f2daf260",
+      "sourcePdfBytes": 353163,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-261-WTLS-20010406-a.cleaned.md",
+      "cleanedMarkdownSha256": "8ac6aaef1b0dfdba232f96bf1aa80e94ff970dfff2497b01752c74b456f4b22c",
+      "cleanedMarkdownBytes": 344623,
+      "cleanedMarkdownLines": 2585
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-261_100-WTLS-20010926-a.pdf",
+      "sourcePdfSha256": "2c88893b935a1a9640bc4fee359aa4feab97e7cf5a8f90287f6c9155dcf69d41",
+      "sourcePdfBytes": 33210,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-261_100-WTLS-20010926-a.cleaned.md",
+      "cleanedMarkdownSha256": "e851d00e331d0b8b2df145196aae933cac96f21bbceff523fbadb0470442a94e",
+      "cleanedMarkdownBytes": 6908,
+      "cleanedMarkdownLines": 79
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-261_101-WTLS-20011027-a.pdf",
+      "sourcePdfSha256": "9e7faac5feaf44ac7b4c7c1a11a89d066c455327c1f5c984fcba855fbcf10367",
+      "sourcePdfBytes": 30753,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-261_101-WTLS-20011027-a.cleaned.md",
+      "cleanedMarkdownSha256": "d25067b64c136b7f79dce3ad16cfb01f815a475b105d325d113fd95e2ea01e5a",
+      "cleanedMarkdownBytes": 7957,
+      "cleanedMarkdownLines": 72
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP-261_102-WTLS-20011027-a.pdf",
+      "sourcePdfSha256": "f75fd08a30007cb35e09dc8487c19e4b788fcc28b7356c5e49cb1d92f9728f24",
+      "sourcePdfBytes": 31493,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP-261_102-WTLS-20011027-a.cleaned.md",
+      "cleanedMarkdownSha256": "b2823a40c3a8cde1209a4c0ac9db709821932d7c1adf220a98560a002f2562dc",
+      "cleanedMarkdownBytes": 8348,
+      "cleanedMarkdownLines": 63
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/WAP.pdf",
+      "sourcePdfSha256": "a1596c79cb743e2dc851751775f65cc7d552b7749f5afce0a717feaa0ad5232c",
+      "sourcePdfBytes": 734053,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/WAP.cleaned.md",
+      "cleanedMarkdownSha256": "dded848ef257335476dcf1d05904e3df4481d686565930848cbb942d6ddf4c97",
+      "cleanedMarkdownBytes": 15947,
+      "cleanedMarkdownLines": 608
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/spec-wml-19990616.pdf",
+      "sourcePdfSha256": "197c8258a78c7f9a4a4ddbd697d03ab6e39d5fb04e85a57d4a8891f64e474ca4",
+      "sourcePdfBytes": 258645,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/spec-wml-19990616.cleaned.md",
+      "cleanedMarkdownSha256": "c95b21d9bea2c2dac47affad7ed8961811b231ea0e4530ce6f06f79a47560ada",
+      "cleanedMarkdownBytes": 155005,
+      "cleanedMarkdownLines": 2305
+    },
+    {
+      "sourcePdfPath": "spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf",
+      "sourcePdfSha256": "e8d6ab951365c1ef467b6e301c0e074bffa8a5e146caabb91907031779b9057b",
+      "sourcePdfBytes": 1724434,
+      "cleanedMarkdownPath": "spec-processing/source-material/parsed-markdown/docling-cleaned/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.cleaned.md",
+      "cleanedMarkdownSha256": "e3c934ff65eb1ba66277f1f265afd4fa2fff9673e8c780e978620a25241a24e2",
+      "cleanedMarkdownBytes": 472542,
+      "cleanedMarkdownLines": 5479
+    }
+  ]
+}

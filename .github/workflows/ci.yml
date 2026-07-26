@@ -158,6 +158,9 @@ jobs:
       - name: Release version consistency check
         run: pnpm run version:check
 
+      - name: Docling provenance strict check
+        run: pnpm run docling:check
+
       - name: Browser frontend typecheck (contract drift guard)
         run: pnpm --dir browser/frontend exec tsc --noEmit
 
