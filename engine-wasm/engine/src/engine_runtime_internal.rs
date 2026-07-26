@@ -130,7 +130,18 @@ impl WmlEngine {
                 .unwrap_or_else(|| "script invocation failed".to_string()));
         }
 
-        self.apply_pending_script_effects()?;
+        if let Err(message) = self.apply_pending_script_effects() {
+            // The script's own execution succeeded, but the navigation it
+            // requested (e.g. `WMLBrowser.go("#missing")`) failed. The outcome
+            // recorded above still reflects the script's success and must be
+            // overwritten, or `lastScriptExecutionOk()`/error-class queries
+            // would contradict the `Err` this function is about to return.
+            self.last_script_outcome = Some(ScriptExecutionOutcome::fatal(
+                message.clone(),
+                ScriptErrorCategoryLiteral::HostBinding,
+            ));
+            return Err(message);
+        }
         Ok(ScriptInvocationOutcome::from_execution(&outcome))
     }
 

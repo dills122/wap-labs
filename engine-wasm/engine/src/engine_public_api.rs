@@ -403,8 +403,15 @@ impl WmlEngine {
     }
 
     /// Execute a raw bytecode unit with no runtime host bindings.
+    ///
+    /// Wrapped in the same panic-containment boundary as every other
+    /// script-execution entry point (see [`Self::execute_script_contained`]),
+    /// so a defensive-programming bug in the decoder or VM degrades to a
+    /// typed `ScriptExecutionOutcome::fatal` instead of unwinding raw through
+    /// the `#[wasm_bindgen]` boundary as an uncaught JS exception.
     pub fn execute_script_unit(&self, bytes: Vec<u8>) -> ScriptExecutionOutcome {
-        self.execute_script_unit_internal(&bytes)
+        catch_engine_panic(|| self.execute_script_unit_internal(&bytes))
+            .unwrap_or_else(contained_panic_script_outcome)
     }
 
     /// Register a bytecode unit by source key.
