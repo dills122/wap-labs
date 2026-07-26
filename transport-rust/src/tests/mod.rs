@@ -256,6 +256,9 @@ struct WtpReplayPolicyInput {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct WtpReplayPolicyFixture {
+    // Deserialized to keep the fixture schema self-documenting alongside
+    // `initiator_policy`, but the responder test cases below construct their
+    // own policy directly rather than reading this field back.
     #[allow(dead_code)]
     responder_policy: WtpReplayPolicyInput,
     responder_cases: Vec<WtpResponderFixtureCase>,

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::network::wsp::header_block::{
     decode_header_block, encode_header_block, WspHeaderBlock, WspHeaderBlockDecodeError,
     WspHeaderBlockDecodePolicy, WspHeaderBlockEncodeError, WspHeaderBlockEncodePolicy,

@@ -5,6 +5,10 @@ use crate::network::wtp::retransmission::{
     decide_retransmission, WtpRetransmissionDecision, WtpRetransmissionEvent,
     WtpRetransmissionPolicy, WtpRetransmissionState, WtpRetransmissionTrace,
 };
+// unused_imports false positive: only consumed transitively via `mod tests`'s
+// `use super::*`, which brings this into scope for its `#[derive(Deserialize)]`
+// fixtures below. The lint can't see usage through that cross-module glob.
+#[allow(unused_imports)]
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

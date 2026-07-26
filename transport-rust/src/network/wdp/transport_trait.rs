@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::network::wdp::datagram::WdpDatagram;
 use serde::{Deserialize, Serialize};
 

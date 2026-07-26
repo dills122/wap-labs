@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::network::wsp::header_registry::is_negotiated_extension_page;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

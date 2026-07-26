@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::network::wsp::decoder::{
     HeaderStreamDecodePolicy, UnsupportedCodePageBehavior, WspHeaderStreamDecodeError,
 };

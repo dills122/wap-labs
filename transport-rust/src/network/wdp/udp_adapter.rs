@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::network::wdp::datagram::{
     WdpAddress, WdpDatagram, WdpServicePort, WDP_MAX_UDP_PAYLOAD_BYTES,
 };
@@ -24,7 +22,6 @@ impl Default for UdpDatagramTransportConfig {
 
 pub struct UdpDatagramTransport {
     socket: UdpSocket,
-    read_timeout_ms: Option<u64>,
 }
 
 impl UdpDatagramTransport {
@@ -36,10 +33,7 @@ impl UdpDatagramTransport {
                 .set_read_timeout(Some(Duration::from_millis(timeout_ms)))
                 .map_err(|error| WdpError::TransportUnavailable(error.to_string()))?;
         }
-        Ok(Self {
-            socket,
-            read_timeout_ms: config.read_timeout_ms,
-        })
+        Ok(Self { socket })
     }
 
     pub fn local_addr(&self) -> SocketAddr {

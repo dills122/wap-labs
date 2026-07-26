@@ -1,5 +1,3 @@
-#![allow(unused_imports)]
-
 pub mod alerts;
 pub mod handshake;
 pub mod record;
