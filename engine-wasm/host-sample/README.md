@@ -75,6 +75,13 @@ pnpm --dir engine-wasm/host-sample run examples:check
 pnpm --dir engine-wasm/host-sample run test:story:unit
 ```
 
+`examples:story-coverage` is advisory only (never fails): it reports any `*.wml` example with no
+adjacent `*.flow.json` story, so a gap doesn't silently sit uncovered until the next manual audit.
+
+```bash
+pnpm --dir engine-wasm/host-sample run examples:story-coverage
+```
+
 The host sample also owns the developer commands for the engine's Rust-derived serialized DTO
 projection. `contracts:generate` refreshes `engine-wasm/contracts/generated/runtime-dtos.ts`, and
 `contracts:check` fails when the committed projection has drifted:
